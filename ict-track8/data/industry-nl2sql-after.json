@@ -1,0 +1,618 @@
+{
+ "summary": {
+  "repo": ".",
+  "split": "all",
+  "units": 18,
+  "EX_answerable": 1.0,
+  "EX_simple_single_turn": null,
+  "EX_complex": 1.0,
+  "silent_error_rate": 0.0,
+  "abstain_rate_on_answerable": 0.0,
+  "clarification_recall": 1.0,
+  "clarification_precision": 1.0,
+  "reliability_score_RS": 1.0,
+  "rs_penalty_c": 5.0,
+  "dialogue_success": null,
+  "safety_violations": 0,
+  "database_files_modified": [],
+  "errors": 0,
+  "latency_ms": {
+   "p50": 2.681,
+   "p95": 6.706
+  },
+  "by_category": {
+   "industry_ambiguity": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "industry_count": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "industry_customer": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "industry_join": {
+    "n": 6,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "industry_ticket": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0
+   }
+  },
+  "planner_sources": {
+   "rules": 18
+  },
+  "by_tag": {
+   "blind": {
+    "n": 18,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.1667
+   },
+   "clarification": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 1.0
+   },
+   "count_distinct": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "fan_out": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "filter": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "grouping": {
+    "n": 12,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "industry": {
+    "n": 18,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.1667
+   },
+   "join": {
+    "n": 12,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "multi_table": {
+    "n": 9,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "second_subject": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "time": {
+    "n": 12,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "unresolved": {
+    "n": 3,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 1.0
+   }
+  },
+  "competition_mapping": {
+   "初赛_NL2SQL执行准确率(10分)": null,
+   "决赛_NL2SQL复杂查询准确率(10分)": 10,
+   "初赛_多轮对话上下文保持(5分)": null,
+   "note": "EX_simple 对应初赛单表/基础题；EX_complex 为含 JOIN/嵌套/比较/窗口的子集",
+   "availability": {
+    "初赛_NL2SQL执行准确率(10分)": false,
+    "决赛_NL2SQL复杂查询准确率(10分)": true,
+    "初赛_多轮对话上下文保持(5分)": false
+   }
+  }
+ },
+ "records": [
+  {
+   "id": "IND_001",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_join",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年华东地区各品类销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"products\".\"category\", \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? AND \"regions\".\"region_name\" = ? GROUP BY \"products\".\"category\", \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_001",
+   "variant": "synthetic",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_join",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年华东地区各品类销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"products\".\"category\", \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? AND \"regions\".\"region_name\" = ? GROUP BY \"products\".\"category\", \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_001",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_join",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年华东地区各品类销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"products\".\"category\", \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? AND \"regions\".\"region_name\" = ? GROUP BY \"products\".\"category\", \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_002",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_join",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年各地区卖了多少钱",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_002",
+   "variant": "synthetic",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_join",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年各地区卖了多少钱",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_002",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_join",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年各地区卖了多少钱",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_003",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_count",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "fan_out",
+    "count_distinct",
+    "grouping"
+   ],
+   "question": "按品类统计订单数",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"products\".\"category\", COUNT(DISTINCT \"orders\".\"order_id\") AS \"订单数\" FROM \"orders\" JOIN \"order_items\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" GROUP BY \"products\".\"category\" ORDER BY COUNT(DISTINCT \"orders\".\"order_id\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_003",
+   "variant": "synthetic",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_count",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "fan_out",
+    "count_distinct",
+    "grouping"
+   ],
+   "question": "按品类统计订单数",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"products\".\"category\", COUNT(DISTINCT \"orders\".\"order_id\") AS \"订单数\" FROM \"orders\" JOIN \"order_items\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" GROUP BY \"products\".\"category\" ORDER BY COUNT(DISTINCT \"orders\".\"order_id\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_003",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_count",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "fan_out",
+    "count_distinct",
+    "grouping"
+   ],
+   "question": "按品类统计订单数",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"products\".\"category\", COUNT(DISTINCT \"orders\".\"order_id\") AS \"订单数\" FROM \"orders\" JOIN \"order_items\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" GROUP BY \"products\".\"category\" ORDER BY COUNT(DISTINCT \"orders\".\"order_id\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_004",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_ticket",
+   "tags": [
+    "blind",
+    "industry",
+    "second_subject",
+    "time",
+    "filter"
+   ],
+   "question": "2025年3月已解决工单的平均解决时长",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT AVG(\"support_tickets\".\"resolution_hours\") AS \"平均解决时长\" FROM \"support_tickets\" WHERE \"support_tickets\".\"created_date\" >= ? AND \"support_tickets\".\"created_date\" < ? AND \"support_tickets\".\"status\" = ? ORDER BY AVG(\"support_tickets\".\"resolution_hours\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "IND_004",
+   "variant": "synthetic",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_ticket",
+   "tags": [
+    "blind",
+    "industry",
+    "second_subject",
+    "time",
+    "filter"
+   ],
+   "question": "2025年3月已解决工单的平均解决时长",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT AVG(\"support_tickets\".\"resolution_hours\") AS \"平均解决时长\" FROM \"support_tickets\" WHERE \"support_tickets\".\"created_date\" >= ? AND \"support_tickets\".\"created_date\" < ? AND \"support_tickets\".\"status\" = ? ORDER BY AVG(\"support_tickets\".\"resolution_hours\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "IND_004",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_ticket",
+   "tags": [
+    "blind",
+    "industry",
+    "second_subject",
+    "time",
+    "filter"
+   ],
+   "question": "2025年3月已解决工单的平均解决时长",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT AVG(\"support_tickets\".\"resolution_hours\") AS \"平均解决时长\" FROM \"support_tickets\" WHERE \"support_tickets\".\"created_date\" >= ? AND \"support_tickets\".\"created_date\" < ? AND \"support_tickets\".\"status\" = ? ORDER BY AVG(\"support_tickets\".\"resolution_hours\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "IND_005",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_customer",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年各客户等级的销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"customers\".\"customer_level\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"customers\" ON \"orders\".\"customer_id\" = \"customers\".\"customer_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"customers\".\"customer_level\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "IND_005",
+   "variant": "synthetic",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_customer",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年各客户等级的销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"customers\".\"customer_level\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"customers\" ON \"orders\".\"customer_id\" = \"customers\".\"customer_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"customers\".\"customer_level\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "IND_005",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_customer",
+   "tags": [
+    "blind",
+    "industry",
+    "join",
+    "multi_table",
+    "time",
+    "grouping"
+   ],
+   "question": "2025年各客户等级的销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT \"customers\".\"customer_level\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"customers\" ON \"orders\".\"customer_id\" = \"customers\".\"customer_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"customers\".\"customer_level\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "IND_006",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_ambiguity",
+   "tags": [
+    "blind",
+    "industry",
+    "clarification",
+    "unresolved"
+   ],
+   "question": "按国家统计订单金额",
+   "effective_question": null,
+   "expected": "clarification",
+   "outcome": "correct",
+   "detail": "clarified (code missing_group_dimension not in ['unresolved_terms', 'missing_analysis_dimension', 'missing_metric'])",
+   "status": "clarification",
+   "clarification_code": "missing_group_dimension",
+   "sql": null,
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_006",
+   "variant": "synthetic",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_ambiguity",
+   "tags": [
+    "blind",
+    "industry",
+    "clarification",
+    "unresolved"
+   ],
+   "question": "按国家统计订单金额",
+   "effective_question": null,
+   "expected": "clarification",
+   "outcome": "correct",
+   "detail": "clarified (code missing_group_dimension not in ['unresolved_terms', 'missing_analysis_dimension', 'missing_metric'])",
+   "status": "clarification",
+   "clarification_code": "missing_group_dimension",
+   "sql": null,
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "IND_006",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "industry_ambiguity",
+   "tags": [
+    "blind",
+    "industry",
+    "clarification",
+    "unresolved"
+   ],
+   "question": "按国家统计订单金额",
+   "effective_question": null,
+   "expected": "clarification",
+   "outcome": "correct",
+   "detail": "clarified (code missing_group_dimension not in ['unresolved_terms', 'missing_analysis_dimension', 'missing_metric'])",
+   "status": "clarification",
+   "clarification_code": "missing_group_dimension",
+   "sql": null,
+   "planner_source": "rules",
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  }
+ ]
+}

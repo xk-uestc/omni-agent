@@ -1,0 +1,667 @@
+{
+ "summary": {
+  "repo": ".",
+  "split": "all",
+  "units": 18,
+  "EX_answerable": 1.0,
+  "EX_simple_single_turn": null,
+  "EX_complex": null,
+  "silent_error_rate": 0.0,
+  "abstain_rate_on_answerable": 0.0,
+  "clarification_recall": 1.0,
+  "clarification_precision": 1.0,
+  "reliability_score_RS": 1.0,
+  "rs_penalty_c": 5.0,
+  "dialogue_success": 1.0,
+  "safety_violations": 0,
+  "database_files_modified": [],
+  "errors": 0,
+  "latency_ms": {
+   "p50": 2.098,
+   "p95": 4.91
+  },
+  "by_category": {
+   "blind_ambiguity": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "blind_dialogue": {
+    "n": 4,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "blind_filter_set": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "blind_join": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "blind_simple": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "blind_time_boundary": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "blind_time_group": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0
+   },
+   "blind_unsupported": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0
+   }
+  },
+  "planner_sources": {
+   "rules": 18
+  },
+  "planner_rejection_reasons": {},
+  "by_tag": {
+   "ambiguity": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 1.0
+   },
+   "blind": {
+    "n": 18,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.2222
+   },
+   "boundary": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "clarification": {
+    "n": 4,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 1.0
+   },
+   "context": {
+    "n": 4,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "filter": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "grouping": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "join_free": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "multi_turn": {
+    "n": 4,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "multi_value": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "negation": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "paraphrase": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "relative_time": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "single_table": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "time": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 0.0
+   },
+   "unsupported_grain": {
+    "n": 2,
+    "correct": 1.0,
+    "silent_error": 0.0,
+    "clarification": 1.0
+   }
+  },
+  "competition_mapping": {
+   "初赛_NL2SQL执行准确率(10分)": null,
+   "决赛_NL2SQL复杂查询准确率(10分)": null,
+   "初赛_多轮对话上下文保持(5分)": 3,
+   "note": "EX_simple 对应初赛单表/基础题；EX_complex 为含 JOIN/嵌套/比较/窗口的子集",
+   "availability": {
+    "初赛_NL2SQL执行准确率(10分)": false,
+    "决赛_NL2SQL复杂查询准确率(10分)": false,
+    "初赛_多轮对话上下文保持(5分)": true
+   }
+  }
+ },
+ "records": [
+  {
+   "id": "BIND_001",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_simple",
+   "tags": [
+    "blind",
+    "single_table",
+    "paraphrase"
+   ],
+   "question": "帮我看一下 2025 年华南门店卖了多少钱",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? AND \"sales_orders\".\"channel\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_001",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_simple",
+   "tags": [
+    "blind",
+    "single_table",
+    "paraphrase"
+   ],
+   "question": "帮我看一下 2025 年华南门店卖了多少钱",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? AND \"sales_orders\".\"channel\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_002",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_ambiguity",
+   "tags": [
+    "blind",
+    "ambiguity",
+    "clarification"
+   ],
+   "question": "按国家统计订单金额",
+   "effective_question": null,
+   "expected": "clarification",
+   "outcome": "correct",
+   "detail": "clarified (code missing_group_dimension not in ['ambiguous_dimension'])",
+   "status": "clarification",
+   "clarification_code": "missing_group_dimension",
+   "sql": null,
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_002",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_ambiguity",
+   "tags": [
+    "blind",
+    "ambiguity",
+    "clarification"
+   ],
+   "question": "按国家统计订单金额",
+   "effective_question": null,
+   "expected": "clarification",
+   "outcome": "correct",
+   "detail": "clarified (code missing_group_dimension not in ['ambiguous_dimension'])",
+   "status": "clarification",
+   "clarification_code": "missing_group_dimension",
+   "sql": null,
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_003",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_join",
+   "tags": [
+    "blind",
+    "join_free",
+    "filter"
+   ],
+   "question": "只看已解决工单的平均处理时长",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT AVG(\"support_tickets\".\"resolution_hours\") AS \"平均解决时长\" FROM \"support_tickets\" WHERE \"support_tickets\".\"status\" = ? ORDER BY AVG(\"support_tickets\".\"resolution_hours\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_003",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_join",
+   "tags": [
+    "blind",
+    "join_free",
+    "filter"
+   ],
+   "question": "只看已解决工单的平均处理时长",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT AVG(\"support_tickets\".\"resolution_hours\") AS \"平均解决时长\" FROM \"support_tickets\" WHERE \"support_tickets\".\"status\" = ? ORDER BY AVG(\"support_tickets\".\"resolution_hours\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_004",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_filter_set",
+   "tags": [
+    "blind",
+    "negation",
+    "multi_value"
+   ],
+   "question": "除了华东和华南以外的销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"region\" NOT IN (?, ?) ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_004",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_filter_set",
+   "tags": [
+    "blind",
+    "negation",
+    "multi_value"
+   ],
+   "question": "除了华东和华南以外的销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"region\" NOT IN (?, ?) ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_005",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_time_group",
+   "tags": [
+    "blind",
+    "time",
+    "grouping"
+   ],
+   "question": "把 2025 年销售额按月列出来",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT strftime('%Y-%m', \"sales_orders\".\"order_date\") AS \"月份\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY strftime('%Y-%m', \"sales_orders\".\"order_date\") ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_005",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_time_group",
+   "tags": [
+    "blind",
+    "time",
+    "grouping"
+   ],
+   "question": "把 2025 年销售额按月列出来",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT strftime('%Y-%m', \"sales_orders\".\"order_date\") AS \"月份\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY strftime('%Y-%m', \"sales_orders\".\"order_date\") ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "test"
+  },
+  {
+   "id": "BIND_006",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_time_boundary",
+   "tags": [
+    "blind",
+    "relative_time",
+    "boundary"
+   ],
+   "question": "最近 7 天的销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_006",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_time_boundary",
+   "tags": [
+    "blind",
+    "relative_time",
+    "boundary"
+   ],
+   "question": "最近 7 天的销售额",
+   "effective_question": null,
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_007",
+   "variant": "seed",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_unsupported",
+   "tags": [
+    "blind",
+    "clarification",
+    "unsupported_grain"
+   ],
+   "question": "按周看销售额走势",
+   "effective_question": null,
+   "expected": "clarification",
+   "outcome": "correct",
+   "detail": "clarified",
+   "status": "clarification",
+   "clarification_code": "unsupported_time_grain",
+   "sql": null,
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_007",
+   "variant": "mutated",
+   "kind": "single",
+   "turn": null,
+   "category": "blind_unsupported",
+   "tags": [
+    "blind",
+    "clarification",
+    "unsupported_grain"
+   ],
+   "question": "按周看销售额走势",
+   "effective_question": null,
+   "expected": "clarification",
+   "outcome": "correct",
+   "detail": "clarified",
+   "status": "clarification",
+   "clarification_code": "unsupported_time_grain",
+   "sql": null,
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_008",
+   "variant": "seed",
+   "kind": "turn",
+   "turn": 1,
+   "category": "blind_dialogue",
+   "tags": [
+    "blind",
+    "multi_turn",
+    "context"
+   ],
+   "question": "2025年华东和华南的销售额",
+   "effective_question": "2025年华东和华南的销售额",
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" IN (?, ?) ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_008",
+   "variant": "seed",
+   "kind": "turn",
+   "turn": 2,
+   "category": "blind_dialogue",
+   "tags": [
+    "blind",
+    "multi_turn",
+    "context"
+   ],
+   "question": "那华北呢",
+   "effective_question": "2025年华北的销售额",
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_008",
+   "variant": "seed",
+   "kind": "dialogue_summary",
+   "category": "blind_dialogue",
+   "tags": [
+    "blind",
+    "multi_turn",
+    "context"
+   ],
+   "turns": 2,
+   "outcome": "correct",
+   "turn_outcomes": [
+    "correct",
+    "correct"
+   ],
+   "split": "dev"
+  },
+  {
+   "id": "BIND_008",
+   "variant": "mutated",
+   "kind": "turn",
+   "turn": 1,
+   "category": "blind_dialogue",
+   "tags": [
+    "blind",
+    "multi_turn",
+    "context"
+   ],
+   "question": "2025年华东和华南的销售额",
+   "effective_question": "2025年华东和华南的销售额",
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" IN (?, ?) ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_008",
+   "variant": "mutated",
+   "kind": "turn",
+   "turn": 2,
+   "category": "blind_dialogue",
+   "tags": [
+    "blind",
+    "multi_turn",
+    "context"
+   ],
+   "question": "那华北呢",
+   "effective_question": "2025年华北的销售额",
+   "expected": "ok",
+   "outcome": "correct",
+   "detail": "rows match",
+   "status": "ok",
+   "clarification_code": null,
+   "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+   "planner_source": "rules",
+   "planner_audit": {},
+   "safety_case": false,
+   "safety_violation": false,
+   "split": "dev"
+  },
+  {
+   "id": "BIND_008",
+   "variant": "mutated",
+   "kind": "dialogue_summary",
+   "category": "blind_dialogue",
+   "tags": [
+    "blind",
+    "multi_turn",
+    "context"
+   ],
+   "turns": 2,
+   "outcome": "correct",
+   "turn_outcomes": [
+    "correct",
+    "correct"
+   ],
+   "split": "dev"
+  }
+ ]
+}

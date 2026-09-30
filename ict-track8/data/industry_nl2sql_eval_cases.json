@@ -1,0 +1,16 @@
+[
+  {"case_id":"industry_sales_region_category","question":"2025年华东地区各品类销售额","expected_status":"ok","sql_contains":["JOIN","order_items","products","regions"],"expected_columns":["category","销售额"],"min_rows":3,"tags":["4-hop","filter","group"]},
+  {"case_id":"industry_channel_orders","question":"按渠道统计订单数","expected_status":"ok","sql_contains":["GROUP BY","channel","COUNT"],"expected_columns":["channel","订单数"],"min_rows":2,"tags":["metric","group"]},
+  {"case_id":"industry_rank","question":"各地区销售额排名","expected_status":"ok","sql_contains":["DENSE_RANK","OVER"],"expected_columns":["region_name","销售额","排名"],"min_rows":3,"tags":["window","rank"]},
+  {"case_id":"industry_share","question":"各地区销售额占比","expected_status":"ok","sql_contains":["OVER ()","占比"],"expected_columns":["region_name","销售额","占比(%)"],"min_rows":3,"tags":["window","share"]},
+  {"case_id":"industry_customer_level","question":"按客户等级统计销售额","expected_status":"ok","sql_contains":["JOIN","customers"],"expected_columns":["customer_level","销售额"],"min_rows":3,"tags":["dimension-join"]},
+  {"case_id":"industry_high_customer","question":"高等级客户的销售额","expected_status":"ok","sql_contains":["customer_level","?"],"expected_columns":["销售额"],"min_rows":1,"tags":["value-filter","join"]},
+  {"case_id":"industry_ticket_duration","question":"按工单状态统计平均解决时长","expected_status":"ok","sql_contains":["AVG","support_tickets"],"expected_columns":["status","平均解决时长"],"min_rows":3,"tags":["second-subject","average"]},
+  {"case_id":"industry_year_region_quantity","question":"2025年各地区的销量","expected_status":"ok","sql_contains":["order_date","GROUP BY"],"expected_columns":["region_name","销量"],"min_rows":3,"tags":["date","multi-hop"]},
+  {"case_id":"industry_product_region","question":"华南地区手机品类销售额","expected_status":"ok","sql_contains":["products","regions","WHERE"],"expected_columns":["销售额"],"min_rows":1,"tags":["two-filters"]},
+  {"case_id":"industry_industry_quantity","question":"按行业统计销量","expected_status":"ok","sql_contains":["customers","SUM"],"expected_columns":["industry","销量"],"min_rows":3,"tags":["cross-domain"]},
+  {"case_id":"industry_average_threshold","question":"销售额高于平均的产品","expected_status":"ok","sql_contains":["SELECT AVG","HAVING"],"expected_columns":["product_name","销售额"],"min_rows":1,"tags":["subquery","having"]},
+  {"case_id":"industry_missing_metric","question":"2025年华东地区的情况","expected_status":"clarification","clarification_code":"missing_metric","tags":["clarification"]},
+  {"case_id":"industry_yoy","question":"2025年各地区销售额同比","expected_status":"ok","sql_contains":["CASE WHEN","同比(%)"],"expected_columns":["region_name","本期销售额","同期销售额","同比(%)"],"min_rows":3,"tags":["comparison","yoy","multi-hop"]},
+  {"case_id":"industry_mom","question":"2025年3月各地区销售额环比","expected_status":"ok","sql_contains":["CASE WHEN","环比(%)"],"expected_columns":["region_name","当前销售额","上期销售额","环比(%)"],"min_rows":3,"tags":["comparison","mom","multi-hop"]}
+]

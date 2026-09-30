@@ -1,0 +1,80 @@
+{
+  "version": 2,
+  "reference_date": "2026-09-22",
+  "provenance": "curated_industry_semantic_cases",
+  "cases": [
+    {
+      "id": "IND_001",
+      "category": "industry_join",
+      "db": "industry",
+      "question": "2025年华东地区各品类销售额",
+      "expected": "ok",
+      "gold_sql": "SELECT p.category, r.region_name, SUM(i.line_amount) FROM order_items i JOIN orders o ON i.order_id = o.order_id JOIN products p ON i.product_id = p.product_id JOIN regions r ON o.region_id = r.region_id WHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01' AND r.region_name = '华东' GROUP BY p.category, r.region_name",
+      "tags": ["blind", "industry", "join", "multi_table", "time", "grouping"],
+      "variants": ["seed", "synthetic", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "IND_002",
+      "category": "industry_join",
+      "db": "industry",
+      "question": "2025年各地区卖了多少钱",
+      "expected": "ok",
+      "gold_sql": "SELECT r.region_name, SUM(i.line_amount) FROM order_items i JOIN orders o ON i.order_id = o.order_id JOIN regions r ON o.region_id = r.region_id WHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01' GROUP BY r.region_name",
+      "tags": ["blind", "industry", "join", "multi_table", "time", "grouping"],
+      "variants": ["seed", "synthetic", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "IND_003",
+      "category": "industry_count",
+      "db": "industry",
+      "question": "按品类统计订单数",
+      "expected": "ok",
+      "gold_sql": "SELECT p.category, COUNT(DISTINCT o.order_id) FROM orders o JOIN order_items i ON i.order_id = o.order_id JOIN products p ON p.product_id = i.product_id GROUP BY p.category",
+      "tags": ["blind", "industry", "join", "fan_out", "count_distinct", "grouping"],
+      "variants": ["seed", "synthetic", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "IND_004",
+      "category": "industry_ticket",
+      "db": "industry",
+      "question": "2025年3月已解决工单的平均解决时长",
+      "expected": "ok",
+      "gold_sql": "SELECT AVG(t.resolution_hours) FROM support_tickets t WHERE t.created_date >= '2025-03-01' AND t.created_date < '2025-04-01' AND t.status = '已解决'",
+      "tags": ["blind", "industry", "second_subject", "time", "filter"],
+      "variants": ["seed", "synthetic", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "IND_005",
+      "category": "industry_customer",
+      "db": "industry",
+      "question": "2025年各客户等级的销售额",
+      "expected": "ok",
+      "gold_sql": "SELECT c.customer_level, SUM(i.line_amount) FROM order_items i JOIN orders o ON i.order_id = o.order_id JOIN customers c ON o.customer_id = c.customer_id WHERE o.order_date >= '2025-01-01' AND o.order_date < '2026-01-01' GROUP BY c.customer_level",
+      "tags": ["blind", "industry", "join", "multi_table", "time", "grouping"],
+      "variants": ["seed", "synthetic", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "IND_006",
+      "category": "industry_ambiguity",
+      "db": "industry",
+      "question": "按国家统计订单金额",
+      "expected": "clarification",
+      "gold_sql": null,
+      "tags": ["blind", "industry", "clarification", "unresolved"],
+      "variants": ["seed", "synthetic", "mutated"],
+      "allowed_codes": ["unresolved_terms", "missing_analysis_dimension", "missing_metric"],
+      "order_sensitive": false,
+      "safety": false
+    }
+  ]
+}

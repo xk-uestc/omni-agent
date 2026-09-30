@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>问数推理台 · 赛题八</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <h1>问数推理台</h1>
+        <small>赛题八 · 可解释精准问数（非 RAG 部分）</small>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="功能切换">
+        <button class="tab" role="tab" id="tab-ask" aria-selected="true" aria-controls="view-ask">问数推理</button>
+        <button class="tab" role="tab" id="tab-doc" aria-selected="false" aria-controls="view-doc">文档体检</button>
+      </nav>
+      <div class="env">
+        <span id="health" class="pill" data-state="unknown"><span class="dot"></span><span id="health-text">连接 API…</span></span>
+        <span id="db-pill" class="pill" hidden></span>
+        <button id="theme" class="icon-button" type="button" aria-label="切换深浅色" title="切换深浅色">◐</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="view-ask" role="tabpanel" aria-labelledby="tab-ask">
+    <div class="shell">
+      <main class="main">
+        <section class="panel composer" aria-label="提问">
+          <form id="ask-form" class="composer-row">
+            <label for="question" class="sr-only" hidden>问题</label>
+            <textarea id="question" rows="1" maxlength="1000" placeholder="用业务语言提问，例如：去年卖了多少钱"></textarea>
+            <button id="ask" class="btn" type="submit">推理并查询</button>
+          </form>
+          <div class="composer-meta">
+            <label><input id="use-context" type="checkbox" checked> 承接上一轮（多轮追问）</label>
+            <span><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> 提交</span>
+            <span id="session-label"></span>
+          </div>
+        </section>
+
+        <div id="error" class="banner" role="alert" hidden></div>
+
+        <section id="chain-panel" class="panel" aria-label="工具调用链" hidden>
+          <div class="panel-head"><h2>工具调用链</h2><span id="trace-id" class="muted small mono"></span><span id="latency" class="muted small" style="margin-left:auto"></span></div>
+          <div id="chain" class="chain"></div>
+        </section>
+
+        <nav id="stepper" class="stepper" aria-label="推理步骤" hidden></nav>
+
+        <div id="steps" class="steps">
+          <section class="panel empty-state">
+            <h2>把一句业务问题拆成可审计的六步</h2>
+            <p>系统不直接“生成”答案，而是逐步说明它在问题里认出了什么、定位到哪张表、为什么这样关联、哪里需要你确认，最后才执行只读 SQL。</p>
+            <ol>
+              <li>① 要素识别</li><li>② 表与字段定位</li><li>③ 查询计划</li><li>④ 语义校验 / 澄清</li><li>⑤ SQL 与安全门</li><li>⑥ 结果与溯源</li>
+            </ol>
+          </section>
+        </div>
+      </main>
+
+      <aside class="rail" aria-label="会话与示例">
+        <section class="panel">
+          <div class="panel-head"><h2>会话记忆</h2>
+            <div class="rail-actions" style="margin-left:auto">
+              <button id="play-dialogue" class="btn ghost small" type="button">演示六轮追问</button>
+              <button id="new-session" class="btn ghost small" type="button">新会话</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <ol id="turns" class="turns"></ol>
+            <p id="turns-empty" class="rail-note">每一轮都会记录原问题和改写后的独立问题。追问“那华南呢”时，系统按槽位替换上一轮的取值，而不是简单拼接字符串。</p>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><h2>示例问题</h2><span id="samples-db" class="muted small"></span></div>
+          <div class="panel-body"><div id="samples" class="samples"><p class="rail-note">等待 API…</p></div></div>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <div id="view-doc" role="tabpanel" aria-labelledby="tab-doc" hidden>
+    <div class="shell" style="grid-template-columns:minmax(0,1fr)">
+      <main class="main">
+        <p class="muted small">文档体检只调用解析与质量接口（难题 6 公式、7 目录、8 复杂度、9 质量），不做知识库检索问答。</p>
+        <div class="doc-shell">
+          <section class="panel">
+            <div class="panel-head"><h2>输入</h2></div>
+            <div class="panel-body doc-input">
+              <textarea id="doc-text" aria-label="文档文本">第一章 总则
+1.1 适用范围
+本办法适用于华东区域销售考核。
+第二章 指标口径
+2.1 毛利率
+毛利率 = (500 - 300) / 500 * 100
+2.2 提成
+提成金额 = 12000 * 0.03
+三、附則
+（一）本辦法自2025年起執行</textarea>
+              <fieldset>
+                <legend>页面信号（模拟扫描件）</legend>
+                <div class="field-grid">
+                  <label>OCR 置信度<input id="sig-conf" type="number" min="0" max="1" step="0.05" value="0.62"></label>
+                  <label>旋转角度°<input id="sig-rot" type="number" min="-360" max="360" step="1" value="180"></label>
+                  <label>倾斜角度°<input id="sig-skew" type="number" min="-90" max="90" step="0.5" value="3.5"></label>
+                  <label>清晰度 0–1<input id="sig-blur" type="number" min="0" max="1" step="0.05" value="0.25"></label>
+                  <label class="check-field"><input id="sig-scan" type="checkbox" checked> 扫描页（无文字层）</label>
+                  <label class="check-field"><input id="sig-off" type="checkbox"> 不附带页面信号，只分析文本</label>
+                </div>
+              </fieldset>
+              <button id="doc-analyze" class="btn" type="button">分析文本</button>
+              <div class="drop">
+                上传 PDF（≤20MB）做目录 / 公式 / 质量分析，或上传图片做清晰度检测与预处理
+                <input id="doc-file" type="file" accept="application/pdf,image/png,image/jpeg,image/webp,image/bmp">
+              </div>
+            </div>
+          </section>
+          <section id="doc-result" class="steps"><section class="panel empty-state"><h2>结果会显示在这里</h2><p>质量分、复杂度分、问题清单、恢复出的目录层级、公式识别与安全计算、OCR 重试计划。</p></section></section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+  <script src="reasoning-core.js"></script>
+  <script src="preview-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "version": "demo-sales-2026-10-01",
+  "data_origin": "Synthetic demonstration schema; not a real enterprise policy",
+  "metrics": [
+    {"id":"revenue","table":"sales_orders","column":"sales_amount","function":"SUM","label":"销售额","aliases":["销售额","销售金额"],"query_alias":"销售额","unit":"currency","currency":"CNY"},
+    {"id":"orders","table":"sales_orders","column":"order_id","function":"COUNT","label":"订单数","aliases":["订单数"],"query_alias":"订单数","unit":"count"},
+    {"id":"units","table":"sales_orders","column":"quantity","function":"SUM","label":"销量","aliases":["销量"],"query_alias":"销量","unit":"item"}
+  ],
+  "derived_metrics": [
+    {"id":"aov","label":"客单价","aliases":["客单价","平均每单金额"],"expression":{"op":"divide","left":{"ref":"revenue"},"right":{"ref":"orders"}}},
+    {"id":"revenue_per_unit","label":"平均每件收入","aliases":["平均每件收入"],"expression":{"op":"divide","left":{"ref":"revenue"},"right":{"ref":"units"}}}
+  ]
+}

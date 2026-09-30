@@ -1,0 +1,79 @@
+[
+  {
+    "document_id": "policy-sales-east-2025",
+    "title": "华东区域销售运营政策",
+    "content": "2025 年华东区域线上与门店销售统一执行季度复盘制度，高等级客户可以申请重点产品的组合优惠。销售额口径以已完成订单的 sales_amount 为准。",
+    "source_uri": "knowledge://sales/policy-east-2025",
+    "metadata": {"domain": "sales", "document_type": "policy", "year": 2025, "region": "华东"}
+  },
+  {
+    "document_id": "policy-customer-level",
+    "title": "客户等级与服务规则",
+    "content": "高等级客户享有优先响应和专属运营支持，中等级客户执行标准服务，低等级客户按基础规则服务。客户等级由年度交易和服务记录综合评定。",
+    "source_uri": "knowledge://customer/level-policy",
+    "metadata": {"domain": "customer", "document_type": "service_rule", "levels": ["高", "中", "低"]}
+  },
+  {
+    "document_id": "metric-sales-amount",
+    "title": "销售额指标口径说明",
+    "content": "销售额指标按订单明细的成交金额汇总，不含取消订单。跨地区比较时应保持日期范围、渠道和产品口径一致。",
+    "source_uri": "knowledge://metrics/sales-amount",
+    "metadata": {"domain": "metric", "document_type": "metric_definition", "metric": "sales_amount"}
+  },
+  {
+    "document_id": "policy-south-channel",
+    "title": "华南渠道执行规范",
+    "content": "华南线上渠道按月进行销售复核，门店渠道按季度复盘。渠道汇总应以订单日期为时间边界。",
+    "source_uri": "knowledge://sales/policy-south-channel",
+    "metadata": {"domain": "sales", "document_type": "procedure", "region": "华南"}
+  },
+  {
+    "document_id": "table-sales-monthly",
+    "title": "月度销售台账字段说明",
+    "content": "月度台账字段包括订单日期、地区、渠道、产品类别、数量和成交金额。空值字段不得直接参与汇总。",
+    "source_uri": "knowledge://fixtures/table-sales-monthly",
+    "metadata": {"domain": "data_dictionary", "document_type": "table_spec"}
+  },
+  {
+    "document_id": "formula-margin",
+    "title": "毛利率计算说明",
+    "content": "毛利率 = (销售额 - 成本) / 销售额。销售额为已完成订单口径，成本必须使用同一时间范围。",
+    "source_uri": "knowledge://fixtures/formula-margin",
+    "metadata": {"domain": "finance", "document_type": "formula"}
+  },
+  {
+    "document_id": "faq-refund",
+    "title": "订单取消与退款 FAQ",
+    "content": "已取消订单不计入销售额；退款订单应在对账周期内冲减原成交金额，并保留原订单号。",
+    "source_uri": "knowledge://fixtures/faq-refund",
+    "metadata": {"domain": "service", "document_type": "faq"}
+  },
+  {
+    "document_id": "scan-quality-note",
+    "title": "扫描件质量标注样例",
+    "content": "该样例记录扫描件可能出现的旋转、倾斜、模糊和 OCR 替换字符问题，低质量页面应进入 OCR 重试队列。",
+    "source_uri": "knowledge://fixtures/scan-quality-note",
+    "metadata": {"domain": "document_quality", "document_type": "scan_annotation", "scanned": true}
+  },
+  {
+    "document_id": "multilingual-sales",
+    "title": "中英双语销售术语表",
+    "content": "销售额 sales amount，销量 quantity，客户等级 customer level。术语映射必须保留原文和标准字段。",
+    "source_uri": "knowledge://fixtures/multilingual-sales",
+    "metadata": {"domain": "glossary", "document_type": "multilingual"}
+  },
+  {
+    "document_id": "image-chart-guide",
+    "title": "图表与图片证据说明",
+    "content": "图表证据应记录图片来源、页码、区域和 OCR 质量；无法确认的图例不得作为确定性数据。",
+    "source_uri": "knowledge://fixtures/image-chart-guide",
+    "metadata": {"domain": "multimodal", "document_type": "image_evidence"}
+  },
+  {
+    "document_id": "exception-escalation",
+    "title": "异常数据升级流程",
+    "content": "当数据质量低于阈值或字段映射存在歧义时，先返回澄清问题并记录异常来源，不直接生成未经验证的结论。",
+    "source_uri": "knowledge://fixtures/exception-escalation",
+    "metadata": {"domain": "governance", "document_type": "exception_process"}
+  }
+]

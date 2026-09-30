@@ -1,0 +1,2556 @@
+{
+ "version": 2,
+ "reference_date": "2026-09-22",
+ "cases": [
+  {
+   "id": "G271828_000",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月平板按渠道的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND product_category = '平板' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_001",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2025年除平板以外的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category <> '平板' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_002",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_003",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度线上和门店的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND channel IN ('线上', '门店')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_004",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月按渠道除华北以外销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND region <> '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_005",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年华北和华东按渠道的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND region IN ('华北', '华东') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_006",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2024年门店和线上的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' AND channel IN ('门店', '线上') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_007",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区平板和耳机销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE product_category IN ('平板', '耳机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_008",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月华北的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND region = '华北'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_009",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2025年除线上以外的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND channel <> '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_010",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年Q4各品类的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_011",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年华北按渠道的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND region = '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_012",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年2月到5月手机和耳机的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND product_category IN ('手机', '耳机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_013",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月华东的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND region = '华东'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_014",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2024年Q4手机和耳机的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND product_category IN ('手机', '耳机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_015",
+   "category": "generated",
+   "db": "sales",
+   "question": "除线上以外订单数是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE channel <> '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_016",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年各品类订单数是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_017",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年按渠道营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_018",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月华南营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND region = '华南'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_019",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月耳机和手机的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND product_category IN ('耳机', '手机')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_020",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年门店和线上的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND channel IN ('门店', '线上')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_021",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月手机和耳机按渠道的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND product_category IN ('手机', '耳机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_022",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2025年门店的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND channel = '门店' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_023",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度华东的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND region = '华东'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_024",
+   "category": "generated",
+   "db": "sales",
+   "question": "线上各品类的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE channel = '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_025",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2024年Q4除华南以外的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND region <> '华南' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_026",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月各品类订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_027",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年除华北以外的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region <> '华北'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_028",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月各地区销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_029",
+   "category": "generated",
+   "db": "sales",
+   "question": "耳机和平板2025年按渠道销量",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category IN ('耳机', '平板') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_030",
+   "category": "generated",
+   "db": "sales",
+   "question": "除华东以外2024年Q4按渠道订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND region <> '华东' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_031",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年按渠道销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_032",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年门店的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND channel = '门店'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_033",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年按渠道营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_034",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月各品类销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_035",
+   "category": "generated",
+   "db": "sales",
+   "question": "手机和平板2025年下半年按渠道营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND product_category IN ('手机', '平板') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_036",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2025年4月手机和耳机的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND product_category IN ('手机', '耳机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_037",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月除线上以外的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND channel <> '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_038",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年2月到5月门店的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel = '门店' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_039",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_040",
+   "category": "generated",
+   "db": "sales",
+   "question": "除手机以外2025年4月订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND product_category <> '手机'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_041",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年除线上以外的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND channel <> '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_042",
+   "category": "generated",
+   "db": "sales",
+   "question": "线上和门店2025年各品类销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND channel IN ('线上', '门店') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_043",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2024年Q4除平板以外的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND product_category <> '平板' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_044",
+   "category": "generated",
+   "db": "sales",
+   "question": "线上2025年4月各地区营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND channel = '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_045",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2024年Q4的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_046",
+   "category": "generated",
+   "db": "sales",
+   "question": "销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_047",
+   "category": "generated",
+   "db": "sales",
+   "question": "华南和华北按渠道的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders WHERE region IN ('华南', '华北') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_048",
+   "category": "generated",
+   "db": "sales",
+   "question": "华北各品类的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE region = '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_049",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2025年2月到5月华北和华东的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND region IN ('华北', '华东') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_050",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类华南营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE region = '华南' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_051",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年Q4除线上以外销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND channel <> '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_052",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2024年的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_053",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月除门店以外的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel <> '门店'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_054",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月华南和华北营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND region IN ('华南', '华北')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_055",
+   "category": "generated",
+   "db": "sales",
+   "question": "线上2025年2月到5月营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel = '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_056",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月线上营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND channel = '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_057",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2025年华北的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region = '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_058",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月线上的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND channel = '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_059",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度各品类华东营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND region = '华东' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_060",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月平板的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND product_category = '平板'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_061",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度各品类销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_062",
+   "category": "generated",
+   "db": "sales",
+   "question": "手机2025年第二季度按渠道销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND product_category = '手机' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_063",
+   "category": "generated",
+   "db": "sales",
+   "question": "华北和华东2025年第二季度各品类营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND region IN ('华北', '华东') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_064",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2025年的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_065",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年第二季度除手机以外的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND product_category <> '手机' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_066",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年Q4门店的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND channel = '门店'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_067",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月线上和门店销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel IN ('线上', '门店')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_068",
+   "category": "generated",
+   "db": "sales",
+   "question": "除华北以外2025年4月各品类销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND region <> '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_069",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年Q4各品类营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_070",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月华南的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND region = '华南'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_071",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月华南按渠道的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND region = '华南' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_072",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年各品类的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_073",
+   "category": "generated",
+   "db": "sales",
+   "question": "门店和线上各品类的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE channel IN ('门店', '线上') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_074",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年各地区线上和门店销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND channel IN ('线上', '门店') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_075",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度华南和华东销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND region IN ('华南', '华东')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_076",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度按渠道平板和耳机营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND product_category IN ('平板', '耳机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_077",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度门店和线上各地区的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND channel IN ('门店', '线上') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_078",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年Q4各地区的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(quantity) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_079",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2024年Q4除线上以外的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND channel <> '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_080",
+   "category": "generated",
+   "db": "sales",
+   "question": "除华东以外营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region <> '华东'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_081",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月各地区的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_082",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2025年2月到5月门店的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel = '门店' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_083",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年各品类销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_084",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道手机和耳机销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE product_category IN ('手机', '耳机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_085",
+   "category": "generated",
+   "db": "sales",
+   "question": "平板2025年4月各地区订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND product_category = '平板' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_086",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2025年第二季度除华北以外的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND region <> '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_087",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年各地区销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_088",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月各品类的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_089",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道除平板以外销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE product_category <> '平板' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_090",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_091",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年按渠道除平板以外销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category <> '平板' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_092",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年Q4各品类的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_093",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2025年华东和华南的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region IN ('华东', '华南') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_094",
+   "category": "generated",
+   "db": "sales",
+   "question": "门店和线上2025年2月到5月各地区销量",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel IN ('门店', '线上') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_095",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年Q4耳机的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date >= '2024-10-01' AND order_date < '2025-01-01' AND product_category = '耳机'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_096",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月除线上以外各品类的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel <> '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_097",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度各品类营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_098",
+   "category": "generated",
+   "db": "sales",
+   "question": "华南和华东2024年各品类销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' AND region IN ('华南', '华东') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_099",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度按渠道销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_100",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年除华北以外按渠道的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND region <> '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_101",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_102",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月各品类订单数是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_103",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2025年华北的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region = '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_104",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年耳机和平板订单数是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category IN ('耳机', '平板')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_105",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月各地区的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_106",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_107",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2025年下半年除线上以外的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND channel <> '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_108",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年除耳机以外按渠道的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND product_category <> '耳机' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_109",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度除线上以外营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND channel <> '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_110",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区订单数是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_111",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_112",
+   "category": "generated",
+   "db": "sales",
+   "question": "门店和线上2025年2月到5月各品类销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel IN ('门店', '线上') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_113",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年按渠道订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_114",
+   "category": "generated",
+   "db": "sales",
+   "question": "2024年华东按渠道的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' AND region = '华东' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_115",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年4月线上的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND channel = '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_116",
+   "category": "generated",
+   "db": "sales",
+   "question": "手机2024年销量",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' AND product_category = '手机'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_117",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年门店各品类的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND channel = '门店' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_118",
+   "category": "generated",
+   "db": "sales",
+   "question": "除华东以外各品类销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE region <> '华东' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_119",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度除平板以外的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND product_category <> '平板'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_120",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类2024年线上和门店的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(quantity) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' AND channel IN ('线上', '门店') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_121",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年4月华北按渠道的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND region = '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_122",
+   "category": "generated",
+   "db": "sales",
+   "question": "手机2025年各地区订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category = '手机' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_123",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年2月到5月除手机以外的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND product_category <> '手机' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_124",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月门店营业额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel = '门店'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_125",
+   "category": "generated",
+   "db": "sales",
+   "question": "除线上以外2025年第二季度各品类订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND channel <> '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_126",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年华北各品类的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01' AND region = '华北' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_127",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年各地区销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_128",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度除手机以外销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND product_category <> '手机'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_129",
+   "category": "generated",
+   "db": "sales",
+   "question": "平板和手机2024年订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' AND product_category IN ('平板', '手机')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_130",
+   "category": "generated",
+   "db": "sales",
+   "question": "各品类订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, COUNT(*) FROM sales_orders GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_131",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年第二季度的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_132",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年2月到5月线上的营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND channel = '线上'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_133",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年第二季度线上的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' AND channel = '线上' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_134",
+   "category": "generated",
+   "db": "sales",
+   "question": "耳机和手机的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE product_category IN ('耳机', '手机')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_135",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年按渠道华北和华南销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(quantity) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region IN ('华北', '华南') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_136",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道订单数是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, COUNT(*) FROM sales_orders GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_137",
+   "category": "generated",
+   "db": "sales",
+   "question": "按渠道2024年的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2024-01-01' AND order_date < '2025-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_138",
+   "category": "generated",
+   "db": "sales",
+   "question": "除华南以外2025年2月到5月各品类营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT product_category, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND region <> '华南' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_139",
+   "category": "generated",
+   "db": "sales",
+   "question": "耳机2025年各地区销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category = '耳机' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_140",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区门店和线上销量是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(quantity) FROM sales_orders WHERE channel IN ('门店', '线上') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_141",
+   "category": "generated",
+   "db": "sales",
+   "question": "除耳机以外2025年4月销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-05-01' AND product_category <> '耳机'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_142",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年各地区的销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_143",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年第二季度按渠道销售额是多少",
+   "expected": "ok",
+   "gold_sql": "SELECT channel, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-04-01' AND order_date < '2025-07-01' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_144",
+   "category": "generated",
+   "db": "sales",
+   "question": "华东的销量",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE region = '华东'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_145",
+   "category": "generated",
+   "db": "sales",
+   "question": "平板和手机2025年各地区营业额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category IN ('平板', '手机') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_146",
+   "category": "generated",
+   "db": "sales",
+   "question": "2025年下半年订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date >= '2025-07-01' AND order_date < '2026-01-01'",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_147",
+   "category": "generated",
+   "db": "sales",
+   "question": "手机2025年2月到5月各地区销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT region, SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND product_category = '手机' GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_148",
+   "category": "generated",
+   "db": "sales",
+   "question": "华东和华南2025年2月到5月销售额",
+   "expected": "ok",
+   "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-02-01' AND order_date < '2025-06-01' AND region IN ('华东', '华南')",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  },
+  {
+   "id": "G271828_149",
+   "category": "generated",
+   "db": "sales",
+   "question": "各地区2025年耳机和平板的订单数",
+   "expected": "ok",
+   "gold_sql": "SELECT region, COUNT(*) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND product_category IN ('耳机', '平板') GROUP BY 1",
+   "tags": [
+    "generated"
+   ],
+   "variants": [
+    "seed",
+    "synthetic"
+   ],
+   "order_sensitive": false,
+   "safety": false
+  }
+ ]
+}

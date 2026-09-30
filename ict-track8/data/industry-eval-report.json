@@ -1,0 +1,2024 @@
+{
+  "total": 14,
+  "passed": 14,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "case_id": "industry_sales_region_category",
+      "question": "2025年华东地区各品类销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "2025年华东地区各品类销售额",
+        "rewritten_question": "2025年华东地区各品类销售额",
+        "sql": "SELECT \"products\".\"category\", \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? AND \"regions\".\"region_name\" = ? GROUP BY \"products\".\"category\", \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华东",
+          100
+        ],
+        "columns": [
+          "category",
+          "region_name",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "category": "手机",
+            "region_name": "华东",
+            "销售额": 12596.0
+          },
+          {
+            "category": "耳机",
+            "region_name": "华东",
+            "销售额": 5592.0
+          },
+          {
+            "category": "配件",
+            "region_name": "华东",
+            "销售额": 1996.0
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "category",
+            "region_name"
+          ],
+          "dimension_tables": {
+            "category": "products",
+            "region_name": "regions"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "BETWEEN",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制在 2025 年",
+              "table": "orders"
+            },
+            {
+              "column": "region_name",
+              "operator": "=",
+              "value": "华东",
+              "source_text": "华东",
+              "explanation": "识别到 region_name=华东",
+              "table": "regions"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "品类",
+              "table": "products",
+              "column": "category",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "品类"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "products",
+            "regions"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"order_items\".\"product_id\" = \"products\".\"product_id\"",
+            "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "order_items",
+              "to_table": "products",
+              "condition": "\"order_items\".\"product_id\" = \"products\".\"product_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "regions",
+              "condition": "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.78,
+          "rewritten_question": "2025年华东地区各品类销售额",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> orders -> products -> regions",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "限制在 2025 年",
+          "识别到 region_name=华东",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 3,
+          "query_hash": "e6a04ce32bacca25",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "品类",
+              "table": "products",
+              "column": "category",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "品类"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_channel_orders",
+      "question": "按渠道统计订单数",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按渠道统计订单数",
+        "rewritten_question": "按渠道统计订单数",
+        "sql": "SELECT \"orders\".\"channel\", COUNT(*) AS \"订单数\" FROM \"orders\" GROUP BY \"orders\".\"channel\" ORDER BY COUNT(*) DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "channel",
+          "订单数"
+        ],
+        "rows": [
+          {
+            "channel": "线上",
+            "订单数": 6
+          },
+          {
+            "channel": "门店",
+            "订单数": 3
+          }
+        ],
+        "plan": {
+          "table": "orders",
+          "metric_table": "orders",
+          "metric_column": "order_id",
+          "metric_function": "COUNT",
+          "metric_label": "订单数",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "channel"
+          ],
+          "dimension_tables": {
+            "channel": "orders"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "订单数",
+              "table": "orders",
+              "column": "order_id",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "订单数"
+            },
+            {
+              "source_text": "渠道",
+              "table": "orders",
+              "column": "channel",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "渠道"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按渠道统计订单数",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 orders 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：订单数",
+          "查询表：orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "orders",
+          "row_count": 2,
+          "query_hash": "11133c3732cc97c6",
+          "field_links": [
+            {
+              "source_text": "订单数",
+              "table": "orders",
+              "column": "order_id",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "订单数"
+            },
+            {
+              "source_text": "渠道",
+              "table": "orders",
+              "column": "channel",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "渠道"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_rank",
+      "question": "各地区销售额排名",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "各地区销售额排名",
+        "rewritten_question": "各地区销售额排名",
+        "sql": "SELECT \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\", DENSE_RANK() OVER (ORDER BY SUM(\"order_items\".\"line_amount\") DESC) AS \"排名\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" GROUP BY \"regions\".\"region_name\" ORDER BY \"排名\" ASC, \"销售额\" DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "region_name",
+          "销售额",
+          "排名"
+        ],
+        "rows": [
+          {
+            "region_name": "华北",
+            "销售额": 25691.0,
+            "排名": 1
+          },
+          {
+            "region_name": "华东",
+            "销售额": 20184.0,
+            "排名": 2
+          },
+          {
+            "region_name": "华南",
+            "销售额": 17892.0,
+            "排名": 3
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "rank",
+          "dimensions": [
+            "region_name"
+          ],
+          "dimension_tables": {
+            "region_name": "regions"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "regions"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "regions",
+              "condition": "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "各地区销售额排名",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> orders -> regions",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "分析模式：rank",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 3,
+          "query_hash": "33d2d3a7460008a4",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_share",
+      "question": "各地区销售额占比",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "各地区销售额占比",
+        "rewritten_question": "各地区销售额占比",
+        "sql": "SELECT \"regions\".\"region_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\", (100.0 * SUM(\"order_items\".\"line_amount\") / NULLIF(SUM(SUM(\"order_items\".\"line_amount\")) OVER (), 0)) AS \"占比(%)\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" GROUP BY \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "region_name",
+          "销售额",
+          "占比(%)"
+        ],
+        "rows": [
+          {
+            "region_name": "华北",
+            "销售额": 25691.0,
+            "占比(%)": 40.28886414603165
+          },
+          {
+            "region_name": "华东",
+            "销售额": 20184.0,
+            "占比(%)": 31.65273574105729
+          },
+          {
+            "region_name": "华南",
+            "销售额": 17892.0,
+            "占比(%)": 28.058400112911066
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "share",
+          "dimensions": [
+            "region_name"
+          ],
+          "dimension_tables": {
+            "region_name": "regions"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "regions"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "regions",
+              "condition": "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "各地区销售额占比",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> orders -> regions",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "分析模式：share",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 3,
+          "query_hash": "6c8c23e02afec0b3",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_customer_level",
+      "question": "按客户等级统计销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按客户等级统计销售额",
+        "rewritten_question": "按客户等级统计销售额",
+        "sql": "SELECT \"customers\".\"customer_level\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"customers\" ON \"orders\".\"customer_id\" = \"customers\".\"customer_id\" GROUP BY \"customers\".\"customer_level\" ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "customer_level",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "customer_level": "高",
+            "销售额": 42380.0
+          },
+          {
+            "customer_level": "中",
+            "销售额": 17892.0
+          },
+          {
+            "customer_level": "低",
+            "销售额": 3495.0
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "customer_level"
+          ],
+          "dimension_tables": {
+            "customer_level": "customers"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "客户等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.9,
+              "matched_alias": "客户等级"
+            },
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "customers"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"customer_id\" = \"customers\".\"customer_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "customers",
+              "condition": "\"orders\".\"customer_id\" = \"customers\".\"customer_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按客户等级统计销售额",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> orders -> customers",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 3,
+          "query_hash": "3f62de6c096a401e",
+          "field_links": [
+            {
+              "source_text": "客户等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.9,
+              "matched_alias": "客户等级"
+            },
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_high_customer",
+      "question": "高等级客户的销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "高等级客户的销售额",
+        "rewritten_question": "高等级客户的销售额",
+        "sql": "SELECT SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"customers\" ON \"orders\".\"customer_id\" = \"customers\".\"customer_id\" WHERE \"customers\".\"customer_level\" = ? ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+        "parameters": [
+          "高",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": 42380.0
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "customer_level",
+              "operator": "=",
+              "value": "高",
+              "source_text": "高",
+              "explanation": "识别到 customer_level=高",
+              "table": "customers"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "等级"
+            },
+            {
+              "source_text": "客户",
+              "table": "customers",
+              "column": "customer_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "客户"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "customers"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"customer_id\" = \"customers\".\"customer_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "customers",
+              "condition": "\"orders\".\"customer_id\" = \"customers\".\"customer_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.7,
+          "rewritten_question": "高等级客户的销售额",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> orders -> customers",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "识别到 customer_level=高",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 1,
+          "query_hash": "67895295c16e2843",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "等级"
+            },
+            {
+              "source_text": "客户",
+              "table": "customers",
+              "column": "customer_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "客户"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_ticket_duration",
+      "question": "按工单状态统计平均解决时长",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按工单状态统计平均解决时长",
+        "rewritten_question": "按工单状态统计平均解决时长",
+        "sql": "SELECT \"support_tickets\".\"status\", AVG(\"support_tickets\".\"resolution_hours\") AS \"平均解决时长\" FROM \"support_tickets\" GROUP BY \"support_tickets\".\"status\" ORDER BY AVG(\"support_tickets\".\"resolution_hours\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "status",
+          "平均解决时长"
+        ],
+        "rows": [
+          {
+            "status": "已关闭",
+            "平均解决时长": 24.0
+          },
+          {
+            "status": "已解决",
+            "平均解决时长": 7.125
+          },
+          {
+            "status": "处理中",
+            "平均解决时长": null
+          }
+        ],
+        "plan": {
+          "table": "support_tickets",
+          "metric_table": "support_tickets",
+          "metric_column": "resolution_hours",
+          "metric_function": "AVG",
+          "metric_label": "平均解决时长",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "status"
+          ],
+          "dimension_tables": {
+            "status": "support_tickets"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "解决时长",
+              "table": "support_tickets",
+              "column": "resolution_hours",
+              "role": "metric",
+              "score": 0.9,
+              "matched_alias": "解决时长"
+            },
+            {
+              "source_text": "工单状态",
+              "table": "support_tickets",
+              "column": "status",
+              "role": "dimension",
+              "score": 0.9,
+              "matched_alias": "工单状态"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按工单状态统计平均解决时长",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 support_tickets 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：平均解决时长",
+          "查询表：support_tickets",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "support_tickets",
+          "row_count": 3,
+          "query_hash": "63df16f2e046ffe7",
+          "field_links": [
+            {
+              "source_text": "解决时长",
+              "table": "support_tickets",
+              "column": "resolution_hours",
+              "role": "metric",
+              "score": 0.9,
+              "matched_alias": "解决时长"
+            },
+            {
+              "source_text": "工单状态",
+              "table": "support_tickets",
+              "column": "status",
+              "role": "dimension",
+              "score": 0.9,
+              "matched_alias": "工单状态"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_year_region_quantity",
+      "question": "2025年各地区的销量",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "2025年各地区的销量",
+        "rewritten_question": "2025年各地区的销量",
+        "sql": "SELECT \"regions\".\"region_name\", SUM(\"order_items\".\"quantity\") AS \"销量\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"regions\".\"region_name\" ORDER BY SUM(\"order_items\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          100
+        ],
+        "columns": [
+          "region_name",
+          "销量"
+        ],
+        "rows": [
+          {
+            "region_name": "华东",
+            "销量": 16
+          },
+          {
+            "region_name": "华北",
+            "销量": 9
+          },
+          {
+            "region_name": "华南",
+            "销量": 8
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "quantity",
+          "metric_function": "SUM",
+          "metric_label": "销量",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "region_name"
+          ],
+          "dimension_tables": {
+            "region_name": "regions"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "BETWEEN",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制在 2025 年",
+              "table": "orders"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销量",
+              "table": "order_items",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "regions"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "regions",
+              "condition": "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.72,
+          "rewritten_question": "2025年各地区的销量",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> orders -> regions",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销量",
+          "查询表：order_items",
+          "限制在 2025 年",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 3,
+          "query_hash": "ef01c61d08e03f59",
+          "field_links": [
+            {
+              "source_text": "销量",
+              "table": "order_items",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_product_region",
+      "question": "华南地区手机品类销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "华南地区手机品类销售额",
+        "rewritten_question": "华南地区手机品类销售额",
+        "sql": "SELECT SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"products\".\"category\" = ? AND \"regions\".\"region_name\" = ? ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+        "parameters": [
+          "手机",
+          "华南",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": 3999.0
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "category",
+              "operator": "=",
+              "value": "手机",
+              "source_text": "手机",
+              "explanation": "识别到 category=手机",
+              "table": "products"
+            },
+            {
+              "column": "region_name",
+              "operator": "=",
+              "value": "华南",
+              "source_text": "华南",
+              "explanation": "识别到 region_name=华南",
+              "table": "regions"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "品类",
+              "table": "products",
+              "column": "category",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "品类"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [
+            "products",
+            "orders",
+            "regions"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"product_id\" = \"products\".\"product_id\"",
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "products",
+              "condition": "\"order_items\".\"product_id\" = \"products\".\"product_id\""
+            },
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "regions",
+              "condition": "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.7,
+          "rewritten_question": "华南地区手机品类销售额",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> products -> orders -> regions",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "识别到 category=手机",
+          "识别到 region_name=华南",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 1,
+          "query_hash": "4786538edf9ce221",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "品类",
+              "table": "products",
+              "column": "category",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "品类"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_industry_quantity",
+      "question": "按行业统计销量",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按行业统计销量",
+        "rewritten_question": "按行业统计销量",
+        "sql": "SELECT \"customers\".\"industry\", SUM(\"order_items\".\"quantity\") AS \"销量\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"customers\" ON \"orders\".\"customer_id\" = \"customers\".\"customer_id\" GROUP BY \"customers\".\"industry\" ORDER BY SUM(\"order_items\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "industry",
+          "销量"
+        ],
+        "rows": [
+          {
+            "industry": "制造业",
+            "销量": 11
+          },
+          {
+            "industry": "教育业",
+            "销量": 6
+          },
+          {
+            "industry": "零售业",
+            "销量": 5
+          },
+          {
+            "industry": "传媒业",
+            "销量": 5
+          },
+          {
+            "industry": "物流业",
+            "销量": 3
+          },
+          {
+            "industry": "医疗业",
+            "销量": 3
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "quantity",
+          "metric_function": "SUM",
+          "metric_label": "销量",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "industry"
+          ],
+          "dimension_tables": {
+            "industry": "customers"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "行业",
+              "table": "customers",
+              "column": "industry",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "行业"
+            },
+            {
+              "source_text": "销量",
+              "table": "order_items",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "customers"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"customer_id\" = \"customers\".\"customer_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "customers",
+              "condition": "\"orders\".\"customer_id\" = \"customers\".\"customer_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按行业统计销量",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> orders -> customers",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销量",
+          "查询表：order_items",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 6,
+          "query_hash": "587fd4555db29148",
+          "field_links": [
+            {
+              "source_text": "行业",
+              "table": "customers",
+              "column": "industry",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "行业"
+            },
+            {
+              "source_text": "销量",
+              "table": "order_items",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_average_threshold",
+      "question": "销售额高于平均的产品",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "销售额高于平均的产品",
+        "rewritten_question": "销售额高于平均的产品",
+        "sql": "SELECT \"products\".\"product_name\", SUM(\"order_items\".\"line_amount\") AS \"销售额\" FROM \"order_items\" JOIN \"products\" ON \"order_items\".\"product_id\" = \"products\".\"product_id\" GROUP BY \"products\".\"product_name\" HAVING SUM(\"order_items\".\"line_amount\") > (SELECT AVG(\"order_items\".\"line_amount\") FROM \"order_items\") ORDER BY SUM(\"order_items\".\"line_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "product_name",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "product_name": "星河 Pro",
+            "销售额": 27993.0
+          },
+          {
+            "product_name": "星河 Lite",
+            "销售额": 13794.0
+          },
+          {
+            "product_name": "云屏 11",
+            "销售额": 12495.0
+          },
+          {
+            "product_name": "声场 Air",
+            "销售额": 6990.0
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "product_name"
+          ],
+          "dimension_tables": {
+            "product_name": "products"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": {
+            "operator": ">",
+            "mode": "scalar_avg",
+            "value": null,
+            "source_text": "高于平均",
+            "explanation": "与全表平均值比较"
+          },
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "产品",
+              "table": "products",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            }
+          ],
+          "join_tables": [
+            "products"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"product_id\" = \"products\".\"product_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "products",
+              "condition": "\"order_items\".\"product_id\" = \"products\".\"product_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "销售额高于平均的产品",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：order_items -> products",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 4,
+          "query_hash": "065db384170a64fa",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "产品",
+              "table": "products",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_missing_metric",
+      "question": "2025年华东地区的情况",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "clarification",
+        "question": "2025年华东地区的情况",
+        "rewritten_question": "2025年华东地区的情况",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "regions",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": null,
+          "metric_label": null,
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.18,
+          "rewritten_question": "2025年华东地区的情况",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "请补充要统计的指标，例如销售额、销量或订单数。",
+          "clarification_code": "missing_metric",
+          "clarification_options": [
+            {
+              "value": "sales_amount",
+              "label": "销售额"
+            },
+            {
+              "value": "quantity",
+              "label": "销量"
+            },
+            {
+              "value": "order_id",
+              "label": "订单数"
+            }
+          ],
+          "assumptions": [],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "请补充要统计的指标，例如销售额、销量或订单数。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite"
+        },
+        "clarification": "请补充要统计的指标，例如销售额、销量或订单数。",
+        "clarification_code": "missing_metric",
+        "clarification_options": [
+          {
+            "value": "sales_amount",
+            "label": "销售额"
+          },
+          {
+            "value": "quantity",
+            "label": "销量"
+          },
+          {
+            "value": "order_id",
+            "label": "订单数"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "industry_yoy",
+      "question": "2025年各地区销售额同比",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "2025年各地区销售额同比",
+        "rewritten_question": "2025年各地区销售额同比",
+        "sql": "SELECT \"region_name\", \"本期销售额\", \"同期销售额\", (100.0 * (\"本期销售额\" - \"同期销售额\") / NULLIF(\"同期销售额\", 0)) AS \"同比(%)\" FROM (SELECT \"regions\".\"region_name\" AS \"region_name\", SUM(CASE WHEN \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? THEN \"order_items\".\"line_amount\" ELSE 0 END) AS \"本期销售额\", SUM(CASE WHEN \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? THEN \"order_items\".\"line_amount\" ELSE 0 END) AS \"同期销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"regions\".\"region_name\") AS comparison_base ORDER BY \"本期销售额\" DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "2024-01-01",
+          "2025-01-01",
+          "2024-01-01",
+          "2026-01-01",
+          100
+        ],
+        "columns": [
+          "region_name",
+          "本期销售额",
+          "同期销售额",
+          "同比(%)"
+        ],
+        "rows": [
+          {
+            "region_name": "华北",
+            "本期销售额": 25691.0,
+            "同期销售额": 0,
+            "同比(%)": null
+          },
+          {
+            "region_name": "华东",
+            "本期销售额": 20184.0,
+            "同期销售额": 0,
+            "同比(%)": null
+          },
+          {
+            "region_name": "华南",
+            "本期销售额": 17892.0,
+            "同期销售额": 0,
+            "同比(%)": null
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "region_name"
+          ],
+          "dimension_tables": {
+            "region_name": "regions"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "regions"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "regions",
+              "condition": "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "2025年各地区销售额同比",
+          "comparison_mode": "同比",
+          "comparison_period": {
+            "date_table": "orders",
+            "date_column": "order_date",
+            "current_start": "2025-01-01",
+            "current_end": "2026-01-01",
+            "previous_start": "2024-01-01",
+            "previous_end": "2025-01-01"
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "比较窗口：2025-01-01 至 2026-01-01",
+            "外键验证 JOIN 路径：order_items -> orders -> regions",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "比较模式：同比",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 3,
+          "query_hash": "997982e7baebcfcb",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry_mom",
+      "question": "2025年3月各地区销售额环比",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "2025年3月各地区销售额环比",
+        "rewritten_question": "2025年3月各地区销售额环比",
+        "sql": "SELECT \"region_name\", \"当前销售额\", \"上期销售额\", (100.0 * (\"当前销售额\" - \"上期销售额\") / NULLIF(\"上期销售额\", 0)) AS \"环比(%)\" FROM (SELECT \"regions\".\"region_name\" AS \"region_name\", SUM(CASE WHEN \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? THEN \"order_items\".\"line_amount\" ELSE 0 END) AS \"当前销售额\", SUM(CASE WHEN \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? THEN \"order_items\".\"line_amount\" ELSE 0 END) AS \"上期销售额\" FROM \"order_items\" JOIN \"orders\" ON \"order_items\".\"order_id\" = \"orders\".\"order_id\" JOIN \"regions\" ON \"orders\".\"region_id\" = \"regions\".\"region_id\" WHERE \"orders\".\"order_date\" >= ? AND \"orders\".\"order_date\" < ? GROUP BY \"regions\".\"region_name\") AS comparison_base ORDER BY \"当前销售额\" DESC LIMIT ?",
+        "parameters": [
+          "2025-03-01",
+          "2025-04-01",
+          "2025-02-01",
+          "2025-03-01",
+          "2025-02-01",
+          "2025-04-01",
+          100
+        ],
+        "columns": [
+          "region_name",
+          "当前销售额",
+          "上期销售额",
+          "环比(%)"
+        ],
+        "rows": [
+          {
+            "region_name": "华北",
+            "当前销售额": 11997.0,
+            "上期销售额": 9695.0,
+            "环比(%)": 23.74419804022692
+          },
+          {
+            "region_name": "华南",
+            "当前销售额": 8997.0,
+            "上期销售额": 0,
+            "环比(%)": null
+          },
+          {
+            "region_name": "华东",
+            "当前销售额": 0,
+            "上期销售额": 3495.0,
+            "环比(%)": -100.0
+          }
+        ],
+        "plan": {
+          "table": "order_items",
+          "metric_table": "order_items",
+          "metric_column": "line_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "region_name"
+          ],
+          "dimension_tables": {
+            "region_name": "regions"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [
+            "orders",
+            "regions"
+          ],
+          "join_conditions": [
+            "\"order_items\".\"order_id\" = \"orders\".\"order_id\"",
+            "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+          ],
+          "join_path": [
+            {
+              "from_table": "order_items",
+              "to_table": "orders",
+              "condition": "\"order_items\".\"order_id\" = \"orders\".\"order_id\""
+            },
+            {
+              "from_table": "orders",
+              "to_table": "regions",
+              "condition": "\"orders\".\"region_id\" = \"regions\".\"region_id\""
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "2025年3月各地区销售额环比",
+          "comparison_mode": "环比",
+          "comparison_period": {
+            "date_table": "orders",
+            "date_column": "order_date",
+            "current_start": "2025-03-01",
+            "current_end": "2025-04-01",
+            "previous_start": "2025-02-01",
+            "previous_end": "2025-03-01"
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "比较窗口：2025-03-01 至 2025-04-01",
+            "外键验证 JOIN 路径：order_items -> orders -> regions",
+            "使用表 order_items 的只读聚合查询"
+          ],
+          "planner_source": "rules"
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：order_items",
+          "比较模式：环比",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "industry_eval.sqlite",
+          "table": "order_items",
+          "row_count": 3,
+          "query_hash": "a44d83c9ae776f1c",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "order_items",
+              "column": "line_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "regions",
+              "column": "region_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    }
+  ],
+  "dataset": "industry_nl2sql_eval_cases.json",
+  "database": "industry_eval.sqlite"
+}

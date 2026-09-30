@@ -1,0 +1,19 @@
+[
+  {"table":"order_items","column":"line_amount","aliases":["销售额","销售金额","成交金额","订单金额","收入","卖了多少钱","卖出多少钱","卖了多少金额"],"role":"metric","metric_function":"SUM"},
+  {"table":"order_items","column":"quantity","aliases":["销量","销售数量","件数","数量"],"role":"metric","metric_function":"SUM"},
+  {"table":"order_items","column":"item_id","aliases":["明细数","商品明细数"],"role":"metric","metric_function":"COUNT_DISTINCT"},
+  {"table":"orders","column":"order_id","aliases":["订单数","订单数量","订单量","笔数"],"role":"metric","metric_function":"COUNT"},
+  {"table":"support_tickets","column":"resolution_hours","aliases":["解决时长","响应时长","处理时长"],"role":"metric","metric_function":"AVG"},
+  {"table":"orders","column":"order_date","aliases":["日期","时间","下单日期","销售日期","月份","月度","按月","年份","按年"],"role":"dimension"},
+  {"table":"orders","column":"channel","aliases":["渠道","销售渠道"],"role":"dimension"},
+  {"table":"regions","column":"region_name","aliases":["地区","区域","地域"],"role":"dimension"},
+  {"table":"regions","column":"province","aliases":["省份","省"],"role":"dimension"},
+  {"table":"products","column":"category","aliases":["品类","产品类别","商品类别","类别"],"role":"dimension"},
+  {"table":"products","column":"product_name","aliases":["产品","商品","产品名称","商品名称"],"role":"dimension"},
+  {"table":"customers","column":"customer_name","aliases":["客户","客户名称","顾客"],"role":"dimension"},
+  {"table":"customers","column":"customer_level","aliases":["客户等级","会员等级","等级"],"role":"dimension"},
+  {"table":"customers","column":"industry","aliases":["行业","客户行业"],"role":"dimension"},
+  {"table":"support_tickets","column":"created_date","aliases":["工单日期","创建日期","提交时间"],"role":"dimension"},
+  {"table":"support_tickets","column":"status","aliases":["工单状态","状态"],"role":"dimension"},
+  {"table":"support_tickets","column":"priority","aliases":["优先级","紧急程度"],"role":"dimension"}
+]

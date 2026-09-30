@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "reference_date": "2026-09-22",
+  "provenance": "independent_manual_review_required",
+  "cases": [
+    {
+      "id": "BIND_001",
+      "category": "blind_simple",
+      "db": "sales",
+      "question": "帮我看一下 2025 年华南门店卖了多少钱",
+      "expected": "ok",
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region = '华南' AND channel = '门店'",
+      "tags": ["blind", "single_table", "paraphrase"],
+      "variants": ["seed", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "BIND_002",
+      "category": "blind_ambiguity",
+      "db": "industry",
+      "question": "按国家统计订单金额",
+      "expected": "clarification",
+      "gold_sql": null,
+      "tags": ["blind", "ambiguity", "clarification"],
+      "variants": ["seed", "mutated"],
+      "allowed_codes": ["ambiguous_dimension"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "BIND_003",
+      "category": "blind_join",
+      "db": "industry",
+      "question": "只看已解决工单的平均处理时长",
+      "expected": "ok",
+      "gold_sql": "SELECT AVG(resolution_hours) FROM support_tickets WHERE status = '已解决'",
+      "tags": ["blind", "join_free", "filter"],
+      "variants": ["seed", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "BIND_004",
+      "category": "blind_filter_set",
+      "db": "sales",
+      "question": "除了华东和华南以外的销售额",
+      "expected": "ok",
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region NOT IN ('华东', '华南')",
+      "tags": ["blind", "negation", "multi_value"],
+      "variants": ["seed", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "BIND_005",
+      "category": "blind_time_group",
+      "db": "sales",
+      "question": "把 2025 年销售额按月列出来",
+      "expected": "ok",
+      "gold_sql": "SELECT strftime('%Y-%m', order_date), SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' GROUP BY 1",
+      "tags": ["blind", "time", "grouping"],
+      "variants": ["seed", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "BIND_006",
+      "category": "blind_time_boundary",
+      "db": "sales",
+      "question": "最近 7 天的销售额",
+      "expected": "ok",
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2026-09-16' AND order_date < '2026-09-23'",
+      "tags": ["blind", "relative_time", "boundary"],
+      "variants": ["seed", "mutated"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "BIND_007",
+      "category": "blind_unsupported",
+      "db": "sales",
+      "question": "按周看销售额走势",
+      "expected": "clarification",
+      "gold_sql": null,
+      "tags": ["blind", "clarification", "unsupported_grain"],
+      "variants": ["seed", "mutated"],
+      "allowed_codes": ["unsupported_time_grain"],
+      "order_sensitive": false,
+      "safety": false
+    },
+    {
+      "id": "BIND_008",
+      "category": "blind_dialogue",
+      "db": "sales",
+      "question": "",
+      "expected": "dialogue",
+      "gold_sql": null,
+      "tags": ["blind", "multi_turn", "context"],
+      "variants": ["seed", "mutated"],
+      "turns": [
+        {
+          "question": "2025年华东和华南的销售额",
+          "expected": "ok",
+          "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region IN ('华东', '华南')"
+        },
+        {
+          "question": "那华北呢",
+          "expected": "ok",
+          "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date >= '2025-01-01' AND order_date < '2026-01-01' AND region = '华北'"
+        }
+      ],
+      "order_sensitive": false,
+      "safety": false
+    }
+  ]
+}

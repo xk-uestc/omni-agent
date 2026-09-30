@@ -1,0 +1,2427 @@
+{
+  "total": 23,
+  "passed": 23,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "cases": [
+    {
+      "case_id": "simple_sales",
+      "question": "销售额是多少",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "销售额是多少",
+        "rewritten_question": "销售额是多少",
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": 95052.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "销售额是多少",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "bf113c25195c4c60",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "simple_quantity",
+      "question": "销量是多少",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "销量是多少",
+        "rewritten_question": "销量是多少",
+        "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "销量"
+        ],
+        "rows": [
+          {
+            "销量": 48
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "quantity",
+          "metric_function": "SUM",
+          "metric_label": "销量",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "销量是多少",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销量",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "fc66b70156a7b8a1",
+          "field_links": [
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "order_count",
+      "question": "订单数是多少",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "订单数是多少",
+        "rewritten_question": "订单数是多少",
+        "sql": "SELECT COUNT(*) AS \"订单数\" FROM \"sales_orders\" ORDER BY COUNT(*) DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "订单数"
+        ],
+        "rows": [
+          {
+            "订单数": 12
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "order_id",
+          "metric_function": "COUNT",
+          "metric_label": "订单数",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "订单数",
+              "table": "sales_orders",
+              "column": "order_id",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "订单数"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "订单数是多少",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：订单数",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "98acd431a31ba909",
+          "field_links": [
+            {
+              "source_text": "订单数",
+              "table": "sales_orders",
+              "column": "order_id",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "订单数"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "distinct_customers",
+      "question": "不同客户数是多少",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "不同客户数是多少",
+        "rewritten_question": "不同客户数是多少",
+        "sql": "SELECT COUNT(DISTINCT \"sales_orders\".\"customer_id\") AS \"客户数\" FROM \"sales_orders\" ORDER BY COUNT(DISTINCT \"sales_orders\".\"customer_id\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "客户数"
+        ],
+        "rows": [
+          {
+            "客户数": 8
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "customer_id",
+          "metric_function": "COUNT_DISTINCT",
+          "metric_label": "客户数",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "不同客户数",
+              "table": "sales_orders",
+              "column": "customer_id",
+              "role": "metric",
+              "score": 0.98,
+              "matched_alias": "不同客户数"
+            },
+            {
+              "source_text": "客户",
+              "table": "customers",
+              "column": "customer_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "客户"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.54,
+          "rewritten_question": "不同客户数是多少",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：客户数",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "99ec9e81cb5f6ce0",
+          "field_links": [
+            {
+              "source_text": "不同客户数",
+              "table": "sales_orders",
+              "column": "customer_id",
+              "role": "metric",
+              "score": 0.98,
+              "matched_alias": "不同客户数"
+            },
+            {
+              "source_text": "客户",
+              "table": "customers",
+              "column": "customer_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "客户"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "east_2025",
+      "question": "2025年华东地区的销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "2025年华东地区的销售额",
+        "rewritten_question": "2025年华东地区的销售额",
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华东",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": 29584.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "BETWEEN",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制在 2025 年",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华东",
+              "source_text": "华东",
+              "explanation": "识别到 region=华东",
+              "table": "sales_orders"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "sales_orders",
+              "column": "region",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.64,
+          "rewritten_question": "2025年华东地区的销售额",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "限制在 2025 年",
+          "识别到 region=华东",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "8afdfacea252cfd1",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "sales_orders",
+              "column": "region",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "year_region",
+      "question": "2025年各地区的销量",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "2025年各地区的销量",
+        "rewritten_question": "2025年各地区的销量",
+        "sql": "SELECT \"sales_orders\".\"region\", SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY \"sales_orders\".\"region\" ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          100
+        ],
+        "columns": [
+          "region",
+          "销量"
+        ],
+        "rows": [
+          {
+            "region": "华东",
+            "销量": 16
+          },
+          {
+            "region": "华北",
+            "销量": 13
+          },
+          {
+            "region": "华南",
+            "销量": 8
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "quantity",
+          "metric_function": "SUM",
+          "metric_label": "销量",
+          "dimensions": [
+            "region"
+          ],
+          "dimension_tables": {
+            "region": "sales_orders"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "BETWEEN",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制在 2025 年",
+              "table": "sales_orders"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            },
+            {
+              "source_text": "地区",
+              "table": "sales_orders",
+              "column": "region",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.72,
+          "rewritten_question": "2025年各地区的销量",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销量",
+          "查询表：sales_orders",
+          "限制在 2025 年",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 3,
+          "query_hash": "a7bd5c41089e3791",
+          "field_links": [
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            },
+            {
+              "source_text": "地区",
+              "table": "sales_orders",
+              "column": "region",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "channel_orders",
+      "question": "按渠道统计订单数",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按渠道统计订单数",
+        "rewritten_question": "按渠道统计订单数",
+        "sql": "SELECT \"sales_orders\".\"channel\", COUNT(*) AS \"订单数\" FROM \"sales_orders\" GROUP BY \"sales_orders\".\"channel\" ORDER BY COUNT(*) DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "channel",
+          "订单数"
+        ],
+        "rows": [
+          {
+            "channel": "线上",
+            "订单数": 7
+          },
+          {
+            "channel": "门店",
+            "订单数": 5
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "order_id",
+          "metric_function": "COUNT",
+          "metric_label": "订单数",
+          "dimensions": [
+            "channel"
+          ],
+          "dimension_tables": {
+            "channel": "sales_orders"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "订单数",
+              "table": "sales_orders",
+              "column": "order_id",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "订单数"
+            },
+            {
+              "source_text": "渠道",
+              "table": "sales_orders",
+              "column": "channel",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "渠道"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按渠道统计订单数",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：订单数",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 2,
+          "query_hash": "24203e3bde05022e",
+          "field_links": [
+            {
+              "source_text": "订单数",
+              "table": "sales_orders",
+              "column": "order_id",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "订单数"
+            },
+            {
+              "source_text": "渠道",
+              "table": "sales_orders",
+              "column": "channel",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "渠道"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "product_sales",
+      "question": "各产品的销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "各产品的销售额",
+        "rewritten_question": "各产品的销售额",
+        "sql": "SELECT \"sales_orders\".\"product_name\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" GROUP BY \"sales_orders\".\"product_name\" ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "product_name",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "product_name": "星河 Pro",
+            "销售额": 42589.0
+          },
+          {
+            "product_name": "云屏 11",
+            "销售额": 21791.0
+          },
+          {
+            "product_name": "星河 Lite",
+            "销售额": 18192.0
+          },
+          {
+            "product_name": "声场 Air",
+            "销售额": 12480.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [
+            "product_name"
+          ],
+          "dimension_tables": {
+            "product_name": "sales_orders"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "产品",
+              "table": "sales_orders",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "各产品的销售额",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 4,
+          "query_hash": "cb2b5a379094cbc4",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "产品",
+              "table": "sales_orders",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "customer_level",
+      "question": "按客户等级统计销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按客户等级统计销售额",
+        "rewritten_question": "按客户等级统计销售额",
+        "sql": "SELECT \"customers\".\"customer_level\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" JOIN \"customers\" ON \"sales_orders\".\"customer_id\" = \"customers\".\"customer_id\" GROUP BY \"customers\".\"customer_level\" ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "customer_level",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "customer_level": "高",
+            "销售额": 49179.0
+          },
+          {
+            "customer_level": "中",
+            "销售额": 26189.0
+          },
+          {
+            "customer_level": "低",
+            "销售额": 19684.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [
+            "customer_level"
+          ],
+          "dimension_tables": {
+            "customer_level": "customers"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "客户等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.9,
+              "matched_alias": "客户等级"
+            },
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ],
+          "join_tables": [
+            "customers"
+          ],
+          "join_conditions": [
+            "\"sales_orders\".\"customer_id\" = \"customers\".\"customer_id\""
+          ],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按客户等级统计销售额",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 3,
+          "query_hash": "9379c4e659b8e619",
+          "field_links": [
+            {
+              "source_text": "客户等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.9,
+              "matched_alias": "客户等级"
+            },
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "high_customer",
+      "question": "高等级客户的销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "高等级客户的销售额",
+        "rewritten_question": "高等级客户的销售额",
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" JOIN \"customers\" ON \"sales_orders\".\"customer_id\" = \"customers\".\"customer_id\" WHERE \"customers\".\"customer_level\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "高",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": 49179.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "customer_level",
+              "operator": "=",
+              "value": "高",
+              "source_text": "高",
+              "explanation": "识别到 customer_level=高",
+              "table": "customers"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "等级"
+            },
+            {
+              "source_text": "客户",
+              "table": "customers",
+              "column": "customer_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "客户"
+            }
+          ],
+          "join_tables": [
+            "customers"
+          ],
+          "join_conditions": [
+            "\"sales_orders\".\"customer_id\" = \"customers\".\"customer_id\""
+          ],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.7,
+          "rewritten_question": "高等级客户的销售额",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "识别到 customer_level=高",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "0e8cc98b2ddd3e73",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "等级",
+              "table": "customers",
+              "column": "customer_level",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "等级"
+            },
+            {
+              "source_text": "客户",
+              "table": "customers",
+              "column": "customer_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "客户"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "industry",
+      "question": "按行业统计销量",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按行业统计销量",
+        "rewritten_question": "按行业统计销量",
+        "sql": "SELECT \"customers\".\"industry\", SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" JOIN \"customers\" ON \"sales_orders\".\"customer_id\" = \"customers\".\"customer_id\" GROUP BY \"customers\".\"industry\" ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "industry",
+          "销量"
+        ],
+        "rows": [
+          {
+            "industry": "传媒业",
+            "销量": 13
+          },
+          {
+            "industry": "教育业",
+            "销量": 7
+          },
+          {
+            "industry": "医疗业",
+            "销量": 7
+          },
+          {
+            "industry": "制造业",
+            "销量": 7
+          },
+          {
+            "industry": "零售业",
+            "销量": 5
+          },
+          {
+            "industry": "咨询业",
+            "销量": 4
+          },
+          {
+            "industry": "餐饮业",
+            "销量": 3
+          },
+          {
+            "industry": "物流业",
+            "销量": 2
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "quantity",
+          "metric_function": "SUM",
+          "metric_label": "销量",
+          "dimensions": [
+            "industry"
+          ],
+          "dimension_tables": {
+            "industry": "customers"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "行业",
+              "table": "customers",
+              "column": "industry",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "行业"
+            },
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ],
+          "join_tables": [
+            "customers"
+          ],
+          "join_conditions": [
+            "\"sales_orders\".\"customer_id\" = \"customers\".\"customer_id\""
+          ],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按行业统计销量",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销量",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 8,
+          "query_hash": "38ee9ee72c5e1374",
+          "field_links": [
+            {
+              "source_text": "行业",
+              "table": "customers",
+              "column": "industry",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "行业"
+            },
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "month_group",
+      "question": "按月统计2025年的销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按月统计2025年的销售额",
+        "rewritten_question": "按月统计2025年的销售额",
+        "sql": "SELECT strftime('%Y-%m', \"sales_orders\".\"order_date\") AS \"月份\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY strftime('%Y-%m', \"sales_orders\".\"order_date\") ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          100
+        ],
+        "columns": [
+          "月份",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "月份": "2025-01",
+            "销售额": 15196.0
+          },
+          {
+            "月份": "2025-03",
+            "销售额": 13794.0
+          },
+          {
+            "月份": "2025-08",
+            "销售额": 11397.0
+          },
+          {
+            "月份": "2025-07",
+            "销售额": 9596.0
+          },
+          {
+            "月份": "2025-02",
+            "销售额": 7197.0
+          },
+          {
+            "月份": "2025-04",
+            "销售额": 4792.0
+          },
+          {
+            "月份": "2025-05",
+            "销售额": 4398.0
+          },
+          {
+            "月份": "2025-06",
+            "销售额": 4193.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [
+            "order_date"
+          ],
+          "dimension_tables": {
+            "order_date": "sales_orders"
+          },
+          "dimension_transforms": {
+            "order_date": "month"
+          },
+          "dimension_labels": {
+            "order_date": "月份"
+          },
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "BETWEEN",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制在 2025 年",
+              "table": "sales_orders"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "按月",
+              "table": "sales_orders",
+              "column": "order_date",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "按月"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.72,
+          "rewritten_question": "按月统计2025年的销售额",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "限制在 2025 年",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 8,
+          "query_hash": "80d891b0a27ad205",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "按月",
+              "table": "sales_orders",
+              "column": "order_date",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "按月"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "year_group",
+      "question": "按年统计销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "按年统计销售额",
+        "rewritten_question": "按年统计销售额",
+        "sql": "SELECT strftime('%Y', \"sales_orders\".\"order_date\") AS \"年份\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" GROUP BY strftime('%Y', \"sales_orders\".\"order_date\") ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "年份",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "年份": "2025",
+            "销售额": 70563.0
+          },
+          {
+            "年份": "2024",
+            "销售额": 24489.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [
+            "order_date"
+          ],
+          "dimension_tables": {
+            "order_date": "sales_orders"
+          },
+          "dimension_transforms": {
+            "order_date": "year"
+          },
+          "dimension_labels": {
+            "order_date": "年份"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "按年",
+              "table": "sales_orders",
+              "column": "order_date",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "按年"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按年统计销售额",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 2,
+          "query_hash": "619c312d3d0add11",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "按年",
+              "table": "sales_orders",
+              "column": "order_date",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "按年"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "threshold",
+      "question": "销售额超过10000的地区",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "销售额超过10000的地区",
+        "rewritten_question": "销售额超过10000的地区",
+        "sql": "SELECT \"sales_orders\".\"region\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" GROUP BY \"sales_orders\".\"region\" HAVING SUM(\"sales_orders\".\"sales_amount\") > ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          10000.0,
+          100
+        ],
+        "columns": [
+          "region",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "region": "华东",
+            "销售额": 45076.0
+          },
+          {
+            "region": "华南",
+            "销售额": 27990.0
+          },
+          {
+            "region": "华北",
+            "销售额": 21986.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [
+            "region"
+          ],
+          "dimension_tables": {
+            "region": "sales_orders"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": {
+            "operator": ">",
+            "mode": "literal",
+            "value": 10000.0,
+            "source_text": "超过10000",
+            "explanation": "聚合值超过阈值"
+          },
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "sales_orders",
+              "column": "region",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "销售额超过10000的地区",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 3,
+          "query_hash": "c4bb6b12289d40f9",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "地区",
+              "table": "sales_orders",
+              "column": "region",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "average_subquery",
+      "question": "销售额高于平均的产品",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "销售额高于平均的产品",
+        "rewritten_question": "销售额高于平均的产品",
+        "sql": "SELECT \"sales_orders\".\"product_name\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" GROUP BY \"sales_orders\".\"product_name\" HAVING SUM(\"sales_orders\".\"sales_amount\") > (SELECT AVG(\"sales_orders\".\"sales_amount\") FROM \"sales_orders\") ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "product_name",
+          "销售额"
+        ],
+        "rows": [
+          {
+            "product_name": "星河 Pro",
+            "销售额": 42589.0
+          },
+          {
+            "product_name": "云屏 11",
+            "销售额": 21791.0
+          },
+          {
+            "product_name": "星河 Lite",
+            "销售额": 18192.0
+          },
+          {
+            "product_name": "声场 Air",
+            "销售额": 12480.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [
+            "product_name"
+          ],
+          "dimension_tables": {
+            "product_name": "sales_orders"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": {
+            "operator": ">",
+            "mode": "scalar_avg",
+            "value": null,
+            "source_text": "高于平均",
+            "explanation": "与全表平均值比较"
+          },
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "产品",
+              "table": "sales_orders",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "销售额高于平均的产品",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 4,
+          "query_hash": "3100657295de085d",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "产品",
+              "table": "sales_orders",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "average_price",
+      "question": "平均单价是多少",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "平均单价是多少",
+        "rewritten_question": "平均单价是多少",
+        "sql": "SELECT AVG(\"sales_orders\".\"unit_price\") AS \"平均单价\" FROM \"sales_orders\" ORDER BY AVG(\"sales_orders\".\"unit_price\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "平均单价"
+        ],
+        "rows": [
+          {
+            "平均单价": 2440.6666666666665
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "unit_price",
+          "metric_function": "AVG",
+          "metric_label": "平均单价",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "单价",
+              "table": "sales_orders",
+              "column": "unit_price",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "单价"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "平均单价是多少",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：平均单价",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "26c7fc2437a1f43a",
+          "field_links": [
+            {
+              "source_text": "单价",
+              "table": "sales_orders",
+              "column": "unit_price",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "单价"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "month_filter",
+      "question": "2025年2月华南销售额",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "2025年2月华南销售额",
+        "rewritten_question": "2025年2月华南销售额",
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-02-01",
+          "2025-03-01",
+          "华南",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": 7197.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "BETWEEN",
+              "value": [
+                "2025-02-01",
+                "2025-03-01"
+              ],
+              "source_text": "2025年2月",
+              "explanation": "限制在 2025 年 2 月",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华南",
+              "source_text": "华南",
+              "explanation": "识别到 region=华南",
+              "table": "sales_orders"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.58,
+          "rewritten_question": "2025年2月华南销售额",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额",
+          "查询表：sales_orders",
+          "限制在 2025 年 2 月",
+          "识别到 region=华南",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "query_hash": "c7d32eb112697d74",
+          "field_links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "missing_metric",
+      "question": "2025年华东地区的情况",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "clarification",
+        "question": "2025年华东地区的情况",
+        "rewritten_question": "2025年华东地区的情况",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": null,
+          "metric_label": null,
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "地区",
+              "table": "sales_orders",
+              "column": "region",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "地区"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.18,
+          "rewritten_question": "2025年华东地区的情况",
+          "clarification": "请补充要统计的指标，例如销售额、销量或订单数。",
+          "clarification_code": "missing_metric",
+          "clarification_options": [
+            {
+              "value": "sales_amount",
+              "label": "销售额"
+            },
+            {
+              "value": "quantity",
+              "label": "销量"
+            },
+            {
+              "value": "order_id",
+              "label": "订单数"
+            }
+          ],
+          "assumptions": []
+        },
+        "explanation": [
+          "请补充要统计的指标，例如销售额、销量或订单数。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite"
+        },
+        "clarification": "请补充要统计的指标，例如销售额、销量或订单数。",
+        "clarification_code": "missing_metric",
+        "clarification_options": [
+          {
+            "value": "sales_amount",
+            "label": "销售额"
+          },
+          {
+            "value": "quantity",
+            "label": "销量"
+          },
+          {
+            "value": "order_id",
+            "label": "订单数"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "compare_scope",
+      "question": "销售额对比",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "clarification",
+        "question": "销售额对比",
+        "rewritten_question": "销售额对比",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.42,
+          "rewritten_question": "销售额对比",
+          "clarification": "这个问题需要比较维度或时间范围，请补充例如按地区、按渠道或具体年份。",
+          "clarification_code": "missing_comparison_scope",
+          "clarification_options": [
+            {
+              "value": "region",
+              "label": "按地区比较"
+            },
+            {
+              "value": "channel",
+              "label": "按渠道比较"
+            },
+            {
+              "value": "product_category",
+              "label": "按品类比较"
+            },
+            {
+              "value": "time_range",
+              "label": "指定时间范围"
+            }
+          ],
+          "assumptions": []
+        },
+        "explanation": [
+          "这个问题需要比较维度或时间范围，请补充例如按地区、按渠道或具体年份。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite"
+        },
+        "clarification": "这个问题需要比较维度或时间范围，请补充例如按地区、按渠道或具体年份。",
+        "clarification_code": "missing_comparison_scope",
+        "clarification_options": [
+          {
+            "value": "region",
+            "label": "按地区比较"
+          },
+          {
+            "value": "channel",
+            "label": "按渠道比较"
+          },
+          {
+            "value": "product_category",
+            "label": "按品类比较"
+          },
+          {
+            "value": "time_range",
+            "label": "指定时间范围"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "trend_time",
+      "question": "销售额趋势",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "clarification",
+        "question": "销售额趋势",
+        "rewritten_question": "销售额趋势",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.4,
+          "rewritten_question": "销售额趋势",
+          "clarification": "趋势或同比查询需要时间范围，请指定年份、月份或按月趋势。",
+          "clarification_code": "missing_time_range",
+          "clarification_options": [
+            {
+              "value": "year",
+              "label": "指定年份"
+            },
+            {
+              "value": "month",
+              "label": "指定月份"
+            },
+            {
+              "value": "monthly_trend",
+              "label": "按月趋势"
+            }
+          ],
+          "assumptions": []
+        },
+        "explanation": [
+          "趋势或同比查询需要时间范围，请指定年份、月份或按月趋势。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite"
+        },
+        "clarification": "趋势或同比查询需要时间范围，请指定年份、月份或按月趋势。",
+        "clarification_code": "missing_time_range",
+        "clarification_options": [
+          {
+            "value": "year",
+            "label": "指定年份"
+          },
+          {
+            "value": "month",
+            "label": "指定月份"
+          },
+          {
+            "value": "monthly_trend",
+            "label": "按月趋势"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "ambiguous_metric",
+      "question": "销售额和销量",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "clarification",
+        "question": "销售额和销量",
+        "rewritten_question": "销售额和销量",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": null,
+          "metric_label": null,
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "销售额",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.82,
+              "matched_alias": "销售额"
+            },
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "销售额和销量",
+          "clarification": "问题同时包含多个指标，请选择需要统计的指标。",
+          "clarification_code": "ambiguous_metric",
+          "clarification_options": [
+            {
+              "value": "sales_amount",
+              "label": "销售额"
+            },
+            {
+              "value": "quantity",
+              "label": "销量"
+            }
+          ],
+          "assumptions": []
+        },
+        "explanation": [
+          "问题同时包含多个指标，请选择需要统计的指标。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite"
+        },
+        "clarification": "问题同时包含多个指标，请选择需要统计的指标。",
+        "clarification_code": "ambiguous_metric",
+        "clarification_options": [
+          {
+            "value": "sales_amount",
+            "label": "销售额"
+          },
+          {
+            "value": "quantity",
+            "label": "销量"
+          }
+        ]
+      }
+    },
+    {
+      "case_id": "missing_subject",
+      "question": "情况",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "clarification",
+        "question": "情况",
+        "rewritten_question": "情况",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": null,
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": null,
+          "metric_label": null,
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.0,
+          "rewritten_question": "情况",
+          "clarification": "当前数据源没有识别出可查询的数据表，请说明业务对象或数据主题。",
+          "clarification_code": "missing_data_subject",
+          "clarification_options": [],
+          "assumptions": []
+        },
+        "explanation": [
+          "当前数据源没有识别出可查询的数据表，请说明业务对象或数据主题。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite"
+        },
+        "clarification": "当前数据源没有识别出可查询的数据表，请说明业务对象或数据主题。",
+        "clarification_code": "missing_data_subject",
+        "clarification_options": []
+      }
+    },
+    {
+      "case_id": "bounded_limit",
+      "question": "前9999个产品的销量",
+      "passed": true,
+      "checks": [],
+      "actual": {
+        "status": "ok",
+        "question": "前9999个产品的销量",
+        "rewritten_question": "前9999个产品的销量",
+        "sql": "SELECT \"sales_orders\".\"product_name\", SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" GROUP BY \"sales_orders\".\"product_name\" ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "product_name",
+          "销量"
+        ],
+        "rows": [
+          {
+            "product_name": "声场 Air",
+            "销量": 20
+          },
+          {
+            "product_name": "星河 Pro",
+            "销量": 11
+          },
+          {
+            "product_name": "云屏 11",
+            "销量": 9
+          },
+          {
+            "product_name": "星河 Lite",
+            "销量": 8
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "quantity",
+          "metric_function": "SUM",
+          "metric_label": "销量",
+          "dimensions": [
+            "product_name"
+          ],
+          "dimension_tables": {
+            "product_name": "sales_orders"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "产品",
+              "table": "sales_orders",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            },
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "前9999个产品的销量",
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 sales_orders 的只读聚合查询"
+          ]
+        },
+        "explanation": [
+          "识别指标：销量",
+          "查询表：sales_orders",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "eval.sqlite",
+          "table": "sales_orders",
+          "row_count": 4,
+          "query_hash": "feae0ca3ac3c8bec",
+          "field_links": [
+            {
+              "source_text": "产品",
+              "table": "sales_orders",
+              "column": "product_name",
+              "role": "dimension",
+              "score": 0.74,
+              "matched_alias": "产品"
+            },
+            {
+              "source_text": "销量",
+              "table": "sales_orders",
+              "column": "quantity",
+              "role": "metric",
+              "score": 0.74,
+              "matched_alias": "销量"
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    }
+  ]
+}
