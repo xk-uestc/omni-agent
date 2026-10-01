@@ -21,6 +21,10 @@ class SourceIntegrityError(ValueError):
     """A cached excerpt cannot be used when its actual source is unavailable."""
 
 
+class SourceRevisionError(SourceIntegrityError):
+    """The logical document now names a different version than the used source."""
+
+
 class KnowledgeStore:
     def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None):
         self.root = Path(root)
@@ -156,13 +160,18 @@ class KnowledgeStore:
         self._verified_asset(result)
         return result
 
-    def verify_source(self, document_id):
+    def verify_source(self, document_id, *, expected_sha256=None):
         self.validate_id(document_id)
         with self.connect() as connection:
             row = connection.execute('SELECT payload FROM documents WHERE document_id=?',(document_id,)).fetchone()
             if row is None:
+                if expected_sha256 is not None:
+                    raise SourceRevisionError('执行中引用的资料已移除，请重新选择资料。')
                 raise KeyError(document_id)
-        return self._verified_asset(json.loads(row[0]))
+        record = json.loads(row[0])
+        if expected_sha256 is not None and record['sha256'] != expected_sha256:
+            raise SourceRevisionError('资料版本在执行期间已更新，请从当前资料重新执行任务。')
+        return self._verified_asset(record)
 
     def _verified_asset(self, document):
         path = self.assets / document['asset']

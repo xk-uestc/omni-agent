@@ -107,6 +107,10 @@ def main():
                 report['checks']['dense'] = answer['retrieval']['mode']=='bm25_dense_rrf'
                 sql = requests.post(base+'/api/v1/omni/query',json={'question':'2025年华东地区销售额'},timeout=10).json()
                 report['checks']['sql'] = sql['result']['rows'][0]['销售额']==29584
+                report['checks']['sql_snapshot_provenance'] = (
+                    sql['result']['provenance'].get('consistency')=='sqlite_read_transaction'
+                    and sql['result']['provenance'].get('source_revision_kind')=='file_generation_and_schema_version_not_content_hash'
+                    and len(sql['result']['provenance'].get('source_revision',''))==64)
                 threshold_tasks = [
                     {'id':'search','tool':'search','args':{'query':'紧急工单首次响应时间'}},
                     {'id':'fact','tool':'search_fact','args':{'evidence':{'ref':'search','path':[]},'scope':'紧急工单','label':'首次响应','unit':'小时'}},
@@ -119,6 +123,21 @@ def main():
                     threshold['status']=='ok' and compared.get('matched') is True and compared.get('operator')=='le'
                     and compared.get('left',{}).get('value')==compared.get('right',{}).get('value')==2
                     and compared['left']['source_uri']!=compared['right']['source_uri'])
+                report['checks']['fusion_document_versions_verified'] = (
+                    threshold.get('source_validation',{}).get('status')=='verified'
+                    and bool(threshold.get('source_validation',{}).get('documents')))
+                for script, report_name, check in (
+                    ('evaluate_live_sql.py','LIVE_SQL_REPORT.json','live_sql_writer_audit'),
+                    ('evaluate_fusion_consistency.py','FUSION_CONSISTENCY_REPORT.json','fusion_mid_plan_mutation_audit'),
+                ):
+                    audit = subprocess.run([sys.executable,str(extracted/'tools'/script)],
+                        cwd=extracted,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=60)
+                    audit_report = json.loads((extracted/'docs'/report_name).read_text(encoding='utf-8'))
+                    report['checks'][check] = audit.returncode==0 and audit_report['passed']==audit_report['total']==5
+                service_audit = subprocess.run([sys.executable,str(extracted/'tools/evaluate_service_consistency.py'),'--base-url',base],
+                    cwd=extracted,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=90)
+                service_report = json.loads((extracted/'docs/SERVICE_CONSISTENCY_REPORT.json').read_text(encoding='utf-8'))
+                report['checks']['actual_http_multisql_snapshot'] = service_audit.returncode==0 and service_report['ok']
                 with closing(sqlite3.connect(extracted/'ict-track8/data/demo_sales.sqlite')) as connection:
                     minimum, maximum = connection.execute('SELECT MIN(sales_amount),MAX(sales_amount) FROM sales_orders').fetchone()
                 extremes = []

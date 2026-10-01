@@ -81,34 +81,107 @@ class Nl2SqlEngine:
         self._snapshot: tuple[tuple[TableInfo, ...], ValueIndex] | None = None
         self._date_storage_cache: dict[tuple[Any, ...], tuple[str, tuple[Any, Any, str]]] = {}
         self._lock = threading.Lock()
+        self._read_scope = threading.local()
+
+    @contextmanager
+    def consistent_reads(self):
+        """Lazy, thread-local read transaction across several answer calls.
+
+        SQL is opened on first use, so document-only plans never require a DB.
+        Nested scopes borrow the owner; only the outer scope closes it.
+        """
+        if getattr(self._read_scope, 'current', None) is not None:
+            yield
+            return
+        scope = {'connection': None, 'snapshot': None}
+        self._read_scope.current = scope
+        try:
+            yield
+        finally:
+            try:
+                if scope['connection'] is not None:
+                    scope['connection'].close()
+            finally:
+                del self._read_scope.current
 
     # ------------------------------------------------------------------ infra
     @contextmanager
     def _connect(self):
+        scope = getattr(self._read_scope, 'current', None)
+        if scope is not None and scope['connection'] is not None:
+            yield scope['connection']
+            return
         if not self.database_path.exists():
             raise FileNotFoundError(f"数据库不存在: {self.database_path.name}")
-        uri = f"file:{self.database_path.resolve().as_posix()}?mode=ro"
+        # Reserved URI characters in a legitimate filename must not become a
+        # fragment/query and accidentally drop mode=ro or open another file.
+        uri = self.database_path.resolve().as_uri() + '?mode=ro'
         connection = sqlite3.connect(uri, uri=True, timeout=2.0, check_same_thread=False)
         connection.row_factory = None
         try:
+            connection.execute('BEGIN')
+            if scope is not None:
+                scope['connection'] = connection
+                self._snapshot_for(connection)
             yield connection
         finally:
-            connection.close()
+            if scope is None:
+                connection.close()
 
-    def _snapshot_for(self, connection: sqlite3.Connection) -> tuple[tuple[TableInfo, ...], ValueIndex]:
-        """Schema 与取值索引按 (文件指纹, schema_version) 缓存，避免每次查询全表扫描。"""
+    def _source_revision(self):
+        """Conservative generation invalidation, including uncheckpointed WAL.
 
-        stat = self.database_path.stat()
-        schema_version = connection.execute("PRAGMA schema_version").fetchone()[0]
-        key = (stat.st_mtime_ns, stat.st_size, schema_version)
+        This is a cache generation, not a cryptographic hash of all DB rows.
+        Alias files are small; hash their contents so preserved mtimes cannot
+        keep an obsolete business mapping in the entity-value index.
+        """
+        def state(path, *, optional=False):
+            try:
+                stat = path.stat()
+                return (stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns)
+            except FileNotFoundError:
+                if optional:
+                    return None
+                raise
+        aliases = None
+        if self.value_aliases_path:
+            path = Path(self.value_aliases_path)
+            aliases = hashlib.sha256(path.read_bytes()).hexdigest()
+        actual = self.database_path.resolve()
+        return (state(actual), state(Path(str(actual)+'-wal'),optional=True), aliases)
+
+    def _snapshot_for(self, connection: sqlite3.Connection):
+        """Pin one read snapshot for Schema, values, date inference and SQL.
+
+        Only publish a reusable cache if the file generation stayed stable
+        across both acquiring the snapshot and building its index.
+        """
+        scope = getattr(self._read_scope, 'current', None)
+        if scope is not None and scope['connection'] is connection and scope['snapshot'] is not None:
+            return scope['snapshot']
+        def pinned(snapshot):
+            if scope is not None and scope['connection'] is connection:
+                scope['snapshot'] = snapshot
+            return snapshot
+        for _attempt in range(3):
+            before = self._source_revision()
+            schema_version = connection.execute("PRAGMA schema_version").fetchone()[0]
+            if before == self._source_revision():
+                break
+            connection.rollback()
+            connection.execute('BEGIN')
+        else:
+            raise sqlite3.OperationalError('数据库持续更新，暂不能建立一致的查询快照')
+        key = (before, schema_version)
         with self._lock:
             if self._snapshot is not None and self._snapshot_key == key:
-                return self._snapshot
+                return pinned((*self._snapshot, key))
             self._date_storage_cache.clear()
             tables = self.introspector.introspect(connection, include_row_count=False)
             index = ValueIndex.build(connection, tables, self.value_aliases_path)
-            self._snapshot_key, self._snapshot = key, (tables, index)
-            return self._snapshot
+            if before == self._source_revision():
+                self._snapshot_key, self._snapshot = key, (tables, index)
+            return pinned((tables, index, key))
 
     def schema(self, *, include_row_count: bool = True) -> dict[str, Any]:
         with self._connect() as connection:
@@ -116,16 +189,16 @@ class Nl2SqlEngine:
         return {"tables": [table.to_dict() for table in tables], "source": "sqlite_read_only"}
 
     # ------------------------------------------------------------------ planning
-    def _rules_plan(self, question: str, tables, connection, index) -> QueryPlan:
+    def _rules_plan(self, question: str, tables, connection, index, cache_namespace=None) -> QueryPlan:
         expanded, expansion = self.metric_catalog.expand(question, tables) if self.metric_catalog else (question, None)
         plan = self.planner.plan(
             expanded, tables, connection, value_index=index, reference_date=self.reference_date,
             date_storage_cache=self._date_storage_cache,
-            date_storage_cache_namespace=self._snapshot_key,
+            date_storage_cache_namespace=cache_namespace,
         )
         return self.metric_catalog.apply(plan, expansion) if self.metric_catalog else plan
 
-    def _model_plan(self, question: str, tables, connection, index) -> QueryPlan:
+    def _model_plan(self, question: str, tables, connection, index, cache_namespace=None) -> QueryPlan:
         try:
             payload = self.model_plan_provider(question, tables)
             plan = self.model_plan_validator.validate(payload, tables, question=question)
@@ -133,13 +206,13 @@ class Nl2SqlEngine:
                 normalized_period, period_format = self.planner.normalize_comparison_period(
                     plan.comparison_period, tables, connection, plan,
                     date_storage_cache=self._date_storage_cache,
-                    date_storage_cache_namespace=self._snapshot_key,
+                    date_storage_cache_namespace=cache_namespace,
                 )
                 if normalized_period is None:
                     raise ModelPlanError("模型计划的比较日期字段存储格式无法安全判断")
                 plan.comparison_period = normalized_period
                 plan.assumptions.append(f"日期参数格式：{period_format}")
-            self._check_model_grounding(plan, question, tables, index, connection)
+            self._check_model_grounding(plan, question, tables, index, connection, cache_namespace=cache_namespace)
             plan.planner_audit = {
                 "candidate_source": "external_model",
                 "final_source": "model_validated",
@@ -152,7 +225,7 @@ class Nl2SqlEngine:
         except Exception as exc:  # 任意 provider/校验异常都只影响"提议"，不影响可用性
             if not self.model_fallback:
                 raise
-            plan = self._rules_plan(question, tables, connection, index)
+            plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
             plan.planner_source = "rules_fallback"
             rejection_reason = self._safe_model_rejection_reason(exc)
             plan.planner_audit = {
@@ -207,7 +280,7 @@ class Nl2SqlEngine:
                 return code
         return "model_contract_or_grounding_rejected"
 
-    def _check_model_grounding(self, plan: QueryPlan, question: str, tables, index: ValueIndex, connection=None) -> None:
+    def _check_model_grounding(self, plan: QueryPlan, question: str, tables, index: ValueIndex, connection=None, *, cache_namespace=None) -> None:
         """模型计划的最低可信条件：置信度、来源依据和显式槽位完整性。"""
 
         if plan.confidence < self.model_min_confidence:
@@ -239,7 +312,7 @@ class Nl2SqlEngine:
         # 通过“高置信度”静默丢掉用户明确写出的时间、取值或分组条件。
         # 即使规则规划器最终需要澄清，也要保留它已经安全识别出的槽位；
         # 否则模型可以用高置信度计划绕过“未知维度/未知值/不支持粒度”等门。
-        rule_plan = self._rules_plan(question, tables, connection, index)
+        rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
         if rule_plan.metrics:
             expected = {(m.table, m.column, m.function) for m in rule_plan.metrics}
             actual = {(m.table, m.column, m.function) for m in plan.metrics}
@@ -418,11 +491,11 @@ class Nl2SqlEngine:
             raise ValueError("question 不能为空")
         row_cap = int(max_rows or self.max_rows)
         with self._connect() as connection:
-            tables, index = self._snapshot_for(connection)
+            tables, index, revision = self._snapshot_for(connection)
             if self.model_plan_provider is None:
-                plan = self._rules_plan(question, tables, connection, index)
+                plan = self._rules_plan(question, tables, connection, index, cache_namespace=revision)
             else:
-                plan = self._model_plan(question, tables, connection, index)
+                plan = self._model_plan(question, tables, connection, index, cache_namespace=revision)
             compiled = None
             if not plan.clarification and (plan.metrics or plan.fan_out):
                 try:
@@ -436,7 +509,8 @@ class Nl2SqlEngine:
                     status="clarification", question=question, rewritten_question=plan.rewritten_question,
                     sql=None, parameters=(), columns=(), rows=(), plan=plan.to_dict(),
                     explanation=(plan.clarification,),
-                    provenance={"source_type": "structured_database", "database": self.database_path.name},
+                    provenance={"source_type": "structured_database", "database": self.database_path.name,
+                                "consistency": "sqlite_read_transaction"},
                     clarification=plan.clarification, clarification_code=plan.clarification_code,
                     clarification_options=tuple(plan.clarification_options),
                 )
@@ -466,6 +540,9 @@ class Nl2SqlEngine:
             "query_hash": query_hash,
             "field_links": [item.to_dict() for item in plan.links],
             "coverage": plan.coverage,
+            "consistency": "sqlite_read_transaction",
+            "source_revision": hashlib.sha256(repr(revision).encode()).hexdigest(),
+            "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
             "grain_audit": plan.grain_audit,
             "result_cells": [
                 {"row": i, "column": column, "query_hash": query_hash,
@@ -504,7 +581,7 @@ class Nl2SqlEngine:
     # ------------------------------------------------------------------ multi-turn
     def analyze_slots(self, question: str) -> dict[str, Any]:
         with self._connect() as connection:
-            tables, index = self._snapshot_for(connection)
+            tables, index, _revision = self._snapshot_for(connection)
         normalized = normalize_text(question)
         links = self.planner.linker.link(question, tables)
         time_parse = lexicon.parse_time(normalized, self.reference_date)

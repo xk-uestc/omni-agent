@@ -14,6 +14,10 @@
 - `MODEL_API_PROBE.json`：用户指定gpt-6-luna的最近真实鉴权结果。
 - `REAL_MODEL_REPORT.json`、`MODEL_VALIDATION_UPDATE_20261001.md`：本轮单次预检401、44题未执行；完整调用审计与第五类实际比较修复。
 - `TEXT_QUALITY_FIRST_RUN.json`、`TEXT_QUALITY_REPORT.json`：繁简、有限错字及原文保留开发对照，首次13/14，修复扩展15/15。
+- `LIVE_SQL_FIRST_RUN.json`、`LIVE_SQL_REPORT.json`：实际WAL更新、日期格式、业务别名、URI和事务释放，首次1/5→修复5/5。
+- `FUSION_CONSISTENCY_FIRST_RUN.json`、`FUSION_CONSISTENCY_REPORT.json`：实际任务中途写库、篡改、移走及重入库，首次1/5→修复5/5。
+- `SOURCE_CONSISTENCY_UPDATE_20261001.md`：单查询/跨SQL读取快照与文档版本复核的实现和代价。
+- `SERVICE_CONSISTENCY_REPORT.json`：新版8030实际HTTP四步跨源，客单价29584/3、SQL同快照和文档版本4项核对。
 - `DOMAIN_TRANSFER_FIRST_RUN.json`、`DOMAIN_TRANSFER_REPORT.json`：新差旅Schema首轮6/8与修复后8/8，明确为自编审计/开发回归。
 - `RELIABILITY_UPDATE_20261001.md`：规划上下文、聚合覆盖与原文件行号修复，以及本轮回归口径。
 - `history/REAL_MODEL_REPORT_PRE_LUNA.json`：旧模型历史实验，不是gpt-6-luna验收。

@@ -54,6 +54,8 @@ python tools/evaluate_domain_transfer.py
 python tools/evaluate_pdf_outline.py
 python tools/evaluate_robustness.py
 python tools/evaluate_text_quality.py
+python tools/evaluate_live_sql.py
+python tools/evaluate_fusion_consistency.py
 python tools/evaluate_rag_scale.py
 python ict-track8/scripts/package_delivery.py --program-only --with-public-assets --output dist/ict8-complete.zip
 python ict-track8/scripts/verify_package.py dist/ict8-complete.zip
@@ -64,7 +66,7 @@ Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产�
 `delivery/requirements-tested.txt`固定当前实测的直接依赖版本；`delivery/ENVIRONMENT.json`另记录全部已安装包、Python及平台。它是实测环境记录，不是跨平台wheel锁或离线安装包。默认OCR为RapidOCR；可选Tesseract未在当前环境安装或验收。
 
 本轮只更新程序，不制作PPT/Word/PDF；历史材料仍在本地delivery，程序包通过--program-only排除。运行安装以ict-track8/requirements.txt为准。
-最新完整本地回归536项通过；第五类完成带来源事实与Excel阈值的实际比较。新增OpenCC繁简检索、文字质量告警和确认校正预览，15组成对开发审计通过；有限错字词表，不是通用中文纠错。真实模型401与未知任务仍待验收，不把stub算模型成绩。
+最新完整本地回归549项通过；第五类完成带来源事实与Excel阈值的实际比较。OpenCC繁简检索、文字质量告警和确认校正预览的15组开发审计通过；有限错字词表，不是通用中文纠错。新增实际SQLite更新与跨源中途变化审计各5/5：WAL更新刷新缓存，多步SQL固定同一读取快照，文档版本变化停止计算。真实模型401与未知任务仍待验收，不把stub算模型成绩。
 
 ```powershell
 cd ict-track8

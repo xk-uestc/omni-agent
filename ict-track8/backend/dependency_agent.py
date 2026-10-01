@@ -11,11 +11,12 @@ import math
 import re
 import sqlite3
 import time
+from contextlib import nullcontext
 from typing import Any
 
 from .document_analysis import DocumentAnalyzer
 from .formula_binding import FormulaBinder, ParameterEvidence
-from .knowledge_store import SourceIntegrityError
+from .knowledge_store import SourceIntegrityError, SourceRevisionError
 
 
 class DependencyPlanError(ValueError):
@@ -103,20 +104,54 @@ class DependencyAgent:
 
     def run(self, tasks, *, on_event=None):
         ordered, dependencies = self.validate(tasks)
+        read_scope = getattr(self.sql_engine, 'consistent_reads', None)
+        with read_scope() if read_scope else nullcontext():
+            return self._run_ordered(tasks, ordered, dependencies, on_event=on_event)
+
+    @staticmethod
+    def _document_versions(tool, result):
+        # Only provenance emitted by our document tools is considered. SQL
+        # cell values that happen to contain source_uri/sha256 are plain data.
+        if tool == 'search':
+            return [(hit['metadata']['document_id'], hit['metadata']['source_sha256']) for hit in result['hits']]
+        if tool in {'document_formula','document_cell','document_fact','policy_select','search_fact'}:
+            items = result.get('sources', [result])
+            sources = []
+            for item in items:
+                uri = item.get('source_uri', '')
+                match = re.fullmatch(r'/api/v1/knowledge/documents/([A-Za-z0-9_.-]+)/original', uri)
+                if match is None or not re.fullmatch(r'[a-f0-9]{64}', item.get('sha256', '')):
+                    raise DependencyPlanError('文档工具未提供有效的原文件版本依据')
+                sources.append((match.group(1), item['sha256']))
+            return sources
+        return []
+
+    def _verify_versions(self, versions):
+        for document_id, digest in versions.items():
+            self.knowledge_store.verify_source(document_id, expected_sha256=digest)
+
+    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None):
         results, trace = {}, []
+        versions = {}
         trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
         for task in ordered:
             started = time.perf_counter()
             try:
+                self._verify_versions(versions)
                 args = self.resolve(task['args'], results)
                 result = self.execute(task['tool'], args, task['args'], results)
+                for document_id, digest in self._document_versions(task['tool'], result):
+                    if document_id in versions and versions[document_id] != digest:
+                        raise SourceRevisionError('同一资料在一个任务中出现了不同版本，请重新执行。')
+                    versions[document_id] = digest
+                self._verify_versions(versions)
                 results[task['id']] = result
                 event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'complete', 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
                 trace.append(event)
                 if on_event:
                     on_event(dict(event))
             except (ValueError, KeyError, TypeError, SyntaxError, OverflowError, OSError, sqlite3.DatabaseError) as exc:
-                code = 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else 'tool_contract_failed'
+                code = 'evidence_revision_changed' if isinstance(exc,SourceRevisionError) else 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else 'tool_contract_failed'
                 message = '数据源暂不可读取，请恢复文件或解除数据库锁后重新执行。' if code=='storage_unavailable' else str(exc)[:200]
                 event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'failed', 'error': message, 'error_code':code, 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
                 trace.append(event)
@@ -125,7 +160,10 @@ class DependencyAgent:
                 return {'status': 'incomplete', 'trace_id': trace_id, 'results': results, 'trace': trace, 'failed_task': task['id'], 'error': message,
                         'error_code':code,'skipped_tasks':[later['id'] for later in ordered[len(trace):]],
                         'edges':[{'from':dependency,'to':key} for key,refs in dependencies.items() for dependency in sorted(refs)]}
-        return {'status': 'ok', 'trace_id': trace_id, 'results': results, 'trace': trace, 'edges': [{'from': dependency, 'to': key} for key, refs in dependencies.items() for dependency in sorted(refs)]}
+        return {'status': 'ok', 'trace_id': trace_id, 'results': results, 'trace': trace,
+                'source_validation': {'status': 'verified', 'documents': versions,
+                                      'scope': 'selected_original_hash_and_logical_version_not_semantic_truth'},
+                'edges': [{'from': dependency, 'to': key} for key, refs in dependencies.items() for dependency in sorted(refs)]}
 
     def execute(self, tool, args, original_args, results):
         if tool == 'policy_select':

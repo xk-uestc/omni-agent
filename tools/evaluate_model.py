@@ -80,7 +80,7 @@ def collect_audits(clients):
 
 def oracle(database, row):
     expression = {'销售额': 'SUM(sales_amount)', '订单数': 'COUNT(*)'}[row.get('metric', '销售额')]
-    with sqlite3.connect(f'file:{Path(database).resolve().as_posix()}?mode=ro', uri=True) as connection:
+    with sqlite3.connect(Path(database).resolve().as_uri()+'?mode=ro', uri=True) as connection:
         return connection.execute(f'SELECT {expression} FROM sales_orders WHERE region=? AND order_date>=? AND order_date<?',
                                   (row['region'], f"{row['year']}-01-01", f"{row['year']+1}-01-01")).fetchone()[0]
 

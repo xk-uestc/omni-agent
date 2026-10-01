@@ -1,0 +1,151 @@
+{
+  "created_at": "2026-10-01T03:52:23.109638+00:00",
+  "scope": "actual_temporary_sqlite_change_audit_not_blind_query_accuracy",
+  "model_called": false,
+  "passed": 5,
+  "total": 5,
+  "cases": [
+    {
+      "id": "wal_new_value",
+      "before": {
+        "status": "ok",
+        "rows": [
+          {
+            "销售额": 10.0
+          }
+        ],
+        "parameters": [
+          1735689600,
+          1767225600,
+          "华东",
+          100
+        ],
+        "clarification_code": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?"
+      },
+      "after": {
+        "status": "ok",
+        "rows": [
+          {
+            "销售额": 27.0
+          }
+        ],
+        "parameters": [
+          1735689600,
+          1767225600,
+          "华中",
+          100
+        ],
+        "clarification_code": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?"
+      },
+      "before_file_state": {
+        "database": [
+          12288,
+          1790826743033694200
+        ],
+        "wal": [
+          0,
+          1790826743034704200
+        ]
+      },
+      "after_file_state": {
+        "database": [
+          12288,
+          1790826743033694200
+        ],
+        "wal": [
+          8272,
+          1790826743053030400
+        ]
+      },
+      "expected": 27,
+      "passed": true
+    },
+    {
+      "id": "wal_date_seconds_to_milliseconds",
+      "after": {
+        "status": "ok",
+        "rows": [
+          {
+            "销售额": 42.0
+          }
+        ],
+        "parameters": [
+          1735689600000,
+          1767225600000,
+          "华东",
+          100
+        ],
+        "clarification_code": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?"
+      },
+      "expected": 42,
+      "passed": true
+    },
+    {
+      "id": "query_releases_read_snapshot",
+      "checkpoint": [
+        0,
+        0,
+        0
+      ],
+      "passed": true
+    },
+    {
+      "id": "live_business_alias_refresh",
+      "before": {
+        "status": "ok",
+        "rows": [
+          {
+            "销售额": 42.0
+          }
+        ],
+        "parameters": [
+          1735689600000,
+          1767225600000,
+          "华东",
+          100
+        ],
+        "clarification_code": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?"
+      },
+      "after": {
+        "status": "ok",
+        "rows": [
+          {
+            "销售额": 42.0
+          }
+        ],
+        "parameters": [
+          1735689600000,
+          1767225600000,
+          "华东",
+          100
+        ],
+        "clarification_code": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?"
+      },
+      "expected": 42,
+      "passed": true
+    },
+    {
+      "id": "sqlite_uri_reserved_filename",
+      "after": {
+        "status": "ok",
+        "rows": [
+          {
+            "销售额": 19.0
+          }
+        ],
+        "parameters": [
+          100
+        ],
+        "clarification_code": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?"
+      },
+      "expected": 19,
+      "passed": true
+    }
+  ]
+}

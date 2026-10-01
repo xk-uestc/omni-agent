@@ -87,6 +87,60 @@ def test_literal_formula_cannot_claim_document_provenance(agent):
     assert result['status'] == 'incomplete'
 
 
+def test_split_sql_parameters_share_one_snapshot_during_writer_commit(agent):
+    import sqlite3
+    from contextlib import closing
+    tasks = [
+        {'id':'formula','tool':'document_formula','args':{'document_id':'policy','label':'客单价'}},
+        {'id':'sales','tool':'sql','args':{'question':'2025年华东销售额'}},
+        {'id':'count','tool':'sql','args':{'question':'2025年华东订单数'}},
+        {'id':'result','tool':'calculate','args':{'formula':{'ref':'formula','path':[]},'parameters':{
+            '销售额':{'ref':'sales','path':['rows',0,'销售额']},'订单数':{'ref':'count','path':['rows',0,'订单数']}}}},
+    ]
+    with closing(sqlite3.connect(agent.sql_engine.database_path)) as writer:
+        writer.execute('PRAGMA journal_mode=WAL')
+        writer.execute('PRAGMA wal_autocheckpoint=0')
+        def intervene(event):
+            if event['task_id']=='sales':
+                writer.execute("UPDATE sales_orders SET region='华南' WHERE region='华东'")
+                writer.commit()
+        result = agent.run(tasks,on_event=intervene)
+        assert result['status']=='ok' and result['results']['result']['value'] == pytest.approx(29584/3)
+        assert result['results']['sales']['provenance']['source_revision']==result['results']['count']['provenance']['source_revision']
+        expected = writer.execute("SELECT COUNT(*) FROM sales_orders WHERE region='华南' AND order_date>='2025-01-01' AND order_date<'2026-01-01'").fetchone()[0]
+        assert agent.sql_engine.answer('2025年华南订单数').rows[0]['订单数']==expected
+        assert writer.execute('PRAGMA wal_checkpoint(TRUNCATE)').fetchone()[0]==0
+
+
+@pytest.mark.parametrize('mutation,code',[('tamper','evidence_integrity_failed'),('replace','evidence_revision_changed'),('delete','evidence_revision_changed')])
+def test_previous_document_cannot_change_mid_plan(agent,mutation,code):
+    source,_ = agent.knowledge_store.original('policy')
+    def intervene(event):
+        if event['task_id']=='formula':
+            if mutation=='tamper':
+                source.write_bytes(b'tampered')
+            elif mutation=='replace':
+                agent.knowledge_store.ingest('客单价 = 销售额 * 2 / 订单数'.encode(),document_id='policy',title='new',modality='txt',filename='new.txt')
+            else:
+                with agent.knowledge_store.connect() as connection:
+                    connection.execute("DELETE FROM documents WHERE document_id='policy'")
+    result = agent.run([
+        {'id':'formula','tool':'document_formula','args':{'document_id':'policy','label':'客单价'}},
+        {'id':'values','tool':'sql','args':{'question':'2025年华东销售额和订单数'}},
+        {'id':'result','tool':'calculate','args':{'formula':{'ref':'formula','path':[]},'parameters':{
+            '销售额':{'ref':'values','path':['rows',0,'销售额']},'订单数':{'ref':'values','path':['rows',0,'订单数']}}}},
+    ],on_event=intervene)
+    assert result['status']=='incomplete' and result['failed_task']=='values'
+    assert result['error_code']==code and 'result' not in result['results']
+
+
+def test_document_only_plan_never_opens_missing_database(agent,tmp_path):
+    agent.sql_engine = Nl2SqlEngine(tmp_path/'never-created.sqlite')
+    result = agent.run([{'id':'region','tool':'document_fact','args':{'document_id':'policy','label':'目标地区'}}])
+    assert result['status']=='ok' and result['results']['region']['value']=='华东'
+    assert not agent.sql_engine.database_path.exists()
+
+
 @pytest.mark.parametrize('base_year,target_year,expected', [(2025, 2026, 'ok'), (2024, 2026, 'incomplete'), (2025, 2027, 'incomplete')])
 def test_forecast_enforces_document_years(agent, base_year, target_year, expected):
     agent.knowledge_store.ingest('2026年目标增长率为12%，预测基准为2025年销售额。\n目标销售额 = 基准销售额 * (1 + 目标增长率)'.encode(), document_id='scoped', title='预测', modality='txt', filename='forecast.txt')

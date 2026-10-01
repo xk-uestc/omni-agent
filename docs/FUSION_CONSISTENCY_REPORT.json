@@ -1,0 +1,74 @@
+{
+  "created_at": "2026-10-01T03:52:24.044396+00:00",
+  "scope": "actual_mid_plan_mutation_development_audit_not_blind_model_accuracy",
+  "model_called": false,
+  "passed": 5,
+  "total": 5,
+  "cases": [
+    {
+      "id": "stable_plan",
+      "passed": true,
+      "status": "ok",
+      "actual_value": 30.0,
+      "expected_value": 30,
+      "expected_stop": false,
+      "failed_task": null,
+      "error_code": null,
+      "mutation_executed": false,
+      "read_transaction_released": true,
+      "next_query_sees_latest_commit": true
+    },
+    {
+      "id": "writer_between_sql",
+      "passed": true,
+      "status": "ok",
+      "actual_value": 30.0,
+      "expected_value": 30,
+      "expected_stop": false,
+      "failed_task": null,
+      "error_code": null,
+      "mutation_executed": true,
+      "read_transaction_released": true,
+      "next_query_sees_latest_commit": true
+    },
+    {
+      "id": "tampered_after_formula",
+      "passed": true,
+      "status": "incomplete",
+      "actual_value": null,
+      "expected_value": null,
+      "expected_stop": true,
+      "failed_task": "sales",
+      "error_code": "evidence_integrity_failed",
+      "mutation_executed": true,
+      "read_transaction_released": true,
+      "next_query_sees_latest_commit": true
+    },
+    {
+      "id": "missing_after_formula",
+      "passed": true,
+      "status": "incomplete",
+      "actual_value": null,
+      "expected_value": null,
+      "expected_stop": true,
+      "failed_task": "sales",
+      "error_code": "evidence_integrity_failed",
+      "mutation_executed": true,
+      "read_transaction_released": true,
+      "next_query_sees_latest_commit": true
+    },
+    {
+      "id": "reingested_after_formula",
+      "passed": true,
+      "status": "incomplete",
+      "actual_value": null,
+      "expected_value": null,
+      "expected_stop": true,
+      "failed_task": "sales",
+      "error_code": "evidence_revision_changed",
+      "mutation_executed": true,
+      "read_transaction_released": true,
+      "next_query_sees_latest_commit": true
+    }
+  ]
+}
