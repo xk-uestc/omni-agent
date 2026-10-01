@@ -11,6 +11,8 @@ import re
 
 from .chunk_cleaning import DocumentChunker
 
+CONTINUATION_POLICY_VERSION = 'native-literal-closed-tail-v3'
+
 
 def continuation_state(text):
     """Recognize only explicitly verbal, alphabetic-ended open prose.
@@ -23,12 +25,19 @@ def continuation_state(text):
         return 'native'
     # A verb in an already closed sentence cannot turn following role labels
     # or names into open prose. Inspect only the final unclosed segment.
-    tail = re.split(r'[。！？!?]|\.(?=\s|$)', tail)[-1]
+    # Reuse the literal closure rules used by the actual continuation proof.
+    # A decimal, initial or dotted acronym cannot reset the final sentence.
+    # This only classifies the tail; it never crops the anchor evidence.
+    tail = _unclosed_tail(tail)
     words = re.findall(r'[A-Za-z]+', tail)
     # A printed block can stop just after the next sentence's noun phrase.
     # Without this gate, "... complete sentence. The power" looks like a
     # free-standing table label and loses the following requirement/condition.
-    if 2 <= len(words) <= 4 and re.match(r'^\s*(?:the|this|these|those)\b', tail, re.I):
+    # A noun phrase can be arbitrarily longer than four words at the bottom
+    # of a printed column. Its length cannot certify a sentence boundary.
+    # Unknown still requires the same unique, styled, geometric successor
+    # proof and first explicit closure as an open verbal tail.
+    if len(words) >= 2 and re.match(r'^\s*(?:the|this|these|those)\b', tail, re.I):
         return 'unknown'
     verbal = bool(re.search(r'\b(?:is|are|was|were|has|have|had|does|do|did|'
                           r'can|could|may|might|must|shall|should|will|would)\b', tail, re.I))
@@ -105,12 +114,26 @@ def _first_closed_end(text):
     and common abbreviations. No lexical completion/inference is attempted.
     """
     abbreviations = {'mr', 'mrs', 'ms', 'dr', 'prof', 'inc', 'ltd', 'corp',
-                     'dept', 'fig', 'no', 'vs', 'etc', 'st'}
+                     'dept', 'fig', 'no', 'vs', 'etc', 'st', 'approx', 'resp',
+                     'vol', 'ref', 'eq', 'sec', 'art', 'para', 'jan', 'feb',
+                     'mar', 'apr', 'jun', 'jul', 'aug', 'sep', 'sept', 'oct',
+                     'nov', 'dec'}
     for match in re.finditer(r'[。！？!?]|\.', text):
         i = match.start()
         if text[i] == '.':
             after = text[i + 1:i + 2]
             if after and not after.isspace():
+                continue
+            # Lowercase continuation after a period leaves an abbreviation
+            # boundary unproved (avg., est., or an unseen domain shorthand).
+            # A finite abbreviation dictionary cannot certify that boundary.
+            # Keep scanning for the first unambiguous closure instead.
+            if re.match(r'\s*[a-z]', text[i + 1:]):
+                continue
+            # A native run can split a decimal immediately after its dot.
+            # A following numeric token leaves the numeric/sentence boundary
+            # ambiguous. Do not crop the remainder as if the dot proved it.
+            if i and text[i - 1].isdigit() and re.match(r'\s*\d', text[i + 1:]):
                 continue
             token = re.search(r'[A-Za-z.]+$', text[max(0, i - 80):i])
             word = token.group() if token else ''
@@ -118,6 +141,21 @@ def _first_closed_end(text):
                 continue
         return match.end()
     return None
+
+
+def _unclosed_tail(text):
+    """Tail after the final unambiguous literal sentence closure.
+
+    Used for eligibility only. The evidence builder retains every character
+    before that boundary, including conditions and prior complete sentences.
+    """
+    cursor = 0
+    while cursor < len(text):
+        end = _first_closed_end(text[cursor:])
+        if end is None:
+            break
+        cursor += end
+    return text[cursor:]
 
 
 def _column_wrap(block, following, ordered, order, column, next_column, height):
@@ -326,5 +364,6 @@ def choose_continuation(block, ordered, order, max_chars=1800):
             'evidence_sha256': _sha(combined), 'members': members,
             'column': column, 'max_chars': max_chars,
             'column_transition': column_transition,
+            'continuation_policy_version': CONTINUATION_POLICY_VERSION,
             'mode': 'unique_native_successor_first_closed_sentence_prototype',
             'calculator_input_eligible': False}

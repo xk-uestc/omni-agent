@@ -1585,10 +1585,7 @@ class DocumentChunker:
                 continue
             if joined and joined[-1] and DocumentChunker._joins_pdf_line(joined[-1], line):
                 previous = joined[-1]
-                if previous.endswith("-") and re.match(r"^[a-z]", line):
-                    joined[-1] = previous[:-1] + line
-                else:
-                    joined[-1] = previous + ("" if _CJK_RE.search(previous[-1:]) and _CJK_RE.match(line) else " ") + line
+                joined[-1] = previous + ("" if _CJK_RE.search(previous[-1:]) and _CJK_RE.match(line) else " ") + line
             else:
                 joined.append(line)
         return "\n".join(joined).strip(), changed
@@ -1599,8 +1596,11 @@ class DocumentChunker:
             return False
         if re.search(r"[。！？；.!?:：]$", previous):
             return False
-        if previous.endswith("-") and re.match(r"^[a-z]", current):
-            return True
+        # A printed line-ending '-' may be a real sign or term boundary.
+        # Keep it and its line break; legacy dehyphenated chunks are located
+        # using native_anchor aliases, never by rewriting source evidence.
+        if previous.endswith("-"):
+            return False
         return bool(_CJK_RE.search(previous[-1:]) and _CJK_RE.match(current)) or previous.endswith((",", "，", "、"))
 
     @staticmethod

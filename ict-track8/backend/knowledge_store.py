@@ -418,6 +418,82 @@ class KnowledgeStore:
             raise ValueError('问题为空或超出长度上限')
         hits = self.search(question, top_k=top_k, **({'document_id': document_id} if document_id is not None else {}),
                            **({'page_no': page_no} if page_no is not None else {}))
+        result = self._answer_hits(question, hits, document_id=document_id, page_no=page_no)
+        from .evidence_recovery import recovery_eligible, plan_evidence_recovery
+        client = getattr(self.generator, 'client', None)
+        if not recovery_eligible(result, client):
+            return result
+        navigation_sources = [{'metadata': hit.metadata} for hit in hits]
+        self._verify_citation_sources(navigation_sources)
+        self._verify_citation_sources(result['citations'])
+        queries, audit = plan_evidence_recovery(question, hits, client)
+        self._verify_citation_sources(navigation_sources)
+        if not queries:
+            result['trace'].append(audit)
+            self._verify_citation_sources(result['citations'])
+            return result
+        scope = {**({'document_id': document_id} if document_id is not None else {}),
+                 **({'page_no': page_no} if page_no is not None else {})}
+        candidates = {hit.document_id: hit for hit in hits}
+        for query in queries:
+            for hit in self.search(query, top_k=4, **scope):
+                candidates.setdefault(hit.document_id, hit)
+        # Rank candidate bodies against the original request, not a model's
+        # guessed answer. Search queries never become evidence themselves.
+        from .evidence_coverage import select_coverage_hits
+        records = {record.document_id: record for record in self.records()
+                   if record.document_id in candidates}
+        query_terms = set(_tokenize(question))
+        rebound = []
+        for key, hit in candidates.items():
+            body = records[key].content if key in records else ''
+            matched = tuple(sorted(query_terms.intersection(_tokenize(body))))
+            rebound.append(DocumentHit(hit.document_id, hit.title, hit.score, matched,
+                                       hit.snippet, hit.source_uri, hit.metadata))
+        selection = select_coverage_hits(question, rebound,
+            {key: record.content for key, record in records.items()},
+            lambda hit: float(hit.metadata.get('ranking_score', hit.score)),
+            min(MAX_EVIDENCE_ITEMS, max(top_k, 8)))
+        # Existing all-page visual/table scans support four selected sources.
+        # Bound navigation before execution, rather than discovering an eight
+        # source budget failure after discarding a usable ordinary answer.
+        source_ids = list(dict.fromkeys(hit.metadata['document_id'] for hit in selection.hits))
+        allowed_sources = set(source_ids[:4])
+        if len(source_ids) > 4:
+            selection = select_coverage_hits(question,
+                [hit for hit in rebound if hit.metadata['document_id'] in allowed_sources],
+                {key: record.content for key, record in records.items()},
+                lambda hit: float(hit.metadata.get('ranking_score', hit.score)),
+                min(MAX_EVIDENCE_ITEMS, max(top_k, 8)))
+        old_ids = {hit.document_id for hit in hits}
+        added = [hit.document_id for hit in selection.hits if hit.document_id not in old_ids]
+        audit.update(new_chunk_ids=added, candidate_count=len(candidates),
+                     selected_count=len(selection.hits), selection=selection.audit,
+                     explicit_document_id=document_id, explicit_page_no=page_no,
+                     selected_source_budget=4, unselected_source_ids=source_ids[4:])
+        if not added:
+            audit['status'] = 'no_new_source_evidence'
+            result['trace'].append(audit)
+            self._verify_citation_sources(result['citations'])
+            return result
+        # Re-run once through the SAME source, numeric, scope, and independent
+        # review checks. No recursive recovery, no reuse of old model facts.
+        recovered = self._answer_hits(question, selection.hits,
+                                      document_id=document_id, page_no=page_no)
+        audit['status'] = 'executed_once'
+        recovered['evidence_recovery'] = {
+            'original_question': question,
+            'prior_status': result['status'], 'prior_answer_mode': result['answer_mode'],
+            'prior_answer': result['answer'], 'prior_trace': result['trace'],
+            'prior_generation_attempts': result.get('generation_attempts', []),
+            'navigation_audit': audit,
+        }
+        recovered['trace'].insert(0, audit)
+        self._verify_citation_sources(result['citations'])
+        self._verify_citation_sources(recovered['citations'])
+        return recovered
+
+    def _answer_hits(self, question, hits, *, document_id=None, page_no=None):
         from .visual_routing import route_visual_table_question
         visual_result, visual_trace = route_visual_table_question(self, question, hits, document_id=document_id, page_no=page_no)
         if visual_result is not None:

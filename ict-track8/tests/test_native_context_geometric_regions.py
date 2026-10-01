@@ -9,6 +9,7 @@ from backend.evidence_context import text_sha256
 from backend.native_continuation import continuation_state, enrich_native_line_styles
 from backend.pdf_native_context import (extract_native_page_context, _rotated_cell_row,
                                         _tabular_runs)
+from backend.native_anchor import ANCHOR_POLICY_VERSION
 
 
 def native_pdf(entries):
@@ -47,7 +48,7 @@ def test_ingestion_line_wrap_equivalence_locates_original_without_rewriting_it()
     result = extract_native_page_context(raw, 1, 'The report covers coordinated activities.')
     assert result and result['text'] == 'The report covers co-\nordinated activities.'
     assert result['text_sha256'] == text_sha256(result['text'])
-    assert result['anchor_match_policy'] == 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only'
+    assert result['anchor_match_policy'] == ANCHOR_POLICY_VERSION
     assert not result['calculator_input_eligible']
     assert result == extract_native_page_context(raw, 1, 'The report covers coordinated activities.')
 

@@ -62,10 +62,147 @@ def save_exact(path, raw):
         path.write_bytes(raw)
 
 
+def pick_category_metadata(rows, members, excluded_docs, excluded_ids, excluded_hashes,
+                           hash_document, per_category=6, max_pdf_bytes=2_000_000):
+    """Select from metadata only; check original bytes before admitting any ID.
+
+    `rows` deliberately contains no question, answer, evidence text or GT.
+    PDF bytes are hashed, never parsed. Aliases of exposed or selected bytes
+    cannot enter the new corpus, even when their document names are different.
+    """
+    eligible = [r for r in rows if r['ID'] not in excluded_ids
+                and r['doc_name'] not in excluded_docs
+                and r['evidence_source'] in CATEGORIES and r['doc_name'] in members
+                and 0 < members[r['doc_name']].file_size <= max_pdf_bytes]
+    selected, owners, checked, rejected = [], {}, {}, {}
+    for category in CATEGORIES:
+        pool = sorted((r for r in eligible if r['evidence_source'] == category),
+                      key=lambda r: (members[r['doc_name']].file_size, r['doc_name'], r['ID']))
+        count = 0
+        for row in pool:
+            if count == per_category:
+                break
+            name = row['doc_name']
+            if name not in checked:
+                checked[name] = hash_document(name)
+            digest = checked[name]
+            if digest in excluded_hashes:
+                rejected[name] = 'original_sha256_previously_exposed'
+                continue
+            if digest in owners and owners[digest] != name:
+                rejected[name] = 'original_sha256_alias_of_selected_document'
+                continue
+            owners[digest] = name
+            selected.append(row)
+            count += 1
+    return selected, sorted(set(r['doc_name'] for r in selected)), rejected
+
+
+def freeze_metadata_categories(args, destination, base, qa_raw, rows):
+    """Strict document holdout; historic texts are never used for selection."""
+    docs, ids, hashes, exclusions = set(), set(), set(), []
+    for path in sorted((ROOT/'benchmarks/ohr_bench').glob('MANIFEST*.json')):
+        raw = path.read_bytes()
+        prior = json.loads(raw)
+        prior_root = Path(prior['data_root_default'])
+        if sha256((prior_root/prior['selected_qa_path']).read_bytes()) != prior['selected_qa_sha256']:
+            raise ValueError('prior_exposure_manifest_mismatch')
+        docs.update(d['doc_name'] for d in prior['documents'])
+        hashes.update(d['pdf_sha256'] for d in prior['documents'])
+        ids.update(r['ID'] for r in prior['cases'])
+        exclusions.append({'path': path.relative_to(ROOT).as_posix(), 'sha256': sha256(raw)})
+    # All OHR saved runs, not only the original OHR_BENCH naming convention.
+    for path in sorted((ROOT/'docs').glob('OHR*.json')):
+        raw = path.read_bytes()
+        prior = json.loads(raw)
+        for document in prior.get('documents', []):
+            if document.get('doc_name'):
+                docs.add(document['doc_name'])
+            if document.get('pdf_sha256'):
+                hashes.add(document['pdf_sha256'])
+        for row in prior.get('cases', []):
+            if row.get('doc_name'):
+                docs.add(row['doc_name'])
+            if row.get('ID'):
+                ids.add(row['ID'])
+        exclusions.append({'path': path.relative_to(ROOT).as_posix(), 'sha256': sha256(raw)})
+    # A saved exposure without a hash must be resolved from its original PDF.
+    for name in sorted(docs):
+        original = DATA/('pdfs/'+name+'.pdf')
+        if not original.is_file():
+            raise ValueError('previously_exposed_original_unavailable_for_sha_exclusion')
+        hashes.add(sha256(original.read_bytes()))
+    metadata = [{k: row[k] for k in ('ID', 'doc_name', 'evidence_source')} for row in rows]
+    reader = RemoteZip(HF_ROOT+'/pdfs.zip', PDF_ZIP_BYTES)
+    candidate_bytes = {}
+    with zipfile.ZipFile(reader) as archive:
+        members = pdf_members(archive)
+        def hash_document(name):
+            member = members[name]
+            raw = archive.read(member)
+            if len(raw) != member.file_size or not raw.startswith(b'%PDF'):
+                raise ValueError('official_original_pdf_invalid')
+            candidate_bytes[name] = raw
+            return sha256(raw)
+        selected_metadata, chosen, rejected = pick_category_metadata(
+            metadata, members, docs, ids, hashes, hash_document,
+            args.per_category, args.max_pdf_bytes)
+        selected_ids = {r['ID'] for r in selected_metadata}
+        opaque_rows = {r['ID']: r for r in rows if r['ID'] in selected_ids}
+        selected = [opaque_rows[r['ID']] for r in selected_metadata]
+        frozen_at = datetime.now(timezone.utc).isoformat()
+        selected_raw = (json.dumps(selected, ensure_ascii=False, indent=2)+'\n').encode()
+        save_exact(DATA/args.selection_name, selected_raw)
+        assets = []
+        for name in chosen:
+            member, raw = members[name], candidate_bytes[name]
+            pdf_path = 'pdfs/'+name+'.pdf'
+            save_exact(DATA/pdf_path, raw)
+            gt_url = CODE_ROOT+'/data/retrieval_base/gt/'+quote(name, safe='/')+'.json'
+            # Preserve opaque official GT bytes for later scoring only.
+            gt_raw = get_bounded(gt_url)
+            gt_path = 'gt/'+name+'.json'
+            save_exact(DATA/gt_path, gt_raw)
+            assets.append({'doc_name': name, 'pdf_path': pdf_path, 'pdf_sha256': sha256(raw),
+                           'pdf_bytes': len(raw), 'archive_member': member.filename,
+                           'archive_member_crc32': member.CRC, 'gt_path': gt_path,
+                           'gt_sha256': sha256(gt_raw), 'gt_url': gt_url})
+            print(json.dumps({'domain': name.split('/')[0], 'downloaded_pdf_bytes': len(raw)}), flush=True)
+    counts = Counter(r['evidence_source'] for r in selected_metadata)
+    unsupported = {c: {'requested': args.per_category, 'selected': counts[c],
+                      'missing': args.per_category-counts[c]}
+                   for c in CATEGORIES if counts[c] < args.per_category}
+    manifest = {**base, 'created_at': frozen_at, 'selection_frozen_before_evaluation': True,
+        'selection_rule': 'Exclude every historical manifest/run document name, stable ID and original PDF SHA256. For each of six evidence categories, rank by original PDF bytes, doc_name and stable ID only. Hash candidate original bytes to reject exposed/selected aliases before freezing IDs. Question, answer, evidence text, GT and model outcomes are never inspected for selection.',
+        'selection_limit': f'Resource-biased strict new-document subset; requested {6*args.per_category} QA ({args.per_category}/category), selected {len(selected)}, PDF <= {args.max_pdf_bytes} bytes. Original bytes are hashed before selection but not parsed; QA and GT are sealed for scoring. Not a full or representative benchmark.',
+        'evaluation_scope': 'strict_original_sha_new_documents_metadata_only_category_balanced',
+        'requested_case_count': 6*args.per_category, 'selected_case_count': len(selected),
+        'requested_per_category': args.per_category, 'max_pdf_bytes': args.max_pdf_bytes,
+        'excluded_document_count': len(docs), 'excluded_query_count': len(ids),
+        'excluded_original_sha256_count': len(hashes), 'excluded_original_sha256': sorted(hashes),
+        'exclusion_inputs': exclusions, 'excluded_doc_names': sorted(docs),
+        'rejected_candidate_metadata': rejected, 'data_root_default': str(DATA),
+        'selected_qa_path': args.selection_name, 'selected_qa_sha256': sha256(selected_raw),
+        'documents': assets, 'cases': [{k: r[k] for k in ('ID','doc_name','evidence_source','evidence_page_no')} |
+            {'original_row_sha256': sha256(json.dumps(r, ensure_ascii=False, sort_keys=True).encode())} for r in selected],
+        'category_counts': {c: counts[c] for c in CATEGORIES}, 'unsupported_selection': unsupported,
+        'archive_range_download_bytes': reader.transferred, 'archive_full_sha_verified': False,
+        'freeze_tool_sha256': sha256(Path(__file__).read_bytes())}
+    with destination.open('x', encoding='utf-8') as stream:
+        json.dump(manifest, stream, ensure_ascii=False, indent=2)
+        stream.write('\n')
+    print(json.dumps({'documents': len(assets), 'requested_questions': 6*args.per_category,
+        'questions': len(selected), 'category_counts': dict(counts), 'unsupported_selection': unsupported,
+        'selection_sha256': manifest['selected_qa_sha256'], 'metadata_only_selection': True,
+        'excluded_original_sha256_count': len(hashes)}), flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--manifest-name', default=DEST.name)
     parser.add_argument('--selection-name', default='SELECTED_OFFICIAL_QA_NEW_DOCUMENTS.json')
+    parser.add_argument('--per-category', type=int, help='Strict metadata-only SHA-excluded category holdout; new manifest required')
+    parser.add_argument('--max-pdf-bytes', type=int, default=2_000_000)
     args = parser.parse_args()
     if (not re.fullmatch(r'MANIFEST[A-Z0-9_]*\.json', args.manifest_name)
             or not re.fullmatch(r'SELECTED_OFFICIAL_QA[A-Z0-9_]*\.json', args.selection_name)):
@@ -80,6 +217,10 @@ def main():
     rows = json.loads(qa_raw)
     if len({r['ID'] for r in rows}) != len(rows):
         raise ValueError('duplicate_official_id')
+    if args.per_category is not None:
+        if args.per_category <= 0 or args.max_pdf_bytes <= 0:
+            parser.error('Strict category and PDF limits must be positive')
+        return freeze_metadata_categories(args, destination, base, qa_raw, rows)
     docs, ids, questions, exclusions, old_pdf_hashes = set(), set(), set(), [], set()
     for path in sorted((ROOT/'benchmarks/ohr_bench').glob('MANIFEST*.json')):
         raw = path.read_bytes(); manifest = json.loads(raw)

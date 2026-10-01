@@ -172,7 +172,8 @@ def answer_output_fields(result, gold):
     """Score the actual program output; alternative renderings stay separate."""
     fields = {'answer': result['answer'], 'scores': answer_scores(result['answer'], gold)}
     for key in ('answer_strategy', 'answer_span_result', 'answer_scope', 'computation',
-                'semantic_review', 'semantic_verification', 'calculator_input_eligible', 'chart_binding'):
+                'semantic_review', 'semantic_verification', 'calculator_input_eligible', 'chart_binding',
+                'evidence_recovery'):
         if key in result:
             fields[key] = result[key]
     if 'full_fact_answer' in result:

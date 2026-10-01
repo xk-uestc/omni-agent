@@ -1,0 +1,174 @@
+{
+  "schema_version": "core-development-failure-diagnosis-v1",
+  "created_at_utc": "2026-10-01T22:08:18Z",
+  "scope": "saved_exposed_synthetic_core_development_reports_only_no_new_rag_content",
+  "status": "TWO_NEW_FAILURES_RETAINED_AND_LOCALIZED_NO_CAUSAL_RELEASE_REGRESSION_CLAIM",
+  "reports": {
+    "round4": {
+      "path": "docs/REAL_MODEL_CORE_ROUND4_ACCEPTANCE_20261002.json",
+      "sha256": "ae2183497a73b119b25ad81f51d6ba21026d5f93cb4ffffff6342673d9e5c674",
+      "passed": 43,
+      "total": 44,
+      "failed_ids": ["qa-04"],
+      "implementation_stable": true
+    },
+    "round5": {
+      "path": "docs/REAL_MODEL_CORE_ROUND5_ACCEPTANCE_20261002.json",
+      "sha256": "a136439e89bdfa3011cf52fd889e65549cd75187d6644df51f9d6e708df4a522",
+      "passed": 41,
+      "total": 44,
+      "failed_ids": ["qa-04", "sql-华北-2024-订单数", "cross-turn-1"],
+      "implementation_stable": true,
+      "api_calls": 110,
+      "retained_calls": 110,
+      "completed_calls": 109,
+      "failed_calls": 1,
+      "total_tokens_reported_sum": 466161,
+      "total_tokens_unknown_calls": 1
+    }
+  },
+  "comparison": {
+    "same_cases_sha256": true,
+    "cases_sha256": "21a19d31ca58a3155245c9d006295d186710e6c180cad758501c7c63193150bb",
+    "same_database_sha256": true,
+    "database_sha256": "f3e34a247bdc35966fb643892bd0c65b055560050a0a11e86ee37c34c339f294",
+    "model": "gpt-6-luna",
+    "reasoning": "medium",
+    "observed_pass_delta": -2,
+    "interpretation": "Observed acceptance regression is retained. One run per version does not establish a causal code regression or pure model randomness. Complete planner request payload identity was not established. Equal input token counts are not payload hashes."
+  },
+  "cases": [
+    {
+      "id": "sql-华北-2024-订单数",
+      "failure_layer": "router_provider_request_did_not_produce_usable_response_before_rules_fallback",
+      "observed": {
+        "status": "ok",
+        "route": "sql",
+        "planner_source": "rules_fallback",
+        "failed_check": "model_router",
+        "router_trace_validation": "provider_failed",
+        "error_type": "GenerationError",
+        "router_api": {
+          "operation": "omni_plan",
+          "http_status": null,
+          "status": "failed",
+          "model_verified": false,
+          "latency_ms": 19052.261,
+          "reported_usage": null
+        },
+        "sql_api": {
+          "operation": "nl2sql_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "total_tokens": 2966
+        },
+        "sql_planner_source": "model_validated",
+        "returned_order_count": 1,
+        "value_check": true
+      },
+      "round4": {
+        "passed": true,
+        "router_api_status": "completed",
+        "router_http_status": 200,
+        "planner_source": "model_validated",
+        "value_check": true
+      },
+      "bounded_conclusion": "No SQL value or execution failure was observed. The strict real-model router requirement correctly fails after rules fallback. Null HTTP status and missing usage do not identify timeout, HTTP rejection, provider implementation failure, or another specific request-stage cause.",
+      "source_references": [
+        "ict-track8/backend/responses_client.py:139",
+        "ict-track8/backend/responses_client.py:149",
+        "ict-track8/backend/omni_agent.py:371",
+        "tools/evaluate_model.py:166"
+      ]
+    },
+    {
+      "id": "cross-turn-1",
+      "failure_layer": "accepted_model_plan_contains_non_scalar_reference_in_sql_question_and_runtime_text_contract_rejects_it",
+      "observed": {
+        "status": "incomplete",
+        "route": "fusion",
+        "planner_source": "model_validated",
+        "router_validation": "complete",
+        "router_api": {
+          "operation": "omni_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "input_tokens": 6716,
+          "total_tokens": 7761
+        },
+        "invalid_sql_question": [
+          {"ref": "policy_scope", "path": []},
+          "2025年华东地区销售额和订单数"
+        ],
+        "referenced_source_tool": "search",
+        "resolved_reference_type": "dict",
+        "completed_tasks": ["policy_scope", "formula"],
+        "failed_task": "sales_orders",
+        "skipped_tasks": ["customer_price"],
+        "error": "查询文本只能引用字符串或数字",
+        "error_code": "tool_contract_failed",
+        "sql_api_calls": 0,
+        "context_resolution_mode": "independent"
+      },
+      "round4": {
+        "passed": true,
+        "initial_plan_validation": "plan_protocol_rejected",
+        "initial_error": "fusion_task_normalization_rejected",
+        "bounded_completion_repair": "completed",
+        "accepted_sql_question": "2025年华东地区销售额和订单数",
+        "completed_tools": ["document_formula", "sql", "calculate"]
+      },
+      "offline_reproduction": {
+        "api_calls": 0,
+        "backend_edits": false,
+        "normalization_accepted_captured_graph": true,
+        "normalization_notes": [],
+        "resolved_first_question_part_type": "dict",
+        "text_contract_exception": "DependencyPlanError: 查询文本只能引用字符串或数字"
+      },
+      "bounded_conclusion": "This is a reproducible pre-existing static reference-type validation gap exposed by the accepted plan, while the runtime guard fails closed. It is not a missing database result, arithmetic failure, multi-turn inheritance failure, or demonstrated consequence of the changed native-PDF code. The differing model plans do not by themselves establish pure randomness.",
+      "source_references": [
+        "ict-track8/backend/fusion_normalization.py:15",
+        "ict-track8/backend/fusion_normalization.py:50",
+        "ict-track8/backend/omni_agent.py:184",
+        "ict-track8/backend/dependency_agent.py:83",
+        "ict-track8/backend/dependency_agent.py:104",
+        "ict-track8/backend/dependency_agent.py:354"
+      ]
+    }
+  ],
+  "unchanged_relevant_source_hashes_round4_round5_and_current": {
+    "ict-track8/backend/omni_agent.py": "ae3605de3b36c63892fb5223dddcda286956540f1175761e3e079b7b355c1599",
+    "ict-track8/backend/dependency_agent.py": "7e337802168aa7b81ce8f25514835be8da6c5bce83efdce6295b105e142d9994",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/responses_client.py": "2e067756105bede0c5403bd2ce74075b3005ec4c795f884471aeeda4251d7a45",
+    "ict-track8/backend/nl2sql/engine.py": "b49fac91909f86f6d95cdad66e9fdaeb5e5d4be34a9f0b0d95544ff6f7bd5162",
+    "ict-track8/backend/nl2sql/planner.py": "17fdd750b1c5cae986fdefb5d665bb6589234036dc694b23701bb458daa24fb5",
+    "tools/evaluate_model.py": "a743874a65087decfe3e9f24bffd7393131de2385f45f28de523761648da1a03",
+    "tools/model_runtime.py": "a73d96109f5bacfd25a6ecec338e9857d67110f1f7d086ca2dfb76ea90e959c1"
+  },
+  "changed_or_added_production_files_between_rounds": [
+    "ict-track8/backend/answer_contract.py",
+    "ict-track8/backend/chunk_cleaning.py",
+    "ict-track8/backend/evidence_recovery.py",
+    "ict-track8/backend/grounded_span_answer.py",
+    "ict-track8/backend/knowledge_store.py",
+    "ict-track8/backend/native_anchor.py",
+    "ict-track8/backend/native_continuation.py",
+    "ict-track8/backend/native_table_question.py",
+    "ict-track8/backend/pdf_native_context.py"
+  ],
+  "general_recommendations": [
+    "Reject statically known whole-object references in SQL question/search query text slots before tool execution; preserve legal scalar projections and dependency/source semantics.",
+    "Send stable reference-type error codes plus permitted field paths/types to the existing bounded fresh-plan repair. Do not stringify dictionaries, silently drop dependency references, or treat unbound snippets as verified facts.",
+    "Improve sanitized request-stage failure taxonomy and provenance so an absent HTTP status does not invite unsupported timeout/provider guesses. No score-selecting rerun and no provider-failure retry are performed here."
+  ],
+  "limits": [
+    "Historical qa-04 remains failed and was not re-diagnosed in this task.",
+    "No new 36-case RAG questions, references, answers, or API runs were read or used.",
+    "No backend, evaluator, model runtime, or original report was changed by the diagnostic review.",
+    "The acceptance denominator remains 44 and all three round5 failures remain retained."
+  ]
+}

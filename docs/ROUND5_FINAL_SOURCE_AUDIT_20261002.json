@@ -1,0 +1,194 @@
+{
+  "scope": "fixed_source_fifth_round_acceptance_not_overall_goal_completion",
+  "backend_sources_verified": 79,
+  "same_final_backend": true,
+  "rag": {
+    "report": "OHR_ROUND5_UNSEEN_ACCEPTANCE_20261002.json",
+    "sha256": "c177e455ef376de069c65dc67261fd5c5088f42a45744c03bb2aa2813d839402",
+    "metrics": {
+      "attempted": 36,
+      "grounded_generations": 25,
+      "grounded_substantive_answers": 8,
+      "model_abstentions": 17,
+      "extractive_fallbacks": 2,
+      "source_span_answers": 5,
+      "native_chart_answers": 0,
+      "normalized_exact_matches": 7,
+      "mean_english_token_f1": 0.317567,
+      "metric_scope": "program_end_to_end_outputs_including_extractive_fallback_not_bare_model_accuracy",
+      "grounded_only_count": 25,
+      "grounded_only_mean_english_token_f1": 0.226147
+    },
+    "api_summary": {
+      "calls": 157,
+      "retained_calls": 157,
+      "dropped_calls": 0,
+      "completed_calls": 156,
+      "failed_calls": 1,
+      "tokens": {
+        "input_tokens": {
+          "reported_sum": 605628,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "output_tokens": {
+          "reported_sum": 24252,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "total_tokens": {
+          "reported_sum": 629880,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "cached_input_tokens": {
+          "reported_sum": 52992,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "reasoning_tokens": {
+          "reported_sum": 14824,
+          "unknown_calls": 1,
+          "complete": false
+        }
+      },
+      "api_latency_ms": 933234.83,
+      "usd_cost": null,
+      "pricing_status": "third_party_price_not_supplied_no_estimate"
+    }
+  },
+  "core": {
+    "report": "REAL_MODEL_CORE_ROUND5_ACCEPTANCE_20261002.json",
+    "sha256": "a136439e89bdfa3011cf52fd889e65549cd75187d6644df51f9d6e708df4a522",
+    "passed": 41,
+    "total": 44,
+    "api_summary": {
+      "calls": 110,
+      "retained_calls": 110,
+      "dropped_calls": 0,
+      "completed_calls": 109,
+      "failed_calls": 1,
+      "tokens": {
+        "input_tokens": {
+          "reported_sum": 444046,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "output_tokens": {
+          "reported_sum": 22115,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "total_tokens": {
+          "reported_sum": 466161,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "cached_input_tokens": {
+          "reported_sum": 38912,
+          "unknown_calls": 1,
+          "complete": false
+        },
+        "reasoning_tokens": {
+          "reported_sum": 10153,
+          "unknown_calls": 1,
+          "complete": false
+        }
+      },
+      "api_latency_ms": 791272.08,
+      "usd_cost": null,
+      "pricing_status": "third_party_price_not_supplied_no_estimate"
+    },
+    "changes_from_round4": [
+      {
+        "id": "qa-04",
+        "before_pass": false,
+        "after_pass": false,
+        "before_checks": {
+          "model_router": true,
+          "status": true,
+          "route": true,
+          "real_generation": false,
+          "required_source_and_facts": false,
+          "verified_api_calls": true,
+          "requested_only_allowed_model": true
+        },
+        "after_checks": {
+          "model_router": true,
+          "status": true,
+          "route": true,
+          "real_generation": false,
+          "required_source_and_facts": false,
+          "verified_api_calls": true,
+          "requested_only_allowed_model": true
+        }
+      },
+      {
+        "id": "sql-华北-2024-订单数",
+        "before_pass": true,
+        "after_pass": false,
+        "before_checks": {
+          "model_router": true,
+          "status": true,
+          "route": true,
+          "real_sql_planner": true,
+          "value": true,
+          "verified_api_calls": true,
+          "requested_only_allowed_model": true
+        },
+        "after_checks": {
+          "model_router": false,
+          "status": true,
+          "route": true,
+          "real_sql_planner": true,
+          "value": true,
+          "verified_api_calls": true,
+          "requested_only_allowed_model": true
+        }
+      },
+      {
+        "id": "cross-turn-1",
+        "before_pass": true,
+        "after_pass": false,
+        "before_checks": {
+          "model_router": true,
+          "status": true,
+          "route": true,
+          "history": true,
+          "real_sql_planner": true,
+          "value": true,
+          "actual_dependencies": true,
+          "verified_api_calls": true,
+          "requested_only_allowed_model": true
+        },
+        "after_checks": {
+          "model_router": true,
+          "status": false,
+          "route": true,
+          "history": true,
+          "value": false,
+          "actual_dependencies": false,
+          "verified_api_calls": true,
+          "requested_only_allowed_model": true
+        }
+      }
+    ],
+    "round4_report_sha256": "ae2183497a73b119b25ad81f51d6ba21026d5f93cb4ffffff6342673d9e5c674"
+  },
+  "regression": {
+    "report": "LOCAL_REGRESSION_ROUND5_ACCEPTANCE_20261002.json",
+    "sha256": "b8ef63f8d25738aaf288edf2288e2a13665bafaf57d07e190bb942606db45c39",
+    "passed": 2662,
+    "subtests_passed": 12
+  },
+  "intermediate_stopped_run": "ROUND5_INTERMEDIATE_EVALUATION_STOP_20261002.json",
+  "goal_status": "active",
+  "limitations": [
+    "One run per version does not establish statistical significance.",
+    "All failures and regressions retained, no best-run selection or score conversion.",
+    "Resource-biased official-query subset is not the complete official benchmark.",
+    "RAG F1 is lexical overlap, not factual accuracy or evidence entailment.",
+    "Interrupted intermediate run has no recoverable API usage total and supplies no scored evidence.",
+    "Source extraction and local unit tests cannot replace real model acceptance."
+  ]
+}

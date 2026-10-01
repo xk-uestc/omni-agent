@@ -6,6 +6,8 @@ existing source validation and independent review remain authoritative.
 """
 import re
 
+from .native_anchor import ANCHOR_POLICY_VERSION
+
 
 _WORDS = re.compile(r"[A-Za-z][A-Za-z0-9'’-]*|[\u3400-\u9fff]{2,}")
 _PURPOSE = re.compile(r'\b(?:purpose|purposes|objective|objectives|aim|aims)\b|目的|宗旨', re.I)
@@ -21,8 +23,10 @@ _NAVIGATION_STOP = set('a an the what which who is are was were be for to of fro
 _NATIVE_MODES = {
     'original-native-bounded-page-region-v1': frozenset({'original_native_complete_table_region', 'original_native_complete_paragraph_region'}),
     'original-native-bounded-page-region-v2': frozenset({'original_native_complete_table_region', 'original_native_complete_paragraph_region', 'original_native_complete_captioned_table_region'}),
+    'original-native-bounded-page-region-v3': frozenset({'original_native_complete_table_region', 'original_native_complete_paragraph_region', 'original_native_complete_captioned_table_region'}),
     'original-native-complete-block-context-v3': frozenset({'original_native_complete_block', 'original_native_complete_continuation'}),
     'original-native-complete-block-context-v4': frozenset({'original_native_complete_block', 'original_native_complete_continuation', 'original_native_complete_rotated_row'}),
+    'original-native-complete-block-context-v5': frozenset({'original_native_complete_block', 'original_native_complete_continuation', 'original_native_complete_rotated_row'}),
 }
 
 
@@ -94,11 +98,21 @@ def literal_answer_shape_error(question, literal):
 def native_source_only_contract_valid(native):
     """New geometry modes are provenance only, never verified numeric rows."""
     if not isinstance(native, dict) or native.get('extraction_version') not in {
-            'original-native-complete-block-context-v4', 'original-native-bounded-page-region-v2'}:
+            'original-native-complete-block-context-v4', 'original-native-bounded-page-region-v2',
+            'original-native-complete-block-context-v5', 'original-native-bounded-page-region-v3'}:
         return True
+    new_anchor = native.get('extraction_version') in {
+        'original-native-complete-block-context-v5', 'original-native-bounded-page-region-v3'}
+    policy = (ANCHOR_POLICY_VERSION if new_anchor
+              else 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only')
     if (not native_context_mode_valid(native) or native.get('calculator_input_eligible') is not False
-            or native.get('anchor_match_policy') != 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only'):
+            or native.get('anchor_match_policy') != policy):
         return False
+    if new_anchor:
+        match = native.get('anchor_match')
+        if (not isinstance(match, dict) or match.get('policy_version') != policy
+                or not isinstance(match.get('members'), list) or not match['members']):
+            return False
     if native.get('mode') == 'original_native_complete_rotated_row':
         rotated = native.get('rotated_native_row')
         return isinstance(rotated, dict) and rotated.get('semantic_row_column_binding_verified') is False

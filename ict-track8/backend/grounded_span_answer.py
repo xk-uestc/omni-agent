@@ -224,9 +224,13 @@ def _snapshot(claims, citations):
         if not isinstance(metadata, dict) or metadata.get('source_sha256', sha) != sha:
             raise ValueError('source_snapshot_mismatch')
         evidence[cid] = text
+        # Text/source hashes alone do not pin the complete native contract.
+        # Include every generation field (and future nested provenance fields)
+        # so review-time mutation and standalone replay both fail closed when
+        # geometry, source-only flags, extraction policy or budgets change.
         snapshots.append({'citation_id': cid, 'source_sha256': sha, 'evidence_sha256': _sha(text),
             'source_locator': source['source_locator'], 'page_no': source.get('page_no'),
-            'document_id': metadata.get('document_id')})
+            'document_id': metadata.get('document_id'), 'generation_payload_sha256': _sha(source)})
     if sum(map(len, evidence.values())) > 12000:
         raise ValueError('evidence_total_budget')
     GroundedGenerator.validate({'abstain': False, 'claims': claims}, evidence)

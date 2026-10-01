@@ -11,3 +11,5 @@
 *.safetensors binary
 *.sqlite binary
 *.sqlite3 binary
+# Sealed audits and frozen inputs are hashed as bytes; never rewrite line ends.
+*.json -text

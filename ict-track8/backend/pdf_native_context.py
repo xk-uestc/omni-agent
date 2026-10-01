@@ -11,20 +11,37 @@ from .grounded_generation import (_ENGLISH_ACTUAL_HEADING, _ENGLISH_FORECAST_HEA
                                   _DECLARED_CONDITION_HEADING, MAX_LOCAL_SCOPE_HEADINGS)
 from .native_continuation import (choose_continuation, continuation_state,
                                   enrich_native_line_styles)
+from .native_anchor import ANCHOR_POLICY_VERSION, anchor_ranges, literal_compact
 
-EXTRACTION_VERSION = 'original-native-complete-block-context-v4'
+EXTRACTION_VERSION = 'original-native-complete-block-context-v5'
 _UNIT = re.compile(r'(?:%|[$€£¥]|USD|EUR|GBP|CNY|RMB|dollars?|euros?|millions?|billions?|thousands?|mn|bn|m|k)', re.I)
 _NUMERIC_END = re.compile(r'\d(?:[\d,.]*\d)?\s*$')
 
 
 def _compact(text):
-    # Ingestion removes a printed alphabetic line-wrap hyphen. Use that same
-    # equivalence only to locate the anchor; evidence and its hashes retain
-    # every original character, including the hyphen and newline. Interior
-    # hyphens, minus signs and arbitrary substitutions remain significant.
-    literal = DocumentChunker.clean_text(text)
-    literal = re.sub(r'(?<=[A-Za-z])-\n(?=[A-Za-z])', '', literal)
-    return re.sub(r'\s+', '', literal)
+    return literal_compact(DocumentChunker.clean_text(text))
+
+
+def _anchor_members(parts, anchor_text):
+    """Locate the union on the whole page before accepting one block/region."""
+    source = '\n\n'.join(part['normalized_text'] for part in parts)
+    ranges = anchor_ranges(source, DocumentChunker.clean_text(anchor_text))
+    if len(ranges) != 1:
+        return None
+    left, right = ranges[0]
+    offset, touched, bindings = 0, [], []
+    for part in parts:
+        end = offset + len(part['normalized_text'])
+        if offset < right and end > left:
+            touched.append(part)
+            bindings.append({'block_id': part['block_id'],
+                'native_block_id': part.get('native_block_id'),
+                'native_column_part': part.get('native_column_part'),
+                'source_range': [max(0, left - offset), min(end, right) - offset],
+                'parent_source_range': part.get('source_range')})
+        offset = end + 2
+    return touched, {'policy_version': ANCHOR_POLICY_VERSION,
+                     'page_reading_order_range': [left, right], 'members': bindings}
 
 
 def _member(block):
@@ -117,11 +134,10 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
             ordered, order = DocumentChunker._pdf_reading_order(blocks, page.rect.width)
     except Exception:
         return None
-    anchor = _compact(anchor_text)
-    matches = [b for b in ordered if anchor in _compact(b['normalized_text'])]
-    if len(matches) != 1 or _compact(matches[0]['normalized_text']).count(anchor) != 1:
+    located = _anchor_members(ordered, anchor_text)
+    if located is None or len(located[0]) != 1:
         return None
-    block = matches[0]
+    block, anchor_match = located[0][0], located[1]
     text = block['normalized_text']
     if len(text) > max_chars:
         return None
@@ -129,6 +145,7 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
     rotated_row = _rotated_cell_row(block, source_rotation, source_display_matrix)
     continuation_members = None
     column_transition = None
+    continuation_policy_version = None
     # Re-read native geometry above, then preserve the entire anchor before
     # adding only the unique successor's first explicitly closed sentence.
     # An open prose block cannot fall back to its incomplete old fragment.
@@ -141,6 +158,7 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
         text = continuation['text']
         continuation_members = continuation['members']
         column_transition = continuation.get('column_transition')
+        continuation_policy_version = continuation.get('continuation_policy_version')
     unit_insertions = []
     # All-page uniqueness: a unit cannot attach to two competing number lines.
     for unit in ordered:
@@ -268,7 +286,8 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
     if prefix_members:
         text = '\n'.join(item['normalized_text'] for item in prefix_members) + '\n' + text
         members = prefix_members + members
-    if len(text) > max_chars or anchor not in _compact(text):
+    if (len(text) > max_chars
+            or len(anchor_ranges(text, DocumentChunker.clean_text(anchor_text))) != 1):
         return None
     return {'text': text, 'source_sha256': hashlib.sha256(raw).hexdigest(), 'page_no': page_no,
             'evidence_sha256': text_sha256(text), 'text_sha256': text_sha256(text),
@@ -281,7 +300,8 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
                         if continuation_members else [_member(b) for b in members]), 'reading_order': order,
             'unit_insertions': unit_insertions, 'column_transition': column_transition,
             'rotated_native_row': rotated_row,
-            'anchor_match_policy': 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only',
+            'anchor_match_policy': ANCHOR_POLICY_VERSION, 'anchor_match': anchor_match,
+            'continuation_policy_version': continuation_policy_version,
             'calculator_input_eligible': False}
 
 
@@ -467,16 +487,10 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
     except Exception:
         return None
     pieces = [part for block in ordered for part in _paragraph_parts(block)]
-    compact = [_compact(part['normalized_text']) for part in pieces]
-    anchor, whole = _compact(anchor_text), ''.join(compact)
-    if whole.count(anchor) != 1:
+    located = _anchor_members(pieces, anchor_text)
+    if located is None:
         return None
-    left, right = whole.index(anchor), whole.index(anchor) + len(anchor)
-    offset, touched = 0, []
-    for part, value in zip(pieces, compact):
-        if offset < right and offset + len(value) > left:
-            touched.append(part)
-        offset += len(value)
+    touched, anchor_match = located
     if not touched or len(touched) > 6:
         return None
     captioned = [region for region in _captioned_table_regions(ordered)
@@ -592,12 +606,12 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
     else:
         text = source_member_text
     if (len(members) > (16 if captioned_mode else 8) or len(text) > max_chars
-            or anchor not in _compact(source_member_text)):
+            or len(anchor_ranges(source_member_text, DocumentChunker.clean_text(anchor_text))) != 1):
         return None
     return {'text': text, 'source_sha256': hashlib.sha256(raw).hexdigest(), 'page_no': page_no,
         'evidence_sha256': text_sha256(text), 'text_sha256': text_sha256(text),
         'evidence_chars': len(text), 'max_chars': max_chars,
-        'extraction_version': 'original-native-bounded-page-region-v2',
+        'extraction_version': 'original-native-bounded-page-region-v3',
         'mode': ('original_native_complete_captioned_table_region' if captioned_mode else
                  'original_native_complete_table_region' if table_mode else
                  'original_native_complete_paragraph_region'),
@@ -607,5 +621,5 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
                                      captioned[0]['horizontal_bounds_unrotated_pt'],
                                      'semantic_row_column_binding_verified': False}
                                     if captioned_mode else None),
-        'anchor_match_policy': 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only',
+        'anchor_match_policy': ANCHOR_POLICY_VERSION, 'anchor_match': anchor_match,
         'unit_insertions': [], 'column_transition': None, 'calculator_input_eligible': False}

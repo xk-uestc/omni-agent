@@ -1,0 +1,31 @@
+{
+  "scope": "strict_original_sha_new_document_metadata_only_selection_audit_not_model_accuracy",
+  "manifest": "benchmarks/ohr_bench/MANIFEST_ROUND5_UNSEEN_DOCUMENTS.json",
+  "manifest_sha256": "bf6b505e1aba6bac11be7d85f56d0dc943c934b1e9e957c5c4ee20b7a9b562b1",
+  "selected_qa_sha256": "816c23b5aa49fc3032fba3756b1f7535e4a3d70037cca4319ff48ca6114e5031",
+  "selection_input_fields": ["evidence_source", "doc_name", "ID", "original_pdf_file_size", "original_pdf_sha256"],
+  "question_answer_evidence_or_gt_used_for_selection": false,
+  "requested_cases": 36,
+  "selected_unique_cases": 36,
+  "category_counts": {"text": 6, "table": 6, "formula": 6, "chart": 6, "reading_order": 6, "multi": 6},
+  "historical_exclusion_input_files": 62,
+  "excluded_document_names": 28,
+  "excluded_stable_ids": 93,
+  "excluded_original_pdf_sha256": 28,
+  "selected_documents": 15,
+  "selected_unique_original_pdf_sha256": 15,
+  "selected_original_pdf_bytes": 637866,
+  "selected_exposed_original_sha_overlap": 0,
+  "selected_qa_file_hash_verified": true,
+  "pdf_and_gt_asset_hashes_verified": 30,
+  "asset_hash_mismatches": 0,
+  "unsupported_categories": {},
+  "domains": ["administration", "finance", "manual", "news", "textbook"],
+  "tests": {"passed": 15, "failed": 0, "command": "python -B -m pytest ict-track8/tests/test_newdoc_strict_freeze.py ict-track8/tests/test_ohr_holdout_freeze.py -q"},
+  "limitations": [
+    "PDF size and category balanced selection is resource biased; five domains are covered without a seven-domain quota.",
+    "Exact question text duplication across byte-distinct documents was deliberately not inspected; document novelty is enforced by original SHA256.",
+    "Opaque original QA rows and GT bytes are sealed only for fixed-input scoring; no score-based replacements or retries choose samples.",
+    "Small fixed subset is neither a full official benchmark nor evidence of official 90 percent accuracy."
+  ]
+}
