@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 import zipfile
+import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -102,7 +103,9 @@ def build_package(output: Path, *, root: Path = ROOT, include_public_assets: boo
         raise FileNotFoundError("交付包缺少必需文件: " + ", ".join(missing))
     output.parent.mkdir(parents=True, exist_ok=True)
     entries: list[dict[str, object]] = []
-    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+    # Publish only a closed archive: concurrent readers must not see a partial ZIP.
+    staging = output.with_name(output.name + '.' + uuid.uuid4().hex + '.building')
+    with zipfile.ZipFile(staging, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for path in files:
             relative = path.relative_to(root).as_posix()
             data = path.read_bytes()
@@ -122,6 +125,7 @@ def build_package(output: Path, *, root: Path = ROOT, include_public_assets: boo
             ],
         }
         archive.writestr("MANIFEST.json", json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
+    staging.replace(output)
     return {"output": str(output), "file_count": len(entries), "bytes": output.stat().st_size, "manifest": manifest}
 
 
