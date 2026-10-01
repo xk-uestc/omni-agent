@@ -1,0 +1,42 @@
+{
+  "package_sha256": "3d93995cfd01f0a0904a344cc71c09b23003188efcfb90fbedafcee51420d1fb",
+  "manifest_verified": true,
+  "real_model_test": "not_run",
+  "checks": {
+    "local_credential_absent": true,
+    "credential_not_packaged": true,
+    "health": true,
+    "text_quality_confirmed_preview": true,
+    "text_quality_stale_source_refused": true,
+    "documents": true,
+    "rag": true,
+    "dense": true,
+    "sql": true,
+    "sql_snapshot_provenance": true,
+    "two_source_threshold_comparison": true,
+    "fusion_document_versions_verified": true,
+    "live_sql_writer_audit": true,
+    "fusion_mid_plan_mutation_audit": true,
+    "actual_http_multisql_snapshot": true,
+    "sql_extremes": true,
+    "distinct_metric_choices": true,
+    "clarification_average_price": true,
+    "clarification_followup": true,
+    "trend_time_and_grain": true,
+    "actual_pdf_outline_gold": true,
+    "source_line_locators": true,
+    "tampered_original_refused": true,
+    "same_original_restored": true,
+    "frontend": true,
+    "ocr": true,
+    "ocr_page_orientation": true,
+    "ocr_rotation_preview": true,
+    "actual_orientation_audit": true
+  },
+  "sample_documents": {
+    "expected_count": 16,
+    "actual_count": 16,
+    "verification": "exact_document_ids_source_sha256_and_modality"
+  },
+  "ok": true
+}
