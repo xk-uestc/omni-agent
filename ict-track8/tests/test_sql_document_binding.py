@@ -57,6 +57,16 @@ def test_actual_rank1_reference_retains_original_search_target(engine):
     assert audit['target_text'] == '冠军团队的方法'
 
 
+def test_scoped_search_preserves_original_sql_dimension_reference_binding(engine):
+    tasks=graph()
+    tasks[1]['args'].update(document_id='service-playbook',page_no=2)
+    tasks,bundle,results=prepared(engine,tasks)
+    assert validate(engine,tasks,bundle,results)['value']=='华东'
+    tasks[1]['args']['query'][1]='2024年华南冠军团队的方法'
+    with pytest.raises(SourceConstraintError):
+        authorize_sql_document_search(QUESTION,tasks,engine)
+
+
 def test_physical_dimension_reference_never_guesses_display_alias(engine):
     tasks = graph()
     tasks[1]['args']['query'][0]['path'] = ['dimension_values', 'sales_orders', 'region', 0]

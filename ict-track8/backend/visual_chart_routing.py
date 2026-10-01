@@ -5,7 +5,6 @@ stay unknown, and annotation-only results cannot feed physical calculations.
 """
 from __future__ import annotations
 
-import re
 import time
 
 from .responses_client import GenerationError, object_schema
@@ -28,9 +27,6 @@ def route_visual_chart_question(store, question, hits, *, document_id=None, page
              'limits': {'documents': MAX_DOCUMENTS, 'pages': MAX_PAGES,
                         'total_bytes': MAX_BYTES, 'source_bytes': MAX_SOURCE_BYTES,
                         'seconds': MAX_SECONDS}}
-    # This adapter does not claim general visual question coverage.
-    if not re.search(r'(?<!\d)\d{4}(?!\d)|\b(?:below|under)\s+[+−-]?\d', question, re.I):
-        return None, trace
     documents = {d['document_id']: d for d in store.list_documents()}
     keys = [document_id] if document_id is not None else list(dict.fromkeys(h.metadata['document_id'] for h in hits))
     candidates = [documents[k] for k in keys if k in documents and documents[k]['modality'] == 'pdf']
@@ -66,7 +62,14 @@ def route_visual_chart_question(store, question, hits, *, document_id=None, page
             for page in selected_pages:
                 if time.monotonic() - started > MAX_SECONDS:
                     return incomplete('chart_complete_scan_time_budget_exceeded')
-                manifest = extract_pdf_charts(raw, page_no=page, expected_source_sha256=d['sha256'])
+                try:
+                    manifest = extract_pdf_charts(raw, page_no=page, expected_source_sha256=d['sha256'])
+                except ValueError:
+                    # Source integrity is checked separately and must still
+                    # raise. Parser/budget failures cannot authorize partial
+                    # candidate scans or a fallback text answer.
+                    store.verify_source(d['document_id'], expected_sha256=d['sha256'])
+                    return incomplete('chart_native_parser_failed_or_over_budget')
                 binding = query_chart_fact(question, manifest)
                 if binding['status'] == 'verified':
                     bindings.append((d, page, manifest, binding))
@@ -115,8 +118,11 @@ def route_visual_chart_question(store, question, hits, *, document_id=None, page
             return result, trace
         finally:
             recheck()
-        fresh = extract_pdf_charts(store.verify_source(d['document_id'], expected_sha256=d['sha256']).read_bytes(),
-                                   page_no=page, expected_source_sha256=d['sha256'])
+        fresh_raw = store.verify_source(d['document_id'], expected_sha256=d['sha256']).read_bytes()
+        try:
+            fresh = extract_pdf_charts(fresh_raw, page_no=page, expected_source_sha256=d['sha256'])
+        except ValueError:
+            return incomplete('chart_native_replay_parser_failed')
         if fresh != manifest or query_chart_fact(question, fresh) != binding:
             return incomplete('chart_native_proof_replay_failed')
         if (not isinstance(selection, dict) or set(selection) != set(SCHEMA['properties'])

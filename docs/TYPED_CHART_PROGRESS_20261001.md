@@ -51,7 +51,9 @@ REAL_MODEL_NINTH_RUN_20261001.json：**39/44**；86调用、82completed、4faile
 可见tokens下界400130，4次调用usage未知；非官方或盲测成绩。
 失败为multiple_documents、cross-turn-2/3/4/5；SQL→文档和SQL五轮本次通过。
 multiple_documents实际计划search携带document_id，但执行工具只接受query，属协议断层；
-cross-turn-3的明确基准取数尚缺最终目标绑定；cross-turn-4继承其失败上下文。
+cross-turn-3本次直接失败是baseline SQL的missing策略与服务器契约冲突，错误码为
+source_metric_missing_policy_mismatch。独立检查还发现其后置目标未绑定最终消费义务，
+这是另一项缺口，不能冒称本次直接失败原因；cross-turn-4继承失败上下文。
 API失败涉及sql-华南-2024-订单数（该题最终修复通过）、cross-turn-2两次SQL规划与cross-turn-5一次总规划。
 即使规则回退数值正确，严格模型验收仍保留失败。
 

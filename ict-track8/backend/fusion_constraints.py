@@ -283,6 +283,58 @@ def _attach_reverse_target_scope(question, clauses, pieces, engine, verified_for
                          clause.role, (absolute,), target_binding)]
 
 
+def _attach_postfix_formula_target(question, clauses, pieces, engine, proofs):
+    """Bind a complete trailing calculation target, without borrowing its dates.
+
+    A single explicit SQL source is the only supported antecedent. Temporal
+    and exact entity prefixes qualify the calculation, never the SQL input.
+    """
+    requests = [(left, right, re.match(r'\s*(?:再|然后)?(?:计算|核算|求|算)\s*', question[left:right]))
+                for left, right in pieces
+                if left > max(clause.end for clause in clauses)
+                and not any(left <= clause.start < right for clause in clauses)]
+    requests = [(left, right, action) for left, right, action in requests if action]
+    if not requests:
+        return clauses
+    if engine is None or len(requests) != 1 or len(clauses) != 1:
+        raise SourceConstraintError('source_binding_ambiguous')
+    left, right, action = requests[0]
+    clause = clauses[0]
+    if left <= clause.end or clause.target_binding:
+        raise SourceConstraintError('source_binding_ambiguous')
+    target = question[left + action.end():right].strip()
+    year = re.match(r'(?P<year>\d{4})年(?:的)?', target)
+    target_year = int(year.group('year')) if year else None
+    if year:
+        target = target[year.end():]
+    # Consume one literal schema-index entity only at the beginning. An
+    # unknown business modifier stays in the complete target noun and rejects.
+    slots = engine.analyze_slots(target)
+    values = [value for value in slots.get('values', []) if value.start == 0 and getattr(value, 'via', '') == 'exact']
+    entity = None
+    if values:
+        if len({(value.table, value.column, value.value) for value in values}) != 1:
+            raise SourceConstraintError('source_binding_ambiguous')
+        value = values[0]
+        entity = {'table': value.table, 'column': value.column, 'value': value.value}
+        target = target[value.end:]
+        suffix = re.match(r'(?:地区|区域)?(?:的)?', target)
+        target = target[suffix.end():]
+        source_values = {(item.table, item.column, item.value)
+                         for item in engine.analyze_slots(clause.text).get('values', [])}
+        if (value.table, value.column, value.value) not in source_values:
+            raise SourceConstraintError('source_binding_ambiguous')
+    target = target.strip()
+    if not target or len(target) > 128 or _DATABASE.search(target) or _DOCUMENT.search(target):
+        raise SourceConstraintError('source_scope_unverified')
+    binding = _verified_formula_target(target, clause, engine, proofs)
+    binding.update({'range': (left, right), 'target_id': f'target:{left}:{right}',
+                    'source_clause_ids': (clause.id,), 'target_year': target_year,
+                    'target_entity': entity, 'placement': 'explicit_postfix_calculation'})
+    return [SourceClause(clause.id, clause.start, clause.end, clause.text, clause.role,
+                         (*clause.qualifier_ranges, (left, right)), binding, clause.document_search_ranges)]
+
+
 def extract_source_clauses(question, schema, *, engine=None, verified_formula_targets=(),
                            verified_document_search_ranges=()):
     """Extract literal DB/table spans; never use the model's effective text.
@@ -362,6 +414,7 @@ def extract_source_clauses(question, schema, *, engine=None, verified_formula_ta
     if not clauses:
         raise SourceConstraintError('source_scope_unverified')
     clauses = _attach_reverse_target_scope(question, clauses, pieces, engine, verified_formula_targets)
+    clauses = _attach_postfix_formula_target(question, clauses, pieces, engine, verified_formula_targets)
     ranges = []
     for item in verified_document_search_ranges:
         if (not isinstance(item, (tuple, list)) or len(item) != 2

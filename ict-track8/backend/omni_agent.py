@@ -38,7 +38,7 @@ document由后续检索与有依据回答模块处理，不要为document额外�
 sql: {question:自然语言或由字符串与引用组成的数组}，禁止raw SQL。
 SQL工具的question应是简短业务问题，如“2025年华东地区销售额和订单数”，不含输出列命名指令、SQL函数或ISO日期区间说明。
 不得替用户新增“去重、按交易日期分组”等统计口径；只保留用户明确要求的聚合、分组与过滤。
-search: {query:自然语言或字符串与引用数组}。
+search: {query:自然语言或字符串与引用数组,document_id:可选真实文档ID,page_no:可选1-based整数页码}。document_id只能使用documents中真实存在的字面ID，不得省略用户指定来源；page_no必须同时指定PDF document_id且在有效页范围内，不填null、不使用引用或猜测页码。
 search_fact: {evidence:引用search整个结果,scope:适用对象,label:事实要素,unit:显式单位}；
 例如scope="紧急工单",label="首次响应",unit="小时"，返回可溯源value/unit等；缺失或冲突时停止。
 document_formula: {document_id,label}；返回 expression/parameters/source_uri/locator。

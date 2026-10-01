@@ -87,7 +87,12 @@ def _physical_rows(rows, columns, bindings):
 
 
 def _reference_and_target(task):
-    if set(task['args']) != {'query'} or not isinstance(task['args']['query'], list):
+    from .search_scope import validate_search_args, SearchScopeError
+    try:
+        validate_search_args(task['args'])
+    except SearchScopeError:
+        _reject()
+    if not isinstance(task['args']['query'], list):
         _reject()
     parts = task['args']['query']
     refs = [part for part in parts if isinstance(part, dict)]

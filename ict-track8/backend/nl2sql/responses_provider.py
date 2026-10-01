@@ -61,6 +61,8 @@ INSTRUCTIONS += """
 verified_intent 是服务端从原始用户问题、真实值索引和业务词典独立提取的显式约束，不是可执行计划。
 你仍须根据问题和Schema独立提出完整plan，且服务器会再次验证字段、安全、语义和这些约束。
 明确metrics的table/column/function/label必须保留；COUNT不能擅自改成COUNT_DISTINCT，不能改业务展示标签。
+verified_intent.metrics明确提供的missing、unit、currency及指标局部filters同样属于来源契约，必须保留。
+missing=null表示遵循SQL原生空值语义，不能擅自改成zero；只有明确零填充业务口径才使用missing=zero。
 明确filters必须完整保留真实value和operator，RANGE必须保持[start,end)半开边界，不能换BETWEEN。
 dimensions为空表示未确认分组，不得把日期过滤误当日期分组；保留已确认时间粒度。
 只引用有依据的槽位，不得从clarification_code中猜测缺失值；口径缺失需保持不确定性。

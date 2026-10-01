@@ -82,6 +82,23 @@ def test_related_chart_with_missing_annotation_never_falls_back(tmp_path):
     assert result['trace'][0]['scope_rejections']
 
 
+def test_missing_year_clarifies_without_text_generation(tmp_path):
+    store, client = setup(tmp_path)
+    result = store.answer('What is the value of Alpha?', document_id='chart')
+    assert result['status'] == 'incomplete' and not client.calls
+    assert result['trace'][0]['scope_rejections'][0]['reason'] == 'chart_lookup_requires_one_explicit_year'
+
+
+def test_parser_budget_failure_returns_structured_incomplete(tmp_path, monkeypatch):
+    store, client = setup(tmp_path)
+    def fail(*args, **kwargs):
+        raise ValueError('chart_native_parser_budget_exceeded')
+    monkeypatch.setattr('backend.visual_chart_routing.extract_pdf_charts', fail)
+    result = store.answer('What is the value of Alpha in 2023?', document_id='chart')
+    assert result['status'] == 'incomplete' and not client.calls
+    assert result['clarification_code'] == 'chart_native_parser_failed_or_over_budget'
+
+
 @pytest.mark.parametrize('year,fail,code', [(2025, False, 'chart_visual_selection_scope_mismatch'),
                                           (2023, True, 'chart_visual_model_unavailable')])
 def test_failed_visual_key_does_not_authorize_native_value(tmp_path, year, fail, code):

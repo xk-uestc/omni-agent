@@ -53,6 +53,12 @@ class DependencyAgent:
                 raise DependencyPlanError('任务结构或 ID 非法')
             if task['id'] in by_id or task['tool'] not in self.TOOLS or not isinstance(task['args'], dict):
                 raise DependencyPlanError('任务重复或工具未授权')
+            if task['tool'] == 'search':
+                from .search_scope import validate_search_args, SearchScopeError
+                try:
+                    validate_search_args(task['args'], self.knowledge_store)
+                except SearchScopeError as exc:
+                    raise DependencyPlanError(str(exc)) from exc
             by_id[task['id']] = task
         dependencies = {key: self.references(task['args']) for key, task in by_id.items()}
         if any(not refs <= by_id.keys() for refs in dependencies.values()):
@@ -367,12 +373,18 @@ class DependencyAgent:
                 'ambiguous_addresses_not_exposed': ambiguous}
             return result
         if tool == 'search':
-            if set(args) != {'query'}:
-                raise DependencyPlanError('检索工具只接受 query')
-            hits = self.knowledge_store.search(self.text(args['query']), top_k=4)
+            from .search_scope import validate_search_args, verify_search_hits, SearchScopeError
+            try:
+                kwargs, scope = validate_search_args(args, self.knowledge_store, resolved=True)
+                hits = self.knowledge_store.search(self.text(args['query']), top_k=4, **kwargs)
+                verify_search_hits(hits, scope)
+                if scope['document_id'] is not None:
+                    self.knowledge_store.verify_source(scope['document_id'], expected_sha256=scope['source_sha256'])
+            except SearchScopeError as exc:
+                raise DependencyPlanError(str(exc)) from exc
             if not hits:
                 raise DependencyPlanError('没有文档证据')
-            return {'hits': [hit.to_dict() for hit in hits]}
+            return {'hits': [hit.to_dict() for hit in hits], 'search_scope': scope}
         if tool == 'search_fact':
             from .evidence_fact import extract_search_fact
             if set(args) != {'evidence', 'scope', 'label', 'unit'}:
