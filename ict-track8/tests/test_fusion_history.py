@@ -11,6 +11,7 @@ from backend.omni_agent import OmniAgent
 from backend.session import ConversationStore
 from backend.fusion_history import resolve_fusion_followup
 from backend.fusion_constraints import SourceConstraintError
+from backend.dependency_agent import DependencyAgent
 
 
 FIRST = '按指标公式文档计算2025年华东地区客单价，销售额和订单数从数据库取。'
@@ -123,8 +124,10 @@ def test_model_cannot_switch_verified_document_in_followup(agent):
 
 
 @pytest.mark.parametrize('mutation', ['label', 'column', 'year'])
-def test_same_documents_cannot_authorize_changed_parameter_contracts(agent, mutation):
+def test_same_documents_cannot_authorize_changed_parameter_contracts(agent, mutation, monkeypatch):
     assert agent.query(FORECAST, session_id='bindings')['status'] == 'ok'
+    monkeypatch.setattr(DependencyAgent, 'run',
+                        lambda *args, **kwargs: pytest.fail('Changed parameter contract reached tool execution'))
     original = agent.client.generate
     def changed(*args, **kwargs):
         plan = original(*args, **kwargs)
@@ -140,8 +143,16 @@ def test_same_documents_cannot_authorize_changed_parameter_contracts(agent, muta
     agent.client.generate = changed
     result = agent.query('那华南2026年的目标呢，基准还是2025年，增长率取该地区Excel？', session_id='bindings')
     assert result['status'] == 'clarification'
-    assert result['result']['clarification_code'] == 'fusion_followup_document_binding_changed'
-    assert result['result']['results'] == {}
+    assert not result['state'].get('fusion_context')
+    if mutation == 'year':
+        # No source row has that year: the literal tool contract now rejects
+        # the plan before inherited binding validation or any DAG execution.
+        assert result['trace'][0]['rejection_code'] == 'document_cell_static_selection_unverified'
+        assert all(attempt['errors'] == ['document_cell_static_selection_unverified']
+                   for attempt in result['trace'][0]['attempts'])
+    else:
+        assert result['result']['clarification_code'] == 'fusion_followup_document_binding_changed'
+        assert result['result']['results'] == {}
 
 
 def test_entity_substring_in_document_title_is_not_replaced(agent):

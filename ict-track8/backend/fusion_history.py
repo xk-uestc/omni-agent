@@ -40,14 +40,28 @@ def resolve_fusion_followup(question, history, engine, knowledge):
         return question, audit, None
     previous = history[-1]
     state = previous.state or {}
-    if state.get('route') != 'fusion':
+    pending = state.get('pending_fusion_scope')
+    recovering = pending is not None
+    if state.get('route') != 'fusion' and not recovering:
         return question, audit, None
     if _self_contained_sql(question, engine):
         audit['reason'] = 'server_verified_self_contained_sql'
         return question, audit, None
-    saved = state.get('fusion_context')
-    if not saved or saved.get('status') != 'verified':
-        raise SourceConstraintError('fusion_history_unverified')
+    if recovering:
+        # A planning/execution failure still has a literal user request. It
+        # supplies text for conservative slot replacement, never evidence,
+        # document contracts, SQL defaults or an earlier successful turn.
+        if (not isinstance(pending, dict) or set(pending) != {'status', 'scope_question'}
+                or pending.get('status') != 'user_text_only'
+                or not isinstance(pending.get('scope_question'), str)
+                or not 1 <= len(pending['scope_question']) <= 1000
+                or pending['scope_question'] != previous.effective_question):
+            raise SourceConstraintError('fusion_history_unverified')
+        saved = {'scope_question': pending['scope_question'], 'documents': {}, 'source_bindings': []}
+    else:
+        saved = state.get('fusion_context')
+        if not saved or saved.get('status') != 'verified':
+            raise SourceConstraintError('fusion_history_unverified')
     scope = saved['scope_question']
     documents = saved.get('documents', {})
     for document_id, digest in documents.items():
@@ -92,6 +106,10 @@ def resolve_fusion_followup(question, history, engine, knowledge):
         if not new_years <= old_years:
             raise SourceConstraintError('fusion_followup_time_ambiguous')
         if len(old_years) > 1:
+            if recovering:
+                # No executed bindings exist to distinguish baseline and
+                # target slots. Their assignment cannot be guessed.
+                raise SourceConstraintError('fusion_followup_time_ambiguous')
             baseline_years = {year for binding in saved.get('source_bindings', [])
                               for year in re.findall(r'(?:19|20)\d{2}(?=年)', binding['text'])}
             target_years = old_years - baseline_years
@@ -118,10 +136,14 @@ def resolve_fusion_followup(question, history, engine, knowledge):
         raise SourceConstraintError('fusion_followup_unsupported')
     if len(scope) > 1000:
         raise SourceConstraintError('fusion_history_unverified')
-    audit = {'mode': 'server_verified_fusion_followup', 'actual_question': question,
+    audit = {'mode': ('server_resolved_pending_fusion_scope' if recovering else 'server_verified_fusion_followup'),
+             'actual_question': question,
              'previous_actual_question': previous.question, 'base_scope_question': saved['scope_question'],
              'scope_question': scope, 'replacements': replacements, 'document_versions': documents,
              'preserved_temporal_scope': sorted(old_years)}
+    if recovering:
+        audit['verification'] = 'user_text_slot_replacement_only_requires_fresh_source_validation'
+        return scope, audit, None
     inherited = deepcopy(saved)
     for contract in inherited.get('document_tasks', []):
         if contract['tool'] == 'document_cell':

@@ -300,10 +300,12 @@ class KnowledgeStore:
         with self.connect() as connection:
             rows = connection.execute('SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id) ORDER BY c.rowid').fetchall()
         records = []
+        from .answer_contract import substantive_numbered_heading
         for payload, title in rows:
             chunk = json.loads(payload)
             # Image resource placeholders and empty OCR outputs are never answer evidence.
-            if not chunk['text'].strip() or chunk['content_type'] in {'image', 'heading'}:
+            if (not chunk['text'].strip() or chunk['content_type'] == 'image'
+                    or chunk['content_type'] == 'heading' and not substantive_numbered_heading(chunk['text'])):
                 continue
             document_id = chunk['document_id']
             records.append(DocumentRecord(chunk['chunk_id'], title, chunk['text'],
@@ -341,6 +343,17 @@ class KnowledgeStore:
             if not records:
                 return []
         contents = {record.document_id: record.content for record in records}
+        from .answer_contract import body_answer_affinity, substantive_numbered_heading
+        navigation_contents = dict(contents)
+        for previous, record in zip(records, records[1:]):
+            left = re.fullmatch(r'page:(\d+):(?:block|heading):(\d+)', previous.metadata.get('source_locator', ''))
+            right = re.fullmatch(r'page:(\d+):(?:block|heading):(\d+)', record.metadata.get('source_locator', ''))
+            if (left and right and previous.metadata['document_id'] == record.metadata['document_id']
+                    and left[1] == right[1] and int(right[2]) == int(left[2]) + 1
+                    and substantive_numbered_heading(previous.content)):
+                # Adjacency changes navigation only. It cannot join facts or
+                # authorize a continuation; native source replay owns that.
+                navigation_contents[record.document_id] = previous.content + '\n' + record.content
         page_coverage = _page_scope_coverage(records, query)
         hits = JsonDocumentRetriever(records).search(query, top_k=max(20, top_k * 5), candidate_limit=100)
         # Explicit years/numbers are grounding anchors. Title matches alone cannot satisfy them.
@@ -349,7 +362,8 @@ class KnowledgeStore:
             anchor_matches = sum(bool(re.search(r'(?<!\d)' + re.escape(anchor) + r'(?!\d)', contents[hit.document_id])) for anchor in anchors)
             raw = float(hit.metadata.get('rrf_score', hit.metadata.get('bm25_raw', 0)))
             coverage = page_coverage.get((hit.metadata['document_id'], hit.metadata.get('page_no')), 0)
-            return raw * (1 + 0.35 * anchor_matches) * (1 + 2 * coverage), anchor_matches
+            affinity = body_answer_affinity(query, navigation_contents[hit.document_id])
+            return raw * (1 + 0.35 * anchor_matches) * (1 + 2 * coverage) * affinity, anchor_matches
         hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
         query_language = ('en' if not re.search(r'[\u3400-\u9fff]', query)
                           and len(re.findall(r'[A-Za-z]{2,}', query)) >= 3 else 'zh_or_mixed')
@@ -378,6 +392,8 @@ class KnowledgeStore:
                      'strategy': 'lexical_unsupported_encoder_language' if unsupported_language else 'configured_retrieval'},
                  'page_scope_coverage': page_coverage.get((source, hit.metadata.get('page_no')), 0),
                  'page_scope_method': 'body_only_idf_coverage_rerank_not_generation_evidence',
+                 'question_shape_navigation': {'method': 'generic_purpose_body_affinity_not_semantic_proof',
+                     'body_affinity': body_answer_affinity(query, navigation_contents[hit.document_id])},
                  'identifier_anchors': list(identifiers), 'evidence_role': role,
                  'evidence_selection': {
                      'method': coverage_selection.audit['method'],
@@ -457,6 +473,13 @@ class KnowledgeStore:
                 if attempts:
                     result['generation_attempts'] = attempts
                     result['generation_repaired'] = False
+                    if attempts[-1].get('error_category') == 'incomplete_question_answer':
+                        # Keep the attributed source excerpts visible, but a
+                        # repeated subject title is not a completed answer.
+                        # A later independently reviewed source answer may
+                        # still recover this status using the same evidence.
+                        result['status'] = 'insufficient_evidence'
+                        result['answer_completeness'] = 'subject_only_answer_not_complete'
                 result['trace'].append({'stage': 'grounded_generation', 'status': 'unavailable_or_invalid', 'fallback': 'attributed_extracts'})
             finally:
                 # Neither a successful answer nor an extractive fallback may
@@ -492,11 +515,14 @@ class KnowledgeStore:
                             result.update(status='ok', answer=source_span['answer_value'], claims=[],
                                 answer_mode='source_span_model_reviewed',
                                 answer_strategy='evidence_first_literal_source_span', answer_span_result=source_span)
+                            result.pop('answer_completeness', None)
                         result['trace'].append({'stage': 'evidence_first_source_span',
                             'status': 'model_reviewed' if verified else 'source_replay_failed'
                                 if source_span['status'] == 'model_reviewed' else source_span['status'],
                             'reason': source_span.get('reason'), 'model_audits': source_span['model_audits'],
                             'evidence_contract': 'raw_source_only_no_validated_facts'})
+                        if source_span.get('literal_error_code') is not None:
+                            result['trace'][-1]['literal_error_code'] = source_span['literal_error_code']
                     finally:
                         self._verify_citation_sources(result['citations'])
                         self._verify_generation_chunks(generation_citations)
@@ -593,6 +619,7 @@ class KnowledgeStore:
         and rankings stay unchanged; model input has its own source ledger.
         """
         self._verify_citation_sources(citations)
+        from .answer_contract import substantive_numbered_heading
         selected, omitted, total, originals = [], [], 0, {}
         with self.connect() as connection:
             for hit in citations:
@@ -612,7 +639,9 @@ class KnowledgeStore:
                         or not hit['snippet'].strip() or hit['snippet'] not in chunk['text']):
                     raise SourceIntegrityError('检索摘录与权威切片或来源不一致。')
                 reason = None
-                native_eligible = (chunk['modality'] == 'pdf' and chunk['content_type'] == 'paragraph'
+                native_eligible = (chunk['modality'] == 'pdf'
+                                   and (chunk['content_type'] == 'paragraph'
+                                       or chunk['content_type'] == 'heading' and substantive_numbered_heading(chunk['text']))
                                    and not chunk['metadata'].get('ocr_status'))
                 if (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
                         and not _verified_pdf_row(chunk)):

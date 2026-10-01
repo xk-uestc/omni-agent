@@ -41,7 +41,7 @@ _AGGREGATE_CUES = (
     (("最低值", "最小值", "单笔最低", "单次最低"), "MIN", "最低"),
     (("总计", "总和", "合计"), "SUM", "总"),
 )
-_AVERAGE_THRESHOLD_RE = re.compile(r"(?:高于|超过|大于|低于|小于|不低于|不高于)(?:整体|全部|总体)?(?:的)?平均")
+_AVERAGE_THRESHOLD_RE = lexicon.AVERAGE_THRESHOLD_RE
 _TREND_WORDS = ("趋势", "按月", "按年", "按日期", "每天", "每月", "每年", "按季度")
 _GENERIC_TIME_ALIASES = GENERIC_TIME_ALIASES
 _MAX_LIMIT = 100
@@ -265,7 +265,8 @@ class SingleTablePlanner:
             plan.dimension_transforms,
             plan.dimension_labels,
         ) = self._choose_dimensions(dimension_links, normalized, table, plan.metric_column, links, tables=tables)
-        for grain, cues in (('month', ('按月', '每月')), ('year', ('按年', '每年'))):
+        for grain, cues in (('month', ('按月', '每月', '月份', '月度')),
+                            ('year', ('按年', '每年', '年份', '年度'))):
             if grain in plan.dimension_transforms.values():
                 consumed.extend(cue for cue in cues if cue in normalized)
 
@@ -461,7 +462,8 @@ class SingleTablePlanner:
                         (f.operator == "=" or f.operator == "IN" and len(f.value) == 1) for f in plan.filters)
             aliases = [normalize_text(link.matched_alias) for link in links
                        if link.table == target_table and link.column == dimension and link.role == "dimension"]
-            explicit_dimension = any(re.search(r"(?:按|各|每个|每|分别按)" + re.escape(alias), normalized) for alias in aliases)
+            explicit_dimension = ((target_table, dimension) in group_fields(normalized, tables)
+                or any(re.search(r"(?:按|各|每个|每|分别按)" + re.escape(alias), normalized) for alias in aliases))
             if fixed and not explicit_dimension:
                 plan.dimensions.remove(dimension)
                 plan.dimension_tables.pop(dimension, None)
@@ -471,9 +473,13 @@ class SingleTablePlanner:
         # ---- 阈值
         threshold = lexicon.parse_threshold(normalized)
         if threshold:
-            consumed.append(threshold.span)
             if not plan.dimensions:
                 return self._clarify(plan, "missing_analysis_dimension", "阈值或“高于平均”需要按某个维度分组比较，请补充分组维度。", 0.35, self._dimension_options(tables))
+            if (threshold.mode == 'scalar_avg'
+                    and not self._group_average_reference_grounded(threshold.reference, plan, tables)):
+                return self._clarify(plan, 'unverified_average_scope',
+                    '平均比较基准未能绑定到当前分组及同一指标，请明确分组、指标和过滤范围。', .3)
+            consumed.append(threshold.span)
             plan.having = HavingSpec(
                 threshold.operator, threshold.mode, threshold.value, threshold.span,
                 "与各分组聚合值的平均比较" if threshold.mode == "scalar_avg" else f"聚合值 {threshold.operator} {threshold.value:g}",
@@ -545,6 +551,25 @@ class SingleTablePlanner:
 
         # ---- 覆盖率守卫
         consumed.extend(self._selected_schema_subjects(clean_question, plan, tables))
+        # A named physical field and its unique schema-derived alias can both
+        # occur in one question. Consume all proved aliases of selected slots,
+        # not just the linker's longest display match. Ambiguous aliases stay.
+        selected = {(plan.metric_table or plan.table, plan.metric_column)}
+        selected.update((plan.dimension_tables.get(column, plan.table), column) for column in plan.dimensions)
+        selected.update((metric.table, metric.column) for metric in plan.metrics)
+        aliases_by_owner = {}
+        available = {(table.name, column.name) for table in tables for column in table.columns}
+        for rule in self.linker.rules_for(tables):
+            if (rule.table, rule.column) not in available:
+                continue
+            for alias in rule.aliases:
+                aliases_by_owner.setdefault(normalize_text(alias), set()).add((rule.table, rule.column))
+        consumed.extend(alias for alias, owners in aliases_by_owner.items()
+                        if alias and owners <= selected and len(owners) == 1 and alias in normalized)
+        if plan.metric_column and plan.metric_function and '计算' in normalized:
+            consumed.append('计算')
+        if plan.having and plan.dimensions:
+            consumed.extend(word for word in ('只返回', '返回', '及其', '和其', '与其') if word in normalized)
         # Presentation verbs are harmless only after the requested selection
         # operation was actually represented. Keep the rank/Top-N predicate.
         if plan.dimensions and (plan.top_n is not None or plan.analysis_mode == 'rank'):
@@ -1223,18 +1248,17 @@ class SingleTablePlanner:
             if link.column.lower().replace("_", "").endswith("id") and any(word in link.matched_alias for word in ("数", "数量", "笔", "量")):
                 function = "COUNT" if link.table == table.name and '去重' not in question else "COUNT_DISTINCT"
                 return link.table, link.column, function, label
-            average_threshold = _AVERAGE_THRESHOLD_RE.search(question)
+            aggregate_text = _AVERAGE_THRESHOLD_RE.sub('', question)
             explicit_aggregate = next((
                 (function, label_prefix)
                 for cues, function, label_prefix in _AGGREGATE_CUES
-                if any(cue in question for cue in cues)
-                and not (function == "AVG" and average_threshold)
+                if any(cue in aggregate_text for cue in cues)
             ), None)
             if explicit_aggregate:
                 function, label_prefix = explicit_aggregate
                 return link.table, link.column, function, f"{label_prefix}{label}"
-            average_requested = any(word in question for word in ("平均", "均价", "均值", "均分", "平均值"))
-            if average_requested and not average_threshold:
+            average_requested = any(word in aggregate_text for word in ("平均", "均价", "均值", "均分", "平均值"))
+            if average_requested:
                 return link.table, link.column, "AVG", f"平均{label}"
             if link.metric_function:
                 return link.table, link.column, link.metric_function, (
@@ -1243,6 +1267,59 @@ class SingleTablePlanner:
         if any(word in question for word in ("多少订单", "几笔订单", "订单量")) and any(c.name == "order_id" for c in table.columns):
             return table.name, "order_id", "COUNT", "订单数"
         return None
+
+    def _group_average_reference_grounded(self, reference, plan, tables):
+        """Only compare the current groups' same aggregate, never row AVG.
+
+        Scope words are not an authorization to discard a new field, period,
+        filter or aggregation. Bind the entire reference to schema/alias names
+        plus the actual selected aggregate. Multiple dimensions or metrics need
+        a richer explicit comparator contract and remain a clarification here.
+        """
+        if len(plan.dimensions) != 1 or len(plan.metrics) > 1:
+            return False
+        dimension = plan.dimensions[0]
+        dim_table = plan.dimension_tables.get(dimension, plan.table)
+        if (plan.dimension_transforms.get(dimension, 'raw') == 'raw'
+                and any((item.table or plan.table, item.column) == (dim_table, dimension)
+                        for item in [*plan.filters, *(f for m in plan.metrics for f in m.filters)])):
+            # "Only group A, above ALL groups' average" needs an outer group
+            # filter distinct from the comparator's population. Sharing that
+            # filter in the inner CTE would silently compute AVG(A) instead.
+            return False
+        def aliases(table, column):
+            result = {normalize_text(column), normalize_text(f'{table}.{column}')}
+            for rule in self.linker.rules_for(tables):
+                if (rule.table, rule.column) == (table, column):
+                    result.update(normalize_text(alias) for alias in rule.aliases)
+            return result
+        dims = aliases(dim_table, dimension)
+        grain = plan.dimension_transforms.get(dimension, 'raw')
+        if grain in {'month', 'year'}:
+            grain_names = {'month': ('月份', '月度'), 'year': ('年份', '年度')}[grain]
+            # A transformed date group is not a daily/raw-date population.
+            # The comparator must declare the same grain, not just a field.
+            dims = {name for name in grain_names} | {
+                field + joiner + name for field in dims
+                for joiner in ('', '的') for name in grain_names}
+        metrics = aliases(plan.metric_table or plan.table, plan.metric_column)
+        cues = {cue for words, function, _ in _AGGREGATE_CUES
+                if function == plan.metric_function for cue in words}
+        # Exact schema/alias coverage: an unmatched noun or changed function
+        # cannot vanish inside a broad average-threshold regular expression.
+        # Short forms still use the current group population; they cannot
+        # bypass the same dimension/filter guards checked above.
+        if reference is None:
+            return True
+        value = reference.removesuffix('的')
+        for dim in dims:
+            for metric in metrics:
+                for cue in cues:
+                    for joiner in ('', '的'):
+                        if value in {dim + joiner + metric + cue,
+                                     dim + joiner + cue + metric}:
+                            return True
+        return value in {'组聚合值', '分组聚合值', '组的聚合值', '分组的聚合值'}
 
     @staticmethod
     def _metric_clause(question, link):

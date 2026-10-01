@@ -250,7 +250,7 @@ class Nl2SqlEngine:
                     repair = getattr(self.model_plan_provider, 'repair', None)
                     blocked = rule_plan.clarification_code in {
                         'ambiguous_metric', 'ambiguous_dimension', 'unverified_join_condition',
-                        'unsupported_exact_rank', 'conflicting_rank_selection'}
+                        'unsupported_exact_rank', 'conflicting_rank_selection', 'unverified_average_scope'}
                     structural = any(marker in str(exc) for marker in (
                         '指标 ID 重复', '指标 ID 或展示列名重复', '指标 ID 无效',
                         'metric.id', 'derived.id', 'output_metric', 'order_metric',
@@ -372,6 +372,7 @@ class Nl2SqlEngine:
             ("extra_having", "增加了问题中没有依据的聚合阈值"),
             ("missing_having", "遗漏了问题中的明确聚合阈值"),
             ("having_mismatch", "聚合阈值与问题不一致"),
+            ("average_scope_unverified", "未核验的平均比较范围"),
             ("extra_dimension", "增加了问题中没有依据的分组维度"),
             ("clarification_bypass", "绕过了明确的分组维度澄清"),
             ("rank_selection_clarification_bypass", "绕过明确的名次选择澄清"),
@@ -433,6 +434,8 @@ class Nl2SqlEngine:
             "unsupported_exact_rank", "conflicting_rank_selection",
         }:
             raise ModelPlanError("模型计划不得绕过明确的名次选择澄清")
+        if rule_plan.clarification_code == 'unverified_average_scope':
+            raise ModelPlanError('模型计划不得绕过未核验的平均比较范围')
         if rule_plan.metrics:
             expected = {(m.table, m.column, m.function) for m in rule_plan.metrics}
             actual = {(m.table, m.column, m.function) for m in plan.metrics}

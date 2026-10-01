@@ -25,6 +25,11 @@ def continuation_state(text):
     # or names into open prose. Inspect only the final unclosed segment.
     tail = re.split(r'[。！？!?]|\.(?=\s|$)', tail)[-1]
     words = re.findall(r'[A-Za-z]+', tail)
+    # A printed block can stop just after the next sentence's noun phrase.
+    # Without this gate, "... complete sentence. The power" looks like a
+    # free-standing table label and loses the following requirement/condition.
+    if 2 <= len(words) <= 4 and re.match(r'^\s*(?:the|this|these|those)\b', tail, re.I):
+        return 'unknown'
     verbal = bool(re.search(r'\b(?:is|are|was|were|has|have|had|does|do|did|'
                           r'can|could|may|might|must|shall|should|will|would)\b', tail, re.I))
     if verbal:
@@ -66,6 +71,8 @@ def enrich_native_line_styles(blocks, page):
             signature = (native['text'], tuple(round(value, 4) for value in native['bbox']))
             matches = by_signature.get(signature, [])
             if len(matches) == 1:
+                native['native_direction'] = tuple(round(float(value), 6)
+                                                   for value in matches[0].get('dir', ()))
                 native['native_style'] = tuple(sorted({
                     (span.get('font'), round(float(span.get('size', 0)), 3), span.get('flags'))
                     for span in matches[0].get('spans', [])}))

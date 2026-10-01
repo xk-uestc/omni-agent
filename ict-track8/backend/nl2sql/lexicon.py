@@ -295,6 +295,10 @@ _OP_WORDS = [
 ]
 _OP_RE = "|".join(re.escape(word) for word, _ in _OP_WORDS)
 _OP_MAP = dict(_OP_WORDS)
+AVERAGE_THRESHOLD_RE = re.compile(
+    r"(?P<operator>" + _OP_RE + r")(?:(?:整体|全部|总体)?(?:的)?平均(?:值|水平)?"
+    r"|(?:所有|全部|各个|每个|各)(?P<reference>[^,;。?!？；<>=]{1,80}?)(?:的)?(?:平均值|平均水平|均值))"
+)
 _MULTIPLIER = {"万": 10_000, "w": 10_000, "亿": 100_000_000, "千": 1000, "k": 1000, None: 1, "": 1}
 
 
@@ -315,12 +319,15 @@ class Threshold:
     value: float | None  # None 表示与平均值比较
     mode: str  # literal | scalar_avg
     span: str
+    # An explicit average-of-groups subject must be bound to the actual
+    # selected dimension and metric before this span may be consumed.
+    reference: str | None = None
 
 
 def parse_threshold(normalized: str) -> Threshold | None:
-    avg = re.search(r"(" + _OP_RE + r")(?:整体|全部|总体)?(?:的)?平均(?:值|水平)?", normalized)
+    avg = AVERAGE_THRESHOLD_RE.search(normalized)
     if avg:
-        return Threshold(_OP_MAP[avg.group(1)], None, "scalar_avg", avg.group(0))
+        return Threshold(_OP_MAP[avg.group('operator')], None, "scalar_avg", avg.group(0), avg.group('reference'))
     match = re.search(r"(" + _OP_RE + r")" + _NUMBER + _UNIT + _TAIL, normalized)
     if match:
         value = parse_number(match.group(2), match.group(3))

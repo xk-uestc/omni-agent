@@ -54,6 +54,37 @@ _PURPOSE = re.compile(r'(?:作为|用作)(?:历史|预测|计算)?(?:基准|基�
                       r'(?:进行|用于)(?:核算|计算|预测)|(?<=计数)计算|(?<=合计)计算')
 _TEMPORAL = re.compile(r'(?<!\d)\d{4}(?:年|[-/]\d{1,2})')
 _TARGET_ROLE = re.compile(r'预测|目标|基准|基数|历史|未来|预计|预估|计划')
+# Unassigned non-document text must be an entire structural/read/output
+# clause, not merely lack a known filter keyword. Unknown business conditions
+# remain unbound even when their values are absent from the schema index.
+_OUTSIDE_STRUCTURE = re.compile(
+    r'\s*(?:请)?(?:'
+    r'(?:先|再|然后)?(?:作为过滤条件)?(?:比较|对比|查询|查|读取|获取|统计)?(?:从|由|用|以|对|与|和|以及)?'
+    r'(?:数据库|数据表|SQL)(?:中|内|里|的)?(?:取|取值|获取|查询|查|读取)?'
+    r'|(?:先|再|然后)?(?:从|由|用|以|对|与|和)'
+    r'|作为(?:输入|参数|基准)'
+    r'|(?:并|再|然后)?(?:作为(?:输入|参数|基准))?(?:进行|用于)?(?:核算|计算|比较|对比)'
+    r'|(?:并|再|然后)?(?:保留|附上|给出|返回|展示|显示|输出)(?:原文)?(?:来源|引用|证据|结果|答案)'
+    r'|(?:是多少|多少|多少钱|几个|几条|几笔|是否|吗|呢))\s*', re.I)
+
+
+def _known_prediction_target(text, engine, clauses):
+    """A separate future target can name a complete known metric, not a filter."""
+    match = re.fullmatch(r'(?:预测|预计|预估)(?:\d{4}年)(?:的)?(.{1,128})', text)
+    if not match:
+        return False
+    metric = engine.extract_required_intent(match.group(1))
+    if (not metric.clarification and not metric.coverage.get('unresolved') and bool(_metrics(metric))
+            and not metric.filters and not metric.dimensions):
+        return True
+    # A short target descriptor (e.g. a prefix of one complete source column)
+    # never defines a new SQL metric. It is allowed only as a literal prefix
+    # of one independently recognized source metric, with no added qualifier.
+    target = normalize_text(match.group(1))
+    matches = {(link.table, link.column) for clause in clauses
+               for link in engine.analyze_slots(clause.text).get('metrics', [])
+               if len(target) >= 2 and normalize_text(link.matched_alias).startswith(target)}
+    return len(matches) == 1
 
 
 def _pieces(question):
@@ -82,8 +113,10 @@ def _outside_ranges(question, clauses):
     for left, right in _pieces(question):
         ranges = [(left, right)]
         for clause in clauses:
+            target_range = (clause.target_binding or {}).get('range')
             for clause_start, clause_end in ((clause.start, clause.end), *clause.qualifier_ranges,
-                                            *clause.document_search_ranges):
+                                            *clause.document_search_ranges,
+                                            *((target_range,) if target_range else ())):
                 remainder = []
                 for start, end in ranges:
                     if clause_end <= start or clause_start >= end:
@@ -630,9 +663,12 @@ def bind_source_constraints(question, tasks, engine, *, verified_formula_targets
     # dictionary. Explicit document/target clauses have separate scopes.
     for start, end in _outside_ranges(question, clauses):
         outside = question[start:end].strip()
-        if outside and not _DOCUMENT.search(outside) and not re.search(r'预测|目标', outside):
+        if outside and not _DOCUMENT.search(outside):
+            if _known_prediction_target(outside, engine, clauses):
+                continue
             slots = engine.analyze_slots(outside)
-            if slots.get('values') or slots.get('dimensions'):
+            if (slots.get('values') or slots.get('dimensions')
+                    or _OUTSIDE_STRUCTURE.fullmatch(outside) is None):
                 raise SourceConstraintError('source_scope_unverified')
     plans = [engine.extract_required_intent(clause.text) for clause in clauses]
     if any(plan.clarification or plan.coverage.get('unresolved') or not _metrics(plan) for plan in plans):

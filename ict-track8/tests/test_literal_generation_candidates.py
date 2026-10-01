@@ -2,7 +2,7 @@
 import pytest
 import json
 
-from backend.grounded_generation import GroundedGenerator, MAX_CANDIDATE_JSON_CHARS
+from backend.grounded_generation import GroundedGenerator, MAX_CANDIDATE_JSON_CHARS, MAX_CLAIM_CHARS
 from backend.responses_client import GenerationError
 
 
@@ -52,8 +52,20 @@ def test_candidate_size_bound_and_no_cross_source_numeric_composition():
 
 
 def test_long_unbroken_fact_is_omitted_without_truncation():
-    source = '若审核完成才允许' + '甲' * 320 + '支付100元'
+    source = '若审核完成才允许' + '甲' * MAX_CLAIM_CHARS + '支付100元'
+    assert len(source) > MAX_CLAIM_CHARS
     assert GroundedGenerator.verbatim_candidates('支付', [evidence(source)]) == []
+
+
+def test_unbroken_fact_at_claim_budget_is_retained_whole():
+    prefix, suffix = '若审核完成才允许', '支付100元'
+    source = prefix + '甲' * (MAX_CLAIM_CHARS - len(prefix) - len(suffix)) + suffix
+    assert len(source) == MAX_CLAIM_CHARS
+    options = GroundedGenerator.verbatim_candidates('支付', [evidence(source)])
+    assert len(options) == 1
+    assert options[0]['text'] == source
+    assert options[0]['support'][0]['quote'] == source
+    assert GroundedGenerator.validate({'abstain': False, 'claims': options}, {1: source})
 
 
 def claim(text, quote):

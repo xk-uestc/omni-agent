@@ -22,7 +22,7 @@ _TEXT_TYPES = ("TEXT", "CHAR", "CLOB", "VARCHAR", "STRING")
 _MEASURE_TOKENS = {
     "age", "amount", "bytes", "cost", "count", "discount", "distance", "duration",
     "hours", "length", "milliseconds", "price", "profit", "quantity", "qty", "rating",
-    "revenue", "salary", "score", "tax", "total", "weight",
+    "revenue", "salary", "score", "stock", "tax", "total", "weight",
 }
 
 
@@ -69,6 +69,7 @@ _TOKEN_ALIASES: dict[str, tuple[str, ...]] = {
     "address": ("地址",),
     "artist": ("艺术家", "歌手", "艺人"),
     "bytes": ("字节数", "文件大小"),
+    "category": ("类别", "分类", "品类"),
     "city": ("城市",),
     "composer": ("作曲家", "作曲者"),
     "country": ("国家",),
@@ -90,6 +91,7 @@ _TOKEN_ALIASES: dict[str, tuple[str, ...]] = {
     "quantity": ("数量", "件数", "销量"),
     "rating": ("评分",),
     "status": ("状态",),
+    "stock": ("库存",),
     "title": ("标题",),
     "total": ("总额", "总金额"),
     "unitprice": ("单价", "价格"),
@@ -136,7 +138,7 @@ def _default_metric_function(tokens: tuple[str, ...], primary_key: bool) -> str 
         return "COUNT_DISTINCT"
     if any(token in {"age", "duration", "hours", "length", "milliseconds", "price", "rating", "salary", "score"} for token in tokens):
         return "AVG"
-    if any(token in {"amount", "bytes", "count", "discount", "profit", "quantity", "qty", "revenue", "tax", "total", "weight"} for token in tokens):
+    if any(token in {"amount", "bytes", "count", "discount", "profit", "quantity", "qty", "revenue", "stock", "tax", "total", "weight"} for token in tokens):
         return "SUM"
     return None
 

@@ -1,0 +1,102 @@
+{
+  "scope": "paired_exposed_synthetic_core_development_suite_not_official_accuracy",
+  "baseline": {
+    "report": "REAL_MODEL_CORE_ROUND3_RELEASE_20261002.json",
+    "sha256": "f857a65cc24a9759d210616936fe74da705693ad203b31bfbc86d10e64f865f2",
+    "passed": 41,
+    "total": 44
+  },
+  "release": {
+    "report": "REAL_MODEL_CORE_ROUND4_ACCEPTANCE_20261002.json",
+    "sha256": "ae2183497a73b119b25ad81f51d6ba21026d5f93cb4ffffff6342673d9e5c674",
+    "passed": 43,
+    "total": 44
+  },
+  "cases_sha256": "21a19d31ca58a3155245c9d006295d186710e6c180cad758501c7c63193150bb",
+  "database_sha256": "f3e34a247bdc35966fb643892bd0c65b055560050a0a11e86ee37c34c339f294",
+  "same_inputs_verified": true,
+  "complete_unique_case_ids_verified": true,
+  "better_cases": 2,
+  "worse_cases": 0,
+  "changes": [
+    {
+      "id": "qa-04",
+      "before_pass": false,
+      "after_pass": false,
+      "before_checks": {
+        "model_router": false,
+        "status": true,
+        "route": true,
+        "real_generation": true,
+        "required_source_and_facts": true,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "after_checks": {
+        "model_router": true,
+        "status": true,
+        "route": true,
+        "real_generation": false,
+        "required_source_and_facts": false,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      }
+    },
+    {
+      "id": "cross-turn-1",
+      "before_pass": false,
+      "after_pass": true,
+      "before_checks": {
+        "model_router": false,
+        "status": false,
+        "route": false,
+        "history": true,
+        "value": false,
+        "actual_dependencies": false,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "after_checks": {
+        "model_router": true,
+        "status": true,
+        "route": true,
+        "history": true,
+        "real_sql_planner": true,
+        "value": true,
+        "actual_dependencies": true,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      }
+    },
+    {
+      "id": "cross-turn-2",
+      "before_pass": false,
+      "after_pass": true,
+      "before_checks": {
+        "model_router": true,
+        "status": false,
+        "route": true,
+        "history": true,
+        "value": false,
+        "actual_dependencies": false,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "after_checks": {
+        "model_router": true,
+        "status": true,
+        "route": true,
+        "history": true,
+        "real_sql_planner": true,
+        "value": true,
+        "actual_dependencies": true,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      }
+    }
+  ],
+  "limitations": [
+    "One run per version does not separate model variation from causal program changes.",
+    "All failed checks and every regression retained. No contest score conversion."
+  ]
+}

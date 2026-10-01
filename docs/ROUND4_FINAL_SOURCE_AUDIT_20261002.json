@@ -1,0 +1,309 @@
+{
+  "scope": "saved_fixed_source_fourth_round_acceptance_not_overall_goal_completion",
+  "common_backend_source_files_checked": 75,
+  "all_final_runs_have_same_common_backend_scope": true,
+  "reports": {
+    "core": {
+      "report": "REAL_MODEL_CORE_ROUND4_ACCEPTANCE_20261002.json",
+      "sha256": "ae2183497a73b119b25ad81f51d6ba21026d5f93cb4ffffff6342673d9e5c674",
+      "source_files_checked": 79,
+      "stable_and_matches_current_execution_scope": true,
+      "full_backend_matches_current_source": true,
+      "full_source_mismatches": [],
+      "excluded_execution_scope": [],
+      "exclusion_reason": null,
+      "metrics": {
+        "passed": 43,
+        "total": 44
+      },
+      "api_summary": {
+        "calls": 113,
+        "retained_calls": 113,
+        "dropped_calls": 0,
+        "completed_calls": 113,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 467210,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 21631,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 488841,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 17920,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 9679,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 713309.766,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    "northwind": {
+      "report": "NORTHWIND_ROUND4_ACCEPTANCE_20261002.json",
+      "sha256": "2cc6b53b039a3deb594015d93bf299c09c1f380b3e7a7436ff7f65c81bcb7323",
+      "source_files_checked": 79,
+      "stable_and_matches_current_execution_scope": true,
+      "full_backend_matches_current_source": true,
+      "full_source_mismatches": [],
+      "excluded_execution_scope": [],
+      "exclusion_reason": null,
+      "metrics": {
+        "passed": 16,
+        "total": 16
+      },
+      "api_summary": {
+        "calls": 16,
+        "retained_calls": 16,
+        "dropped_calls": 0,
+        "completed_calls": 16,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 76217,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 5075,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 81292,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 23040,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 2324,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 146583.557,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    "rag_exposed": {
+      "report": "OHR_ROUND4_EXPOSED_FINAL_20261002.json",
+      "sha256": "2a330dc718710e2dc23df96871d2a4f002feacb6e4ba2873d9549ae56a7b4da3",
+      "source_files_checked": 77,
+      "stable_and_matches_current_execution_scope": true,
+      "full_backend_matches_current_source": false,
+      "full_source_mismatches": [
+        "ict-track8/backend/fusion_constraints.py",
+        "ict-track8/backend/omni_agent.py"
+      ],
+      "excluded_execution_scope": [
+        "ict-track8/backend/fusion_constraints.py",
+        "ict-track8/backend/omni_agent.py"
+      ],
+      "exclusion_reason": "OHR evaluator calls KnowledgeStore directly, without Omni planning or fusion source binding.",
+      "metrics": {
+        "attempted": 18,
+        "normalized_exact_matches": 4,
+        "mean_english_token_f1": 0.407031
+      },
+      "api_summary": {
+        "calls": 61,
+        "retained_calls": 61,
+        "dropped_calls": 0,
+        "completed_calls": 61,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 208474,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 10256,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 218730,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 55296,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 5510,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 357676.453,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    "rag_second": {
+      "report": "OHR_ROUND4_SECOND_FINAL_20261002.json",
+      "sha256": "e0424db4e8e7ae7bebf2ffc45c4640a8b54327189c85d0f14d4ef6e21a44ca4f",
+      "source_files_checked": 77,
+      "stable_and_matches_current_execution_scope": true,
+      "full_backend_matches_current_source": false,
+      "full_source_mismatches": [
+        "ict-track8/backend/fusion_constraints.py",
+        "ict-track8/backend/omni_agent.py"
+      ],
+      "excluded_execution_scope": [
+        "ict-track8/backend/fusion_constraints.py",
+        "ict-track8/backend/omni_agent.py"
+      ],
+      "exclusion_reason": "OHR evaluator calls KnowledgeStore directly, without Omni planning or fusion source binding.",
+      "metrics": {
+        "attempted": 18,
+        "normalized_exact_matches": 5,
+        "mean_english_token_f1": 0.340822
+      },
+      "api_summary": {
+        "calls": 46,
+        "retained_calls": 46,
+        "dropped_calls": 0,
+        "completed_calls": 46,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 123344,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 7963,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 131307,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 8960,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 4776,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 293112.807,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    "rag_new_documents": {
+      "report": "OHR_ROUND4_UNSEEN_FINAL_20261002.json",
+      "sha256": "e3baafb8861a52663dae82547f1f4fddac706a8e25edfdb0ea153b5ea5f617c4",
+      "source_files_checked": 77,
+      "stable_and_matches_current_execution_scope": true,
+      "full_backend_matches_current_source": true,
+      "full_source_mismatches": [],
+      "excluded_execution_scope": [
+        "ict-track8/backend/fusion_constraints.py",
+        "ict-track8/backend/omni_agent.py"
+      ],
+      "exclusion_reason": "OHR evaluator calls KnowledgeStore directly, without Omni planning or fusion source binding.",
+      "metrics": {
+        "attempted": 18,
+        "normalized_exact_matches": 3,
+        "mean_english_token_f1": 0.259798
+      },
+      "api_summary": {
+        "calls": 50,
+        "retained_calls": 50,
+        "dropped_calls": 0,
+        "completed_calls": 50,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 166543,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 10020,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 176563,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 22272,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 6323,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 363590.061,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    }
+  },
+  "local_regression": {
+    "report": "LOCAL_REGRESSION_ROUND4_ACCEPTANCE_20261002.json",
+    "sha256": "90f3007b19bb32aab4fc2a90f40d7cc154ddb35f09dfeab571e81e295806e7d7",
+    "created_at": "2026-10-01T20:35:31.742596+00:00",
+    "scope": "complete_local_contract_regression_not_model_accuracy",
+    "model_called": false,
+    "command": "python -m pytest ict-track8/tests -q",
+    "exit_code": 0,
+    "duration_seconds": 137.375,
+    "environment": {
+      "python": "3.12.10",
+      "platform": "Windows-11-10.0.26200-SP0"
+    },
+    "passed": 2504,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "ok": true
+  },
+  "retained_api_calls": 286,
+  "completed_api_calls": 286,
+  "failed_api_calls": 0,
+  "reported_total_tokens": 1096733,
+  "goal_status": "active",
+  "limitations": [
+    "Development replay and new-document subset are separate evidence scopes.",
+    "Small resource-biased samples do not establish official 90 percent accuracy.",
+    "Runtime credentials are never read by this audit."
+  ]
+}

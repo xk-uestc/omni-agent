@@ -12,13 +12,19 @@ from .grounded_generation import (_ENGLISH_ACTUAL_HEADING, _ENGLISH_FORECAST_HEA
 from .native_continuation import (choose_continuation, continuation_state,
                                   enrich_native_line_styles)
 
-EXTRACTION_VERSION = 'original-native-complete-block-context-v3'
+EXTRACTION_VERSION = 'original-native-complete-block-context-v4'
 _UNIT = re.compile(r'(?:%|[$€£¥]|USD|EUR|GBP|CNY|RMB|dollars?|euros?|millions?|billions?|thousands?|mn|bn|m|k)', re.I)
 _NUMERIC_END = re.compile(r'\d(?:[\d,.]*\d)?\s*$')
 
 
 def _compact(text):
-    return re.sub(r'\s+', '', DocumentChunker.clean_text(text))
+    # Ingestion removes a printed alphabetic line-wrap hyphen. Use that same
+    # equivalence only to locate the anchor; evidence and its hashes retain
+    # every original character, including the hyphen and newline. Interior
+    # hyphens, minus signs and arbitrary substitutions remain significant.
+    literal = DocumentChunker.clean_text(text)
+    literal = re.sub(r'(?<=[A-Za-z])-\n(?=[A-Za-z])', '', literal)
+    return re.sub(r'\s+', '', literal)
 
 
 def _member(block):
@@ -26,7 +32,8 @@ def _member(block):
             'bbox_fitz_unrotated_pt', 'text_sha256', 'source_range', 'parent_text_sha256')},
             'lines': [{'line_index': i, 'bbox_fitz_unrotated_pt': line.get('bbox'),
                        'text_sha256': text_sha256(line['text']),
-                       'native_style': line.get('native_style')}
+                       'native_style': line.get('native_style'),
+                       'native_direction': line.get('native_direction')}
                       for i, line in enumerate(block.get('native_lines', []))]}
 
 
@@ -37,6 +44,50 @@ def _column(block, order):
         return 0
     matches = [i for i, b in enumerate(bands) if box[0] >= b['x0'] - 5 and box[2] <= b['x1'] + 5]
     return matches[0] if len(matches) == 1 else None
+
+
+def _rotated_cell_row(block, rotation, matrix):
+    """Recognize a complete rotated native row from fresh display geometry.
+
+    Its label/condition cells remain literal, unbound source text. A rotated
+    prose fragment or an ordinary page with a Rotate flag cannot use this
+    exception to bypass continuation checks.
+    """
+    if rotation not in (90, 180, 270):
+        return None
+    import fitz
+    native = block.get('native_lines') or []
+    if not 3 <= len(native) <= 128:
+        return None
+    transformed = []
+    for line in native:
+        direction = line.get('native_direction')
+        if not isinstance(direction, tuple) or len(direction) != 2:
+            return None
+        dx = direction[0] * matrix[0] + direction[1] * matrix[2]
+        dy = direction[0] * matrix[1] + direction[1] * matrix[3]
+        if abs(dx - 1) > .0001 or abs(dy) > .0001:
+            return None
+        box = list(fitz.Rect(line['bbox']) * fitz.Matrix(*matrix))
+        if box[0] >= box[2] or box[1] >= box[3]:
+            return None
+        transformed.append(box)
+    components = []
+    for box in sorted(transformed, key=lambda value: value[0]):
+        if components and box[0] - components[-1][2] < 8:
+            previous = components[-1]
+            previous[:] = [min(previous[0], box[0]), min(previous[1], box[1]),
+                           max(previous[2], box[2]), max(previous[3], box[3])]
+        else:
+            components.append(box[:])
+    if not 3 <= len(components) <= 8:
+        return None
+    if min(box[3] for box in components) <= max(box[1] for box in components):
+        return None
+    return {'method': 'fresh_native_direction_and_disjoint_display_cell_runs',
+            'page_rotation_degrees': rotation, 'native_to_display_matrix': list(matrix),
+            'display_cell_components_pt': components,
+            'semantic_row_column_binding_verified': False}
 
 
 def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
@@ -56,6 +107,8 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
             if page_no > len(document) or len(document) > 1000:
                 return None
             page = document[page_no - 1]
+            source_rotation = page.rotation
+            source_display_matrix = tuple(page.rotation_matrix)
             page.set_rotation(0)
             blocks = DocumentChunker._pdf_text_blocks(page)
             if len(blocks) > 20000:
@@ -73,13 +126,14 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
     if len(text) > max_chars:
         return None
     members = [block]
+    rotated_row = _rotated_cell_row(block, source_rotation, source_display_matrix)
     continuation_members = None
     column_transition = None
     # Re-read native geometry above, then preserve the entire anchor before
     # adding only the unique successor's first explicitly closed sentence.
     # An open prose block cannot fall back to its incomplete old fragment.
     state = continuation_state(text)
-    if state in ('open', 'unknown'):
+    if state in ('open', 'unknown') and rotated_row is None:
         continuation = choose_continuation(block, ordered,
             {**order, 'source_sha256': hashlib.sha256(raw).hexdigest()}, max_chars=max_chars)
         if continuation['text'] is None:
@@ -90,6 +144,11 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
     unit_insertions = []
     # All-page uniqueness: a unit cannot attach to two competing number lines.
     for unit in ordered:
+        # Right-touch in unrotated x/y is not a display baseline after Rotate.
+        # Keep all original cell text, but never attach a neighbouring rotated
+        # block as a unit using the horizontal-page heuristic.
+        if source_rotation:
+            break
         unit_text = unit['normalized_text'].strip()
         if unit is block or not _UNIT.fullmatch(unit_text):
             continue
@@ -215,10 +274,14 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
             'evidence_sha256': text_sha256(text), 'text_sha256': text_sha256(text),
             'evidence_chars': len(text), 'max_chars': max_chars,
             'extraction_version': EXTRACTION_VERSION,
-            'mode': 'original_native_complete_continuation' if continuation_members else 'original_native_complete_block',
+            'mode': ('original_native_complete_rotated_row' if rotated_row else
+                     'original_native_complete_continuation' if continuation_members else
+                     'original_native_complete_block'),
             'members': ([_member(item) for item in prefix_members] + continuation_members
                         if continuation_members else [_member(b) for b in members]), 'reading_order': order,
             'unit_insertions': unit_insertions, 'column_transition': column_transition,
+            'rotated_native_row': rotated_row,
+            'anchor_match_policy': 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only',
             'calculator_input_eligible': False}
 
 
@@ -276,9 +339,104 @@ def _paragraph_parts(block):
 
 
 def _tabular_runs(block):
-    # Literal multi-cell baselines, not a semantic header/value binding.
-    return sum(len(group) >= 2 and any(re.search(r'\d', line['text']) for line in group)
-               for group in _native_groups(block)) >= 3
+    # A superscript, unit or separate font run inside prose is not a cell.
+    # Require repeated, aligned numeric-only runs with an actual empty gutter
+    # to another literal run. This still certifies geometry, never row meaning.
+    numeric = re.compile(r'[$€£¥]?[+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?')
+    lanes = []
+    for group in _native_groups(block):
+        row = sorted(group, key=lambda line: line['bbox'][0])
+        for index, line in enumerate(row):
+            if not numeric.fullmatch(line['text'].strip()):
+                continue
+            before = row[index - 1] if index else None
+            after = row[index + 1] if index + 1 < len(row) else None
+            if not (before and line['bbox'][0] - before['bbox'][2] >= 8
+                    or after and after['bbox'][0] - line['bbox'][2] >= 8):
+                continue
+            edge = line['bbox'][2]
+            lane = next((values for values in lanes if abs(values[0][0] - edge) <= 5), None)
+            if lane is None:
+                lane = []
+                lanes.append(lane)
+            lane.append((edge, line['bbox'][1]))
+    return any(len({round(y, 1) for _, y in lane}) >= 3 for lane in lanes)
+
+
+_TABLE_CAPTION = re.compile(r'^(?:Table\s+\d+(?:[.-]\d+)*\b|表\s*\d+\b)', re.I)
+
+
+def _captioned_table_regions(ordered):
+    """Whole, contiguous native regions below an explicit printed caption.
+
+    MuPDF can split a table's caption, labels, header and data into separate
+    blocks. Preserve all literal blocks in the one geometric region, including
+    wrapped labels and subtotal rows. No model, question terms or gold define
+    its boundary; numeric cell meanings and cross-page relations stay unknown.
+    """
+    regions = []
+    physical = sorted(ordered, key=lambda item: (item['bbox_fitz_unrotated_pt'][1],
+                                                item['bbox_fitz_unrotated_pt'][0]))
+    for caption in physical:
+        if not _TABLE_CAPTION.match(caption['normalized_text'].strip()):
+            continue
+        cb = caption['bbox_fitz_unrotated_pt']
+        native = caption.get('native_lines') or []
+        heights = [line['bbox'][3] - line['bbox'][1] for line in native if line.get('bbox')]
+        if not heights or len(caption['normalized_text']) > 300:
+            continue
+        height = sorted(heights)[len(heights) // 2]
+        # A caption can be much narrower than its table. Inspect the complete
+        # following horizontal section; a competing caption or narrative block
+        # rejects the proposal rather than trimming away distant literal cells.
+        x0 = min(block['bbox_fitz_unrotated_pt'][0] for block in physical)
+        x1 = max(block['bbox_fitz_unrotated_pt'][2] for block in physical)
+        bottom, members = cb[3], [caption]
+        for block in physical:
+            if block is caption:
+                continue
+            bb = block['bbox_fitz_unrotated_pt']
+            if bb[1] < cb[3] or bb[0] < x0 or bb[2] > x1:
+                continue
+            gap = bb[1] - bottom
+            if gap > (40 if len(members) == 1 else 2 * height + 4):
+                break
+            if _TABLE_CAPTION.match(block['normalized_text'].strip()):
+                break
+            members.append(block)
+            bottom = max(bottom, bb[3])
+        if len(members) < 2:
+            continue
+        merged = {'native_lines': [line for block in members[1:]
+                                   for line in block.get('native_lines', [])]}
+        if (not _tabular_runs(merged) or len(members) < 4
+                or any(_tabular_runs(block) for block in members[1:])):
+            continue
+        if any(len(re.findall(r'[A-Za-z]+', block['normalized_text'])) >= 16
+               and re.search(r'\b(?:is|are|was|were|has|have|must|shall|will|would)\b',
+                             block['normalized_text'], re.I) for block in members[1:]):
+            continue
+        # An intersecting native block cannot be silently cropped out of the
+        # purported complete region, including a competing second caption.
+        if any(block not in members and block['bbox_fitz_unrotated_pt'][1] < bottom
+               and block['bbox_fitz_unrotated_pt'][3] > cb[3]
+               and block['bbox_fitz_unrotated_pt'][0] < x1
+               and block['bbox_fitz_unrotated_pt'][2] > x0 for block in physical):
+            continue
+        # The caption can be narrower than its numeric columns. Bound those
+        # columns from literal numeric runs, with a fixed font-height margin
+        # for their printed headers/labels. A distant short sidebar must reject
+        # expansion, rather than being interleaved as another alleged cell.
+        number = re.compile(r'[$€£¥]?[+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?')
+        numeric_right = max((line['bbox'][2] for line in merged['native_lines']
+                             if number.fullmatch(line['text'].strip())), default=cb[2])
+        bounds = [cb[0] - 40, max(cb[2], numeric_right) + 4 * height + 4]
+        supported = all(bounds[0] <= block['bbox_fitz_unrotated_pt'][0]
+                        and block['bbox_fitz_unrotated_pt'][2] <= bounds[1]
+                        for block in members)
+        regions.append({'members': members, 'supported_horizontal_scope': supported,
+                        'horizontal_bounds_unrotated_pt': bounds})
+    return regions
 
 
 def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
@@ -321,6 +479,11 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
         offset += len(value)
     if not touched or len(touched) > 6:
         return None
+    captioned = [region for region in _captioned_table_regions(ordered)
+                 if all(any(part['block_id'] == block['block_id'] for block in region['members'])
+                        for part in touched)]
+    if len(captioned) > 1 or captioned and not captioned[0]['supported_horizontal_scope']:
+        return None
     # A small title/header hit can recover one adjacent table block. Competing
     # tables, distant tables and unrelated column blocks do not expand it.
     tables = [block for block in ordered if _tabular_runs(block)]
@@ -335,7 +498,10 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
                     and ab[2] <= tb[2] + 8):
                 candidates.append(table)
     table_mode = len(candidates) == 1
-    if table_mode:
+    captioned_mode = len(captioned) == 1
+    if captioned_mode:
+        members = captioned[0]['members']
+    elif table_mode:
         table = candidates[0]
         tb = table['bbox_fitz_unrotated_pt']
         region = [table]
@@ -398,14 +564,48 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
             return None
     if forecast is not None and not any(part is forecast for part in prefixes):
         prefixes.insert(0, forecast)
+    if captioned_mode and original is not None:
+        # The narrow extractor already proves immediate declarations and
+        # spanning forecast headings for this caption. A table expansion must
+        # keep them even when the caption spans inferred body columns.
+        retained_ids = {part['block_id'] for part in members + prefixes}
+        original_ids = {part['block_id'] for part in original['members']}
+        prefixes = [part for part in ordered if part['block_id'] in original_ids
+                    and part['block_id'] not in retained_ids] + prefixes
     members = prefixes + members
-    text = '\n\n'.join(part['normalized_text'] for part in members)
-    if len(members) > 8 or len(text) > max_chars or anchor not in _compact(text):
+    source_member_text = '\n\n'.join(part['normalized_text'] for part in members)
+    row_layout = []
+    if captioned_mode:
+        # Render all native runs in physical row order, retaining geometry
+        # rather than inventing header:value, pipes or calculator bindings.
+        # A source block's anchor can be interleaved with the neighbouring
+        # cells; its complete literal member remains independently pinned.
+        native = {'native_lines': [line for part in members for line in part['native_lines']]}
+        groups = _native_groups(native)
+        text = DocumentChunker.clean_text('\n'.join(' '.join(
+            line['text'].strip() for line in sorted(group, key=lambda line: line['bbox'][0]))
+            for group in groups))
+        row_layout = [[{'bbox_fitz_unrotated_pt': line['bbox'],
+                        'text_sha256': text_sha256(line['text'])}
+                       for line in sorted(group, key=lambda line: line['bbox'][0])]
+                      for group in groups]
+    else:
+        text = source_member_text
+    if (len(members) > (16 if captioned_mode else 8) or len(text) > max_chars
+            or anchor not in _compact(source_member_text)):
         return None
     return {'text': text, 'source_sha256': hashlib.sha256(raw).hexdigest(), 'page_no': page_no,
         'evidence_sha256': text_sha256(text), 'text_sha256': text_sha256(text),
         'evidence_chars': len(text), 'max_chars': max_chars,
-        'extraction_version': 'original-native-bounded-page-region-v1',
-        'mode': 'original_native_complete_table_region' if table_mode else 'original_native_complete_paragraph_region',
+        'extraction_version': 'original-native-bounded-page-region-v2',
+        'mode': ('original_native_complete_captioned_table_region' if captioned_mode else
+                 'original_native_complete_table_region' if table_mode else
+                 'original_native_complete_paragraph_region'),
         'members': [_member(part) for part in members], 'reading_order': order,
+        'native_row_layout': row_layout,
+        'captioned_native_region': ({'horizontal_bounds_unrotated_pt':
+                                     captioned[0]['horizontal_bounds_unrotated_pt'],
+                                     'semantic_row_column_binding_verified': False}
+                                    if captioned_mode else None),
+        'anchor_match_policy': 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only',
         'unit_insertions': [], 'column_transition': None, 'calculator_input_eligible': False}
