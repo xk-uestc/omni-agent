@@ -24,6 +24,17 @@ sys.path.insert(0, str(ROOT/'ict-track8'))
 from scripts.verify_package import verify_package
 
 
+def sample_documents_match(documents, manifest):
+    """Fresh startup must expose every shipped sample and its actual version."""
+    expected = manifest.get('files', [])
+    if len(expected) < 10 or len(documents) != len(expected):
+        return False
+    expected_by_id = {item['document_id']: (item['sha256'], item['modality']) for item in expected}
+    actual_by_id = {item['document_id']: (item['sha256'], item['modality']) for item in documents}
+    return (len(expected_by_id) == len(expected) and len(actual_by_id) == len(documents)
+            and actual_by_id == expected_by_id)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('package', type=Path)
@@ -101,7 +112,11 @@ def main():
                     'text':original_text+'。','source_sha256':quality['source_sha256'],'accepted_ids':[]},timeout=10)
                 report['checks']['text_quality_stale_source_refused'] = stale.status_code==422
                 documents = requests.get(base+'/api/v1/knowledge/documents',timeout=5).json()['documents']
-                report['checks']['documents'] = len(documents)==15
+                sample_manifest = json.loads((extracted/'samples/manifest.json').read_text(encoding='utf-8'))
+                report['checks']['documents'] = sample_documents_match(documents, sample_manifest)
+                report['sample_documents'] = {'expected_count': len(sample_manifest['files']),
+                                            'actual_count': len(documents),
+                                            'verification': 'exact_document_ids_source_sha256_and_modality'}
                 answer = requests.post(base+'/api/v1/knowledge/query',json={'question':'标准硬件产品保修期有多久？'},timeout=60).json()
                 report['checks']['rag'] = '12个月' in answer['answer'] and bool(answer['citations'])
                 report['checks']['dense'] = answer['retrieval']['mode']=='bm25_dense_rrf'
