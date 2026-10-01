@@ -22,6 +22,14 @@ MODEL = 'gpt-6-luna'
 TOKEN_FIELDS = ('input_tokens', 'output_tokens', 'total_tokens', 'cached_input_tokens', 'reasoning_tokens')
 
 
+def implementation_hashes(root=ROOT):
+    """Pin executable source, never credentials or runtime-generated files."""
+    files = sorted((root/'ict-track8/backend').rglob('*.py'))
+    files += [root/'tools/evaluate_model.py', root/'tools/model_runtime.py']
+    return {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in files if path.is_file()}
+
+
 def case(identifier, question, kind, **kwargs):
     return {'id': identifier, 'question': question, 'kind': kind, **kwargs}
 
@@ -296,6 +304,7 @@ def main():
               'planned_cases': len(cases), 'case_groups': dict(Counter(row['kind'] for row in cases)),
               'cases': [], 'passed': 0, 'total': 0, 'status': 'preflight_failed'}
     report['cases_sha256'] = hashlib.sha256(json.dumps(cases, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    report['implementation_sha256_start'] = implementation_hashes()
     if requested_ids:
         report['scope'] = 'real_api_targeted_development_cases_with_required_history_not_full_suite'
         report['requested_case_ids'] = requested_ids
@@ -355,6 +364,10 @@ def main():
                   status=stopped or ('passed' if all(r['pass'] for r in records) else 'some_cases_failed'),
                   api_summary=summarise_audits(audits, dropped), not_run=[row['id'] for row in cases if row['id'] not in {record['id'] for record in records}])
     report['execution_metrics'] = execution_metrics(records, execution_wall_ms)
+    report['implementation_sha256_end'] = implementation_hashes()
+    report['implementation_stable'] = report['implementation_sha256_start'] == report['implementation_sha256_end']
+    if not report['implementation_stable']:
+        report['status'] = 'implementation_changed_during_run_not_final_acceptance'
     report['timings'] = {'preflight_wall_ms': round(preflight_wall_ms, 3),
                          'initialization_wall_ms': round(initialization_wall_ms, 3),
                          'queries_wall_ms': round(execution_wall_ms, 3),

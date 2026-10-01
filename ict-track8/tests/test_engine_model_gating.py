@@ -147,6 +147,22 @@ def test_model_cannot_change_explicit_top_n(tmp_path):
     assert result.plan["top_n"] == 3
 
 
+@pytest.mark.parametrize("question,code", [
+    ("销售额排名第三的地区", "unsupported_exact_rank"),
+    ("销售额排名第一且前3的地区", "conflicting_rank_selection"),
+])
+def test_model_cannot_convert_exact_or_conflicting_rank_to_top_three(tmp_path, question, code):
+    path = initialize_database(tmp_path / "demo.sqlite")
+    payload = _payload(filters=[], analysis_mode="rank", top_n=3, confidence=0.99)
+    engine = Nl2SqlEngine(path, model_plan_provider=lambda q, t: payload)
+    result = engine.answer(question)
+    assert result.status == "clarification"
+    assert result.clarification_code == code
+    assert result.plan["planner_source"] == "rules_fallback"
+    assert result.plan["planner_audit"]["reason_code"] == "rank_selection_clarification_bypass"
+    assert not result.rows and not result.sql
+
+
 def test_model_cannot_change_metric_aggregation_function(tmp_path):
     path = initialize_database(tmp_path / "demo.sqlite")
     payload = _payload(metric={"table": "sales_orders", "column": "sales_amount", "function": "AVG", "label": "销售额"})

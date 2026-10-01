@@ -30,6 +30,22 @@ def test_suite_has_both_initial_tasks_five_fusion_types_and_five_turns(evaluator
     assert next(r for r in cases if r['id'] == 'cross-explicit-reset')['reset_context'] is True
 
 
+def test_implementation_fingerprint_detects_edits_and_new_modules_without_runtime_secrets(evaluator, tmp_path):
+    backend = tmp_path/'ict-track8/backend'
+    backend.mkdir(parents=True)
+    source = backend/'engine.py'
+    source.write_text('version = 1', encoding='utf-8')
+    runtime = tmp_path/'runtime'
+    runtime.mkdir()
+    (runtime/'model_config.json').write_text('{"secret":"test-only"}', encoding='utf-8')
+    before = evaluator.implementation_hashes(tmp_path)
+    assert set(before) == {'ict-track8/backend/engine.py'}
+    source.write_text('version = 2', encoding='utf-8')
+    assert evaluator.implementation_hashes(tmp_path) != before
+    (backend/'new_binding.py').write_text('enabled = True', encoding='utf-8')
+    assert 'ict-track8/backend/new_binding.py' in evaluator.implementation_hashes(tmp_path)
+
+
 def test_targeted_selection_includes_all_prior_session_turns_in_suite_order(evaluator):
     rows = evaluator.select_cases(evaluator.suite(), ['sql-turn-5', 'qa-02', 'cross-turn-2'])
     assert [row['id'] for row in rows] == ['qa-02', 'cross-turn-1', 'cross-turn-2',

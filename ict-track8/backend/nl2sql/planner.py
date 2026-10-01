@@ -309,10 +309,24 @@ class SingleTablePlanner:
         consumed.extend(word for word in _ANALYSIS_WORDS if word in normalized)
         # 当前 SQL 生成器只实现月/年日期变换；未实现的日期粒度必须进入
         # 覆盖率守卫并澄清，不能默默退化为总体聚合。
+        ordinals = lexicon.parse_ordinal_ranks(normalized)
+        if ordinals and (len(ordinals) != 1 or ordinals[0].n != 1):
+            return self._clarify(
+                plan, "unsupported_exact_rank",
+                "第 N 名表示只取该名次，不能等同于前 N 名。当前支持第一名（含并列）；请明确是否要查询前 N 名，或只查询指定名次。", 0.3,
+            )
+        if ordinals:
+            remaining_rank_text = normalized.replace(ordinals[0].span, "", 1)
+            other_top = lexicon.parse_top_n(remaining_rank_text)
+            if other_top is not None and (other_top.n != 1 or other_top.descending != ordinals[0].descending):
+                return self._clarify(
+                    plan, "conflicting_rank_selection",
+                    "问题同时包含不一致的名次范围或排序方向，请选择一个明确的排名条件。", 0.3,
+                )
         top = lexicon.parse_top_n(normalized)
         if top is None and plan.dimensions:
             # "某指标最高的某维度""冠军"：按聚合值取第 1 名（含并列），而不是把指标改成 MAX
-            superlative = re.search(r"(最高|最多|最大|冠军|第一名|最低|最少|最小|垫底)", normalized)
+            superlative = re.search(r"(最高|最多|最大|冠军|最低|最少|最小|垫底)", normalized)
             if superlative:
                 top = lexicon.TopN(1, superlative.group(1) not in {"最低", "最少", "最小", "垫底"}, superlative.group(1))
         if top:
@@ -1242,6 +1256,7 @@ class SingleTablePlanner:
         dimension_transforms: dict[str, str] = {}
         dimension_labels: dict[str, str] = {}
         explicit = any(word in question for word in ("各", "每个", "按", "分别", "分组", "前", "top", "超过", "大于", "高于", "低于", "小于", "不超过", "至少", "排名", "占比", "倒数", "最高的", "最低的"))
+        explicit = explicit or bool(lexicon.parse_ordinal_ranks(question))
         for link in links:
             if link.role != "dimension" or link.column == metric_column or link.column in seen:
                 continue

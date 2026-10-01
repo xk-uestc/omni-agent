@@ -119,7 +119,7 @@ class DependencyAgent:
                         'skipped_tasks': [task['id'] for task in ordered], 'edges': [],
                         'user_constraint_validation': {'status': 'unverified', 'error_code': exc.code}}
             result = self._run_ordered(tasks, ordered, dependencies, on_event=on_event,
-                                       source_constraints=source_constraints or {})
+                                       source_constraints=source_constraints or {}, original_question=original_question)
             result['user_constraint_validation'] = {'status': ('verified' if source_constraints else 'not_applicable')
                                                    if original_question is not None else 'verified' if source_constraints else 'not_provided',
                                                    'scope': 'explicit_server_bound_sql_source_clauses', 'bindings': audit}
@@ -149,7 +149,7 @@ class DependencyAgent:
         for document_id, digest in versions.items():
             self.knowledge_store.verify_source(document_id, expected_sha256=digest)
 
-    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, source_constraints=None):
+    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, source_constraints=None, original_question=None):
         results, trace = {}, []
         versions = {}
         trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
@@ -159,6 +159,10 @@ class DependencyAgent:
                 self._verify_versions(versions)
                 args = self.resolve(task['args'], results)
                 required = (source_constraints or {}).get(task['id'])
+                if task['tool'] == 'sql' and original_question is not None:
+                    from .dynamic_source_binding import bind_dynamic_source_filters
+                    required = bind_dynamic_source_filters(self, task=task, tasks=tasks, results=results,
+                        required_intent=required, original_question=original_question)
                 result = (self.execute(task['tool'], args, task['args'], results, required_intent=required)
                           if required is not None else self.execute(task['tool'], args, task['args'], results))
                 for document_id, digest in self._document_versions(task['tool'], result):

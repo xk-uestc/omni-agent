@@ -347,7 +347,37 @@ class TopN:
     span: str
 
 
+@dataclass(frozen=True)
+class OrdinalRank:
+    """An exact rank request; rank three never means the first three ranks."""
+
+    n: int
+    descending: bool
+    span: str
+
+
+def parse_ordinal_ranks(normalized: str) -> list[OrdinalRank]:
+    # Require a ranking verb, rather than interpreting 第一季度/第一产品
+    # or an entity whose name contains an ordinal as a selection predicate.
+    number = r"([0-9]+|[零〇一二两三四五六七八九十百千]+)"
+    pattern = re.compile(
+        r"(?:排名|排行|名列|位居)(?:为|在|是)?"
+        r"(?:(倒数)?第" + number + r"(?:名|位)?|首位)"
+        r"(?![0-9零〇一二两三四五六七八九十百千]|季度|个月|月|年|天|周)"
+    )
+    result = []
+    for match in pattern.finditer(normalized):
+        value = cn_to_int(match.group(2)) if match.group(2) else 1
+        if value is not None:
+            result.append(OrdinalRank(value, not bool(match.group(1)), match.group(0)))
+    return result
+
+
 def parse_top_n(normalized: str) -> TopN | None:
+    ordinals = parse_ordinal_ranks(normalized)
+    if len(ordinals) == 1 and ordinals[0].n == 1:
+        ordinal = ordinals[0]
+        return TopN(1, ordinal.descending, ordinal.span)
     patterns = (
         (r"(?:排名)?(?:前|top)([0-9]+|[一二两三四五六七八九十]{1,3})" + _TIME_UNIT_AFTER + r"(?:名|个|位|家|款|条|种)?", True),
         (r"(?:最高|最多|最大)的?([0-9]+|[一二两三四五六七八九十]{1,3})" + _TIME_UNIT_AFTER + r"(?:名|个|位|家|款|条|种)?", True),

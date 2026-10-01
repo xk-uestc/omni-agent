@@ -10,6 +10,7 @@ from backend.fusion_constraints import SourceConstraintError, extract_source_cla
 from backend.knowledge_store import KnowledgeStore
 from backend.nl2sql.engine import Nl2SqlEngine
 from backend.nl2sql.models import FilterSpec, MetricSpec, QueryPlan
+from backend.nl2sql.seed import initialize_database
 from backend.omni_agent import OmniAgent
 from backend.session import ConversationStore
 
@@ -255,3 +256,118 @@ def test_same_physical_metric_with_two_local_filters_cannot_hide_first_filter():
 def test_table_identifier_substring_is_not_an_explicit_source():
     with pytest.raises(SourceConstraintError):
         extract_source_clauses('按文档核算PreOrdersArchive的费用', {'tables': [{'name': 'Orders'}]})
+
+
+@pytest.mark.parametrize('question', [
+    '2025年南湾每笔核算额，计算公式用文档，费用金额合计和包裹ID记录计数从数据库取值。',
+    '按指标计算文档中的每笔核算额公式计算2025年南湾区域每笔核算额，费用金额合计和包裹ID记录计数从数据库取值。',
+])
+def test_reverse_source_preserves_literal_calculation_target_scope(environment, question):
+    engine, knowledge = environment
+    execution_tasks = split_tasks('2025年南湾包裹台账包裹ID记录计数')
+    execution_tasks[1]['args']['question'] = '2025年南湾包裹台账费用金额合计'
+    result = run(environment, question, execution_tasks)
+    assert result['status'] == 'ok', result
+    assert result['result']['results']['c']['value'] == 30
+    binding = result['result']['user_constraint_validation']['bindings'][0]
+    assert '2025年南湾' in binding['text']
+    assert '每笔核算额' not in binding['text']
+    assert len(binding['qualifier_ranges']) == 1
+    left, right = binding['qualifier_ranges'][0]
+    assert question[left:right] in {'2025年南湾', '2025年南湾区域'}
+    # The model may not drop/change inherited scope in any split read.
+    execution_tasks[2]['args']['question'] = '包裹台账包裹ID记录计数'
+    wrong = run(environment, question, execution_tasks)
+    assert wrong['status'] == 'incomplete'
+    assert wrong['result']['error_code'] == 'source_constraint_mismatch'
+
+
+@pytest.mark.parametrize('question', [
+    '2025年南湾每笔核算额，2026年文档计算公式，费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年南湾北岭每笔核算额，计算公式用文档，费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年2026年南湾每笔核算额，计算公式用文档，费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年南湾特殊口径每笔核算额，计算公式用文档，费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年南湾每笔核算额，计算公式用文档，2026年费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年南湾每笔核算额，计算公式用文档，北岭费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年南湾每笔核算额，计算公式用文档，不含南湾费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年南湾每笔核算额，费用金额合计从数据库取值，包裹ID记录计数从数据库取值。',
+    '2025年南湾每笔核算额，按2026年文档预测，费用金额合计和包裹ID记录计数从数据库取值。',
+    '2025年不含北岭每笔核算额，计算公式用文档，费用金额合计和包裹ID记录计数从数据库取值。',
+])
+def test_reverse_source_does_not_guess_conflicting_or_unknown_target_scope(environment, question):
+    result = run(environment, question, split_tasks())
+    assert result['status'] == 'clarification', result
+    assert result['result']['results'] == {}
+
+
+@pytest.mark.parametrize('question', [
+    '2025年华东平均客单价，计算公式用文档，销售额和订单数从数据库取值',
+    '按指标计算文档中的客单价公式计算2025年华东地区客单价，销售額和订单数从数据库取值。',
+    '按指标公式文档计算2025年华东地区客单价，销售额和订单数从数据库取。',
+    '按指标文档公式计算2025年华东地区客单价，销售额和订单数从数据库取值。',
+])
+def test_historical_formula_questions_execute_server_bound_sales_scope(tmp_path, question):
+    # This is the actual shipped sales schema/seed, not a rewritten model
+    # question or an assertion over a precomputed expected SourceClause.
+    engine = Nl2SqlEngine(initialize_database(tmp_path / 'demo.sqlite'))
+    knowledge = KnowledgeStore(tmp_path / 'knowledge')
+    knowledge.ingest('客单价 = 销售额 / 订单数'.encode(), document_id='formula',
+                     title='经营指标公式', modality='txt', filename='formula.txt')
+    execution_tasks = [
+        {'id': 'f', 'tool': 'document_formula', 'args': {'document_id': 'formula', 'label': '客单价'}},
+        {'id': 's', 'tool': 'sql', 'args': {'question': '2025年华东地区销售额和订单数'}},
+        {'id': 'c', 'tool': 'calculate', 'args': {
+            'formula': {'ref': 'f', 'path': []}, 'parameters': {
+                '销售额': {'ref': 's', 'path': ['aggregate_cells', 'sales_orders', 'sales_amount', 'SUM', 0]},
+                '订单数': {'ref': 's', 'path': ['aggregate_cells', 'sales_orders', 'order_id', 'COUNT', 0]},
+            }}},
+    ]
+    result = DependencyAgent(engine, knowledge).run(execution_tasks, original_question=question)
+    assert result['status'] == 'ok', result
+    assert result['results']['c']['value'] == pytest.approx(29584 / 3)
+    scope = result['user_constraint_validation']['bindings'][0]
+    left, right = scope['qualifier_ranges'][0]
+    assert question[left:right] in {'2025年华东', '2025年华东地区'}
+    assert '客单价' not in scope['text']
+    assert result['results']['s']['provenance']['source_constraint_validation']['status'] == 'verified'
+
+
+def test_reverse_target_year_keeps_explicit_database_exclusion(environment):
+    question = '2025年每笔核算额，计算公式用文档，费用金额合计和包裹ID记录计数（不含北岭）从数据库取值。'
+    result = run(environment, question, split_tasks())
+    assert result['status'] == 'ok', result
+    assert result['result']['results']['c']['value'] == 30
+    scope = result['result']['user_constraint_validation']['bindings'][0]
+    assert scope['text'] == '2025年 费用金额合计和包裹ID记录计数（不含北岭）'
+
+
+@pytest.mark.parametrize('role', ['预测', '目标', '基准', '历史', '未来', '预计', '预估', '计划'])
+def test_reverse_formula_does_not_turn_a_target_role_into_database_scope(environment, role):
+    question = f'按文档{role}每笔核算额公式计算2026年南湾每笔核算额，费用金额合计和包裹ID记录计数从数据库取值。'
+    result = run(environment, question, split_tasks())
+    assert result['status'] == 'clarification', result
+    assert result['result']['error_code'] == 'source_scope_unverified'
+    assert result['result']['results'] == {}
+
+
+def test_reverse_explicit_baseline_scope_stays_separate_from_forecast_target(environment):
+    question = '按文档预测每笔核算额公式计算2026年南湾每笔核算额，2025年南湾费用金额合计和包裹ID记录计数从数据库取值。'
+    execution_tasks = split_tasks('2025年南湾包裹台账包裹ID记录计数')
+    execution_tasks[1]['args']['question'] = '2025年南湾包裹台账费用金额合计'
+    result = run(environment, question, execution_tasks)
+    assert result['status'] == 'ok', result
+    scope = result['result']['user_constraint_validation']['bindings'][0]
+    assert scope['text'] == '2025年南湾费用金额合计和包裹ID记录计数'
+    assert scope['qualifier_ranges'] == ()
+    assert result['result']['results']['c']['value'] == 30
+
+
+@pytest.mark.parametrize('question', [
+    '按公式文档计算2025年南湾未知核算额，费用金额合计和包裹ID记录计数从数据库取。',
+    '按文档公式计算2025年南湾未知核算额，费用金额合计和包裹ID记录计数从数据库取。',
+    '按公式文档预测计算2026年南湾每笔核算额，费用金额合计和包裹ID记录计数从数据库取。',
+])
+def test_generic_formula_document_does_not_authorize_an_unknown_target(environment, question):
+    result = run(environment, question, split_tasks())
+    assert result['status'] == 'clarification', result
+    assert result['result']['results'] == {}

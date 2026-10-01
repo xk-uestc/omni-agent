@@ -11,6 +11,9 @@ from .fusion_normalization import normalize_fusion_tasks
 from .responses_client import GenerationError, object_schema
 from .nl2sql.schema import normalize_text
 from .plan_requirements import requested_operations, completion_errors
+from .fusion_constraints import SourceConstraintError
+from .fusion_history import (resolve_fusion_followup, verify_inherited_document_tasks,
+                             verified_fusion_context)
 
 
 PLAN_SCHEMA = object_schema({'route': {'type': 'string', 'enum': ['sql', 'document', 'fusion', 'clarify']},
@@ -39,7 +42,7 @@ search_fact: {evidence:引用search整个结果,scope:适用对象,label:事实�
 例如scope="紧急工单",label="首次响应",unit="小时"，返回可溯源value/unit等；缺失或冲突时停止。
 document_formula: {document_id,label}；返回 expression/parameters/source_uri/locator。
 document_cell: {document_id,where:{列名:实际值},column:列名}；返回 value/unit/source_uri/locator。
-document_fact: {document_id,label}；只定位真实文本中label:值，返回value等。
+document_fact: {document_id,label}；仅用于真实label:值行，返回value等。自然句子事实禁止用document_fact，必须search→search_fact，明确scope、label和unit；核对阈值必须继续执行实际compare，不能用检索替代比较。
 policy_select: {document_id,as_of:YYYY-MM-DD,label:明确政策要素}；要求文档明确生效日期，返回value等。
 calculate: {formula:引用定位结果,parameters:{变量名:引用}}，禁止手工填literal。
 formula必须引用document_formula完整结果path:[]，不能只引用expression字符串，否则会丢失来源。
@@ -167,19 +170,32 @@ class OmniAgent:
         if session_id and reset_context:
             self.conversations.clear(session_id)
         history = self.conversations.context(session_id) if session_id else ()
+        scope_question, fusion_history_audit, inherited = question, {'mode': 'independent'}, None
+        history_error = None
+        if not explicit_cross_source_request(question):
+            try:
+                scope_question, fusion_history_audit, inherited = resolve_fusion_followup(
+                    question, history, self.engine, self.knowledge)
+            except SourceConstraintError as exc:
+                history_error = exc.code
         started = time.perf_counter()
         source, error = 'rules_basic', None
         planning_notes = []
         planning_attempts = []
         rejection_code = None
-        if self.client:
+        if history_error:
+            plan = {'route': 'clarify', 'effective_question': question, 'tasks_json': '[]',
+                    'clarification': '追问来源或时间范围尚未核验，请完整说明文档来源、数据库基准年份和目标年份。'}
+            rejection_code = history_error
+        elif self.client:
             try:
-                context_question = question
+                context_question = scope_question
                 if history and re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$',question):
                     allowance = max(0,999-len(question))
                     context_question = question+'\n'+history[-1].effective_question[:allowance]
-                requirements = requested_operations(question)
-                context = {'question': question,
+                requirements = requested_operations(scope_question)
+                context = {'question': scope_question, 'actual_question': question,
+                    'server_context_resolution': fusion_history_audit,
                     'history': [{'question': turn.effective_question, 'state': turn.state} for turn in history[-5:]],
                     'reference_date': self.engine.reference_date.isoformat(),
                     'required_operations': requirements,
@@ -267,6 +283,10 @@ class OmniAgent:
         else:
             plan = self.basic_plan(question, history)
         route, effective = plan['route'], plan['effective_question']
+        if inherited is not None and route not in {'fusion', 'clarify'}:
+            route, effective = 'clarify', question
+            plan['clarification'] = '该追问继承了已核验跨源任务，不能退化为单源查询；请重试完整跨源规划。'
+            rejection_code = 'fusion_followup_route_changed'
         # In a self-contained single-source turn, rewriting is unnecessary and
         # can silently inject a filter, aggregation, or second question before
         # the SQL/claim validators ever see the user's actual request. Resolve
@@ -298,8 +318,18 @@ class OmniAgent:
             result = self.knowledge.answer(effective)
             state = {'route': route, 'sources': [hit['metadata']['document_id'] for hit in result['citations']]}
         elif route == 'fusion':
-            result = DependencyAgent(self.engine, self.knowledge).run(json.loads(plan['tasks_json']), original_question=question)
+            tasks = json.loads(plan['tasks_json'])
+            effective = scope_question
+            try:
+                verify_inherited_document_tasks(tasks, inherited)
+                result = DependencyAgent(self.engine, self.knowledge).run(tasks, original_question=scope_question)
+            except SourceConstraintError as exc:
+                result = {'status': 'clarification', 'clarification': str(exc), 'clarification_code': exc.code,
+                          'results': {}, 'trace': [], 'trace_id': 'source_scope_unverified'}
             state = {'route': route, 'trace_id': result['trace_id']}
+            saved = verified_fusion_context(scope_question, tasks, result)
+            if saved:
+                state['fusion_context'] = saved
         else:
             result = {'status': 'clarification', 'clarification': plan['clarification'] or '请明确查询口径和适用时间。'}
             state = {'route': route, 'pending': result['clarification']}
@@ -308,6 +338,7 @@ class OmniAgent:
         response = {'status': result['status'], 'question': question, 'effective_question': effective, 'route': route,
                     'planner_source': source, 'session_id': session_id, 'context_turns': len(history),
                     'state': state, 'result': result, 'trace': trace, 'audit_id': audit_id}
+        response['context_resolution'] = fusion_history_audit
         if session_id:
             self.conversations.remember(session_id, question=question, effective_question=effective, state=state)
         return response

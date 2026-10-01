@@ -324,6 +324,7 @@ class Nl2SqlEngine:
             ("having_mismatch", "聚合阈值与问题不一致"),
             ("extra_dimension", "增加了问题中没有依据的分组维度"),
             ("clarification_bypass", "绕过了明确的分组维度澄清"),
+            ("rank_selection_clarification_bypass", "绕过明确的名次选择澄清"),
             ("missing_group_dimension", "分组维度"),
             ("time_grain_mismatch", "时间分组粒度"),
             ("comparison_mismatch", "比较时间窗口"),
@@ -371,6 +372,10 @@ class Nl2SqlEngine:
         # 否则模型可以用高置信度计划绕过“未知维度/未知值/不支持粒度”等门。
         if rule_plan is None:
             rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
+        if rule_plan.clarification_code in {
+            "unsupported_exact_rank", "conflicting_rank_selection",
+        }:
+            raise ModelPlanError("模型计划不得绕过明确的名次选择澄清")
         if rule_plan.metrics:
             expected = {(m.table, m.column, m.function) for m in rule_plan.metrics}
             actual = {(m.table, m.column, m.function) for m in plan.metrics}
@@ -591,6 +596,26 @@ class Nl2SqlEngine:
                 try:
                     if subset is not None:
                         current_required = server_project_required_intent(current_required, subset)
+                    dynamic_filters = getattr(required_intent, "source_dynamic_filters", None)
+                    if dynamic_filters is not None:
+                        from ..dynamic_source_binding import apply_dynamic_source_filters
+                        if not isinstance(dynamic_filters, list) or len(dynamic_filters) != 1:
+                            raise SourceConstraintError("source_dynamic_binding_unverified")
+                        descriptor = dynamic_filters[0]
+                        label = descriptor.get("dimension_label") if isinstance(descriptor, dict) else None
+                        if not isinstance(label, str) or not label or len(label) > 100:
+                            raise SourceConstraintError("source_dynamic_binding_unverified")
+                        if any(not isinstance(descriptor.get(key), str) for key in ("table", "column")):
+                            raise SourceConstraintError("source_dynamic_binding_unverified")
+                        dimensions = {(link.table, link.column)
+                                      for link in self.planner.linker.link(label, tables)
+                                      if link.role == "dimension"}
+                        if dimensions != {(descriptor.get("table"), descriptor.get("column"))}:
+                            raise SourceConstraintError("source_dynamic_binding_unverified")
+                        current_required = apply_dynamic_source_filters(
+                            current_required, dynamic_filters, tables=tables,
+                            scope_question=scope_question,
+                        )
                     errors = verify_required_intent(plan, current_required)
                 except SourceConstraintError as exc:
                     errors = [exc.code]
