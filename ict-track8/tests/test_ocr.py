@@ -83,3 +83,23 @@ def test_invalid_ocr_url_disables_executor_without_import_failure(monkeypatch):
     monkeypatch.setenv("ICT8_OCR_URL", "ftp://not-supported")
     assert build_ocr_pipeline(warnings) is None
     assert warnings == ["ICT8_OCR_URL: invalid; OCR disabled"]
+
+
+def test_quality_retries_do_not_replace_better_baseline_with_last_attempt():
+    class PoorQuality(FakeAnalyzer):
+        def analyze(self, _image_bytes):
+            return type('Quality', (), {'quality_score': 0.4, 'recommended_transforms': ('upscale', 'contrast')})()
+
+    class RegressingExecutor:
+        name = 'fake'
+        def __init__(self):
+            self.responses = iter([OcrResponse('一般工单24小时', .98, {'selected': 'baseline'}),
+                                   OcrResponse('一工单24小时', .94, {}), OcrResponse('一工单24小时', .95, {})])
+        def execute(self, _image_bytes, *, language):
+            return next(self.responses)
+
+    result = OcrPipeline(RegressingExecutor(), analyzer=PoorQuality(), enhancer=FakeEnhancer()).run(b'image')
+    assert len(result.attempts) == 3
+    assert result.text == '一般工单24小时'
+    assert result.selected_transforms == ()
+    assert result.metadata['selected'] == 'baseline'

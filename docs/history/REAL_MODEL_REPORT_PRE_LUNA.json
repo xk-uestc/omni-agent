@@ -1,0 +1,758 @@
+{
+  "created_at": "2026-09-30T23:42:16.435380+00:00",
+  "scope": "real_api_synthetic_corpus_not_public_accuracy",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "python": "3.12.10",
+  "cases": [
+    {
+      "id": "generated_rag",
+      "question": "标准硬件产品保修期有多久？",
+      "pass": true,
+      "latency_ms": 12912.734,
+      "result": {
+        "status": "ok",
+        "question": "标准硬件产品保修期有多久？",
+        "effective_question": "标准硬件产品的保修期有多久？",
+        "route": "document",
+        "planner_source": "model_validated",
+        "session_id": null,
+        "context_turns": 0,
+        "state": {
+          "route": "document",
+          "sources": [
+            "warranty-policy",
+            "warranty-policy"
+          ]
+        },
+        "result": {
+          "status": "ok",
+          "question": "标准硬件产品的保修期有多久？",
+          "answer_mode": "model_grounded",
+          "answer": "标准硬件产品保修期为12个月，自签收日期起算。 [1]",
+          "citations": [
+            {
+              "citation_id": 1,
+              "document_id": "0226ff4e8d2849682173ee48",
+              "title": "保修规则",
+              "score": 0.03278688524590164,
+              "matched_terms": [
+                "保修",
+                "产品的",
+                "件产",
+                "件产品",
+                "准硬",
+                "准硬件",
+                "品的",
+                "品的保",
+                "标准硬",
+                "的保",
+                "的保修",
+                "硬件产"
+              ],
+              "snippet": "标准硬件产品的保修期为12个月,自签收日期起算。",
+              "source_uri": "/api/v1/knowledge/documents/warranty-policy/original",
+              "metadata": {
+                "raw_text": "标准硬件产品的保修期为12个月,自签收日期起算。",
+                "raw_page_text": "保修规则\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 产品保修\n\n一、期限\n\n标准硬件产品的保修期为12个月，自签收日期起算。\n\n二、覆盖范围\n\n保修覆盖正常使用条件下的材料及制造缺陷，不覆盖人为损坏和未经授权的拆机。\n\n三、流程\n\n维修需记录产品序列号、订单号和故障描述，保存检测报告。\n\n四、解释\n\n更换配件不会自动重置整机保修期限，延保服务必须以独立合同为依据。此文件为合成演\n\n示政策，不代表任何企业实际承诺。",
+                "ocr_status": null,
+                "ocr_attempts": [],
+                "ocr_selected_transforms": [],
+                "coordinate_evidence": {
+                  "bbox_status": "exact_block",
+                  "layout_block_ids": [
+                    4
+                  ],
+                  "source_bbox_pdf_user_pt": [
+                    78.0,
+                    643.9088,
+                    330.164,
+                    655.1618
+                  ],
+                  "source_bbox_fitz_unrotated_pt": [
+                    78.0,
+                    186.728,
+                    330.164,
+                    197.981
+                  ],
+                  "page_bbox_pdf_user_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "source_bbox_fitz_display_pt": [
+                    78.0,
+                    186.728,
+                    330.164,
+                    197.981
+                  ],
+                  "source_bbox_render_px": null,
+                  "page_geometry": {
+                    "rotation_degrees": 0,
+                    "rotation_source": "pdf_page_rotate",
+                    "media_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "crop_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_rect_fitz_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_size_pt": [
+                      595.2756,
+                      841.8898
+                    ],
+                    "coordinate_systems": {
+                      "pdf_user_space": {
+                        "origin": "bottom_left",
+                        "unit": "pt"
+                      },
+                      "fitz_unrotated_text_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "fitz_display_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "render_pixel_space": {
+                        "origin": "top_left",
+                        "unit": "px"
+                      }
+                    },
+                    "mappings": {
+                      "pdf_user_to_fitz_unrotated": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        -1.0,
+                        0.0,
+                        841.889771
+                      ],
+                      "fitz_unrotated_to_display": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0
+                      ],
+                      "fitz_display_to_render_pixel": null
+                    },
+                    "render": null,
+                    "mapping_status": "complete"
+                  },
+                  "render_input_sha256": null,
+                  "render_size_px": null,
+                  "render_scale": null
+                },
+                "source_sha256": "e09ac68bbb2f1f7a0f22bfe3f7ad9109fc9ed8c4d6d966778443b74aa09a455d",
+                "original_document_id": "warranty-policy",
+                "document_id": "warranty-policy",
+                "chunk_id": "0226ff4e8d2849682173ee48",
+                "source_locator": "page:1:block:5",
+                "page_no": 1,
+                "sheet_name": null,
+                "row_start": null,
+                "row_end": null,
+                "title_path": [
+                  "一、期限"
+                ],
+                "quality": 1.0,
+                "warnings": [],
+                "bm25_raw": 72.194474,
+                "retrieval_channel": "hybrid",
+                "bm25_relative": 1.0,
+                "bm25_rank": 1,
+                "retrieval_channels": [
+                  "bm25",
+                  "dense"
+                ],
+                "dense_cosine": 0.75711,
+                "dense_rank": 1,
+                "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                "rrf_rank": 1,
+                "rrf_score": 0.03278688524590164,
+                "ranking_score": 0.03278688524590164,
+                "anchor_match_count": 0,
+                "evidence_role": "primary"
+              }
+            },
+            {
+              "citation_id": 2,
+              "document_id": "3f50eea7d6b2fb4d22ccf214",
+              "title": "保修规则",
+              "score": 0.03200204813108039,
+              "matched_terms": [
+                "保修",
+                "保修期",
+                "修期"
+              ],
+              "snippet": "更换配件不会自动重置整机保修期限,延保服务必须以独立合同为依据。此文件为合成演",
+              "source_uri": "/api/v1/knowledge/documents/warranty-policy/original",
+              "metadata": {
+                "raw_text": "更换配件不会自动重置整机保修期限,延保服务必须以独立合同为依据。此文件为合成演",
+                "raw_page_text": "保修规则\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 产品保修\n\n一、期限\n\n标准硬件产品的保修期为12个月，自签收日期起算。\n\n二、覆盖范围\n\n保修覆盖正常使用条件下的材料及制造缺陷，不覆盖人为损坏和未经授权的拆机。\n\n三、流程\n\n维修需记录产品序列号、订单号和故障描述，保存检测报告。\n\n四、解释\n\n更换配件不会自动重置整机保修期限，延保服务必须以独立合同为依据。此文件为合成演\n\n示政策，不代表任何企业实际承诺。",
+                "ocr_status": null,
+                "ocr_attempts": [],
+                "ocr_selected_transforms": [],
+                "coordinate_evidence": {
+                  "bbox_status": "exact_block",
+                  "layout_block_ids": [
+                    10
+                  ],
+                  "source_bbox_pdf_user_pt": [
+                    78.0,
+                    535.9088,
+                    507.0,
+                    547.1618
+                  ],
+                  "source_bbox_fitz_unrotated_pt": [
+                    78.0,
+                    294.728,
+                    507.0,
+                    305.981
+                  ],
+                  "page_bbox_pdf_user_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "source_bbox_fitz_display_pt": [
+                    78.0,
+                    294.728,
+                    507.0,
+                    305.981
+                  ],
+                  "source_bbox_render_px": null,
+                  "page_geometry": {
+                    "rotation_degrees": 0,
+                    "rotation_source": "pdf_page_rotate",
+                    "media_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "crop_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_rect_fitz_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_size_pt": [
+                      595.2756,
+                      841.8898
+                    ],
+                    "coordinate_systems": {
+                      "pdf_user_space": {
+                        "origin": "bottom_left",
+                        "unit": "pt"
+                      },
+                      "fitz_unrotated_text_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "fitz_display_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "render_pixel_space": {
+                        "origin": "top_left",
+                        "unit": "px"
+                      }
+                    },
+                    "mappings": {
+                      "pdf_user_to_fitz_unrotated": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        -1.0,
+                        0.0,
+                        841.889771
+                      ],
+                      "fitz_unrotated_to_display": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0
+                      ],
+                      "fitz_display_to_render_pixel": null
+                    },
+                    "render": null,
+                    "mapping_status": "complete"
+                  },
+                  "render_input_sha256": null,
+                  "render_size_px": null,
+                  "render_scale": null
+                },
+                "source_sha256": "e09ac68bbb2f1f7a0f22bfe3f7ad9109fc9ed8c4d6d966778443b74aa09a455d",
+                "original_document_id": "warranty-policy",
+                "document_id": "warranty-policy",
+                "chunk_id": "3f50eea7d6b2fb4d22ccf214",
+                "source_locator": "page:1:block:11",
+                "page_no": 1,
+                "sheet_name": null,
+                "row_start": null,
+                "row_end": null,
+                "title_path": [
+                  "四、解释"
+                ],
+                "quality": 1.0,
+                "warnings": [],
+                "bm25_raw": 11.270238,
+                "retrieval_channel": "hybrid",
+                "bm25_relative": 0.1561,
+                "bm25_rank": 2,
+                "retrieval_channels": [
+                  "bm25",
+                  "dense"
+                ],
+                "dense_cosine": 0.534674,
+                "dense_rank": 3,
+                "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                "rrf_rank": 2,
+                "rrf_score": 0.03200204813108039,
+                "ranking_score": 0.03200204813108039,
+                "anchor_match_count": 0,
+                "evidence_role": "supporting"
+              }
+            }
+          ],
+          "retrieval": {
+            "mode": "bm25_dense_rrf",
+            "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+            "dense_answer_threshold": 0.6
+          },
+          "trace": [
+            {
+              "stage": "document_retrieval",
+              "channel": "bm25_dense_rrf",
+              "candidate_count": 4
+            },
+            {
+              "stage": "evidence_selection",
+              "selected_count": 2,
+              "generation": "extractive"
+            },
+            {
+              "stage": "grounded_generation",
+              "status": "validated",
+              "model": "gpt-5.6-terra"
+            }
+          ],
+          "claims": [
+            {
+              "support": [
+                {
+                  "citation_id": 1,
+                  "quote": "标准硬件产品的保修期为12个月,自签收日期起算。"
+                }
+              ],
+              "text": "标准硬件产品保修期为12个月，自签收日期起算。"
+            }
+          ],
+          "generation_audit": {
+            "provider": "responses",
+            "model": "gpt-5.6-terra",
+            "reasoning": "medium",
+            "input_tokens": 373,
+            "output_tokens": 71
+          },
+          "support_validation": "literal_quotes_and_numbers_checked_not_entailment_proof"
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "document",
+            "latency_ms": 2496.857,
+            "error": null
+          },
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25_dense_rrf",
+            "candidate_count": 4
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 2,
+            "generation": "extractive"
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "validated",
+            "model": "gpt-5.6-terra"
+          }
+        ],
+        "audit_id": "816a659a3b73b6c02cdabb2a"
+      },
+      "api_audit": {
+        "provider": "responses",
+        "model": "gpt-5.6-terra",
+        "reasoning": "medium",
+        "input_tokens": 373,
+        "output_tokens": 71
+      }
+    },
+    {
+      "id": "formula_sql",
+      "question": "按指标计算文档中的客单价公式计算2025年华东地区客单价，销售額和订单数从数据库取值。",
+      "pass": false,
+      "latency_ms": 5198.805,
+      "result": {
+        "status": "incomplete",
+        "question": "按指标计算文档中的客单价公式计算2025年华东地区客单价，销售額和订单数从数据库取值。",
+        "effective_question": "按《经营指标公式》中的客单价公式，计算2025年华东地区客单价；销售额和订单数从数据库获取。",
+        "route": "fusion",
+        "planner_source": "model_validated",
+        "session_id": null,
+        "context_turns": 0,
+        "state": {
+          "route": "fusion",
+          "trace_id": "03a89b4ec3d2596b38b7"
+        },
+        "result": {
+          "status": "incomplete",
+          "trace_id": "03a89b4ec3d2596b38b7",
+          "results": {
+            "formula": {
+              "expression": "销售额/订单数",
+              "parameters": [
+                "销售额",
+                "订单数"
+              ],
+              "label": "客单价",
+              "source_uri": "/api/v1/knowledge/documents/metric-definitions/original",
+              "locator": "body:paragraph:5",
+              "chunk_id": "994252e14202f91c266385f7",
+              "sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10"
+            }
+          },
+          "trace": [
+            {
+              "trace_id": "03a89b4ec3d2596b38b7",
+              "task_id": "formula",
+              "tool": "document_formula",
+              "dependencies": [],
+              "status": "complete",
+              "latency_ms": 1.159
+            },
+            {
+              "trace_id": "03a89b4ec3d2596b38b7",
+              "task_id": "metrics",
+              "tool": "sql",
+              "dependencies": [],
+              "status": "failed",
+              "error": "问题中的“去重、和去重”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+              "latency_ms": 11.385
+            }
+          ],
+          "failed_task": "metrics",
+          "error": "问题中的“去重、和去重”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。"
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "fusion",
+            "latency_ms": 5186.135,
+            "error": null
+          },
+          {
+            "trace_id": "03a89b4ec3d2596b38b7",
+            "task_id": "formula",
+            "tool": "document_formula",
+            "dependencies": [],
+            "status": "complete",
+            "latency_ms": 1.159
+          },
+          {
+            "trace_id": "03a89b4ec3d2596b38b7",
+            "task_id": "metrics",
+            "tool": "sql",
+            "dependencies": [],
+            "status": "failed",
+            "error": "问题中的“去重、和去重”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+            "latency_ms": 11.385
+          }
+        ],
+        "audit_id": "7c054ecc38b214c7649c1785"
+      },
+      "api_audit": {
+        "provider": "responses",
+        "model": "gpt-5.6-terra",
+        "reasoning": "medium",
+        "input_tokens": 3589,
+        "output_tokens": 182
+      }
+    },
+    {
+      "id": "forecast_three_sources",
+      "question": "根据经营预测PDF的公式、区域目标Excel中华东2026年的增长率，以及数据库中2025年华东销售额，算出2026年目标销售额。",
+      "pass": false,
+      "latency_ms": 6922.271,
+      "result": {
+        "status": "incomplete",
+        "question": "根据经营预测PDF的公式、区域目标Excel中华东2026年的增长率，以及数据库中2025年华东销售额，算出2026年目标销售额。",
+        "effective_question": "根据《2026经营预测报告》中的目标销售额公式，结合区域目标表中华东地区2026年目标增长率，以及数据库中华东地区2025年销售额，计算华东地区2026年目标销售额。",
+        "route": "fusion",
+        "planner_source": "model_validated",
+        "session_id": null,
+        "context_turns": 0,
+        "state": {
+          "route": "fusion",
+          "trace_id": "4a39c009b0132a571be5"
+        },
+        "result": {
+          "status": "incomplete",
+          "trace_id": "4a39c009b0132a571be5",
+          "results": {
+            "formula": {
+              "expression": "基准销售额*(1+目标增长率)",
+              "parameters": [
+                "基准销售额",
+                "目标增长率"
+              ],
+              "label": "目标销售额",
+              "source_uri": "/api/v1/knowledge/documents/forecast-report/original",
+              "locator": "page:1:block:8",
+              "chunk_id": "f24259fdbace3bbaee096ecd",
+              "sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29"
+            }
+          },
+          "trace": [
+            {
+              "trace_id": "4a39c009b0132a571be5",
+              "task_id": "formula",
+              "tool": "document_formula",
+              "dependencies": [],
+              "status": "complete",
+              "latency_ms": 1.03
+            },
+            {
+              "trace_id": "4a39c009b0132a571be5",
+              "task_id": "growth_rate",
+              "tool": "document_cell",
+              "dependencies": [],
+              "status": "failed",
+              "error": "表格取值缺失或歧义；必须明确唯一记录",
+              "latency_ms": 0.336
+            }
+          ],
+          "failed_task": "growth_rate",
+          "error": "表格取值缺失或歧义；必须明确唯一记录"
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "fusion",
+            "latency_ms": 6920.794,
+            "error": null
+          },
+          {
+            "trace_id": "4a39c009b0132a571be5",
+            "task_id": "formula",
+            "tool": "document_formula",
+            "dependencies": [],
+            "status": "complete",
+            "latency_ms": 1.03
+          },
+          {
+            "trace_id": "4a39c009b0132a571be5",
+            "task_id": "growth_rate",
+            "tool": "document_cell",
+            "dependencies": [],
+            "status": "failed",
+            "error": "表格取值缺失或歧义；必须明确唯一记录",
+            "latency_ms": 0.336
+          }
+        ],
+        "audit_id": "18cb0796fb9805c7f2d95897"
+      },
+      "api_audit": {
+        "provider": "responses",
+        "model": "gpt-5.6-terra",
+        "reasoning": "medium",
+        "input_tokens": 3595,
+        "output_tokens": 298
+      }
+    },
+    {
+      "id": "version_policy",
+      "question": "按照退货政策历史版本，2024-12-31和2025-01-01的无理由退货期限分别是多少，比较是否变化。",
+      "pass": true,
+      "latency_ms": 7072.075,
+      "result": {
+        "status": "ok",
+        "question": "按照退货政策历史版本，2024-12-31和2025-01-01的无理由退货期限分别是多少，比较是否变化。",
+        "effective_question": "按照《退货政策历史版本》的生效日期，查询2024-12-31和2025-01-01适用的无理由退货期限，并比较两日是否发生变化。",
+        "route": "fusion",
+        "planner_source": "model_validated",
+        "session_id": null,
+        "context_turns": 0,
+        "state": {
+          "route": "fusion",
+          "trace_id": "f9f24f7cae630a4c01cf"
+        },
+        "result": {
+          "status": "ok",
+          "trace_id": "f9f24f7cae630a4c01cf",
+          "results": {
+            "policy_2024": {
+              "value": "5日,生效区间为2024-01-01至2024-12-31",
+              "text": "2024版无理由退货期限为5日,生效区间为2024-01-01至2024-12-31。",
+              "valid_from": "2024-01-01",
+              "valid_to": "2024-12-31",
+              "as_of": "2024-12-31",
+              "source_uri": "/api/v1/knowledge/documents/policy-history/original",
+              "locator": "text:1",
+              "sha256": "2fbbedd3a1efb7f9fd314e30a5826417a82267797054932427930d5ded6f5bb8"
+            },
+            "policy_2025": {
+              "value": "7日,自2025-01-01起生效",
+              "text": "2025版无理由退货期限为7日,自2025-01-01起生效。",
+              "valid_from": "2025-01-01",
+              "valid_to": null,
+              "as_of": "2025-01-01",
+              "source_uri": "/api/v1/knowledge/documents/policy-history/original",
+              "locator": "text:1",
+              "sha256": "2fbbedd3a1efb7f9fd314e30a5826417a82267797054932427930d5ded6f5bb8"
+            },
+            "compare_policy": {
+              "status": "different",
+              "left": {
+                "value": "5日,生效区间为2024-01-01至2024-12-31",
+                "text": "2024版无理由退货期限为5日,生效区间为2024-01-01至2024-12-31。",
+                "valid_from": "2024-01-01",
+                "valid_to": "2024-12-31",
+                "as_of": "2024-12-31",
+                "source_uri": "/api/v1/knowledge/documents/policy-history/original",
+                "locator": "text:1",
+                "sha256": "2fbbedd3a1efb7f9fd314e30a5826417a82267797054932427930d5ded6f5bb8"
+              },
+              "right": {
+                "value": "7日,自2025-01-01起生效",
+                "text": "2025版无理由退货期限为7日,自2025-01-01起生效。",
+                "valid_from": "2025-01-01",
+                "valid_to": null,
+                "as_of": "2025-01-01",
+                "source_uri": "/api/v1/knowledge/documents/policy-history/original",
+                "locator": "text:1",
+                "sha256": "2fbbedd3a1efb7f9fd314e30a5826417a82267797054932427930d5ded6f5bb8"
+              },
+              "unit": "unknown",
+              "difference": null
+            }
+          },
+          "trace": [
+            {
+              "trace_id": "f9f24f7cae630a4c01cf",
+              "task_id": "policy_2024",
+              "tool": "policy_select",
+              "dependencies": [],
+              "status": "complete",
+              "latency_ms": 1.795
+            },
+            {
+              "trace_id": "f9f24f7cae630a4c01cf",
+              "task_id": "policy_2025",
+              "tool": "policy_select",
+              "dependencies": [],
+              "status": "complete",
+              "latency_ms": 0.428
+            },
+            {
+              "trace_id": "f9f24f7cae630a4c01cf",
+              "task_id": "compare_policy",
+              "tool": "compare",
+              "dependencies": [
+                "policy_2024",
+                "policy_2025"
+              ],
+              "status": "complete",
+              "latency_ms": 0.029
+            }
+          ],
+          "edges": [
+            {
+              "from": "policy_2024",
+              "to": "compare_policy"
+            },
+            {
+              "from": "policy_2025",
+              "to": "compare_policy"
+            }
+          ]
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "fusion",
+            "latency_ms": 7069.681,
+            "error": null
+          },
+          {
+            "trace_id": "f9f24f7cae630a4c01cf",
+            "task_id": "policy_2024",
+            "tool": "policy_select",
+            "dependencies": [],
+            "status": "complete",
+            "latency_ms": 1.795
+          },
+          {
+            "trace_id": "f9f24f7cae630a4c01cf",
+            "task_id": "policy_2025",
+            "tool": "policy_select",
+            "dependencies": [],
+            "status": "complete",
+            "latency_ms": 0.428
+          },
+          {
+            "trace_id": "f9f24f7cae630a4c01cf",
+            "task_id": "compare_policy",
+            "tool": "compare",
+            "dependencies": [
+              "policy_2024",
+              "policy_2025"
+            ],
+            "status": "complete",
+            "latency_ms": 0.029
+          }
+        ],
+        "audit_id": "9d21c973ee5973400d2f714f"
+      },
+      "api_audit": {
+        "provider": "responses",
+        "model": "gpt-5.6-terra",
+        "reasoning": "medium",
+        "input_tokens": 3591,
+        "output_tokens": 293
+      }
+    }
+  ],
+  "passed": 2,
+  "total": 4
+}

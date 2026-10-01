@@ -29,6 +29,7 @@ from .value_index import ValueIndex
 
 _DEFAULT_MAX_JOIN_HOPS = 4
 _JOIN_HINT_RE = re.compile(r"\[join_path:([A-Za-z0-9_.>\-]+)\]")
+_FIELD_HINT_RE = re.compile(r"\[field:(metric|dimension):([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z_][A-Za-z0-9_]*)\]")
 _ANALYSIS_WORDS = ("排名", "排行", "名次", "占比", "份额", "比例")
 _TREND_WORDS = ("趋势", "按月", "按年", "按日期", "每天", "每月", "每年", "按季度")
 _GENERIC_TIME_ALIASES = {"日期", "时间", "月份", "月度", "按月", "年份", "按年", "年度", "每月", "每年"}
@@ -36,7 +37,7 @@ _MAX_LIMIT = 100
 _COVERAGE_STRUCTURAL_WORDS = (
     "订单", "工单", "明细", "金额", "总额", "总金额", "销售额", "收入", "销售",
     "数据", "查询", "统计", "各", "每个", "按", "分别", "的", "有", "是多少",
-    "那边", "告诉我", "平均", "情况", "政策", "规定", "说明", "只看", "把", "列出来",
+    "那边", "告诉我", "平均", "合计", "去重", "情况", "政策", "规定", "说明", "只看", "把", "列出来",
 )
 # 用户可能把破坏性指令和合法的统计意图写在同一句里。此处只移除带有明确
 # 顺序词的自然语言指令片段；不会接受原始 SQL，也不会放宽执行层的只读限制。
@@ -100,9 +101,20 @@ class SingleTablePlanner:
     ) -> QueryPlan:
         path_hint = self._path_hint(question)
         clean_question = _JOIN_HINT_RE.sub("", question or "")
+        hints = _FIELD_HINT_RE.findall(clean_question)
+        clean_question = _FIELD_HINT_RE.sub("", clean_question)
         clean_question, ignored_instructions = _strip_unsafe_instruction_noise(clean_question)
         normalized = normalize_text(clean_question)
         links = self.linker.link(clean_question, tables)
+        for role, target_table, target_column in hints:
+            chosen = [link for link in links if (link.role, link.table, link.column) == (role, target_table, target_column)]
+            if not chosen or sum(1 for hint in hints if hint[0] == role) > 1:
+                invalid = QueryPlan(rewritten_question=clean_question)
+                return self._clarify(invalid, "invalid_field_selection", "选中的字段与原问题或当前 Schema 不匹配。", 0.0)
+            aliases = {normalize_text(link.matched_alias) for link in chosen}
+            links = [link for link in links if link.role != role or
+                ((link.table, link.column) == (target_table, target_column)) or
+                (role == "dimension" and normalize_text(link.matched_alias) not in aliases)]
         table = self._choose_table(normalized, tables, links)
         plan = QueryPlan(table=table.name if table else None, rewritten_question=clean_question.strip() or (question or "").strip())
         consumed: list[str] = []
@@ -1007,7 +1019,7 @@ class SingleTablePlanner:
             if link.column == "customer_id":
                 return link.table, link.column, "COUNT_DISTINCT", "客户数"
             if link.column.lower().replace("_", "").endswith("id") and any(word in link.matched_alias for word in ("数", "数量", "笔", "量")):
-                function = "COUNT" if link.table == table.name else "COUNT_DISTINCT"
+                function = "COUNT" if link.table == table.name and '去重' not in question else "COUNT_DISTINCT"
                 return link.table, link.column, function, label
             average_threshold = re.search(r"(?:高于|超过|大于|低于|小于|不低于|不高于)(?:整体|全部|总体)?(?:的)?平均", question)
             explicit_aggregate = next((

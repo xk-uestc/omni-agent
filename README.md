@@ -29,6 +29,33 @@ python tools/run_server.py --port 8030
 
 浏览器打开 http://127.0.0.1:8030。API 和前端使用同一端口，不占用原项目的 8014、8020、8021。
 
+### 真实模型
+
+本轮只使用 `gpt-6-luna` 和 `https://spacetimeai.cc/v1`。固定配置已保存在 `runtime/model_config.json`，下次无需重新输入；该文件不进入 Git、ZIP 或浏览器。
+
+```powershell
+python tools/probe_model.py
+python tools/evaluate_model.py --full
+python tools/run_server.py --with-model --port 8030
+```
+
+当前真实探测返回 HTTP 401，见 `docs/MODEL_API_PROBE.json`。有效凭据就绪前默认演示使用规则规划和原文摘录，不把回退当作真实模型验收。
+
+### 可重现评测与打包
+
+```powershell
+python tools/create_sample_corpus.py --ingest
+python tools/evaluate_independent.py --dense
+python tools/evaluate_chinook.py
+python tools/evaluate_schema_scale.py
+python tools/evaluate_robustness.py
+python tools/evaluate_rag_scale.py
+python ict-track8/scripts/package_delivery.py --with-public-assets --output dist/ict8-complete.zip
+python ict-track8/scripts/verify_package.py dist/ict8-complete.zip
+```
+
+Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产包包含公开模型权重、Chinook及许可；源码包可省略 `--with-public-assets` 并根据公开下载清单恢复资产。依赖仍需按requirements安装，真实模型密钥单独配置。开发题成绩不代表官方未知题准确率。
+
 ```powershell
 cd ict-track8
 python -m pytest tests -q

@@ -8,6 +8,8 @@ import threading
 import time
 from collections import deque
 from dataclasses import dataclass
+from contextlib import contextmanager
+import json
 from pathlib import Path
 
 
@@ -19,6 +21,7 @@ class ConversationTurn:
     question: str
     effective_question: str
     created_at: float
+    state: dict | None = None
 
 
 class ConversationStore:
@@ -63,7 +66,7 @@ class ConversationStore:
             with self._connect() as connection:
                 self._persistent_purge(connection, now)
                 record = connection.execute(
-                    "SELECT question, effective_question, created_at "
+                    "SELECT question, effective_question, created_at, state "
                     "FROM conversation_turns WHERE session_id=? ORDER BY sequence DESC LIMIT ?",
                     (key, self.max_turns),
                 ).fetchall()
@@ -72,7 +75,7 @@ class ConversationStore:
                     (now, key),
                 )
                 return tuple(
-                    ConversationTurn(str(row[0]), str(row[1]), float(row[2]))
+                    ConversationTurn(str(row[0]), str(row[1]), float(row[2]), json.loads(row[3]))
                     for row in reversed(record)
                 )
         with self._lock:
@@ -84,11 +87,23 @@ class ConversationStore:
             self._sessions[key] = (now, turns)
             return tuple(turns)
 
-    def remember(self, session_id: str, *, question: str, effective_question: str) -> None:
+    def clear(self, session_id):
+        key = self.validate_id(session_id)
+        if self.storage_path:
+            with self._connect() as connection:
+                connection.execute('DELETE FROM conversation_sessions WHERE session_id=?', (key,))
+        else:
+            with self._lock:
+                self._sessions.pop(key, None)
+
+    def remember(self, session_id: str, *, question: str, effective_question: str, state: dict | None = None) -> None:
         key = self.validate_id(session_id)
         if not str(question).strip() or not str(effective_question).strip():
             return
         now = self._clock()
+        encoded_state = json.dumps(state or {}, ensure_ascii=False)
+        if len(encoded_state) > 32000:
+            raise ValueError('会话状态超过大小限制')
         if self.storage_path:
             with self._connect() as connection:
                 self._persistent_purge(connection, now)
@@ -113,9 +128,9 @@ class ConversationStore:
                     (key, now),
                 )
                 connection.execute(
-                    "INSERT INTO conversation_turns(session_id, sequence, question, effective_question, created_at) "
-                    "VALUES(?, ?, ?, ?, ?)",
-                    (key, int(sequence), str(question).strip(), str(effective_question).strip(), now),
+                    "INSERT INTO conversation_turns(session_id, sequence, question, effective_question, created_at, state) "
+                    "VALUES(?, ?, ?, ?, ?, ?)",
+                    (key, int(sequence), str(question).strip(), str(effective_question).strip(), now, encoded_state),
                 )
                 connection.execute(
                     "DELETE FROM conversation_turns WHERE session_id=? AND sequence < "
@@ -129,7 +144,7 @@ class ConversationStore:
                 oldest = min(self._sessions, key=lambda item: self._sessions[item][0])
                 self._sessions.pop(oldest, None)
             turns = self._sessions.get(key, (now, deque(maxlen=self.max_turns)))[1]
-            turns.append(ConversationTurn(str(question).strip(), str(effective_question).strip(), now))
+            turns.append(ConversationTurn(str(question).strip(), str(effective_question).strip(), now, state or {}))
             self._sessions[key] = (now, turns)
 
     def _purge(self, now: float) -> None:
@@ -137,12 +152,17 @@ class ConversationStore:
         for key in expired:
             self._sessions.pop(key, None)
 
-    def _connect(self) -> sqlite3.Connection:
+    @contextmanager
+    def _connect(self):
         if self.storage_path is None:
             raise RuntimeError("当前会话存储未启用 SQLite")
         connection = sqlite3.connect(self.storage_path, timeout=2.0)
         connection.execute("PRAGMA foreign_keys = ON")
-        return connection
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
 
     def _initialize_database(self) -> None:
         with self._connect() as connection:
@@ -164,6 +184,9 @@ class ConversationStore:
                     ON conversation_sessions(touched_at);
                 """
             )
+            columns = {row[1] for row in connection.execute('PRAGMA table_info(conversation_turns)')}
+            if 'state' not in columns:
+                connection.execute("ALTER TABLE conversation_turns ADD COLUMN state TEXT NOT NULL DEFAULT '{}'")
 
     def _persistent_purge(self, connection: sqlite3.Connection, now: float) -> None:
         connection.execute(

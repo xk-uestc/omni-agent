@@ -1,0 +1,17 @@
+{
+  "scope": "public_chinook_manual_queries_not_spider_test",
+  "cases": [
+    {"id":"C01","question":"Invoice Total的合计是多少","columns":["总Total"],"gold_sql":"SELECT SUM(Total) AS 总Total FROM Invoice","category":"aggregate"},
+    {"id":"C02","question":"Invoice的订单数是多少","columns":["InvoiceId"],"gold_sql":"SELECT COUNT(*) AS InvoiceId FROM Invoice","category":"count"},
+    {"id":"C03","question":"Invoice的平均Total是多少","columns":["平均Total"],"gold_sql":"SELECT AVG(Total) AS 平均Total FROM Invoice","category":"aggregate"},
+    {"id":"C04","question":"按BillingCountry统计Invoice Total","columns":["BillingCountry","Total"],"gold_sql":"SELECT BillingCountry,SUM(Total) AS Total FROM Invoice GROUP BY BillingCountry","category":"group"},
+    {"id":"C05","question":"2009年Invoice Total是多少","columns":["Total"],"gold_sql":"SELECT SUM(Total) AS Total FROM Invoice WHERE InvoiceDate >= '2009-01-01' AND InvoiceDate < '2010-01-01'","category":"time"},
+    {"id":"C06","question":"2010年按月统计Invoice Total","columns":["月份","Total"],"gold_sql":"SELECT strftime('%Y-%m',InvoiceDate) AS 月份,SUM(Total) AS Total FROM Invoice WHERE InvoiceDate >= '2010-01-01' AND InvoiceDate < '2011-01-01' GROUP BY 1","category":"time_group"},
+    {"id":"C07","question":"Invoice Total按BillingCountry排名","columns":["BillingCountry","Total"],"gold_sql":"SELECT BillingCountry,SUM(Total) AS Total FROM Invoice GROUP BY BillingCountry ORDER BY Total DESC,BillingCountry ASC","category":"rank"},
+    {"id":"C08","question":"按Customer City统计Invoice Total","columns":["City","Total"],"gold_sql":"SELECT c.City,SUM(i.Total) AS Total FROM Invoice i JOIN Customer c ON i.CustomerId=c.CustomerId GROUP BY c.City","category":"join"},
+    {"id":"C09","question":"按Genre Name统计Track Milliseconds的平均值","columns":["Name","平均Milliseconds"],"gold_sql":"SELECT g.Name,AVG(t.Milliseconds) AS 平均Milliseconds FROM Track t JOIN Genre g ON t.GenreId=g.GenreId GROUP BY g.Name","category":"join"},
+    {"id":"C10","question":"按MediaType Name统计Track Bytes的平均值","columns":["Name","平均Bytes"],"gold_sql":"SELECT m.Name,AVG(t.Bytes) AS 平均Bytes FROM Track t JOIN MediaType m ON t.MediaTypeId=m.MediaTypeId GROUP BY m.Name","category":"join"},
+    {"id":"C11","question":"按Genre Name统计InvoiceLine Quantity的合计","columns":["Name","总Quantity"],"gold_sql":"SELECT g.Name,SUM(il.Quantity) AS 总Quantity FROM InvoiceLine il JOIN Track t ON il.TrackId=t.TrackId JOIN Genre g ON t.GenreId=g.GenreId GROUP BY g.Name","category":"multi_hop"},
+    {"id":"C12","question":"各BillingCountry的Invoice Total高于平均","columns":["BillingCountry","Total"],"gold_sql":"SELECT BillingCountry,SUM(Total) AS Total FROM Invoice GROUP BY BillingCountry HAVING SUM(Total) > (SELECT AVG(s) FROM (SELECT SUM(Total) AS s FROM Invoice GROUP BY BillingCountry))","category":"nested"}
+  ]
+}

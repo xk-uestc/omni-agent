@@ -1,0 +1,149 @@
+{
+  "created_at": "2026-10-01T00:21:28.600559+00:00",
+  "scope": "synthetic_text_pdf_local_hybrid_extractive_no_ocr_no_external_generation",
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "embedding": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620"
+  },
+  "records": [
+    {
+      "pages": 10,
+      "pdf_bytes": 10770,
+      "chunks": 50,
+      "ingest_ms": 232.576,
+      "cold_first_answer_ms": 6323.282,
+      "warm": {
+        "p50_ms": 11.519,
+        "p95_ms": 14.011
+      },
+      "warm_evidence_passed": 7,
+      "warm_evidence_total": 7,
+      "query_scenario": "exact_identifier_lookup",
+      "global_semantic_query": {
+        "first_answer_ms": 401.494,
+        "warm": {
+          "p50_ms": 19.093,
+          "p95_ms": 19.575
+        },
+        "evidence_passed": 7,
+        "evidence_total": 7
+      },
+      "answer_mode": "attributed_extracts",
+      "retrieval": {
+        "mode": "bm25_dense_rrf",
+        "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+        "dense_answer_threshold": 0.6
+      },
+      "concurrency": {
+        "1": {
+          "qps": 69.381,
+          "completed": 16,
+          "citation_missing": 0
+        },
+        "4": {
+          "qps": 76.515,
+          "completed": 16,
+          "citation_missing": 0
+        },
+        "8": {
+          "qps": 71.052,
+          "completed": 16,
+          "citation_missing": 0
+        }
+      }
+    },
+    {
+      "pages": 100,
+      "pdf_bytes": 91299,
+      "chunks": 500,
+      "ingest_ms": 399.8,
+      "cold_first_answer_ms": 167.293,
+      "warm": {
+        "p50_ms": 21.833,
+        "p95_ms": 117.391
+      },
+      "warm_evidence_passed": 7,
+      "warm_evidence_total": 7,
+      "query_scenario": "exact_identifier_lookup",
+      "global_semantic_query": {
+        "first_answer_ms": 3104.035,
+        "warm": {
+          "p50_ms": 109.542,
+          "p95_ms": 115.637
+        },
+        "evidence_passed": 7,
+        "evidence_total": 7
+      },
+      "answer_mode": "attributed_extracts",
+      "retrieval": {
+        "mode": "bm25_dense_rrf",
+        "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+        "dense_answer_threshold": 0.6
+      },
+      "concurrency": {
+        "1": {
+          "qps": 15.331,
+          "completed": 16,
+          "citation_missing": 0
+        },
+        "4": {
+          "qps": 15.777,
+          "completed": 16,
+          "citation_missing": 0
+        },
+        "8": {
+          "qps": 15.146,
+          "completed": 16,
+          "citation_missing": 0
+        }
+      }
+    },
+    {
+      "pages": 500,
+      "pdf_bytes": 450113,
+      "chunks": 2500,
+      "ingest_ms": 992.506,
+      "cold_first_answer_ms": 188.185,
+      "warm": {
+        "p50_ms": 78.262,
+        "p95_ms": 176.968
+      },
+      "warm_evidence_passed": 7,
+      "warm_evidence_total": 7,
+      "query_scenario": "exact_identifier_lookup",
+      "global_semantic_query": {
+        "first_answer_ms": 16101.17,
+        "warm": {
+          "p50_ms": 541.472,
+          "p95_ms": 616.101
+        },
+        "evidence_passed": 7,
+        "evidence_total": 7
+      },
+      "answer_mode": "attributed_extracts",
+      "retrieval": {
+        "mode": "bm25_dense_rrf",
+        "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+        "dense_answer_threshold": 0.6
+      },
+      "concurrency": {
+        "1": {
+          "qps": 3.338,
+          "completed": 16,
+          "citation_missing": 0
+        },
+        "4": {
+          "qps": 3.197,
+          "completed": 16,
+          "citation_missing": 0
+        },
+        "8": {
+          "qps": 3.193,
+          "completed": 16,
+          "citation_missing": 0
+        }
+      }
+    }
+  ]
+}

@@ -150,6 +150,31 @@ def test_unknown_explicit_grouping_never_silently_returns_total(tmp_path):
     assert result.clarification_code == "unsupported_time_grain"
 
 
+def test_dimension_clarification_selects_real_role_and_changes_result(tmp_path):
+    from backend.clarification import ClarificationResolver, ClarificationSelection
+    path = _chinook_fixture(tmp_path / "chinook.sqlite")
+    with sqlite3.connect(path) as connection:
+        connection.execute("ALTER TABLE Invoice ADD COLUMN BillingCountry TEXT")
+        connection.execute("UPDATE Invoice SET BillingCountry = CASE InvoiceId WHEN 10 THEN 'GB' ELSE 'CA' END")
+    engine = Nl2SqlEngine(path)
+    question = "按国家统计订单金额"
+    resolver = ClarificationResolver()
+    billing = engine.answer(resolver.apply(question, ClarificationSelection("ambiguous_dimension", "Invoice.BillingCountry")))
+    customer = engine.answer(resolver.apply(question, ClarificationSelection("ambiguous_dimension", "Customer.Country")))
+    assert billing.status == customer.status == "ok"
+    assert billing.plan["dimension_tables"] == {"BillingCountry": "Invoice"}
+    assert customer.plan["dimension_tables"] == {"Country": "Customer"}
+    assert {row["BillingCountry"]: row[billing.plan["metric_label"]] for row in billing.rows} == {"GB": 30, "CA": 35}
+    assert {row["Country"]: row[customer.plan["metric_label"]] for row in customer.rows} == {"US": 50, "CA": 15}
+
+
+def test_forged_clarification_field_does_not_execute(tmp_path):
+    path = _chinook_fixture(tmp_path / "chinook.sqlite")
+    result = Nl2SqlEngine(path).answer("按国家统计订单金额 [field:dimension:Invoice.Total]")
+    assert result.status == "clarification"
+    assert result.clarification_code == "invalid_field_selection"
+
+
 def test_generic_amount_does_not_invent_sales_semantics(tmp_path):
     path = tmp_path / "finance.sqlite"
     with sqlite3.connect(path) as connection:

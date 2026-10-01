@@ -1,0 +1,7036 @@
+{
+  "created_at": "2026-09-30T23:46:53.358521+00:00",
+  "scope": "public_chinook_manual_queries_not_standard_test_set",
+  "db_sha256": "7651ba378ac2fcd0dfc3c66fb101f7a7eed3ba39a612ec642b96e20702061f15",
+  "model": null,
+  "passed": 12,
+  "total": 12,
+  "cases": [
+    {
+      "id": "C01",
+      "question": "Invoice Total的合计是多少",
+      "columns": [
+        "总Total"
+      ],
+      "gold_sql": "SELECT SUM(Total) AS 总Total FROM Invoice",
+      "category": "aggregate",
+      "pass": true,
+      "latency_ms": 161.912,
+      "expected": [
+        [
+          2328.6
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Invoice Total的合计是多少",
+        "rewritten_question": "Invoice Total的合计是多少",
+        "sql": "SELECT SUM(\"Invoice\".\"Total\") AS \"总Total\" FROM \"Invoice\" ORDER BY SUM(\"Invoice\".\"Total\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "总Total"
+        ],
+        "rows": [
+          {
+            "总Total": 2328.6
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "SUM",
+          "metric_label": "总Total",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "Invoice Total的合计是多少",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Invoice Total的合计是多少",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "SUM",
+              "label": "总Total"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.48,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：总Total（SUM）",
+          "查询表：Invoice",
+          "使用表 Invoice 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 1,
+          "query_hash": "792fa711728e57cf",
+          "field_links": [
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "总Total",
+              "query_hash": "792fa711728e57cf",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "总Total"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C02",
+      "question": "Invoice的订单数是多少",
+      "columns": [
+        "InvoiceId"
+      ],
+      "gold_sql": "SELECT COUNT(*) AS InvoiceId FROM Invoice",
+      "category": "count",
+      "pass": true,
+      "latency_ms": 127.101,
+      "expected": [
+        [
+          412
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Invoice的订单数是多少",
+        "rewritten_question": "Invoice的订单数是多少",
+        "sql": "SELECT COUNT(*) AS \"InvoiceId\" FROM \"Invoice\" ORDER BY COUNT(*) DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "InvoiceId"
+        ],
+        "rows": [
+          {
+            "InvoiceId": 412
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "InvoiceId",
+          "metric_function": "COUNT",
+          "metric_label": "InvoiceId",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "订单数",
+              "table": "Invoice",
+              "column": "InvoiceId",
+              "role": "metric",
+              "score": 0.68,
+              "matched_alias": "订单数",
+              "metric_function": "COUNT_DISTINCT"
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "Invoice的订单数是多少",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "订单数"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Invoice的订单数是多少",
+            "metric": {
+              "table": "Invoice",
+              "column": "InvoiceId",
+              "function": "COUNT",
+              "label": "InvoiceId"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.48,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：InvoiceId（COUNT）",
+          "查询表：Invoice",
+          "使用表 Invoice 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 1,
+          "query_hash": "04921fb32c158d8d",
+          "field_links": [
+            {
+              "source_text": "订单数",
+              "table": "Invoice",
+              "column": "InvoiceId",
+              "role": "metric",
+              "score": 0.68,
+              "matched_alias": "订单数",
+              "metric_function": "COUNT_DISTINCT"
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "订单数"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "InvoiceId",
+              "query_hash": "04921fb32c158d8d",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "InvoiceId"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C03",
+      "question": "Invoice的平均Total是多少",
+      "columns": [
+        "平均Total"
+      ],
+      "gold_sql": "SELECT AVG(Total) AS 平均Total FROM Invoice",
+      "category": "aggregate",
+      "pass": true,
+      "latency_ms": 122.451,
+      "expected": [
+        [
+          5.651941747572815
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Invoice的平均Total是多少",
+        "rewritten_question": "Invoice的平均Total是多少",
+        "sql": "SELECT AVG(\"Invoice\".\"Total\") AS \"平均Total\" FROM \"Invoice\" ORDER BY AVG(\"Invoice\".\"Total\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "平均Total"
+        ],
+        "rows": [
+          {
+            "平均Total": 5.651941747572815
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "AVG",
+          "metric_label": "平均Total",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "Invoice的平均Total是多少",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Invoice的平均Total是多少",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "AVG",
+              "label": "平均Total"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.48,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：平均Total（AVG）",
+          "查询表：Invoice",
+          "使用表 Invoice 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 1,
+          "query_hash": "f9cf5dffa60eac04",
+          "field_links": [
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "平均Total",
+              "query_hash": "f9cf5dffa60eac04",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "平均Total"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C04",
+      "question": "按BillingCountry统计Invoice Total",
+      "columns": [
+        "BillingCountry",
+        "Total"
+      ],
+      "gold_sql": "SELECT BillingCountry,SUM(Total) AS Total FROM Invoice GROUP BY BillingCountry",
+      "category": "group",
+      "pass": true,
+      "latency_ms": 128.998,
+      "expected": [
+        [
+          "Argentina",
+          37.62
+        ],
+        [
+          "Australia",
+          37.62
+        ],
+        [
+          "Austria",
+          42.62
+        ],
+        [
+          "Belgium",
+          37.62
+        ],
+        [
+          "Brazil",
+          190.1
+        ],
+        [
+          "Canada",
+          303.96
+        ],
+        [
+          "Chile",
+          46.62
+        ],
+        [
+          "Czech Republic",
+          90.24
+        ],
+        [
+          "Denmark",
+          37.62
+        ],
+        [
+          "Finland",
+          41.62
+        ],
+        [
+          "France",
+          195.1
+        ],
+        [
+          "Germany",
+          156.48
+        ],
+        [
+          "Hungary",
+          45.62
+        ],
+        [
+          "India",
+          75.26
+        ],
+        [
+          "Ireland",
+          45.62
+        ],
+        [
+          "Italy",
+          37.62
+        ],
+        [
+          "Netherlands",
+          40.62
+        ],
+        [
+          "Norway",
+          39.62
+        ],
+        [
+          "Poland",
+          37.62
+        ],
+        [
+          "Portugal",
+          77.24
+        ],
+        [
+          "Spain",
+          37.62
+        ],
+        [
+          "Sweden",
+          38.62
+        ],
+        [
+          "USA",
+          523.06
+        ],
+        [
+          "United Kingdom",
+          112.86
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按BillingCountry统计Invoice Total",
+        "rewritten_question": "按BillingCountry统计Invoice Total",
+        "sql": "SELECT \"Invoice\".\"BillingCountry\", SUM(\"Invoice\".\"Total\") AS \"Total\" FROM \"Invoice\" GROUP BY \"Invoice\".\"BillingCountry\" ORDER BY SUM(\"Invoice\".\"Total\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "BillingCountry",
+          "Total"
+        ],
+        "rows": [
+          {
+            "BillingCountry": "USA",
+            "Total": 523.06
+          },
+          {
+            "BillingCountry": "Canada",
+            "Total": 303.96
+          },
+          {
+            "BillingCountry": "France",
+            "Total": 195.1
+          },
+          {
+            "BillingCountry": "Brazil",
+            "Total": 190.1
+          },
+          {
+            "BillingCountry": "Germany",
+            "Total": 156.48
+          },
+          {
+            "BillingCountry": "United Kingdom",
+            "Total": 112.86
+          },
+          {
+            "BillingCountry": "Czech Republic",
+            "Total": 90.24
+          },
+          {
+            "BillingCountry": "Portugal",
+            "Total": 77.24
+          },
+          {
+            "BillingCountry": "India",
+            "Total": 75.26
+          },
+          {
+            "BillingCountry": "Chile",
+            "Total": 46.62
+          },
+          {
+            "BillingCountry": "Ireland",
+            "Total": 45.62
+          },
+          {
+            "BillingCountry": "Hungary",
+            "Total": 45.62
+          },
+          {
+            "BillingCountry": "Austria",
+            "Total": 42.62
+          },
+          {
+            "BillingCountry": "Finland",
+            "Total": 41.62
+          },
+          {
+            "BillingCountry": "Netherlands",
+            "Total": 40.62
+          },
+          {
+            "BillingCountry": "Norway",
+            "Total": 39.62
+          },
+          {
+            "BillingCountry": "Sweden",
+            "Total": 38.62
+          },
+          {
+            "BillingCountry": "Spain",
+            "Total": 37.62
+          },
+          {
+            "BillingCountry": "Poland",
+            "Total": 37.62
+          },
+          {
+            "BillingCountry": "Italy",
+            "Total": 37.62
+          },
+          {
+            "BillingCountry": "Denmark",
+            "Total": 37.62
+          },
+          {
+            "BillingCountry": "Belgium",
+            "Total": 37.62
+          },
+          {
+            "BillingCountry": "Australia",
+            "Total": 37.62
+          },
+          {
+            "BillingCountry": "Argentina",
+            "Total": 37.62
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "SUM",
+          "metric_label": "Total",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "BillingCountry"
+          ],
+          "dimension_tables": {
+            "BillingCountry": "Invoice"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "BillingCountry",
+              "table": "Invoice",
+              "column": "BillingCountry",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "BillingCountry",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按BillingCountry统计Invoice Total",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "billingcountry",
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "按BillingCountry统计Invoice Total",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "SUM",
+              "label": "Total"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Invoice",
+                "column": "BillingCountry",
+                "grain": "raw",
+                "label": "BillingCountry"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：Total（SUM）",
+          "查询表：Invoice",
+          "使用表 Invoice 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 24,
+          "query_hash": "a1b3b57f88917c46",
+          "field_links": [
+            {
+              "source_text": "BillingCountry",
+              "table": "Invoice",
+              "column": "BillingCountry",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "BillingCountry",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "billingcountry",
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 0,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 1,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 2,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 2,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 3,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 3,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 4,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 4,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 5,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 5,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 6,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 6,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 7,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 7,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 8,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 8,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 9,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 9,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 10,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 10,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 11,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 11,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 12,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 12,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 13,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 13,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 14,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 14,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 15,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 15,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 16,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 16,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 17,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 17,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 18,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 18,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 19,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 19,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 20,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 20,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 21,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 21,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 22,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 22,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 23,
+              "column": "BillingCountry",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 23,
+              "column": "Total",
+              "query_hash": "a1b3b57f88917c46",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "Total"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C05",
+      "question": "2009年Invoice Total是多少",
+      "columns": [
+        "Total"
+      ],
+      "gold_sql": "SELECT SUM(Total) AS Total FROM Invoice WHERE InvoiceDate >= '2009-01-01' AND InvoiceDate < '2010-01-01'",
+      "category": "time",
+      "pass": true,
+      "latency_ms": 125.083,
+      "expected": [
+        [
+          null
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "empty",
+        "notices": [
+          "该时间范围内没有数据；Invoice.InvoiceDate 的数据覆盖 2021-01-01 00:00:00 至 2025-12-22 00:00:00"
+        ],
+        "question": "2009年Invoice Total是多少",
+        "rewritten_question": "2009年Invoice Total是多少",
+        "sql": "SELECT SUM(\"Invoice\".\"Total\") AS \"Total\" FROM \"Invoice\" WHERE \"Invoice\".\"InvoiceDate\" >= ? AND \"Invoice\".\"InvoiceDate\" < ? ORDER BY SUM(\"Invoice\".\"Total\") DESC LIMIT ?",
+        "parameters": [
+          "2009-01-01",
+          "2010-01-01",
+          100
+        ],
+        "columns": [
+          "Total"
+        ],
+        "rows": [
+          {
+            "Total": null
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "SUM",
+          "metric_label": "Total",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "InvoiceDate",
+              "operator": "RANGE",
+              "value": [
+                "2009-01-01",
+                "2010-01-01"
+              ],
+              "source_text": "2009年",
+              "explanation": "限制时间 [2009-01-01, 2010-01-01)，时间字段 Invoice.InvoiceDate",
+              "table": "Invoice"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.58,
+          "rewritten_question": "2009年Invoice Total是多少",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "日期参数格式：iso_text",
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "2009年",
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "2009年Invoice Total是多少",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "SUM",
+              "label": "Total"
+            },
+            "filters": [
+              {
+                "column": "InvoiceDate",
+                "operator": "RANGE",
+                "value": [
+                  "2009-01-01",
+                  "2010-01-01"
+                ],
+                "source_text": "2009年",
+                "explanation": "限制时间 [2009-01-01, 2010-01-01)，时间字段 Invoice.InvoiceDate",
+                "table": "Invoice"
+              }
+            ],
+            "time_range": [
+              "2009-01-01",
+              "2010-01-01"
+            ],
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.58,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：Total（SUM）",
+          "查询表：Invoice",
+          "限制时间 [2009-01-01, 2010-01-01)，时间字段 Invoice.InvoiceDate",
+          "日期参数格式：iso_text",
+          "使用表 Invoice 的只读聚合查询",
+          "该时间范围内没有数据；Invoice.InvoiceDate 的数据覆盖 2021-01-01 00:00:00 至 2025-12-22 00:00:00",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 1,
+          "query_hash": "f8b954e063aeda05",
+          "field_links": [
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "2009年",
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "Total",
+              "query_hash": "f8b954e063aeda05",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Total"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C06",
+      "question": "2010年按月统计Invoice Total",
+      "columns": [
+        "月份",
+        "Total"
+      ],
+      "gold_sql": "SELECT strftime('%Y-%m',InvoiceDate) AS 月份,SUM(Total) AS Total FROM Invoice WHERE InvoiceDate >= '2010-01-01' AND InvoiceDate < '2011-01-01' GROUP BY 1",
+      "category": "time_group",
+      "pass": true,
+      "latency_ms": 124.428,
+      "expected": [],
+      "result": {
+        "status": "ok",
+        "result_state": "empty",
+        "notices": [
+          "该时间范围内没有数据；Invoice.InvoiceDate 的数据覆盖 2021-01-01 00:00:00 至 2025-12-22 00:00:00"
+        ],
+        "question": "2010年按月统计Invoice Total",
+        "rewritten_question": "2010年按月统计Invoice Total",
+        "sql": "SELECT strftime('%Y-%m', \"Invoice\".\"InvoiceDate\") AS \"月份\", SUM(\"Invoice\".\"Total\") AS \"Total\" FROM \"Invoice\" WHERE \"Invoice\".\"InvoiceDate\" >= ? AND \"Invoice\".\"InvoiceDate\" < ? GROUP BY strftime('%Y-%m', \"Invoice\".\"InvoiceDate\") ORDER BY SUM(\"Invoice\".\"Total\") DESC LIMIT ?",
+        "parameters": [
+          "2010-01-01",
+          "2011-01-01",
+          100
+        ],
+        "columns": [
+          "月份",
+          "Total"
+        ],
+        "rows": [],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "SUM",
+          "metric_label": "Total",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "InvoiceDate"
+          ],
+          "dimension_tables": {
+            "InvoiceDate": "Invoice"
+          },
+          "dimension_transforms": {
+            "InvoiceDate": "month"
+          },
+          "dimension_labels": {
+            "InvoiceDate": "月份"
+          },
+          "filters": [
+            {
+              "column": "InvoiceDate",
+              "operator": "RANGE",
+              "value": [
+                "2010-01-01",
+                "2011-01-01"
+              ],
+              "source_text": "2010年",
+              "explanation": "限制时间 [2010-01-01, 2011-01-01)，时间字段 Invoice.InvoiceDate",
+              "table": "Invoice"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "按月",
+              "table": "Invoice",
+              "column": "InvoiceDate",
+              "role": "dimension",
+              "score": 0.8,
+              "matched_alias": "按月",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.72,
+          "rewritten_question": "2010年按月统计Invoice Total",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "日期参数格式：iso_text",
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "2010年",
+              "total",
+              "按月"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "2010年按月统计Invoice Total",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "SUM",
+              "label": "Total"
+            },
+            "filters": [
+              {
+                "column": "InvoiceDate",
+                "operator": "RANGE",
+                "value": [
+                  "2010-01-01",
+                  "2011-01-01"
+                ],
+                "source_text": "2010年",
+                "explanation": "限制时间 [2010-01-01, 2011-01-01)，时间字段 Invoice.InvoiceDate",
+                "table": "Invoice"
+              }
+            ],
+            "time_range": [
+              "2010-01-01",
+              "2011-01-01"
+            ],
+            "group_by": [
+              {
+                "table": "Invoice",
+                "column": "InvoiceDate",
+                "grain": "month",
+                "label": "月份"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.72,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：Total（SUM）",
+          "查询表：Invoice",
+          "限制时间 [2010-01-01, 2011-01-01)，时间字段 Invoice.InvoiceDate",
+          "日期参数格式：iso_text",
+          "使用表 Invoice 的只读聚合查询",
+          "该时间范围内没有数据；Invoice.InvoiceDate 的数据覆盖 2021-01-01 00:00:00 至 2025-12-22 00:00:00",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 0,
+          "query_hash": "7edd966525bf2e30",
+          "field_links": [
+            {
+              "source_text": "按月",
+              "table": "Invoice",
+              "column": "InvoiceDate",
+              "role": "dimension",
+              "score": 0.8,
+              "matched_alias": "按月",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "2010年",
+              "total",
+              "按月"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": []
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C07",
+      "question": "Invoice Total按BillingCountry排名",
+      "columns": [
+        "BillingCountry",
+        "Total"
+      ],
+      "gold_sql": "SELECT BillingCountry,SUM(Total) AS Total FROM Invoice GROUP BY BillingCountry ORDER BY Total DESC,BillingCountry ASC",
+      "category": "rank",
+      "pass": true,
+      "latency_ms": 122.72,
+      "expected": [
+        [
+          "USA",
+          523.06
+        ],
+        [
+          "Canada",
+          303.96
+        ],
+        [
+          "France",
+          195.1
+        ],
+        [
+          "Brazil",
+          190.1
+        ],
+        [
+          "Germany",
+          156.48
+        ],
+        [
+          "United Kingdom",
+          112.86
+        ],
+        [
+          "Czech Republic",
+          90.24
+        ],
+        [
+          "Portugal",
+          77.24
+        ],
+        [
+          "India",
+          75.26
+        ],
+        [
+          "Chile",
+          46.62
+        ],
+        [
+          "Hungary",
+          45.62
+        ],
+        [
+          "Ireland",
+          45.62
+        ],
+        [
+          "Austria",
+          42.62
+        ],
+        [
+          "Finland",
+          41.62
+        ],
+        [
+          "Netherlands",
+          40.62
+        ],
+        [
+          "Norway",
+          39.62
+        ],
+        [
+          "Sweden",
+          38.62
+        ],
+        [
+          "Argentina",
+          37.62
+        ],
+        [
+          "Australia",
+          37.62
+        ],
+        [
+          "Belgium",
+          37.62
+        ],
+        [
+          "Denmark",
+          37.62
+        ],
+        [
+          "Italy",
+          37.62
+        ],
+        [
+          "Poland",
+          37.62
+        ],
+        [
+          "Spain",
+          37.62
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Invoice Total按BillingCountry排名",
+        "rewritten_question": "Invoice Total按BillingCountry排名",
+        "sql": "SELECT \"Invoice\".\"BillingCountry\", SUM(\"Invoice\".\"Total\") AS \"Total\", DENSE_RANK() OVER (ORDER BY SUM(\"Invoice\".\"Total\") DESC) AS \"排名\" FROM \"Invoice\" GROUP BY \"Invoice\".\"BillingCountry\" ORDER BY \"排名\" ASC, \"Total\" DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "BillingCountry",
+          "Total",
+          "排名"
+        ],
+        "rows": [
+          {
+            "BillingCountry": "USA",
+            "Total": 523.06,
+            "排名": 1
+          },
+          {
+            "BillingCountry": "Canada",
+            "Total": 303.96,
+            "排名": 2
+          },
+          {
+            "BillingCountry": "France",
+            "Total": 195.1,
+            "排名": 3
+          },
+          {
+            "BillingCountry": "Brazil",
+            "Total": 190.1,
+            "排名": 4
+          },
+          {
+            "BillingCountry": "Germany",
+            "Total": 156.48,
+            "排名": 5
+          },
+          {
+            "BillingCountry": "United Kingdom",
+            "Total": 112.86,
+            "排名": 6
+          },
+          {
+            "BillingCountry": "Czech Republic",
+            "Total": 90.24,
+            "排名": 7
+          },
+          {
+            "BillingCountry": "Portugal",
+            "Total": 77.24,
+            "排名": 8
+          },
+          {
+            "BillingCountry": "India",
+            "Total": 75.26,
+            "排名": 9
+          },
+          {
+            "BillingCountry": "Chile",
+            "Total": 46.62,
+            "排名": 10
+          },
+          {
+            "BillingCountry": "Ireland",
+            "Total": 45.62,
+            "排名": 11
+          },
+          {
+            "BillingCountry": "Hungary",
+            "Total": 45.62,
+            "排名": 11
+          },
+          {
+            "BillingCountry": "Austria",
+            "Total": 42.62,
+            "排名": 12
+          },
+          {
+            "BillingCountry": "Finland",
+            "Total": 41.62,
+            "排名": 13
+          },
+          {
+            "BillingCountry": "Netherlands",
+            "Total": 40.62,
+            "排名": 14
+          },
+          {
+            "BillingCountry": "Norway",
+            "Total": 39.62,
+            "排名": 15
+          },
+          {
+            "BillingCountry": "Sweden",
+            "Total": 38.62,
+            "排名": 16
+          },
+          {
+            "BillingCountry": "Spain",
+            "Total": 37.62,
+            "排名": 17
+          },
+          {
+            "BillingCountry": "Poland",
+            "Total": 37.62,
+            "排名": 17
+          },
+          {
+            "BillingCountry": "Italy",
+            "Total": 37.62,
+            "排名": 17
+          },
+          {
+            "BillingCountry": "Denmark",
+            "Total": 37.62,
+            "排名": 17
+          },
+          {
+            "BillingCountry": "Belgium",
+            "Total": 37.62,
+            "排名": 17
+          },
+          {
+            "BillingCountry": "Australia",
+            "Total": 37.62,
+            "排名": 17
+          },
+          {
+            "BillingCountry": "Argentina",
+            "Total": 37.62,
+            "排名": 17
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "SUM",
+          "metric_label": "Total",
+          "analysis_mode": "rank",
+          "dimensions": [
+            "BillingCountry"
+          ],
+          "dimension_tables": {
+            "BillingCountry": "Invoice"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "BillingCountry",
+              "table": "Invoice",
+              "column": "BillingCountry",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "BillingCountry",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "Invoice Total按BillingCountry排名",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "billingcountry",
+              "total",
+              "排名"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Invoice Total按BillingCountry排名",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "SUM",
+              "label": "Total"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Invoice",
+                "column": "BillingCountry",
+                "grain": "raw",
+                "label": "BillingCountry"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：Total（SUM）",
+          "查询表：Invoice",
+          "分析模式：rank",
+          "使用表 Invoice 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 24,
+          "query_hash": "30ad1c124f24bb52",
+          "field_links": [
+            {
+              "source_text": "BillingCountry",
+              "table": "Invoice",
+              "column": "BillingCountry",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "BillingCountry",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "billingcountry",
+              "total",
+              "排名"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 0,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 0,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 1,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 1,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 2,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 2,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 2,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 3,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 3,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 3,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 4,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 4,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 4,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 5,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 5,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 5,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 6,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 6,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 6,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 7,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 7,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 7,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 8,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 8,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 8,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 9,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 9,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 9,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 10,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 10,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 10,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 11,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 11,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 11,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 12,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 12,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 12,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 13,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 13,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 13,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 14,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 14,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 14,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 15,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 15,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 15,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 16,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 16,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 16,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 17,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 17,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 17,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 18,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 18,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 18,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 19,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 19,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 19,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 20,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 20,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 20,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 21,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 21,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 21,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 22,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 22,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 22,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "排名"
+              }
+            },
+            {
+              "row": 23,
+              "column": "BillingCountry",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 23,
+              "column": "Total",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 23,
+              "column": "排名",
+              "query_hash": "30ad1c124f24bb52",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "排名"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C08",
+      "question": "按Customer City统计Invoice Total",
+      "columns": [
+        "City",
+        "Total"
+      ],
+      "gold_sql": "SELECT c.City,SUM(i.Total) AS Total FROM Invoice i JOIN Customer c ON i.CustomerId=c.CustomerId GROUP BY c.City",
+      "category": "join",
+      "pass": true,
+      "latency_ms": 123.538,
+      "expected": [
+        [
+          "Amsterdam",
+          40.62
+        ],
+        [
+          "Bangalore",
+          36.64
+        ],
+        [
+          "Berlin",
+          75.24
+        ],
+        [
+          "Bordeaux",
+          39.62
+        ],
+        [
+          "Boston",
+          37.62
+        ],
+        [
+          "Brasília",
+          37.62
+        ],
+        [
+          "Brussels",
+          37.62
+        ],
+        [
+          "Budapest",
+          45.62
+        ],
+        [
+          "Buenos Aires",
+          37.62
+        ],
+        [
+          "Chicago",
+          43.62
+        ],
+        [
+          "Copenhagen",
+          37.62
+        ],
+        [
+          "Cupertino",
+          38.62
+        ],
+        [
+          "Delhi",
+          38.62
+        ],
+        [
+          "Dijon",
+          40.62
+        ],
+        [
+          "Dublin",
+          45.62
+        ],
+        [
+          "Edinburgh ",
+          37.62
+        ],
+        [
+          "Edmonton",
+          37.62
+        ],
+        [
+          "Fort Worth",
+          47.62
+        ],
+        [
+          "Frankfurt",
+          43.62
+        ],
+        [
+          "Halifax",
+          37.62
+        ],
+        [
+          "Helsinki",
+          41.62
+        ],
+        [
+          "Lisbon",
+          39.62
+        ],
+        [
+          "London",
+          75.24
+        ],
+        [
+          "Lyon",
+          37.62
+        ],
+        [
+          "Madison",
+          42.62
+        ],
+        [
+          "Madrid",
+          37.62
+        ],
+        [
+          "Montréal",
+          39.62
+        ],
+        [
+          "Mountain View",
+          77.24
+        ],
+        [
+          "New York",
+          37.62
+        ],
+        [
+          "Orlando",
+          39.62
+        ],
+        [
+          "Oslo",
+          39.62
+        ],
+        [
+          "Ottawa",
+          37.62
+        ],
+        [
+          "Paris",
+          77.24
+        ],
+        [
+          "Porto",
+          37.62
+        ],
+        [
+          "Prague",
+          90.24
+        ],
+        [
+          "Redmond",
+          39.62
+        ],
+        [
+          "Reno",
+          37.62
+        ],
+        [
+          "Rio de Janeiro",
+          37.62
+        ],
+        [
+          "Rome",
+          37.62
+        ],
+        [
+          "Salt Lake City",
+          43.62
+        ],
+        [
+          "Santiago",
+          46.62
+        ],
+        [
+          "Sidney",
+          37.62
+        ],
+        [
+          "Stockholm",
+          38.62
+        ],
+        [
+          "Stuttgart",
+          37.62
+        ],
+        [
+          "São José dos Campos",
+          39.62
+        ],
+        [
+          "São Paulo",
+          75.24
+        ],
+        [
+          "Toronto",
+          37.62
+        ],
+        [
+          "Tucson",
+          37.62
+        ],
+        [
+          "Vancouver",
+          38.62
+        ],
+        [
+          "Vienne",
+          42.62
+        ],
+        [
+          "Warsaw",
+          37.62
+        ],
+        [
+          "Winnipeg",
+          37.62
+        ],
+        [
+          "Yellowknife",
+          37.62
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按Customer City统计Invoice Total",
+        "rewritten_question": "按Customer City统计Invoice Total",
+        "sql": "SELECT \"Customer\".\"City\", SUM(\"Invoice\".\"Total\") AS \"Total\" FROM \"Invoice\" JOIN \"Customer\" ON \"Invoice\".\"CustomerId\" = \"Customer\".\"CustomerId\" GROUP BY \"Customer\".\"City\" ORDER BY SUM(\"Invoice\".\"Total\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "City",
+          "Total"
+        ],
+        "rows": [
+          {
+            "City": "Prague",
+            "Total": 90.24
+          },
+          {
+            "City": "Paris",
+            "Total": 77.24
+          },
+          {
+            "City": "Mountain View",
+            "Total": 77.24
+          },
+          {
+            "City": "São Paulo",
+            "Total": 75.24
+          },
+          {
+            "City": "London",
+            "Total": 75.24
+          },
+          {
+            "City": "Berlin",
+            "Total": 75.24
+          },
+          {
+            "City": "Fort Worth",
+            "Total": 47.62
+          },
+          {
+            "City": "Santiago",
+            "Total": 46.62
+          },
+          {
+            "City": "Dublin",
+            "Total": 45.62
+          },
+          {
+            "City": "Budapest",
+            "Total": 45.62
+          },
+          {
+            "City": "Salt Lake City",
+            "Total": 43.62
+          },
+          {
+            "City": "Frankfurt",
+            "Total": 43.62
+          },
+          {
+            "City": "Chicago",
+            "Total": 43.62
+          },
+          {
+            "City": "Vienne",
+            "Total": 42.62
+          },
+          {
+            "City": "Madison",
+            "Total": 42.62
+          },
+          {
+            "City": "Helsinki",
+            "Total": 41.62
+          },
+          {
+            "City": "Dijon",
+            "Total": 40.62
+          },
+          {
+            "City": "Amsterdam",
+            "Total": 40.62
+          },
+          {
+            "City": "São José dos Campos",
+            "Total": 39.62
+          },
+          {
+            "City": "Redmond",
+            "Total": 39.62
+          },
+          {
+            "City": "Oslo",
+            "Total": 39.62
+          },
+          {
+            "City": "Orlando",
+            "Total": 39.62
+          },
+          {
+            "City": "Montréal",
+            "Total": 39.62
+          },
+          {
+            "City": "Lisbon",
+            "Total": 39.62
+          },
+          {
+            "City": "Bordeaux",
+            "Total": 39.62
+          },
+          {
+            "City": "Vancouver",
+            "Total": 38.62
+          },
+          {
+            "City": "Stockholm",
+            "Total": 38.62
+          },
+          {
+            "City": "Delhi",
+            "Total": 38.62
+          },
+          {
+            "City": "Cupertino",
+            "Total": 38.62
+          },
+          {
+            "City": "Yellowknife",
+            "Total": 37.62
+          },
+          {
+            "City": "Winnipeg",
+            "Total": 37.62
+          },
+          {
+            "City": "Warsaw",
+            "Total": 37.62
+          },
+          {
+            "City": "Tucson",
+            "Total": 37.62
+          },
+          {
+            "City": "Toronto",
+            "Total": 37.62
+          },
+          {
+            "City": "Stuttgart",
+            "Total": 37.62
+          },
+          {
+            "City": "Sidney",
+            "Total": 37.62
+          },
+          {
+            "City": "Rome",
+            "Total": 37.62
+          },
+          {
+            "City": "Rio de Janeiro",
+            "Total": 37.62
+          },
+          {
+            "City": "Reno",
+            "Total": 37.62
+          },
+          {
+            "City": "Porto",
+            "Total": 37.62
+          },
+          {
+            "City": "Ottawa",
+            "Total": 37.62
+          },
+          {
+            "City": "New York",
+            "Total": 37.62
+          },
+          {
+            "City": "Madrid",
+            "Total": 37.62
+          },
+          {
+            "City": "Lyon",
+            "Total": 37.62
+          },
+          {
+            "City": "Halifax",
+            "Total": 37.62
+          },
+          {
+            "City": "Edmonton",
+            "Total": 37.62
+          },
+          {
+            "City": "Edinburgh ",
+            "Total": 37.62
+          },
+          {
+            "City": "Copenhagen",
+            "Total": 37.62
+          },
+          {
+            "City": "Buenos Aires",
+            "Total": 37.62
+          },
+          {
+            "City": "Brussels",
+            "Total": 37.62
+          },
+          {
+            "City": "Brasília",
+            "Total": 37.62
+          },
+          {
+            "City": "Boston",
+            "Total": 37.62
+          },
+          {
+            "City": "Bangalore",
+            "Total": 36.64
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "SUM",
+          "metric_label": "Total",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "City"
+          ],
+          "dimension_tables": {
+            "City": "Customer"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "City",
+              "table": "Customer",
+              "column": "City",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "City",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "Customer"
+          ],
+          "join_conditions": [
+            "\"Invoice\".\"CustomerId\" = \"Customer\".\"CustomerId\""
+          ],
+          "join_path": [
+            {
+              "from_table": "Invoice",
+              "to_table": "Customer",
+              "condition": "\"Invoice\".\"CustomerId\" = \"Customer\".\"CustomerId\"",
+              "cardinality": "many_to_one"
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按Customer City统计Invoice Total",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：Invoice -> Customer",
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "city",
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "按Customer City统计Invoice Total",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "SUM",
+              "label": "Total"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Customer",
+                "column": "City",
+                "grain": "raw",
+                "label": "City"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：Total（SUM）",
+          "查询表：Invoice",
+          "外键验证 JOIN 路径：Invoice -> Customer",
+          "使用表 Invoice 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 53,
+          "query_hash": "c34ed90431694742",
+          "field_links": [
+            {
+              "source_text": "City",
+              "table": "Customer",
+              "column": "City",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "City",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "city",
+              "total"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "City"
+              }
+            },
+            {
+              "row": 0,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 1,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "City"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 2,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "City"
+              }
+            },
+            {
+              "row": 2,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 3,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "City"
+              }
+            },
+            {
+              "row": 3,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 4,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "City"
+              }
+            },
+            {
+              "row": 4,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 5,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "City"
+              }
+            },
+            {
+              "row": 5,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 6,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "City"
+              }
+            },
+            {
+              "row": 6,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 7,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "City"
+              }
+            },
+            {
+              "row": 7,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 8,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "City"
+              }
+            },
+            {
+              "row": 8,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 9,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "City"
+              }
+            },
+            {
+              "row": 9,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 10,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "City"
+              }
+            },
+            {
+              "row": 10,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 11,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "City"
+              }
+            },
+            {
+              "row": 11,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 12,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "City"
+              }
+            },
+            {
+              "row": 12,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 13,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "City"
+              }
+            },
+            {
+              "row": 13,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 14,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "City"
+              }
+            },
+            {
+              "row": 14,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 15,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "City"
+              }
+            },
+            {
+              "row": 15,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 16,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "City"
+              }
+            },
+            {
+              "row": 16,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 17,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "City"
+              }
+            },
+            {
+              "row": 17,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 18,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "City"
+              }
+            },
+            {
+              "row": 18,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 19,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "City"
+              }
+            },
+            {
+              "row": 19,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 20,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "City"
+              }
+            },
+            {
+              "row": 20,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 21,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "City"
+              }
+            },
+            {
+              "row": 21,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 22,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "City"
+              }
+            },
+            {
+              "row": 22,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 23,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "City"
+              }
+            },
+            {
+              "row": 23,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 24,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 24,
+                "column": "City"
+              }
+            },
+            {
+              "row": 24,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 24,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 25,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 25,
+                "column": "City"
+              }
+            },
+            {
+              "row": 25,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 25,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 26,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 26,
+                "column": "City"
+              }
+            },
+            {
+              "row": 26,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 26,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 27,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 27,
+                "column": "City"
+              }
+            },
+            {
+              "row": 27,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 27,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 28,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 28,
+                "column": "City"
+              }
+            },
+            {
+              "row": 28,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 28,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 29,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 29,
+                "column": "City"
+              }
+            },
+            {
+              "row": 29,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 29,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 30,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 30,
+                "column": "City"
+              }
+            },
+            {
+              "row": 30,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 30,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 31,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 31,
+                "column": "City"
+              }
+            },
+            {
+              "row": 31,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 31,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 32,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 32,
+                "column": "City"
+              }
+            },
+            {
+              "row": 32,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 32,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 33,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 33,
+                "column": "City"
+              }
+            },
+            {
+              "row": 33,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 33,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 34,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 34,
+                "column": "City"
+              }
+            },
+            {
+              "row": 34,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 34,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 35,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 35,
+                "column": "City"
+              }
+            },
+            {
+              "row": 35,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 35,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 36,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 36,
+                "column": "City"
+              }
+            },
+            {
+              "row": 36,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 36,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 37,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 37,
+                "column": "City"
+              }
+            },
+            {
+              "row": 37,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 37,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 38,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 38,
+                "column": "City"
+              }
+            },
+            {
+              "row": 38,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 38,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 39,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 39,
+                "column": "City"
+              }
+            },
+            {
+              "row": 39,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 39,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 40,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 40,
+                "column": "City"
+              }
+            },
+            {
+              "row": 40,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 40,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 41,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 41,
+                "column": "City"
+              }
+            },
+            {
+              "row": 41,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 41,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 42,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 42,
+                "column": "City"
+              }
+            },
+            {
+              "row": 42,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 42,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 43,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 43,
+                "column": "City"
+              }
+            },
+            {
+              "row": 43,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 43,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 44,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 44,
+                "column": "City"
+              }
+            },
+            {
+              "row": 44,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 44,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 45,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 45,
+                "column": "City"
+              }
+            },
+            {
+              "row": 45,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 45,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 46,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 46,
+                "column": "City"
+              }
+            },
+            {
+              "row": 46,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 46,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 47,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 47,
+                "column": "City"
+              }
+            },
+            {
+              "row": 47,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 47,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 48,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 48,
+                "column": "City"
+              }
+            },
+            {
+              "row": 48,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 48,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 49,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 49,
+                "column": "City"
+              }
+            },
+            {
+              "row": 49,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 49,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 50,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 50,
+                "column": "City"
+              }
+            },
+            {
+              "row": 50,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 50,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 51,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 51,
+                "column": "City"
+              }
+            },
+            {
+              "row": 51,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 51,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 52,
+              "column": "City",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 52,
+                "column": "City"
+              }
+            },
+            {
+              "row": 52,
+              "column": "Total",
+              "query_hash": "c34ed90431694742",
+              "locator": {
+                "type": "sql_result",
+                "row": 52,
+                "column": "Total"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C09",
+      "question": "按Genre Name统计Track Milliseconds的平均值",
+      "columns": [
+        "Name",
+        "平均Milliseconds"
+      ],
+      "gold_sql": "SELECT g.Name,AVG(t.Milliseconds) AS 平均Milliseconds FROM Track t JOIN Genre g ON t.GenreId=g.GenreId GROUP BY g.Name",
+      "category": "join",
+      "pass": true,
+      "latency_ms": 124.062,
+      "expected": [
+        [
+          "Alternative",
+          264058.525
+        ],
+        [
+          "Alternative & Punk",
+          234353.84939759035
+        ],
+        [
+          "Blues",
+          270359.77777777775
+        ],
+        [
+          "Bossa Nova",
+          219590.0
+        ],
+        [
+          "Classical",
+          293867.5675675676
+        ],
+        [
+          "Comedy",
+          1585263.705882353
+        ],
+        [
+          "Drama",
+          2575283.78125
+        ],
+        [
+          "Easy Listening",
+          189164.20833333334
+        ],
+        [
+          "Electronica/Dance",
+          302985.8
+        ],
+        [
+          "Heavy Metal",
+          297452.9285714286
+        ],
+        [
+          "Hip Hop/Rap",
+          178176.2857142857
+        ],
+        [
+          "Jazz",
+          291755.3769230769
+        ],
+        [
+          "Latin",
+          232859.26252158894
+        ],
+        [
+          "Metal",
+          309749.4438502674
+        ],
+        [
+          "Opera",
+          174813.0
+        ],
+        [
+          "Pop",
+          229034.10416666666
+        ],
+        [
+          "R&B/Soul",
+          220066.8524590164
+        ],
+        [
+          "Reggae",
+          247177.75862068965
+        ],
+        [
+          "Rock",
+          283910.0431765613
+        ],
+        [
+          "Rock And Roll",
+          134643.5
+        ],
+        [
+          "Sci Fi & Fantasy",
+          2911783.0384615385
+        ],
+        [
+          "Science Fiction",
+          2625549.076923077
+        ],
+        [
+          "Soundtrack",
+          244370.88372093023
+        ],
+        [
+          "TV Shows",
+          2145041.0215053763
+        ],
+        [
+          "World",
+          224923.82142857142
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按Genre Name统计Track Milliseconds的平均值",
+        "rewritten_question": "按Genre Name统计Track Milliseconds的平均值",
+        "sql": "SELECT \"Genre\".\"Name\", AVG(\"Track\".\"Milliseconds\") AS \"平均Milliseconds\" FROM \"Track\" JOIN \"Genre\" ON \"Track\".\"GenreId\" = \"Genre\".\"GenreId\" GROUP BY \"Genre\".\"Name\" ORDER BY AVG(\"Track\".\"Milliseconds\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "Name",
+          "平均Milliseconds"
+        ],
+        "rows": [
+          {
+            "Name": "Sci Fi & Fantasy",
+            "平均Milliseconds": 2911783.0384615385
+          },
+          {
+            "Name": "Science Fiction",
+            "平均Milliseconds": 2625549.076923077
+          },
+          {
+            "Name": "Drama",
+            "平均Milliseconds": 2575283.78125
+          },
+          {
+            "Name": "TV Shows",
+            "平均Milliseconds": 2145041.0215053763
+          },
+          {
+            "Name": "Comedy",
+            "平均Milliseconds": 1585263.705882353
+          },
+          {
+            "Name": "Metal",
+            "平均Milliseconds": 309749.4438502674
+          },
+          {
+            "Name": "Electronica/Dance",
+            "平均Milliseconds": 302985.8
+          },
+          {
+            "Name": "Heavy Metal",
+            "平均Milliseconds": 297452.9285714286
+          },
+          {
+            "Name": "Classical",
+            "平均Milliseconds": 293867.5675675676
+          },
+          {
+            "Name": "Jazz",
+            "平均Milliseconds": 291755.3769230769
+          },
+          {
+            "Name": "Rock",
+            "平均Milliseconds": 283910.0431765613
+          },
+          {
+            "Name": "Blues",
+            "平均Milliseconds": 270359.77777777775
+          },
+          {
+            "Name": "Alternative",
+            "平均Milliseconds": 264058.525
+          },
+          {
+            "Name": "Reggae",
+            "平均Milliseconds": 247177.75862068965
+          },
+          {
+            "Name": "Soundtrack",
+            "平均Milliseconds": 244370.88372093023
+          },
+          {
+            "Name": "Alternative & Punk",
+            "平均Milliseconds": 234353.84939759035
+          },
+          {
+            "Name": "Latin",
+            "平均Milliseconds": 232859.26252158894
+          },
+          {
+            "Name": "Pop",
+            "平均Milliseconds": 229034.10416666666
+          },
+          {
+            "Name": "World",
+            "平均Milliseconds": 224923.82142857142
+          },
+          {
+            "Name": "R&B/Soul",
+            "平均Milliseconds": 220066.8524590164
+          },
+          {
+            "Name": "Bossa Nova",
+            "平均Milliseconds": 219590.0
+          },
+          {
+            "Name": "Easy Listening",
+            "平均Milliseconds": 189164.20833333334
+          },
+          {
+            "Name": "Hip Hop/Rap",
+            "平均Milliseconds": 178176.2857142857
+          },
+          {
+            "Name": "Opera",
+            "平均Milliseconds": 174813.0
+          },
+          {
+            "Name": "Rock And Roll",
+            "平均Milliseconds": 134643.5
+          }
+        ],
+        "plan": {
+          "table": "Track",
+          "metric_table": "Track",
+          "metric_column": "Milliseconds",
+          "metric_function": "AVG",
+          "metric_label": "平均Milliseconds",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "Name"
+          ],
+          "dimension_tables": {
+            "Name": "Genre"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "Milliseconds",
+              "table": "Track",
+              "column": "Milliseconds",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Milliseconds",
+              "metric_function": null
+            },
+            {
+              "source_text": "Name",
+              "table": "Genre",
+              "column": "Name",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Name",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "Genre"
+          ],
+          "join_conditions": [
+            "\"Track\".\"GenreId\" = \"Genre\".\"GenreId\""
+          ],
+          "join_path": [
+            {
+              "from_table": "Track",
+              "to_table": "Genre",
+              "condition": "\"Track\".\"GenreId\" = \"Genre\".\"GenreId\"",
+              "cardinality": "many_to_one"
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按Genre Name统计Track Milliseconds的平均值",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：Track -> Genre",
+            "使用表 Track 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "milliseconds",
+              "name"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "按Genre Name统计Track Milliseconds的平均值",
+            "metric": {
+              "table": "Track",
+              "column": "Milliseconds",
+              "function": "AVG",
+              "label": "平均Milliseconds"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Genre",
+                "column": "Name",
+                "grain": "raw",
+                "label": "Name"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：平均Milliseconds（AVG）",
+          "查询表：Track",
+          "外键验证 JOIN 路径：Track -> Genre",
+          "使用表 Track 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Track",
+          "row_count": 25,
+          "query_hash": "dad411aa356ec54d",
+          "field_links": [
+            {
+              "source_text": "Milliseconds",
+              "table": "Track",
+              "column": "Milliseconds",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Milliseconds",
+              "metric_function": null
+            },
+            {
+              "source_text": "Name",
+              "table": "Genre",
+              "column": "Name",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Name",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "milliseconds",
+              "name"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 0,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 1,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 2,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 2,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 3,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 3,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 4,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 4,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 5,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 5,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 6,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 6,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 7,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 7,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 8,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 8,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 9,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 9,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 10,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 10,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 11,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 11,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 12,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 12,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 13,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 13,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 14,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 14,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 15,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 15,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 16,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 16,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 17,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 17,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 18,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 18,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 19,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 19,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 20,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 20,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 21,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 21,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 22,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 22,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 23,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 23,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "平均Milliseconds"
+              }
+            },
+            {
+              "row": 24,
+              "column": "Name",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 24,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 24,
+              "column": "平均Milliseconds",
+              "query_hash": "dad411aa356ec54d",
+              "locator": {
+                "type": "sql_result",
+                "row": 24,
+                "column": "平均Milliseconds"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C10",
+      "question": "按MediaType Name统计Track Bytes的平均值",
+      "columns": [
+        "Name",
+        "平均Bytes"
+      ],
+      "gold_sql": "SELECT m.Name,AVG(t.Bytes) AS 平均Bytes FROM Track t JOIN MediaType m ON t.MediaTypeId=m.MediaTypeId GROUP BY m.Name",
+      "category": "join",
+      "pass": true,
+      "latency_ms": 125.228,
+      "expected": [
+        [
+          "AAC audio file",
+          4476793.818181818
+        ],
+        [
+          "MPEG audio file",
+          8630428.7656559
+        ],
+        [
+          "Protected AAC audio file",
+          4663795.573839663
+        ],
+        [
+          "Protected MPEG-4 video file",
+          420493713.0140187
+        ],
+        [
+          "Purchased AAC audio file",
+          8759372.42857143
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按MediaType Name统计Track Bytes的平均值",
+        "rewritten_question": "按MediaType Name统计Track Bytes的平均值",
+        "sql": "SELECT \"MediaType\".\"Name\", AVG(\"Track\".\"Bytes\") AS \"平均Bytes\" FROM \"Track\" JOIN \"MediaType\" ON \"Track\".\"MediaTypeId\" = \"MediaType\".\"MediaTypeId\" GROUP BY \"MediaType\".\"Name\" ORDER BY AVG(\"Track\".\"Bytes\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "Name",
+          "平均Bytes"
+        ],
+        "rows": [
+          {
+            "Name": "Protected MPEG-4 video file",
+            "平均Bytes": 420493713.0140187
+          },
+          {
+            "Name": "Purchased AAC audio file",
+            "平均Bytes": 8759372.42857143
+          },
+          {
+            "Name": "MPEG audio file",
+            "平均Bytes": 8630428.7656559
+          },
+          {
+            "Name": "Protected AAC audio file",
+            "平均Bytes": 4663795.573839663
+          },
+          {
+            "Name": "AAC audio file",
+            "平均Bytes": 4476793.818181818
+          }
+        ],
+        "plan": {
+          "table": "Track",
+          "metric_table": "Track",
+          "metric_column": "Bytes",
+          "metric_function": "AVG",
+          "metric_label": "平均Bytes",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "Name"
+          ],
+          "dimension_tables": {
+            "Name": "MediaType"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "Bytes",
+              "table": "Track",
+              "column": "Bytes",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Bytes",
+              "metric_function": null
+            },
+            {
+              "source_text": "Name",
+              "table": "MediaType",
+              "column": "Name",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Name",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "MediaType"
+          ],
+          "join_conditions": [
+            "\"Track\".\"MediaTypeId\" = \"MediaType\".\"MediaTypeId\""
+          ],
+          "join_path": [
+            {
+              "from_table": "Track",
+              "to_table": "MediaType",
+              "condition": "\"Track\".\"MediaTypeId\" = \"MediaType\".\"MediaTypeId\"",
+              "cardinality": "many_to_one"
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按MediaType Name统计Track Bytes的平均值",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "外键验证 JOIN 路径：Track -> MediaType",
+            "使用表 Track 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "bytes",
+              "name"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "按MediaType Name统计Track Bytes的平均值",
+            "metric": {
+              "table": "Track",
+              "column": "Bytes",
+              "function": "AVG",
+              "label": "平均Bytes"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "MediaType",
+                "column": "Name",
+                "grain": "raw",
+                "label": "Name"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：平均Bytes（AVG）",
+          "查询表：Track",
+          "外键验证 JOIN 路径：Track -> MediaType",
+          "使用表 Track 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Track",
+          "row_count": 5,
+          "query_hash": "6e7b0dde1e4cf23d",
+          "field_links": [
+            {
+              "source_text": "Bytes",
+              "table": "Track",
+              "column": "Bytes",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Bytes",
+              "metric_function": null
+            },
+            {
+              "source_text": "Name",
+              "table": "MediaType",
+              "column": "Name",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Name",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "bytes",
+              "name"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "Name",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 0,
+              "column": "平均Bytes",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "平均Bytes"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Name",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 1,
+              "column": "平均Bytes",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "平均Bytes"
+              }
+            },
+            {
+              "row": 2,
+              "column": "Name",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 2,
+              "column": "平均Bytes",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "平均Bytes"
+              }
+            },
+            {
+              "row": 3,
+              "column": "Name",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 3,
+              "column": "平均Bytes",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "平均Bytes"
+              }
+            },
+            {
+              "row": 4,
+              "column": "Name",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 4,
+              "column": "平均Bytes",
+              "query_hash": "6e7b0dde1e4cf23d",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "平均Bytes"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C11",
+      "question": "按Genre Name统计InvoiceLine Quantity的合计",
+      "columns": [
+        "Name",
+        "总Quantity"
+      ],
+      "gold_sql": "SELECT g.Name,SUM(il.Quantity) AS 总Quantity FROM InvoiceLine il JOIN Track t ON il.TrackId=t.TrackId JOIN Genre g ON t.GenreId=g.GenreId GROUP BY g.Name",
+      "category": "multi_hop",
+      "pass": true,
+      "latency_ms": 126.334,
+      "expected": [
+        [
+          "Alternative",
+          14
+        ],
+        [
+          "Alternative & Punk",
+          244
+        ],
+        [
+          "Blues",
+          61
+        ],
+        [
+          "Bossa Nova",
+          15
+        ],
+        [
+          "Classical",
+          41
+        ],
+        [
+          "Comedy",
+          9
+        ],
+        [
+          "Drama",
+          29
+        ],
+        [
+          "Easy Listening",
+          10
+        ],
+        [
+          "Electronica/Dance",
+          12
+        ],
+        [
+          "Heavy Metal",
+          12
+        ],
+        [
+          "Hip Hop/Rap",
+          17
+        ],
+        [
+          "Jazz",
+          80
+        ],
+        [
+          "Latin",
+          386
+        ],
+        [
+          "Metal",
+          264
+        ],
+        [
+          "Pop",
+          28
+        ],
+        [
+          "R&B/Soul",
+          41
+        ],
+        [
+          "Reggae",
+          30
+        ],
+        [
+          "Rock",
+          835
+        ],
+        [
+          "Rock And Roll",
+          6
+        ],
+        [
+          "Sci Fi & Fantasy",
+          20
+        ],
+        [
+          "Science Fiction",
+          6
+        ],
+        [
+          "Soundtrack",
+          20
+        ],
+        [
+          "TV Shows",
+          47
+        ],
+        [
+          "World",
+          13
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按Genre Name统计InvoiceLine Quantity的合计",
+        "rewritten_question": "按Genre Name统计InvoiceLine Quantity的合计",
+        "sql": "SELECT \"Genre\".\"Name\", SUM(\"InvoiceLine\".\"Quantity\") AS \"总Quantity\" FROM \"InvoiceLine\" JOIN \"Track\" ON \"InvoiceLine\".\"TrackId\" = \"Track\".\"TrackId\" JOIN \"Genre\" ON \"Track\".\"GenreId\" = \"Genre\".\"GenreId\" GROUP BY \"Genre\".\"Name\" ORDER BY SUM(\"InvoiceLine\".\"Quantity\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "Name",
+          "总Quantity"
+        ],
+        "rows": [
+          {
+            "Name": "Rock",
+            "总Quantity": 835
+          },
+          {
+            "Name": "Latin",
+            "总Quantity": 386
+          },
+          {
+            "Name": "Metal",
+            "总Quantity": 264
+          },
+          {
+            "Name": "Alternative & Punk",
+            "总Quantity": 244
+          },
+          {
+            "Name": "Jazz",
+            "总Quantity": 80
+          },
+          {
+            "Name": "Blues",
+            "总Quantity": 61
+          },
+          {
+            "Name": "TV Shows",
+            "总Quantity": 47
+          },
+          {
+            "Name": "R&B/Soul",
+            "总Quantity": 41
+          },
+          {
+            "Name": "Classical",
+            "总Quantity": 41
+          },
+          {
+            "Name": "Reggae",
+            "总Quantity": 30
+          },
+          {
+            "Name": "Drama",
+            "总Quantity": 29
+          },
+          {
+            "Name": "Pop",
+            "总Quantity": 28
+          },
+          {
+            "Name": "Soundtrack",
+            "总Quantity": 20
+          },
+          {
+            "Name": "Sci Fi & Fantasy",
+            "总Quantity": 20
+          },
+          {
+            "Name": "Hip Hop/Rap",
+            "总Quantity": 17
+          },
+          {
+            "Name": "Bossa Nova",
+            "总Quantity": 15
+          },
+          {
+            "Name": "Alternative",
+            "总Quantity": 14
+          },
+          {
+            "Name": "World",
+            "总Quantity": 13
+          },
+          {
+            "Name": "Heavy Metal",
+            "总Quantity": 12
+          },
+          {
+            "Name": "Electronica/Dance",
+            "总Quantity": 12
+          },
+          {
+            "Name": "Easy Listening",
+            "总Quantity": 10
+          },
+          {
+            "Name": "Comedy",
+            "总Quantity": 9
+          },
+          {
+            "Name": "Science Fiction",
+            "总Quantity": 6
+          },
+          {
+            "Name": "Rock And Roll",
+            "总Quantity": 6
+          }
+        ],
+        "plan": {
+          "table": "InvoiceLine",
+          "metric_table": "InvoiceLine",
+          "metric_column": "Quantity",
+          "metric_function": "SUM",
+          "metric_label": "总Quantity",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "Name"
+          ],
+          "dimension_tables": {
+            "Name": "Genre"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "Name",
+              "table": "Genre",
+              "column": "Name",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Name",
+              "metric_function": null
+            },
+            {
+              "source_text": "Quantity",
+              "table": "InvoiceLine",
+              "column": "Quantity",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Quantity",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "Track",
+            "Genre"
+          ],
+          "join_conditions": [
+            "\"InvoiceLine\".\"TrackId\" = \"Track\".\"TrackId\"",
+            "\"Track\".\"GenreId\" = \"Genre\".\"GenreId\""
+          ],
+          "join_path": [
+            {
+              "from_table": "InvoiceLine",
+              "to_table": "Track",
+              "condition": "\"InvoiceLine\".\"TrackId\" = \"Track\".\"TrackId\"",
+              "cardinality": "many_to_one"
+            },
+            {
+              "from_table": "Track",
+              "to_table": "Genre",
+              "condition": "\"Track\".\"GenreId\" = \"Genre\".\"GenreId\"",
+              "cardinality": "many_to_one"
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按Genre Name统计InvoiceLine Quantity的合计",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "时间条件使用与指标多对一关联的日期字段 Invoice.InvoiceDate",
+            "外键验证 JOIN 路径：InvoiceLine -> Track -> Genre",
+            "使用表 InvoiceLine 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "name",
+              "quantity"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "按Genre Name统计InvoiceLine Quantity的合计",
+            "metric": {
+              "table": "InvoiceLine",
+              "column": "Quantity",
+              "function": "SUM",
+              "label": "总Quantity"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Genre",
+                "column": "Name",
+                "grain": "raw",
+                "label": "Name"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：总Quantity（SUM）",
+          "查询表：InvoiceLine",
+          "时间条件使用与指标多对一关联的日期字段 Invoice.InvoiceDate",
+          "外键验证 JOIN 路径：InvoiceLine -> Track -> Genre",
+          "使用表 InvoiceLine 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "InvoiceLine",
+          "row_count": 24,
+          "query_hash": "726091435db9f0a6",
+          "field_links": [
+            {
+              "source_text": "Name",
+              "table": "Genre",
+              "column": "Name",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Name",
+              "metric_function": null
+            },
+            {
+              "source_text": "Quantity",
+              "table": "InvoiceLine",
+              "column": "Quantity",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Quantity",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "name",
+              "quantity"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 0,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 1,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 2,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 2,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 3,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 3,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 4,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 4,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 5,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 5,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 6,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 6,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 6,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 7,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 7,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 7,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 8,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 8,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 8,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 9,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 9,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 9,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 10,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 10,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 10,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 11,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 11,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 11,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 12,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 12,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 12,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 13,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 13,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 13,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 14,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 14,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 14,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 15,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 15,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 15,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 16,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 16,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 16,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 17,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 17,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 17,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 18,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 18,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 18,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 19,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 19,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 19,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 20,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 20,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 20,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 21,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 21,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 21,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 22,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 22,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 22,
+                "column": "总Quantity"
+              }
+            },
+            {
+              "row": 23,
+              "column": "Name",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "Name"
+              }
+            },
+            {
+              "row": 23,
+              "column": "总Quantity",
+              "query_hash": "726091435db9f0a6",
+              "locator": {
+                "type": "sql_result",
+                "row": 23,
+                "column": "总Quantity"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "C12",
+      "question": "各BillingCountry的Invoice Total高于平均",
+      "columns": [
+        "BillingCountry",
+        "Total"
+      ],
+      "gold_sql": "SELECT BillingCountry,SUM(Total) AS Total FROM Invoice GROUP BY BillingCountry HAVING SUM(Total) > (SELECT AVG(s) FROM (SELECT SUM(Total) AS s FROM Invoice GROUP BY BillingCountry))",
+      "category": "nested",
+      "pass": true,
+      "latency_ms": 125.813,
+      "expected": [
+        [
+          "Brazil",
+          190.1
+        ],
+        [
+          "Canada",
+          303.96
+        ],
+        [
+          "France",
+          195.1
+        ],
+        [
+          "Germany",
+          156.48
+        ],
+        [
+          "USA",
+          523.06
+        ],
+        [
+          "United Kingdom",
+          112.86
+        ]
+      ],
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "各BillingCountry的Invoice Total高于平均",
+        "rewritten_question": "各BillingCountry的Invoice Total高于平均",
+        "sql": "SELECT \"Invoice\".\"BillingCountry\", SUM(\"Invoice\".\"Total\") AS \"Total\" FROM \"Invoice\" GROUP BY \"Invoice\".\"BillingCountry\" HAVING SUM(\"Invoice\".\"Total\") > (SELECT AVG(\"__group_metric\") FROM (SELECT SUM(\"Invoice\".\"Total\") AS \"__group_metric\" FROM \"Invoice\" GROUP BY \"Invoice\".\"BillingCountry\") AS avg_base) ORDER BY SUM(\"Invoice\".\"Total\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "BillingCountry",
+          "Total"
+        ],
+        "rows": [
+          {
+            "BillingCountry": "USA",
+            "Total": 523.06
+          },
+          {
+            "BillingCountry": "Canada",
+            "Total": 303.96
+          },
+          {
+            "BillingCountry": "France",
+            "Total": 195.1
+          },
+          {
+            "BillingCountry": "Brazil",
+            "Total": 190.1
+          },
+          {
+            "BillingCountry": "Germany",
+            "Total": 156.48
+          },
+          {
+            "BillingCountry": "United Kingdom",
+            "Total": 112.86
+          }
+        ],
+        "plan": {
+          "table": "Invoice",
+          "metric_table": "Invoice",
+          "metric_column": "Total",
+          "metric_function": "SUM",
+          "metric_label": "Total",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "BillingCountry"
+          ],
+          "dimension_tables": {
+            "BillingCountry": "Invoice"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": {
+            "operator": ">",
+            "mode": "scalar_avg",
+            "value": null,
+            "source_text": "高于平均",
+            "explanation": "与各分组聚合值的平均比较"
+          },
+          "links": [
+            {
+              "source_text": "BillingCountry",
+              "table": "Invoice",
+              "column": "BillingCountry",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "BillingCountry",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "各BillingCountry的Invoice Total高于平均",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Invoice 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "billingcountry",
+              "total",
+              "高于平均"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "各BillingCountry的Invoice Total高于平均",
+            "metric": {
+              "table": "Invoice",
+              "column": "Total",
+              "function": "SUM",
+              "label": "Total"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Invoice",
+                "column": "BillingCountry",
+                "grain": "raw",
+                "label": "BillingCountry"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：Total（SUM）",
+          "查询表：Invoice",
+          "聚合阈值：与各分组聚合值的平均比较",
+          "使用表 Invoice 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "Chinook.sqlite",
+          "table": "Invoice",
+          "row_count": 6,
+          "query_hash": "98c293ffc8922550",
+          "field_links": [
+            {
+              "source_text": "BillingCountry",
+              "table": "Invoice",
+              "column": "BillingCountry",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "BillingCountry",
+              "metric_function": null
+            },
+            {
+              "source_text": "Total",
+              "table": "Invoice",
+              "column": "Total",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "Total",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "billingcountry",
+              "total",
+              "高于平均"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "BillingCountry",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 0,
+              "column": "Total",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 1,
+              "column": "BillingCountry",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Total",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 2,
+              "column": "BillingCountry",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 2,
+              "column": "Total",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 3,
+              "column": "BillingCountry",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 3,
+              "column": "Total",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 3,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 4,
+              "column": "BillingCountry",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 4,
+              "column": "Total",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 4,
+                "column": "Total"
+              }
+            },
+            {
+              "row": 5,
+              "column": "BillingCountry",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "BillingCountry"
+              }
+            },
+            {
+              "row": 5,
+              "column": "Total",
+              "query_hash": "98c293ffc8922550",
+              "locator": {
+                "type": "sql_result",
+                "row": 5,
+                "column": "Total"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    }
+  ]
+}

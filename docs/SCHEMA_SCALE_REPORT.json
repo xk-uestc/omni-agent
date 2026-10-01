@@ -1,0 +1,144 @@
+{
+  "created_at": "2026-09-30T23:55:06.821020+00:00",
+  "scope": "public_db_with_synthetic_schema_distractors",
+  "few_shot_examples": 0,
+  "cases": [
+    {
+      "tables": 11,
+      "question": "按Genre Name统计Track Milliseconds的平均值",
+      "expected_fields": [
+        "Genre.Name",
+        "Track.Milliseconds"
+      ],
+      "observed_fields": [
+        "Genre.Name",
+        "Track.Milliseconds"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 166.765
+    },
+    {
+      "tables": 11,
+      "question": "按Customer City统计Invoice Total",
+      "expected_fields": [
+        "Customer.City",
+        "Invoice.Total"
+      ],
+      "observed_fields": [
+        "Customer.City",
+        "Invoice.Total"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 125.244
+    },
+    {
+      "tables": 11,
+      "question": "Invoice Total按BillingCountry排名",
+      "expected_fields": [
+        "Invoice.BillingCountry",
+        "Invoice.Total"
+      ],
+      "observed_fields": [
+        "Invoice.BillingCountry",
+        "Invoice.Total"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 126.007
+    },
+    {
+      "tables": 40,
+      "question": "按Genre Name统计Track Milliseconds的平均值",
+      "expected_fields": [
+        "Genre.Name",
+        "Track.Milliseconds"
+      ],
+      "observed_fields": [
+        "Genre.Name",
+        "Track.Milliseconds"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 217.691
+    },
+    {
+      "tables": 40,
+      "question": "按Customer City统计Invoice Total",
+      "expected_fields": [
+        "Customer.City",
+        "Invoice.Total"
+      ],
+      "observed_fields": [
+        "Customer.City",
+        "Invoice.Total"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 157.803
+    },
+    {
+      "tables": 40,
+      "question": "Invoice Total按BillingCountry排名",
+      "expected_fields": [
+        "Invoice.BillingCountry",
+        "Invoice.Total"
+      ],
+      "observed_fields": [
+        "Invoice.BillingCountry",
+        "Invoice.Total"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 157.388
+    },
+    {
+      "tables": 80,
+      "question": "按Genre Name统计Track Milliseconds的平均值",
+      "expected_fields": [
+        "Genre.Name",
+        "Track.Milliseconds"
+      ],
+      "observed_fields": [
+        "Genre.Name",
+        "Track.Milliseconds"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 261.187
+    },
+    {
+      "tables": 80,
+      "question": "按Customer City统计Invoice Total",
+      "expected_fields": [
+        "Customer.City",
+        "Invoice.Total"
+      ],
+      "observed_fields": [
+        "Customer.City",
+        "Invoice.Total"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 212.087
+    },
+    {
+      "tables": 80,
+      "question": "Invoice Total按BillingCountry排名",
+      "expected_fields": [
+        "Invoice.BillingCountry",
+        "Invoice.Total"
+      ],
+      "observed_fields": [
+        "Invoice.BillingCountry",
+        "Invoice.Total"
+      ],
+      "pass": true,
+      "status": "ok",
+      "latency_ms": 212.61
+    }
+  ],
+  "passed": 9,
+  "total": 9
+}

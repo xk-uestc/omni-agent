@@ -1,0 +1,248 @@
+"""Independent, persistent document corpus with original-file provenance."""
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import sqlite3
+import unicodedata
+from contextlib import contextmanager
+from pathlib import Path
+from typing import Any
+
+from .chunk_cleaning import DocumentChunker
+from .cross_source import DocumentHit, DocumentRecord, JsonDocumentRetriever, _tokenize
+
+SAFE_ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}')
+SUPPORTED = {'pdf', 'docx', 'xlsx', 'txt', 'md', 'image'}
+
+
+class KnowledgeStore:
+    def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None):
+        self.root = Path(root)
+        self.root.mkdir(parents=True, exist_ok=True)
+        self.assets = self.root / 'assets'
+        self.assets.mkdir(exist_ok=True)
+        self.database = self.root / 'knowledge.sqlite'
+        self.chunker = DocumentChunker()
+        self.ocr_pipeline = ocr_pipeline
+        self.generator = generator
+        with self.connect() as connection:
+            connection.executescript('''
+                CREATE TABLE IF NOT EXISTS documents (
+                    document_id TEXT PRIMARY KEY, title TEXT NOT NULL,
+                    modality TEXT NOT NULL, filename TEXT NOT NULL,
+                    sha256 TEXT NOT NULL, payload TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS chunks (
+                    chunk_id TEXT PRIMARY KEY, document_id TEXT NOT NULL,
+                    payload TEXT NOT NULL,
+                    FOREIGN KEY(document_id) REFERENCES documents(document_id) ON DELETE CASCADE);
+                CREATE INDEX IF NOT EXISTS chunks_document ON chunks(document_id);
+            ''')
+        self.dense_index = None
+        if embedder is not None:
+            from .dense_retrieval import DenseIndex
+            self.dense_index = DenseIndex(self, embedder)
+
+    def retrieval_health(self):
+        return {'mode': 'bm25_dense_rrf' if self.dense_index else 'bm25',
+                'embedding_model': self.dense_index.embedder.identity if self.dense_index else None,
+                'dense_answer_threshold': 0.6 if self.dense_index else None}
+
+    @contextmanager
+    def connect(self):
+        connection = sqlite3.connect(self.database, timeout=15)
+        connection.execute('PRAGMA foreign_keys=ON')
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
+
+    @staticmethod
+    def validate_id(document_id):
+        if not isinstance(document_id, str) or not SAFE_ID.fullmatch(document_id) or document_id in {'.', '..'}:
+            raise ValueError('document_id 必须为安全的字母数字标识符')
+
+    def ingest(self, raw: bytes, *, document_id: str, title: str, modality: str, filename: str, language='eng'):
+        self.validate_id(document_id)
+        if modality not in SUPPORTED or not raw or len(raw) > 20 * 1024 * 1024:
+            raise ValueError('不支持的文档格式、空文件或超过 20 MiB 限制')
+        if not title.strip() or len(title) > 200:
+            raise ValueError('文档标题为空或超出上限')
+        filename = Path(filename.replace('\\', '/')).name
+        if not filename or len(filename) > 200:
+            raise ValueError('无效文件名')
+        if modality in {'txt', 'md'}:
+            text = raw.decode('utf-8-sig')
+            from .text_structure import chunk_text
+            parsed = chunk_text(self.chunker, text, document_id=document_id, modality=modality)
+        elif modality == 'pdf':
+            parsed = self.chunker.parse_pdf(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
+        elif modality == 'docx':
+            parsed = self.chunker.parse_docx(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
+        elif modality == 'xlsx':
+            parsed = self.chunker.parse_xlsx(raw, document_id=document_id).to_dict()
+        else:
+            parsed = self.chunker.parse_image(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
+        digest = hashlib.sha256(raw).hexdigest()
+        extension = {'image': Path(filename).suffix.lower() if Path(filename).suffix.lower() in {'.png', '.jpg', '.jpeg', '.webp'} else '.png'}.get(modality, '.' + modality)
+        asset = self.assets / (digest + extension)
+        if not asset.exists():
+            # Content-addressed immutable files: concurrent identical ingestion is safe.
+            try:
+                with asset.open('xb') as stream:
+                    stream.write(raw)
+            except FileExistsError:
+                pass
+        if hashlib.sha256(asset.read_bytes()).hexdigest() != digest:
+            raise ValueError('原文件完整性校验失败')
+        from .document_analysis import DocumentAnalyzer, PageSignal
+        evidence_chunks = [chunk for chunk in parsed['chunks'] if chunk['content_type'] != 'image']
+        page_count = int(parsed['stats'].get('page_count') or 1)
+        pages = []
+        for page_no in range(1, page_count+1):
+            page_chunks = [chunk for chunk in evidence_chunks if (chunk['page_no'] or 1)==page_no]
+            ocr_chunks = [chunk for chunk in page_chunks if chunk['content_type'].startswith('ocr') or chunk['metadata'].get('ocr_executor')]
+            pages.append(PageSignal(page_no, '\n'.join(chunk['text'] for chunk in page_chunks),
+                ocr_confidence=min((chunk['quality'] for chunk in ocr_chunks), default=1), scanned=bool(ocr_chunks)))
+        analysis = DocumentAnalyzer().analyze(pages=pages, document_id=document_id).to_dict()
+        complex_split = analysis['complexity_score'] >= 0.3
+        if complex_split:
+            splitter = DocumentChunker(max_chars=900, overlap_chars=80)
+            resplit = []
+            for chunk in parsed['chunks']:
+                if len(chunk['text']) > 900 and chunk['content_type'] not in {'image','table_row','heading'}:
+                    resplit.extend(c.to_dict() for c in splitter._make_chunks(document_id, modality, chunk['content_type'], chunk['text'],
+                        locator=chunk['source_locator'], title_path=tuple(chunk['title_path']), page_no=chunk['page_no'],
+                        quality=chunk['quality'], warnings=tuple(chunk['warnings']), metadata=chunk['metadata'], overlap=True))
+                else:
+                    resplit.append(chunk)
+            parsed['chunks'] = resplit
+        record = {'document_id': document_id, 'title': title, 'modality': modality,
+                  'filename': filename, 'sha256': digest, 'asset': asset.name,
+                  'chunk_count': len(parsed['chunks']), 'warnings': parsed['warnings'], 'stats': parsed['stats'],
+                  'analysis': analysis,
+                  'routing': {'chunk_strategy': 'complex_adaptive_900' if complex_split else 'hierarchical' if any(chunk['title_path'] for chunk in parsed['chunks']) else 'paragraph',
+                              'formula_tool': any(formula['status'] in {'requires_parameters','evaluated'} for formula in analysis['formulas']),
+                              'ocr_executed': any(chunk['content_type'].startswith('ocr') or chunk['metadata'].get('ocr_executor') for chunk in parsed['chunks']),
+                              'review_required': analysis['quality_score']<0.6 or bool(parsed['warnings'])}}
+        with self.connect() as connection:
+            connection.execute('DELETE FROM documents WHERE document_id=?', (document_id,))
+            connection.execute('INSERT INTO documents VALUES(?,?,?,?,?,?)', (document_id, title, modality, filename, digest, json.dumps(record, ensure_ascii=False)))
+            for chunk in parsed['chunks']:
+                chunk['metadata'].update({'source_sha256': digest, 'original_document_id': document_id})
+                connection.execute('INSERT INTO chunks VALUES(?,?,?)', (chunk['chunk_id'], document_id, json.dumps(chunk, ensure_ascii=False)))
+        return record
+
+    def list_documents(self):
+        with self.connect() as connection:
+            return [json.loads(row[0]) for row in connection.execute('SELECT payload FROM documents ORDER BY document_id')]
+
+    def document(self, document_id):
+        self.validate_id(document_id)
+        with self.connect() as connection:
+            row = connection.execute('SELECT payload FROM documents WHERE document_id=?', (document_id,)).fetchone()
+            if row is None:
+                raise KeyError(document_id)
+            result = json.loads(row[0])
+            result['chunks'] = [json.loads(item[0]) for item in connection.execute('SELECT payload FROM chunks WHERE document_id=? ORDER BY rowid', (document_id,))]
+            return result
+
+    def original(self, document_id):
+        document = self.document(document_id)
+        path = self.assets / document['asset']
+        if path.is_symlink() or path.resolve().parent != self.assets.resolve() or hashlib.sha256(path.read_bytes()).hexdigest() != document['sha256']:
+            raise ValueError('原文件完整性校验失败')
+        return path, document['filename']
+
+    def records(self):
+        with self.connect() as connection:
+            rows = connection.execute('SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id) ORDER BY c.rowid').fetchall()
+        records = []
+        for payload, title in rows:
+            chunk = json.loads(payload)
+            # Image resource placeholders and empty OCR outputs are never answer evidence.
+            if not chunk['text'].strip() or chunk['content_type'] in {'image', 'heading'}:
+                continue
+            document_id = chunk['document_id']
+            records.append(DocumentRecord(chunk['chunk_id'], title, chunk['text'],
+                f'/api/v1/knowledge/documents/{document_id}/original',
+                {**chunk['metadata'], 'document_id': document_id, 'chunk_id': chunk['chunk_id'],
+                 'source_locator': chunk['source_locator'], 'page_no': chunk['page_no'],
+                 'sheet_name': chunk['sheet_name'], 'row_start': chunk['row_start'], 'row_end': chunk['row_end'],
+                 'title_path': chunk['title_path'], 'quality': chunk['quality'], 'warnings': chunk['warnings']}))
+        return records
+
+    def search(self, query: str, *, top_k: int = 4) -> list[DocumentHit]:
+        if not isinstance(query, str) or not query.strip() or len(query) > 1000 or not 1 <= top_k <= 20:
+            raise ValueError('问题或检索数量超出限制')
+        records = self.records()
+        # Exact entity identifiers are mandatory scope constraints, not soft synonyms.
+        # Dense similarity can confuse contracts differing only in a serial number.
+        normalized_query = unicodedata.normalize('NFKC', query)
+        identifiers = tuple(dict.fromkeys(re.findall(
+            r'(?<![A-Za-z0-9_])(?=[A-Za-z0-9_-]*[A-Za-z])(?=[A-Za-z0-9_-]*\d)[A-Za-z][A-Za-z0-9_-]{2,63}(?![A-Za-z0-9_])', normalized_query)))
+        if identifiers:
+            def eligible(record):
+                text = unicodedata.normalize('NFKC', record.title + '\n' + record.content)
+                return all(re.search(r'(?<![A-Za-z0-9_])' + re.escape(identifier) + r'(?![A-Za-z0-9_])', text, re.I)
+                           for identifier in identifiers)
+            records = [record for record in records if eligible(record)]
+            if not records:
+                return []
+        contents = {record.document_id: record.content for record in records}
+        hits = JsonDocumentRetriever(records).search(query, top_k=max(20, top_k * 5))
+        # Explicit years/numbers are grounding anchors. Title matches alone cannot satisfy them.
+        anchors = tuple(dict.fromkeys(re.findall(r'(?<![\w.])\d{4}(?!\d)', query)))
+        def ranking(hit):
+            anchor_matches = sum(bool(re.search(r'(?<!\d)' + re.escape(anchor) + r'(?!\d)', contents[hit.document_id])) for anchor in anchors)
+            raw = float(hit.metadata.get('rrf_score', hit.metadata.get('bm25_raw', 0)))
+            return raw * (1 + 0.35 * anchor_matches), anchor_matches
+        hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
+        if self.dense_index:
+            from .dense_retrieval import reciprocal_rank_fusion
+            dense = [hit for hit in self.dense_index.search(query, records, top_k=max(20, top_k * 5))
+                     if hit.metadata['dense_cosine'] >= 0.35]
+            hits = reciprocal_rank_fusion(hits, dense)
+            hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
+        selected, counts = [], {}
+        for hit in hits:
+            source = hit.metadata['document_id']
+            if counts.get(source, 0) >= 2:
+                continue
+            role = 'primary' if not selected else 'supporting'
+            score, anchor_count = ranking(hit)
+            selected.append(DocumentHit(hit.document_id, hit.title, hit.score, hit.matched_terms, hit.snippet, hit.source_uri,
+                {**hit.metadata, 'ranking_score': score, 'anchor_match_count': anchor_count, 'identifier_anchors': list(identifiers), 'evidence_role': role}))
+            counts[source] = counts.get(source, 0) + 1
+            if len(selected) >= top_k:
+                break
+        return selected
+
+    def answer(self, question: str, *, top_k=4) -> dict[str, Any]:
+        if not question.strip() or len(question) > 1000:
+            raise ValueError('问题为空或超出长度上限')
+        hits = self.search(question, top_k=top_k)
+        query_terms = set(_tokenize(question))
+        # This local baseline returns attributed quotations, not inferred factual claims.
+        selected = [hit for hit in hits if len(query_terms.intersection(hit.matched_terms)) >= min(2, len(query_terms))
+                    or hit.metadata.get('dense_cosine', -1) >= 0.6]
+        result = {'status': 'ok' if selected else 'insufficient_evidence', 'question': question,
+                'answer_mode': 'attributed_extracts',
+                'answer': '\n\n'.join(f'[{i}] {hit.snippet}' for i, hit in enumerate(selected, 1)) if selected else '没有足够的文档证据，暂不能回答。',
+                'citations': [{'citation_id': i, **hit.to_dict()} for i, hit in enumerate(selected, 1)],
+                'retrieval': self.retrieval_health(),
+                'trace': [{'stage': 'document_retrieval', 'channel': self.retrieval_health()['mode'], 'candidate_count': len(hits)},
+                          {'stage': 'evidence_selection', 'selected_count': len(selected), 'generation': 'extractive'}]}
+        if self.generator and selected:
+            from .responses_client import GenerationError
+            try:
+                generated = self.generator.answer(question, result['citations'])
+                result.update(generated)
+                result['answer_mode'] = 'model_grounded'
+                result['trace'].append({'stage': 'grounded_generation', 'status': 'validated', 'model': self.generator.client.model})
+            except GenerationError:
+                result['answer_mode'] = 'extractive_fallback'
+                result['trace'].append({'stage': 'grounded_generation', 'status': 'unavailable_or_invalid', 'fallback': 'attributed_extracts'})
+        return result

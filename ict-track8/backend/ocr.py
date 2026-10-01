@@ -12,7 +12,8 @@ import binascii
 import os
 import re
 import shutil
-from dataclasses import asdict, dataclass
+import threading
+from dataclasses import asdict, dataclass, field
 from io import BytesIO
 from typing import Any, Protocol
 
@@ -156,6 +157,7 @@ class OcrPipelineResult:
     selected_transforms: tuple[str, ...]
     attempts: tuple[OcrAttempt, ...]
     warnings: tuple[str, ...] = ()
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -166,6 +168,7 @@ class OcrPipelineResult:
             "selected_transforms": list(self.selected_transforms),
             "attempts": [item.to_dict() for item in self.attempts],
             "warnings": list(self.warnings),
+            "metadata": dict(self.metadata),
         }
 
 
@@ -215,16 +218,22 @@ class OcrPipeline:
                 accepted = bool(response.text.strip()) and (
                     response.confidence is None or response.confidence >= self.CONFIDENCE_THRESHOLD
                 )
+                # High recognition confidence can still omit strokes in dark/washed scans.
+                # A measured poor image therefore completes the bounded enhancement sequence.
+                quality_retry = getattr(quality, 'quality_score', 1.0) < 0.6 and bool(recommended) and index < len(sequences[:int(max_attempts)])
                 attempts.append(
-                    OcrAttempt(index, transforms, "accepted" if accepted else "low_confidence", len(response.text), response.confidence)
+                    OcrAttempt(index, transforms, "quality_retry" if accepted and quality_retry else "accepted" if accepted else "low_confidence", len(response.text), response.confidence)
                 )
-                if accepted:
-                    return OcrPipelineResult("ok", self.executor.name, response.text, response.confidence, transforms, tuple(attempts), tuple(warnings))
+                if accepted and not quality_retry:
+                    # Enhancement is a candidate, not permission to discard a better baseline.
+                    selected = best if best.text and (best.confidence is None or best.confidence >= self.CONFIDENCE_THRESHOLD) else response
+                    selected_transforms = best_transforms if selected is best else transforms
+                    return OcrPipelineResult("ok", self.executor.name, selected.text, selected.confidence, selected_transforms, tuple(attempts), tuple(warnings), selected.metadata)
             except (OcrExecutionError, ValueError) as exc:
                 attempts.append(OcrAttempt(index, transforms, "failed", 0, None, str(exc)))
                 warnings.append(str(exc))
         status = "low_confidence" if best.text else "failed"
-        return OcrPipelineResult(status, self.executor.name, best.text, best.confidence, best_transforms, tuple(attempts), tuple(dict.fromkeys(warnings)))
+        return OcrPipelineResult(status, self.executor.name, best.text, best.confidence, best_transforms, tuple(attempts), tuple(dict.fromkeys(warnings)), best.metadata)
 
     def health(self) -> dict[str, Any]:
         probe = getattr(self.executor, "health", None)
@@ -266,4 +275,48 @@ def build_ocr_pipeline(warnings: list[str] | None = None) -> OcrPipeline | None:
             return None
     if os.getenv("ICT8_OCR_ENGINE", "").strip().lower() == "tesseract":
         return OcrPipeline(TesseractOcrExecutor())
+    if os.getenv("ICT8_OCR_ENGINE", "").strip().lower() == "rapidocr":
+        return OcrPipeline(RapidOcrExecutor())
     return None
+
+
+class RapidOcrExecutor:
+    """Local CPU OCR with packaged Chinese/English ONNX models; no remote service."""
+    name = "rapidocr"
+
+    def __init__(self):
+        self._model = None
+        self._lock = threading.Lock()
+
+    def _load(self):
+        if self._model is None:
+            try:
+                from rapidocr_onnxruntime import RapidOCR
+                self._model = RapidOCR(intra_op_num_threads=2, inter_op_num_threads=1)
+            except Exception as exc:
+                raise OcrExecutionError("RapidOCR 模型不可用，请安装独立项目依赖") from exc
+        return self._model
+
+    def health(self):
+        try:
+            with self._lock:
+                self._load()
+            return {"ready": True, "provider": self.name, "languages": ["Chinese", "English"], "execution": "local_cpu"}
+        except OcrExecutionError:
+            return {"ready": False, "provider": self.name, "detail": "模型初始化失败"}
+
+    def execute(self, image_bytes: bytes, *, language: str) -> OcrResponse:
+        if language not in {"eng", "chi_sim", "chi_sim+eng", "zh", "en"}:
+            raise OcrExecutionError("RapidOCR 本配置只支持中文简体/英文；不得冒充其他语言识别")
+        try:
+            with self._lock:
+                results, timings = self._load()(image_bytes, use_cls=True)
+            regions = [{'bbox': [[float(x), float(y)] for x, y in row[0]], 'text': str(row[1]), 'confidence': float(row[2])} for row in (results or [])]
+            text = '\n'.join(item['text'] for item in regions)
+            total = sum(len(item['text']) for item in regions)
+            confidence = sum(item['confidence'] * len(item['text']) for item in regions) / total if total else 0.0
+            return OcrResponse(text, confidence, {"provider": self.name, "regions": regions, "timings_seconds": [float(t) for t in (timings or [])], "language_model": "Chinese_English"})
+        except OcrExecutionError:
+            raise
+        except Exception as exc:
+            raise OcrExecutionError("RapidOCR 本地识别失败") from exc

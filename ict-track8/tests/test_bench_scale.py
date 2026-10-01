@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+from pathlib import Path
 
 from eval.bench_scale import bench_structured
 from backend.nl2sql.seed import initialize_database as real_initialize_database
@@ -37,6 +38,7 @@ def test_benchmark_cli_fail_on_error_is_explicit(tmp_path):
         [sys.executable, "eval/bench_scale.py", "--repo", ".", "--rows", "1000", "--pages", "10",
          "--repeats", "1", "--out", str(report), "--fail-on-error"],
         capture_output=True, text=True, check=False,
+        cwd=Path(__file__).resolve().parents[1],
     )
     assert completed.returncode == 0, completed.stderr + completed.stdout
     payload = json.loads(report.read_text(encoding="utf-8"))

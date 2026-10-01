@@ -145,13 +145,21 @@ class ValueIndex:
         def free(start: int, end: int) -> bool:
             return all(end <= a or start >= b for a, b in occupied)
 
+        def word_boundary(start, end, key):
+            # ASCII state codes/names must not match inside identifiers such as Invoice.
+            ascii_word = lambda ch: ch.isascii() and (ch.isalnum() or ch == '_')
+            return not (ascii_word(key[0]) and start > 0 and ascii_word(normalized[start-1])
+                        or ascii_word(key[-1]) and end < len(normalized) and ascii_word(normalized[end]))
+
         candidates: list[tuple[int, int, str, list[ValueEntry], str]] = []
         for key, entries in self.by_normalized.items():
             usable = [e for e in entries if len(key) >= 2 or (e.table, e.column) in linked_columns]
             if usable:
-                candidates.extend((m.start(), m.end(), key, usable, "exact") for m in re.finditer(re.escape(key), normalized))
+                candidates.extend((m.start(), m.end(), key, usable, "exact") for m in re.finditer(re.escape(key), normalized)
+                                  if word_boundary(m.start(), m.end(), key))
         for key, entries in self.synonyms.items():
-            candidates.extend((m.start(), m.end(), key, list(entries), "synonym") for m in re.finditer(re.escape(key), normalized))
+            candidates.extend((m.start(), m.end(), key, list(entries), "synonym") for m in re.finditer(re.escape(key), normalized)
+                              if word_boundary(m.start(), m.end(), key))
         # 最长优先，其次靠前
         candidates.sort(key=lambda item: (-(item[1] - item[0]), item[0]))
         matches: list[ValueMatch] = []
@@ -174,7 +182,7 @@ class ValueIndex:
         # 词头：只在没有被精确匹配覆盖的位置检查
         for head, entries in self.by_head.items():
             for m in re.finditer(re.escape(head), normalized):
-                if not free(m.start(), m.end()):
+                if not free(m.start(), m.end()) or not word_boundary(m.start(), m.end(), head):
                     continue
                 if len(entries) == 1:
                     entry = entries[0]

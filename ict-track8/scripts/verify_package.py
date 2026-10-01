@@ -46,6 +46,9 @@ def verify_package(package: Path) -> dict[str, object]:
             if relative in expected:
                 errors.append(f"duplicate manifest path: {relative}")
             expected.add(relative)
+            parts = PurePosixPath(relative).parts
+            if any(part in {'runtime', 'backups', '.git', '.venv'} for part in parts) or PurePosixPath(relative).name in {'auth.json', 'model_config.json'}:
+                errors.append(f'private/runtime member: {relative}')
             if relative not in names:
                 errors.append(f"missing member: {relative}")
                 continue

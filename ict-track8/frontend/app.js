@@ -1,4 +1,4 @@
-const API = new URLSearchParams(location.search).get("api") || window.ICT8_API_BASE || "http://127.0.0.1:8020";
+const API = new URLSearchParams(location.search).get("api") || window.ICT8_API_BASE || (location.protocol === "file:" ? "http://127.0.0.1:8030" : location.origin);
 const STREAM = new URLSearchParams(location.search).get("stream") !== "false";
 const $ = (id) => document.getElementById(id);
 const stageNames = {intent:"理解问题与上下文",structured_query:"规划并执行只读 SQL",document_retrieval:"检索文档依据",evidence_fusion:"融合结果与证据",clarification:"等待澄清"};

@@ -1,0 +1,21 @@
+{
+  "created_at": "2026-10-01T00:04:56.247656+00:00",
+  "model": "gpt-6-luna",
+  "base_url": "https://spacetimeai.cc/v1",
+  "checks": [
+    {
+      "endpoint": "/v1/models",
+      "http_status": 401
+    },
+    {
+      "endpoint": "/models",
+      "http_status": 401
+    },
+    {
+      "endpoint": "/v1/responses",
+      "http_status": 401,
+      "structured_valid": false
+    }
+  ],
+  "status": "authentication_failed"
+}

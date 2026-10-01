@@ -23,6 +23,11 @@ class ClarificationResolver:
         question = (original_question or "").strip()
         if not question:
             raise ValueError("original_question 不能为空")
+        if selection.code in {"ambiguous_dimension", "ambiguous_metric"} and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*\.[A-Za-z_][A-Za-z0-9_]*", selection.value):
+            role = "dimension" if selection.code == "ambiguous_dimension" else "metric"
+            return f"{question} [field:{role}:{selection.value}]"
+        if selection.code == "ambiguous_dimension":
+            raise ValueError("维度歧义选项必须包含真实 table.column")
         if selection.code == "ambiguous_value":
             # 选项值由服务端生成："<原片段>=><具体取值>"；只做问题级替换，仍经完整规划与安全门
             span, sep, target = selection.value.partition("=>")

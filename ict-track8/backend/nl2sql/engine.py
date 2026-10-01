@@ -8,6 +8,7 @@ import os
 import re
 import sqlite3
 import threading
+from dataclasses import asdict
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -399,8 +400,8 @@ class Nl2SqlEngine:
             "execution_allowed": not blocking,
             "planner_source": plan.planner_source,
             "planner_audit": plan.planner_audit,
-            "metrics": [vars(m) for m in plan.metrics],
-            "derived_metrics": [vars(m) for m in plan.derived_metrics],
+            "metrics": [asdict(m) for m in plan.metrics],
+            "derived_metrics": [asdict(m) for m in plan.derived_metrics],
             "grain_audit": plan.grain_audit,
             "semantic_audit": plan.semantic_audit,
         }

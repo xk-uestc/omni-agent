@@ -15,11 +15,11 @@ from typing import Any, Iterable
 
 _HEADING_RE = re.compile(
     r"^\s*(?:(#{1,6})\s+|第\s*[一二三四五六七八九十百千万0-9]+\s*[章节篇部]\s*|"
-    r"([0-9]+(?:\.[0-9]+)*)[、.．]\s*|([一二三四五六七八九十]+)[、.．]\s*).{1,100}$"
+    r"([0-9]+(?:\.[0-9]+)*)(?:[、．]|\.(?!\d)|\s+)\s*|([一二三四五六七八九十]+)[、.．]\s*).{1,100}$"
 )
 _FORMULA_RE = re.compile(
-    r"(?P<label>[\u3400-\u9fffA-Za-z][\u3400-\u9fffA-Za-z0-9 _-]{0,24})\s*(?:=|＝|:|：)\s*"
-    r"(?P<expr>[0-9０-９.．＋+\-−*/×÷%％()（）\s]{1,120})"
+    r"^[ \t]*(?P<label>[\u3400-\u9fffA-Za-z][\u3400-\u9fffA-Za-z0-9 _-]{0,48})[ \t]*(?:=|＝|:|：)[ \t]*"
+    r"(?P<expr>[^\r\n]{1,300})$", re.MULTILINE
 )
 _NON_FORMULA_LABEL = re.compile(r"电话|手机|传真|日期|时间|编号|号码|版本|邮编|型号|账号|序列号|ID|id|No", re.IGNORECASE)
 _NON_FORMULA_VALUE = re.compile(r"\d{3,4}-\d{3,4}(?:-\d{3,4})?|\d{4}-\d{1,2}(?:-\d{1,2})?|\d{4}/\d{1,2}(?:/\d{1,2})?")
@@ -51,6 +51,8 @@ class FormulaEvidence:
     value: float | None
     status: str
     error: str | None = None
+    parameters: tuple[str, ...] = ()
+    line_no: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -126,21 +128,46 @@ class SafeFormulaEvaluator:
     _BINOPS = (ast.Add, ast.Sub, ast.Mult, ast.Div, ast.Pow, ast.Mod)
     _UNARYOPS = (ast.UAdd, ast.USub)
 
-    def evaluate(self, expression: str) -> float:
+    def parameters(self, expression: str) -> tuple[str, ...]:
+        if len(expression) > 300:
+            raise ValueError("公式超出长度上限")
         tree = ast.parse(expression, mode="eval")
-        return self._visit(tree.body)
+        allowed = (ast.Expression, ast.BinOp, ast.UnaryOp, ast.Constant, ast.Name, ast.Load, *self._BINOPS, *self._UNARYOPS)
+        nodes = list(ast.walk(tree))
+        if len(nodes) > 128 or any(not isinstance(node, allowed) for node in nodes):
+            raise ValueError("表达式包含不支持的语法或超出复杂度上限")
+        def depth(node):
+            return 1 + max((depth(child) for child in ast.iter_child_nodes(node)), default=0)
+        if depth(tree) > 20:
+            raise ValueError("公式嵌套超出安全范围")
+        if any(isinstance(node, ast.Constant) and (not isinstance(node.value, (int, float)) or isinstance(node.value, bool)) for node in nodes):
+            raise ValueError("公式只能包含数值常量")
+        return tuple(dict.fromkeys(node.id for node in nodes if isinstance(node, ast.Name)))
 
-    def _visit(self, node: ast.AST) -> float:
+    def evaluate(self, expression: str, parameters: dict[str, float] | None = None) -> float:
+        required = self.parameters(expression)
+        supplied = parameters or {}
+        if set(required) != set(supplied):
+            raise ValueError("公式参数缺失或包含未引用的参数")
+        for value in supplied.values():
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or abs(value) > 1e15:
+                raise ValueError("公式参数必须为安全范围内的有限数字")
+        tree = ast.parse(expression, mode="eval")
+        return self._visit(tree.body, supplied)
+
+    def _visit(self, node: ast.AST, parameters: dict[str, float]) -> float:
+        if isinstance(node, ast.Name):
+            return float(parameters[node.id])
         if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)) and not isinstance(node.value, bool):
-            if not math.isfinite(float(node.value)):
+            if not math.isfinite(float(node.value)) or abs(node.value) > 1e15:
                 raise ValueError("数字不是有限值")
             return float(node.value)
         if isinstance(node, ast.UnaryOp) and isinstance(node.op, self._UNARYOPS):
-            value = self._visit(node.operand)
+            value = self._visit(node.operand, parameters)
             return value if isinstance(node.op, ast.UAdd) else -value
         if isinstance(node, ast.BinOp) and isinstance(node.op, self._BINOPS):
-            left, right = self._visit(node.left), self._visit(node.right)
-            if isinstance(node.op, ast.Div) and right == 0:
+            left, right = self._visit(node.left, parameters), self._visit(node.right, parameters)
+            if isinstance(node.op, (ast.Div, ast.Mod)) and right == 0:
                 raise ValueError("除数不能为零")
             if isinstance(node.op, ast.Pow) and abs(right) > 12:
                 raise ValueError("指数超出安全范围")
@@ -152,7 +179,7 @@ class SafeFormulaEvaluator:
                 ast.Pow: lambda: left**right,
                 ast.Mod: lambda: left % right,
             }[type(node.op)]()
-            if not math.isfinite(value) or abs(value) > 1e15:
+            if isinstance(value, complex) or not math.isfinite(value) or abs(value) > 1e15:
                 raise ValueError("结果超出安全范围")
             return float(value)
         raise ValueError("表达式包含不支持的语法")
@@ -273,19 +300,24 @@ class DocumentAnalyzer:
                 # 电话、日期、编号等"形似算式"的文本不是公式，不参与计算
                 continue
             normalized = self._normalize_formula(source)
+            line_no = text.count("\n", 0, match.start()) + 1
             try:
+                parameters = self.formula_evaluator.parameters(normalized)
+                if parameters:
+                    result.append(FormulaEvidence(label, source, normalized, None, "requires_parameters", parameters=parameters, line_no=line_no))
+                    continue
                 value = self.formula_evaluator.evaluate(normalized)
-                result.append(FormulaEvidence(match.group("label").strip(), source, normalized, round(value, 10), "evaluated"))
+                result.append(FormulaEvidence(label, source, normalized, round(value, 10), "evaluated", line_no=line_no))
             except (SyntaxError, ValueError, TypeError, OverflowError) as exc:
-                result.append(FormulaEvidence(match.group("label").strip(), source, normalized, None, "rejected", str(exc)))
+                result.append(FormulaEvidence(label, source, normalized, None, "rejected", str(exc), line_no=line_no))
         return result
 
     @staticmethod
     def _normalize_formula(expression: str) -> str:
-        translation = str.maketrans("０１２３４５６７８９．＋−×÷％（）", "0123456789.+-x/%()")
-        value = expression.translate(translation).replace("x", "*").replace(" ", "")
-        if value.endswith("%"):
-            value = f"({value[:-1]})/100"
+        translation = str.maketrans("０１２３４５６７８９．＋−×÷％（）", "0123456789.+-*/%()")
+        value = expression.translate(translation).replace("×", "*").replace(" ", "").replace("\t", "")
+        # x is a valid parameter name; only the actual multiplication glyph is translated.
+        value = re.sub(r"(?<![\w.])(\d+(?:\.\d+)?)%(?![\w.])", r"(\1/100)", value)
         return value
 
     @staticmethod

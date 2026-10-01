@@ -16,13 +16,16 @@ from urllib.parse import urlsplit
 
 from fastapi import FastAPI, HTTPException
 from fastapi import Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from .cross_source import CrossSourceAgent, JsonDocumentRetriever
 from .clarification import ClarificationResolver, ClarificationSelection
 from .document_analysis import DocumentAnalyzer, PageSignal
+from .formula_binding import FormulaBinder, ParameterEvidence
+from .knowledge_store import KnowledgeStore
+from .dependency_agent import DependencyAgent
 from .image_quality import ImageEnhancer, ImageQualityAnalyzer
 from .pdf_ingest import PdfIngestor
 from .chunk_cleaning import DocumentChunker
@@ -159,6 +162,26 @@ image_enhancer = ImageEnhancer()
 pdf_ingestor = PdfIngestor(document_analyzer)
 document_chunker = DocumentChunker()
 ocr_pipeline = build_ocr_pipeline(CONFIG_WARNINGS)
+embedder = None
+dense_path = os.getenv('ICT8_DENSE_MODEL_PATH', '').strip()
+if dense_path:
+    from .dense_retrieval import LocalBgeEmbedder
+    embedder = LocalBgeEmbedder(dense_path)
+generation_client = None
+if os.getenv('ICT8_GENERATION_PROVIDER', '').lower() == 'responses':
+    from .responses_client import StructuredResponses
+    generation_client = StructuredResponses(os.getenv('ICT8_OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+        os.getenv('ICT8_OPENAI_API_KEY', '') or os.getenv('OPENAI_API_KEY', ''),
+        model=os.getenv('ICT8_OPENAI_MODEL', ''), reasoning=os.getenv('ICT8_OPENAI_REASONING', 'medium'))
+generator = None
+if generation_client:
+    from .grounded_generation import GroundedGenerator
+    generator = GroundedGenerator(generation_client)
+knowledge_store = KnowledgeStore(os.getenv("ICT8_KNOWLEDGE_ROOT", str(ROOT / "runtime/knowledge")), ocr_pipeline=ocr_pipeline, embedder=embedder, generator=generator)
+if os.getenv("ICT8_KNOWLEDGE_ROOT", "").strip():
+    document_retriever = knowledge_store
+    document_source = "independent_corpus"
+    agent = CrossSourceAgent(engine, document_retriever)
 clarification_resolver = ClarificationResolver()
 app = FastAPI(title="ICT Track 8 Structured QA", version="0.1.0")
 allowed_origins = [
@@ -257,6 +280,38 @@ class DocumentAnalysisRequest(BaseModel):
     pages: list[PageSignalRequest] = Field(default_factory=list, max_length=500)
 
 
+class FormulaParameterRequest(BaseModel):
+    value: float = Field(allow_inf_nan=False)
+    source_uri: str = Field(min_length=1, max_length=500)
+    locator: str = Field(min_length=1, max_length=500)
+    unit: str = Field(default="unknown", max_length=64)
+
+
+class FormulaCalculationRequest(BaseModel):
+    expression: str = Field(min_length=1, max_length=300)
+    parameters: dict[str, FormulaParameterRequest] = Field(default_factory=dict, max_length=32)
+    formula_source: str = Field(min_length=1, max_length=500)
+    formula_locator: str = Field(min_length=1, max_length=500)
+
+
+class KnowledgeIngestRequest(BaseModel):
+    document_id: str = Field(min_length=1, max_length=128)
+    title: str = Field(min_length=1, max_length=200)
+    modality: str = Field(pattern=r"^(pdf|docx|xlsx|txt|md|image)$")
+    filename: str = Field(min_length=1, max_length=200)
+    file_base64: str = Field(min_length=1, max_length=28_000_000)
+    language: str = Field(default="eng", min_length=2, max_length=32)
+
+
+class KnowledgeQueryRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=1000)
+    top_k: int = Field(default=4, ge=1, le=10)
+
+
+class DependencyQueryRequest(BaseModel):
+    tasks: list[dict[str, Any]] = Field(min_length=1, max_length=16)
+
+
 class ImageQualityRequest(BaseModel):
     image_base64: str = Field(min_length=1, max_length=12_000_000)
 
@@ -294,6 +349,22 @@ class ClarificationRequest(BaseModel):
     top_k_documents: int = Field(default=4, ge=1, le=10)
 
 
+class OmniRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=1000)
+    session_id: str | None = Field(default=None, max_length=128)
+    reset_context: bool = False
+
+
+@app.post('/api/v1/omni/query')
+def omni_query(request: OmniRequest):
+    from .omni_agent import OmniAgent
+    try:
+        return OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
+            request.question, session_id=request.session_id, reset_context=request.reset_context)
+    except (ValueError, OSError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
+
+
 @app.get("/health")
 def health() -> dict[str, object]:
     return {
@@ -302,6 +373,8 @@ def health() -> dict[str, object]:
         "database": DATABASE_PATH.name,
         "document_source": document_source,
         "planner_source": planner_source,
+        "retrieval": knowledge_store.retrieval_health(),
+        "generation": {'mode': 'responses' if generator else 'attributed_extracts', 'model': generation_client.model if generation_client else None},
         "configuration_warnings": list(CONFIG_WARNINGS),
     }
 
@@ -312,6 +385,84 @@ def schema() -> dict[str, object]:
         return engine.schema()
     except (OSError, ValueError) as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/knowledge/documents")
+def knowledge_documents():
+    return {"documents": knowledge_store.list_documents()}
+
+
+@app.get('/api/v1/specification')
+def official_specification():
+    path = ROOT.parent/'specification/official-track8.pdf'
+    if not path.exists():
+        raise HTTPException(status_code=404, detail='当前部署未包含赛题文档')
+    return FileResponse(path, media_type='application/pdf', content_disposition_type='inline')
+
+
+@app.get('/api/v1/capabilities')
+def capabilities():
+    path = ROOT.parent/'docs/coverage.json'
+    if not path.exists():
+        return {'items': [], 'status': 'not_available'}
+    result = json.loads(path.read_text(encoding='utf-8'))
+    # This is a saved diagnostic, not a live health guarantee or a credential file.
+    probe = ROOT.parent/'docs/MODEL_API_PROBE.json'
+    if probe.exists():
+        report = json.loads(probe.read_text(encoding='utf-8'))
+        result['last_model_probe'] = {key: report.get(key) for key in ('created_at', 'model', 'status', 'checks')}
+    return result
+
+
+@app.post("/api/v1/knowledge/ingest")
+def knowledge_ingest(request: KnowledgeIngestRequest):
+    if not DOCUMENT_PARSE_SLOTS.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail="文档解析繁忙，请稍后重试")
+    try:
+        raw = base64.b64decode(request.file_base64, validate=True)
+        return knowledge_store.ingest(raw, document_id=request.document_id, title=request.title,
+            modality=request.modality, filename=request.filename, language=request.language)
+    except (ValueError, UnicodeError, binascii.Error) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)[:200]) from exc
+    finally:
+        DOCUMENT_PARSE_SLOTS.release()
+
+
+@app.get("/api/v1/knowledge/documents/{document_id}")
+def knowledge_document(document_id: str):
+    try:
+        return knowledge_store.document(document_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="文档不存在") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/knowledge/documents/{document_id}/original")
+def knowledge_original(document_id: str):
+    try:
+        path, filename = knowledge_store.original(document_id)
+        return FileResponse(path, filename=filename, content_disposition_type="inline")
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="文档不存在") from exc
+    except (ValueError, OSError) as exc:
+        raise HTTPException(status_code=400, detail="原文件完整性检查失败") from exc
+
+
+@app.post("/api/v1/knowledge/query")
+def knowledge_query(request: KnowledgeQueryRequest):
+    try:
+        return knowledge_store.answer(request.question, top_k=request.top_k)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post("/api/v1/fusion/execute")
+def execute_dependency_plan(request: DependencyQueryRequest):
+    try:
+        return DependencyAgent(engine, knowledge_store).run(request.tasks)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail={"code": "invalid_dependency_plan", "message": str(exc)[:200]}) from exc
 
 
 @app.get("/api/v1/nl2sql/schema/annotation-report")
@@ -451,6 +602,16 @@ def analyze_document(request: DocumentAnalysisRequest) -> dict[str, object]:
     pages = tuple(PageSignal(**page.model_dump()) for page in request.pages)
     result = document_analyzer.analyze(request.text, document_id=request.document_id, pages=pages)
     return result.to_dict()
+
+
+@app.post("/api/v1/documents/formulas/calculate")
+def calculate_document_formula(request: FormulaCalculationRequest) -> dict[str, object]:
+    try:
+        return FormulaBinder().calculate(request.expression,
+            {name: ParameterEvidence(**value.model_dump()) for name, value in request.parameters.items()},
+            formula_source=request.formula_source, formula_locator=request.formula_locator)
+    except (ValueError, SyntaxError, OverflowError) as exc:
+        raise HTTPException(status_code=422, detail={"code": "invalid_formula_binding", "message": str(exc)[:200]}) from exc
 
 
 @app.post("/api/v1/documents/image-quality")

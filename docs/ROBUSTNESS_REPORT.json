@@ -1,0 +1,2049 @@
+{
+  "created_at": "2026-10-01T00:09:16.207620+00:00",
+  "scope": "synthetic_pair_corruption_not_OHR_benchmark",
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "ocr": [
+    {
+      "variant": "clean",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "售后响应通知 （合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。",
+        "confidence": 0.9872013887801727,
+        "selected_transforms": [
+          "reduce_highlights",
+          "sharpen"
+        ],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 82,
+            "confidence": 0.9868707007322556,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "reduce_highlights"
+            ],
+            "status": "quality_retry",
+            "text_length": 82,
+            "confidence": 0.9858253269623487,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ],
+            "status": "accepted",
+            "text_length": 81,
+            "confidence": 0.9872013887801727,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  62.0,
+                  64.0
+                ],
+                [
+                  490.0,
+                  65.0
+                ],
+                [
+                  490.0,
+                  103.0
+                ],
+                [
+                  62.0,
+                  102.0
+                ]
+              ],
+              "text": "售后响应通知（合成样本）",
+              "confidence": 0.996809129913648
+            },
+            {
+              "bbox": [
+                [
+                  63.0,
+                  170.0
+                ],
+                [
+                  623.0,
+                  168.0
+                ],
+                [
+                  623.0,
+                  206.0
+                ],
+                [
+                  63.0,
+                  208.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时。",
+              "confidence": 0.9903237521648407
+            },
+            {
+              "bbox": [
+                [
+                  64.0,
+                  276.0
+                ],
+                [
+                  645.0,
+                  276.0
+                ],
+                [
+                  645.0,
+                  311.0
+                ],
+                [
+                  64.0,
+                  311.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9767132261220146
+            },
+            {
+              "bbox": [
+                [
+                  61.0,
+                  379.0
+                ],
+                [
+                  506.0,
+                  381.0
+                ],
+                [
+                  506.0,
+                  418.0
+                ],
+                [
+                  61.0,
+                  416.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.9988299449284871
+            },
+            {
+              "bbox": [
+                [
+                  63.0,
+                  485.0
+                ],
+                [
+                  643.0,
+                  485.0
+                ],
+                [
+                  643.0,
+                  523.0
+                ],
+                [
+                  63.0,
+                  523.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试。",
+              "confidence": 0.9777084308512071
+            }
+          ],
+          "timings_seconds": [
+            0.7859198000223842,
+            0.006008148193359375,
+            1.5348567962646484
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 1400,
+        "height": 650,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.9695,
+        "contrast": 0.1243,
+        "edge_energy": 0.0217,
+        "resolution_score": 0.7406,
+        "quality_score": 0.4424,
+        "issues": [
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "reduce_highlights",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 8982.048
+    },
+    {
+      "variant": "rotate180",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "本通知仅用于OCR和证据定位测试。\n生效日期：2025年1月1日。\n一般工单：首次响应时间为24小时\n紧急工单：首次响应时间为2小时。\n售后响应通知 (合成样本)",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "本通知仅用于OCR和证据定位测试。\n生效日期：2025年1月1日。\n一般工单：首次响应时间为24小时\n紧急工单：首次响应时间为2小时。\n售后响应通知 (合成样本)",
+        "confidence": 0.9910686917893299,
+        "selected_transforms": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 81,
+            "confidence": 0.9910686917893299,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "reduce_highlights"
+            ],
+            "status": "quality_retry",
+            "text_length": 80,
+            "confidence": 0.9899179355094307,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ],
+            "status": "accepted",
+            "text_length": 80,
+            "confidence": 0.9866453064115424,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  758.0,
+                  126.0
+                ],
+                [
+                  1341.0,
+                  129.0
+                ],
+                [
+                  1340.0,
+                  170.0
+                ],
+                [
+                  758.0,
+                  167.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试。",
+              "confidence": 0.9693517316790188
+            },
+            {
+              "bbox": [
+                [
+                  895.0,
+                  232.0
+                ],
+                [
+                  1339.0,
+                  235.0
+                ],
+                [
+                  1339.0,
+                  273.0
+                ],
+                [
+                  895.0,
+                  270.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.998858904838562
+            },
+            {
+              "bbox": [
+                [
+                  759.0,
+                  339.0
+                ],
+                [
+                  1335.0,
+                  337.0
+                ],
+                [
+                  1335.0,
+                  375.0
+                ],
+                [
+                  759.0,
+                  377.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时",
+              "confidence": 0.9997035339474678
+            },
+            {
+              "bbox": [
+                [
+                  778.0,
+                  444.0
+                ],
+                [
+                  1338.0,
+                  442.0
+                ],
+                [
+                  1338.0,
+                  481.0
+                ],
+                [
+                  778.0,
+                  483.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时。",
+              "confidence": 0.9975079745054245
+            },
+            {
+              "bbox": [
+                [
+                  908.0,
+                  548.0
+                ],
+                [
+                  1339.0,
+                  548.0
+                ],
+                [
+                  1339.0,
+                  588.0
+                ],
+                [
+                  908.0,
+                  588.0
+                ]
+              ],
+              "text": "售后响应通知 (合成样本)",
+              "confidence": 0.9919263170315669
+            }
+          ],
+          "timings_seconds": [
+            0.8379265000112355,
+            0.008938074111938477,
+            0.8061385154724121
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 1400,
+        "height": 650,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.9695,
+        "contrast": 0.1243,
+        "edge_energy": 0.0217,
+        "resolution_score": 0.7406,
+        "quality_score": 0.4424,
+        "issues": [
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "reduce_highlights",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 9132.655
+    },
+    {
+      "variant": "rotate90",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "一般工单：首次响应时间为24小时。\n本通知仅用于OCR和证据定位测试\n紧急工单：首次响应时间为2小时\n生效日期：2025年1月1日。\n售后响应通知 (合成样本）",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "一般工单：首次响应时间为24小时。\n本通知仅用于OCR和证据定位测试\n紧急工单：首次响应时间为2小时\n生效日期：2025年1月1日。\n售后响应通知 (合成样本）",
+        "confidence": 0.9913892071498068,
+        "selected_transforms": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 80,
+            "confidence": 0.9913892071498068,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "reduce_highlights"
+            ],
+            "status": "quality_retry",
+            "text_length": 80,
+            "confidence": 0.9893701107878434,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ],
+            "status": "accepted",
+            "text_length": 80,
+            "confidence": 0.9879669398069382,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  271.0,
+                  755.0
+                ],
+                [
+                  314.0,
+                  755.0
+                ],
+                [
+                  316.0,
+                  1331.0
+                ],
+                [
+                  273.0,
+                  1331.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9992772656328538
+            },
+            {
+              "bbox": [
+                [
+                  483.0,
+                  759.0
+                ],
+                [
+                  524.0,
+                  759.0
+                ],
+                [
+                  524.0,
+                  1341.0
+                ],
+                [
+                  483.0,
+                  1341.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.9988400228321552
+            },
+            {
+              "bbox": [
+                [
+                  167.0,
+                  780.0
+                ],
+                [
+                  210.0,
+                  780.0
+                ],
+                [
+                  210.0,
+                  1342.0
+                ],
+                [
+                  167.0,
+                  1342.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时",
+              "confidence": 0.9997891982396444
+            },
+            {
+              "bbox": [
+                [
+                  379.0,
+                  896.0
+                ],
+                [
+                  423.0,
+                  896.0
+                ],
+                [
+                  419.0,
+                  1342.0
+                ],
+                [
+                  375.0,
+                  1342.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.997032376130422
+            },
+            {
+              "bbox": [
+                [
+                  62.0,
+                  910.0
+                ],
+                [
+                  105.0,
+                  910.0
+                ],
+                [
+                  105.0,
+                  1341.0
+                ],
+                [
+                  62.0,
+                  1341.0
+                ]
+              ],
+              "text": "售后响应通知 (合成样本）",
+              "confidence": 0.955700172827794
+            }
+          ],
+          "timings_seconds": [
+            0.8395927999808919,
+            0.0070035457611083984,
+            0.7821879386901855
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 650,
+        "height": 1400,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.9694,
+        "contrast": 0.1247,
+        "edge_energy": 0.0217,
+        "resolution_score": 0.7406,
+        "quality_score": 0.4428,
+        "issues": [
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "reduce_highlights",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 8309.316
+    },
+    {
+      "variant": "blur1.5",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "售后响应通知 (合成样本)\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知 (合成样本)\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。",
+        "confidence": 0.9957560201485952,
+        "selected_transforms": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 82,
+            "confidence": 0.9957560201485952,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "reduce_highlights"
+            ],
+            "status": "quality_retry",
+            "text_length": 82,
+            "confidence": 0.991006368245834,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ],
+            "status": "accepted",
+            "text_length": 82,
+            "confidence": 0.9865567156901727,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  62.0,
+                  64.0
+                ],
+                [
+                  493.0,
+                  64.0
+                ],
+                [
+                  493.0,
+                  104.0
+                ],
+                [
+                  62.0,
+                  104.0
+                ]
+              ],
+              "text": "售后响应通知 (合成样本)",
+              "confidence": 0.9800669367496784
+            },
+            {
+              "bbox": [
+                [
+                  61.0,
+                  168.0
+                ],
+                [
+                  624.0,
+                  166.0
+                ],
+                [
+                  624.0,
+                  207.0
+                ],
+                [
+                  61.0,
+                  208.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时。",
+              "confidence": 0.9997856095433235
+            },
+            {
+              "bbox": [
+                [
+                  63.0,
+                  274.0
+                ],
+                [
+                  646.0,
+                  274.0
+                ],
+                [
+                  646.0,
+                  312.0
+                ],
+                [
+                  63.0,
+                  312.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9997151599210852
+            },
+            {
+              "bbox": [
+                [
+                  60.0,
+                  378.0
+                ],
+                [
+                  508.0,
+                  380.0
+                ],
+                [
+                  507.0,
+                  418.0
+                ],
+                [
+                  59.0,
+                  416.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.9992382764816284
+            },
+            {
+              "bbox": [
+                [
+                  62.0,
+                  483.0
+                ],
+                [
+                  644.0,
+                  485.0
+                ],
+                [
+                  644.0,
+                  523.0
+                ],
+                [
+                  62.0,
+                  521.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试。",
+              "confidence": 0.9969292808981502
+            }
+          ],
+          "timings_seconds": [
+            0.401548299996648,
+            0.0037755966186523438,
+            0.33133578300476074
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 1400,
+        "height": 650,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.97,
+        "contrast": 0.1098,
+        "edge_energy": 0.0157,
+        "resolution_score": 0.7406,
+        "quality_score": 0.4096,
+        "issues": [
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "reduce_highlights",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 3971.373
+    },
+    {
+      "variant": "low_contrast",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "售后响应通知 （合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知 （合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+        "confidence": 0.9903084388026944,
+        "selected_transforms": [
+          "reduce_highlights"
+        ],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 82,
+            "confidence": 0.9829795857270559,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "reduce_highlights"
+            ],
+            "status": "quality_retry",
+            "text_length": 81,
+            "confidence": 0.9903084388026944,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "reduce_highlights",
+              "contrast"
+            ],
+            "status": "accepted",
+            "text_length": 82,
+            "confidence": 0.9876002409519293,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  63.0,
+                  64.0
+                ],
+                [
+                  490.0,
+                  64.0
+                ],
+                [
+                  490.0,
+                  102.0
+                ],
+                [
+                  63.0,
+                  102.0
+                ]
+              ],
+              "text": "售后响应通知 （合成样本）",
+              "confidence": 0.9576841088441702
+            },
+            {
+              "bbox": [
+                [
+                  62.0,
+                  170.0
+                ],
+                [
+                  622.0,
+                  168.0
+                ],
+                [
+                  622.0,
+                  206.0
+                ],
+                [
+                  62.0,
+                  208.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时。",
+              "confidence": 0.9935703054070473
+            },
+            {
+              "bbox": [
+                [
+                  65.0,
+                  274.0
+                ],
+                [
+                  646.0,
+                  272.0
+                ],
+                [
+                  646.0,
+                  310.0
+                ],
+                [
+                  65.0,
+                  312.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9988944810979506
+            },
+            {
+              "bbox": [
+                [
+                  60.0,
+                  377.0
+                ],
+                [
+                  508.0,
+                  380.0
+                ],
+                [
+                  507.0,
+                  418.0
+                ],
+                [
+                  59.0,
+                  415.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.9989162524541219
+            },
+            {
+              "bbox": [
+                [
+                  61.0,
+                  483.0
+                ],
+                [
+                  641.0,
+                  485.0
+                ],
+                [
+                  641.0,
+                  522.0
+                ],
+                [
+                  61.0,
+                  520.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.9963613450527191
+            }
+          ],
+          "timings_seconds": [
+            0.4437720999994781,
+            0.003997325897216797,
+            0.9138760566711426
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 1400,
+        "height": 650,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.969,
+        "contrast": 0.0314,
+        "edge_energy": 0.0058,
+        "resolution_score": 0.7406,
+        "quality_score": 0.3064,
+        "issues": [
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "low_contrast",
+            "severity": "warning",
+            "message": "对比度偏低"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "reduce_highlights",
+          "contrast",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 4772.075
+    },
+    {
+      "variant": "downsample",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+        "confidence": 0.9975992392849278,
+        "selected_transforms": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 78,
+            "confidence": 0.9975992392849278,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "upscale"
+            ],
+            "status": "quality_retry",
+            "text_length": 81,
+            "confidence": 0.987040769744229,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "upscale",
+              "reduce_highlights"
+            ],
+            "status": "accepted",
+            "text_length": 81,
+            "confidence": 0.9885749491778287,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  25.0,
+                  25.0
+                ],
+                [
+                  197.0,
+                  25.0
+                ],
+                [
+                  197.0,
+                  42.0
+                ],
+                [
+                  25.0,
+                  42.0
+                ]
+              ],
+              "text": "售后响应通知（合成样本）",
+              "confidence": 0.997624546289444
+            },
+            {
+              "bbox": [
+                [
+                  25.0,
+                  68.0
+                ],
+                [
+                  249.0,
+                  67.0
+                ],
+                [
+                  249.0,
+                  82.0
+                ],
+                [
+                  25.0,
+                  83.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时",
+              "confidence": 0.9973814646402995
+            },
+            {
+              "bbox": [
+                [
+                  25.0,
+                  110.0
+                ],
+                [
+                  258.0,
+                  109.0
+                ],
+                [
+                  258.0,
+                  124.0
+                ],
+                [
+                  25.0,
+                  125.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时",
+              "confidence": 0.9993091635406017
+            },
+            {
+              "bbox": [
+                [
+                  24.0,
+                  151.0
+                ],
+                [
+                  203.0,
+                  152.0
+                ],
+                [
+                  203.0,
+                  167.0
+                ],
+                [
+                  24.0,
+                  166.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.9959460020065307
+            },
+            {
+              "bbox": [
+                [
+                  26.0,
+                  194.0
+                ],
+                [
+                  257.0,
+                  194.0
+                ],
+                [
+                  257.0,
+                  208.0
+                ],
+                [
+                  26.0,
+                  208.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.9976244084537029
+            }
+          ],
+          "timings_seconds": [
+            0.4458963999932166,
+            0.006504058837890625,
+            0.3868880271911621
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 560,
+        "height": 260,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.968,
+        "contrast": 0.1252,
+        "edge_energy": 0.0209,
+        "resolution_score": 0.1185,
+        "quality_score": 0.223,
+        "issues": [
+          {
+            "code": "low_resolution",
+            "severity": "warning",
+            "message": "短边分辨率偏低"
+          },
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "upscale",
+          "reduce_highlights",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 6484.556
+    },
+    {
+      "variant": "small_text",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日，\n本通知仅用于OCR和证据定位测试",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日，\n本通知仅用于OCR和证据定位测试",
+        "confidence": 0.9745160377508885,
+        "selected_transforms": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 78,
+            "confidence": 0.9745160377508885,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "upscale"
+            ],
+            "status": "quality_retry",
+            "text_length": 80,
+            "confidence": 0.9462053289538935,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "upscale",
+              "reduce_highlights"
+            ],
+            "status": "accepted",
+            "text_length": 81,
+            "confidence": 0.9523830371243613,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  12.0,
+                  13.0
+                ],
+                [
+                  99.0,
+                  13.0
+                ],
+                [
+                  99.0,
+                  21.0
+                ],
+                [
+                  12.0,
+                  21.0
+                ]
+              ],
+              "text": "售后响应通知（合成样本）",
+              "confidence": 0.9722373286883036
+            },
+            {
+              "bbox": [
+                [
+                  12.0,
+                  33.0
+                ],
+                [
+                  125.0,
+                  33.0
+                ],
+                [
+                  125.0,
+                  42.0
+                ],
+                [
+                  12.0,
+                  42.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时",
+              "confidence": 0.956530769666036
+            },
+            {
+              "bbox": [
+                [
+                  12.0,
+                  55.0
+                ],
+                [
+                  129.0,
+                  55.0
+                ],
+                [
+                  129.0,
+                  63.0
+                ],
+                [
+                  12.0,
+                  63.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时",
+              "confidence": 0.9878973141312599
+            },
+            {
+              "bbox": [
+                [
+                  12.0,
+                  76.0
+                ],
+                [
+                  102.0,
+                  76.0
+                ],
+                [
+                  102.0,
+                  84.0
+                ],
+                [
+                  12.0,
+                  84.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日，",
+              "confidence": 0.9590782860914866
+            },
+            {
+              "bbox": [
+                [
+                  12.0,
+                  96.0
+                ],
+                [
+                  129.0,
+                  96.0
+                ],
+                [
+                  129.0,
+                  105.0
+                ],
+                [
+                  12.0,
+                  105.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.9941778741776943
+            }
+          ],
+          "timings_seconds": [
+            0.4114058999984991,
+            0.005472421646118164,
+            0.33590078353881836
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 280,
+        "height": 130,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.9683,
+        "contrast": 0.1137,
+        "edge_energy": 0.0209,
+        "resolution_score": 0.0296,
+        "quality_score": 0.1816,
+        "issues": [
+          {
+            "code": "low_resolution",
+            "severity": "warning",
+            "message": "短边分辨率偏低"
+          },
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "upscale",
+          "reduce_highlights",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 6186.964
+    },
+    {
+      "variant": "dark",
+      "baseline_correct": false,
+      "pipeline_correct": true,
+      "baseline_text": "售后响应通知 （合成样本）\n紧急工单：首次响应时间为2小时，\n般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知 （合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+        "confidence": 0.9899701414170203,
+        "selected_transforms": [
+          "brighten"
+        ],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 80,
+            "confidence": 0.9765999026988682,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "brighten"
+            ],
+            "status": "quality_retry",
+            "text_length": 81,
+            "confidence": 0.9899701414170203,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "brighten",
+              "contrast"
+            ],
+            "status": "accepted",
+            "text_length": 82,
+            "confidence": 0.9879842561024886,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  63.0,
+                  64.0
+                ],
+                [
+                  490.0,
+                  64.0
+                ],
+                [
+                  490.0,
+                  102.0
+                ],
+                [
+                  63.0,
+                  102.0
+                ]
+              ],
+              "text": "售后响应通知 （合成样本）",
+              "confidence": 0.9630733040662912
+            },
+            {
+              "bbox": [
+                [
+                  62.0,
+                  170.0
+                ],
+                [
+                  622.0,
+                  168.0
+                ],
+                [
+                  622.0,
+                  206.0
+                ],
+                [
+                  62.0,
+                  208.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时。",
+              "confidence": 0.9940534569323063
+            },
+            {
+              "bbox": [
+                [
+                  66.0,
+                  275.0
+                ],
+                [
+                  645.0,
+                  275.0
+                ],
+                [
+                  645.0,
+                  310.0
+                ],
+                [
+                  66.0,
+                  310.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9927866879631492
+            },
+            {
+              "bbox": [
+                [
+                  60.0,
+                  377.0
+                ],
+                [
+                  508.0,
+                  380.0
+                ],
+                [
+                  507.0,
+                  418.0
+                ],
+                [
+                  59.0,
+                  415.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.9990731994311015
+            },
+            {
+              "bbox": [
+                [
+                  62.0,
+                  485.0
+                ],
+                [
+                  641.0,
+                  485.0
+                ],
+                [
+                  641.0,
+                  520.0
+                ],
+                [
+                  62.0,
+                  520.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.9962138086557388
+            }
+          ],
+          "timings_seconds": [
+            0.4006574999948498,
+            0.0050048828125,
+            0.9840655326843262
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 1400,
+        "height": 650,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.1141,
+        "contrast": 0.0147,
+        "edge_energy": 0.0027,
+        "resolution_score": 0.7406,
+        "quality_score": 0.2813,
+        "issues": [
+          {
+            "code": "underexposed",
+            "severity": "warning",
+            "message": "图像偏暗"
+          },
+          {
+            "code": "low_contrast",
+            "severity": "warning",
+            "message": "对比度偏低"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "brighten",
+          "contrast",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 4389.319
+    },
+    {
+      "variant": "washed_out",
+      "baseline_correct": false,
+      "pipeline_correct": true,
+      "baseline_text": "",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知 （合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+        "confidence": 0.989192621274428,
+        "selected_transforms": [
+          "reduce_highlights",
+          "contrast"
+        ],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "low_confidence",
+            "text_length": 0,
+            "confidence": 0.0,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "reduce_highlights"
+            ],
+            "status": "quality_retry",
+            "text_length": 79,
+            "confidence": 0.988767397403717,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "reduce_highlights",
+              "contrast"
+            ],
+            "status": "accepted",
+            "text_length": 81,
+            "confidence": 0.989192621274428,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  62.0,
+                  64.0
+                ],
+                [
+                  490.0,
+                  65.0
+                ],
+                [
+                  490.0,
+                  104.0
+                ],
+                [
+                  62.0,
+                  102.0
+                ]
+              ],
+              "text": "售后响应通知 （合成样本）",
+              "confidence": 0.9610772453821622
+            },
+            {
+              "bbox": [
+                [
+                  63.0,
+                  170.0
+                ],
+                [
+                  623.0,
+                  168.0
+                ],
+                [
+                  623.0,
+                  206.0
+                ],
+                [
+                  63.0,
+                  208.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时。",
+              "confidence": 0.9976396523416042
+            },
+            {
+              "bbox": [
+                [
+                  64.0,
+                  276.0
+                ],
+                [
+                  645.0,
+                  276.0
+                ],
+                [
+                  645.0,
+                  311.0
+                ],
+                [
+                  64.0,
+                  311.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9863919335253098
+            },
+            {
+              "bbox": [
+                [
+                  61.0,
+                  379.0
+                ],
+                [
+                  506.0,
+                  381.0
+                ],
+                [
+                  506.0,
+                  418.0
+                ],
+                [
+                  61.0,
+                  416.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.9991769671440125
+            },
+            {
+              "bbox": [
+                [
+                  64.0,
+                  486.0
+                ],
+                [
+                  642.0,
+                  486.0
+                ],
+                [
+                  642.0,
+                  521.0
+                ],
+                [
+                  64.0,
+                  521.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.99720473960042
+            }
+          ],
+          "timings_seconds": [
+            0.4550928999960888,
+            0.0040776729583740234,
+            0.3880438804626465
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 1400,
+        "height": 650,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.9674,
+        "contrast": 0.005,
+        "edge_energy": 0.0009,
+        "resolution_score": 0.7406,
+        "quality_score": 0.2666,
+        "issues": [
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "low_contrast",
+            "severity": "warning",
+            "message": "对比度偏低"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "reduce_highlights",
+          "contrast",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 3226.189
+    },
+    {
+      "variant": "blur3",
+      "baseline_correct": true,
+      "pipeline_correct": true,
+      "baseline_text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+      "pipeline": {
+        "status": "ok",
+        "executor": "rapidocr",
+        "text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
+        "confidence": 0.9804890951827953,
+        "selected_transforms": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "transforms": [],
+            "status": "quality_retry",
+            "text_length": 80,
+            "confidence": 0.9804890951827953,
+            "error": null
+          },
+          {
+            "attempt": 2,
+            "transforms": [
+              "reduce_highlights"
+            ],
+            "status": "quality_retry",
+            "text_length": 81,
+            "confidence": 0.9785925386013923,
+            "error": null
+          },
+          {
+            "attempt": 3,
+            "transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ],
+            "status": "accepted",
+            "text_length": 81,
+            "confidence": 0.9701668027933542,
+            "error": null
+          }
+        ],
+        "warnings": [],
+        "metadata": {
+          "provider": "rapidocr",
+          "regions": [
+            {
+              "bbox": [
+                [
+                  61.0,
+                  59.0
+                ],
+                [
+                  495.0,
+                  62.0
+                ],
+                [
+                  495.0,
+                  107.0
+                ],
+                [
+                  60.0,
+                  104.0
+                ]
+              ],
+              "text": "售后响应通知（合成样本）",
+              "confidence": 0.9949666062990824
+            },
+            {
+              "bbox": [
+                [
+                  60.0,
+                  167.0
+                ],
+                [
+                  626.0,
+                  165.0
+                ],
+                [
+                  626.0,
+                  209.0
+                ],
+                [
+                  60.0,
+                  211.0
+                ]
+              ],
+              "text": "紧急工单：首次响应时间为2小时。",
+              "confidence": 0.9722285382449627
+            },
+            {
+              "bbox": [
+                [
+                  61.0,
+                  272.0
+                ],
+                [
+                  648.0,
+                  272.0
+                ],
+                [
+                  648.0,
+                  315.0
+                ],
+                [
+                  61.0,
+                  315.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9795038489734426
+            },
+            {
+              "bbox": [
+                [
+                  60.0,
+                  376.0
+                ],
+                [
+                  510.0,
+                  378.0
+                ],
+                [
+                  510.0,
+                  420.0
+                ],
+                [
+                  59.0,
+                  418.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.9604776680469513
+            },
+            {
+              "bbox": [
+                [
+                  60.0,
+                  479.0
+                ],
+                [
+                  647.0,
+                  480.0
+                ],
+                [
+                  647.0,
+                  527.0
+                ],
+                [
+                  59.0,
+                  525.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.9976990558207035
+            }
+          ],
+          "timings_seconds": [
+            0.37480479999794625,
+            0.003991842269897461,
+            0.2607440948486328
+          ],
+          "language_model": "Chinese_English"
+        }
+      },
+      "quality": {
+        "width": 1400,
+        "height": 650,
+        "mode": "RGB",
+        "exif_orientation": null,
+        "brightness": 0.9702,
+        "contrast": 0.0965,
+        "edge_energy": 0.0091,
+        "resolution_score": 0.7406,
+        "quality_score": 0.3756,
+        "issues": [
+          {
+            "code": "overexposed",
+            "severity": "warning",
+            "message": "图像偏亮"
+          },
+          {
+            "code": "blurred",
+            "severity": "warning",
+            "message": "边缘能量偏低，可能模糊"
+          }
+        ],
+        "recommended_transforms": [
+          "reduce_highlights",
+          "sharpen"
+        ]
+      },
+      "latency_ms": 4819.23
+    }
+  ],
+  "query_pairs": [
+    {
+      "question": "二〇二五年华东地区销售额",
+      "pass": true,
+      "status": "ok",
+      "rows": [
+        {
+          "销售额": 29584.0
+        }
+      ]
+    },
+    {
+      "question": "２０２５年华东地区销售额",
+      "pass": true,
+      "status": "ok",
+      "rows": [
+        {
+          "销售额": 29584.0
+        }
+      ]
+    },
+    {
+      "question": "2025 年 华东 地区 销售额",
+      "pass": true,
+      "status": "ok",
+      "rows": [
+        {
+          "销售额": 29584.0
+        }
+      ]
+    },
+    {
+      "question": "2025年華東地區銷售額",
+      "pass": true,
+      "status": "ok",
+      "rows": [
+        {
+          "销售额": 29584.0
+        }
+      ]
+    },
+    {
+      "question": "2025年华东地区销受额",
+      "pass": true,
+      "status": "ok",
+      "rows": [
+        {
+          "销售额": 29584.0
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "ocr_baseline_correct": 8,
+    "ocr_pipeline_correct": 10,
+    "ocr_total": 10,
+    "structured_correct": 5,
+    "structured_total": 5
+  }
+}

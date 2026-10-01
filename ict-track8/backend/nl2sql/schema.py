@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import re
 import sqlite3
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -21,7 +22,7 @@ def normalize_text(value: str) -> str:
     """统一全角空格、大小写和常见标点，保留中文可检索性。"""
 
     # 繁→简字符归一：问题与库内取值两侧都经过这里，保证一致
-    return to_simplified(re.sub(r"\s+", "", value or "").lower().replace("，", ","))
+    return to_simplified(re.sub(r"\s+", "", unicodedata.normalize('NFKC', value or '')).lower().replace("，", ","))
 
 
 @dataclass(frozen=True)
@@ -204,6 +205,8 @@ class SchemaLinker:
             if rule.table not in table_names:
                 continue
             matches = [alias for alias in rule.aliases if normalize_text(alias) in normalized]
+            matches = [alias for alias in matches if len(normalize_text(alias)) > 1 or
+                       re.search(r'(?:^|按|各|每个|统计|的)' + re.escape(normalize_text(alias)) + r'(?:$|分组|统计|汇总)', normalized)]
             if not matches:
                 continue
             alias = max(matches, key=len)
@@ -246,10 +249,50 @@ class SchemaLinker:
                         matched_alias=column.name,
                     )
                 )
+        if any(word in normalized for word in ('按月', '按年', '每月', '每年')):
+            metric_tables = {link.table for link in links if link.role == 'metric'}
+            if len(metric_tables) == 1:
+                table = next(table for table in tables if table.name in metric_tables)
+                dates = [column for column in table.columns if normalize_text(column.name).endswith(('date', 'time'))]
+                if len(dates) == 1 and not any(link.table == table.name and link.column == dates[0].name for link in links):
+                    cue = next(word for word in ('按月', '按年', '每月', '每年') if word in normalized)
+                    links.append(LinkCandidate(cue, table.name, dates[0].name, 'dimension', 0.8, cue))
+        # Explicit Schema identifiers take precedence over substrings in other fields.
+        protected = []
+        for table in tables:
+            for column in table.columns:
+                column_text = normalize_text(column.name)
+                qualified = normalize_text(table.name) + r'\.?' + re.escape(column_text)
+                for match in re.finditer(qualified, normalized):
+                    protected.append((match.start(), match.end(), table.name, column.name, True))
+                if len(column_text) >= 3:
+                    for match in re.finditer(re.escape(column_text), normalized):
+                        protected.append((match.start(), match.end(), table.name, column.name, False))
+        def shadowed(link):
+            alias = normalize_text(link.matched_alias)
+            positions = list(re.finditer(re.escape(alias), normalized))
+            return bool(positions) and all(any(
+                start <= match.start() and match.end() <= end
+                and (table, column) != (link.table, link.column)
+                and (qualified or end-start > len(alias))
+                for start, end, table, column, qualified in protected
+            ) for match in positions)
+        explicit_concepts = {}
+        for rule in rules:
+            native = normalize_text(rule.column)
+            native_positions = list(re.finditer(re.escape(native), normalized))
+            standalone = any(not any(start <= match.start() and match.end() <= end and end-start > len(native)
+                                     for start, end, _, _, _ in protected) for match in native_positions)
+            if len(native) >= 3 and standalone:
+                for alias in rule.aliases:
+                    explicit_concepts.setdefault((rule.role, normalize_text(alias)), set()).add((rule.table, rule.column))
+        def disfavored(link):
+            choices = explicit_concepts.get((link.role, normalize_text(link.matched_alias)), set())
+            return len(choices) == 1 and (link.table, link.column) not in choices
         filtered_links = [
             link
             for link in links
-            if not any(
+            if not shadowed(link) and not disfavored(link) and not any(
                 other is not link
                 and other.table == link.table
                 and other.role == link.role
