@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import re
+import json
 import unicodedata
 from copy import deepcopy
 from decimal import Decimal
+from functools import lru_cache
+from types import MappingProxyType
 
 from .responses_client import GenerationError, object_schema
 from .evidence_context import sentence_spans, sentence_texts
@@ -24,6 +27,8 @@ quote 保留原文换行、空格、标点和大小写；JSON 中换行使用转
 数值必须出自该结论引用的原文，不进行无工具的计算。
 保持实体、单位、正负号、否定、适用条件与实际/预测限定；优先引用最小完整事实句。
 每项 text 优先直接采用证据中与问题相关的完整事实原句，不改写实体、数值、单位或条件。
+verbatim_fact_candidates 是服务器校验过的逐字原文候选，不是预设答案。相关时优先直接复制候选的 text 和 support；不相关则不选。
+不要把候选合并改写成新句子，尤其不能删除句首实体、限定或冒号前的完整标签；可用多项结论保留多个相关事实。
 quote 必须保留原句的否定、预测与适用条件，不能截掉“不”“预计”“若”等限定词。
 仅采用保守意译，不能通过组合不同事实句改变实体与数值的对应关系。'''
 
@@ -46,6 +51,12 @@ _ENGLISH_FORECAST = re.compile(r'\b(?:forecast|forecasted|predicted|projected|es
 _ENGLISH_FORECAST_HEADING = re.compile(r'^\s*(?:(?:forecast|projection|estimate|budget)(?:\s+(?:data|figures|results))?(?:\s*:|\s*$)|(?:the\s+)?following\b.*\b(?:forecast|projected|estimated|budgeted)\b)', re.I)
 _ENGLISH_ACTUAL_HEADING = re.compile(r'^\s*(?:actual|observed|historical)(?:\s+(?:data|figures|results))?(?:\s*:|\s*$)', re.I)
 _COORDINATE_PREDICATE = re.compile(r'^(?:不予|不会|不能|不|未)?(覆盖|支持|提供|包含|允许|适用)(.+)$')
+_DECLARED_UNIT_HEADING = re.compile(r'^(?:单位|units?)\s*[:：]\s*[^，,。；;！？!?\n]{1,40}$', re.I)
+_DECLARED_CONDITION_HEADING = re.compile(
+    r'^(?:(?:适用条件|适用范围|前提条件|applicable conditions?|conditions?|scope)\s*[:：]|仅限|仅在|只有|若|如果|除非)'
+    r'[^，,。；;！？!?\n\d]{1,50}$', re.I)
+MAX_CANDIDATE_JSON_CHARS = 4800
+MAX_LOCAL_SCOPE_HEADINGS = 8
 
 
 def _number_key(match):
@@ -101,6 +112,76 @@ def _source_contexts(quote, original):
     return [original[left:right] for left, right in sorted(selected)]
 
 
+def _adjacent_declared_scopes(original):
+    # Only bounded generation evidence is cached; immutable results prevent
+    # callers from mutating a proof reused by later validation.
+    if len(original) <= 1800:
+        return _cached_declared_scopes(original)
+    return _declared_scopes(original)
+
+
+@lru_cache(maxsize=16)
+def _cached_declared_scopes(original):
+    return _declared_scopes(original)
+
+
+def _declared_scopes(original):
+    """Keep explicit conditions and units across the bounded source paragraph.
+
+    Conditions accumulate until a blank paragraph or explicit section marker.
+    A new unit replaces the old unit but cannot remove conditions. More than
+    eight declarations make the remaining paragraph unverified, even after
+    intervening facts or a replacement heading; no suffix is authorized.
+    This is local proof, not a document-wide section classifier.
+    """
+    spans = sentence_spans(original)
+    scopes = []
+    unit = None
+    conditions = []
+    heading_count = 0
+    previous_end = 0
+    for left, right in spans:
+        raw, text = original[left:right], original[left:right].strip()
+        gap = original[previous_end:left] + re.match(r'\s*', raw).group()
+        if re.search(r'\n\s*\n', gap):
+            unit = None
+            conditions = []
+            heading_count = 0
+        if _DECLARED_UNIT_HEADING.fullmatch(text):
+            heading_count += 1
+            unit = (left, text)
+        elif _DECLARED_CONDITION_HEADING.fullmatch(text):
+            heading_count += 1
+            if len(conditions) < MAX_LOCAL_SCOPE_HEADINGS:
+                conditions.append((left, text))
+        elif re.match(r'^(?:#{1,6}\s|\[[^\]\n]{1,40}\]|[^：:\n]{1,40}[:：]\s*(?:\n|$))', text):
+            unit = None
+            conditions = []
+            heading_count = 0
+        elif unit or conditions or heading_count > MAX_LOCAL_SCOPE_HEADINGS:
+            declarations = sorted([*conditions, *([unit] if unit else [])])
+            scopes.append({'start': declarations[0][0], 'end': right,
+                           'headings': tuple(item[1] for item in declarations),
+                           'fact_start': left, 'fact_end': right,
+                           'over_budget': heading_count > MAX_LOCAL_SCOPE_HEADINGS})
+        previous_end = right
+    return tuple(MappingProxyType(scope) for scope in scopes)
+
+
+def _check_declared_adjacent_scope(text, quote, original):
+    scopes = _adjacent_declared_scopes(original)
+    position = original.find(quote)
+    canonical = _canonical(text)
+    while position >= 0:
+        for scope in scopes:
+            if scope['fact_start'] < position + len(quote) and scope['fact_end'] > position:
+                if scope.get('over_budget'):
+                    raise GenerationError('来源条件标题链超出核验预算，不能删除前部条件或取后缀授权；关系未核验')
+                if any(_canonical(heading) not in canonical for heading in scope['headings']):
+                    raise GenerationError('结论删除了紧邻来源标题的单位或适用条件；关系未核验')
+        position = original.find(quote, position + 1)
+
+
 def _check_inherited_source_scope(text, quote, original):
     """Explicit forecast headings survive added English sentence boundaries.
 
@@ -108,6 +189,7 @@ def _check_inherited_source_scope(text, quote, original):
     not contaminate independent facts. An explicit actual-results heading
     closes an English forecast section. This is only a restrictive guard.
     """
+    _check_declared_adjacent_scope(text, quote, original)
     spans = sentence_spans(original)
     position = original.find(quote)
     while position >= 0:
@@ -198,10 +280,53 @@ class GroundedGenerator:
     def __init__(self, client):
         self.client = client
 
+    @staticmethod
+    def verbatim_candidates(question, evidence):
+        """Offer bounded literal options, all checked by the unchanged gate.
+
+        These are prompt aids only. The model must still choose relevance and
+        emit a fresh structured answer; every final claim is validated again.
+        No rejected claim, scoring gold or inferred fact becomes a candidate.
+        """
+        normalized_question = question.casefold()
+        terms = {normalized_question[i:i + 2] for i in range(len(normalized_question) - 1)
+                 if re.fullmatch(r'[A-Za-z0-9\u3400-\u9fff]{2}', normalized_question[i:i + 2])}
+        choices, seen = [], set()
+        for item in evidence:
+            original, citation_id = item['text'], item['citation_id']
+            scoped = [original[scope['start']:scope['end']] for scope in _adjacent_declared_scopes(original)]
+            for text in [*scoped, *sentence_texts(original), original]:
+                if not text.strip() or len(text) > 300 or (citation_id, text) in seen:
+                    continue
+                claim = {'text': text, 'support': [{'citation_id': citation_id, 'quote': text}]}
+                try:
+                    GroundedGenerator.validate({'abstain': False, 'claims': [claim]}, {citation_id: original})
+                except GenerationError:
+                    continue
+                seen.add((citation_id, text))
+                score = sum(term in text.casefold() for term in terms)
+                if score:
+                    choices.append((score, claim))
+        # Equal-relevance options rotate across sources. The full JSON budget
+        # includes duplicate text/quote and field overhead, not just claim text.
+        selected, size, counts = [], 0, {}
+        while choices and len(selected) < 12:
+            choices.sort(key=lambda item: (-item[0], counts.get(item[1]['support'][0]['citation_id'], 0)))
+            _, claim = choices.pop(0)
+            if (size + len(claim['text']) > 2400
+                    or len(json.dumps([*selected, claim], ensure_ascii=False)) > MAX_CANDIDATE_JSON_CHARS):
+                continue
+            selected.append(claim)
+            size += len(claim['text'])
+            citation_id = claim['support'][0]['citation_id']
+            counts[citation_id] = counts.get(citation_id, 0) + 1
+        return selected
+
     def answer(self, question, citations):
         evidence = [{'citation_id': hit['citation_id'], 'text': hit.get('generation_evidence', {}).get('text', hit['snippet']), 'title': hit['title'],
                      'locator': hit['metadata']['source_locator']} for hit in citations]
-        context = {'question': question, 'evidence': evidence}
+        context = {'question': question, 'evidence': evidence,
+                   'verbatim_fact_candidates': self.verbatim_candidates(question, evidence)}
         attempts = []
         for index in range(2):
             operation = 'grounded_answer' if index == 0 else 'grounded_answer_correction'

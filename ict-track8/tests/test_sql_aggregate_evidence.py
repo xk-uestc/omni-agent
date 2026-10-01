@@ -11,7 +11,8 @@ from backend.nl2sql.seed import initialize_database
 
 def test_formula_uses_schema_address_instead_of_display_or_formula_label(tmp_path):
     store = KnowledgeStore(tmp_path/'knowledge')
-    store.ingest('预测总额 = 基准金额 * 1.1'.encode(), document_id='formula', title='核算方法', modality='txt', filename='formula.txt')
+    store.ingest('预测总额 = 基准金额 * 1.1\n参数绑定：基准金额 = SUM(sales_orders.sales_amount)'.encode(),
+                 document_id='formula', title='核算方法', modality='txt', filename='formula.txt')
     agent = DependencyAgent(Nl2SqlEngine(initialize_database(tmp_path/'sales.sqlite')), store)
     result = agent.run([
         {'id':'formula','tool':'document_formula','args':{'document_id':'formula','label':'预测总额'}},
@@ -25,6 +26,32 @@ def test_formula_uses_schema_address_instead_of_display_or_formula_label(tmp_pat
     assert cell['source_uri'].startswith('sql://') and cell['locator']=='rows/0/销售额'
     assert cell['unit']=='unknown'  # Legacy single-metric rules declare no currency.
     assert {'from':'sql','to':'result'} in result['edges']
+    proof = result['results']['formula']['parameter_contract_sources'][0]
+    assert proof['quote'] == '参数绑定:基准金额 = SUM(sales_orders.sales_amount)'
+    assert proof['quote_basis'] == 'normalized_extracted_document_chunk'
+    assert any(proof['quote'] in chunk['text'] for chunk in store.document('formula')['chunks'])
+    assert proof['sha256'] == store.document('formula')['sha256']
+
+
+@pytest.mark.parametrize('declaration,parameter', [
+    ('', '基准金额'),
+    ('参数绑定：基准金额 = SUM(sales_orders.sales_amount) + 1', '基准金额'),
+    ('参数绑定：基准金额 = SUM(sales_orders.sales_amount)\n参数绑定：基准金额 = AVG(sales_orders.sales_amount)', '基准金额'),
+    ('参数绑定：销售额 = COUNT(sales_orders.order_id)', '销售额'),
+])
+def test_unmapped_or_conflicting_document_parameter_never_guesses_from_an_aggregate_address(tmp_path, declaration, parameter):
+    store = KnowledgeStore(tmp_path / 'knowledge')
+    store.ingest(f'预测总额 = {parameter} * 1.1\n{declaration}'.encode(), document_id='formula',
+                 title='核算方法', modality='txt', filename='formula.txt')
+    agent = DependencyAgent(Nl2SqlEngine(initialize_database(tmp_path / 'sales.sqlite')), store)
+    result = agent.run([
+        {'id': 'f', 'tool': 'document_formula', 'args': {'document_id': 'formula', 'label': '预测总额'}},
+        {'id': 's', 'tool': 'sql', 'args': {'question': '2025年华东地区销售额'}},
+        {'id': 'c', 'tool': 'calculate', 'args': {'formula': {'ref': 'f', 'path': []}, 'parameters': {
+            parameter: {'ref': 's', 'path': ['aggregate_cells', 'sales_orders', 'sales_amount', 'SUM', 0]}}}},
+    ])
+    assert result['status'] != 'ok', result
+    assert 'c' not in result['results']
 
 
 def sample():

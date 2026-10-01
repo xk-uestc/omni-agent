@@ -191,3 +191,70 @@ def test_goal_change_cannot_be_erased_as_reference_syntax(agent):
     result = agent.query('那华南的目标呢', session_id='meaning')
     assert result['status'] == 'clarification'
     assert len(agent.client.contexts) == calls
+
+
+@pytest.mark.parametrize('question,expected', [
+    ('2024年华北地区销售额呢', 3999),
+    ('那2025年华南销售额呢', 22992),
+    ('那么2025年各地区销售额呢', None),
+])
+def test_complete_sql_after_fusion_does_not_inherit_document_scope(agent, question, expected):
+    assert agent.query(FORECAST, session_id='fresh')['status'] == 'ok'
+    def sql_planner(instructions, context, *args, **kwargs):
+        assert context['history'] == []
+        assert context['question'] == question
+        # Model rewrite is deliberately wrong; the original fresh scope wins.
+        return {'route': 'sql', 'effective_question': '2026年华东销售额', 'tasks_json': '[]', 'clarification': ''}
+    agent.client.generate = sql_planner
+    result = agent.query(question, session_id='fresh')
+    assert result['status'] == 'ok', result
+    assert result['route'] == 'sql'
+    assert result['effective_question'] == question
+    assert result['context_resolution']['mode'] == 'independent'
+    assert result['context_resolution']['reason'] == 'server_verified_self_contained_sql'
+    assert not result['state'].get('fusion_context')
+    if expected is not None:
+        assert result['result']['rows'][0]['销售额'] == expected
+
+
+@pytest.mark.parametrize('question', [
+    '那2025年华南销售额呢，仍按同一公式？',
+    '那2025年华南销售额呢，未批准记录不要算',
+    '那2025年华南销售额呢，新增未知条件',
+])
+def test_complete_looking_sql_with_reference_or_unknown_constraint_is_not_fresh(agent, question):
+    assert agent.query(FORECAST, session_id='guard')['status'] == 'ok'
+    calls = len(agent.client.contexts)
+    result = agent.query(question, session_id='guard')
+    assert result['status'] == 'clarification'
+    assert len(agent.client.contexts) == calls
+    assert result['context_resolution'].get('reason') != 'server_verified_self_contained_sql'
+
+
+def test_true_entity_only_followup_still_inherits(agent):
+    assert agent.query(FIRST, session_id='short')['status'] == 'ok'
+    result = agent.query('那华南呢', session_id='short')
+    assert result['status'] == 'ok'
+    assert result['context_resolution']['mode'] == 'server_verified_fusion_followup'
+    assert result['result']['results']['calculate']['value'] == pytest.approx(22992 / 3)
+
+
+def test_complete_sql_can_reset_even_after_failed_fusion(agent):
+    assert agent.query(FORECAST, session_id='failedfresh')['status'] == 'ok'
+    assert agent.query('那华南呢，未知条件', session_id='failedfresh')['status'] == 'clarification'
+    agent.client.generate = lambda *args, **kwargs: {'route': 'sql', 'effective_question': '错', 'tasks_json': '[]', 'clarification': ''}
+    result = agent.query('那2025年华南销售额呢', session_id='failedfresh')
+    assert result['status'] == 'ok'
+    assert result['effective_question'] == '那2025年华南销售额呢'
+
+
+def test_fresh_sql_does_not_require_old_document_revision(agent):
+    assert agent.query(FORECAST, session_id='oldrevision')['status'] == 'ok'
+    agent.knowledge.ingest('新版本不含旧公式'.encode(), document_id='policy', title='改版', modality='txt', filename='new.txt')
+    def planner(instructions, context, *args, **kwargs):
+        assert context['history'] == []
+        return {'route': 'sql', 'effective_question': context['question'], 'tasks_json': '[]', 'clarification': ''}
+    agent.client.generate = planner
+    result = agent.query('2024年华北地区销售额呢', session_id='oldrevision')
+    assert result['status'] == 'ok'
+    assert result['result']['rows'][0]['销售额'] == 3999

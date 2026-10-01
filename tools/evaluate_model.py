@@ -373,7 +373,9 @@ def main():
                          'queries_wall_ms': round(execution_wall_ms, 3),
                          'configuration_to_report_wall_ms': round((time.perf_counter()-overall_started)*1000, 3),
                          'process_startup_excluded': True}
-    output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+    final_report = json.dumps(report, ensure_ascii=False, indent=2)+'\n'
+    output.write_text(final_report, encoding='utf-8')
+    progress_path.write_text(final_report, encoding='utf-8')
     return 0 if report['status'] == 'passed' else 1
 
 

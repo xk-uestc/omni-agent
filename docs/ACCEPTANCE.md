@@ -101,6 +101,16 @@
 
 ## 测试与交付口径
 
+## 2026-10-01 最终公式消费和参数语义更新
+
+当前固定版本本地完整回归 **1456 passed / 0 failed / 1 告警，70.40 秒**，见 `FUSION_TARGET_CONSUMPTION_REGRESSION_20261001.json`。已修复完整新 SQL 问题误继承、闲置公式证明、遗漏明确目标、SUM/COUNT 参数交换、伪造 SQL 排名结果后检索及同段条件/单位遗漏。泛称参数必须有可核验的目录/Schema 语义或原文档明确物理声明；不是按单位或输出别名猜测。
+
+第六轮历史真实模型 **40/44**，83 次调用（2 次失败），可见 tokens 下界 460165；源码稳定。第七轮冻结修复版本 **40/44**，80 次调用均 completed、无丢失，可见 tokens **465279**，源码开始/结束指纹一致。报告分别为 `REAL_MODEL_SIXTH_RUN_20261001.json` 与 `REAL_MODEL_SEVENTH_RUN_20261001.json`，不覆盖旧报告。
+
+第七轮仍失败的原题为 `document_to_sql`、`sql_to_document`、`sql-turn-4`、`sql-turn-5`。现在报告保留实际 typed execution_plan 与静态来源错误码：前两题规划添加了未声明的来源选择/检索修饰，SQL 第四轮错误地要求重新提供已知时间地区，第五轮受其上下文影响。API 成功不等于整题通过，仍需修复规划协议和单源追问的服务器上下文。
+
+官方 OHR 原 PDF pilot 仍为 EM 0/12；源码 hardening、本地1456项或已曝光44题的40项通过均不能证明多模态未知题达标。词法覆盖选择和原生块续句目前仅有隔离原型，尚未进入生产或官方实测。总体目标保持未完成。
+
 最新已完成完整回归860 passed / 0 failed / 1告警，见 `LOCAL_REGRESSION_REPORT.json`；最新单源路由补丁已通过完整本地回归。API stub不算真实模型效果；开发成绩不能直接换算比赛分数或获奖等级。
 
 `delivery` 为历史材料快照，SOURCE_MANIFEST只对应生成时证据。本轮不更新PPT/Word/PDF，程序包用 `--program-only` 排除。OHR/AdventureWorks大型原始资产在D盘外置，程序包保留manifest、工具、许可与边界；仅有工具不代表用户无需下载即可运行官方数据评测。

@@ -87,6 +87,18 @@ def test_literal_formula_cannot_claim_document_provenance(agent):
     assert result['status'] == 'incomplete'
 
 
+def test_constant_document_formula_needs_no_unrelated_sql_parameters(agent):
+    agent.knowledge_store.ingest('固定数量 = 2 + 3'.encode(), document_id='constant',
+                                 title='固定数量规则', modality='txt', filename='constant.txt')
+    result = agent.run([
+        {'id': 'f', 'tool': 'document_formula', 'args': {'document_id': 'constant', 'label': '固定数量'}},
+        {'id': 'c', 'tool': 'calculate', 'args': {'formula': {'ref': 'f', 'path': []}, 'parameters': {}}},
+    ])
+    assert result['status'] == 'ok', result
+    assert result['results']['c']['value'] == 5
+    assert result['results']['c']['parameter_semantics_validation']['bindings'] == []
+
+
 def test_split_sql_parameters_share_one_snapshot_during_writer_commit(agent):
     import sqlite3
     from contextlib import closing

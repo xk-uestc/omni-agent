@@ -11,6 +11,27 @@ from .knowledge_store import SourceIntegrityError
 
 _FOLLOWUP = re.compile(r'^(?:那么|那|改成|换成|再看|如果)|呢[？?]?$')
 _RESET = re.compile(r'^(?:换个主题|换一个主题|换个问题|新问题)')
+_INHERITED_REFERENCE = re.compile(r'同一|同样|照旧|仍按|还是同|上(?:一)?次|刚才|之前|上述|'
+                                  r'该|这个|此(?:地区|客户|产品|公式|文档)|基准(?:还是|仍是)|增长率取')
+
+
+def _self_contained_sql(question, engine):
+    """Prove fresh SQL scope before treating conversational 那/呢 as context.
+
+    A metric-only fragment still depends on history. An explicit temporal
+    scope (or a fully specified grouping request) plus a server-verified plan
+    does not acquire old documents merely because it ends with 呢.
+    """
+    if _INHERITED_REFERENCE.search(question):
+        return False
+    slots = engine.analyze_slots(question)
+    if not slots.get('metrics'):
+        return False
+    if not slots.get('time_spans') and not (slots.get('dimensions') and re.search(r'各|按|每个|分别|分组', question)):
+        return False
+    required = engine.extract_required_intent(question)
+    return (not required.clarification and not required.coverage.get('unresolved')
+            and bool(required.metrics or required.metric_column and required.metric_function))
 
 
 def resolve_fusion_followup(question, history, engine, knowledge):
@@ -20,6 +41,9 @@ def resolve_fusion_followup(question, history, engine, knowledge):
     previous = history[-1]
     state = previous.state or {}
     if state.get('route') != 'fusion':
+        return question, audit, None
+    if _self_contained_sql(question, engine):
+        audit['reason'] = 'server_verified_self_contained_sql'
         return question, audit, None
     saved = state.get('fusion_context')
     if not saved or saved.get('status') != 'verified':

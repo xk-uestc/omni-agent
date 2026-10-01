@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import re
 
 from .nl2sql.models import MetricSpec, QueryPlan
+from .nl2sql.schema import normalize_text
 
 
 class SourceConstraintError(ValueError):
@@ -27,6 +28,22 @@ class SourceClause:
     text: str
     role: str
     qualifier_ranges: tuple[tuple[int, int], ...] = ()
+    target_binding: dict | None = None
+    document_search_ranges: tuple[tuple[int, int], ...] = ()
+
+
+@dataclass(frozen=True)
+class VerifiedFormulaTarget:
+    """Internal proof emitted only after a pinned document formula read.
+
+    This type is not a model/API request field. A label selected in model
+    JSON is insufficient: the caller must obtain it from the actual document
+    tool result and keep the source version pinned during execution.
+    """
+    label: str
+    document_id: str
+    source_sha256: str
+    task_id: str
 
 
 _DATABASE = re.compile(r'数据库|数据表|(?<![A-Za-z0-9_])SQL(?![A-Za-z0-9_])', re.I)
@@ -65,7 +82,8 @@ def _outside_ranges(question, clauses):
     for left, right in _pieces(question):
         ranges = [(left, right)]
         for clause in clauses:
-            for clause_start, clause_end in ((clause.start, clause.end), *clause.qualifier_ranges):
+            for clause_start, clause_end in ((clause.start, clause.end), *clause.qualifier_ranges,
+                                            *clause.document_search_ranges):
                 remainder = []
                 for start, end in ranges:
                     if clause_end <= start or clause_start >= end:
@@ -79,7 +97,65 @@ def _outside_ranges(question, clauses):
         yield from ranges
 
 
-def _attach_reverse_target_scope(question, clauses, pieces, engine):
+def _verified_formula_target(target_metric, clause, engine, verified_formula_targets):
+    """Account for the COMPLETE target noun, including unknown qualifiers."""
+    proofs = []
+    for proof in verified_formula_targets:
+        if (not isinstance(proof, VerifiedFormulaTarget) or not isinstance(proof.label, str)
+                or not 1 <= len(proof.label) <= 128
+                or not isinstance(proof.document_id, str) or not proof.document_id
+                or not isinstance(proof.source_sha256, str)
+                or not re.fullmatch(r'[0-9a-f]{64}', proof.source_sha256)
+                or not isinstance(proof.task_id, str)
+                or not re.fullmatch(r'[A-Za-z][A-Za-z0-9_-]{0,40}', proof.task_id)):
+            raise SourceConstraintError('source_scope_unverified')
+        if proof.label == target_metric:
+            proofs.append(proof)
+    distinct = {(proof.document_id, proof.source_sha256, proof.label) for proof in proofs}
+    if len(distinct) > 1:
+        raise SourceConstraintError('source_binding_ambiguous')
+    if proofs:
+        proof = proofs[0]
+        return {'mode': 'verified_document_formula_exact_label', **proof.__dict__,
+                'formula_task_ids': tuple(sorted({item.task_id for item in proofs}))}
+    target_plan = engine.extract_required_intent(target_metric)
+    source_plan = engine.extract_required_intent(clause.text)
+    catalog = getattr(engine, 'metric_catalog', None)
+    aliases = {normalize_text(item.label) for item in target_plan.derived_metrics}
+    if catalog:
+        aliases.update(alias for item in target_plan.derived_metrics
+                       for alias in catalog.aliases.get(item.id, ()))
+    normalized_target = normalize_text(target_metric)
+    # coverage may discard filler words (e.g. "有效"); use a positive exact
+    # label grammar too. An explicitly consumed average operator is the only
+    # supported prefix, never an arbitrary business noun/condition.
+    exact_target = normalized_target in aliases
+    if (normalized_target.startswith('平均') and normalized_target[2:] in aliases
+            and '平均' in target_plan.coverage.get('consumed', [])):
+        exact_target = True
+    if (not target_plan.clarification and not target_plan.coverage.get('unresolved')
+            and exact_target and target_plan.derived_metrics and _metrics(target_plan)
+            and not source_plan.clarification and not source_plan.coverage.get('unresolved')
+            and _metrics(target_plan) <= _metrics(source_plan)):
+        labels = {item.label for item in target_plan.derived_metrics}
+        actual_proofs = [item for item in verified_formula_targets if item.label in labels]
+        distinct = {(item.document_id, item.source_sha256, item.label) for item in actual_proofs}
+        if len(distinct) > 1 or len(labels) != 1:
+            raise SourceConstraintError('source_binding_ambiguous')
+        if actual_proofs:
+            proof = actual_proofs[0]
+            return {'mode': 'verified_document_formula_catalog_target', **proof.__dict__,
+                    'formula_task_ids': tuple(sorted({item.task_id for item in actual_proofs})),
+                    'target': target_metric, 'derived_labels': sorted(labels)}
+        # Scope extraction can use a catalog without executing a document
+        # graph, but an actual calculation must still consume the verified
+        # formula task/label contract. Empty task IDs cannot authorize a DAG.
+        return {'mode': 'server_semantic_catalog_complete_target', 'target': target_metric,
+                'label': next(iter(labels)), 'formula_task_ids': (), 'derived_labels': sorted(labels)}
+    raise SourceConstraintError('source_scope_unverified')
+
+
+def _attach_reverse_target_scope(question, clauses, pieces, engine, verified_formula_targets):
     """Attach literal target qualifiers to one reverse DB declaration.
 
     This is not general inheritance: there must be one DB read, one preceding
@@ -111,20 +187,14 @@ def _attach_reverse_target_scope(question, clauses, pieces, engine):
     target = question[start:end]
     if _DATABASE.search(target) or _EXCLUSION.search(target):
         return clauses
-    if _TARGET_ROLE.search(target):
-        # Check the whole clause BEFORE discarding a document/action prefix,
-        # including unknown forecast grammar that cannot reach the parser.
-        target_slots = engine.analyze_slots(target)
-        local = engine.analyze_slots(clause.text)
-        if ((target_slots.get('time_spans') and not local.get('time_spans'))
-                or (target_slots.get('values') and not local.get('values'))):
-            raise SourceConstraintError('source_scope_unverified')
-        return clauses
+    target_role = bool(_TARGET_ROLE.search(target))
     if _DOCUMENT.search(target):
         # Distinguish document-parameter dates from the requested calculation
         # target: the qualifiers must occur AFTER an explicit formula action.
         action = re.search(r'公式\s*(?:(?:文档|手册|资料|知识库)\s*)?(?:计算|核算|求|算)', target)
         if not action:
+            if target_role:
+                raise SourceConstraintError('source_scope_unverified')
             return clauses
         offset = action.end()
     else:
@@ -132,7 +202,12 @@ def _attach_reverse_target_scope(question, clauses, pieces, engine):
     literal_target = target[offset:]
     slots = engine.analyze_slots(literal_target)
     dates = slots.get('time_spans', [])
-    values = slots.get('values', [])
+    time_ranges = [(match.start(), match.end()) for literal in dates
+                   for match in re.finditer(re.escape(literal), slots.get('normalized', literal_target))]
+    # The value index can match a stored date's year head. A year already
+    # accounted for by the time parser is not a separate business entity.
+    values = [value for value in slots.get('values', [])
+              if not any(left <= value.start and value.end <= right for left, right in time_ranges)]
     if (len(set(dates)) > 1 or any(getattr(value, 'via', '') != 'exact' for value in values)
             or len({(value.table, value.column, value.value) for value in values}) != len(values)
             or len({(value.table, value.column) for value in values}) != len(values)):
@@ -161,38 +236,55 @@ def _attach_reverse_target_scope(question, clauses, pieces, engine):
     region_suffix = re.match(r'(?:地区|区域)?(?:的)?', literal_target[qright:])
     qright += region_suffix.end()
     target_metric = literal_target[qright:].strip()
-    # A target noun is not a license to inherit hidden comparisons, unknown
-    # business scope, extra dates, ranks, or negation into a DB read.
-    if (not re.fullmatch(r'[\u4e00-\u9fffA-Za-z_]{1,32}', target_metric)
-            or re.search(r'口径|条件|限定|仅|只|不|排除|比较|预测|目标|最高|最低|排名|按|分组|之外|以外', target_metric)
-            or engine.analyze_slots(target_metric).get('dimensions')):
-        return clauses
-    if _DOCUMENT.search(target) and not target[:action.start()].rstrip().endswith(target_metric):
-        # A generic "formula document" may name a target defined by the
-        # server semantic catalog (e.g. a derived sales metric). Verify both
-        # its exact label and DB inputs, rather than accepting arbitrary nouns
-        # or relying on a model-selected document label.
-        target_plan = engine.extract_required_intent(target_metric)
-        source_plan = engine.extract_required_intent(clause.text)
-        if (target_plan.clarification or target_plan.coverage.get('unresolved')
-                or not any(item.label == target_metric for item in target_plan.derived_metrics)
-                or not _metrics(target_plan) <= _metrics(source_plan)):
-            return clauses
+    if not target_metric or len(target_metric) > 128:
+        raise SourceConstraintError('source_scope_unverified')
+    target_binding = _verified_formula_target(target_metric, clause, engine, verified_formula_targets)
+    target_start, target_end = start + offset + qright, end
+    while target_start < target_end and question[target_start].isspace():
+        target_start += 1
+    while target_end > target_start and question[target_end - 1].isspace():
+        target_end -= 1
+    target_binding['range'] = (target_start, target_end)
+    target_binding['target_id'] = f'target:{target_start}:{target_end}'
+    target_binding['source_clause_ids'] = (clause.id,)
+    if _DOCUMENT.search(target):
+        # Cover the prefix too: repeating the metric suffix does not authorize
+        # an unknown business qualifier hidden before "formula calculate".
+        before = target[:action.start()].strip()
+        if before.endswith(target_metric):
+            before = before[:-len(target_metric)]
+        grammar = r'(?:按|根据|依据)?(?:指标|经营|核算|计算|预测)?(?:计算)?(?:文档|手册|资料|知识库)?(?:中|内|里)?(?:的)?(?:预测|目标|基准|基数|历史|未来|预计|预估|计划)?'
+        if not re.fullmatch(grammar, before):
+            raise SourceConstraintError('source_scope_unverified')
     qualifier = literal_target[qleft:qright]
     local_slots = engine.analyze_slots(clause.text)
     local_dates = set(local_slots.get('time_spans', []))
-    local_values = {(value.table, value.column, value.value) for value in local_slots.get('values', [])}
+    local_time_ranges = [(match.start(), match.end()) for literal in local_dates
+                         for match in re.finditer(re.escape(literal), local_slots.get('normalized', clause.text))]
+    local_values = {(value.table, value.column, value.value) for value in local_slots.get('values', [])
+                    if not any(left <= value.start and value.end <= right for left, right in local_time_ranges)}
     inherited_values = {(value.table, value.column, value.value) for value in values}
+    if target_role:
+        # A complete target still needs its forecast/baseline role separated
+        # from the DB read. Even with explicit baseline filters, validating
+        # the full target above is mandatory; unknown qualifiers may not hide.
+        if ((dates and not local_dates)
+                or not {(value.table, value.column) for value in values}
+                <= {(table, column) for table, column, _ in local_values}):
+            raise SourceConstraintError('source_scope_unverified')
+        return [SourceClause(clause.id, clause.start, clause.end, clause.text, clause.role,
+                             target_binding=target_binding)]
     if ((values and _EXCLUSION.search(clause.text))
             or (local_dates and dates and local_dates != set(dates))
             or (local_values and inherited_values and local_values != inherited_values)):
         raise SourceConstraintError('source_binding_ambiguous')
     absolute = (start + offset + qleft, start + offset + qright)
     return [SourceClause(clause.id, clause.start, clause.end, qualifier + ' ' + clause.text,
-                         clause.role, (absolute,))]
+                         clause.role, (absolute,), target_binding)]
 
 
-def extract_source_clauses(question, schema, *, engine=None):
+def extract_source_clauses(question, schema, *, engine=None, verified_formula_targets=(),
+                           verified_document_search_ranges=()):
     """Extract literal DB/table spans; never use the model's effective text.
 
     Dates in a separate prediction/Excel clause are not appended to baseline
@@ -269,7 +361,24 @@ def extract_source_clauses(question, schema, *, engine=None):
         consumed.add(number)
     if not clauses:
         raise SourceConstraintError('source_scope_unverified')
-    clauses = _attach_reverse_target_scope(question, clauses, pieces, engine)
+    clauses = _attach_reverse_target_scope(question, clauses, pieces, engine, verified_formula_targets)
+    ranges = []
+    for item in verified_document_search_ranges:
+        if (not isinstance(item, (tuple, list)) or len(item) != 2
+                or any(not isinstance(part, int) or isinstance(part, bool) for part in item)):
+            raise SourceConstraintError('source_scope_unverified')
+        left, right = item
+        if (not 0 <= left < right <= len(question) or (left, right) not in pieces
+                or left < min(clause.end for clause in clauses)
+                or any(left < clause.end and right > clause.start for clause in clauses)
+                or any(left < qright and right > qleft for clause in clauses
+                       for qleft, qright in clause.qualifier_ranges)):
+            raise SourceConstraintError('source_scope_unverified')
+        ranges.append((left, right))
+    if ranges:
+        clauses = [SourceClause(clause.id, clause.start, clause.end, clause.text, clause.role,
+                                clause.qualifier_ranges, clause.target_binding, tuple(sorted(set(ranges))))
+                   for clause in clauses]
     source_dates = {match.group() for clause in clauses for match in _TEMPORAL.finditer(clause.text)}
     for start, end in _outside_ranges(question, clauses):
         outside = question[start:end].strip()
@@ -410,7 +519,8 @@ def server_project_required_intent(required: QueryPlan, subset):
     return projected
 
 
-def bind_source_constraints(question, tasks, engine):
+def bind_source_constraints(question, tasks, engine, *, verified_formula_targets=(),
+                            verified_document_search_ranges=()):
     """Server generates QueryPlans and accounts for every explicit SQL scope.
 
     One clear source maps directly to one SQL step. Literal metric subsets may
@@ -431,7 +541,9 @@ def bind_source_constraints(question, tasks, engine):
             raise SourceConstraintError('source_scope_unverified')
         return {}, []
     try:
-        clauses = extract_source_clauses(question, engine.schema(include_row_count=False), engine=engine)
+        clauses = extract_source_clauses(question, engine.schema(include_row_count=False), engine=engine,
+                                        verified_formula_targets=verified_formula_targets,
+                                        verified_document_search_ranges=verified_document_search_ranges)
     except SourceConstraintError:
         # A self-contained ordinary SQL question can arrive on a fusion route
         # with an actual SQL task. Preserve and verify its entire original

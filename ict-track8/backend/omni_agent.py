@@ -178,6 +178,9 @@ class OmniAgent:
                     question, history, self.engine, self.knowledge)
             except SourceConstraintError as exc:
                 history_error = exc.code
+        fresh_scope = (fusion_history_audit.get('reason') == 'server_verified_self_contained_sql'
+                       or bool(re.search(r'^(?:换个主题|换一个主题|换个问题|新问题)', question)))
+        planning_history = () if fresh_scope else history
         started = time.perf_counter()
         source, error = 'rules_basic', None
         planning_notes = []
@@ -190,13 +193,13 @@ class OmniAgent:
         elif self.client:
             try:
                 context_question = scope_question
-                if history and re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$',question):
+                if planning_history and re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$',question):
                     allowance = max(0,999-len(question))
-                    context_question = question+'\n'+history[-1].effective_question[:allowance]
+                    context_question = question+'\n'+planning_history[-1].effective_question[:allowance]
                 requirements = requested_operations(scope_question)
                 context = {'question': scope_question, 'actual_question': question,
                     'server_context_resolution': fusion_history_audit,
-                    'history': [{'question': turn.effective_question, 'state': turn.state} for turn in history[-5:]],
+                    'history': [{'question': turn.effective_question, 'state': turn.state} for turn in planning_history[-5:]],
                     'reference_date': self.engine.reference_date.isoformat(),
                     'required_operations': requirements,
                     'database_schema': self.engine.schema(include_row_count=False), 'documents': self.catalogue(context_question)}
@@ -326,6 +329,7 @@ class OmniAgent:
             except SourceConstraintError as exc:
                 result = {'status': 'clarification', 'clarification': str(exc), 'clarification_code': exc.code,
                           'results': {}, 'trace': [], 'trace_id': 'source_scope_unverified'}
+            result['execution_plan'] = tasks
             state = {'route': route, 'trace_id': result['trace_id']}
             saved = verified_fusion_context(scope_question, tasks, result)
             if saved:
