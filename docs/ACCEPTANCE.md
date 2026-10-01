@@ -4,6 +4,14 @@
 
 ## 当前判断
 
+最新工程接线见 `TYPED_CHART_PROGRESS_20261001.md`：完整本地 **1692 passed / 0 failed / 1 告警 / 12 子测试通过**。
+官方冻结原12题最新报告 `OHR_BENCH_TYPED_CHART_REPLAY_20261001.json` 已终止且源码稳定：
+**EM 2/12、F1 0.313369**，6项语言生成实质回答、3拒答、2项原生图表答案、1项普通摘录；
+13次API全部completed、25642可见tokens。两项精确匹配来自原生图表，短答案投影命中0题。
+最新44题第九轮终止且源码稳定：**39/44**，86调用/82completed/4failed，无审计丢失，
+可见tokens下界400130。失败multiple_documents、cross-turn-2/3/4/5，具体边界见上述进展文件。
+下方历史报告数值保留，不能当作当前版本最终验收。
+
 独立问数、文档/OCR、本地Dense混合检索、带来源计算、版本政策、多轮与前端工作台已形成，但**尚未全面完成赛题效果验收**。
 
 最新冻结实测见 `COVERAGE_CONTINUATION_PROGRESS_20261001.md`：第八轮真实开发题38/44（含3次API失败），官方OHR原12题EM仍0/12、F1为0.136409。两组开始/结束源码SHA一致。后续去重符号、繁简覆盖、BM25候选池、SQL历史语义比较与原生PDF边界修复已完成完整回归 **1567 passed / 0 failed / 1 告警，另12子测试通过**；见 `COVERAGE_BOUNDARY_HARDENING_REGRESSION_20261001.json`。修复后真实模型和官方效果尚未复测，不能用旧报告证明新版本效果。

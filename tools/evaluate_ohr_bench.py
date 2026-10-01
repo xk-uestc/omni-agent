@@ -183,12 +183,20 @@ def summarise_cases(cases):
                            'grounded_substantive_answers': sum(row.get('answer_mode') == 'model_grounded' and row.get('status') == 'ok' for row in models),
                            'model_abstentions': sum(row.get('answer_mode') == 'model_grounded' and row.get('status') == 'insufficient_evidence' for row in models),
                            'extractive_fallbacks': sum(row.get('answer_mode') == 'extractive_fallback' for row in models),
+                           'native_chart_answers': sum(row.get('answer_mode') == 'visual_chart_native_annotated' and row.get('status') == 'ok' for row in models),
                            'normalized_exact_matches': sum(row.get('scores', {}).get('normalized_exact_match', 0) for row in models),
                            'mean_english_token_f1': round(sum(row.get('scores', {}).get('english_token_f1', 0) for row in models) / len(models), 6),
                            'metric_scope': 'program_end_to_end_outputs_including_extractive_fallback_not_bare_model_accuracy'}
         grounded = [row for row in models if row.get('answer_mode') == 'model_grounded']
         result['model']['grounded_only_count'] = len(grounded)
         result['model']['grounded_only_mean_english_token_f1'] = round(sum(row['scores']['english_token_f1'] for row in grounded) / len(grounded), 6) if grounded else None
+        projected = [row for row in models if row.get('answer_projection', {}).get('status') == 'verified']
+        result['typed_projection'] = {
+            'verified_count': len(projected), 'total_questions': len(models),
+            'normalized_exact_matches': sum(row['projection_scores']['normalized_exact_match'] for row in projected),
+            'mean_english_token_f1_all_questions': round(sum(row['projection_scores']['english_token_f1'] for row in projected) / len(models), 6),
+            'metric_scope': 'separate_verified_display_field_unprojected_questions_count_zero_not_replacement_for_raw_answer_score',
+        }
     return result
 
 
@@ -301,6 +309,14 @@ def main():
                                            'gold_answer_lexically_present': answer_scores(model_evidence, row['answers'])['normalized_gold_substring'],
                                        },
                                        'wall_ms': round((time.perf_counter() - started) * 1000, 3)}
+                if result.get('answer_mode') == 'visual_chart_native_annotated':
+                    entry['generation']['chart_binding'] = result.get('chart_binding')
+                    entry['generation']['answer_scope'] = result.get('answer_scope')
+                    entry['generation']['calculator_input_eligible'] = result.get('calculator_input_eligible')
+                projection = result.get('answer_projection', {})
+                if projection.get('status') == 'verified':
+                    entry['generation']['answer_projection'] = projection
+                    entry['generation']['projection_scores'] = answer_scores(projection['answer_value'], row['answers'])
             except Exception as exc:
                 entry['generation'] = {'status': 'failed', 'error_type': type(exc).__name__, 'wall_ms': round((time.perf_counter()-started)*1000, 3)}
             entry['generation']['api_audits'] = safe_audits(client)

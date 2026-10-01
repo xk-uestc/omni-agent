@@ -31,7 +31,7 @@ $('omni').addEventListener('submit',async event=>{
 function renderOmni(box,question,data,activeSession){
   box.replaceChildren(element('b',question),element('small',`${data.route} · ${data.planner_source} · 已继承${data.context_turns}轮上下文`));
   const r=data.result;box.append(element('p',`独立问题：${data.effective_question}`,'muted'));
-  if(r.answer)box.append(element('p',r.answer));
+  appendAnswer(box,r);
   if(r.rows?.length)box.append(element('pre',JSON.stringify(r.rows,null,2)));
   if(r.clarification)box.append(element('p',r.clarification));
   if(r.status==='clarification'){
@@ -75,6 +75,30 @@ function renderOmni(box,question,data,activeSession){
   const details=element('details');details.append(element('summary','查看真实工具步骤、SQL、引用和状态'),element('pre',JSON.stringify(data,null,2)));box.append(details);
 }
 function element(tag,text,className){const e=document.createElement(tag);if(text!=null)e.textContent=String(text);if(className)e.className=className;return e;}
+function appendAnswer(host,result){
+  const projection=result.answer_projection;
+  if(projection?.status==='verified'&&typeof projection.answer_value==='string'){
+    const card=element('section',null,'citation');
+    card.append(element('small','已核对来源关系的精确答案','muted'),element('p',projection.answer_value));
+    const labels={entity:'对象',subject:'主体',object:'客体',metric:'指标',field:'字段',role:'角色',year:'年份',years:'年份',conditions:'适用条件',modality:'数据口径',unit:'单位',currency:'币种'};
+    const scope=projection.answer_scope||{};
+    for(const [key,value] of Object.entries(scope)){
+      const label=labels[key]||key;
+      if(value!=null&&value!==''&&(!Array.isArray(value)||value.length))card.append(element('small',`${label}：${Array.isArray(value)?value.join('；'):typeof value==='object'?JSON.stringify(value):value}`,'muted'));
+    }
+    card.append(element('p','唯一性限于本次已核验的证据；完整原文和引用保留在下方。','muted'));
+    if(result.answer){const fact=element('details');fact.append(element('summary','完整事实与引用'),element('p',result.answer));card.append(fact);}
+    host.append(card);
+  }else if(result.answer){
+    host.append(element('p',result.answer));
+    if(result.answer_mode==='visual_chart_native_annotated'){
+      const scope=result.answer_scope||{};
+      host.append(element('p',`原生图表标签 · 系列：${scope.series||'未声明'} · 年份：${scope.year??'未声明'} · 单位：${scope.unit==='unknown'?'原图未明确声明':scope.unit||'未声明'}`,'muted'));
+      host.append(element('p','数值来自原页文字标签，模型仅核对图表、系列和年份；不作为物理量计算输入。','muted'));
+      const context=element('details');context.append(element('summary','图表标题、范围和完整核验记录'),element('pre',JSON.stringify(scope,null,2)));host.append(context);
+    }
+  }
+}
 async function responseError(response){let data;try{data=await response.json();}catch{return Error(`服务请求失败（HTTP ${response.status}）`);}return Error(response.status===401?'需要服务访问授权，请在页首填写当前服务的访问令牌。':typeof data.detail==='string'?data.detail:JSON.stringify(data.detail||data));}
 async function request(path,payload){const r=await authFetch(path,{method:payload?'POST':'GET',headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined});if(!r.ok)throw await responseError(r);return r.json();}
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
@@ -184,7 +208,7 @@ $('ask').addEventListener('submit',async event=>{
     if(selectedPage&&(!selectedDocument||documentCatalog.get(selectedDocument)?.modality!=='pdf'))throw Error('指定页码时请先选择PDF资料。');
     const data=await request('/api/v1/knowledge/query',{question:$('question').value,top_k:4,...(selectedDocument?{document_id:selectedDocument}:{}),...(selectedPage?{page_no:Number(selectedPage)}:{})});
     $('answer').replaceChildren(element('small',`检索：${data.retrieval.mode} · 回答：${data.answer_mode}`,'muted'));
-    if(data.answer)$('answer').append(element('p',data.answer));
+    appendAnswer($('answer'),data);
     if(data.clarification)$('answer').append(element('p',data.clarification,'error'));
     if(data.answer_mode==='visual_grid_routed')$('answer').append(element('p','已走原页表格核验链路；唯一性限于本轮候选资料，未声明全库唯一。','muted'));
     (data.source_options||[]).forEach(option=>{const source=element('div',null,'toolbar');source.append(element('span',`${option.title} · 第${option.page_no}页`));addVisualAction(source,option.document_id,option.page_no,option.source_sha256);$('answer').append(source);});

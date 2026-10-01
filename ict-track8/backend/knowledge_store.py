@@ -397,6 +397,10 @@ class KnowledgeStore:
         visual_result, visual_trace = route_visual_table_question(self, question, hits, document_id=document_id, page_no=page_no)
         if visual_result is not None:
             return visual_result
+        from .visual_chart_routing import route_visual_chart_question
+        chart_result, chart_trace = route_visual_chart_question(self, question, hits, document_id=document_id, page_no=page_no)
+        if chart_result is not None:
+            return chart_result
         query_terms = set(_tokenize(question))
         # This local baseline returns attributed quotations, not inferred factual claims.
         selected = [hit for hit in hits if len(query_terms.intersection(hit.matched_terms)) >= min(2, len(query_terms))
@@ -409,6 +413,7 @@ class KnowledgeStore:
                 'trace': [{'stage': 'document_retrieval', 'channel': self.retrieval_health()['mode'], 'candidate_count': len(hits)},
                           {'stage': 'evidence_selection', 'selected_count': len(selected), 'generation': 'extractive'}]}
         result['trace'].append(visual_trace)
+        result['trace'].append(chart_trace)
         if self.generator and selected:
             from .responses_client import GenerationError
             generation_citations, omitted = self._generation_citations(result['citations'])
@@ -442,6 +447,24 @@ class KnowledgeStore:
                 # silently retain evidence from a removed/replaced source.
                 self._verify_citation_sources(result['citations'])
                 self._verify_generation_chunks(generation_citations)
+            if result['answer_mode'] == 'model_grounded' and result.get('claims'):
+                from .typed_answer import bind_answer_slot, replay_answer_proof
+                projection = bind_answer_slot(question, result['claims'], generation_citations)
+                if projection['status'] == 'verified':
+                    # Rehydrate from the pinned original and database, rather
+                    # than replaying against the model's mutable input object.
+                    fresh, fresh_omitted = self._generation_citations(result['citations'])
+                    verified = not fresh_omitted and replay_answer_proof(question, projection, fresh)
+                    self._verify_citation_sources(result['citations'])
+                    self._verify_generation_chunks(fresh)
+                    if verified:
+                        result['answer_projection'] = projection
+                    result['trace'].append({'stage': 'typed_answer_projection',
+                                            'status': 'verified' if verified else 'proof_replay_failed',
+                                            'original_answer_retained': True})
+                else:
+                    result['trace'].append({'stage': 'typed_answer_projection', 'status': 'unsupported',
+                                            'reason': projection['reason'], 'original_answer_retained': True})
         return result
 
     def _verify_citation_sources(self, citations):

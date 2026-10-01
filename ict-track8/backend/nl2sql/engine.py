@@ -638,6 +638,39 @@ class Nl2SqlEngine:
                                     "consistency": "sqlite_read_transaction",
                                     "source_constraint_validation": source_constraint_audit},
                     )
+            rank_return_audit = None
+            if (not plan.clarification and plan.planner_source == 'model_validated'
+                    and plan.analysis_mode == 'rank' and plan.top_n is not None
+                    and plan.limit == plan.top_n):
+                from ..fusion_constraints import verify_required_intent
+                rank_scope = scope_question if required_intent is not None else question
+                rank_required = (current_required if required_intent is not None else
+                    self._rules_plan(rank_scope, tables, connection, index, cache_namespace=revision))
+                # Top-N counts dense ranks, not result rows. Correct only an
+                # independently proven rank scope in this same read snapshot.
+                # Explicit row limits are user intent and are never enlarged.
+                explicit_rows = re.search(
+                    r'(?:返回|展示|显示|只看|仅看|只取|仅取|取|最多|仅|只要)\s*'
+                    r'(?:(?:最多|仅|只要|前)\s*)*[0-9零一二三四五六七八九十百两]+\s*(?:条|行)'
+                    r'|\b(?:return|show)\s+(?:(?:only|at\s+most)\s+)*\d+\s+(?:rows?|records?)\b'
+                    r'|\blimit\s+\d+\b', rank_scope, re.I)
+                # The current Chinese coverage lexer can ignore English
+                # qualifiers. Unknown row-limit language is therefore a
+                # veto, never affirmative evidence of an implicit cap.
+                unknown_return_qualifier = re.search(
+                    r'\b(?:return|show|limit|rows?|records?|only|at\s+most)\b'
+                    r'|最多|仅取|只取|只要|限制(?:返回|条数|行数)', rank_scope, re.I)
+                safe_cap = min(row_cap, self.max_rows, rank_required.limit)
+                if (not explicit_rows and not unknown_return_qualifier
+                        and not verify_required_intent(plan, rank_required)
+                        and safe_cap > plan.limit):
+                    old_limit = plan.limit
+                    plan.limit = safe_cap
+                    rank_return_audit = {'status': 'verified', 'from': old_limit, 'to': safe_cap,
+                        'top_n': plan.top_n, 'reason': 'dense_rank_selection_separate_from_safe_row_cap',
+                        'scope_question_sha256': hashlib.sha256(rank_scope.encode()).hexdigest(),
+                        'verification': 'independent_original_scope_in_execution_snapshot'}
+                    plan.planner_audit['rank_return_cap_normalization'] = rank_return_audit
             compiled = None
             if not plan.clarification and (plan.metrics or plan.fan_out):
                 try:
@@ -648,6 +681,8 @@ class Nl2SqlEngine:
             plan.intent_audit = self._intent_audit(plan, question)
             if source_constraint_audit is not None:
                 plan.intent_audit["source_constraint_validation"] = source_constraint_audit
+            if rank_return_audit is not None:
+                plan.intent_audit['rank_return_cap_normalization'] = rank_return_audit
             if plan.clarification:
                 return QueryResult(
                     status="clarification", question=question, rewritten_question=plan.rewritten_question,
@@ -702,6 +737,8 @@ class Nl2SqlEngine:
         }
         if source_constraint_audit is not None:
             provenance["source_constraint_validation"] = source_constraint_audit
+        if rank_return_audit is not None:
+            provenance['rank_return_cap_normalization'] = rank_return_audit
         return QueryResult(
             status="ok", question=question, rewritten_question=plan.rewritten_question, sql=sql,
             parameters=parameters, columns=columns, rows=rows, plan=plan.to_dict(),

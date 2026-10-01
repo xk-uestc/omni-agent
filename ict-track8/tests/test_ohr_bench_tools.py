@@ -66,6 +66,22 @@ def test_token_f1_lcs_and_substring_are_separate_metrics():
     assert tool.reference_lcs_recall('third first second', 'first second third') == pytest.approx(2 / 3, abs=1e-6)
 
 
+def test_verified_projection_score_is_separate_and_unprojected_questions_are_not_dropped():
+    tool = load('evaluate_ohr_bench')
+    cases = [{'generation': {'answer_mode': 'model_grounded', 'status': 'ok',
+              'scores': tool.answer_scores('Revenue was 100 USD.', '100 USD'),
+              'answer_projection': {'status': 'verified', 'answer_value': '100 USD'},
+              'projection_scores': tool.answer_scores('100 USD', '100 USD')}},
+             {'generation': {'answer_mode': 'model_grounded', 'status': 'insufficient_evidence',
+              'scores': tool.answer_scores('Cannot answer', '200 USD')}}]
+    summary = tool.summarise_cases(cases)
+    assert summary['model']['normalized_exact_matches'] == 0
+    assert summary['typed_projection']['verified_count'] == 1
+    assert summary['typed_projection']['total_questions'] == 2
+    assert summary['typed_projection']['normalized_exact_matches'] == 1
+    assert summary['typed_projection']['mean_english_token_f1_all_questions'] == .5
+
+
 def test_official_lcs_filters_wrong_documents_and_handles_evidence_array():
     tool = load('evaluate_ohr_bench')
     row = {'doc_name': 'law/A', 'evidence_page_no': 0, 'evidence_context': ['real fact'], 'answers': 'fact'}
