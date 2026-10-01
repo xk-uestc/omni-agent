@@ -1,0 +1,514 @@
+{
+  "created_at": "2026-10-01T23:20:53.347240+00:00",
+  "scope": "already_exposed_adventureworks_sqlite_development_complete_artifact_candidate_not_official_score",
+  "new_frozen_56_questions_or_oracles_read": false,
+  "old_evaluator_or_scorer_changed": false,
+  "model_api_calls": 0,
+  "domain_alias_rules": 0,
+  "source_sha256_before_after": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+  "exposed_questions_sha256": "d85a27411bfe3c23b5de76bcf4f941c1ae966f393ae0d8e0a652d4a82356ba76",
+  "exposed_questions_frozen_lf_sha256": "bf97202958ef41ee287d1bed9b6776a48630dd458103ae6ca4752fe2b726dbb8",
+  "isolated_checkout_crlf_normalized_only_for_frozen_byte_check": true,
+  "passed_complete_artifact_checks": 6,
+  "total_exposed_queries": 6,
+  "cases": [
+    {
+      "id": "aw-01",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 10,
+      "legacy_rows": 10,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 10,
+      "actual_artifact_rows": 10,
+      "pages_read": 1,
+      "actual_rows_sha256": "2debdcab4224bef1eaca0676773bf51e9f212bf6bcadc556512634f761d1ccbe",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "c9e5b406d941a63cb20a88370c80c30766f73a21761b9743e3c5582a78fda2a1",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "9ffe592697df5a11670e9fd84f12ecfd41a37e31bd33d9257ab49a24b0a9ce5f",
+        "columns": [
+          "Name",
+          "记录数CustomerID"
+        ],
+        "row_count": 10,
+        "observed_rows": 10,
+        "preview_row_count": 10,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "879aa54f14254c60b77ac499dc4d944c",
+        "data_sha256": "103b42c38f5c1c22fbdaf8650c5d87af306c61952d8f21db0777612ad3d762e4",
+        "byte_count": 182,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "08d2a99b97a4a7f7d533fb209f3651627a9b9f707cf04ad02a3975f17ee9a01f",
+        "binding_sha256": "bc2b45626a3950c05147f59ef2f67d3e5397035e5aa62ad9508595eaefea75d3",
+        "receipt_signature": "d570970304b8b15192065a3db6f34f7b6c0693f838434d23c7def57e9771b94a",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"SalesTerritory\".\"Name\", COUNT(*) AS \"记录数CustomerID\" FROM \"Customer\" JOIN \"SalesTerritory\" ON \"Customer\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\" GROUP BY \"SalesTerritory\".\"Name\" ORDER BY COUNT(*) DESC",
+      "parameters": [],
+      "result_status": "ok",
+      "latency_ms": 537.776
+    },
+    {
+      "id": "aw-02",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 19119,
+      "legacy_rows": 100,
+      "legacy_complete_rows_match": false,
+      "preview_rows": 100,
+      "actual_artifact_rows": 19119,
+      "pages_read": 192,
+      "actual_rows_sha256": "4963706f90c88ce67eca1aa1710f98d39fc3fa373fdadba6fc3102ab252254f9",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "faffe5246f29d47d1bba3265de8051a7262a8fe4a9425d6a44b817c9d2c1afd4",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "9ffe592697df5a11670e9fd84f12ecfd41a37e31bd33d9257ab49a24b0a9ce5f",
+        "columns": [
+          "AccountNumber",
+          "总SubTotal"
+        ],
+        "row_count": 19119,
+        "observed_rows": 19119,
+        "preview_row_count": 100,
+        "preview_limit": 100,
+        "preview_truncated": true,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "531d878364ca425583af5d47503e5468",
+        "data_sha256": "e8f3454cd9bc905e0286cc84f804432e07846d6bfa3b7b69d876fea04eeb66fc",
+        "byte_count": 441936,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "08d2a99b97a4a7f7d533fb209f3651627a9b9f707cf04ad02a3975f17ee9a01f",
+        "binding_sha256": "cd120eb9f0315877537e80c3c2cb6417cbb705867aa2ebd4a869b56f3261a61c",
+        "receipt_signature": "ae6e1d39cc63e62b1f3c37bc6dcdc75cfaf2af986d85671df5cc83274bfee047",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"Customer\".\"AccountNumber\", SUM(\"SalesOrderHeader\".\"SubTotal\") AS \"总SubTotal\" FROM \"SalesOrderHeader\" JOIN \"Customer\" ON \"SalesOrderHeader\".\"CustomerID\" = \"Customer\".\"CustomerID\" GROUP BY \"Customer\".\"AccountNumber\" ORDER BY SUM(\"SalesOrderHeader\".\"SubTotal\") DESC",
+      "parameters": [],
+      "result_status": "ok",
+      "latency_ms": 7068.369
+    },
+    {
+      "id": "aw-03",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 19119,
+      "legacy_rows": 100,
+      "legacy_complete_rows_match": false,
+      "preview_rows": 100,
+      "actual_artifact_rows": 19119,
+      "pages_read": 192,
+      "actual_rows_sha256": "16bd2f4388cc834e8308e645b41850c85d1fccbbca9fde80e6a1fcedb539956e",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "d14b6f9c8b750a9179c28c93a8e25e1948289349f5a5ab04e27a8fad99dffb0e",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "9ffe592697df5a11670e9fd84f12ecfd41a37e31bd33d9257ab49a24b0a9ce5f",
+        "columns": [
+          "AccountNumber",
+          "记录数SalesOrderID"
+        ],
+        "row_count": 19119,
+        "observed_rows": 19119,
+        "preview_row_count": 100,
+        "preview_limit": 100,
+        "preview_truncated": true,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "cc8f5d93d667495b8863854c8ca443ae",
+        "data_sha256": "94edb3038893455ddc03d8fea440e8cb5fcd177f6e90cfaa55b4a66c6a6c6ec2",
+        "byte_count": 325140,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "08d2a99b97a4a7f7d533fb209f3651627a9b9f707cf04ad02a3975f17ee9a01f",
+        "binding_sha256": "1aac5bccc97f2c69ed4aa4535f2f16b068b16c7d85510238b522df1c8a2dacee",
+        "receipt_signature": "ae84b1a6e0c7e772333b2b38df92786826412a42c9890f24add6de9e56bc766e",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"Customer\".\"AccountNumber\", COUNT(*) AS \"记录数SalesOrderID\" FROM \"SalesOrderHeader\" JOIN \"Customer\" ON \"SalesOrderHeader\".\"CustomerID\" = \"Customer\".\"CustomerID\" GROUP BY \"Customer\".\"AccountNumber\" ORDER BY COUNT(*) DESC",
+      "parameters": [],
+      "result_status": "ok",
+      "latency_ms": 6906.046
+    },
+    {
+      "id": "aw-04",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 10,
+      "legacy_rows": 10,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 10,
+      "actual_artifact_rows": 10,
+      "pages_read": 1,
+      "actual_rows_sha256": "47e3de2f557c3aea93a84a792c65e42a8d75aa62dbbfc53f31d59a42c1a34667",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "78ca7c02968cdbe06d4cca23cc1bf63854dd69e8f13e5fd3e70c3eb1c1707622",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "9ffe592697df5a11670e9fd84f12ecfd41a37e31bd33d9257ab49a24b0a9ce5f",
+        "columns": [
+          "Name",
+          "总SubTotal"
+        ],
+        "row_count": 10,
+        "observed_rows": 10,
+        "preview_row_count": 10,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "a0d57ffda0b545deb877610c2401e35f",
+        "data_sha256": "10f397fd1656e07e881b6074dd9d460a62b46af703bab89c2baf2060d475d40a",
+        "byte_count": 263,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "08d2a99b97a4a7f7d533fb209f3651627a9b9f707cf04ad02a3975f17ee9a01f",
+        "binding_sha256": "924aa226983b50c670f68b64ae483d315608e6dded30474453750a6a1be7de8b",
+        "receipt_signature": "711af55255dd3778633f1cfbbf8fd0e50ebee403595abb1a5dc1972bfd968c04",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"SalesTerritory\".\"Name\", SUM(\"SalesOrderHeader\".\"SubTotal\") AS \"总SubTotal\" FROM \"SalesOrderHeader\" JOIN \"SalesTerritory\" ON \"SalesOrderHeader\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\" WHERE \"SalesOrderHeader\".\"OrderDate\" >= ? AND \"SalesOrderHeader\".\"OrderDate\" < ? GROUP BY \"SalesTerritory\".\"Name\" ORDER BY SUM(\"SalesOrderHeader\".\"SubTotal\") DESC",
+      "parameters": [
+        "2023-01-01",
+        "2024-01-01"
+      ],
+      "result_status": "ok",
+      "latency_ms": 479.318
+    },
+    {
+      "id": "aw-05",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 1,
+      "legacy_rows": 1,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 1,
+      "actual_artifact_rows": 1,
+      "pages_read": 1,
+      "actual_rows_sha256": "ed3c8eacb4e1a63ff36c99f2a400780a74a77bb97c78c4374e0eb816d9926260",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "22528b71cbd172f8344439b24f158917b6179fae68820a6e3d4cdc97e71fc464",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "9ffe592697df5a11670e9fd84f12ecfd41a37e31bd33d9257ab49a24b0a9ce5f",
+        "columns": [
+          "记录数CustomerID"
+        ],
+        "row_count": 1,
+        "observed_rows": 1,
+        "preview_row_count": 1,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "77318ef83de9480cbeff8d4a522329fa",
+        "data_sha256": "2e3e0431ebc196b4576b66b3f6be3a8a07c6862433be95104ff00316950748ce",
+        "byte_count": 7,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "08d2a99b97a4a7f7d533fb209f3651627a9b9f707cf04ad02a3975f17ee9a01f",
+        "binding_sha256": "2d0bafa9074d87df2edc11a8aa98757d2417052f7d9cb4f62da1bdc41969dee2",
+        "receipt_signature": "a944310569ee6a5a98dd96223f6e4acdcf709f3ee2028ed27432c8fe917c4d58",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT COUNT(*) AS \"记录数CustomerID\" FROM \"Customer\" JOIN \"SalesTerritory\" ON \"Customer\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\" WHERE \"SalesTerritory\".\"CountryRegionCode\" = ? ORDER BY COUNT(*) DESC",
+      "parameters": [
+        "US"
+      ],
+      "result_status": "ok",
+      "latency_ms": 342.04
+    },
+    {
+      "id": "aw-06",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 3,
+      "legacy_rows": 3,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 3,
+      "actual_artifact_rows": 3,
+      "pages_read": 1,
+      "actual_rows_sha256": "32da6787d34cda46a7f020cb88736368d46bb1a49b9ef708c62ac95347504d35",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "01e566bc82902a3079565f9af299d8cf6f8a93e47c02e908bd28c7c1cc587c5c",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "9ffe592697df5a11670e9fd84f12ecfd41a37e31bd33d9257ab49a24b0a9ce5f",
+        "columns": [
+          "AccountNumber",
+          "总TotalDue"
+        ],
+        "row_count": 3,
+        "observed_rows": 3,
+        "preview_row_count": 3,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": 3,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "7b81296549574c7aa603b7b03d584b65",
+        "data_sha256": "217b63935613965c89e9ec05f2e20c5046ecf8cdac14201a9a74b6226eda271c",
+        "byte_count": 87,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "08d2a99b97a4a7f7d533fb209f3651627a9b9f707cf04ad02a3975f17ee9a01f",
+        "binding_sha256": "52030befe85327af1f115a2a71d6315fb55aba314f6f3783570ac355a2d4bdda",
+        "receipt_signature": "434f668e8890855ee57c8ed3329f566da5260ab73f2794c3c09bf55757b99d0e",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"AccountNumber\", \"总TotalDue\" FROM (SELECT \"Customer\".\"AccountNumber\", SUM(\"SalesOrderHeader\".\"TotalDue\") AS \"总TotalDue\", DENSE_RANK() OVER (ORDER BY SUM(\"SalesOrderHeader\".\"TotalDue\") DESC) AS \"排名\" FROM \"SalesOrderHeader\" JOIN \"Customer\" ON \"SalesOrderHeader\".\"CustomerID\" = \"Customer\".\"CustomerID\" GROUP BY \"Customer\".\"AccountNumber\") AS ranked WHERE \"排名\" <= ? ORDER BY \"排名\" ASC, \"总TotalDue\" DESC",
+      "parameters": [
+        3
+      ],
+      "result_status": "ok",
+      "latency_ms": 485.372
+    }
+  ]
+}

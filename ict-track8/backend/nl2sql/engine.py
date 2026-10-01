@@ -782,6 +782,9 @@ class Nl2SqlEngine:
             if complete_results and not plan.clarification:
                 complete_scope = configure_complete_scope(plan,
                     scope_question if required_intent is not None else question)
+                if plan.preview_row_limit is not None:
+                    row_cap = min(row_cap, plan.preview_row_limit)
+                complete_scope['effective_preview_limit'] = row_cap
             compiled = None
             if not plan.clarification and (plan.metrics or plan.fan_out):
                 try:

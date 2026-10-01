@@ -18,12 +18,19 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'ict-track8'))
-from backend.nl2sql.engine import Nl2SqlEngine
-from evaluate_adventureworks import verify_assets, projection, same_rows
 
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def implementation_snapshot():
+    """Pin evidence tooling and all production backend code, never runtime."""
+    paths = [*sorted((ROOT / 'ict-track8/backend').rglob('*.py')),
+             Path(__file__), ROOT / 'tools/evaluate_adventureworks.py']
+    files = {path.relative_to(ROOT).as_posix(): digest(path) for path in paths}
+    canonical = json.dumps(files, sort_keys=True, separators=(',', ':')).encode()
+    return {'sha256': hashlib.sha256(canonical).hexdigest(), 'files': files}
 
 
 def all_cells(engine, receipt):
@@ -46,6 +53,11 @@ def main():
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError('Never overwrite evidence')
+    implementation_before = implementation_snapshot()
+    # Import only after pinning, so the code used by this process is covered
+    # by the same start/end implementation evidence as the saved report.
+    from backend.nl2sql.engine import Nl2SqlEngine
+    from evaluate_adventureworks import verify_assets, projection, same_rows
     manifest = verify_assets(args.directory)
     database = (args.directory / manifest['database']['file']).resolve()
     questions_path = ROOT / 'benchmarks/adventureworks/questions.json'
@@ -95,6 +107,7 @@ def main():
             'reference_rows', 'legacy_rows', 'actual_artifact_rows', 'pages_read')}, ensure_ascii=False), flush=True)
     if digest(database) != source_before:
         raise ValueError('Official source changed')
+    implementation_after = implementation_snapshot()
     report = {'created_at': datetime.now(timezone.utc).isoformat(),
         'scope': 'already_exposed_adventureworks_sqlite_development_complete_artifact_candidate_not_official_score',
         'new_frozen_56_questions_or_oracles_read': False, 'old_evaluator_or_scorer_changed': False,
@@ -102,12 +115,17 @@ def main():
         'exposed_questions_sha256': digest(questions_path),
         'exposed_questions_frozen_lf_sha256': frozen_question_sha,
         'isolated_checkout_crlf_normalized_only_for_frozen_byte_check': digest(questions_path) != frozen_question_sha,
+        'implementation_before': implementation_before,
+        'implementation_after': implementation_after,
+        'implementation_stable': implementation_before == implementation_after,
         'passed_complete_artifact_checks': sum(row['artifact_validation_pass'] for row in records),
         'total_exposed_queries': len(records), 'cases': records}
     with args.output.open('x', encoding='utf-8') as stream:
         json.dump(report, stream, ensure_ascii=False, indent=2)
         stream.write('\n')
     print(json.dumps({key: report[key] for key in ('passed_complete_artifact_checks', 'total_exposed_queries', 'model_api_calls')}))
+    if not report['implementation_stable']:
+        raise SystemExit('Implementation changed during evidence run; report cannot certify this revision')
 
 
 if __name__ == '__main__':

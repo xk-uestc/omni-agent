@@ -13,7 +13,20 @@ _EXPLICIT_ROWS = re.compile(
     r'|\b(?:return|show)\s+(?:(?:only|at\s+most)\s+)*(?P<en>\d+)\s+(?:rows?|records?)\b'
     r'|\blimit\s+(?P<limit>\d+)\b', re.I)
 _UNPARSED_ROWS = re.compile(
-    r'[0-9零一二三四五六七八九十百两]+\s*(?:条|行|rows?\b|records?\b)|\blimit\b|限制(?:返回|条数|行数)', re.I)
+    r'[0-9零一二三四五六七八九十百千万亿两]+\s*(?:条|行|rows?\b|records?\b)|\blimit\b|限制(?:返回|条数|行数)', re.I)
+_PREVIEW_ROWS = re.compile(
+    r'(?:(?:仅|只)?(?:展示|显示|返回|查看)\s*(?:(?:最多|至多|前)\s*)*)?'
+    r'(?P<after>[0-9零一二三四五六七八九十百两]+)\s*(?:条|行)\s*(?:的|结果)?\s*预览'
+    r'|(?:仅|只)?预览\s*(?:(?:展示|显示|最多|至多|前)\s*)*'
+    r'(?P<before>[0-9零一二三四五六七八九十百两]+)\s*(?:条|行)'
+    r'|\b(?:show|display|return)\s+(?:(?:only|at\s+most|up\s+to|first)\s+)*'
+    r'(?P<en_after>\d+)\s+(?:rows?|records?)\s+(?:(?:as|of|in)\s+)?(?:a\s+)?preview\b'
+    r'|\bpreview\s+(?:(?:only|at\s+most|up\s+to|first)\s+)*'
+    r'(?P<en_before>\d+)\s+(?:rows?|records?)\b', re.I)
+_WITH_TIES = re.compile(r'保留并列|含并列|包含并列|包括并列|'
+                        r'\b(?:with|include|including|preserve|keep|retain)\s+ties\b', re.I)
+_ALL_ROWS = re.compile(r'\b(?:return|show|display|list)\s+(?:all|every|complete)\s+(?:rows?|records?)\b', re.I)
+_UNKNOWN_RETURN_ROWS = re.compile(r'\b(?:return|show|display)\s+[^,.!?;]{1,40}\s+(?:rows?|records?)\b', re.I)
 
 
 def configure_complete_scope(plan, original_question: str) -> dict:
@@ -23,17 +36,30 @@ def configure_complete_scope(plan, original_question: str) -> dict:
     query semantics. Top-N is kept in its existing independent rank filter.
     Unknown or conflicting row-limit language fails closed.
     """
-    matches = list(_EXPLICIT_ROWS.finditer(original_question))
+    previews = list(_PREVIEW_ROWS.finditer(original_question))
+    preview_values = [cn_to_int(next(value for value in match.groupdict().values() if value is not None))
+                      for match in previews]
+    if len(set(preview_values)) > 1 or any(not value or not 1 <= value <= 100_000 for value in preview_values):
+        raise SqlSafetyError('complete_result_preview_scope_ambiguous_or_unsupported')
+    result_question = _PREVIEW_ROWS.sub('', original_question)
+    matches = list(_EXPLICIT_ROWS.finditer(result_question))
     values = [cn_to_int(next(value for value in match.groupdict().values() if value is not None))
               for match in matches]
-    remaining = _EXPLICIT_ROWS.sub('', original_question)
+    remaining = _EXPLICIT_ROWS.sub('', result_question)
+    remaining = _ALL_ROWS.sub('', remaining)
     if (len(set(values)) > 1 or any(not value or not 1 <= value <= 100_000 for value in values)
-            or _UNPARSED_ROWS.search(remaining)):
+            or _UNPARSED_ROWS.search(remaining) or _UNKNOWN_RETURN_ROWS.search(remaining)):
         raise SqlSafetyError('complete_result_scope_ambiguous_or_unsupported')
+    ties_question = re.sub(r'(?:不|不要|无需)(?:保留|包含|包括|含)并列', '', original_question)
+    if values and _WITH_TIES.search(ties_question):
+        raise SqlSafetyError('complete_result_row_cap_conflicts_with_ties')
     plan.complete_results = True
     plan.semantic_row_limit = values[0] if values else None
+    plan.preview_row_limit = min(100, preview_values[0]) if preview_values else None
     return {'mode': 'bounded_complete_result_with_preview',
             'semantic_row_limit': plan.semantic_row_limit, 'top_n': plan.top_n,
+            'requested_preview_limit': preview_values[0] if preview_values else None,
+            'effective_preview_limit': plan.preview_row_limit,
             'default_preview_limit_removed_from_sql': plan.semantic_row_limit is None,
             'verification': 'original_question_row_limit_and_existing_rank_filter'}
 

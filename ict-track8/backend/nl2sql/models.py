@@ -137,6 +137,7 @@ class QueryPlan:
     # Opt-in complete artifacts separate preview caps from user SQL semantics.
     complete_results: bool = False
     semantic_row_limit: int | None = None
+    preview_row_limit: int | None = None
     confidence: float = 0.0
     rewritten_question: str = ""
     comparison_mode: str = "none"

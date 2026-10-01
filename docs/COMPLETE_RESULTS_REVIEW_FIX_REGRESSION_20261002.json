@@ -1,0 +1,47 @@
+{
+  "scope": "isolated_complete_result_review_fix_after_e77338c_not_official_score",
+  "command": "python -m pytest ict-track8/tests/test_complete_sql_results_round5.py ict-track8/tests/test_nl2sql_api_audit.py ict-track8/tests/test_nl2sql_baseline.py ict-track8/tests/test_nl2sql_v2.py ict-track8/tests/test_metric_compiler.py ict-track8/tests/test_nl2sql_generalization_round2.py ict-track8/tests/test_nl2sql_round3_roles_repair.py -q",
+  "exit_code": 0,
+  "passed": 271,
+  "skipped": 2,
+  "skip_reason": "Windows host cannot create symlinks without privilege; foreign-link fixtures skipped",
+  "warnings": 1,
+  "warning_reason": "Starlette TestClient httpx deprecation",
+  "elapsed_seconds": 17.54,
+  "additional_review_fix_cases": 19,
+  "review_fixes": {
+    "ties": "Explicit final row caps combined with preserved ties reject before SQL execution",
+    "preview": "Chinese/English preview-only caps change actual preview length without final SQL limit; 200-row preview caps at 100",
+    "unknown_count": "Unparsed English number words and unsupported Chinese row counts fail closed",
+    "receipt": "Persisted private server HMAC rejects publicly rehashed metadata/data even after engine restart or binding-cache eviction",
+    "key_lifecycle": "Missing/replaced private key rejects old artifacts; read never creates a new key",
+    "total_deadline": "Execute/page use one absolute deadline across all phases; postverification cannot receive a renewed time budget"
+  },
+  "exposed_development_replay": {
+    "initial_review_report": "docs/COMPLETE_RESULTS_ADVENTUREWORKS_REVIEW_FIX_20261002.json",
+    "pinned_report": "docs/COMPLETE_RESULTS_ADVENTUREWORKS_REVIEW_FIX_PINNED_20261002.json",
+    "complete_artifact_checks_passed": 6,
+    "total_exposed_queries": 6,
+    "aw_02_actual_rows": 19119,
+    "aw_03_actual_rows": 19119,
+    "pages_read_each": 192,
+    "all_actual_cells_equal_independent_readonly_reference": true,
+    "model_api_calls": 0,
+    "new_frozen_56_questions_or_oracles_read": false,
+    "old_evaluator_or_scorer_changed": false
+  },
+  "private_material": {
+    "default_location": "runtime/.query-result-private/receipt-signing.key",
+    "git_ignored": true,
+    "private_key_content_read_or_printed_by_workflow": false,
+    "included_in_commit_or_zip": false
+  },
+  "limitations": [
+    "OS blocking calls use cooperative elapsed-time checks; no hard realtime interruption claimed",
+    "Result deadline starts at complete execution or page read, excluding earlier model planning",
+    "Existing unsigned artifacts require a fresh query",
+    "Integrity assumes the private signing key remains private; no whole-host attacker resistance claimed",
+    "Agent/cross-source default calls and frozen scorers remain unchanged",
+    "Storage retention and multi-tenant authorization are not implemented"
+  ]
+}

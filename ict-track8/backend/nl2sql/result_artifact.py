@@ -9,7 +9,9 @@ from __future__ import annotations
 import base64
 from dataclasses import dataclass
 import hashlib
+import hmac
 import json
+import os
 from pathlib import Path
 import re
 import sqlite3
@@ -58,6 +60,11 @@ def _sha(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def _check_deadline(deadline: float | None):
+    if deadline is not None and time.monotonic() > deadline:
+        raise SqlSafetyError('complete_result_operation_time_budget_exceeded')
+
+
 def _cell(value):
     if isinstance(value, bytes):
         return {'$sqlite_type': 'blob', 'base64': base64.b64encode(value).decode('ascii')}
@@ -79,7 +86,76 @@ def _artifact_member(directory: Path, name: str) -> Path:
     return member
 
 
+def _protect_private_path(path: Path, *, directory: bool = False):
+    if os.name != 'nt':
+        path.chmod(0o700 if directory else 0o600)
+        return
+    # The file/directory owner and SYSTEM only; protected DACL disables broad
+    # inherited workspace permissions. This needs ownership, not elevation.
+    import ctypes
+    from ctypes import wintypes
+    advapi = ctypes.WinDLL('advapi32', use_last_error=True)
+    kernel = ctypes.WinDLL('kernel32', use_last_error=True)
+    descriptor = ctypes.c_void_p()
+    convert = advapi.ConvertStringSecurityDescriptorToSecurityDescriptorW
+    convert.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, ctypes.POINTER(ctypes.c_void_p), ctypes.c_void_p]
+    convert.restype = wintypes.BOOL
+    set_security = advapi.SetFileSecurityW
+    set_security.argtypes = [wintypes.LPCWSTR, wintypes.DWORD, ctypes.c_void_p]
+    set_security.restype = wintypes.BOOL
+    kernel.LocalFree.argtypes = [ctypes.c_void_p]
+    kernel.LocalFree.restype = ctypes.c_void_p
+    if not convert('D:P(A;;FA;;;OW)(A;;FA;;;SY)', 1, ctypes.byref(descriptor), None):
+        raise ResultRevisionError('result_receipt_private_acl_creation_failed')
+    try:
+        if not set_security(str(path), 0x00000004 | 0x80000000, descriptor):
+            raise ResultRevisionError('result_receipt_private_acl_creation_failed')
+    finally:
+        kernel.LocalFree(descriptor)
+
+
+def _receipt_key(artifact_dir: Path, *, create: bool = False) -> bytes:
+    private = artifact_dir.parent / '.query-result-private'
+    if private.is_symlink() or private.resolve().parent != artifact_dir.parent:
+        raise ResultRevisionError('result_receipt_private_path_invalid')
+    path = private / 'receipt-signing.key'
+    if create:
+        private.mkdir(mode=0o700, exist_ok=True)
+        _protect_private_path(private, directory=True)
+        path = _artifact_member(private.resolve(), 'receipt-signing.key')
+        try:
+            descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0), 0o600)
+        except FileExistsError:
+            pass
+        else:
+            with os.fdopen(descriptor, 'wb') as stream:
+                stream.write(os.urandom(32))
+                stream.flush()
+                os.fsync(stream.fileno())
+            _protect_private_path(path)
+    path = _artifact_member(private.resolve(), 'receipt-signing.key')
+    try:
+        with path.open('rb') as stream:
+            key = stream.read(33)
+    except FileNotFoundError as exc:
+        raise ResultRevisionError('result_receipt_private_key_missing') from exc
+    if len(key) != 32:
+        raise ResultRevisionError('result_receipt_private_key_invalid')
+    if os.name != 'nt' and (path.stat().st_mode & 0o077 or private.stat().st_mode & 0o077):
+        raise ResultRevisionError('result_receipt_private_permissions_invalid')
+    return key
+
+
+def _receipt_message(metadata: dict, binding: str) -> bytes:
+    return _json({'artifact_id': metadata['artifact_id'], 'binding_sha256': binding,
+                  'query_sha256': metadata['query_sha256'],
+                  'source_revision': metadata['source_revision'],
+                  'producer_sha256': metadata['producer_sha256'],
+                  'receipt_key_id': metadata['receipt_key_id']})
+
+
 def _hash_file(path: Path, *, max_bytes: int, deadline: float):
+    _check_deadline(deadline)
     before = _file_state(path)
     if before[2] > max_bytes:
         raise SqlSafetyError('complete_result_source_byte_budget_exceeded')
@@ -95,14 +171,17 @@ def _hash_file(path: Path, *, max_bytes: int, deadline: float):
     after = _file_state(path)
     if before != after or size != after[2]:
         raise ResultRevisionError('complete_result_source_changed_while_pinning')
+    _check_deadline(deadline)
     return {'sha256': digest.hexdigest(), 'bytes': size, 'generation': list(after)}
 
 
 def pin_database(path: Path, budgets: ResultBudgets, *, generation: Callable | None = None,
-                 expected_generation=None) -> dict:
-    deadline = time.monotonic() + budgets.max_seconds
+                 expected_generation=None, deadline: float | None = None) -> dict:
+    deadline = time.monotonic() + budgets.max_seconds if deadline is None else deadline
+    _check_deadline(deadline)
     if generation is not None and generation() != expected_generation:
         raise ResultRevisionError('complete_result_source_snapshot_changed')
+    _check_deadline(deadline)
     files = {}
     remaining = budgets.max_source_bytes
     for suffix in ('', '-wal'):
@@ -125,9 +204,14 @@ def producer_paths() -> tuple[Path, ...]:
         'planner.py', 'metric_compiler.py', 'models.py'))
 
 
-def pin_producer(paths: Sequence[Path] | None = None) -> str:
+def pin_producer(paths: Sequence[Path] | None = None, *, deadline: float | None = None) -> str:
     members = paths if paths is not None else producer_paths()
-    return _sha(_json([(str(path.resolve()), _sha(path.read_bytes())) for path in members]))
+    result = []
+    for path in members:
+        _check_deadline(deadline)
+        result.append((str(path.resolve()), _sha(path.read_bytes())))
+    _check_deadline(deadline)
+    return _sha(_json(result))
 
 
 def query_hash(sql: str, parameters: Sequence[Any]) -> str:
@@ -142,15 +226,16 @@ def execute_complete_read_only(
     source_code_paths: Sequence[Path] | None = None, scope: dict | None = None,
 ) -> CompleteExecution:
     budgets = budgets or ResultBudgets()
+    deadline = time.monotonic() + budgets.max_seconds
     if type(preview_limit) is not int or not 1 <= preview_limit <= 100:
         raise ValueError('preview_limit_must_be_between_1_and_100')
     validated = validate_read_only_sql(sql, max_rows=100)
     parameters = tuple(parameters)
     source = pin_database(database_path, budgets, generation=generation,
-                          expected_generation=expected_generation)
+                          expected_generation=expected_generation, deadline=deadline)
     if expected_source is not None and expected_source != source:
         raise ResultRevisionError('complete_result_source_changed_after_planning')
-    producer = pin_producer(source_code_paths)
+    producer = pin_producer(source_code_paths, deadline=deadline)
     binding = query_hash(validated.sql, parameters)
     artifact_dir = artifact_dir.resolve()
     artifact_dir.mkdir(parents=True, exist_ok=True)
@@ -159,7 +244,7 @@ def execute_complete_read_only(
     columns, preview, preview_cells, count, total_bytes, steps = (), [], [], 0, 0, 0
     digest = hashlib.sha256()
     failure = None
-    deadline = time.monotonic() + budgets.max_seconds
+    _check_deadline(deadline)
 
     def progress():
         nonlocal steps, failure
@@ -212,8 +297,8 @@ def execute_complete_read_only(
         connection.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, previous_length_limit)
     try:
         current = pin_database(database_path, budgets, generation=generation,
-                               expected_generation=expected_generation)
-        if current != source or pin_producer(source_code_paths) != producer:
+                               expected_generation=expected_generation, deadline=deadline)
+        if current != source or pin_producer(source_code_paths, deadline=deadline) != producer:
             raise ResultRevisionError('complete_result_source_or_producer_changed')
         metadata = {'format': 'sqlite-ordered-cell-arrays-jsonl-v1',
             'status': 'partial' if failure else 'complete', 'reason': failure,
@@ -231,10 +316,21 @@ def execute_complete_read_only(
             # Metadata is published last: interrupted executions never leave
             # a discoverable complete artifact. No SQL/parameter values leak.
             data_path = _artifact_member(artifact_dir, artifact_id + '.jsonl')
-            temporary.replace(data_path)
+            key = _receipt_key(artifact_dir, create=True)
+            metadata['receipt_key_id'] = _sha(key)
             metadata['binding_sha256'] = _sha(_json(metadata))
+            metadata['receipt_signature'] = hmac.new(key,
+                _receipt_message(metadata, metadata['binding_sha256']), hashlib.sha256).hexdigest()
+            _check_deadline(deadline)
+            temporary.replace(data_path)
             with _artifact_member(artifact_dir, artifact_id + '.json').open('xb') as stream:
                 stream.write(_json(metadata))
+            try:
+                _check_deadline(deadline)
+            except SqlSafetyError:
+                _artifact_member(artifact_dir, artifact_id + '.json').unlink(missing_ok=True)
+                data_path.unlink(missing_ok=True)
+                raise
         return CompleteExecution(columns, tuple(preview), tuple(preview_cells), metadata)
     finally:
         temporary.unlink(missing_ok=True)
@@ -246,6 +342,10 @@ def read_result_page(
     expected_binding_sha256: str,
     source_code_paths: Sequence[Path] | None = None,
 ) -> dict:
+    # The operation starts before metadata/key/producer/source reads. No
+    # phase receives a fresh budget. Blocking OS calls are cooperative: when
+    # they return after deadline the operation must fail, never claim complete.
+    started = time.monotonic()
     if not isinstance(artifact_id, str) or not re.fullmatch(r'[0-9a-f]{32}', artifact_id):
         raise ValueError('invalid_result_artifact_id')
     if type(offset) is not int or offset < 0 or type(page_size) is not int or not 1 <= page_size <= 100:
@@ -260,20 +360,29 @@ def read_result_page(
     if len(metadata_raw) > 64 * 1024:
         raise ResultRevisionError('result_artifact_metadata_too_large')
     metadata = json.loads(metadata_raw)
+    if not isinstance(metadata, dict):
+        raise ResultRevisionError('result_artifact_metadata_invalid')
+    signature = metadata.pop('receipt_signature', None)
     binding = metadata.pop('binding_sha256', None)
     if (binding != expected_binding_sha256 or binding != _sha(_json(metadata)) or metadata['artifact_id'] != artifact_id
             or metadata['status'] != 'complete' or not metadata['cursor_eof_verified']
             or (expected_query_sha256 is not None and metadata['query_sha256'] != expected_query_sha256)):
         raise ResultRevisionError('result_artifact_binding_mismatch')
+    key = _receipt_key(directory)
+    if (metadata.get('receipt_key_id') != _sha(key) or not isinstance(signature, str)
+            or not hmac.compare_digest(signature,
+                hmac.new(key, _receipt_message(metadata, binding), hashlib.sha256).hexdigest())):
+        raise ResultRevisionError('result_artifact_server_receipt_invalid')
     budgets = ResultBudgets(**metadata['budgets'])
-    before = pin_database(database_path, budgets)
-    producer = pin_producer(source_code_paths)
+    deadline = started + budgets.max_seconds
+    _check_deadline(deadline)
+    before = pin_database(database_path, budgets, deadline=deadline)
+    producer = pin_producer(source_code_paths, deadline=deadline)
     if before != metadata['source_pin'] or producer != metadata['producer_sha256']:
         raise ResultRevisionError('result_artifact_source_or_producer_changed')
     data = _artifact_member(directory, artifact_id + '.jsonl')
     before_data = _file_state(data)
     digest, rows, count, size = hashlib.sha256(), [], 0, 0
-    deadline = time.monotonic() + budgets.max_seconds
     with data.open('rb') as stream:
         while line := stream.readline(budgets.max_bytes + 1):
             size += len(line)
@@ -288,9 +397,10 @@ def read_result_page(
                 rows.append(cells)
     if (digest.hexdigest() != metadata['data_sha256'] or size != metadata['byte_count']
             or count != metadata['row_count'] or before_data != _file_state(data)
-            or metadata_path.read_bytes() != metadata_raw or pin_database(database_path, budgets) != before
-            or pin_producer(source_code_paths) != producer):
+            or metadata_path.read_bytes() != metadata_raw or pin_database(database_path, budgets, deadline=deadline) != before
+            or pin_producer(source_code_paths, deadline=deadline) != producer):
         raise ResultRevisionError('result_artifact_data_or_source_changed')
+    _check_deadline(deadline)
     return {'status': 'complete', 'artifact_id': artifact_id, 'columns': metadata['columns'],
             'rows': rows, 'offset': offset, 'page_size': page_size, 'row_count': count,
             'next_offset': offset + len(rows) if offset + len(rows) < count else None,

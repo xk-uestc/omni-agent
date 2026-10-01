@@ -160,10 +160,9 @@ def test_wallclock_limit_is_enforced_during_cursor_fetch(database, tmp_path):
             time.sleep(.005)
             return value
         db.create_function('slow', 1, slow)
-        result = execute_complete_read_only(db, 'SELECT slow(amount) FROM facts', database_path=database,
-            artifact_dir=directory, budgets=ResultBudgets(max_seconds=.03))
-    assert result.metadata['status'] == 'partial'
-    assert result.metadata['reason'] == 'complete_result_time_budget_exceeded'
+        with pytest.raises(SqlSafetyError, match='time_budget'):
+            execute_complete_read_only(db, 'SELECT slow(amount) FROM facts', database_path=database,
+                artifact_dir=directory, budgets=ResultBudgets(max_seconds=.03))
     assert list(directory.iterdir()) == []
 
 
@@ -341,6 +340,125 @@ def test_http_partial_budget_failure_is_explicit_and_has_no_complete_artifact(da
     payload = response.json()
     assert payload['status'] == 'incomplete' and payload['result_state'] == 'partial_rows'
     assert payload['provenance']['complete_result']['artifact_id'] is None
+
+
+@pytest.mark.parametrize('question', ['按金额排名，返回前2行（保留并列）',
+    'return only 2 rows with ties', '排名前3名含并列，最多3行'])
+def test_rank_ties_and_explicit_row_cap_conflict_fails_closed(question):
+    plan = base_plan(top_n=2)
+    with pytest.raises(SqlSafetyError, match='conflicts_with_ties'):
+        configure_complete_scope(plan, question)
+    assert plan.complete_results is False
+
+
+@pytest.mark.parametrize('question, preview', [
+    ('只展示100行预览，并将全部结果保存供分页下载', 100),
+    ('只展示50行预览，并将全部结果保存供分页下载', 50),
+    ('预览前50行，然后导出全部结果', 50),
+    ('show only 50 rows as preview and export all results', 50),
+    ('preview first 50 rows; return all rows in the artifact', 50),
+    ('只展示200行预览，并将全部结果保存', 100),
+])
+def test_preview_language_changes_actual_preview_only_not_complete_sql(database, tmp_path, question, preview):
+    engine = Nl2SqlEngine(database, result_artifact_dir=tmp_path / 'results')
+    engine._rules_plan = lambda *args, **kwargs: base_plan()
+    result = engine.answer(question, complete_results=True)
+    receipt = result.provenance['complete_result']
+    assert result.status == 'ok' and receipt['row_count'] == 241
+    assert len(result.rows) == len(receipt['preview_cells']) == preview
+    assert receipt['preview_limit'] == preview and receipt['scope']['effective_preview_limit'] == preview
+    assert result.plan['semantic_row_limit'] is None and 'LIMIT' not in result.sql
+    assert len(all_pages(database, tmp_path / 'results', receipt)) == 241
+
+
+@pytest.mark.parametrize('question', ['return ten rows', 'show at most twenty five records',
+                                     'display exactly a dozen rows', '仅展示一千行预览'])
+def test_unknown_explicit_row_counts_never_silently_remove_a_limit(question):
+    with pytest.raises(SqlSafetyError, match='ambiguous_or_unsupported'):
+        configure_complete_scope(base_plan(), question)
+
+
+def _replace_data_and_recompute_every_public_hash(directory, receipt):
+    data = directory / (receipt['artifact_id'] + '.jsonl')
+    meta = directory / (receipt['artifact_id'] + '.json')
+    record = json.loads(meta.read_bytes())
+    lines = data.read_bytes().splitlines(keepends=True)
+    lines[0] = b'["forged-region",999999]\n'
+    raw = b''.join(lines)
+    data.write_bytes(raw)
+    record['byte_count'] = len(raw)
+    record['data_sha256'] = hashlib.sha256(raw).hexdigest()
+    signature = record.pop('receipt_signature')
+    record.pop('binding_sha256')
+    canonical = json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()
+    record['binding_sha256'] = hashlib.sha256(canonical).hexdigest()
+    record['receipt_signature'] = signature  # attacker cannot recompute the private HMAC
+    meta.write_text(json.dumps(record))
+    return record['binding_sha256']
+
+
+@pytest.mark.parametrize('lose_cache', ['restart', 'eviction'])
+def test_server_signature_rejects_forgery_even_if_client_passes_new_public_binding(database, tmp_path, lose_cache):
+    directory = tmp_path / 'results'
+    engine = Nl2SqlEngine(database, result_artifact_dir=directory)
+    engine._rules_plan = lambda *args, **kwargs: base_plan()
+    receipt = engine.answer('按region汇总amount', complete_results=True).provenance['complete_result']
+    forged_binding = _replace_data_and_recompute_every_public_hash(directory, receipt)
+    if lose_cache == 'restart':
+        engine = Nl2SqlEngine(database, result_artifact_dir=directory)
+    else:
+        engine._result_bindings.clear()
+    with pytest.raises(ResultRevisionError, match='server_receipt_invalid'):
+        engine.complete_result_page(receipt['artifact_id'], expected_binding_sha256=forged_binding,
+                                    expected_query_sha256=receipt['query_sha256'])
+
+
+@pytest.mark.parametrize('change', ['missing', 'replaced'])
+def test_private_receipt_key_missing_or_replaced_never_regenerates_on_read(database, tmp_path, change):
+    directory = tmp_path / 'results'
+    receipt = run(database, directory, 'SELECT region,amount FROM facts ORDER BY seq').metadata
+    key = directory.parent / '.query-result-private' / 'receipt-signing.key'
+    if change == 'missing':
+        key.unlink()
+    else:
+        key.write_bytes(bytes(32))
+    with pytest.raises(ResultRevisionError, match='private_key_missing|server_receipt_invalid'):
+        read_result_page(directory, receipt['artifact_id'], database_path=database,
+                         expected_binding_sha256=receipt['binding_sha256'])
+    assert key.exists() == (change == 'replaced')
+
+
+def test_shared_operation_deadline_includes_source_pins_sql_and_postverification(database, tmp_path, monkeypatch):
+    import backend.nl2sql.result_artifact as module
+    original = module._hash_file
+    def delayed_hash(*args, **kwargs):
+        time.sleep(.04)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(module, '_hash_file', delayed_hash)
+    directory = tmp_path / 'results'
+    with closing(sqlite3.connect(database)) as db:
+        db.create_function('slow', 1, lambda value: (time.sleep(.04), value)[1])
+        with pytest.raises(SqlSafetyError, match='time_budget'):
+            execute_complete_read_only(db, 'SELECT slow(amount) FROM facts LIMIT 1',
+                database_path=database, artifact_dir=directory, budgets=ResultBudgets(max_seconds=.06))
+    assert list(directory.glob('*.json')) == [] and list(directory.glob('*.jsonl')) == []
+
+
+def test_page_deadline_includes_both_source_pins_without_renewal(database, tmp_path, monkeypatch):
+    import backend.nl2sql.result_artifact as module
+    directory = tmp_path / 'results'
+    clock = {'now': 1000.0}
+    monkeypatch.setattr(module.time, 'monotonic', lambda: clock['now'])
+    receipt = run(database, directory, 'SELECT region,amount FROM facts LIMIT 1',
+                  budgets=ResultBudgets(max_seconds=.06)).metadata
+    original = module._hash_file
+    def delayed_hash(*args, **kwargs):
+        clock['now'] += .04
+        return original(*args, **kwargs)
+    monkeypatch.setattr(module, '_hash_file', delayed_hash)
+    with pytest.raises(SqlSafetyError, match='time_budget'):
+        read_result_page(directory, receipt['artifact_id'], database_path=database,
+                         expected_binding_sha256=receipt['binding_sha256'])
 
 
 def test_source_change_between_planning_and_execution_is_rejected(database, tmp_path):
