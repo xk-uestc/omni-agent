@@ -1,0 +1,94 @@
+{
+  "schema_version": "isolated-reference-types-validation-v2",
+  "created_at_utc": "2026-10-01T22:22:52Z",
+  "scope": "offline_saved_synthetic_development_plan_replay_not_real_model_accuracy",
+  "status": "PATCH_READY_FOR_ROOT_REVIEW_NOT_APPLIED_TO_MAIN",
+  "isolation": {
+    "worktree": "D:/ICT8-Backups/round5-reference-types-20261002",
+    "detached_base": "e89113db5134e1f789217e363726940fd82e8f1b",
+    "production_root": "D:/ICT8-OmniAgent",
+    "runtime_credentials_copied": false,
+    "api_calls": 0,
+    "production_backend_edits": false,
+    "production_evaluator_edits": false,
+    "new_36_case_rag_content_read": false,
+    "baseline_source_note": "Relevant planner/normalizer source content equals the frozen main source under git diff --ignore-cr-at-eol. Checkout CRLF changes raw byte hashes."
+  },
+  "diagnosis": {
+    "path": "D:/ICT8-OmniAgent/docs/CORE_ROUND5_ACCEPTANCE_FAILURE_DIAGNOSIS_20261002.json",
+    "sha256": "44c2f611831d8f6e9de9dc714b15d06a68e52fda5b9c52c271e30d55278310de"
+  },
+  "patch": {
+    "path": "docs/REFERENCE_TYPES_PATCH_20261002.patch",
+    "sha256": "7ca70348503bd72b512ea5224cbd572cbf6cadaded18ad9221fceefabac7acad",
+    "superseded_initial_patch_sha256": "005668b15b85a1d7fd00eb48eb372fdce1e7153f3e8bef064c0f4009d9455cc4",
+    "files": [
+      "ict-track8/backend/omni_agent.py",
+      "ict-track8/backend/text_reference_contract.py",
+      "ict-track8/tests/test_text_reference_contract_round5.py",
+      "ict-track8/tests/test_text_reference_shapes_round5.py",
+      "ict-track8/tests/fixtures/round5_cross_turn1_invalid_plan.json"
+    ],
+    "diff_check": "passed",
+    "main_git_apply_check": "passed_read_only_before_merge",
+    "implementation": [
+      "Check declared SQL question/search query projection types after existing normalization and before dependency execution.",
+      "Reject whole objects, arrays inside a text array, booleans and unknown projection types without rewriting the graph or resolving tool results.",
+      "Preserve existing scalar paths, deep string navigation paths, SQL physical projections, resolve semantics and cell value projection.",
+      "Carry bounded stable error codes, source tool, argument slot, projected type and available field paths into the existing one-attempt fresh-plan repair.",
+      "Mark suggested text paths as navigation only and require runtime availability checks; unbound snippets are not certified facts.",
+      "Leave runtime text guards, source bindings and provider-failure no-retry behavior in place."
+    ]
+  },
+  "tests": {
+    "python": "3.12.10",
+    "command": "python -B -m pytest -p no:cacheprovider ict-track8/tests/test_text_reference_shapes_round5.py ict-track8/tests/test_text_reference_contract_round5.py ict-track8/tests/test_fusion_normalization.py ict-track8/tests/test_omni_plan_recovery_round4.py ict-track8/tests/test_search_fact_plan_contract.py ict-track8/tests/test_dependency_agent.py ict-track8/tests/test_omni_agent.py -q",
+    "passed": 220,
+    "failed": 0,
+    "elapsed_seconds": 29.15,
+    "coverage": [
+      "Exact recorded cross-turn-1 invalid execution plan equals the retained round5 report.",
+      "No tool executes before a valid fresh plan is returned; only one existing completion repair is available.",
+      "Repeated invalid plans stop, provider exceptions are not retried, and unsuccessful HTTP/provider audits do not authorize repair.",
+      "Legal deep string paths and source references survive unchanged; nested arrays, objects and unknown paths reject.",
+      "Schema projections audited against actual local outputs from sql, document_formula, document_cell, document_fact, policy_select, search, search_fact, calculate and compare; no provider request is allowed by the new shape tests.",
+      "QueryPlan derives declared fields from the real dataclass annotations; phantom output fields remain unknown, and tuple matched_terms retains existing non-indexable resolve behavior.",
+      "Existing aggregate evidence, document cell projection, formula source binding and dependency execution tests continue to pass."
+    ]
+  },
+  "saved_plan_static_replay": {
+    "schema_revision": "v2_replayed_after_real_output_shape_corrections",
+    "round4_report": "docs/REAL_MODEL_CORE_ROUND4_ACCEPTANCE_20261002.json",
+    "round4_report_sha256": "ae2183497a73b119b25ad81f51d6ba21026d5f93cb4ffffff6342673d9e5c674",
+    "round4_execution_plans": 11,
+    "round4_rejected_ids": [],
+    "round5_report": "docs/REAL_MODEL_CORE_ROUND5_ACCEPTANCE_20261002.json",
+    "round5_report_sha256": "a136439e89bdfa3011cf52fd889e65549cd75187d6644df51f9d6e708df4a522",
+    "round5_execution_plans": 11,
+    "round5_rejected_ids": ["cross-turn-1"],
+    "previously_passing_plan_rejections": 0,
+    "tool_execution": false,
+    "answer_regrading": false
+  },
+  "isolated_file_sha256": {
+    "ict-track8/backend/omni_agent.py": "8a81478eed7f2c52c9aff0af35bcbcb7638e3fea205980874f85840cdadf4fa0",
+    "ict-track8/backend/text_reference_contract.py": "51e808fa3ba119e4b747ea1f2a66fa38e2dd66996b1304cd748615afeccab567",
+    "ict-track8/tests/test_text_reference_contract_round5.py": "8ecbc07a55e3a90a183f8afc7c3a19db0ec733d879d53d981cae456931664d91",
+    "ict-track8/tests/test_text_reference_shapes_round5.py": "7a88839976336784988af4761618ad33946947e5c9272958749dd7dd5bee9270",
+    "ict-track8/tests/fixtures/round5_cross_turn1_invalid_plan.json": "63e83aec9c51857144f54563af9ee1b678110bb9ef8e7da212b52def2c7299a0"
+  },
+  "main_source_hashes_rechecked_unchanged": {
+    "ict-track8/backend/omni_agent.py": "ae3605de3b36c63892fb5223dddcda286956540f1175761e3e079b7b355c1599",
+    "ict-track8/backend/dependency_agent.py": "7e337802168aa7b81ce8f25514835be8da6c5bce83efdce6295b105e142d9994",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "tools/evaluate_model.py": "a743874a65087decfe3e9f24bffd7393131de2385f45f28de523761648da1a03",
+    "tools/model_runtime.py": "a73d96109f5bacfd25a6ecec338e9857d67110f1f7d086ca2dfb76ea90e959c1"
+  },
+  "limits": [
+    "Offline mock-planner repair success does not demonstrate that the real model will return a corrected plan.",
+    "Schemas declare navigation shapes, not source availability, factual truth or authorization to add user constraints.",
+    "Unspecified metadata fields and Any annotations remain unknown and conservatively reject text projection; arbitrary future tool fields are not implicitly supported.",
+    "The 41/44 round5 acceptance, three failed cases and failed API usage remain retained; no score-selecting rerun was performed.",
+    "Root authorized an isolated local commit for cherry-pick; real-model acceptance must be run independently after merge and must retain earlier failed outcomes."
+  ]
+}

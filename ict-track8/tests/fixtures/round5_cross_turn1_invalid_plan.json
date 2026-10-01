@@ -1,0 +1,18 @@
+{
+  "source_report": "docs/REAL_MODEL_CORE_ROUND5_ACCEPTANCE_20261002.json",
+  "source_report_sha256": "a136439e89bdfa3011cf52fd889e65549cd75187d6644df51f9d6e708df4a522",
+  "case_id": "cross-turn-1",
+  "question": "按指标公式文档计算2025年华东地区客单价，销售额和订单数从数据库取。",
+  "execution_plan": [
+    {"id": "policy_scope", "tool": "search", "args": {"query": "核验2025年销售额统计时间范围及订单数统计口径", "document_id": "revenue-policy"}},
+    {"id": "formula", "tool": "document_formula", "args": {"document_id": "metric-definitions", "label": "客单价"}},
+    {"id": "sales_orders", "tool": "sql", "args": {"question": [{"ref": "policy_scope", "path": []}, "2025年华东地区销售额和订单数"]}},
+    {"id": "customer_price", "tool": "calculate", "args": {
+      "formula": {"ref": "formula", "path": []},
+      "parameters": {
+        "销售额": {"ref": "sales_orders", "path": ["aggregate_cells", "sales_orders", "sales_amount", "SUM", 0]},
+        "订单数": {"ref": "sales_orders", "path": ["aggregate_cells", "sales_orders", "order_id", "COUNT", 0]}
+      }
+    }}
+  ]
+}

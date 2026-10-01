@@ -9,6 +9,7 @@ import time
 
 from .dependency_agent import DependencyAgent
 from .fusion_normalization import normalize_fusion_tasks
+from .text_reference_contract import text_reference_errors
 from .responses_client import GenerationError, object_schema
 from .nl2sql.schema import normalize_text
 from .plan_requirements import requested_operations, completion_errors
@@ -108,9 +109,11 @@ def explicit_cross_source_request(question):
     return database and document and dependency or sql_then_search
 
 
-def _reject_plan(code):
+def _reject_plan(code, details=None):
     error = GenerationError('规划协议未通过校验')
     error.plan_rejection_code = code
+    if details:
+        error.plan_rejection_details = details
     raise error
 
 
@@ -189,6 +192,9 @@ def _normalize_model_tasks(plan, tasks, engine, knowledge, question):
             tasks, notes = normalize_fusion_tasks(tasks)
         except (ValueError, TypeError, KeyError):
             _reject_plan('fusion_task_normalization_rejected')
+        reference_errors = text_reference_errors(tasks)
+        if reference_errors:
+            _reject_plan('text_reference_type_invalid', reference_errors)
         _check_static_document_cells(tasks, knowledge)
         plan['tasks_json'] = json.dumps(tasks, ensure_ascii=False)
         return plan, notes
@@ -373,6 +379,7 @@ class OmniAgent:
                                                   'api_audit': dict(getattr(self.client, 'audit', {}))})
                         raise
                     protocol_error = None
+                    protocol_details = []
                     adjustments = []
                     try:
                         tasks_for_check = _parse_model_plan(plan)
@@ -388,12 +395,15 @@ class OmniAgent:
                                                                        self.knowledge, scope_question)
                     except GenerationError as exc:
                         protocol_error = exc
+                        protocol_details = getattr(exc, 'plan_rejection_details', [])
                         rejection_code = getattr(exc, 'plan_rejection_code', 'model_plan_shape_invalid')
                         errors = [rejection_code]
                     audit = dict(getattr(self.client, 'audit', {}))
                     planning_attempts.append({'attempt': attempt+1, 'validation': ('complete' if not errors else
                         'plan_protocol_rejected' if protocol_error else 'requested_operation_missing'),
                                               'errors': errors, 'api_audit': audit})
+                    if protocol_details:
+                        planning_attempts[-1]['reference_type_errors'] = protocol_details
                     if not errors:
                         rejection_code = None
                         planning_notes.extend(adjustments)
@@ -407,6 +417,12 @@ class OmniAgent:
                     # static error codes, never arbitrary rejected model text.
                     context = {**context, 'plan_completion_feedback': {'errors': errors,
                         'instruction': '重新规划同一用户任务，修正协议并补齐实际依赖操作；保留全部用户约束，不直接给答案。'}}
+                    if protocol_details:
+                        context['plan_completion_feedback']['reference_type_errors'] = protocol_details
+                        context['plan_completion_feedback']['instruction'] += (
+                            '文本字段只接受标量或扁平标量数组；按给出的字段路径与类型重新规划，'
+                            '不能将整对象转成字符串。检索文本投影仅用于导航，不是已核验事实；'
+                            '不得据此新增筛选条件或代替来源绑定。')
                 source = 'model_validated'
             except (GenerationError, ValueError, TypeError, KeyError) as exc:
                 source, error = 'rules_fallback', type(exc).__name__
