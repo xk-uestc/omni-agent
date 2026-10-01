@@ -83,6 +83,14 @@ def render_pdf_evidence(
         if len(document) > max_pages or page_no > len(document):
             raise VisualEvidenceError('page bounds or page-count budget exceeded')
         page = document[page_no - 1]
+        # With Rotate and a nonzero CropBox, PyMuPDF's transformation_matrix
+        # on the rotated page omits the CropBox translation. Obtain the true
+        # PDF-user-to-unrotated transform in this private in-memory document,
+        # then restore display rotation before extracting and rendering.
+        original_rotation = page.rotation
+        page.set_rotation(0)
+        pdf_to_unrotated = fitz.Matrix(page.transformation_matrix)
+        page.set_rotation(original_rotation)
         page_rect = page.rect
         if not page_rect.is_valid or page_rect.is_empty or page_rect.is_infinite:
             raise VisualEvidenceError('invalid displayed page rectangle')
@@ -130,7 +138,7 @@ def render_pdf_evidence(
                 'word_id': f'page:{page_no}:word:{index}', 'text': str(word[4]),
                 'block_no': int(word[5]), 'line_no': int(word[6]), 'word_no': int(word[7]),
                 'bbox_fitz_unrotated_pt': _rect(unrotated),
-                'bbox_pdf_user_pt': _rect(unrotated * ~page.transformation_matrix),
+                'bbox_pdf_user_pt': _rect(unrotated * ~pdf_to_unrotated),
                 'bbox_display_pt': _rect(displayed),
                 'bbox_asset_px': _rect(displayed * display_to_asset),
                 'fully_contained_in_crop': clip.contains(displayed),
@@ -138,11 +146,13 @@ def render_pdf_evidence(
             })
         renderer = f'PyMuPDF:{fitz.VersionBind}:RGB:alpha0:annots1'
         identity = {'source_sha256': digest, 'page_no': page_no, 'renderer': renderer,
+                    'coordinate_mapping_version': 'cropbox-unrotated-v2',
                     'scale': scale, 'crop_display_pt': _rect(clip),
                     'rotation': page.rotation, 'cropbox': _rect(page.cropbox)}
         evidence_id = _sha(json.dumps(identity, sort_keys=True, separators=(',', ':')).encode())
         manifest = {
             'schema_version': 'pdf-visual-asset-v1', 'evidence_id': evidence_id,
+            'coordinate_mapping_version': 'cropbox-unrotated-v2',
             'status': 'rendered_provenance_only', 'asset_kind': 'crop' if crop_display_pt is not None else 'page',
             'source_sha256': digest, 'source_byte_count': len(pdf_bytes),
             'page_no': page_no, 'page_count': len(document), 'renderer': renderer,
@@ -154,7 +164,7 @@ def render_pdf_evidence(
             'raster_display_rect_pt': _rect(fitz.Rect(pixmap.x, pixmap.y, pixmap.x + pixmap.width,
                                                    pixmap.y + pixmap.height) * fitz.Matrix(1 / scale, 1 / scale)),
             'coordinate_frame': {'origin': 'top_left', 'unit': 'pt', 'rotation_applied': True},
-            'mappings': {'pdf_user_to_fitz_unrotated': _matrix(page.transformation_matrix),
+            'mappings': {'pdf_user_to_fitz_unrotated': _matrix(pdf_to_unrotated),
                          'fitz_unrotated_to_display': _matrix(page.rotation_matrix),
                          'display_to_asset_px': _matrix(display_to_asset),
                          'asset_px_to_display': _matrix(asset_to_display)},

@@ -1,0 +1,359 @@
+{
+  "created_at": "2026-10-01T07:47:39.181478+00:00",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "scope": "two_randomized_image_only_transport_probes_not_complete_visual_qa_or_benchmark",
+  "gold_or_native_words_sent_as_text": false,
+  "requests_planned": 2,
+  "image_directory": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261001T074739083879Z-8676b3ac",
+  "status": "passed",
+  "cases": [
+    {
+      "id": "random-table-cell",
+      "question": "Read the image table. What integer is in the West row, Units column? Return only the requested JSON.",
+      "gold": {
+        "units": 3578
+      },
+      "prediction": {
+        "units": 3578
+      },
+      "pass": true,
+      "error_type": null,
+      "assets": {
+        "pdf": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261001T074739083879Z-8676b3ac\\random-table-cell.pdf",
+        "png": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261001T074739083879Z-8676b3ac\\random-table-cell.png"
+      },
+      "manifest": {
+        "schema_version": "pdf-visual-asset-v1",
+        "evidence_id": "62c47e3b44cc95aaec9b5712968f95f4436bd684ce1a31b89085157cff254891",
+        "status": "rendered_provenance_only",
+        "asset_kind": "page",
+        "source_sha256": "3fdf7c51ceb5c32ef5545078213322c1622140b9d394b2bf49a246142042a2ea",
+        "source_byte_count": 737964,
+        "page_no": 1,
+        "page_count": 1,
+        "renderer": "PyMuPDF:1.27.2.2:RGB:alpha0:annots1",
+        "render_scale": 1.0,
+        "render_sha256": "4416e80d514ffc8913bd37e4aaabfd9b6475ee18b935a2b64a2c7af0cb8dd342",
+        "png_byte_count": 19116,
+        "size_px": [
+          680,
+          360
+        ],
+        "rotation_degrees": 0,
+        "media_box_pdf_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "crop_box_pdf_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "page_display_rect_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "requested_crop_display_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "raster_display_rect_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "coordinate_frame": {
+          "origin": "top_left",
+          "unit": "pt",
+          "rotation_applied": true
+        },
+        "mappings": {
+          "pdf_user_to_fitz_unrotated": [
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            360.0
+          ],
+          "fitz_unrotated_to_display": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "display_to_asset_px": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "asset_px_to_display": [
+            1.0,
+            -0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "native_words": [],
+        "warnings": [
+          "native_text_is_not_ocr_or_verified_cell_or_chart_fact"
+        ],
+        "budgets": {
+          "max_source_bytes": 20971520,
+          "max_pages": 1000,
+          "max_pixels": 6000000,
+          "max_png_bytes": 12582912,
+          "max_native_words": 20000
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_transport_probe",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "62c47e3b44cc95aaec9b5712968f95f4436bd684ce1a31b89085157cff254891",
+              "source_sha256": "3fdf7c51ceb5c32ef5545078213322c1622140b9d394b2bf49a246142042a2ea",
+              "render_sha256": "4416e80d514ffc8913bd37e4aaabfd9b6475ee18b935a2b64a2c7af0cb8dd342",
+              "page_no": 1,
+              "size_px": [
+                680,
+                360
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 548,
+          "output_tokens": 33,
+          "total_tokens": 581,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 16,
+          "call_index": 1,
+          "latency_ms": 30079.988
+        }
+      ],
+      "audit_dropped_calls": 0
+    },
+    {
+      "id": "random-color-position",
+      "question": "In the image, read the integer in the lower-left card and identify that card background color. Return only the requested JSON.",
+      "gold": {
+        "value": 22813,
+        "color": "green"
+      },
+      "prediction": {
+        "value": 22813,
+        "color": "green"
+      },
+      "pass": true,
+      "error_type": null,
+      "assets": {
+        "pdf": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261001T074739083879Z-8676b3ac\\random-color-position.pdf",
+        "png": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261001T074739083879Z-8676b3ac\\random-color-position.png"
+      },
+      "manifest": {
+        "schema_version": "pdf-visual-asset-v1",
+        "evidence_id": "fbe3d6821dd45538ebfadc6ef5a382922bf3d49fbb10cdb7bc7f31502bd2bfed",
+        "status": "rendered_provenance_only",
+        "asset_kind": "page",
+        "source_sha256": "15757580a34b6f347a00cd288fc4f5d455ccf77020f61c35723b783ffbd0f2ea",
+        "source_byte_count": 759564,
+        "page_no": 1,
+        "page_count": 1,
+        "renderer": "PyMuPDF:1.27.2.2:RGB:alpha0:annots1",
+        "render_scale": 1.0,
+        "render_sha256": "42dbb8d501347e92b02c134f9fab3e2d24e9ba6b3eaee79170cc8670c3d09425",
+        "png_byte_count": 13130,
+        "size_px": [
+          600,
+          420
+        ],
+        "rotation_degrees": 0,
+        "media_box_pdf_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "crop_box_pdf_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "page_display_rect_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "requested_crop_display_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "raster_display_rect_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "coordinate_frame": {
+          "origin": "top_left",
+          "unit": "pt",
+          "rotation_applied": true
+        },
+        "mappings": {
+          "pdf_user_to_fitz_unrotated": [
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            420.0
+          ],
+          "fitz_unrotated_to_display": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "display_to_asset_px": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "asset_px_to_display": [
+            1.0,
+            -0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "native_words": [],
+        "warnings": [
+          "native_text_is_not_ocr_or_verified_cell_or_chart_fact"
+        ],
+        "budgets": {
+          "max_source_bytes": 20971520,
+          "max_pages": 1000,
+          "max_pixels": 6000000,
+          "max_png_bytes": 12582912,
+          "max_native_words": 20000
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_transport_probe",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "fbe3d6821dd45538ebfadc6ef5a382922bf3d49fbb10cdb7bc7f31502bd2bfed",
+              "source_sha256": "15757580a34b6f347a00cd288fc4f5d455ccf77020f61c35723b783ffbd0f2ea",
+              "render_sha256": "42dbb8d501347e92b02c134f9fab3e2d24e9ba6b3eaee79170cc8670c3d09425",
+              "page_no": 1,
+              "size_px": [
+                600,
+                420
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 577,
+          "output_tokens": 42,
+          "total_tokens": 619,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 21,
+          "call_index": 1,
+          "latency_ms": 9790.293
+        }
+      ],
+      "audit_dropped_calls": 0
+    }
+  ],
+  "implementation_sha256": {
+    "tools/probe_visual_model.py": "14b2473bcdde734abcbb7a0dbfdb50d84977077cfbd4c76cf317556f90e35a8d",
+    "ict-track8/backend/responses_client.py": "2e067756105bede0c5403bd2ce74075b3005ec4c795f884471aeeda4251d7a45",
+    "ict-track8/backend/visual_evidence.py": "ebea7f7badb8c8dba0abc8e9fc1653be84a3add74ae37f1c717cc4df3024563a"
+  },
+  "limits": [
+    "Two easy synthetic images do not establish real PDF/table/chart QA accuracy.",
+    "Observed model identity relies on the provider response audit."
+  ],
+  "passed": 2,
+  "attempted": 2,
+  "api_summary": {
+    "calls": 2,
+    "retained_calls": 2,
+    "dropped_calls": 0,
+    "completed_calls": 2,
+    "failed_calls": 0,
+    "tokens": {
+      "input_tokens": {
+        "reported_sum": 1125,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "output_tokens": {
+        "reported_sum": 75,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "total_tokens": {
+        "reported_sum": 1200,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "cached_input_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "reasoning_tokens": {
+        "reported_sum": 37,
+        "unknown_calls": 0,
+        "complete": true
+      }
+    },
+    "api_latency_ms": 39870.281,
+    "usd_cost": null,
+    "pricing_status": "third_party_price_not_supplied_no_estimate"
+  },
+  "wall_ms": 39872.029
+}

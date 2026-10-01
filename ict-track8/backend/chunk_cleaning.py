@@ -1319,6 +1319,23 @@ class DocumentChunker:
         media_box = DocumentChunker._rect_values(getattr(page, "mediabox", None))
         crop_box = DocumentChunker._rect_values(getattr(page, "cropbox", None))
         display_rect = DocumentChunker._rect_values(getattr(page, "rect", None))
+        # With Rotate and a nonzero CropBox, PyMuPDF's matrix can omit the
+        # physical CropBox translation. Native text boxes are unrotated:
+        # obtain their PDF-user transform at Rotate=0, then restore the
+        # original display rotation even if matrix extraction fails.
+        set_rotation = getattr(page, "set_rotation", None)
+        if rotation and callable(set_rotation):
+            try:
+                set_rotation(0)
+                pdf_user_to_unrotated = DocumentChunker._matrix_values(
+                    getattr(page, "transformation_matrix", None)
+                )
+            finally:
+                set_rotation(rotation)
+        else:
+            pdf_user_to_unrotated = DocumentChunker._matrix_values(
+                getattr(page, "transformation_matrix", None)
+            )
         render = None
         if render_scale is not None:
             render = {
@@ -1348,9 +1365,7 @@ class DocumentChunker:
                 "render_pixel_space": {"origin": "top_left", "unit": "px"},
             },
             "mappings": {
-                "pdf_user_to_fitz_unrotated": DocumentChunker._matrix_values(
-                    getattr(page, "transformation_matrix", None)
-                ),
+                "pdf_user_to_fitz_unrotated": pdf_user_to_unrotated,
                 "fitz_unrotated_to_display": DocumentChunker._matrix_values(
                     getattr(page, "rotation_matrix", None)
                 ),
@@ -1366,6 +1381,7 @@ class DocumentChunker:
                 else None,
             },
             "render": render,
+            "coordinate_mapping_version": "cropbox-unrotated-v2",
             "mapping_status": "complete" if display_rect and media_box and crop_box else "partial",
         }
 

@@ -1,0 +1,118 @@
+{
+  "scope": "two_synthetic_local_pixel_native_ocr_development_cases_not_official_accuracy",
+  "external_model_calls": 0,
+  "data_directory": "D:\\ICT8-OfficialDatasets\\diag\\visible-cell-ocr\\20261001T082901931050Z",
+  "results": [
+    {
+      "case": "agreement",
+      "expected": "corroborated",
+      "passed": true,
+      "native_value": "3578",
+      "verification": {
+        "status": "corroborated",
+        "scope": "selected_cell_and_internal_headers_ocr_corroboration",
+        "source_sha256": "74164f92856980943a8de0b6f4933a4d6d1e210ed4050295daaa0fe07ee579ee",
+        "page_no": 1,
+        "render_sha256": "008886243e296a1d588d110cb68c6625d9856fac91afc251b1573d2bede24a73",
+        "fact_id": "7a4e42bc8152614237031dd4dc96d5b5db2d5d7736d0cfb8cc1d05ae7bb0298d:table:0:r:1:c:1",
+        "checks": [
+          {
+            "role": "row_header",
+            "cell_id": "7a4e42bc8152614237031dd4dc96d5b5db2d5d7736d0cfb8cc1d05ae7bb0298d:table:0:r:1:c:0",
+            "crop_sha256": "0b14ccf0c9b85fb59758a70adb85941229a1b90e27b99a6ea1ae27db341937af",
+            "comparison": "nfc_whitespace",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "agrees",
+            "confidence": 0.9986597001552582
+          },
+          {
+            "role": "column_header",
+            "cell_id": "7a4e42bc8152614237031dd4dc96d5b5db2d5d7736d0cfb8cc1d05ae7bb0298d:table:0:r:0:c:1",
+            "crop_sha256": "1e1e9f87a2e8d10af06c31aa145a3329ead200fe14e4199b707d0a6a43d8d1e7",
+            "comparison": "nfc_whitespace_with_year_label_boundary",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "agrees",
+            "confidence": 0.9988126635551453
+          },
+          {
+            "role": "value",
+            "cell_id": "7a4e42bc8152614237031dd4dc96d5b5db2d5d7736d0cfb8cc1d05ae7bb0298d:table:0:r:1:c:1",
+            "crop_sha256": "da5dd77e26d381ddaf0b69eeff98fa18f0383e3b7a96e58920ab42570f028740",
+            "comparison": "nfc_whitespace",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "agrees",
+            "confidence": 0.999627560377121
+          }
+        ],
+        "calculator_input_eligible": false,
+        "reason": null
+      }
+    },
+    {
+      "case": "visible_hidden_conflict",
+      "expected": "conflict",
+      "passed": true,
+      "native_value": "3578",
+      "verification": {
+        "status": "conflict",
+        "scope": "selected_cell_and_internal_headers_ocr_corroboration",
+        "source_sha256": "cc5e90532a8939c11670e5e6ecd951928ab4b41411110cc77bf14eda2873d4f7",
+        "page_no": 1,
+        "render_sha256": "d67b26945bd436c2547dc96e701ab24c7d1f7a2f58b867964af474c4ee24663d",
+        "fact_id": "45f41ba11274d4b718a8c5b332be767bc938f14f3241ab66425601696ddcf8f6:table:0:r:1:c:1",
+        "checks": [
+          {
+            "role": "row_header",
+            "cell_id": "45f41ba11274d4b718a8c5b332be767bc938f14f3241ab66425601696ddcf8f6:table:0:r:1:c:0",
+            "crop_sha256": "0b14ccf0c9b85fb59758a70adb85941229a1b90e27b99a6ea1ae27db341937af",
+            "comparison": "nfc_whitespace",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "agrees",
+            "confidence": 0.9986597001552582
+          },
+          {
+            "role": "column_header",
+            "cell_id": "45f41ba11274d4b718a8c5b332be767bc938f14f3241ab66425601696ddcf8f6:table:0:r:0:c:1",
+            "crop_sha256": "1e1e9f87a2e8d10af06c31aa145a3329ead200fe14e4199b707d0a6a43d8d1e7",
+            "comparison": "nfc_whitespace_with_year_label_boundary",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "agrees",
+            "confidence": 0.9988126635551453
+          },
+          {
+            "role": "value",
+            "cell_id": "45f41ba11274d4b718a8c5b332be767bc938f14f3241ab66425601696ddcf8f6:table:0:r:1:c:1",
+            "crop_sha256": "d71d42867ba42b47fa8b687505e2e4a21599b20c67bf271bb99862701ac3368f",
+            "comparison": "nfc_whitespace",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "conflict",
+            "confidence": 0.9996041804552078,
+            "observed_text": "9999"
+          }
+        ],
+        "calculator_input_eligible": false,
+        "reason": "visible_native_literal_mismatch"
+      }
+    }
+  ],
+  "passed": 2,
+  "total": 2
+}

@@ -1,0 +1,91 @@
+{
+  "scope": "two_synthetic_local_pixel_native_ocr_development_cases_not_official_accuracy",
+  "external_model_calls": 0,
+  "data_directory": "D:\\ICT8-OfficialDatasets\\diag\\visible-cell-ocr\\20261001T082814778191Z",
+  "results": [
+    {
+      "case": "agreement",
+      "expected": "corroborated",
+      "passed": false,
+      "native_value": "3578",
+      "verification": {
+        "status": "conflict",
+        "scope": "selected_cell_and_internal_headers_ocr_corroboration",
+        "source_sha256": "bb75e5ec8a02d730c04145b08b81953969a035949e6eb28ed388781193c956f2",
+        "page_no": 1,
+        "render_sha256": "008886243e296a1d588d110cb68c6625d9856fac91afc251b1573d2bede24a73",
+        "fact_id": "14c0df43ef8aca061aa8566d511f75a150fb527117914dc2cbd55934156c8890:table:0:r:1:c:1",
+        "checks": [
+          {
+            "role": "row_header",
+            "cell_id": "14c0df43ef8aca061aa8566d511f75a150fb527117914dc2cbd55934156c8890:table:0:r:1:c:0",
+            "crop_sha256": "0b14ccf0c9b85fb59758a70adb85941229a1b90e27b99a6ea1ae27db341937af",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "agrees",
+            "confidence": 0.9986597001552582
+          },
+          {
+            "role": "column_header",
+            "cell_id": "14c0df43ef8aca061aa8566d511f75a150fb527117914dc2cbd55934156c8890:table:0:r:0:c:1",
+            "crop_sha256": "1e1e9f87a2e8d10af06c31aa145a3329ead200fe14e4199b707d0a6a43d8d1e7",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "conflict",
+            "confidence": 0.9988126635551453,
+            "observed_text": "2025Actual"
+          }
+        ],
+        "calculator_input_eligible": false,
+        "reason": "visible_native_literal_mismatch"
+      }
+    },
+    {
+      "case": "visible_hidden_conflict",
+      "expected": "conflict",
+      "passed": true,
+      "native_value": "3578",
+      "verification": {
+        "status": "conflict",
+        "scope": "selected_cell_and_internal_headers_ocr_corroboration",
+        "source_sha256": "12ce6ad866cd3ac62861005b857048e7d201c385ad913ceaf7583ab72ff5c03a",
+        "page_no": 1,
+        "render_sha256": "d67b26945bd436c2547dc96e701ab24c7d1f7a2f58b867964af474c4ee24663d",
+        "fact_id": "616651b892eea11271db9e426d9ce8184741e596ae33fc95be8575ed1fb6d8d3:table:0:r:1:c:1",
+        "checks": [
+          {
+            "role": "row_header",
+            "cell_id": "616651b892eea11271db9e426d9ce8184741e596ae33fc95be8575ed1fb6d8d3:table:0:r:1:c:0",
+            "crop_sha256": "0b14ccf0c9b85fb59758a70adb85941229a1b90e27b99a6ea1ae27db341937af",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "agrees",
+            "confidence": 0.9986597001552582
+          },
+          {
+            "role": "column_header",
+            "cell_id": "616651b892eea11271db9e426d9ce8184741e596ae33fc95be8575ed1fb6d8d3:table:0:r:0:c:1",
+            "crop_sha256": "1e1e9f87a2e8d10af06c31aa145a3329ead200fe14e4199b707d0a6a43d8d1e7",
+            "crop_size_px": [
+              222,
+              92
+            ],
+            "status": "conflict",
+            "confidence": 0.9988126635551453,
+            "observed_text": "2025Actual"
+          }
+        ],
+        "calculator_input_eligible": false,
+        "reason": "visible_native_literal_mismatch"
+      }
+    }
+  ],
+  "passed": 1,
+  "total": 2
+}

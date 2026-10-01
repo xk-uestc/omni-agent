@@ -242,6 +242,22 @@ class KnowledgeStore:
         asset.manifest['original_uri'] = f'/api/v1/knowledge/documents/{document_id}/original'
         return asset
 
+    def visual_table_answer(self, document_id, *, question, page_no, expected_source_sha256, crop_display_pt=None):
+        from .visual_tables import extract_pdf_tables
+        from .visual_table_reader import VisualTableReader
+        if self.generator is None:
+            raise ValueError('视觉表格问数需要配置指定真实模型')
+        asset = self.visual_asset(document_id, page_no=page_no, expected_source_sha256=expected_source_sha256,
+                                  crop_display_pt=crop_display_pt)
+        path = self.verify_source(document_id, expected_sha256=expected_source_sha256)
+        tables = extract_pdf_tables(path.read_bytes(), page_no=page_no, expected_source_sha256=expected_source_sha256,
+                                     crop_display_pt=crop_display_pt)
+        result = VisualTableReader(self.generator.client, self.ocr_pipeline).answer(question, asset, tables)
+        self.verify_source(document_id, expected_sha256=expected_source_sha256)
+        result['document_id'] = document_id
+        result['original_uri'] = asset.manifest['original_uri']
+        return result
+
     def records(self):
         with self.connect() as connection:
             rows = connection.execute('SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id) ORDER BY c.rowid').fetchall()

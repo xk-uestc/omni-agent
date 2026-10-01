@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import binascii
 import hmac
+import hashlib
 import os
 import json
 import sqlite3
@@ -12,20 +13,20 @@ import queue
 import threading
 import time
 from pathlib import Path
-from typing import Any
-from urllib.parse import urlsplit
+from typing import Any, Annotated
+from urllib.parse import urlsplit, urlencode, quote
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query, Path as ApiPath
 from fastapi import Request
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from .cross_source import CrossSourceAgent, JsonDocumentRetriever
 from .clarification import ClarificationResolver, ClarificationSelection
 from .document_analysis import DocumentAnalyzer, PageSignal
 from .formula_binding import FormulaBinder, ParameterEvidence
-from .knowledge_store import KnowledgeStore, SourceIntegrityError
+from .knowledge_store import KnowledgeStore, SourceIntegrityError, SourceRevisionError
 from .dependency_agent import DependencyAgent
 from .image_quality import ImageEnhancer, ImageQualityAnalyzer
 from .pdf_ingest import PdfIngestor
@@ -330,6 +331,20 @@ class KnowledgeQueryRequest(BaseModel):
     top_k: int = Field(default=4, ge=1, le=10)
 
 
+class VisualEvidenceRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    page_no: int = Field(strict=True, ge=1, le=1000)
+    expected_source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    crop_display_pt: tuple[Annotated[float, Field(strict=True, allow_inf_nan=False)],
+                           Annotated[float, Field(strict=True, allow_inf_nan=False)],
+                           Annotated[float, Field(strict=True, allow_inf_nan=False)],
+                           Annotated[float, Field(strict=True, allow_inf_nan=False)]] | None = None
+
+
+class VisualTableQueryRequest(VisualEvidenceRequest):
+    question: str = Field(min_length=1, max_length=1000)
+
+
 class DependencyQueryRequest(BaseModel):
     tasks: list[dict[str, Any]] = Field(min_length=1, max_length=16)
 
@@ -510,6 +525,80 @@ def knowledge_query(request: KnowledgeQueryRequest):
         raise HTTPException(status_code=409, detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+def _registered_visual_asset(document_id, request):
+    if not DOCUMENT_PARSE_SLOTS.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail={'code': 'visual_render_busy',
+                                                     'message': '文档解析并发已满，请稍后重试'})
+    try:
+        return knowledge_store.visual_asset(document_id, page_no=request.page_no,
+            expected_source_sha256=request.expected_source_sha256, crop_display_pt=request.crop_display_pt)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail='文档不存在') from exc
+    except SourceRevisionError as exc:
+        raise HTTPException(status_code=409, detail={'code': 'evidence_source_changed', 'message': str(exc)}) from exc
+    except SourceIntegrityError as exc:
+        raise HTTPException(status_code=409, detail={'code': 'evidence_integrity_failed', 'message': str(exc)}) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={'code': 'invalid_visual_evidence', 'message': str(exc)[:200]}) from exc
+    finally:
+        DOCUMENT_PARSE_SLOTS.release()
+
+
+@app.post('/api/v1/knowledge/documents/{document_id}/visual-evidence')
+def visual_evidence_manifest(document_id: str, request: VisualEvidenceRequest):
+    asset = _registered_visual_asset(document_id, request)
+    manifest = dict(asset.manifest)
+    parameters = {'source_sha256': request.expected_source_sha256, 'render_sha256': manifest['render_sha256']}
+    if request.crop_display_pt is not None:
+        parameters['crop_display_pt'] = json.dumps(request.crop_display_pt, separators=(',', ':'))
+    manifest['png_uri'] = (f'/api/v1/knowledge/documents/{quote(document_id, safe="")}/pages/{request.page_no}/visual.png?'
+                           + urlencode(parameters))
+    return manifest
+
+
+@app.post('/api/v1/knowledge/documents/{document_id}/visual-table-query')
+def visual_table_query(document_id: str, request: VisualTableQueryRequest):
+    from .responses_client import GenerationError
+    if knowledge_store.generator is None:
+        raise HTTPException(status_code=503, detail={'code': 'visual_model_unconfigured', 'message': '尚未配置指定视觉模型'})
+    if not DOCUMENT_PARSE_SLOTS.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail={'code': 'visual_render_busy', 'message': '视觉处理并发已满'})
+    try:
+        return knowledge_store.visual_table_answer(document_id, question=request.question, page_no=request.page_no,
+            expected_source_sha256=request.expected_source_sha256, crop_display_pt=request.crop_display_pt)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail='文档不存在') from exc
+    except SourceIntegrityError as exc:
+        raise HTTPException(status_code=409, detail={'code': 'evidence_integrity_failed', 'message': str(exc)}) from exc
+    except GenerationError as exc:
+        raise HTTPException(status_code=503, detail={'code': 'visual_model_unavailable', 'message': '视觉模型未返回可核验选择'}) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={'code': 'invalid_visual_query', 'message': str(exc)[:200]}) from exc
+    finally:
+        DOCUMENT_PARSE_SLOTS.release()
+
+
+@app.get('/api/v1/knowledge/documents/{document_id}/pages/{page_no}/visual.png')
+def visual_evidence_png(document_id: str, page_no: Annotated[int, ApiPath(ge=1, le=1000)],
+                        source_sha256: Annotated[str, Query(pattern=r'^[a-f0-9]{64}$')],
+                        render_sha256: Annotated[str, Query(pattern=r'^[a-f0-9]{64}$')],
+                        crop_display_pt: Annotated[str | None, Query(max_length=160)] = None):
+    try:
+        request = VisualEvidenceRequest(page_no=page_no, expected_source_sha256=source_sha256,
+            crop_display_pt=json.loads(crop_display_pt) if crop_display_pt is not None else None)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail={'code': 'invalid_visual_parameters',
+                                                     'message': '页码、SHA256或裁剪坐标无效'}) from exc
+    asset = _registered_visual_asset(document_id, request)
+    if hashlib.sha256(asset.png_bytes).hexdigest() != render_sha256 or asset.manifest['render_sha256'] != render_sha256:
+        raise HTTPException(status_code=409, detail={'code': 'visual_render_changed',
+                                                     'message': '页图与证据清单哈希不一致，请重新取得清单'})
+    return Response(content=asset.png_bytes, media_type='image/png', headers={
+        'Cache-Control': 'no-store', 'ETag': f'"{render_sha256}"',
+        'X-Source-SHA256': source_sha256, 'X-Render-SHA256': render_sha256,
+        'X-Content-Type-Options': 'nosniff'})
 
 
 @app.post("/api/v1/fusion/execute")

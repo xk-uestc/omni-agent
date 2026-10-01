@@ -2,10 +2,14 @@
 from __future__ import annotations
 
 import json
+import base64
+import hashlib
+from io import BytesIO
 import threading
 import re
 import time
 from collections import deque
+from copy import deepcopy
 
 import requests
 from urllib.parse import urlsplit
@@ -43,11 +47,11 @@ class StructuredResponses:
 
     @property
     def audit(self):
-        return dict(getattr(self._local, 'audit', {}))
+        return deepcopy(getattr(self._local, 'audit', {}))
 
     @property
     def audit_history(self):
-        return [dict(item) for item in getattr(self._local, 'history', ())]
+        return [deepcopy(item) for item in getattr(self._local, 'history', ())]
 
     @property
     def audit_dropped_count(self):
@@ -71,7 +75,47 @@ class StructuredResponses:
     def token_count(value):
         return value if type(value) is int and value >= 0 else None
 
-    def generate(self, instructions, context, schema, *, name='answer', max_tokens=4000):
+    @staticmethod
+    def _image_content(image_attachments):
+        from .visual_evidence import VisualAsset
+        from PIL import Image
+        if not isinstance(image_attachments, (list, tuple)) or not 1 <= len(image_attachments) <= 2:
+            raise GenerationError('视觉输入必须包含1至2份本地证据资产')
+        content, descriptors, total = [], [], 0
+        for asset in image_attachments:
+            if not isinstance(asset, VisualAsset) or not isinstance(asset.png_bytes, bytes):
+                raise GenerationError('视觉输入只能使用服务器生成的PNG资产')
+            raw, manifest = asset.png_bytes, asset.manifest
+            total += len(raw)
+            if not raw or len(raw) > 12 * 1024 * 1024 or total > 16 * 1024 * 1024:
+                raise GenerationError('视觉输入超过字节预算')
+            if not isinstance(manifest, dict) or manifest.get('schema_version') != 'pdf-visual-asset-v1':
+                raise GenerationError('视觉证据契约无效')
+            for field in ('evidence_id', 'source_sha256', 'render_sha256'):
+                if not isinstance(manifest.get(field), str) or not re.fullmatch('[a-f0-9]{64}', manifest[field]):
+                    raise GenerationError('视觉证据标识无效')
+            if (hashlib.sha256(raw).hexdigest() != manifest['render_sha256']
+                    or manifest.get('png_byte_count') != len(raw)
+                    or type(manifest.get('page_no')) is not int or manifest['page_no'] < 1):
+                raise GenerationError('视觉证据摘要或页码不匹配')
+            try:
+                with Image.open(BytesIO(raw)) as picture:
+                    width, height = picture.size
+                    if (picture.format != 'PNG' or width * height > 6_000_000
+                            or manifest.get('size_px') != [width, height]):
+                        raise GenerationError('视觉输入尺寸或格式超出契约')
+                    picture.verify()
+            except (OSError, ValueError, Image.DecompressionBombError) as exc:
+                raise GenerationError('视觉输入PNG完整性无效') from exc
+            descriptor = {key: manifest[key] for key in ('evidence_id', 'source_sha256', 'render_sha256', 'page_no', 'size_px')}
+            descriptors.append(descriptor)
+            # Native text is deliberately not sent here. The image must be
+            # independently visible, including for image-only capability probes.
+            content.extend([{'type': 'input_text', 'text': json.dumps({'image_evidence': descriptor})},
+                            {'type': 'input_image', 'image_url': 'data:image/png;base64,' + base64.b64encode(raw).decode('ascii'), 'detail': 'high'}])
+        return content, descriptors
+
+    def generate(self, instructions, context, schema, *, name='answer', max_tokens=4000, image_attachments=None):
         self._local.audit = {}
         started = time.perf_counter()
         audit = {'provider': 'responses', 'model': self.model, 'reasoning': self.reasoning,
@@ -80,6 +124,17 @@ class StructuredResponses:
                 'max_output_tokens': max_tokens, 'instructions': instructions,
                 'input': json.dumps(context, ensure_ascii=False),
                 'text': {'format': {'type': 'json_schema', 'name': name, 'strict': True, 'schema': schema}}}
+        if image_attachments is not None:
+            try:
+                image_content, descriptors = self._image_content(image_attachments)
+            except GenerationError:
+                audit['input_validation'] = 'visual_asset_rejected'
+                self._record(audit, started)
+                raise
+            body['input'] = [{'role': 'user', 'content': [
+                {'type': 'input_text', 'text': json.dumps(context, ensure_ascii=False)}, *image_content]}]
+            audit['image_evidence'] = descriptors
+            audit['image_count'] = len(descriptors)
         try:
             response = self.session.post(self.url, json=body,
                 headers={**self.http_headers, 'Authorization': 'Bearer ' + self.token, 'Content-Type': 'application/json'},

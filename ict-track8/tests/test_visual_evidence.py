@@ -50,6 +50,21 @@ def test_original_page_words_rotation_cropbox_and_round_trip(rotation, crop):
         assert word['fully_contained_in_crop']
 
 
+@pytest.mark.parametrize('rotation', [0, 90, 180, 270])
+def test_pdf_user_coordinates_are_same_original_location_despite_crop_and_rotation(rotation):
+    # Compare against the uncropped physical page, not merely two mutually
+    # inverse matrices (which can both have the same incorrect translation).
+    with fitz.open(stream=pdf_bytes(), filetype='pdf') as document:
+        expected = []
+        for word in document[0].get_text('words', sort=False):
+            x0, y0, x1, y1 = word[:4]
+            expected.append([x0, 300 - y1, x1, 300 - y0])
+    manifest = render_pdf_evidence(pdf_bytes(rotation, True), page_no=1).manifest
+    assert len(expected) == len(manifest['native_words'])
+    for actual, position in zip(manifest['native_words'], expected):
+        assert actual['bbox_pdf_user_pt'] == pytest.approx(position, abs=0.001)
+
+
 def test_fractional_crop_maps_raster_origin_not_assumed_crop_offset():
     raw = pdf_bytes()
     asset = render_pdf_evidence(raw, page_no=1, crop_display_pt=[79.25, 85.25, 145.75, 104.75], render_scale=1.5)

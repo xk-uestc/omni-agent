@@ -1,0 +1,142 @@
+{
+  "scope": "one_synthetic_native_grid_model_selection_with_server_value_not_official_accuracy",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "question": "What is West 2025 Units?",
+  "expected": {
+    "row_header": "West",
+    "column_header_path": [
+      "2025 Units"
+    ],
+    "raw_value": "6635"
+  },
+  "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+  "data_directory": "D:\\ICT8-OfficialDatasets\\diag\\visual-table-lookup\\20261001T080201900680Z",
+  "requests_planned": 1,
+  "limits": [
+    "Native text and ruling-grid provenance is not independent visible OCR verification.",
+    "One synthetic lookup does not establish public PDF/chart QA accuracy."
+  ],
+  "result": {
+    "status": "ok",
+    "answer_mode": "visual_grid_lookup",
+    "answer": "West / 2025 Units: 6635",
+    "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+    "page_no": 1,
+    "image_evidence_id": "0f6c8fde507bb33c8246a740d0b3eab1fb382de07e41683d8a6cf8b6afdea10f",
+    "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+    "validation_scope": "native_grid_layout_not_visible_ocr_or_general_semantic_truth",
+    "clarification_code": null,
+    "fact": {
+      "fact_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+      "fact_type": "native_grid_cell_literal",
+      "status": "layout_verified",
+      "validation_scope": "native_text_layer_not_visible_ocr",
+      "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+      "evidence_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98",
+      "page_no": 1,
+      "table_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0",
+      "fact_key": {
+        "table_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0",
+        "row_index": 1,
+        "column_index": 1,
+        "row_header": "West",
+        "column_header_path": [
+          "2025 Units"
+        ]
+      },
+      "row_header_cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:0",
+      "column_header_cell_ids": [
+        "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:0:c:1"
+      ],
+      "value_cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+      "raw_value": "6635",
+      "row_header_word_ids": [
+        "page:1:word:5"
+      ],
+      "column_header_word_ids": [
+        "page:1:word:1",
+        "page:1:word:2"
+      ],
+      "value_word_ids": [
+        "page:1:word:6"
+      ],
+      "bbox_display_pt": [
+        150.0,
+        85.0,
+        250.0,
+        120.0
+      ],
+      "unit": "unknown",
+      "scale": null,
+      "numeric_validation": "not_parsed_or_unit_bound"
+    },
+    "generation_audit": {
+      "provider": "responses",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "operation": "visual_table_selection",
+      "http_status": 200,
+      "status": "completed",
+      "model_verified": true,
+      "image_evidence": [
+        {
+          "evidence_id": "0f6c8fde507bb33c8246a740d0b3eab1fb382de07e41683d8a6cf8b6afdea10f",
+          "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+          "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+          "page_no": 1,
+          "size_px": [
+            860,
+            560
+          ]
+        }
+      ],
+      "image_count": 1,
+      "response_model": "gpt-6-luna",
+      "input_tokens": 943,
+      "output_tokens": 72,
+      "total_tokens": 1015,
+      "cached_input_tokens": 0,
+      "reasoning_tokens": 0,
+      "call_index": 1,
+      "latency_ms": 12678.156
+    },
+    "value_source": "server_extracted_literal_grid_cell",
+    "calculator_input_eligible": false,
+    "document_id": "grid",
+    "original_uri": "/api/v1/knowledge/documents/grid/original"
+  },
+  "pass": true,
+  "api_audits": [
+    {
+      "provider": "responses",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "operation": "visual_table_selection",
+      "http_status": 200,
+      "status": "completed",
+      "model_verified": true,
+      "image_evidence": [
+        {
+          "evidence_id": "0f6c8fde507bb33c8246a740d0b3eab1fb382de07e41683d8a6cf8b6afdea10f",
+          "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+          "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+          "page_no": 1,
+          "size_px": [
+            860,
+            560
+          ]
+        }
+      ],
+      "image_count": 1,
+      "response_model": "gpt-6-luna",
+      "input_tokens": 943,
+      "output_tokens": 72,
+      "total_tokens": 1015,
+      "cached_input_tokens": 0,
+      "reasoning_tokens": 0,
+      "call_index": 1,
+      "latency_ms": 12678.156
+    }
+  ]
+}
