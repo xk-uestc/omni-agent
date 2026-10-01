@@ -2,7 +2,9 @@
 
 本项目针对《中国电子杯》第三届高校 ICT 产教融合创新大赛赛题八：多模态数据驱动的可解释精准问数/问答智能体。
 
-这是 E 盘独立实现。原睿视清源生产项目不被修改，也不是本项目运行依赖。已有 NL2SQL 连同最新未提交的优化整体迁移；适合题目的文档解析、证据定位与安全执行组件保留，后续能力在此仓库实现。
+这是 D 盘独立实现，当前根目录为 `D:\ICT8-OmniAgent`。原睿视清源生产项目不被修改，也不是本项目运行依赖。已有 NL2SQL 连同最新未提交的优化整体迁移；适合题目的文档解析、证据定位与安全执行组件保留，后续能力在此仓库实现。
+
+2026-10-01 从 E 盘完整迁移了 1,407 个文件（534,638,727 字节），逐文件 SHA-256、Git HEAD 和未提交状态均一致。旧 E 盘目录保留为迁移快照；历史报告的旧路径不改写。官方大型数据位于 `D:\ICT8-OfficialDatasets`，历史交付包和迁移校验位于 `D:\ICT8-Backups`。
 
 ## 目录
 
@@ -23,7 +25,7 @@
 ## 快速启动
 
 ```powershell
-cd E:\ICT8-OmniAgent
+cd D:\ICT8-OmniAgent
 python -m pip install -r ict-track8/requirements.txt
 python tools/run_server.py --port 8030
 ```
@@ -44,17 +46,21 @@ python tools/evaluate_model.py --workers 3 --case-ids cross-turn-2 sql-turn-5 --
 python tools/run_server.py --with-model --port 8030
 ```
 
-当前真实预检HTTP200，44题端到端开发验收首轮11/44、第二轮32/44，分别见 `docs/REAL_MODEL_FIRST_RUN_20261001.json` 和 `docs/REAL_MODEL_REPORT.json`。第二轮包含服务端计划规范化与安全门，并非裸模型准确率或官方/独立盲测成绩。SQL执行值19/19匹配，但要求模型路由等完整契约后仅16/19整题通过；13个文档题通过8个，4个摘录回退不计生成通过。83次API调用均completed，网关上报443785 tokens；API成功不等于答案正确，未提供第三方单价，不估费用。
+当前真实预检HTTP200。44题端到端合成开发验收已完成第三轮，见 `docs/REAL_MODEL_THIRD_RUN_20261001.json`：**38/44**，文档12/13、SQL17/19、公式3/3、预测3/3、文档→SQL1/1、SQL→文档0/1、阈值0/2、政策1/1、澄清1/1。87次API均completed，网关上报463367 tokens（输入447071、输出16296）。成绩包含模型路由、服务端计划规范化和安全门；不是裸模型准确率、官方成绩或独立盲测。调用成功不等于答案正确，未提供第三方单价，不估费用。
 
-后续修复进行了独立定向验收：`docs/REAL_MODEL_TARGETED_REPORT.json`为15/19，其中第二轮所选12个失败项9个通过，自动补入的7个前置轮6个通过。38次API调用均completed，上报195833 tokens；3路并行约3分15秒。仍有4项未过：qa-07/qa-08自由改写无法通过有界支持守卫，保留原文摘录；政策版本比较仍选文档问答路线；预测追问的SQL展示标签与下游引用不一致。本轮未重跑全44题，不能将分批结果拼成当前全量准确率或44/44。第二轮完整证据另原样保存在`docs/REAL_MODEL_SECOND_RUN_20261001.json`。
+历史首轮11/44、第二轮32/44和定向15/19分别保留在 `docs/REAL_MODEL_FIRST_RUN_20261001.json`、`docs/REAL_MODEL_SECOND_RUN_20261001.json`、`docs/REAL_MODEL_TARGETED_REPORT.json`，不合并分批成绩。第三轮实测早于最新Schema限定、局部计数、单位契约与单源路由补丁；这些补丁不能据此宣称已提高当前全量真实成绩。
+
+新增五轮业务Schema在路由补丁后严格真实回放 **5/5**，见 `docs/NEW_MULTITURN_ROUTER_REPLAY_20261001.json`：11次API全部completed、0失败/0丢失，25030 tokens，查询总耗时152.572秒；原始SQL、来源、无旧过滤继承与退款公式600均核对通过。首轮0/5、第二轮2/5原样保留，输入及gold不改。这个已曝光自建开发五轮证明该代表性闭环，不是未知盲测，不替代全44题38/44。Chinook第二轮严格模型12/12，但仅10个非空开发题，另外2个为空结果边界，详见下方数据验收。
 
 真实HTTP验收另见`docs/HTTP_MODEL_ACCEPTANCE_REPORT.json`，2/2通过：SSE查询2025年华东销售额29584，标准硬件保修回答有真实生成及引用；网页人工操作三源预测实际返回33134.08。它们是局部接口/交互证据，不替代完整题集或吞吐验收。
 
-定向真实评测早于最终文档问题保护补丁：单源SQL/document默认保留用户原问题，SQL只有经服务端验证的上下文合并才继承，防止同类跨主题问题被模型自由改写为另一主题。该最终补丁已通过真实KnowledgeStore本地回归，没有再调用API；定向分数不表示最终补丁已重新跑真实题集。两例实际DOM/结果证据见`docs/BROWSER_MODEL_ACCEPTANCE_20261001.json`。
+单源SQL/document默认保留用户原问题，SQL只有经服务端验证的上下文合并才继承，防止同类跨主题问题被模型自由改写为另一主题。补丁时序与真实题集证据分别记录，不把本地回归当作最新真实模型复测。两例实际DOM/结果证据见 `docs/BROWSER_MODEL_ACCEPTANCE_20261001.json`。
 
 `--preview`不读取凭据或联网；`--full`内置单次预检，401/403停止后续题。44题覆盖问数、生成问答、五类跨源、连续五轮及澄清回填，SQL内部也接真实模型。默认演示使用规则和原文摘录，不把回退当作模型通过。网关返回的model字段核对只验证服务端声明，不能证明其底层模型身份。
 
 `--workers 3`只并行独立会话，同一会话仍依次执行。`--case-ids`可用空格或逗号分隔；选择某一多轮题会自动纳入该会话全部前置轮，保留原始题序与历史计数，未知ID在读取凭据前拒绝。`--output`指定项目docs内的新JSON报告，拒绝覆盖已存在历史文件。定向报告显式标记所选题与前置题，不代替全量报告。
+
+真实模型HTTP规模采样见 `docs/MODEL_HTTP_SCALE_FIRST_RUN_20261001.json`：1千/1万/10万行、并发1/2/4，共24/24请求通过，并采样服务器RSS。它只测合成单表索引聚合的真实路由与SQL规划，结果解释由本地序列化，没有额外模型答案生成；未测文档页数/OCR规模，usage为可见下界，不代表最大吞吐或全量模型能力。
 
 ### 可重现评测与打包
 
@@ -62,6 +68,12 @@ python tools/run_server.py --with-model --port 8030
 python tools/create_sample_corpus.py --ingest
 python tools/evaluate_independent.py --dense
 python tools/evaluate_chinook.py
+python tools/evaluate_chinook.py --model --output docs/CHINOOK_MODEL_NEW_REPLAY.json
+python tools/fetch_adventureworks.py
+python tools/evaluate_adventureworks.py --output docs/ADVENTUREWORKS_NEW_REPLAY.json
+python tools/fetch_ohr_bench.py --restore-frozen
+python tools/evaluate_ohr_bench.py --output docs/OHR_BENCH_LOCAL_NEW_REPLAY.json
+python tools/evaluate_ohr_bench.py --with-model --output docs/OHR_BENCH_MODEL_NEW_REPLAY.json
 python tools/evaluate_schema_scale.py
 python tools/evaluate_domain_transfer.py
 python tools/evaluate_heldout_finance.py --output docs/HELDOUT_FINANCE_REPLAY.json
@@ -78,14 +90,16 @@ python ict-track8/scripts/verify_package.py dist/ict8-complete.zip
 
 Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产包包含公开模型权重、Chinook及许可；源码包可省略 `--with-public-assets` 并根据公开下载清单恢复资产。依赖仍需按requirements安装，真实模型密钥单独配置。开发题成绩不代表官方未知题准确率。
 
+官方原始大型资产放在 `D:\ICT8-OfficialDatasets`，不进入程序ZIP。恢复及口径见 [官方数据工程验收](docs/OFFICIAL_DATASET_ACCEPTANCE.md)：Chinook第二轮严格模型12/12（10非空+2空结果边界）；微软官方AdventureWorks CSV三表SQLite移植4/6，另2题19119组被100行上限截断；OHR-Bench冻结12原题/7原PDF的资源受限pilot只有1个实质回答、9个拒答、2个摘录回退，EM为0/12。不能把已接入数据等同于效果达标。OHR现有manifest须用 `--restore-frozen` 恢复，禁止重新选题冒充同一实验；原PDF研究用途及版权条件保留。
+
 `ict-track8/requirements-tested.txt`记录现场metadata核对的17项直接依赖版本；`ict-track8/ENVIRONMENT.json`记录CPython3.12.10、Windows11及复现边界，两者均包含在程序包。这不是完整传递依赖lock、跨平台wheel锁或离线安装包，也未证明安装来源或全新虚拟环境可复现。默认OCR为RapidOCR；可选Tesseract依赖移至`ict-track8/requirements-tesseract.txt`，还需系统二进制与语言数据，当前未安装或验收。
 
 本轮只更新程序，不制作PPT/Word/PDF；历史材料仍在本地delivery，程序包通过--program-only排除。运行安装以ict-track8/requirements.txt为准。
-最终版本完整本地回归706 passed、0 failed、1条Starlette弃用告警；中文日期角色、Schema主体覆盖及既有模型门控专项170项通过。第五类完成带来源事实与Excel阈值的实际比较。OpenCC繁简检索、文字质量告警和确认校正预览的15组开发审计通过；有限错字词表，不是通用中文纠错。实际SQLite更新与跨源中途变化审计各5/5：WAL更新刷新缓存，多步SQL固定同一读取快照，文档版本变化停止计算。无EXIF扫描件方向/倾斜、正向文字顺序和网页校正预览的图片/PDF/Word等13项开发审计通过；方向证据不足不猜测，原文件保留。
+已完成的最新完整本地回归为 **860 passed、0 failed、1条Starlette弃用告警，39.78秒（报告脚本总耗时41.656秒）**，见 `docs/LOCAL_REGRESSION_REPORT.json`；包含最新单源路由补丁，完整本地回归已通过。这是本地功能契约成绩，不是模型准确率。第五类完成带来源事实与Excel阈值的实际比较。OpenCC繁简检索、文字质量告警和确认校正预览的15组开发审计通过；有限错字词表，不是通用中文纠错。实际SQLite更新与跨源中途变化审计各5/5：WAL更新刷新缓存，多步SQL固定同一读取快照，文档版本变化停止计算。无EXIF扫描件方向/倾斜、正向文字顺序和网页校正预览的图片/PDF/Word等13项开发审计通过；方向证据不足不猜测，原文件保留。
 
 程序包新目录验收见压缩包旁`.smoke.json`；历史方向包29/29，本轮最终包需核对旁报告。上述本地回归不是全新依赖环境安装、最终ZIP解包或真实模型全量通过的证明。
 
-新增订阅账单Schema审计首轮0/12；修复通用中文日期识别和真实选定表名覆盖后9/11有效题通过，12题总尝试，HF11因金标并列排序口径错误排除可靠正确率分母。字段与数值均核对，初测保留；后测属于已曝光题的开发回归，不是官方或严格独立盲测。未知主题词继续澄清，数值时间戳过滤可用，但月/年日历分组明确澄清，避免NULL分组静默错误。真实模型第二轮12项失败后进行了上述定向修复，最新定向仍有4项失败；未知任务泛化、当前全量真实准确率与真实模型吞吐待继续验收。
+新增订阅账单Schema审计首轮0/12；修复通用中文日期识别和真实选定表名覆盖后9/11有效题通过，12题总尝试，HF11因金标并列排序口径错误排除可靠正确率分母。字段与数值均核对，初测保留；后测属于已曝光题的开发回归，不是官方或严格独立盲测。未知主题词继续澄清，数值时间戳过滤可用，但月/年日历分组明确澄清，避免NULL分组静默错误。第三轮44题仍有6个整题失败；新Schema路由补丁后5/5只属于该开发回放，未知任务泛化、最新补丁后的全量44题真实成绩和最大端到端模型吞吐仍需验收。
 
 ```powershell
 cd ict-track8

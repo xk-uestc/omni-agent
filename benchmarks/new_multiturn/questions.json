@@ -1,0 +1,44 @@
+{
+  "scope": "authored_frozen_new_schema_five_turn_audit_not_public_or_blind_holdout",
+  "few_shot_examples": 0,
+  "domain_alias_rules": 0,
+  "cases": [
+    {
+      "id": "new-turn-1", "kind": "sql", "session_id": "new-schema-five", "context_turns": 0,
+      "question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Orders WHERE Department='研发部' AND ApprovedDate>='2025-01-01' AND ApprovedDate<'2026-01-01'",
+      "metric": {"table":"Orders","column":"ApprovedAmount","function":"SUM"}
+    },
+    {
+      "id": "new-turn-2", "kind": "sql", "session_id": "new-schema-five", "context_turns": 1,
+      "question": "那支持部呢？",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Orders WHERE Department='支持部' AND ApprovedDate>='2025-01-01' AND ApprovedDate<'2026-01-01'",
+      "metric": {"table":"Orders","column":"ApprovedAmount","function":"SUM"}
+    },
+    {
+      "id": "new-turn-3", "kind": "sql_to_document", "session_id": "new-schema-five", "context_turns": 2,
+      "question": "先从Orders按Department查询2025年ApprovedAmount合计最高的部门，再根据查出的部门检索该部门采购审批规则，并保留来源。",
+      "gold_sql": "SELECT Department,SUM(ApprovedAmount) FROM Orders WHERE ApprovedDate>='2025-01-01' AND ApprovedDate<'2026-01-01' GROUP BY Department ORDER BY SUM(ApprovedAmount) DESC LIMIT 1",
+      "sources": ["new-approval-support"], "contains": ["支持部", "双人审批"]
+    },
+    {
+      "id": "new-turn-4", "kind": "sql", "session_id": "new-schema-five", "context_turns": 3,
+      "question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+      "gold_sql": "SELECT SUM(RefundedAmount) FROM WarrantyRequests WHERE RequestDate>='2025-01-01' AND RequestDate<'2026-01-01'",
+      "metric": {"table":"WarrantyRequests","column":"RefundedAmount","function":"SUM"},
+      "forbidden_filter_columns": ["Department"]
+    },
+    {
+      "id": "new-turn-5", "kind": "formula", "session_id": "new-schema-five", "context_turns": 4,
+      "question": "按退款核算说明中的每笔退款核算额公式，用WarrantyRequests中2025年的RefundedAmount合计和RequestId记录计数计算每笔退款核算额，不沿用采购部门筛选。",
+      "gold_sql": "SELECT SUM(RefundedAmount)*1.0/COUNT(RequestId) FROM WarrantyRequests WHERE RequestDate>='2025-01-01' AND RequestDate<'2026-01-01'",
+      "expected_formula_document": "new-refund-calculation",
+      "expected_parameters": ["退款总额", "退款记录数"]
+    }
+  ],
+  "documents": [
+    {"id":"new-approval-support","title":"支持部采购审批规则","file":"approval-support.md"},
+    {"id":"new-approval-research","title":"研发部采购审批规则","file":"approval-research.md"},
+    {"id":"new-refund-calculation","title":"退款核算说明","file":"refund-calculation.md"}
+  ]
+}

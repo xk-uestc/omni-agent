@@ -1,4 +1,4 @@
-param([string]$ProjectRoot = 'E:\ICT8-OmniAgent')
+param([string]$ProjectRoot = (Split-Path -Parent $PSScriptRoot))
 $ErrorActionPreference = 'Stop'
 $results = @()
 foreach ($source in Get-ChildItem -LiteralPath (Join-Path $ProjectRoot 'delivery') -Filter '*.docx') {

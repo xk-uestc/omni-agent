@@ -1,0 +1,1356 @@
+{
+  "created_at": "2026-10-01T06:02:32.144339+00:00",
+  "scope": "authored_development_queries_on_microsoft_official_csv_sqlite_port_not_native_postgres_or_official_question_score",
+  "model": null,
+  "model_api_calls": 0,
+  "few_shot_examples": 0,
+  "domain_alias_rules": 0,
+  "dataset_manifest_sha256": "0e9f0df781f64b173addef00f71ea71da589e782631203e71036d2f14de716d2",
+  "input_frozen": {
+    "frozen_at": "2026-10-01",
+    "questions_sha256": "bf97202958ef41ee287d1bed9b6776a48630dd458103ae6ca4752fe2b726dbb8",
+    "source_repository": "https://github.com/microsoft/sql-server-samples",
+    "source_commit": "1346b94fab23bfa7edfdb32afae52282ddc3bfaa",
+    "license": "MIT",
+    "dataset_directory": "D:/ICT8-OfficialDatasets/adventureworks",
+    "dataset_manifest": "D:/ICT8-OfficialDatasets/adventureworks/MANIFEST.json",
+    "scope": "official_original_csv_sqlite_subset_port_not_native_adventureworks_postgres_or_official_question_score",
+    "selected_tables": [
+      "SalesTerritory",
+      "Customer",
+      "SalesOrderHeader"
+    ],
+    "recommended_postgres_image": {
+      "name": "chriseaton/adventureworks:postgres",
+      "manifest_digest": "sha256:07e46e828d40cb2ce728025662aae68c289a811244fd9297d189a7c42c3598f5",
+      "amd64_download_bytes": 244774960,
+      "source": "https://github.com/chriseaton/docker-adventureworks",
+      "source_license": "MIT",
+      "boundary": "Third-party PostgreSQL16 port recommended by contest; not Microsoft native PostgreSQL release. Not downloaded or tested in this SQLite audit."
+    }
+  },
+  "source_commit": "1346b94fab23bfa7edfdb32afae52282ddc3bfaa",
+  "dataset_statistics": {
+    "SalesTerritory": {
+      "rows": 10,
+      "fields": 10,
+      "raw_decimal_sums": {
+        "SalesYTD": "52751209.9534",
+        "SalesLastYear": "32715355.4353",
+        "CostYTD": "0.0000",
+        "CostLastYear": "0.0000"
+      }
+    },
+    "Customer": {
+      "rows": 19820,
+      "fields": 7,
+      "raw_decimal_sums": {}
+    },
+    "SalesOrderHeader": {
+      "rows": 31465,
+      "fields": 26,
+      "raw_decimal_sums": {
+        "SubTotal": "109846381.4039",
+        "TaxAmt": "10186974.4602",
+        "Freight": "3183430.2518",
+        "TotalDue": "123216786.1159"
+      }
+    }
+  },
+  "database_sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+  "passed": 0,
+  "total": 6,
+  "wall_ms": 263.189,
+  "cases": [
+    {
+      "id": "aw-01",
+      "question": "按SalesTerritory的Name统计Customer的CustomerID记录数",
+      "gold_sql": "SELECT t.Name,COUNT(c.CustomerID) FROM Customer c JOIN SalesTerritory t ON c.TerritoryID=t.TerritoryID GROUP BY t.Name",
+      "metric": {
+        "table": "Customer",
+        "column": "CustomerID",
+        "function": "COUNT"
+      },
+      "dimensions": [
+        {
+          "table": "SalesTerritory",
+          "column": "Name"
+        }
+      ],
+      "pass": false,
+      "checks": {
+        "status": false,
+        "physical_projection": false,
+        "complete_execution_result": false,
+        "actual_join": false,
+        "no_api_or_domain_catalog": true
+      },
+      "expected": {
+        "count": 10,
+        "sample_first_20": [
+          [
+            "Australia",
+            3665
+          ],
+          [
+            "Canada",
+            1791
+          ],
+          [
+            "Central",
+            132
+          ],
+          [
+            "France",
+            1884
+          ],
+          [
+            "Germany",
+            1852
+          ],
+          [
+            "Northeast",
+            113
+          ],
+          [
+            "Northwest",
+            3520
+          ],
+          [
+            "Southeast",
+            176
+          ],
+          [
+            "Southwest",
+            4696
+          ],
+          [
+            "United Kingdom",
+            1991
+          ]
+        ],
+        "ordered_rows_sha256": "5cdbab6672bd10568520b999028ba3d129e196f669bf974e7e4b9efc54ba7932",
+        "sampling_limit": "comparison used complete row collections; report stores bounded display only"
+      },
+      "observed": null,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按SalesTerritory的Name统计Customer的CustomerID记录数",
+        "rewritten_question": "按SalesTerritory的Name统计Customer的CustomerID记录数",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "Customer",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": null,
+          "metric_label": null,
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按SalesTerritory的Name统计Customer的CustomerID记录数",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "“CustomerID”对应多个指标字段，请明确统计口径。",
+          "clarification_code": "ambiguous_metric",
+          "clarification_options": [
+            {
+              "value": "Customer.CustomerID",
+              "label": "CustomerID（Customer.CustomerID）"
+            },
+            {
+              "value": "SalesOrderHeader.CustomerID",
+              "label": "CustomerID（SalesOrderHeader.CustomerID）"
+            }
+          ],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按SalesTerritory的Name统计Customer的CustomerID记录数",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": null,
+              "label": null
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "“CustomerID”对应多个指标字段，请明确统计口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "adventureworks-subset.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "“CustomerID”对应多个指标字段，请明确统计口径。",
+        "clarification_code": "ambiguous_metric",
+        "clarification_options": [
+          {
+            "value": "Customer.CustomerID",
+            "label": "CustomerID（Customer.CustomerID）"
+          },
+          {
+            "value": "SalesOrderHeader.CustomerID",
+            "label": "CustomerID（SalesOrderHeader.CustomerID）"
+          }
+        ]
+      },
+      "error_type": null,
+      "latency_ms": 41.96
+    },
+    {
+      "id": "aw-02",
+      "question": "按Customer的AccountNumber统计SalesOrderHeader的SubTotal合计",
+      "gold_sql": "SELECT c.AccountNumber,SUM(h.SubTotal) FROM SalesOrderHeader h JOIN Customer c ON h.CustomerID=c.CustomerID GROUP BY c.AccountNumber",
+      "metric": {
+        "table": "SalesOrderHeader",
+        "column": "SubTotal",
+        "function": "SUM"
+      },
+      "dimensions": [
+        {
+          "table": "Customer",
+          "column": "AccountNumber"
+        }
+      ],
+      "pass": false,
+      "checks": {
+        "status": false,
+        "physical_projection": false,
+        "complete_execution_result": false,
+        "actual_join": false,
+        "no_api_or_domain_catalog": true
+      },
+      "expected": {
+        "count": 19119,
+        "sample_first_20": [
+          [
+            "AW00011000",
+            8248.99
+          ],
+          [
+            "AW00011001",
+            6383.879999999999
+          ],
+          [
+            "AW00011002",
+            8114.039999999999
+          ],
+          [
+            "AW00011003",
+            8139.29
+          ],
+          [
+            "AW00011004",
+            8196.01
+          ],
+          [
+            "AW00011005",
+            8121.33
+          ],
+          [
+            "AW00011006",
+            8119.03
+          ],
+          [
+            "AW00011007",
+            8211.0
+          ],
+          [
+            "AW00011008",
+            8106.3099999999995
+          ],
+          [
+            "AW00011009",
+            8091.33
+          ],
+          [
+            "AW00011010",
+            8088.039999999999
+          ],
+          [
+            "AW00011011",
+            8133.039999999999
+          ],
+          [
+            "AW00011012",
+            81.26
+          ],
+          [
+            "AW00011013",
+            113.96000000000001
+          ],
+          [
+            "AW00011014",
+            138.45
+          ],
+          [
+            "AW00011015",
+            2500.97
+          ],
+          [
+            "AW00011016",
+            2332.28
+          ],
+          [
+            "AW00011017",
+            6434.3099999999995
+          ],
+          [
+            "AW00011018",
+            6533.28
+          ],
+          [
+            "AW00011019",
+            882.7
+          ]
+        ],
+        "ordered_rows_sha256": "f3af9f0ea31fca2fd8421f22d616ca4099711e37561671cced768f2d681df1a8",
+        "sampling_limit": "comparison used complete row collections; report stores bounded display only"
+      },
+      "observed": null,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按Customer的AccountNumber统计SalesOrderHeader的SubTotal合计",
+        "rewritten_question": "按Customer的AccountNumber统计SalesOrderHeader的SubTotal合计",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "SalesOrderHeader",
+          "metric_table": "SalesOrderHeader",
+          "metric_column": "SubTotal",
+          "metric_function": "SUM",
+          "metric_label": "总SubTotal",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "AccountNumber"
+          ],
+          "dimension_tables": {
+            "AccountNumber": "Customer"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "AccountNumber",
+              "table": "Customer",
+              "column": "AccountNumber",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "AccountNumber",
+              "metric_function": null
+            },
+            {
+              "source_text": "AccountNumber",
+              "table": "SalesOrderHeader",
+              "column": "AccountNumber",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "AccountNumber",
+              "metric_function": null
+            },
+            {
+              "source_text": "SubTotal",
+              "table": "SalesOrderHeader",
+              "column": "SubTotal",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "SubTotal",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按Customer的AccountNumber统计SalesOrderHeader的SubTotal合计",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "“accountnumber”对应多个可分组字段，请明确业务口径。",
+          "clarification_code": "ambiguous_dimension",
+          "clarification_options": [
+            {
+              "value": "Customer.AccountNumber",
+              "label": "accountnumber（Customer.AccountNumber）"
+            },
+            {
+              "value": "SalesOrderHeader.AccountNumber",
+              "label": "accountnumber（SalesOrderHeader.AccountNumber）"
+            }
+          ],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按Customer的AccountNumber统计SalesOrderHeader的SubTotal合计",
+            "metric": {
+              "table": "SalesOrderHeader",
+              "column": "SubTotal",
+              "function": "SUM",
+              "label": "总SubTotal"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Customer",
+                "column": "AccountNumber",
+                "grain": "raw",
+                "label": "AccountNumber"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "“accountnumber”对应多个可分组字段，请明确业务口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "adventureworks-subset.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "“accountnumber”对应多个可分组字段，请明确业务口径。",
+        "clarification_code": "ambiguous_dimension",
+        "clarification_options": [
+          {
+            "value": "Customer.AccountNumber",
+            "label": "accountnumber（Customer.AccountNumber）"
+          },
+          {
+            "value": "SalesOrderHeader.AccountNumber",
+            "label": "accountnumber（SalesOrderHeader.AccountNumber）"
+          }
+        ]
+      },
+      "error_type": null,
+      "latency_ms": 8.805
+    },
+    {
+      "id": "aw-03",
+      "question": "按Customer的AccountNumber统计SalesOrderHeader的SalesOrderID记录数",
+      "gold_sql": "SELECT c.AccountNumber,COUNT(h.SalesOrderID) FROM SalesOrderHeader h JOIN Customer c ON h.CustomerID=c.CustomerID GROUP BY c.AccountNumber",
+      "metric": {
+        "table": "SalesOrderHeader",
+        "column": "SalesOrderID",
+        "function": "COUNT"
+      },
+      "dimensions": [
+        {
+          "table": "Customer",
+          "column": "AccountNumber"
+        }
+      ],
+      "pass": false,
+      "checks": {
+        "status": false,
+        "physical_projection": false,
+        "complete_execution_result": false,
+        "actual_join": false,
+        "no_api_or_domain_catalog": true
+      },
+      "expected": {
+        "count": 19119,
+        "sample_first_20": [
+          [
+            "AW00011000",
+            3
+          ],
+          [
+            "AW00011001",
+            3
+          ],
+          [
+            "AW00011002",
+            3
+          ],
+          [
+            "AW00011003",
+            3
+          ],
+          [
+            "AW00011004",
+            3
+          ],
+          [
+            "AW00011005",
+            3
+          ],
+          [
+            "AW00011006",
+            3
+          ],
+          [
+            "AW00011007",
+            3
+          ],
+          [
+            "AW00011008",
+            3
+          ],
+          [
+            "AW00011009",
+            3
+          ],
+          [
+            "AW00011010",
+            3
+          ],
+          [
+            "AW00011011",
+            3
+          ],
+          [
+            "AW00011012",
+            2
+          ],
+          [
+            "AW00011013",
+            2
+          ],
+          [
+            "AW00011014",
+            2
+          ],
+          [
+            "AW00011015",
+            1
+          ],
+          [
+            "AW00011016",
+            1
+          ],
+          [
+            "AW00011017",
+            3
+          ],
+          [
+            "AW00011018",
+            3
+          ],
+          [
+            "AW00011019",
+            17
+          ]
+        ],
+        "ordered_rows_sha256": "4a21c17241daa76d9992878973cc2cc4fcb65e27f839dcd55532a24fc49b5c57",
+        "sampling_limit": "comparison used complete row collections; report stores bounded display only"
+      },
+      "observed": null,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按Customer的AccountNumber统计SalesOrderHeader的SalesOrderID记录数",
+        "rewritten_question": "按Customer的AccountNumber统计SalesOrderHeader的SalesOrderID记录数",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "SalesOrderHeader",
+          "metric_table": "SalesOrderHeader",
+          "metric_column": "SalesOrderID",
+          "metric_function": "SUM",
+          "metric_label": "SalesOrderID",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "AccountNumber"
+          ],
+          "dimension_tables": {
+            "AccountNumber": "Customer"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "AccountNumber",
+              "table": "Customer",
+              "column": "AccountNumber",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "AccountNumber",
+              "metric_function": null
+            },
+            {
+              "source_text": "AccountNumber",
+              "table": "SalesOrderHeader",
+              "column": "AccountNumber",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "AccountNumber",
+              "metric_function": null
+            },
+            {
+              "source_text": "SalesOrderID",
+              "table": "SalesOrderHeader",
+              "column": "SalesOrderID",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "SalesOrderID",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按Customer的AccountNumber统计SalesOrderHeader的SalesOrderID记录数",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "“accountnumber”对应多个可分组字段，请明确业务口径。",
+          "clarification_code": "ambiguous_dimension",
+          "clarification_options": [
+            {
+              "value": "Customer.AccountNumber",
+              "label": "accountnumber（Customer.AccountNumber）"
+            },
+            {
+              "value": "SalesOrderHeader.AccountNumber",
+              "label": "accountnumber（SalesOrderHeader.AccountNumber）"
+            }
+          ],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按Customer的AccountNumber统计SalesOrderHeader的SalesOrderID记录数",
+            "metric": {
+              "table": "SalesOrderHeader",
+              "column": "SalesOrderID",
+              "function": "SUM",
+              "label": "SalesOrderID"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Customer",
+                "column": "AccountNumber",
+                "grain": "raw",
+                "label": "AccountNumber"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "“accountnumber”对应多个可分组字段，请明确业务口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "adventureworks-subset.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "“accountnumber”对应多个可分组字段，请明确业务口径。",
+        "clarification_code": "ambiguous_dimension",
+        "clarification_options": [
+          {
+            "value": "Customer.AccountNumber",
+            "label": "accountnumber（Customer.AccountNumber）"
+          },
+          {
+            "value": "SalesOrderHeader.AccountNumber",
+            "label": "accountnumber（SalesOrderHeader.AccountNumber）"
+          }
+        ]
+      },
+      "error_type": null,
+      "latency_ms": 5.9
+    },
+    {
+      "id": "aw-04",
+      "question": "按SalesTerritory的Name统计2023年SalesOrderHeader的OrderDate对应SubTotal合计",
+      "gold_sql": "SELECT t.Name,SUM(h.SubTotal) FROM SalesOrderHeader h JOIN SalesTerritory t ON h.TerritoryID=t.TerritoryID WHERE h.OrderDate>='2023-01-01' AND h.OrderDate<'2024-01-01' GROUP BY t.Name",
+      "metric": {
+        "table": "SalesOrderHeader",
+        "column": "SubTotal",
+        "function": "SUM"
+      },
+      "dimensions": [
+        {
+          "table": "SalesTerritory",
+          "column": "Name"
+        }
+      ],
+      "pass": false,
+      "checks": {
+        "status": false,
+        "physical_projection": false,
+        "complete_execution_result": false,
+        "actual_join": false,
+        "no_api_or_domain_catalog": true
+      },
+      "expected": {
+        "count": 10,
+        "sample_first_20": [
+          [
+            "Australia",
+            2114048.3731
+          ],
+          [
+            "Canada",
+            5580848.0456
+          ],
+          [
+            "Central",
+            2758256.6569
+          ],
+          [
+            "France",
+            1557152.937
+          ],
+          [
+            "Germany",
+            550070.7367
+          ],
+          [
+            "Northeast",
+            2773503.8298
+          ],
+          [
+            "Northwest",
+            4254635.1897
+          ],
+          [
+            "Southeast",
+            2651805.1011
+          ],
+          [
+            "Southwest",
+            7786323.6076
+          ],
+          [
+            "United Kingdom",
+            1578277.4699
+          ]
+        ],
+        "ordered_rows_sha256": "9b6aa57e1bbfb1df91c8ca93dcee77a417d65840b00d20c354a4de0fa8194a79",
+        "sampling_limit": "comparison used complete row collections; report stores bounded display only"
+      },
+      "observed": null,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按SalesTerritory的Name统计2023年SalesOrderHeader的OrderDate对应SubTotal合计",
+        "rewritten_question": "按SalesTerritory的Name统计2023年SalesOrderHeader的OrderDate对应SubTotal合计",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "SalesOrderHeader",
+          "metric_table": "SalesOrderHeader",
+          "metric_column": "SubTotal",
+          "metric_function": "SUM",
+          "metric_label": "总SubTotal",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "Name"
+          ],
+          "dimension_tables": {
+            "Name": "SalesTerritory"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "OrderDate",
+              "operator": "RANGE",
+              "value": [
+                "2023-01-01",
+                "2024-01-01"
+              ],
+              "source_text": "2023年",
+              "explanation": "限制时间 [2023-01-01, 2024-01-01)，时间字段 SalesOrderHeader.OrderDate",
+              "table": "SalesOrderHeader"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "OrderDate",
+              "table": "SalesOrderHeader",
+              "column": "OrderDate",
+              "role": "dimension",
+              "score": 0.84,
+              "matched_alias": "OrderDate",
+              "metric_function": null
+            },
+            {
+              "source_text": "Name",
+              "table": "SalesTerritory",
+              "column": "Name",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Name",
+              "metric_function": null
+            },
+            {
+              "source_text": "SubTotal",
+              "table": "SalesOrderHeader",
+              "column": "SubTotal",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "SubTotal",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "SalesTerritory"
+          ],
+          "join_conditions": [
+            "\"SalesOrderHeader\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\""
+          ],
+          "join_path": [
+            {
+              "from_table": "SalesOrderHeader",
+              "to_table": "SalesTerritory",
+              "condition": "\"SalesOrderHeader\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\"",
+              "cardinality": "many_to_one"
+            }
+          ],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按SalesTerritory的Name统计2023年SalesOrderHeader的OrderDate对应SubTotal合计",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "问题中的“对应”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "clarification_code": "unresolved_terms",
+          "clarification_options": [],
+          "assumptions": [
+            "日期参数格式：iso_text",
+            "外键验证 JOIN 路径：SalesOrderHeader -> SalesTerritory",
+            "SalesTerritory 可经由 Customer、SalesOrderHeader 关联；本次使用 SalesOrderHeader 的外键（如需按Customer口径，请在问题中写明“ModifiedDate所在…”）"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "2023年",
+              "name",
+              "orderdate",
+              "salesorderheader",
+              "salesterritory",
+              "subtotal",
+              "合计"
+            ],
+            "unresolved": [
+              "对应"
+            ],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "按SalesTerritory的Name统计2023年SalesOrderHeader的OrderDate对应SubTotal合计",
+            "metric": {
+              "table": "SalesOrderHeader",
+              "column": "SubTotal",
+              "function": "SUM",
+              "label": "总SubTotal"
+            },
+            "filters": [
+              {
+                "column": "OrderDate",
+                "operator": "RANGE",
+                "value": [
+                  "2023-01-01",
+                  "2024-01-01"
+                ],
+                "source_text": "2023年",
+                "explanation": "限制时间 [2023-01-01, 2024-01-01)，时间字段 SalesOrderHeader.OrderDate",
+                "table": "SalesOrderHeader"
+              }
+            ],
+            "time_range": [
+              "2023-01-01",
+              "2024-01-01"
+            ],
+            "group_by": [
+              {
+                "table": "SalesTerritory",
+                "column": "Name",
+                "grain": "raw",
+                "label": "Name"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [
+              "对应"
+            ],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "问题中的“对应”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "adventureworks-subset.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "问题中的“对应”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+        "clarification_code": "unresolved_terms",
+        "clarification_options": []
+      },
+      "error_type": null,
+      "latency_ms": 76.034
+    },
+    {
+      "id": "aw-05",
+      "question": "SalesTerritory的CountryRegionCode为US的Customer的CustomerID记录数是多少",
+      "gold_sql": "SELECT COUNT(c.CustomerID) FROM Customer c JOIN SalesTerritory t ON c.TerritoryID=t.TerritoryID WHERE t.CountryRegionCode='US'",
+      "metric": {
+        "table": "Customer",
+        "column": "CustomerID",
+        "function": "COUNT"
+      },
+      "dimensions": [],
+      "pass": false,
+      "checks": {
+        "status": false,
+        "physical_projection": false,
+        "complete_execution_result": false,
+        "actual_join": false,
+        "no_api_or_domain_catalog": true
+      },
+      "expected": {
+        "count": 1,
+        "sample_first_20": [
+          [
+            8637
+          ]
+        ],
+        "ordered_rows_sha256": "ed3c8eacb4e1a63ff36c99f2a400780a74a77bb97c78c4374e0eb816d9926260",
+        "sampling_limit": "comparison used complete row collections; report stores bounded display only"
+      },
+      "observed": null,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "SalesTerritory的CountryRegionCode为US的Customer的CustomerID记录数是多少",
+        "rewritten_question": "SalesTerritory的CountryRegionCode为US的Customer的CustomerID记录数是多少",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "Customer",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": null,
+          "metric_label": null,
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "SalesTerritory的CountryRegionCode为US的Customer的CustomerID记录数是多少",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "“CustomerID”对应多个指标字段，请明确统计口径。",
+          "clarification_code": "ambiguous_metric",
+          "clarification_options": [
+            {
+              "value": "Customer.CustomerID",
+              "label": "CustomerID（Customer.CustomerID）"
+            },
+            {
+              "value": "SalesOrderHeader.CustomerID",
+              "label": "CustomerID（SalesOrderHeader.CustomerID）"
+            }
+          ],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "SalesTerritory的CountryRegionCode为US的Customer的CustomerID记录数是多少",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": null,
+              "label": null
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "“CustomerID”对应多个指标字段，请明确统计口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "adventureworks-subset.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "“CustomerID”对应多个指标字段，请明确统计口径。",
+        "clarification_code": "ambiguous_metric",
+        "clarification_options": [
+          {
+            "value": "Customer.CustomerID",
+            "label": "CustomerID（Customer.CustomerID）"
+          },
+          {
+            "value": "SalesOrderHeader.CustomerID",
+            "label": "CustomerID（SalesOrderHeader.CustomerID）"
+          }
+        ]
+      },
+      "error_type": null,
+      "latency_ms": 3.833
+    },
+    {
+      "id": "aw-06",
+      "question": "按Customer的AccountNumber统计SalesOrderHeader的TotalDue合计，取最高前三名含并列",
+      "gold_sql": "WITH totals AS (SELECT c.AccountNumber,SUM(h.TotalDue) v FROM SalesOrderHeader h JOIN Customer c ON h.CustomerID=c.CustomerID GROUP BY c.AccountNumber), ranked AS (SELECT AccountNumber,v,DENSE_RANK() OVER(ORDER BY v DESC) r FROM totals) SELECT AccountNumber,v FROM ranked WHERE r<=3",
+      "metric": {
+        "table": "SalesOrderHeader",
+        "column": "TotalDue",
+        "function": "SUM"
+      },
+      "dimensions": [
+        {
+          "table": "Customer",
+          "column": "AccountNumber"
+        }
+      ],
+      "pass": false,
+      "checks": {
+        "status": false,
+        "physical_projection": false,
+        "complete_execution_result": false,
+        "actual_join": false,
+        "no_api_or_domain_catalog": true
+      },
+      "expected": {
+        "count": 3,
+        "sample_first_20": [
+          [
+            "AW00029818",
+            989184.0819999999
+          ],
+          [
+            "AW00029715",
+            961675.8596
+          ],
+          [
+            "AW00029722",
+            954021.9235
+          ]
+        ],
+        "ordered_rows_sha256": "32da6787d34cda46a7f020cb88736368d46bb1a49b9ef708c62ac95347504d35",
+        "sampling_limit": "comparison used complete row collections; report stores bounded display only"
+      },
+      "observed": null,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按Customer的AccountNumber统计SalesOrderHeader的TotalDue合计，取最高前三名含并列",
+        "rewritten_question": "按Customer的AccountNumber统计SalesOrderHeader的TotalDue合计，取最高前三名含并列",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "SalesOrderHeader",
+          "metric_table": "SalesOrderHeader",
+          "metric_column": "TotalDue",
+          "metric_function": "SUM",
+          "metric_label": "总TotalDue",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "AccountNumber"
+          ],
+          "dimension_tables": {
+            "AccountNumber": "Customer"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "AccountNumber",
+              "table": "Customer",
+              "column": "AccountNumber",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "AccountNumber",
+              "metric_function": null
+            },
+            {
+              "source_text": "AccountNumber",
+              "table": "SalesOrderHeader",
+              "column": "AccountNumber",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "AccountNumber",
+              "metric_function": null
+            },
+            {
+              "source_text": "TotalDue",
+              "table": "SalesOrderHeader",
+              "column": "TotalDue",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "TotalDue",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按Customer的AccountNumber统计SalesOrderHeader的TotalDue合计，取最高前三名含并列",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "“accountnumber”对应多个可分组字段，请明确业务口径。",
+          "clarification_code": "ambiguous_dimension",
+          "clarification_options": [
+            {
+              "value": "Customer.AccountNumber",
+              "label": "accountnumber（Customer.AccountNumber）"
+            },
+            {
+              "value": "SalesOrderHeader.AccountNumber",
+              "label": "accountnumber（SalesOrderHeader.AccountNumber）"
+            }
+          ],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按Customer的AccountNumber统计SalesOrderHeader的TotalDue合计，取最高前三名含并列",
+            "metric": {
+              "table": "SalesOrderHeader",
+              "column": "TotalDue",
+              "function": "SUM",
+              "label": "总TotalDue"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Customer",
+                "column": "AccountNumber",
+                "grain": "raw",
+                "label": "AccountNumber"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "“accountnumber”对应多个可分组字段，请明确业务口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "adventureworks-subset.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "“accountnumber”对应多个可分组字段，请明确业务口径。",
+        "clarification_code": "ambiguous_dimension",
+        "clarification_options": [
+          {
+            "value": "Customer.AccountNumber",
+            "label": "accountnumber（Customer.AccountNumber）"
+          },
+          {
+            "value": "SalesOrderHeader.AccountNumber",
+            "label": "accountnumber（SalesOrderHeader.AccountNumber）"
+          }
+        ]
+      },
+      "error_type": null,
+      "latency_ms": 2.21
+    }
+  ],
+  "limitations": [
+    "SQL Server schema Sales flattened to bare SQLite names; selected tables only.",
+    "SQL Server money converted from validated four-decimal Decimal strings to SQLite NUMERIC affinity (binary floating storage); raw exact sums retained.",
+    "Datetime strings kept and validated, uniqueidentifier stored as TEXT; SQL Server identity/defaults/triggers/non-PK indexes not reproduced.",
+    "Computed columns retained from original CSV and checked against official expressions; internal FKs retained, external FKs explicitly omitted.",
+    "No selected table has a composite primary key; no claim of testing composite key compatibility.",
+    "No native PostgreSQL adapter, XML/geography/custom-type/functions/procedures support or official benchmark score is claimed."
+  ],
+  "native_postgresql_support": false,
+  "official_benchmark_score": false,
+  "audit_limits": [
+    "Questions authored and frozen before first execution; not official benchmark gold or blind holdout.",
+    "Exact original Decimal totals retained in manifest; SQL result comparison tolerance 0.0001 and relative 1e-10 acknowledges SQLite NUMERIC floating representation.",
+    "Unordered row multiset comparison does not score ranking presentation order; full collections checked despite bounded report samples.",
+    "Default engine safety row limits remain; truncated large groups count as failed complete results."
+  ]
+}

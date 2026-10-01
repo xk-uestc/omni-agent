@@ -1,0 +1,14 @@
+{
+  "scope": "authored_development_queries_on_microsoft_official_csv_sqlite_port_not_native_postgres_or_official_question_score",
+  "frozen_at": "2026-10-01",
+  "domain_alias_rules": 0,
+  "few_shot_examples": 0,
+  "cases": [
+    {"id":"aw-01","question":"按SalesTerritory的Name统计Customer的CustomerID记录数","gold_sql":"SELECT t.Name,COUNT(c.CustomerID) FROM Customer c JOIN SalesTerritory t ON c.TerritoryID=t.TerritoryID GROUP BY t.Name","metric":{"table":"Customer","column":"CustomerID","function":"COUNT"},"dimensions":[{"table":"SalesTerritory","column":"Name"}]},
+    {"id":"aw-02","question":"按Customer的AccountNumber统计SalesOrderHeader的SubTotal合计","gold_sql":"SELECT c.AccountNumber,SUM(h.SubTotal) FROM SalesOrderHeader h JOIN Customer c ON h.CustomerID=c.CustomerID GROUP BY c.AccountNumber","metric":{"table":"SalesOrderHeader","column":"SubTotal","function":"SUM"},"dimensions":[{"table":"Customer","column":"AccountNumber"}]},
+    {"id":"aw-03","question":"按Customer的AccountNumber统计SalesOrderHeader的SalesOrderID记录数","gold_sql":"SELECT c.AccountNumber,COUNT(h.SalesOrderID) FROM SalesOrderHeader h JOIN Customer c ON h.CustomerID=c.CustomerID GROUP BY c.AccountNumber","metric":{"table":"SalesOrderHeader","column":"SalesOrderID","function":"COUNT"},"dimensions":[{"table":"Customer","column":"AccountNumber"}]},
+    {"id":"aw-04","question":"按SalesTerritory的Name统计2023年SalesOrderHeader的OrderDate对应SubTotal合计","gold_sql":"SELECT t.Name,SUM(h.SubTotal) FROM SalesOrderHeader h JOIN SalesTerritory t ON h.TerritoryID=t.TerritoryID WHERE h.OrderDate>='2023-01-01' AND h.OrderDate<'2024-01-01' GROUP BY t.Name","metric":{"table":"SalesOrderHeader","column":"SubTotal","function":"SUM"},"dimensions":[{"table":"SalesTerritory","column":"Name"}]},
+    {"id":"aw-05","question":"SalesTerritory的CountryRegionCode为US的Customer的CustomerID记录数是多少","gold_sql":"SELECT COUNT(c.CustomerID) FROM Customer c JOIN SalesTerritory t ON c.TerritoryID=t.TerritoryID WHERE t.CountryRegionCode='US'","metric":{"table":"Customer","column":"CustomerID","function":"COUNT"},"dimensions":[]},
+    {"id":"aw-06","question":"按Customer的AccountNumber统计SalesOrderHeader的TotalDue合计，取最高前三名含并列","gold_sql":"WITH totals AS (SELECT c.AccountNumber,SUM(h.TotalDue) v FROM SalesOrderHeader h JOIN Customer c ON h.CustomerID=c.CustomerID GROUP BY c.AccountNumber), ranked AS (SELECT AccountNumber,v,DENSE_RANK() OVER(ORDER BY v DESC) r FROM totals) SELECT AccountNumber,v FROM ranked WHERE r<=3","metric":{"table":"SalesOrderHeader","column":"TotalDue","function":"SUM"},"dimensions":[{"table":"Customer","column":"AccountNumber"}]}
+  ]
+}

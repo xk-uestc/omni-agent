@@ -1,4 +1,23 @@
-# 文档状态说明
+# 工程证据索引
+
+当前独立项目为 `D:/ICT8-OmniAgent`。以下表格为最新已完成实测入口；下方原索引保留为历史说明，其中“最终”“当前”仅适用于对应报告的执行时点，不覆盖新报告。
+
+| 文件 | 实测口径 |
+|---|---|
+| `ACCEPTANCE.md`、`coverage.json`、`CURRENT_ARCHITECTURE.md` | 全赛题状态、实际实现及剩余缺口 |
+| `OFFICIAL_DATASET_ACCEPTANCE.md` | 三个推荐数据源的固定版本、恢复命令与实测边界 |
+| `LOCAL_REGRESSION_REPORT.json` | 当前源码契约回归；不调用模型，不代表模型准确率 |
+| `REAL_MODEL_THIRD_RUN_20261001.json` | 第三轮38/44、87次API完成；早于后续Schema/计数/单位及路由补丁 |
+| `CHINOOK_MODEL_SECOND_RUN_20261001.json` | 原库人工开发题12/12严格模型；10非空、2空结果边界，非官方金标题 |
+| `ADVENTUREWORKS_SQLITE_PORT_SECOND_RUN_20261001.json` | 官方CSV三表SQLite移植4/6；两题19119组被100行上限截断，非原生PG |
+| `OHR_BENCH_MODEL_VERIFIED_SCORE_20261001.json` | 官方原题12题资源受限pilot：1实质回答、9拒答、2回退，EM0/12 |
+| `NEW_MULTITURN_SECOND_RUN_20261001.json` | 新Schema第二轮2/5；3题SQL值正确但统一路由回退 |
+| `NEW_MULTITURN_ROUTER_REPLAY_20261001.json` | 路由补丁后新Schema严格5/5；11API均completed、25030 tokens；已曝光自建开发五轮，非盲测，不替代全44题38/44 |
+| `MODEL_HTTP_SCALE_FIRST_RUN_20261001.json` | 三种行规模、并发1/2/4真实模型HTTP24/24；小样本、token仅可见下界 |
+
+各结果分别对应报告的输入、源码和时点；不把分批成绩拼成当前全量准确率。程序包使用 `--program-only --with-public-assets`，外置官方数据由冻结manifest恢复；空目录HTTP验收见ZIP旁 `.smoke.json`。完整本地迁移备份包含运行配置，仅作本机恢复，不能当公开程序包。
+
+## 历史索引
 
 本目录的 `ICT_TRACK8_*`、`NL2SQL_*` 历史报告随源码整体迁移，用于继承思路、解释旧实验和实现边界；其中 D 盘路径、8014 生产联调和历史成绩不表示独立项目已完成这些验收。
 

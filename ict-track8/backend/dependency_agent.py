@@ -17,6 +17,7 @@ from typing import Any
 from .document_analysis import DocumentAnalyzer
 from .formula_binding import FormulaBinder, ParameterEvidence
 from .knowledge_store import SourceIntegrityError, SourceRevisionError
+from .sql_evidence import aggregate_evidence
 
 
 class DependencyPlanError(ValueError):
@@ -170,7 +171,10 @@ class DependencyAgent:
             from .policy_evidence import select_policy
             if set(args) != {'document_id', 'as_of', 'label'}:
                 raise DependencyPlanError('版本选择必须含文档、适用日期和政策要素')
-            return select_policy(self.knowledge_store.document(args['document_id']), as_of=args['as_of'], label=args['label'])
+            evidence = select_policy(self.knowledge_store.document(args['document_id']), as_of=args['as_of'], label=args['label'])
+            if 'numeric_value' in evidence:
+                evidence = {**evidence, 'value': evidence['numeric_value']}
+            return evidence
         if tool == 'compare':
             if set(args) not in ({'left', 'right'}, {'left', 'right', 'operator'}):
                 raise DependencyPlanError('证据比较必须有两个来源')
@@ -179,11 +183,19 @@ class DependencyAgent:
                 raise DependencyPlanError('比较运算符未受支持')
             for key in ('left', 'right'):
                 ref = original_args[key]
-                if not isinstance(ref, dict) or ref.get('path') != [] or ref.get('ref') not in results:
+                path = ref.get('path') if isinstance(ref, dict) else None
+                source_result = results.get(ref.get('ref'), {}) if isinstance(ref, dict) else {}
+                aggregate_ref = (isinstance(path, list) and len(path) == 5 and path[0] == 'aggregate_cells'
+                    and all(isinstance(part, str) for part in path[1:4]) and type(path[4]) is int and path[4] >= 0
+                    and 'provenance' in source_result and 'aggregate_cells' in source_result)
+                if not isinstance(ref, dict) or ref.get('ref') not in results or not (path == [] or aggregate_ref):
                     raise DependencyPlanError('比较对象必须直接引用工具证据')
                 if not isinstance(args[key], dict) or not {'value', 'source_uri', 'locator'} <= args[key].keys():
                     raise DependencyPlanError('比较对象缺少可定位证据')
             left, right = args['left'], args['right']
+            if left.get('evidence_type') == right.get('evidence_type') == 'policy':
+                if (left.get('document_id'), left.get('label')) != (right.get('document_id'), right.get('label')):
+                    raise DependencyPlanError('政策版本比较必须使用同一文档的同一政策要素')
             unit_left, unit_right = left.get('unit', 'unknown'), right.get('unit', 'unknown')
             values = (left['value'], right['value'])
             if unit_left != unit_right:
@@ -205,6 +217,11 @@ class DependencyAgent:
             result = self.sql_engine.answer(self.text(args['question'])).to_dict()
             if result['status'] != 'ok' or not result['rows']:
                 raise DependencyPlanError(result.get('clarification') or '结构化查询未产生可用结果')
+            result['aggregate_cells'], ambiguous = aggregate_evidence(result)
+            result['aggregate_cell_contract'] = {
+                'address': ['table', 'column', 'function', 'row'],
+                'source': 'actual_verified_plan_and_executed_rows',
+                'ambiguous_addresses_not_exposed': ambiguous}
             return result
         if tool == 'search':
             if set(args) != {'query'}:

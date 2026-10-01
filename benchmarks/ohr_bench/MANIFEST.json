@@ -1,0 +1,194 @@
+{
+  "dataset": "opendatalab/OHR-Bench",
+  "official_dataset_url": "https://huggingface.co/datasets/opendatalab/OHR-Bench",
+  "hf_revision": "7f833e3eda9a571a9ea545a8f6d476fa1685033d",
+  "official_code_revision": "1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7",
+  "dataset_card_license": "cc-by-4.0",
+  "pdf_usage_statement": "Official README: research purposes only, not commercial use; source PDFs retain original copyright.",
+  "data_root_default": "D:\\ICT8-OfficialDatasets\\ohr-bench",
+  "created_at": "2026-10-01T05:58:15.275547+00:00",
+  "selection_frozen_before_evaluation": true,
+  "selection_rule": "For each of six evidence categories, first 2 rows sorted by original PDF bytes then ID; PDF <=2000000 bytes; answer/evidence not used for selection.",
+  "selection_limit": "Resource-biased small pilot, not official full benchmark or representative accuracy; categories with missing eligible PDFs explicitly reported.",
+  "qa_source_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/qas_v2.json",
+  "qa_sha256": "2446db28741fa9f392067ee7aae7f3b05e0d85c584069a50ddd5b1b5bc783f58",
+  "official_qa_total": 8498,
+  "selected_qa_path": "SELECTED_OFFICIAL_QA.json",
+  "selected_qa_sha256": "447b3b7a542b79ca41af4bd6eca23c26849b4785e0bda6659be966b1512e5b45",
+  "readme_sha256": "bff078b1ee88c89823b40339b09dd754893122f56cb366ec3afd88c65046a222",
+  "pdf_archive_lfs_sha256": "f9bc65f383172c4ea47940c47dfab01dd36c03a120bc0450d7a962917098c783",
+  "archive_full_sha_verified": false,
+  "archive_range_download_bytes": 307426,
+  "unsupported_selection": {},
+  "cases": [
+    {
+      "ID": "8e685f52-dbfc-4c45-830b-b2c2ba567003",
+      "doc_name": "law/DUDE_6cd4b999973e3787ac703d4417881ad2",
+      "evidence_source": "text",
+      "evidence_page_no": 0,
+      "original_row_sha256": "c3157f3897de3c9215375702b45f941877d1c57513b22b4786c14a560909a753"
+    },
+    {
+      "ID": "a09648f9-bd23-4978-8330-95890857ac72",
+      "doc_name": "administration/DUDE_4530b7915538163469088b4df4044d7d",
+      "evidence_source": "text",
+      "evidence_page_no": 0,
+      "original_row_sha256": "6c7c440317345fe57da53c11263c6fc71ca0cd53e9a3c9b20dd6b2d793a24b67"
+    },
+    {
+      "ID": "81439bae-4b23-438e-b867-a07279f3f134",
+      "doc_name": "law/DUDE_6cd4b999973e3787ac703d4417881ad2",
+      "evidence_source": "table",
+      "evidence_page_no": 0,
+      "original_row_sha256": "850d927d2983e24111c1f86267b905a8d6f8a75a41c1b5b67cdcba565f26a6fe"
+    },
+    {
+      "ID": "8e6b81a3-e9ed-459c-a80a-b2000cfcbe46",
+      "doc_name": "law/DUDE_6cd4b999973e3787ac703d4417881ad2",
+      "evidence_source": "table",
+      "evidence_page_no": 0,
+      "original_row_sha256": "785393eb60d1a79ccf6a698dc8ad41730ee58553eb5f054a0851d6fface379e0"
+    },
+    {
+      "ID": "a8bc54d0-c77d-40a4-bceb-689d5c82ee74",
+      "doc_name": "administration/DUDE_4530b7915538163469088b4df4044d7d",
+      "evidence_source": "formula",
+      "evidence_page_no": 0,
+      "original_row_sha256": "90e5dfc6f72f9147a2ce6b942887cc92b30b4fd868e91c8d66026d4a6a720216"
+    },
+    {
+      "ID": "a8bec806-be9d-4715-9b7e-e3e9744acc63",
+      "doc_name": "administration/DUDE_4530b7915538163469088b4df4044d7d",
+      "evidence_source": "formula",
+      "evidence_page_no": 0,
+      "original_row_sha256": "aa14b902cea433f5b554a85505929c84d3e98560eecca17c98115363418d6be4"
+    },
+    {
+      "ID": "aadf21a7-8955-441c-893f-8c124aa8b5f5",
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "evidence_source": "chart",
+      "evidence_page_no": 1,
+      "original_row_sha256": "3e2f97e24afa18d71997f929d28812e7f793032bbe3c358f4db93a077fd7f33e"
+    },
+    {
+      "ID": "aadf501a-997e-46dd-bba8-b4d857c80b00",
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "evidence_source": "chart",
+      "evidence_page_no": 1,
+      "original_row_sha256": "6b41f1d71b5ce909e81789c971bfdf35d3cd05d7f3e447dfe6d422d2a0a620db"
+    },
+    {
+      "ID": "c195d44c-0a19-4bf1-afdd-a1219ae0c6b6",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3",
+      "evidence_source": "reading_order",
+      "evidence_page_no": 0,
+      "original_row_sha256": "669d918e5d705f670c14fede18a08c7c3ff5e3037741d039fc4d492afdd51d2b"
+    },
+    {
+      "ID": "c4169984-a4e0-4c71-ba6e-88281796d5fa",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2",
+      "evidence_source": "reading_order",
+      "evidence_page_no": 0,
+      "original_row_sha256": "e8ca9967a3ca387a96b024e573427e4fcd8bb6e1d9ecbaacf98ecdf08dc98d03"
+    },
+    {
+      "ID": "b4930cee-4bf1-40c2-a5f4-5205df948481",
+      "doc_name": "law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56",
+      "evidence_source": "multi",
+      "evidence_page_no": [
+        0,
+        2
+      ],
+      "original_row_sha256": "28c338be3d7dda555a06ceaab384d154d822cf76e48814409dc33bb4add6b6c6"
+    },
+    {
+      "ID": "027835b7-dba4-4421-b30a-c73ca96a7846",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "multi",
+      "evidence_page_no": [
+        1,
+        2
+      ],
+      "original_row_sha256": "50328fb08654a55eafd7db69c1a5d69e6187bc23eb7d74c2f6671035fe6b1f97"
+    }
+  ],
+  "documents": [
+    {
+      "doc_name": "administration/DUDE_4530b7915538163469088b4df4044d7d",
+      "pdf_path": "pdfs/administration/DUDE_4530b7915538163469088b4df4044d7d.pdf",
+      "pdf_bytes": 15967,
+      "pdf_sha256": "83ee4346330a4a0ddc66b3fc279daf35a2b4fb08cc7187dd4be56eb4ec47848f",
+      "archive_member": "administration/DUDE_4530b7915538163469088b4df4044d7d.pdf",
+      "archive_member_crc32": 2197898147,
+      "gt_path": "gt/administration/DUDE_4530b7915538163469088b4df4044d7d.json",
+      "gt_sha256": "6c89740d1283244be57dd14d37a56edc15689e916b780dfc638bda49b4c2bcf4",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/administration/DUDE_4530b7915538163469088b4df4044d7d.json"
+    },
+    {
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "pdf_path": "pdfs/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.pdf",
+      "pdf_bytes": 31023,
+      "pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "archive_member": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.pdf",
+      "archive_member_crc32": 3644091755,
+      "gt_path": "gt/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.json",
+      "gt_sha256": "e8842e1b35bf45d7ad42d86d5ca71af125e7f7dc553ab1bdbc9df250a46d34aa",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.json"
+    },
+    {
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "pdf_path": "pdfs/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.pdf",
+      "pdf_bytes": 53852,
+      "pdf_sha256": "6e5185ff6b6459872ffc2b8eddf394b1d517c5641fb3695f21e9cb510deca4bc",
+      "archive_member": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.pdf",
+      "archive_member_crc32": 1838754352,
+      "gt_path": "gt/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.json",
+      "gt_sha256": "2c4d6e4503e9be6130a5e83b46b7f7d05119825323649b39a5fa19aa92956ee8",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.json"
+    },
+    {
+      "doc_name": "law/DUDE_6cd4b999973e3787ac703d4417881ad2",
+      "pdf_path": "pdfs/law/DUDE_6cd4b999973e3787ac703d4417881ad2.pdf",
+      "pdf_bytes": 8466,
+      "pdf_sha256": "34635f298801f37546174143e8c9940d1e2e8d0c21942cc232237db54fdf63bd",
+      "archive_member": "law/DUDE_6cd4b999973e3787ac703d4417881ad2.pdf",
+      "archive_member_crc32": 4259685650,
+      "gt_path": "gt/law/DUDE_6cd4b999973e3787ac703d4417881ad2.json",
+      "gt_sha256": "f408184dfca151a2dd3b9663d92e8249366e90022c306ba2d3dfddfff1ea568d",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/law/DUDE_6cd4b999973e3787ac703d4417881ad2.json"
+    },
+    {
+      "doc_name": "law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56",
+      "pdf_path": "pdfs/law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.pdf",
+      "pdf_bytes": 16190,
+      "pdf_sha256": "e5a18078bf488ca0eb5f2456996b963507b89fdc2dfde569d0d044cce8a2294d",
+      "archive_member": "law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.pdf",
+      "archive_member_crc32": 1975697794,
+      "gt_path": "gt/law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.json",
+      "gt_sha256": "803f668af87c6fb634e3d29ed6975b680ffcf1249efcd342d81a3755a01bc7e9",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.json"
+    },
+    {
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2",
+      "pdf_path": "pdfs/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.pdf",
+      "pdf_bytes": 28741,
+      "pdf_sha256": "87cf26189a02b186dcc243f31353e1f27512f48d60aa9678bcb96cbc29949f6a",
+      "archive_member": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.pdf",
+      "archive_member_crc32": 2776791606,
+      "gt_path": "gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.json",
+      "gt_sha256": "404bd53c460a311979fff601169aed3da16f3af0d653c26c096f1926dc51a6bb",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.json"
+    },
+    {
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3",
+      "pdf_path": "pdfs/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.pdf",
+      "pdf_bytes": 28544,
+      "pdf_sha256": "3b8eace7bf8d996268dfebc202873fdd8079edadfda6dcb46c3990ebc5e75918",
+      "archive_member": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.pdf",
+      "archive_member_crc32": 3536487057,
+      "gt_path": "gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.json",
+      "gt_sha256": "d3cd6f1774c87872f3bdb7b9d764a1969d484f70eeee9429ee2e32b9e3eaa40c",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.json"
+    }
+  ]
+}

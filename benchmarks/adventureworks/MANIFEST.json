@@ -1,0 +1,19 @@
+{
+  "frozen_at": "2026-10-01",
+  "questions_sha256": "bf97202958ef41ee287d1bed9b6776a48630dd458103ae6ca4752fe2b726dbb8",
+  "source_repository": "https://github.com/microsoft/sql-server-samples",
+  "source_commit": "1346b94fab23bfa7edfdb32afae52282ddc3bfaa",
+  "license": "MIT",
+  "dataset_directory": "D:/ICT8-OfficialDatasets/adventureworks",
+  "dataset_manifest": "D:/ICT8-OfficialDatasets/adventureworks/MANIFEST.json",
+  "scope": "official_original_csv_sqlite_subset_port_not_native_adventureworks_postgres_or_official_question_score",
+  "selected_tables": ["SalesTerritory", "Customer", "SalesOrderHeader"],
+  "recommended_postgres_image": {
+    "name": "chriseaton/adventureworks:postgres",
+    "manifest_digest": "sha256:07e46e828d40cb2ce728025662aae68c289a811244fd9297d189a7c42c3598f5",
+    "amd64_download_bytes": 244774960,
+    "source": "https://github.com/chriseaton/docker-adventureworks",
+    "source_license": "MIT",
+    "boundary": "Third-party PostgreSQL16 port recommended by contest; not Microsoft native PostgreSQL release. Not downloaded or tested in this SQLite audit."
+  }
+}

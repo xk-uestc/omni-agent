@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from copy import deepcopy
 from decimal import Decimal
 
 from .responses_client import GenerationError, object_schema
@@ -173,17 +174,73 @@ class GroundedGenerator:
     def answer(self, question, citations):
         evidence = [{'citation_id': hit['citation_id'], 'text': hit['snippet'], 'title': hit['title'],
                      'locator': hit['metadata']['source_locator']} for hit in citations]
-        result = self.client.generate(INSTRUCTIONS, {'question': question, 'evidence': evidence}, SCHEMA, name='grounded_answer')
-        claims = self.validate(result, {item['citation_id']: item['text'] for item in evidence})
+        context = {'question': question, 'evidence': evidence}
+        attempts = []
+        for index in range(2):
+            operation = 'grounded_answer' if index == 0 else 'grounded_answer_correction'
+            try:
+                result = self.client.generate(INSTRUCTIONS, deepcopy(context), SCHEMA, name=operation)
+            except GenerationError as exc:
+                attempts.append({'attempt': index + 1, 'operation': operation,
+                                 'validation_status': 'not_validated', 'error_category': 'provider_unavailable',
+                                 'provider_audit': dict(self.client.audit)})
+                self._raise_with_attempts(exc, attempts)
+            audit = dict(self.client.audit)
+            try:
+                claims = self.validate(result, {item['citation_id']: item['text'] for item in evidence})
+            except GenerationError as exc:
+                category = self._validation_category(exc)
+                attempts.append({'attempt': index + 1, 'operation': operation,
+                                 'validation_status': 'rejected', 'error_category': category,
+                                 'provider_audit': audit})
+                completed_http = (audit.get('status') == 'completed' and type(audit.get('http_status')) is int
+                                  and 200 <= audit['http_status'] < 300)
+                if index != 0 or not completed_http:
+                    self._raise_with_attempts(exc, attempts)
+                # Request a new structured model output from identical
+                # evidence. Never silently turn the rejected old claim into
+                # its quote or send the untrusted old claim back as an order.
+                context['correction'] = {
+                    'validation_error_category': category,
+                    'instruction': '上一份结构化答案未通过服务器校验。只基于同一evidence重新输出。'
+                                   'text直接采用与问题相关的完整事实原句；quote逐字引用原句。'
+                                   '保留实体、数值、单位、否定、预测和适用条件，不补充常识或计算。'
+                                   '无法确定完整原句时abstain=true且claims=[]。',
+                }
+                continue
+            attempts.append({'attempt': index + 1, 'operation': operation,
+                             'validation_status': 'validated', 'error_category': None,
+                             'provider_audit': audit})
+            break
         return {'status': 'ok' if claims else 'insufficient_evidence', 'claims': claims,
                 'answer': '\n\n'.join(claim['text'] + ' ' + ''.join(f'[{source["citation_id"]}]' for source in claim['support']) for claim in claims)
                     if claims else '现有证据无法支持完整回答，请补充资料或明确口径。',
                 'generation_audit': dict(self.client.audit),
+                'generation_attempts': attempts, 'generation_repaired': len(attempts) == 2,
                 'support_validation': 'bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof'}
 
     @staticmethod
+    def _validation_category(error):
+        message = str(error)
+        if '数字' in message:
+            return 'unsupported_number'
+        if '引用' in message or '原文' in message:
+            return 'citation_contract_invalid'
+        if '关系未核验' in message:
+            return 'unverified_fact_relation'
+        return 'claim_contract_invalid'
+
+    @staticmethod
+    def _raise_with_attempts(error, attempts):
+        # The caller can expose these sanitized semantic and provider stages
+        # even when it falls back to attributed extracts. Raw model replies,
+        # provider exceptions, credentials and prompts are not in this log.
+        error.generation_attempts = deepcopy(attempts)
+        raise error
+
+    @staticmethod
     def validate(result, evidence):
-        if set(result) != {'abstain', 'claims'} or not isinstance(result['abstain'], bool) or not isinstance(result['claims'], list):
+        if not isinstance(result, dict) or set(result) != {'abstain', 'claims'} or not isinstance(result['abstain'], bool) or not isinstance(result['claims'], list):
             raise GenerationError('生成答案结构不符合契约')
         if result['abstain']:
             if result['claims']:

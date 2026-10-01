@@ -33,6 +33,8 @@ _JOIN_HINT_RE = re.compile(r"\[join_path:([A-Za-z0-9_.>\-]+)\]")
 _FIELD_HINT_RE = re.compile(r"\[field:(metric|dimension):([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z_][A-Za-z0-9_]*)\]")
 _ANALYSIS_WORDS = ("排名", "排行", "名次", "占比", "份额", "比例")
 _AGGREGATE_CUES = (
+    (("去重计数",), "COUNT_DISTINCT", "去重数"),
+    (("记录计数", "记录数", "计数"), "COUNT", "记录数"),
     (("平均", "均价", "均值", "均分", "平均值"), "AVG", "平均"),
     (("最高值", "最大值", "单笔最高", "单次最高"), "MAX", "最高"),
     (("最低值", "最小值", "单笔最低", "单次最低"), "MIN", "最低"),
@@ -45,7 +47,7 @@ _MAX_LIMIT = 100
 _COVERAGE_STRUCTURAL_WORDS = (
     "订单", "工单", "明细", "金额", "总额", "总金额", "销售额", "收入", "销售",
     "数据", "查询", "统计", "各", "每个", "按", "分别", "的", "有", "是多少",
-    "那边", "告诉我", "平均", "合计", "去重", "情况", "政策", "规定", "说明", "只看", "把", "列出来",
+    "那边", "告诉我", "情况", "政策", "规定", "说明", "只看", "把", "列出来",
 )
 # 用户可能把破坏性指令和合法的统计意图写在同一句里。此处只移除带有明确
 # 顺序词的自然语言指令片段；不会接受原始 SQL，也不会放宽执行层的只读限制。
@@ -193,23 +195,25 @@ class SingleTablePlanner:
             # Only consume aggregate words implemented by the selected slot.
             # A comparison against an average is a HAVING condition, not AVG.
             aggregate_text = _AVERAGE_THRESHOLD_RE.sub("", normalized)
-            requested_functions = {function for cues, function, _ in _AGGREGATE_CUES
-                                   if any(cue in aggregate_text for cue in cues)}
+            requested_functions = {function for _, function in self._aggregate_matches(aggregate_text)}
             if len(requested_functions) > 1:
                 return self._clarify(plan, "ambiguous_aggregation",
                     "同一指标包含多个聚合口径，请分别查询或明确要使用的聚合函数。", 0.3)
-            consumed.extend(cue for cues, function, _ in _AGGREGATE_CUES
-                            if function == plan.metric_function for cue in cues if cue in aggregate_text)
+            consumed.extend(cue for cue, function in self._aggregate_matches(aggregate_text)
+                            if function == plan.metric_function)
         if multiple_requested:
             from .models import MetricSpec
             by_name = {item.name: item for item in tables}
             for i, link in enumerate(all_metric_links):
-                pos = normalized.find(normalize_text(link.matched_alias))
-                before = re.split(r"(?:和|及|与|、|,)", normalized[:pos])[-1]
-                clause = before + normalize_text(link.matched_alias)
+                clause = self._metric_clause(normalized, link)
+                aggregate_text = _AVERAGE_THRESHOLD_RE.sub("", clause)
+                functions = {fn for _, fn in self._aggregate_matches(aggregate_text)}
+                if len(functions) > 1:
+                    return self._clarify(plan, 'ambiguous_aggregation', '同一指标包含多个聚合口径，请分别查询或明确聚合函数。', 0.3)
                 picked = self._choose_metric([link], clause, by_name[link.table])
                 if picked:
                     mt, mc, fn, label = picked
+                    consumed.extend(cue for cue, function in self._aggregate_matches(aggregate_text) if function == fn)
                     plan.metrics.append(MetricSpec(f"m{i}", mt, mc, fn, label,
                                                   "count" if fn in {"COUNT", "COUNT_DISTINCT"} else "unknown"))
             if len(plan.metrics) > 8:
@@ -219,6 +223,22 @@ class SingleTablePlanner:
             plan.table = first.table
             plan.metric_table, plan.metric_column = first.table, first.column
             plan.metric_function, plan.metric_label = first.function, first.label
+        # COUNT currently compiles COUNT(*) rather than COUNT(column). For an
+        # explicitly named nullable field these have different meanings; never
+        # silently promise the non-null-field count. INTEGER single PK and
+        # declared NOT NULL fields establish equivalence without reading data.
+        for link in all_metric_links:
+            clause = self._metric_clause(normalized, link)
+            explicit_count = bool(re.search(r'(?:记录计数|记录数|计数)', self._count_cue_text(clause)))
+            column_table = next(item for item in tables if item.name == link.table)
+            column = next(item for item in column_table.columns if item.name == link.column)
+            integer_pk = (column.primary_key and column.data_type.upper().strip() == 'INTEGER'
+                          and sum(c.primary_key for c in column_table.columns) == 1)
+            if explicit_count and column.nullable and not integer_pk:
+                return self._clarify(plan, 'ambiguous_count_semantics',
+                    '该字段可为空，请明确需要记录行数还是非空字段计数；当前不将COUNT(*)冒充COUNT(字段)。', 0.3)
+            if plan.metric_function == 'COUNT_DISTINCT' and '去重' in clause:
+                consumed.append('去重')
         reachable = self._many_to_one_distances(plan.metric_table, tables)
 
         # ---- "X所在Y"：X 只限定关联路径，不作为分组维度
@@ -494,6 +514,21 @@ class SingleTablePlanner:
 
         # ---- 覆盖率守卫
         consumed.extend(self._selected_schema_subjects(clean_question, plan, tables))
+        # Presentation verbs are harmless only after the requested selection
+        # operation was actually represented. Keep the rank/Top-N predicate.
+        if plan.dimensions and (plan.top_n is not None or plan.analysis_mode == 'rank'):
+            consumed.extend(match.group(0) for match in re.finditer(r'(?:并且|并)?找出', normalized))
+        if plan.dimensions and plan.top_n is not None:
+            consumed.extend(cue for cue in ('取最高', '取最低', '含并列') if cue in normalized)
+        if any(self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column))
+               for link in links) and (plan.filters or plan.dimensions) and '对应' in normalized:
+            # 日期字段→指标 is a syntactic bridge only after both are linked;
+            # arbitrary association requests still leave their objects intact.
+            consumed.append('对应')
+        if normalize_text(plan.table or '') in normalized:
+            topic = re.match(r'^(?:换个主题|换一个主题|换个问题)[,，:：]', normalized)
+            if topic:
+                consumed.append(topic.group(0))
         unresolved = self._coverage_guard(normalized, consumed)
         plan.coverage = {
             "consumed": sorted({item for item in consumed if item}),
@@ -672,20 +707,23 @@ class SingleTablePlanner:
         for span in sorted({item for item in consumed if item}, key=len, reverse=True):
             residual = residual.replace(span, "\x00")
         unresolved = [match.group(0) for match in lexicon.UNRESOLVED_CUES.finditer(residual)]
+        structural = (*_COVERAGE_STRUCTURAL_WORDS, *lexicon.FILLER_WORDS)
+        def content(fragment):
+            for word in sorted(structural, key=len, reverse=True):
+                fragment = fragment.replace(word, '')
+            return fragment
         for match in re.finditer(r"\x00(?:和|与|及|、|或)([\u3400-\u9fff]{2,})|([\u3400-\u9fff]{2,})(?:和|与|及|、|或)\x00", residual):
             fragment = match.group(1) or match.group(2) or ""
             # 并列结构中未被识别的实体：截掉"的/各/按…"之后的修饰部分再判断
             fragment = re.split(r"的|各|按|统计|每个|分别|是|有", fragment)[0 if match.group(1) else -1]
+            fragment = content(fragment)
             if len(fragment) >= 2:
                 unresolved.append(fragment)
         # 最后检查未被任何槽位消费的中文实体片段。只移除通用句法/业务
         # 结构词；剩余片段宁可澄清，也不能像“摇滚的订单金额”一样静默
         # 退化成全量汇总。真实取值应通过 ValueIndex 或显式同义词消费。
-        structural = (*_COVERAGE_STRUCTURAL_WORDS, *lexicon.FILLER_WORDS)
         for match in re.finditer(r"[\u3400-\u9fff]{2,}", residual):
-            fragment = match.group(0)
-            for word in structural:
-                fragment = fragment.replace(word, "")
+            fragment = content(match.group(0))
             if len(fragment) >= 2:
                 unresolved.append(fragment)
         return list(dict.fromkeys(unresolved))
@@ -1142,6 +1180,13 @@ class SingleTablePlanner:
                 "sales_amount": "销售额", "quantity": "销量", "unit_price": "单价", "order_id": "订单数",
                 "line_amount": "销售额", "item_id": "明细数", "resolution_hours": "解决时长",
             }.get(link.column, link.column)
+            # An explicit local count applies to this named source field, not
+            # to a neighboring amount or an arbitrary entity from the schema.
+            local = self._metric_clause(question, link)
+            if '去重计数' in local:
+                return link.table, link.column, 'COUNT_DISTINCT', f'去重数{label}'
+            if re.search(r'(?:记录计数|记录数|计数)', local):
+                return link.table, link.column, 'COUNT', f'记录数{label}'
             if link.column == "customer_id":
                 return link.table, link.column, "COUNT_DISTINCT", "客户数"
             if link.column.lower().replace("_", "").endswith("id") and any(word in link.matched_alias for word in ("数", "数量", "笔", "量")):
@@ -1167,6 +1212,27 @@ class SingleTablePlanner:
         if any(word in question for word in ("多少订单", "几笔订单", "订单量")) and any(c.name == "order_id" for c in table.columns):
             return table.name, "order_id", "COUNT", "订单数"
         return None
+
+    @staticmethod
+    def _metric_clause(question, link):
+        alias = normalize_text(link.matched_alias)
+        position = question.find(alias)
+        if position < 0:
+            return question
+        separators = r'(?:以及|同时|和|及|与|、|,|，|;|；)'
+        before = re.split(separators, question[:position])[-1]
+        after = re.split(separators, question[position + len(alias):])[0]
+        return before + alias + after
+
+    @staticmethod
+    def _count_cue_text(question):
+        # The shorter 计数 cue must not falsely make 去重计数 a second COUNT.
+        return question.replace('去重计数', '')
+
+    @classmethod
+    def _aggregate_matches(cls, question):
+        return [(cue, function) for cues, function, _ in _AGGREGATE_CUES
+                for cue in cues if cue in (cls._count_cue_text(question) if function == 'COUNT' else question)]
 
     def _choose_dimensions(self, links: list, question: str, table: TableInfo, metric_column: str, all_links: list | None = None, *, tables=None):
         tables = tuple(tables) if tables is not None else (table,)

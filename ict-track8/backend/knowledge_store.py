@@ -277,7 +277,11 @@ class KnowledgeStore:
                 result.update(generated)
                 result['answer_mode'] = 'model_grounded'
                 result['trace'].append({'stage': 'grounded_generation', 'status': 'validated', 'model': self.generator.client.model})
-            except GenerationError:
+            except GenerationError as exc:
                 result['answer_mode'] = 'extractive_fallback'
+                attempts = getattr(exc, 'generation_attempts', None)
+                if attempts:
+                    result['generation_attempts'] = attempts
+                    result['generation_repaired'] = False
                 result['trace'].append({'stage': 'grounded_generation', 'status': 'unavailable_or_invalid', 'fallback': 'attributed_extracts'})
         return result

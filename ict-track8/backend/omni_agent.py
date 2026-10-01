@@ -10,6 +10,7 @@ from .dependency_agent import DependencyAgent
 from .fusion_normalization import normalize_fusion_tasks
 from .responses_client import GenerationError, object_schema
 from .nl2sql.schema import normalize_text
+from .plan_requirements import requested_operations, completion_errors
 
 
 PLAN_SCHEMA = object_schema({'route': {'type': 'string', 'enum': ['sql', 'document', 'fusion', 'clarify']},
@@ -17,6 +18,7 @@ PLAN_SCHEMA = object_schema({'route': {'type': 'string', 'enum': ['sql', 'docume
 INSTRUCTIONS = '''你是多源问数问答工具规划器，只返回结构化计划，绝不直接计算答案或编造SQL。
 选择 sql（单纯结构化查询）、document（文档问答）、fusion（跨源或多步计算）、clarify（口径不清）。
 政策、操作方法、概念区别、业务能力边界以及文档明确给出的目标/增长率属于document；含数值并不等于sql。
+用户明确要求按两个或多个生效日期选择政策版本并比较变化时属于fusion，必须policy_select各日期→compare；只摘录文档不能当作完成版本比较。
 只有用户要求从数据库取数、聚合、排名时选择sql；不要把资料问答错误送去数据库查询。
 缺少对应证据的知识性问题仍选择document，让问答层明确拒答；不要凭常识回答或编造数据库查询。
 参考 history 解析省略、继承/替换槽位；新主题必须清空旧主题约束。effective_question 是本轮独立问题。
@@ -43,6 +45,11 @@ calculate: {formula:引用定位结果,parameters:{变量名:引用}}，禁止�
 formula必须引用document_formula完整结果path:[]，不能只引用expression字符串，否则会丢失来源。
 parameters变量名必须逐字等于document_formula的parameters；文档单元格引用完整结果path:[]以保留单位和来源。
 SQL数值引用rows中的实际业务标签，不是指标ID；例如{ref:"values",path:["rows",0,"销售额"]}。
+优先使用稳定聚合证据引用，避免猜中文展示标签：
+{ref:"values",path:["aggregate_cells",真实表名,真实列名,实际聚合函数,0]}。
+aggregate_cells的叶子是带value/单位/SQL定位的完整证据，直接传给calculate.parameters或compare。
+函数严格按业务指标口径和metric_contracts选择，如SUM/COUNT/COUNT_DISTINCT，不得更换统计口径。
+公式变量“基准销售额”可不同于SQL展示列名；不得把公式变量名猜成rows列名。
 引用列标签需与工具question中的业务指标及formula参数一致，不能擅自给标签加“去重/总计/本期”等词。
 document_formula的label必须是文档中明确公式名，不要填完整问题、公式表达式或推测出的新指标名。
 compare: {left:引用,right:引用,operator:可选eq/ne/lt/le/gt/ge}；两个证据的值比较，不直接比较search结果。
@@ -53,6 +60,19 @@ SQL结果含rows、plan、provenance，引用值必须path:["rows",行下标,实
 时间、单位、公式变量必须严格匹配。规划不能把2026预测增长用于2024基准；缺信息要clarify。
 歧义、缺必要参数不能随机选；clarification 给简短澄清问题。最多16个工具，最少必要步骤。
 不要为纯文档问答过度规划。最后一步必须产出用户所需结果。'''
+
+
+def explicit_cross_source_request(question):
+    """Only literal sources plus dependency operations gate task discarding.
+
+    This is deliberately not a theme classifier: unfamiliar business words
+    do not imply another source, and ordinary SQL comparisons remain SQL.
+    """
+    database = bool(re.search(r'数据库|数据表|(?<![A-Za-z0-9_])SQL(?![A-Za-z0-9_])', question, re.I))
+    document = bool(re.search(r'文档|资料|手册|知识库|(?<![A-Za-z0-9_])(?:PDF|Excel|XLSX|DOCX)(?![A-Za-z0-9_])', question, re.I))
+    dependency = bool(re.search(r'根据|依据|按照|结合|按.+公式|先.+(?:再|然后)|比较|对比|核对', question))
+    sql_then_search = bool(re.search(r'(?:先|从).{0,120}(?:数据库|数据表|查询|查出|取数).{0,120}(?:再|然后).{0,120}(?:检索|搜索)', question))
+    return database and document and dependency or sql_then_search
 
 
 class OmniAgent:
@@ -124,6 +144,10 @@ class OmniAgent:
         return documents
 
     def basic_plan(self, question, history):
+        if requested_operations(question)['version_comparison_dates']:
+            return {'route': 'clarify', 'effective_question': question,
+                    'clarification': '版本日期比较尚未形成完整工具计划；请启用或重试模型规划，或在跨源工作台明确版本选择及比较步骤。',
+                    'tasks_json': '[]'}
         previous = history[-1] if history else None
         followup = bool(re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$', question))
         slots = self.engine.analyze_slots(question)
@@ -146,44 +170,93 @@ class OmniAgent:
         started = time.perf_counter()
         source, error = 'rules_basic', None
         planning_notes = []
+        planning_attempts = []
+        rejection_code = None
         if self.client:
             try:
                 context_question = question
                 if history and re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$',question):
                     allowance = max(0,999-len(question))
                     context_question = question+'\n'+history[-1].effective_question[:allowance]
-                plan = self.client.generate(INSTRUCTIONS, {'question': question,
+                requirements = requested_operations(question)
+                context = {'question': question,
                     'history': [{'question': turn.effective_question, 'state': turn.state} for turn in history[-5:]],
                     'reference_date': self.engine.reference_date.isoformat(),
-                    'database_schema': self.engine.schema(include_row_count=False), 'documents': self.catalogue(context_question)}, PLAN_SCHEMA, name='omni_plan', max_tokens=5000)
+                    'required_operations': requirements,
+                    'database_schema': self.engine.schema(include_row_count=False), 'documents': self.catalogue(context_question)}
+                catalogue = getattr(self.engine, 'metric_catalog', None)
+                if catalogue:
+                    available = {(table['name'], col['name']) for table in context['database_schema']['tables'] for col in table['columns']}
+                    context['metric_contracts'] = [{key: getattr(metric, key) for key in ('table', 'column', 'function', 'label', 'unit', 'currency')}
+                        for metric in catalogue.sources.values() if (metric.table, metric.column) in available]
+                for attempt in range(2):
+                    try:
+                        plan = self.client.generate(INSTRUCTIONS, context, PLAN_SCHEMA,
+                            name='omni_plan' if attempt == 0 else 'omni_plan_completion_repair', max_tokens=5000)
+                    except GenerationError:
+                        planning_attempts.append({'attempt': attempt+1, 'validation': 'provider_failed',
+                                                  'api_audit': dict(getattr(self.client, 'audit', {}))})
+                        raise
+                    rejection_code = 'tasks_json_invalid'
+                    tasks_for_check = json.loads(plan['tasks_json'])
+                    rejection_code = None
+                    errors = completion_errors(requirements, plan['route'], tasks_for_check)
+                    audit = dict(getattr(self.client, 'audit', {}))
+                    planning_attempts.append({'attempt': attempt+1, 'validation': 'complete' if not errors else 'requested_operation_missing',
+                                              'errors': errors, 'api_audit': audit})
+                    if not errors:
+                        break
+                    if attempt or audit.get('status') != 'completed' or not isinstance(audit.get('http_status'), int) or not 200 <= audit['http_status'] < 300:
+                        rejection_code = 'requested_operations_incomplete'
+                        raise GenerationError('计划未完成用户明确要求的操作')
+                    # Feedback contains only required user operations and
+                    # static error codes, never arbitrary rejected model text.
+                    context = {**context, 'plan_completion_feedback': {'errors': errors,
+                        'instruction': '重新规划同一用户任务，补齐所要求的实际依赖操作，不直接给答案。'}}
                 source = 'model_validated'
                 if set(plan) != {'route', 'effective_question', 'clarification', 'tasks_json'} or plan['route'] not in {'sql', 'document', 'fusion', 'clarify'}:
+                    rejection_code = 'model_plan_shape_invalid'
                     raise GenerationError('规划输出无效')
                 if not isinstance(plan['effective_question'], str) or not 1 <= len(plan['effective_question']) <= 1000:
+                    rejection_code = 'effective_question_invalid'
                     raise GenerationError('改写问题超出限制')
                 if not isinstance(plan['tasks_json'], str) or len(plan['tasks_json']) > 32000:
+                    rejection_code = 'tasks_payload_invalid'
                     raise GenerationError('跨源规划超出大小限制')
                 tasks = json.loads(plan['tasks_json'])
                 if plan['route'] == 'fusion':
+                    rejection_code = 'fusion_task_normalization_rejected'
                     tasks, adjustments = normalize_fusion_tasks(tasks)
+                    rejection_code = None
                     planning_notes.extend(adjustments)
                     plan['tasks_json'] = json.dumps(tasks, ensure_ascii=False)
                 elif tasks != []:
                     # Some gateways emit a redundant read-only document step
                     # despite the requested empty array. Validate it first and
-                    # discard one ordinary document read or matching natural
-                    # SQL read. Never discard arithmetic/comparison or a DAG.
+                    # discard one ordinary document read or natural SQL read.
+                    # The SQL task text is never executed: original user text
+                    # or verified follow-up slots remain authoritative below.
+                    # Never discard arithmetic/comparison or a DAG.
+                    rejection_code = 'single_source_task_graph_invalid'
                     DependencyAgent(self.engine, self.knowledge).validate(tasks)
+                    rejection_code = None
                     ordinary_document = (plan['route'] == 'document' and len(tasks) == 1
                                          and tasks[0]['tool'] in {'search', 'document_fact'})
                     ordinary_sql = (plan['route'] == 'sql' and len(tasks) == 1 and tasks[0]['tool'] == 'sql'
                                     and set(tasks[0]['args']) == {'question'}
                                     and isinstance(tasks[0]['args']['question'], str)
-                                    and normalize_text(tasks[0]['args']['question']) in {
-                                        normalize_text(question), normalize_text(plan['effective_question'])}
+                                    and 1 <= len(tasks[0]['args']['question'].strip()) <= 1000
                                     and not re.search(r'\b(?:select|drop|delete|insert|update|alter|pragma|attach)\b',
                                                       tasks[0]['args']['question'], re.I))
+                    if ordinary_sql and explicit_cross_source_request(question):
+                        rejection_code = 'single_source_cross_source_request'
+                        raise GenerationError('明确跨源请求不能丢弃为单源SQL任务')
                     if not (ordinary_document or ordinary_sql):
+                        rejection_code = 'single_source_task_not_discardable'
+                        if (plan['route'] == 'sql' and len(tasks) == 1 and tasks[0]['tool'] == 'sql'
+                                and isinstance(tasks[0]['args'].get('question'), str)
+                                and re.search(r'\b(?:select|drop|delete|insert|update|alter|pragma|attach)\b', tasks[0]['args']['question'], re.I)):
+                            rejection_code = 'single_source_raw_sql_rejected'
                         raise GenerationError('单源规划不能携带执行任务')
                     plan['tasks_json'] = '[]'
                     planning_notes.append('discarded_redundant_document_read_not_executed' if ordinary_document
@@ -213,7 +286,8 @@ class OmniAgent:
                 planning_notes.append('server_verified_sql_followup_slots')
         trace = [{'stage': 'intent_planning', 'source': source, 'route': route,
                   'latency_ms': round((time.perf_counter()-started)*1000, 3), 'error': error,
-                  'normalizations': planning_notes}]
+                  'rejection_code': rejection_code,
+                  'normalizations': planning_notes, 'attempts': planning_attempts}]
         if route == 'sql':
             result = self.engine.answer(effective).to_dict()
             state = {'route': route, 'metrics': result['plan'].get('metrics', []),

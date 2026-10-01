@@ -21,7 +21,8 @@ FILTER = obj({"table": STRING, "column": STRING,
 DIMENSION = obj({"table": STRING, "column": STRING, "transform": {"type": "string", "enum": ["raw", "month", "year"]}, "label": STRING})
 METRIC = obj({"id": STRING, "table": STRING, "column": STRING,
               "function": {"type": "string", "enum": ["SUM", "AVG", "COUNT", "COUNT_DISTINCT", "MIN", "MAX"]},
-              "label": STRING, "unit": STRING, "currency": NULLABLE_STRING,
+              "label": STRING, "unit": {"type": "string", "minLength": 1, "maxLength": 40},
+              "currency": {"type": ["string", "null"], "maxLength": 10},
               "missing": {"type": "string", "enum": ["null", "zero"]}, "filters": {"type": "array", "items": FILTER}})
 EXPRESSION = {"anyOf": [obj({"ref": STRING}), obj({"constant": {"type": "number"}}),
                        obj({"op": {"type": "string", "enum": ["add", "subtract", "multiply", "divide"]},
@@ -52,6 +53,7 @@ RANGE 是半开区间[start,end)，BETWEEN 是闭区间。日期按 reference_da
 派生指标 output_metrics 仅含用户要求的指标，依赖源仍列在 metrics 内。
 无依据的口径、未定义的指标或多义字段应保留不确定性，不要发明字段、过滤值、公式或 JOIN。
 标签应与业务指标词典一致；一般维度使用字段名，日期月/年分别用月份/年份。
+unit必须是1至40字符的非空字符串。源Schema/指标词典未声明单位时用unknown；未声明币种时currency为null，不能猜币种或用空unit。
 结果 limit 最大100；同一事实分配到多个子维度需要业务分摊规则，不能使用 SUM(DISTINCT amount)。
 为每个过滤保留准确 source_text。SQL执行和语义审查由服务器完成。"""
 

@@ -1,0 +1,1689 @@
+{
+  "created_at": "2026-10-01T05:57:09.466434+00:00",
+  "scope": "authored_frozen_new_schema_five_turn_audit_not_public_or_blind_holdout",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "python": "3.12.10",
+  "few_shot_examples": 0,
+  "domain_alias_rules": 0,
+  "frozen_inputs": {
+    "approval-research.md": "5fe14465b12f359e2fb989dc150468f809e80aae8c970ab5580ddb2c15a88c87",
+    "approval-support.md": "87413ca7c79c3d2756f3166fc5afe797d95774b2d933f9b8b1ce4e777cde3f90",
+    "questions.json": "3e804960dbafdd7e182d7fee7103b8e5a44bb52ebe88d6b905375521481a72cb",
+    "README.md": "1ccbef427551db3665a0259882dd8afba13e1fd423ddd4a361ad736d1285f34f",
+    "refund-calculation.md": "7c7cbc79503b1993db55bea272b792fe60ccc7e524af0c32682dc6efbf88ef01",
+    "schema.sql": "85af0785cc2e2cced82e3bea1c47b5670a2bf96020ae34dd2165d7b865e89189"
+  },
+  "status": "some_cases_failed",
+  "planned_cases": 5,
+  "passed": 0,
+  "total": 5,
+  "cases": [
+    {
+      "id": "new-turn-1",
+      "kind": "sql",
+      "session_id": "new-schema-five",
+      "context_turns": 0,
+      "question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Orders WHERE Department='研发部' AND ApprovedDate>='2025-01-01' AND ApprovedDate<'2026-01-01'",
+      "metric": {
+        "table": "Orders",
+        "column": "ApprovedAmount",
+        "function": "SUM"
+      },
+      "expected_rows": [
+        [
+          1500.0
+        ]
+      ],
+      "checks": {
+        "model_router": false,
+        "status": true,
+        "route": true,
+        "history": true,
+        "real_sql_planner": false,
+        "physical_metric_value": false,
+        "no_previous_topic_filter": true,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "pass": false,
+      "result": {
+        "status": "ok",
+        "question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+        "effective_question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+        "route": "sql",
+        "planner_source": "rules_fallback",
+        "session_id": "new-schema-five",
+        "context_turns": 0,
+        "state": {
+          "route": "sql",
+          "metrics": [],
+          "filters": [
+            {
+              "column": "ApprovedDate",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+              "table": "Orders"
+            },
+            {
+              "column": "Department",
+              "operator": "=",
+              "value": "研发部",
+              "source_text": "研发部",
+              "explanation": "限定 Department ∈ {研发部}",
+              "table": "Orders"
+            }
+          ],
+          "dimensions": [],
+          "clarification_code": null,
+          "pending_question": null
+        },
+        "result": {
+          "status": "ok",
+          "result_state": "rows",
+          "notices": [],
+          "question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+          "rewritten_question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+          "sql": "SELECT SUM(\"Orders\".\"ApprovedAmount\") AS \"总ApprovedAmount\" FROM \"Orders\" WHERE \"Orders\".\"ApprovedDate\" >= ? AND \"Orders\".\"ApprovedDate\" < ? AND \"Orders\".\"Department\" = ? ORDER BY SUM(\"Orders\".\"ApprovedAmount\") DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "研发部",
+            100
+          ],
+          "columns": [
+            "总ApprovedAmount"
+          ],
+          "rows": [
+            {
+              "总ApprovedAmount": 1500.0
+            }
+          ],
+          "plan": {
+            "table": "Orders",
+            "metric_table": "Orders",
+            "metric_column": "ApprovedAmount",
+            "metric_function": "SUM",
+            "metric_label": "总ApprovedAmount",
+            "analysis_mode": "aggregate",
+            "dimensions": [],
+            "dimension_tables": {},
+            "dimension_transforms": {},
+            "dimension_labels": {},
+            "filters": [
+              {
+                "column": "ApprovedDate",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+                "table": "Orders"
+              },
+              {
+                "column": "Department",
+                "operator": "=",
+                "value": "研发部",
+                "source_text": "研发部",
+                "explanation": "限定 Department ∈ {研发部}",
+                "table": "Orders"
+              }
+            ],
+            "having": null,
+            "links": [
+              {
+                "source_text": "ApprovedAmount",
+                "table": "Orders",
+                "column": "ApprovedAmount",
+                "role": "metric",
+                "score": 0.7,
+                "matched_alias": "ApprovedAmount",
+                "metric_function": null
+              }
+            ],
+            "join_tables": [],
+            "join_conditions": [],
+            "join_path": [],
+            "join_alternatives": [],
+            "order_desc": true,
+            "limit": 100,
+            "confidence": 0.58,
+            "rewritten_question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+            "comparison_mode": "none",
+            "comparison_period": {},
+            "clarification": null,
+            "clarification_code": null,
+            "clarification_options": [],
+            "assumptions": [
+              "问题中的繁体字已按简体归一化后解析",
+              "日期参数格式：iso_text",
+              "使用表 Orders 的只读聚合查询",
+              "模型计划不可用或未通过校验（指标单位/币种无效），已回退规则规划"
+            ],
+            "planner_source": "rules_fallback",
+            "top_n": null,
+            "fan_out": false,
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "approvedamount",
+                "orders",
+                "合计",
+                "研发部"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "intent_audit": {
+              "question": "2025年Orders中研发部的ApprovedAmount合计是多少？",
+              "metric": {
+                "table": "Orders",
+                "column": "ApprovedAmount",
+                "function": "SUM",
+                "label": "总ApprovedAmount"
+              },
+              "filters": [
+                {
+                  "column": "ApprovedDate",
+                  "operator": "RANGE",
+                  "value": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_text": "2025年",
+                  "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+                  "table": "Orders"
+                },
+                {
+                  "column": "Department",
+                  "operator": "=",
+                  "value": "研发部",
+                  "source_text": "研发部",
+                  "explanation": "限定 Department ∈ {研发部}",
+                  "table": "Orders"
+                }
+              ],
+              "time_range": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "group_by": [],
+              "comparison": "none",
+              "comparison_window": null,
+              "top_n": null,
+              "confidence": 0.58,
+              "unresolved": [],
+              "execution_allowed": true,
+              "planner_source": "rules_fallback",
+              "planner_audit": {
+                "candidate_source": "external_model",
+                "final_source": "rules_fallback",
+                "fallback": true,
+                "decision": "rejected_or_unavailable",
+                "reason_type": "ModelPlanError",
+                "reason_code": "model_contract_or_grounding_rejected",
+                "reason": "指标单位/币种无效"
+              },
+              "metrics": [],
+              "derived_metrics": [],
+              "grain_audit": {},
+              "semantic_audit": {}
+            },
+            "planner_audit": {
+              "candidate_source": "external_model",
+              "final_source": "rules_fallback",
+              "fallback": true,
+              "decision": "rejected_or_unavailable",
+              "reason_type": "ModelPlanError",
+              "reason_code": "model_contract_or_grounding_rejected",
+              "reason": "指标单位/币种无效"
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "order_metric": null,
+            "grain_audit": {},
+            "semantic_audit": {},
+            "output_metrics": []
+          },
+          "explanation": [
+            "识别指标：总ApprovedAmount（SUM）",
+            "查询表：Orders",
+            "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+            "限定 Department ∈ {研发部}",
+            "问题中的繁体字已按简体归一化后解析",
+            "日期参数格式：iso_text",
+            "使用表 Orders 的只读聚合查询",
+            "模型计划不可用或未通过校验（指标单位/币种无效），已回退规则规划",
+            "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+          ],
+          "provenance": {
+            "source_type": "structured_database",
+            "database": "new_schema.sqlite",
+            "table": "Orders",
+            "row_count": 1,
+            "query_hash": "32dba65e7e709ada",
+            "field_links": [
+              {
+                "source_text": "ApprovedAmount",
+                "table": "Orders",
+                "column": "ApprovedAmount",
+                "role": "metric",
+                "score": 0.7,
+                "matched_alias": "ApprovedAmount",
+                "metric_function": null
+              }
+            ],
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "approvedamount",
+                "orders",
+                "合计",
+                "研发部"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "consistency": "sqlite_read_transaction",
+            "source_revision": "7e41464d63cb21115db32bc661d45c4475a4cff04805790f40d27b8416c58db4",
+            "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+            "grain_audit": {},
+            "result_cells": [
+              {
+                "row": 0,
+                "column": "总ApprovedAmount",
+                "query_hash": "32dba65e7e709ada",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "总ApprovedAmount"
+                }
+              }
+            ]
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": []
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "rules_fallback",
+            "route": "sql",
+            "latency_ms": 21007.388,
+            "error": "GenerationError",
+            "normalizations": [],
+            "attempts": [
+              {
+                "attempt": 1,
+                "validation": "complete",
+                "errors": [],
+                "api_audit": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2353,
+                  "output_tokens": 157,
+                  "total_tokens": 2510,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 74,
+                  "call_index": 1,
+                  "latency_ms": 9989.892
+                }
+              }
+            ]
+          }
+        ],
+        "audit_id": "5f31f6428dd40388947c4a09"
+      },
+      "error_type": null,
+      "latency_ms": 30496.323,
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "omni_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 2353,
+          "output_tokens": 157,
+          "total_tokens": 2510,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 74,
+          "call_index": 1,
+          "latency_ms": 9989.892,
+          "component": "omni"
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "nl2sql_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1766,
+          "output_tokens": 240,
+          "total_tokens": 2006,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 40,
+          "call_index": 1,
+          "latency_ms": 9473.825,
+          "component": "nl2sql"
+        }
+      ],
+      "api_summary": {
+        "calls": 2,
+        "retained_calls": 2,
+        "dropped_calls": 0,
+        "completed_calls": 2,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 4119,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 397,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 4516,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 0,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 114,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 19463.717,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    {
+      "id": "new-turn-2",
+      "kind": "sql",
+      "session_id": "new-schema-five",
+      "context_turns": 1,
+      "question": "那支持部呢？",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Orders WHERE Department='支持部' AND ApprovedDate>='2025-01-01' AND ApprovedDate<'2026-01-01'",
+      "metric": {
+        "table": "Orders",
+        "column": "ApprovedAmount",
+        "function": "SUM"
+      },
+      "expected_rows": [
+        [
+          3600.0
+        ]
+      ],
+      "checks": {
+        "model_router": false,
+        "status": true,
+        "route": true,
+        "history": true,
+        "real_sql_planner": false,
+        "physical_metric_value": false,
+        "no_previous_topic_filter": true,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "pass": false,
+      "result": {
+        "status": "ok",
+        "question": "那支持部呢？",
+        "effective_question": "2025年orders中支持部的approvedamount合计是多少?",
+        "route": "sql",
+        "planner_source": "rules_fallback",
+        "session_id": "new-schema-five",
+        "context_turns": 1,
+        "state": {
+          "route": "sql",
+          "metrics": [],
+          "filters": [
+            {
+              "column": "ApprovedDate",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+              "table": "Orders"
+            },
+            {
+              "column": "Department",
+              "operator": "=",
+              "value": "支持部",
+              "source_text": "支持部",
+              "explanation": "限定 Department ∈ {支持部}",
+              "table": "Orders"
+            }
+          ],
+          "dimensions": [],
+          "clarification_code": null,
+          "pending_question": null
+        },
+        "result": {
+          "status": "ok",
+          "result_state": "rows",
+          "notices": [],
+          "question": "2025年orders中支持部的approvedamount合计是多少?",
+          "rewritten_question": "2025年orders中支持部的approvedamount合计是多少?",
+          "sql": "SELECT SUM(\"Orders\".\"ApprovedAmount\") AS \"总ApprovedAmount\" FROM \"Orders\" WHERE \"Orders\".\"ApprovedDate\" >= ? AND \"Orders\".\"ApprovedDate\" < ? AND \"Orders\".\"Department\" = ? ORDER BY SUM(\"Orders\".\"ApprovedAmount\") DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "支持部",
+            100
+          ],
+          "columns": [
+            "总ApprovedAmount"
+          ],
+          "rows": [
+            {
+              "总ApprovedAmount": 3600.0
+            }
+          ],
+          "plan": {
+            "table": "Orders",
+            "metric_table": "Orders",
+            "metric_column": "ApprovedAmount",
+            "metric_function": "SUM",
+            "metric_label": "总ApprovedAmount",
+            "analysis_mode": "aggregate",
+            "dimensions": [],
+            "dimension_tables": {},
+            "dimension_transforms": {},
+            "dimension_labels": {},
+            "filters": [
+              {
+                "column": "ApprovedDate",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+                "table": "Orders"
+              },
+              {
+                "column": "Department",
+                "operator": "=",
+                "value": "支持部",
+                "source_text": "支持部",
+                "explanation": "限定 Department ∈ {支持部}",
+                "table": "Orders"
+              }
+            ],
+            "having": null,
+            "links": [
+              {
+                "source_text": "ApprovedAmount",
+                "table": "Orders",
+                "column": "ApprovedAmount",
+                "role": "metric",
+                "score": 0.7,
+                "matched_alias": "ApprovedAmount",
+                "metric_function": null
+              }
+            ],
+            "join_tables": [],
+            "join_conditions": [],
+            "join_path": [],
+            "join_alternatives": [],
+            "order_desc": true,
+            "limit": 100,
+            "confidence": 0.58,
+            "rewritten_question": "2025年orders中支持部的approvedamount合计是多少?",
+            "comparison_mode": "none",
+            "comparison_period": {},
+            "clarification": null,
+            "clarification_code": null,
+            "clarification_options": [],
+            "assumptions": [
+              "日期参数格式：iso_text",
+              "使用表 Orders 的只读聚合查询",
+              "模型计划不可用或未通过校验（指标单位/币种无效），已回退规则规划"
+            ],
+            "planner_source": "rules_fallback",
+            "top_n": null,
+            "fan_out": false,
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "approvedamount",
+                "orders",
+                "合计",
+                "支持部"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "intent_audit": {
+              "question": "2025年orders中支持部的approvedamount合计是多少?",
+              "metric": {
+                "table": "Orders",
+                "column": "ApprovedAmount",
+                "function": "SUM",
+                "label": "总ApprovedAmount"
+              },
+              "filters": [
+                {
+                  "column": "ApprovedDate",
+                  "operator": "RANGE",
+                  "value": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_text": "2025年",
+                  "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+                  "table": "Orders"
+                },
+                {
+                  "column": "Department",
+                  "operator": "=",
+                  "value": "支持部",
+                  "source_text": "支持部",
+                  "explanation": "限定 Department ∈ {支持部}",
+                  "table": "Orders"
+                }
+              ],
+              "time_range": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "group_by": [],
+              "comparison": "none",
+              "comparison_window": null,
+              "top_n": null,
+              "confidence": 0.58,
+              "unresolved": [],
+              "execution_allowed": true,
+              "planner_source": "rules_fallback",
+              "planner_audit": {
+                "candidate_source": "external_model",
+                "final_source": "rules_fallback",
+                "fallback": true,
+                "decision": "rejected_or_unavailable",
+                "reason_type": "ModelPlanError",
+                "reason_code": "model_contract_or_grounding_rejected",
+                "reason": "指标单位/币种无效"
+              },
+              "metrics": [],
+              "derived_metrics": [],
+              "grain_audit": {},
+              "semantic_audit": {}
+            },
+            "planner_audit": {
+              "candidate_source": "external_model",
+              "final_source": "rules_fallback",
+              "fallback": true,
+              "decision": "rejected_or_unavailable",
+              "reason_type": "ModelPlanError",
+              "reason_code": "model_contract_or_grounding_rejected",
+              "reason": "指标单位/币种无效"
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "order_metric": null,
+            "grain_audit": {},
+            "semantic_audit": {},
+            "output_metrics": []
+          },
+          "explanation": [
+            "识别指标：总ApprovedAmount（SUM）",
+            "查询表：Orders",
+            "限制时间 [2025-01-01, 2026-01-01)，时间字段 Orders.ApprovedDate",
+            "限定 Department ∈ {支持部}",
+            "日期参数格式：iso_text",
+            "使用表 Orders 的只读聚合查询",
+            "模型计划不可用或未通过校验（指标单位/币种无效），已回退规则规划",
+            "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+          ],
+          "provenance": {
+            "source_type": "structured_database",
+            "database": "new_schema.sqlite",
+            "table": "Orders",
+            "row_count": 1,
+            "query_hash": "15368e613801c892",
+            "field_links": [
+              {
+                "source_text": "ApprovedAmount",
+                "table": "Orders",
+                "column": "ApprovedAmount",
+                "role": "metric",
+                "score": 0.7,
+                "matched_alias": "ApprovedAmount",
+                "metric_function": null
+              }
+            ],
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "approvedamount",
+                "orders",
+                "合计",
+                "支持部"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "consistency": "sqlite_read_transaction",
+            "source_revision": "7e41464d63cb21115db32bc661d45c4475a4cff04805790f40d27b8416c58db4",
+            "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+            "grain_audit": {},
+            "result_cells": [
+              {
+                "row": 0,
+                "column": "总ApprovedAmount",
+                "query_hash": "15368e613801c892",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "总ApprovedAmount"
+                }
+              }
+            ]
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": []
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "rules_fallback",
+            "route": "sql",
+            "latency_ms": 6133.214,
+            "error": "GenerationError",
+            "normalizations": [
+              "original_single_source_question_preserved",
+              "server_verified_sql_followup_slots"
+            ],
+            "attempts": [
+              {
+                "attempt": 1,
+                "validation": "complete",
+                "errors": [],
+                "api_audit": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2521,
+                  "output_tokens": 122,
+                  "total_tokens": 2643,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 55,
+                  "call_index": 1,
+                  "latency_ms": 6108.597
+                }
+              }
+            ]
+          }
+        ],
+        "audit_id": "11cdf8093aa0b55b2fb10ffd"
+      },
+      "error_type": null,
+      "latency_ms": 12032.332,
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "omni_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 2521,
+          "output_tokens": 122,
+          "total_tokens": 2643,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 55,
+          "call_index": 1,
+          "latency_ms": 6108.597,
+          "component": "omni"
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "nl2sql_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1765,
+          "output_tokens": 256,
+          "total_tokens": 2021,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 58,
+          "call_index": 1,
+          "latency_ms": 5894.492,
+          "component": "nl2sql"
+        }
+      ],
+      "api_summary": {
+        "calls": 2,
+        "retained_calls": 2,
+        "dropped_calls": 0,
+        "completed_calls": 2,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 4286,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 378,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 4664,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 0,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 113,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 12003.089,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    {
+      "id": "new-turn-3",
+      "kind": "sql_to_document",
+      "session_id": "new-schema-five",
+      "context_turns": 2,
+      "question": "先从Orders按Department查询2025年ApprovedAmount合计最高的部门，再根据查出的部门检索该部门采购审批规则，并保留来源。",
+      "gold_sql": "SELECT Department,SUM(ApprovedAmount) FROM Orders WHERE ApprovedDate>='2025-01-01' AND ApprovedDate<'2026-01-01' GROUP BY Department ORDER BY SUM(ApprovedAmount) DESC LIMIT 1",
+      "sources": [
+        "new-approval-support"
+      ],
+      "contains": [
+        "支持部",
+        "双人审批"
+      ],
+      "expected_rows": [
+        [
+          "支持部",
+          3600.0
+        ]
+      ],
+      "checks": {
+        "model_router": true,
+        "status": false,
+        "route": true,
+        "history": true,
+        "real_sql_planner": false,
+        "actual_champion": false,
+        "source_and_champion": false,
+        "sql_to_search_dependency": false,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "pass": false,
+      "result": {
+        "status": "incomplete",
+        "question": "先从Orders按Department查询2025年ApprovedAmount合计最高的部门，再根据查出的部门检索该部门采购审批规则，并保留来源。",
+        "effective_question": "先按Department统计Orders在2025年的ApprovedAmount合计并找出合计最高的部门，再检索该部门的采购审批规则并保留来源。",
+        "route": "fusion",
+        "planner_source": "model_validated",
+        "session_id": "new-schema-five",
+        "context_turns": 2,
+        "state": {
+          "route": "fusion",
+          "trace_id": "34fac956958d3ea14823"
+        },
+        "result": {
+          "status": "incomplete",
+          "trace_id": "34fac956958d3ea14823",
+          "results": {},
+          "trace": [
+            {
+              "trace_id": "34fac956958d3ea14823",
+              "task_id": "q1",
+              "tool": "sql",
+              "dependencies": [],
+              "status": "failed",
+              "error": "问题中的“并找出”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+              "error_code": "tool_contract_failed",
+              "latency_ms": 7257.051
+            }
+          ],
+          "failed_task": "q1",
+          "error": "问题中的“并找出”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "error_code": "tool_contract_failed",
+          "skipped_tasks": [
+            "q2"
+          ],
+          "edges": [
+            {
+              "from": "q1",
+              "to": "q2"
+            }
+          ]
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "fusion",
+            "latency_ms": 15380.274,
+            "error": null,
+            "normalizations": [],
+            "attempts": [
+              {
+                "attempt": 1,
+                "validation": "complete",
+                "errors": [],
+                "api_audit": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2725,
+                  "output_tokens": 631,
+                  "total_tokens": 3356,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 483,
+                  "call_index": 1,
+                  "latency_ms": 15360.697
+                }
+              }
+            ]
+          },
+          {
+            "trace_id": "34fac956958d3ea14823",
+            "task_id": "q1",
+            "tool": "sql",
+            "dependencies": [],
+            "status": "failed",
+            "error": "问题中的“并找出”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+            "error_code": "tool_contract_failed",
+            "latency_ms": 7257.051
+          }
+        ],
+        "audit_id": "4cc003796bce9d0ed89aa149"
+      },
+      "error_type": null,
+      "latency_ms": 22638.376,
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "omni_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 2725,
+          "output_tokens": 631,
+          "total_tokens": 3356,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 483,
+          "call_index": 1,
+          "latency_ms": 15360.697,
+          "component": "omni"
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "nl2sql_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1756,
+          "output_tokens": 277,
+          "total_tokens": 2033,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 49,
+          "call_index": 1,
+          "latency_ms": 7254.085,
+          "component": "nl2sql"
+        }
+      ],
+      "api_summary": {
+        "calls": 2,
+        "retained_calls": 2,
+        "dropped_calls": 0,
+        "completed_calls": 2,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 4481,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 908,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 5389,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 0,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 532,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 22614.782,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    {
+      "id": "new-turn-4",
+      "kind": "sql",
+      "session_id": "new-schema-five",
+      "context_turns": 3,
+      "question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+      "gold_sql": "SELECT SUM(RefundedAmount) FROM WarrantyRequests WHERE RequestDate>='2025-01-01' AND RequestDate<'2026-01-01'",
+      "metric": {
+        "table": "WarrantyRequests",
+        "column": "RefundedAmount",
+        "function": "SUM"
+      },
+      "forbidden_filter_columns": [
+        "Department"
+      ],
+      "expected_rows": [
+        [
+          1800.0
+        ]
+      ],
+      "checks": {
+        "model_router": true,
+        "status": false,
+        "route": true,
+        "history": true,
+        "real_sql_planner": false,
+        "physical_metric_value": false,
+        "no_previous_topic_filter": true,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "pass": false,
+      "result": {
+        "status": "clarification",
+        "question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+        "effective_question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+        "route": "sql",
+        "planner_source": "model_validated",
+        "session_id": "new-schema-five",
+        "context_turns": 3,
+        "state": {
+          "route": "sql",
+          "metrics": [],
+          "filters": [
+            {
+              "column": "RequestDate",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 WarrantyRequests.RequestDate",
+              "table": "WarrantyRequests"
+            }
+          ],
+          "dimensions": [],
+          "clarification_code": "unresolved_terms",
+          "pending_question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？"
+        },
+        "result": {
+          "status": "clarification",
+          "result_state": "rows",
+          "notices": [],
+          "question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+          "rewritten_question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+          "sql": null,
+          "parameters": [],
+          "columns": [],
+          "rows": [],
+          "plan": {
+            "table": "WarrantyRequests",
+            "metric_table": "WarrantyRequests",
+            "metric_column": "RefundedAmount",
+            "metric_function": "SUM",
+            "metric_label": "总RefundedAmount",
+            "analysis_mode": "aggregate",
+            "dimensions": [],
+            "dimension_tables": {},
+            "dimension_transforms": {},
+            "dimension_labels": {},
+            "filters": [
+              {
+                "column": "RequestDate",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 WarrantyRequests.RequestDate",
+                "table": "WarrantyRequests"
+              }
+            ],
+            "having": null,
+            "links": [
+              {
+                "source_text": "RefundedAmount",
+                "table": "WarrantyRequests",
+                "column": "RefundedAmount",
+                "role": "metric",
+                "score": 0.7,
+                "matched_alias": "RefundedAmount",
+                "metric_function": null
+              }
+            ],
+            "join_tables": [],
+            "join_conditions": [],
+            "join_path": [],
+            "join_alternatives": [],
+            "order_desc": true,
+            "limit": 100,
+            "confidence": 0.3,
+            "rewritten_question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+            "comparison_mode": "none",
+            "comparison_period": {},
+            "clarification": "问题中的“换个主题”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+            "clarification_code": "unresolved_terms",
+            "clarification_options": [],
+            "assumptions": [
+              "问题中的繁体字已按简体归一化后解析",
+              "日期参数格式：iso_text",
+              "模型计划不可用或未通过校验（指标单位/币种无效），已回退规则规划"
+            ],
+            "planner_source": "rules_fallback",
+            "top_n": null,
+            "fan_out": false,
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "refundedamount",
+                "warrantyrequests",
+                "合计"
+              ],
+              "unresolved": [
+                "换个主题"
+              ],
+              "ignored_instruction_spans": []
+            },
+            "intent_audit": {
+              "question": "换个主题，2025年WarrantyRequests的RefundedAmount合计是多少？",
+              "metric": {
+                "table": "WarrantyRequests",
+                "column": "RefundedAmount",
+                "function": "SUM",
+                "label": "总RefundedAmount"
+              },
+              "filters": [
+                {
+                  "column": "RequestDate",
+                  "operator": "RANGE",
+                  "value": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_text": "2025年",
+                  "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 WarrantyRequests.RequestDate",
+                  "table": "WarrantyRequests"
+                }
+              ],
+              "time_range": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "group_by": [],
+              "comparison": "none",
+              "comparison_window": null,
+              "top_n": null,
+              "confidence": 0.3,
+              "unresolved": [
+                "换个主题"
+              ],
+              "execution_allowed": false,
+              "planner_source": "rules_fallback",
+              "planner_audit": {
+                "candidate_source": "external_model",
+                "final_source": "rules_fallback",
+                "fallback": true,
+                "decision": "rejected_or_unavailable",
+                "reason_type": "ModelPlanError",
+                "reason_code": "model_contract_or_grounding_rejected",
+                "reason": "指标单位/币种无效"
+              },
+              "metrics": [],
+              "derived_metrics": [],
+              "grain_audit": {},
+              "semantic_audit": {}
+            },
+            "planner_audit": {
+              "candidate_source": "external_model",
+              "final_source": "rules_fallback",
+              "fallback": true,
+              "decision": "rejected_or_unavailable",
+              "reason_type": "ModelPlanError",
+              "reason_code": "model_contract_or_grounding_rejected",
+              "reason": "指标单位/币种无效"
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "order_metric": null,
+            "grain_audit": {},
+            "semantic_audit": {},
+            "output_metrics": []
+          },
+          "explanation": [
+            "问题中的“换个主题”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。"
+          ],
+          "provenance": {
+            "source_type": "structured_database",
+            "database": "new_schema.sqlite",
+            "consistency": "sqlite_read_transaction"
+          },
+          "clarification": "问题中的“换个主题”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "clarification_code": "unresolved_terms",
+          "clarification_options": []
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "sql",
+            "latency_ms": 2708.852,
+            "error": null,
+            "normalizations": [
+              "original_single_source_question_preserved"
+            ],
+            "attempts": [
+              {
+                "attempt": 1,
+                "validation": "complete",
+                "errors": [],
+                "api_audit": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2538,
+                  "output_tokens": 80,
+                  "total_tokens": 2618,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 37,
+                  "call_index": 1,
+                  "latency_ms": 2691.776
+                }
+              }
+            ]
+          }
+        ],
+        "audit_id": "efd4c6a01071c0c8c23d25ff"
+      },
+      "error_type": null,
+      "latency_ms": 26018.978,
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "omni_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 2538,
+          "output_tokens": 80,
+          "total_tokens": 2618,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 37,
+          "call_index": 1,
+          "latency_ms": 2691.776,
+          "component": "omni"
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "nl2sql_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1734,
+          "output_tokens": 328,
+          "total_tokens": 2062,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 146,
+          "call_index": 1,
+          "latency_ms": 23306.285,
+          "component": "nl2sql"
+        }
+      ],
+      "api_summary": {
+        "calls": 2,
+        "retained_calls": 2,
+        "dropped_calls": 0,
+        "completed_calls": 2,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 4272,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 408,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 4680,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 0,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 183,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 25998.061,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    },
+    {
+      "id": "new-turn-5",
+      "kind": "formula",
+      "session_id": "new-schema-five",
+      "context_turns": 4,
+      "question": "按退款核算说明中的每笔退款核算额公式，用WarrantyRequests中2025年的RefundedAmount合计和RequestId记录计数计算每笔退款核算额，不沿用采购部门筛选。",
+      "gold_sql": "SELECT SUM(RefundedAmount)*1.0/COUNT(RequestId) FROM WarrantyRequests WHERE RequestDate>='2025-01-01' AND RequestDate<'2026-01-01'",
+      "expected_formula_document": "new-refund-calculation",
+      "expected_parameters": [
+        "退款总额",
+        "退款记录数"
+      ],
+      "expected_rows": [
+        [
+          600.0
+        ]
+      ],
+      "checks": {
+        "model_router": true,
+        "status": false,
+        "route": true,
+        "history": true,
+        "real_sql_planner": false,
+        "calculated_value": false,
+        "formula_source": false,
+        "parameter_provenance": false,
+        "physical_sql_inputs": false,
+        "actual_dependencies": false,
+        "no_previous_topic_filter": true,
+        "verified_api_calls": true,
+        "requested_only_allowed_model": true
+      },
+      "pass": false,
+      "result": {
+        "status": "incomplete",
+        "question": "按退款核算说明中的每笔退款核算额公式，用WarrantyRequests中2025年的RefundedAmount合计和RequestId记录计数计算每笔退款核算额，不沿用采购部门筛选。",
+        "effective_question": "依据《退款核算说明》的“每笔退款核算额 = 退款总额/退款记录数”公式，查询WarrantyRequests中2025年的RefundedAmount合计和RequestId记录计数，并计算每笔退款核算额；不应用Orders或采购部门筛选。",
+        "route": "fusion",
+        "planner_source": "model_validated",
+        "session_id": "new-schema-five",
+        "context_turns": 4,
+        "state": {
+          "route": "fusion",
+          "trace_id": "49b24d75c19c63f0322c"
+        },
+        "result": {
+          "status": "incomplete",
+          "trace_id": "49b24d75c19c63f0322c",
+          "results": {
+            "formula_refund_per_record": {
+              "expression": "退款总额/退款记录数",
+              "parameters": [
+                "退款总额",
+                "退款记录数"
+              ],
+              "label": "每笔退款核算额",
+              "source_uri": "/api/v1/knowledge/documents/new-refund-calculation/original",
+              "locator": "lines:3-8",
+              "chunk_id": "a63696b3e1404fc1929a6e9c",
+              "sha256": "7c7cbc79503b1993db55bea272b792fe60ccc7e524af0c32682dc6efbf88ef01"
+            }
+          },
+          "trace": [
+            {
+              "trace_id": "49b24d75c19c63f0322c",
+              "task_id": "formula_refund_per_record",
+              "tool": "document_formula",
+              "dependencies": [],
+              "status": "complete",
+              "latency_ms": 2.463
+            },
+            {
+              "trace_id": "49b24d75c19c63f0322c",
+              "task_id": "refund_totals_2025",
+              "tool": "sql",
+              "dependencies": [],
+              "status": "failed",
+              "error": "问题中的“合计、记录计数”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+              "error_code": "tool_contract_failed",
+              "latency_ms": 35962.298
+            }
+          ],
+          "failed_task": "refund_totals_2025",
+          "error": "问题中的“合计、记录计数”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "error_code": "tool_contract_failed",
+          "skipped_tasks": [
+            "calc_refund_per_record"
+          ],
+          "edges": [
+            {
+              "from": "formula_refund_per_record",
+              "to": "calc_refund_per_record"
+            },
+            {
+              "from": "refund_totals_2025",
+              "to": "calc_refund_per_record"
+            }
+          ]
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "fusion",
+            "latency_ms": 13993.248,
+            "error": null,
+            "normalizations": [],
+            "attempts": [
+              {
+                "attempt": 1,
+                "validation": "complete",
+                "errors": [],
+                "api_audit": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2958,
+                  "output_tokens": 581,
+                  "total_tokens": 3539,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 320,
+                  "call_index": 1,
+                  "latency_ms": 13973.292
+                }
+              }
+            ]
+          },
+          {
+            "trace_id": "49b24d75c19c63f0322c",
+            "task_id": "formula_refund_per_record",
+            "tool": "document_formula",
+            "dependencies": [],
+            "status": "complete",
+            "latency_ms": 2.463
+          },
+          {
+            "trace_id": "49b24d75c19c63f0322c",
+            "task_id": "refund_totals_2025",
+            "tool": "sql",
+            "dependencies": [],
+            "status": "failed",
+            "error": "问题中的“合计、记录计数”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+            "error_code": "tool_contract_failed",
+            "latency_ms": 35962.298
+          }
+        ],
+        "audit_id": "db6c6b933b16619f73c996c7"
+      },
+      "error_type": null,
+      "latency_ms": 49959.377,
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "omni_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 2958,
+          "output_tokens": 581,
+          "total_tokens": 3539,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 320,
+          "call_index": 1,
+          "latency_ms": 13973.292,
+          "component": "omni"
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "nl2sql_plan",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1821,
+          "output_tokens": 652,
+          "total_tokens": 2473,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 425,
+          "call_index": 1,
+          "latency_ms": 35958.611,
+          "component": "nl2sql"
+        }
+      ],
+      "api_summary": {
+        "calls": 2,
+        "retained_calls": 2,
+        "dropped_calls": 0,
+        "completed_calls": 2,
+        "failed_calls": 0,
+        "tokens": {
+          "input_tokens": {
+            "reported_sum": 4779,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "output_tokens": {
+            "reported_sum": 1233,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "total_tokens": {
+            "reported_sum": 6012,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "cached_input_tokens": {
+            "reported_sum": 0,
+            "unknown_calls": 0,
+            "complete": true
+          },
+          "reasoning_tokens": {
+            "reported_sum": 745,
+            "unknown_calls": 0,
+            "complete": true
+          }
+        },
+        "api_latency_ms": 49931.903,
+        "usd_cost": null,
+        "pricing_status": "third_party_price_not_supplied_no_estimate"
+      }
+    }
+  ],
+  "preflight": [
+    {
+      "provider": "responses",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "operation": "model_preflight",
+      "http_status": 200,
+      "status": "completed",
+      "model_verified": true,
+      "response_model": "gpt-6-luna",
+      "input_tokens": 39,
+      "output_tokens": 14,
+      "total_tokens": 53,
+      "cached_input_tokens": 0,
+      "reasoning_tokens": 0,
+      "call_index": 1,
+      "latency_ms": 2672.921
+    }
+  ],
+  "database_sha256": "441a6ef7aeb0069eff63b23190f606d568098d5f40e77888a906f895c0ff938d",
+  "retrieval_health": {
+    "mode": "bm25_dense_rrf",
+    "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+    "dense_answer_threshold": 0.6
+  },
+  "api_summary": {
+    "calls": 11,
+    "retained_calls": 11,
+    "dropped_calls": 0,
+    "completed_calls": 11,
+    "failed_calls": 0,
+    "tokens": {
+      "input_tokens": {
+        "reported_sum": 21976,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "output_tokens": {
+        "reported_sum": 3338,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "total_tokens": {
+        "reported_sum": 25314,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "cached_input_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "reasoning_tokens": {
+        "reported_sum": 1687,
+        "unknown_calls": 0,
+        "complete": true
+      }
+    },
+    "api_latency_ms": 132684.473,
+    "usd_cost": null,
+    "pricing_status": "third_party_price_not_supplied_no_estimate"
+  },
+  "not_run": [],
+  "execution_metrics": {
+    "scope": "in_process_agent_mixed_development_workload_not_http_service_or_production_sla",
+    "wall_ms": 141166.447,
+    "attempted_queries": 5,
+    "passed_queries": 0,
+    "attempted_queries_per_second": 0.035419,
+    "passed_queries_per_second": 0.0,
+    "query_latency_p50_ms": 26018.978,
+    "query_latency_p95_ms": 46066.766,
+    "query_latency_max_ms": 49959.377,
+    "repair_calls": 0,
+    "repair_operations": {},
+    "grounded_first_attempt_rejections": 0,
+    "grounded_correction_validated_cases": 0,
+    "transport_retry_count": null,
+    "transport_retry_limit": "API audits include retries; repeated SQL operations can be distinct DAG tools and are not classified as retries",
+    "warm_cold_limit": "shared process/store; lazy loading and cache states vary; not independent cold-start trials",
+    "preflight_and_initialization_excluded": true
+  },
+  "timings": {
+    "preflight_wall_ms": 2672.954,
+    "initialization_wall_ms": 707.966,
+    "queries_wall_ms": 141166.447,
+    "configuration_to_report_wall_ms": 144548.905
+  }
+}

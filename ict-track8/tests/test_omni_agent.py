@@ -130,9 +130,9 @@ def test_sql_topic_does_not_authorize_model_document_topic_replacement(tmp_path)
 
 
 @pytest.mark.parametrize('read_question,accepted', [
-    ('2025年华东地区销售额', True), ('2025年华南地区销售额', False), ('DROP TABLE sales_orders', False),
+    ('2025年华东地区销售额', True), ('2025年华南地区销售额', True), ('DROP TABLE sales_orders', False),
 ])
-def test_only_matching_redundant_natural_sql_read_can_be_discarded(tmp_path, read_question, accepted):
+def test_redundant_natural_sql_text_is_discarded_and_never_executed(tmp_path, read_question, accepted):
     database = initialize_database(tmp_path/'sales.sqlite')
     class Planner:
         def generate(self, *args, **kwargs):
@@ -141,5 +141,6 @@ def test_only_matching_redundant_natural_sql_read_can_be_discarded(tmp_path, rea
     result = OmniAgent(Nl2SqlEngine(database), KnowledgeStore(tmp_path/'knowledge'),
                        ConversationStore(), Planner()).query('2025年华东地区销售额')
     assert result['planner_source'] == ('model_validated' if accepted else 'rules_fallback')
+    assert result['effective_question'] == '2025年华东地区销售额'
     assert result['result']['rows'][0]['销售额'] == 29584
     assert ('discarded_redundant_sql_read_not_executed' in result['trace'][0]['normalizations']) is accepted

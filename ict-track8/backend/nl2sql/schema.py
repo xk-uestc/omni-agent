@@ -269,7 +269,14 @@ class SchemaLinker:
         for table in tables:
             for column in table.columns:
                 column_text = normalize_text(column.name)
-                qualified = normalize_text(table.name) + r'\.?' + re.escape(column_text)
+                # Bind an explicitly named owner before resolving homonymous
+                # columns. Natural Chinese qualification (Table的Column) is
+                # just as explicit as Table.Column; table names are literals,
+                # never regex, and cannot match inside a longer SQL identifier.
+                table_text = re.escape(normalize_text(table.name))
+                qualified = (r'(?<![a-z0-9_])' + table_text
+                             + r'(?:\.|表的|中的|内的|里的|的|表中|中)?'
+                             + re.escape(column_text) + r'(?![a-z0-9_])')
                 for match in re.finditer(qualified, normalized):
                     protected.append((match.start(), match.end(), table.name, column.name, True))
                 if len(column_text) >= 3:

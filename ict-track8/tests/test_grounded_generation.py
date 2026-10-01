@@ -1,4 +1,5 @@
 import pytest
+from copy import deepcopy
 from backend.grounded_generation import GroundedGenerator
 from backend.responses_client import GenerationError
 from backend.formula_binding import FormulaBinder, ParameterEvidence
@@ -132,6 +133,125 @@ def test_invalid_generated_relation_uses_real_knowledge_store_extract_fallback(t
     assert '华东收入100万元' in result['answer']
     assert '华东收入200万元' not in result['answer']
     assert result['trace'][-1]['fallback'] == 'attributed_extracts'
+
+
+class RepairClient:
+    model = 'gpt-6-luna'
+
+    def __init__(self, replies, *, http_status=200):
+        self.replies = list(replies)
+        self.calls, self.audit_history, self.audit = [], [], {}
+        self.http_status = http_status
+
+    def generate(self, instructions, context, schema, **kwargs):
+        self.calls.append({'instructions': instructions, 'context': deepcopy(context), 'operation': kwargs['name']})
+        reply = self.replies[len(self.calls) - 1]
+        self.audit = {'status': 'completed' if not isinstance(reply, Exception) else 'failed',
+                      'http_status': self.http_status if not isinstance(reply, Exception) else getattr(reply, 'status', None),
+                      'model': self.model, 'call_index': len(self.calls)}
+        self.audit_history.append(dict(self.audit))
+        if isinstance(reply, Exception):
+            raise reply
+        return deepcopy(reply)
+
+
+def _citations(text):
+    return [{'citation_id': 1, 'snippet': text, 'title': '演示证据', 'metadata': {'source_locator': 'line:1'}}]
+
+
+def test_completed_invalid_generation_gets_one_new_structured_correction_with_same_evidence():
+    source = '华东收入100万元，华西收入200万元。'
+    invalid = _claim('华东收入200万元，华西收入100万元。', source)
+    valid = _claim(source, source)
+    client = RepairClient([invalid, valid])
+    result = GroundedGenerator(client).answer('各地区收入是多少', _citations(source))
+    assert result['status'] == 'ok' and result['claims'] == valid['claims']
+    assert result['generation_repaired'] is True
+    assert len(client.calls) == len(client.audit_history) == 2
+    assert client.calls[0]['operation'] == 'grounded_answer'
+    assert client.calls[1]['operation'] == 'grounded_answer_correction'
+    assert client.calls[0]['context']['question'] == client.calls[1]['context']['question']
+    assert client.calls[0]['context']['evidence'] == client.calls[1]['context']['evidence']
+    assert client.calls[1]['context']['correction']['validation_error_category'] == 'unverified_fact_relation'
+    assert 'claims' not in client.calls[1]['context']
+    assert [attempt['validation_status'] for attempt in result['generation_attempts']] == ['rejected', 'validated']
+    assert [attempt['provider_audit']['call_index'] for attempt in result['generation_attempts']] == [1, 2]
+    assert invalid['claims'][0]['text'] != result['claims'][0]['text']
+
+
+@pytest.mark.parametrize('invalid', [
+    _claim('华东收入200万元', '华西收入200万元'),
+    _claim('华东收入100万元', '华东收入100万元'),
+    _claim('覆盖人工损坏', '覆盖人工损坏'),
+    _claim('华东收入100元', '华东收入100万元'),
+])
+def test_correction_never_loosens_original_guards_or_retries_a_third_time(invalid):
+    source = '预计华东收入100万元，华西收入200万元。不覆盖人工损坏。'
+    client = RepairClient([invalid, invalid])
+    with pytest.raises(GenerationError) as captured:
+        GroundedGenerator(client).answer('收入和覆盖范围', _citations(source))
+    assert len(client.calls) == len(client.audit_history) == 2
+    assert [attempt['validation_status'] for attempt in captured.value.generation_attempts] == ['rejected', 'rejected']
+
+
+@pytest.mark.parametrize('status', [None, 401, 403, 429, 503])
+def test_transport_or_http_failure_is_not_a_grounding_repair_trigger(status):
+    client = RepairClient([GenerationError('provider unavailable', status=status)])
+    with pytest.raises(GenerationError) as captured:
+        GroundedGenerator(client).answer('保修期限', _citations('保修期12个月。'))
+    assert len(client.calls) == 1
+    assert captured.value.generation_attempts[0]['validation_status'] == 'not_validated'
+    assert captured.value.generation_attempts[0]['error_category'] == 'provider_unavailable'
+
+
+def test_correction_transport_failure_preserves_first_rejection_and_second_failed_call():
+    source = '保修期12个月。'
+    client = RepairClient([_claim('保修期14个月。', source), GenerationError('provider unavailable', status=403)])
+    with pytest.raises(GenerationError) as captured:
+        GroundedGenerator(client).answer('保修期限', _citations(source))
+    assert len(client.calls) == 2
+    assert [attempt['validation_status'] for attempt in captured.value.generation_attempts] == ['rejected', 'not_validated']
+    assert client.calls[-1]['context']['correction']['validation_error_category'] == 'unsupported_number'
+    assert captured.value.generation_attempts[-1]['provider_audit']['http_status'] == 403
+
+
+def test_successful_or_valid_abstaining_first_output_does_not_get_repaired():
+    for reply in [_claim('保修期12个月。', '保修期12个月。'), {'abstain': True, 'claims': []}]:
+        client = RepairClient([reply])
+        result = GroundedGenerator(client).answer('保修期限', _citations('保修期12个月。'))
+        assert len(client.calls) == 1 and result['generation_repaired'] is False
+        assert result['generation_attempts'][0]['validation_status'] == 'validated'
+
+
+def test_second_invalid_structured_reply_really_falls_back_to_store_original_extract(tmp_path):
+    from backend.knowledge_store import KnowledgeStore
+    source = '华东收入100万元，华西收入200万元。'
+    invalid = _claim('华东收入200万元，华西收入100万元。', source)
+    client = RepairClient([invalid, invalid])
+    store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))
+    store.ingest(source.encode(), document_id='revenue', title='地区收入', modality='txt', filename='revenue.txt')
+    result = store.answer('华东收入')
+    assert len(client.calls) == 2 and result['answer_mode'] == 'extractive_fallback'
+    assert '华东收入100万元' in result['answer'] and '华东收入200万元' not in result['answer']
+
+
+@pytest.mark.parametrize('malformed', [None, [], 'text'])
+def test_nonobject_claim_reply_is_explicit_contract_failure(malformed):
+    with pytest.raises(GenerationError, match='契约'):
+        GroundedGenerator.validate(malformed, {1: '保修期12个月。'})
+
+
+def test_invalid_reply_without_completed_http_audit_cannot_trigger_repair():
+    class WithoutCompletion(RepairClient):
+        def generate(self, *args, **kwargs):
+            output = super().generate(*args, **kwargs)
+            self.audit = {}
+            return output
+    source = '保修期12个月。'
+    client = WithoutCompletion([_claim('保修期14个月。', source)])
+    with pytest.raises(GenerationError) as captured:
+        GroundedGenerator(client).answer('保修期', _citations(source))
+    assert len(client.calls) == 1 and len(captured.value.generation_attempts) == 1
 
 
 def test_units_convert_percentage_and_reject_currency_mix():

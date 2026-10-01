@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -73,6 +74,37 @@ def summarise_audits(audits, dropped=0):
             'completed_calls': sum(a.get('status') == 'completed' for a in audits), 'failed_calls': sum(a.get('status') != 'completed' for a in audits),
             'tokens': totals, 'api_latency_ms': round(sum(a.get('latency_ms', 0) for a in audits), 3),
             'usd_cost': None, 'pricing_status': 'third_party_price_not_supplied_no_estimate'}
+
+
+def execution_metrics(records, wall_ms):
+    """Observed bounded mixed-workload throughput; API latency sums are not wall time."""
+    latencies = sorted(row['latency_ms'] for row in records)
+    def percentile(fraction):
+        if not latencies:
+            return None
+        position = (len(latencies)-1)*fraction
+        lower, upper = math.floor(position), math.ceil(position)
+        return round(latencies[lower]+(latencies[upper]-latencies[lower])*(position-lower), 3)
+    seconds = wall_ms / 1000
+    audits = [audit for row in records for audit in row['api_audits']]
+    corrections = [audit for audit in audits if audit.get('operation', '').endswith(('_correction', '_repair'))]
+    generation_attempts = [row['result']['result'].get('generation_attempts', [])
+                           for row in records if isinstance(row.get('result'), dict)
+                           and isinstance(row['result'].get('result'), dict)]
+    return {'scope': 'in_process_agent_mixed_development_workload_not_http_service_or_production_sla',
+            'wall_ms': round(wall_ms, 3), 'attempted_queries': len(records),
+            'passed_queries': sum(row['pass'] for row in records),
+            'attempted_queries_per_second': round(len(records)/seconds, 6) if seconds > 0 else None,
+            'passed_queries_per_second': round(sum(row['pass'] for row in records)/seconds, 6) if seconds > 0 else None,
+            'query_latency_p50_ms': percentile(.5), 'query_latency_p95_ms': percentile(.95),
+            'query_latency_max_ms': max(latencies) if latencies else None,
+            'repair_calls': len(corrections), 'repair_operations': dict(Counter(a['operation'] for a in corrections)),
+            'grounded_first_attempt_rejections': sum(bool(a) and a[0].get('validation_status') == 'rejected' for a in generation_attempts),
+            'grounded_correction_validated_cases': sum(len(a) == 2 and a[1].get('validation_status') == 'validated' for a in generation_attempts),
+            'transport_retry_count': None,
+            'transport_retry_limit': 'API audits include retries; repeated SQL operations can be distinct DAG tools and are not classified as retries',
+            'warm_cold_limit': 'shared process/store; lazy loading and cache states vary; not independent cold-start trials',
+            'preflight_and_initialization_excluded': True}
 
 
 def select_cases(cases, requested_ids):
@@ -255,6 +287,7 @@ def main():
         return 0
     from model_runtime import enable_local_model, local_model_headers
     from backend.responses_client import StructuredResponses, GenerationError, object_schema
+    overall_started = time.perf_counter()
     enable_local_model(args.model)
     client = StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'], os.environ['ICT8_OPENAI_API_KEY'], model=MODEL, reasoning=os.environ['ICT8_OPENAI_REASONING'], http_headers=local_model_headers())
     report = {'created_at': datetime.now(timezone.utc).isoformat(), 'scope': 'real_api_synthetic_development_cases_not_public_or_blind_accuracy',
@@ -262,11 +295,13 @@ def main():
               'workers': args.workers,
               'planned_cases': len(cases), 'case_groups': dict(Counter(row['kind'] for row in cases)),
               'cases': [], 'passed': 0, 'total': 0, 'status': 'preflight_failed'}
+    report['cases_sha256'] = hashlib.sha256(json.dumps(cases, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     if requested_ids:
         report['scope'] = 'real_api_targeted_development_cases_with_required_history_not_full_suite'
         report['requested_case_ids'] = requested_ids
         report['history_prerequisite_case_ids'] = [row['id'] for row in cases if row['id'] not in requested_ids]
     output.parent.mkdir(parents=True, exist_ok=True)
+    preflight_started = time.perf_counter()
     try:
         preflight = client.generate('只返回ok=true。', {}, object_schema({'ok': {'type': 'boolean'}}), name='model_preflight', max_tokens=1000)
         if preflight.get('ok') is not True:
@@ -276,10 +311,14 @@ def main():
         report['api_summary'] = summarise_audits(client.audit_history)
         report['status'] = 'authentication_failed' if client.audit.get('http_status') == 401 else 'preflight_failed'
         report['not_run'] = [row['id'] for row in cases]
+        report['timings'] = {'preflight_wall_ms': round((time.perf_counter()-preflight_started)*1000, 3),
+                             'configuration_to_report_wall_ms': round((time.perf_counter()-overall_started)*1000, 3)}
         output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
         print(json.dumps({'status': report['status'], 'http_status': client.audit.get('http_status'), 'planned_cases': len(cases), 'executed_cases': 0}, ensure_ascii=False))
         return 1
     report['preflight'] = client.audit_history
+    preflight_wall_ms = (time.perf_counter()-preflight_started)*1000
+    initialization_started = time.perf_counter()
     from backend.grounded_generation import GroundedGenerator
     from backend.knowledge_store import KnowledgeStore
     from backend.dense_retrieval import LocalBgeEmbedder
@@ -293,6 +332,8 @@ def main():
     provider.catalog, provider.reference_date = engine.metric_catalog, engine.reference_date
     store = KnowledgeStore(ROOT/'runtime/knowledge', embedder=LocalBgeEmbedder(ROOT/'models/bge-small-zh-v1.5'), generator=GroundedGenerator(client))
     agent = OmniAgent(engine, store, ConversationStore(), client)
+    initialization_wall_ms = (time.perf_counter()-initialization_started)*1000
+    report['database_sha256'] = hashlib.sha256(database.read_bytes()).hexdigest()
     progress_lock, progress_records = threading.Lock(), []
     order = {row['id']: index for index, row in enumerate(cases)}
     progress_path = ROOT/'runtime/model-evaluation-progress.json'
@@ -304,13 +345,21 @@ def main():
             progress_path.write_text(json.dumps({**report, 'status': 'running',
                 'cases': ordered, 'total': len(ordered), 'passed': sum(item['pass'] for item in ordered)},
                 ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+    execution_started = time.perf_counter()
     records, stopped = execute_grouped(agent, {'omni_and_generation': client, 'nl2sql': provider}, cases, database,
                                       workers=args.workers, on_record=save_progress)
+    execution_wall_ms = (time.perf_counter()-execution_started)*1000
     audits = [*report['preflight'], *(a for row in records for a in row['api_audits'])]
     dropped = sum(row['api_summary']['dropped_calls'] for row in records)
     report.update(cases=records, passed=sum(r['pass'] for r in records), total=len(records),
                   status=stopped or ('passed' if all(r['pass'] for r in records) else 'some_cases_failed'),
                   api_summary=summarise_audits(audits, dropped), not_run=[row['id'] for row in cases if row['id'] not in {record['id'] for record in records}])
+    report['execution_metrics'] = execution_metrics(records, execution_wall_ms)
+    report['timings'] = {'preflight_wall_ms': round(preflight_wall_ms, 3),
+                         'initialization_wall_ms': round(initialization_wall_ms, 3),
+                         'queries_wall_ms': round(execution_wall_ms, 3),
+                         'configuration_to_report_wall_ms': round((time.perf_counter()-overall_started)*1000, 3),
+                         'process_startup_excluded': True}
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     return 0 if report['status'] == 'passed' else 1
 

@@ -575,6 +575,10 @@ class Nl2SqlEngine:
             sql, parameters = compiled or self.planner.build_sql(plan)
             columns, rows = execute_read_only(connection, sql, parameters, max_rows=row_cap, max_steps=self.max_steps, max_seconds=self.max_seconds)
             result_state, notices = self._result_state(connection, plan, rows)
+            effective_limit = min(plan.limit, row_cap)
+            limit_reached = len(rows) >= effective_limit
+            if limit_reached:
+                notices.append(f"结果达到返回上限{effective_limit}行，完整分组数量尚未核验；请细分过滤范围，不能将当前结果当作全部分组。")
         query_hash = hashlib.sha256(
             json.dumps({"sql": sql, "parameters": parameters}, ensure_ascii=False, default=str, sort_keys=True).encode()
         ).hexdigest()[:16]
@@ -595,6 +599,8 @@ class Nl2SqlEngine:
             "database": self.database_path.name,
             "table": plan.table,
             "row_count": len(rows),
+            "row_limit": effective_limit,
+            "result_completeness": "limit_reached_total_unknown" if limit_reached else "within_return_limit",
             "query_hash": query_hash,
             "field_links": [item.to_dict() for item in plan.links],
             "coverage": plan.coverage,

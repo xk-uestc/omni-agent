@@ -109,6 +109,30 @@ def test_audits_include_omni_generator_and_sql_component(evaluator):
     assert audits[-1]['component'] == 'nl2sql' and dropped == 0
 
 
+def test_wall_throughput_is_not_parallel_api_latency_sum(evaluator):
+    records = [{'pass':True, 'latency_ms':1000, 'api_audits':[{'latency_ms':1000,'operation':'grounded_answer'}],
+        'result':{'result':{'generation_attempts':[{'validation_status':'validated'}]}}},
+        {'pass':False, 'latency_ms':2000, 'api_audits':[{'latency_ms':2000,'operation':'grounded_answer_correction'}],
+        'result':{'result':{'generation_attempts':[{'validation_status':'rejected'},{'validation_status':'validated'}]}}}]
+    metrics = evaluator.execution_metrics(records, 2000)
+    assert metrics['wall_ms']==2000
+    assert metrics['attempted_queries_per_second']==1 and metrics['passed_queries_per_second']==.5
+    assert metrics['query_latency_p50_ms']==1500 and metrics['query_latency_p95_ms']==1950
+    assert metrics['repair_calls']==1 and metrics['repair_operations']=={'grounded_answer_correction':1}
+    assert metrics['grounded_first_attempt_rejections']==1
+    assert metrics['grounded_correction_validated_cases']==1
+    assert metrics['transport_retry_count'] is None
+
+
+def test_throughput_handles_empty_and_failed_results(evaluator):
+    metrics = evaluator.execution_metrics([], 0)
+    assert metrics['attempted_queries_per_second'] is None
+    assert metrics['query_latency_p95_ms'] is None and metrics['repair_calls']==0
+    records = [{'pass':False,'latency_ms':2,'api_audits':[], 'result':None},
+        {'pass':False,'latency_ms':3,'api_audits':[], 'result':{'result':None}}]
+    assert evaluator.execution_metrics(records, 5)['grounded_first_attempt_rejections']==0
+
+
 def test_parallel_groups_preserve_session_order_and_original_report_order(evaluator, monkeypatch):
     import threading
     barrier = threading.Barrier(2)
