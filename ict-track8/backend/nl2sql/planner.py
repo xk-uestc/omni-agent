@@ -28,6 +28,7 @@ from .schema import SchemaLinker, normalize_text
 from .value_index import ValueIndex
 from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
 from .question_roles import association_scope, binding_present, group_fields, group_grains
+from .result_scope import append_result_limit
 
 _DEFAULT_MAX_JOIN_HOPS = 4
 _JOIN_HINT_RE = re.compile(r"\[join_path:([A-Za-z0-9_.>\-]+)\]")
@@ -1081,8 +1082,9 @@ class SingleTablePlanner:
             visible = [_quote(plan.dimension_labels.get(column, column)) for column in plan.dimensions] + [_quote(metric_label)]
             if plan.analysis_mode in {"rank", "share"}:
                 visible.append('"排名"' if plan.analysis_mode == "rank" else '"占比(%)"')
-            sql = f'SELECT {", ".join(visible)} FROM ({sql}) AS ranked WHERE "排名" <= ? ORDER BY "排名" ASC, {_quote(metric_label)} {direction} LIMIT ?'
-            parameters.extend([plan.top_n, plan.limit])
+            sql = f'SELECT {", ".join(visible)} FROM ({sql}) AS ranked WHERE "排名" <= ? ORDER BY "排名" ASC, {_quote(metric_label)} {direction}'
+            parameters.append(plan.top_n)
+            sql = append_result_limit(plan, sql, parameters)
             return sql, tuple(parameters)
         if plan.analysis_mode == "rank":
             sql += f' ORDER BY "排名" ASC, {_quote(metric_label)} {direction}'
@@ -1095,8 +1097,7 @@ class SingleTablePlanner:
             sql += ' ORDER BY ' + ', '.join(expression+' ASC' for expression in time_groups+other_groups)
         else:
             sql += f" ORDER BY {metric_expression} {direction}"
-        sql += " LIMIT ?"
-        parameters.append(plan.limit)
+        sql = append_result_limit(plan, sql, parameters)
         return sql, tuple(parameters)
 
     @staticmethod
@@ -1193,9 +1194,9 @@ class SingleTablePlanner:
             f"SELECT {prefix}{_quote(current_label)}, {_quote(previous_label)}, "
             f"(100.0 * ({_quote(current_label)} - {_quote(previous_label)}) / NULLIF({_quote(previous_label)}, 0)) AS {_quote(change_label)} "
             f"FROM ({inner_sql}) AS comparison_base "
-            f"ORDER BY {_quote(current_label)} {'DESC' if plan.order_desc else 'ASC'} LIMIT ?"
+            f"ORDER BY {_quote(current_label)} {'DESC' if plan.order_desc else 'ASC'}"
         )
-        parameters.append(plan.limit)
+        outer_sql = append_result_limit(plan, outer_sql, parameters)
         return outer_sql, tuple(parameters)
 
     # ================================================================ legacy-compatible helpers

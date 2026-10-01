@@ -275,6 +275,7 @@ async def request_security(request: Request, call_next):
 class QueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     max_rows: int = Field(default=100, ge=1, le=100)
+    complete_results: bool = False
 
 
 class AgentQueryRequest(BaseModel):
@@ -638,12 +639,30 @@ def schema_annotation_report() -> dict[str, object]:
 def query(request: QueryRequest) -> dict[str, object]:
     try:
         # 与 /agent/query 共用同一引擎（同一规划器、模型门控和缓存），避免两个入口答案不一致
-        result = engine.answer(request.question, max_rows=request.max_rows)
+        result = engine.answer(request.question, max_rows=request.max_rows,
+                               complete_results=request.complete_results)
         return result.to_dict()
     except SqlSafetyError as exc:
         raise HTTPException(status_code=422, detail={"code": "sql_rejected_or_limited", "message": "查询超出安全执行限制"}) from exc
     except (OSError, ValueError) as exc:
         raise HTTPException(status_code=400, detail={"code": "bad_request", "message": str(exc)[:200]}) from exc
+
+
+@app.get('/api/v1/nl2sql/results/{artifact_id}')
+def complete_sql_result_page(artifact_id: str, offset: int = Query(default=0, ge=0),
+                             page_size: int = Query(default=100, ge=1, le=100),
+                             query_sha256: str | None = Query(default=None, max_length=64),
+                             binding_sha256: str = Query(min_length=64, max_length=64)):
+    try:
+        return engine.complete_result_page(artifact_id, offset=offset, page_size=page_size,
+                                           expected_query_sha256=query_sha256,
+                                           expected_binding_sha256=binding_sha256)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail={'code': 'result_artifact_not_found'}) from exc
+    except SqlSafetyError as exc:
+        raise HTTPException(status_code=409, detail={'code': 'result_artifact_stale_or_invalid'}) from exc
+    except (OSError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail={'code': 'invalid_result_artifact_request'}) from exc
 
 
 @app.post("/api/v1/agent/query")

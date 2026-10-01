@@ -8,6 +8,7 @@ import os
 import re
 import sqlite3
 import threading
+from collections import OrderedDict
 from dataclasses import asdict
 from contextlib import contextmanager
 from datetime import date
@@ -25,6 +26,9 @@ from .semantics import MetricCatalog
 from .value_index import ValueIndex
 from .plan_structure import canonicalize, diagnose
 from .question_roles import association_scope, binding_present, group_fields, group_grains
+from .result_scope import configure_complete_scope
+from .result_artifact import (ResultBudgets, execute_complete_read_only,
+                              pin_database, read_result_page)
 
 _FOLLOWUP_CUE = re.compile(r"^(那么|那|如果是|如果|换成|改成|再看|再查|同样|也)|呢$|呢[?？]$")
 
@@ -54,6 +58,8 @@ class Nl2SqlEngine:
         value_aliases_path: str | Path | None = None,
         model_min_confidence: float = 0.5,
         metric_catalog_path: str | Path | None = None,
+        result_artifact_dir: str | Path | None = None,
+        complete_result_budgets: ResultBudgets | None = None,
     ):
         self.database_path = Path(database_path)
         self.max_rows = max_rows
@@ -84,6 +90,11 @@ class Nl2SqlEngine:
         self._date_storage_cache: dict[tuple[Any, ...], tuple[str, tuple[Any, Any, str]]] = {}
         self._lock = threading.Lock()
         self._read_scope = threading.local()
+        self.result_artifact_dir = (Path(result_artifact_dir) if result_artifact_dir else
+            Path(__file__).resolve().parents[3] / 'runtime' / 'query-results')
+        self.complete_result_budgets = complete_result_budgets or ResultBudgets(
+            max_seconds=self.max_seconds, max_steps=self.max_steps)
+        self._result_bindings = OrderedDict()
 
     @contextmanager
     def consistent_reads(self):
@@ -644,12 +655,20 @@ class Nl2SqlEngine:
             return plan
 
     def answer(self, question: str, *, max_rows: int | None = None,
-               required_intent: QueryPlan | None = None) -> QueryResult:
+               required_intent: QueryPlan | None = None, complete_results: bool = False) -> QueryResult:
         if not isinstance(question, str) or not question.strip():
             raise ValueError("question 不能为空")
         row_cap = int(max_rows or self.max_rows)
+        if type(complete_results) is not bool:
+            raise ValueError('complete_results 必须为布尔值')
+        if complete_results:
+            row_cap = min(100, row_cap, self.max_rows)
+            if row_cap < 1:
+                raise ValueError('preview 行数必须为正数')
         with self._connect() as connection:
             tables, index, revision = self._snapshot_for(connection)
+            source_pin = (pin_database(self.database_path, self.complete_result_budgets,
+                generation=self._source_revision, expected_generation=revision[0]) if complete_results else None)
             source_constraint_audit = None
             current_required, errors = None, []
             if required_intent is not None:
@@ -759,6 +778,10 @@ class Nl2SqlEngine:
                         'scope_question_sha256': hashlib.sha256(rank_scope.encode()).hexdigest(),
                         'verification': 'independent_original_scope_in_execution_snapshot'}
                     plan.planner_audit['rank_return_cap_normalization'] = rank_return_audit
+            complete_scope = None
+            if complete_results and not plan.clarification:
+                complete_scope = configure_complete_scope(plan,
+                    scope_question if required_intent is not None else question)
             compiled = None
             if not plan.clarification and (plan.metrics or plan.fan_out):
                 try:
@@ -782,11 +805,33 @@ class Nl2SqlEngine:
                     clarification_options=tuple(plan.clarification_options),
                 )
             sql, parameters = compiled or self.planner.build_sql(plan)
-            columns, rows = execute_read_only(connection, sql, parameters, max_rows=row_cap, max_steps=self.max_steps, max_seconds=self.max_seconds)
+            complete_metadata = None
+            if complete_results:
+                execution = execute_complete_read_only(connection, sql, parameters,
+                    database_path=self.database_path, artifact_dir=self.result_artifact_dir,
+                    budgets=self.complete_result_budgets, preview_limit=row_cap,
+                    expected_source=source_pin, generation=self._source_revision,
+                    expected_generation=revision[0], scope=complete_scope)
+                columns, rows = execution.columns, execution.preview_rows
+                complete_metadata = {**execution.metadata, 'preview_cells': [list(row) for row in execution.preview_cells],
+                    'preview_format': 'ordered_cell_arrays_preserve_duplicate_labels'}
+                if complete_metadata['status'] == 'complete':
+                    with self._lock:
+                        self._result_bindings[complete_metadata['artifact_id']] = complete_metadata['binding_sha256']
+                        while len(self._result_bindings) > 256:
+                            self._result_bindings.popitem(last=False)
+            else:
+                columns, rows = execute_read_only(connection, sql, parameters, max_rows=row_cap, max_steps=self.max_steps, max_seconds=self.max_seconds)
             result_state, notices = self._result_state(connection, plan, rows)
             effective_limit = min(plan.limit, row_cap)
-            limit_reached = len(rows) >= effective_limit
-            if limit_reached:
+            limit_reached = len(rows) >= effective_limit if not complete_results else complete_metadata['preview_truncated']
+            if complete_metadata is not None:
+                if complete_metadata['status'] == 'complete':
+                    notices.append(f"预览 {len(rows)} 行；完整查询结果 {complete_metadata['row_count']} 行，已核验游标结束并保存可分页原始结果。")
+                else:
+                    notices.append('完整结果未通过资源预算；当前行仅为部分预览，不得作为完整答案。')
+                    result_state = 'partial_rows'
+            elif limit_reached:
                 notices.append(f"结果达到返回上限{effective_limit}行，完整分组数量尚未核验；请细分过滤范围，不能将当前结果当作全部分组。")
         query_hash = hashlib.sha256(
             json.dumps({"sql": sql, "parameters": parameters}, ensure_ascii=False, default=str, sort_keys=True).encode()
@@ -809,7 +854,8 @@ class Nl2SqlEngine:
             "table": plan.table,
             "row_count": len(rows),
             "row_limit": effective_limit,
-            "result_completeness": "limit_reached_total_unknown" if limit_reached else "within_return_limit",
+            "result_completeness": (complete_metadata['status'] if complete_metadata is not None
+                else "limit_reached_total_unknown" if limit_reached else "within_return_limit"),
             "query_hash": query_hash,
             "field_links": [item.to_dict() for item in plan.links],
             "coverage": plan.coverage,
@@ -827,11 +873,31 @@ class Nl2SqlEngine:
             provenance["source_constraint_validation"] = source_constraint_audit
         if rank_return_audit is not None:
             provenance['rank_return_cap_normalization'] = rank_return_audit
+        if complete_metadata is not None:
+            provenance['complete_result'] = complete_metadata
         return QueryResult(
-            status="ok", question=question, rewritten_question=plan.rewritten_question, sql=sql,
+            status=('incomplete' if complete_metadata is not None and complete_metadata['status'] != 'complete' else 'ok'),
+            question=question, rewritten_question=plan.rewritten_question, sql=sql,
             parameters=parameters, columns=columns, rows=rows, plan=plan.to_dict(),
             explanation=tuple(explanation), provenance=provenance, result_state=result_state, notices=tuple(notices),
         )
+
+    def complete_result_page(self, artifact_id: str, *, offset: int = 0, page_size: int = 100,
+                             expected_query_sha256: str | None = None,
+                             expected_binding_sha256: str | None = None) -> dict:
+        # Same-session calls may use the trusted producer record. After a
+        # restart the client must supply the binding from its first response;
+        # a metadata file cannot bootstrap its own authenticity.
+        with self._lock:
+            initial = self._result_bindings.get(artifact_id)
+        if expected_binding_sha256 is None:
+            expected_binding_sha256 = initial
+        elif initial is not None and expected_binding_sha256 != initial:
+            raise SqlSafetyError('result_artifact_initial_binding_mismatch')
+        return read_result_page(self.result_artifact_dir, artifact_id, database_path=self.database_path,
+                                offset=offset, page_size=page_size,
+                                expected_query_sha256=expected_query_sha256,
+                                expected_binding_sha256=expected_binding_sha256)
 
     def _result_state(self, connection, plan: QueryPlan, rows) -> tuple[str, list[str]]:
         empty = not rows or (not plan.dimensions and all(value is None for value in rows[0].values()))

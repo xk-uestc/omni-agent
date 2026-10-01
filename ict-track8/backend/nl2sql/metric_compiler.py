@@ -7,6 +7,8 @@
 
 from __future__ import annotations
 
+from .result_scope import append_result_limit
+
 import math
 from dataclasses import replace
 from typing import Any
@@ -265,8 +267,7 @@ class MetricCompiler:
             sql += f'{sort} {direction}'
         if dim_labels and not chronological:
             sql += ", " + ", ".join(quote(label) for label in dim_labels)
-        sql += " LIMIT ?"
-        params.append(plan.limit)
+        sql = append_result_limit(plan, sql, params)
         plan.grain_audit = {"strategy": "aggregate_each_fact_then_join", "metrics": audits,
                             "formulas": formula_audit, "null_group_alignment": "IS", "order_metric": None if chronological else sort_id,
                             "ordering": 'time_ascending' if chronological else 'metric'}

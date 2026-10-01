@@ -134,6 +134,9 @@ class QueryPlan:
     join_alternatives: list[dict[str, str]] = field(default_factory=list)
     order_desc: bool = True
     limit: int = 100
+    # Opt-in complete artifacts separate preview caps from user SQL semantics.
+    complete_results: bool = False
+    semantic_row_limit: int | None = None
     confidence: float = 0.0
     rewritten_question: str = ""
     comparison_mode: str = "none"

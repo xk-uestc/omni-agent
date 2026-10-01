@@ -1,0 +1,36 @@
+{
+  "scope": "isolated_complete_result_candidate_at_e89113d_not_main_production_or_official_score",
+  "command": "python -m pytest ict-track8/tests/test_complete_sql_results_round5.py ict-track8/tests/test_nl2sql_api_audit.py ict-track8/tests/test_nl2sql_baseline.py ict-track8/tests/test_nl2sql_v2.py ict-track8/tests/test_metric_compiler.py ict-track8/tests/test_nl2sql_generalization_round2.py ict-track8/tests/test_nl2sql_round3_roles_repair.py -q",
+  "exit_code": 0,
+  "passed": 252,
+  "skipped": 2,
+  "skip_reason": "Windows host cannot create symlinks without privilege; actual foreign-link fixtures skipped",
+  "warnings": 1,
+  "warning_reason": "Starlette TestClient httpx deprecation",
+  "elapsed_seconds": 36.34,
+  "new_tests": {
+    "synthetic_real_sqlite": "19119 actual rows and all cells reconstructed through bounded artifact pages",
+    "http": "opt-in query, bounded page endpoint, required first-response binding, explicit incomplete state",
+    "semantics": "default preview limit separated from SQL; explicit row LIMIT and DENSE_RANK ties retained",
+    "integrity": "parameters, column contract, data hash, original trusted binding, producer code, DB replacement, WAL changes",
+    "budgets": "row, bytes, VM steps, wall clock; no complete artifact when exceeded"
+  },
+  "official_dataset_development_replay": {
+    "report": "docs/COMPLETE_RESULTS_ADVENTUREWORKS_CANDIDATE_20261002.json",
+    "complete_artifact_checks_passed": 6,
+    "total_exposed_queries": 6,
+    "aw_02_actual_rows": 19119,
+    "aw_03_actual_rows": 19119,
+    "pages_read_each": 192,
+    "all_actual_cells_equal_independent_readonly_reference": true,
+    "model_api_calls": 0,
+    "frozen_new_56_questions_or_oracles_read": false,
+    "old_evaluator_or_scorer_changed": false
+  },
+  "limits": [
+    "Candidate not merged into active main checkout",
+    "Default legacy mode and Agent/cross-source calls unchanged",
+    "Frozen scorer still compares rows; no artifact correctness counted as its 100-row score",
+    "No storage retention or multi-tenant authorization policy implemented"
+  ]
+}
