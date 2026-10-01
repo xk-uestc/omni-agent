@@ -1,0 +1,148 @@
+{
+  "scope": "paired_resource_biased_official_query_subset_not_full_benchmark_or_unseen_document",
+  "baseline": {
+    "path": "docs\\OHR_BENCH_SECOND_BASELINE_20261002.json",
+    "sha256": "67383804a8b1ed285b21b23657e50afbc851d3ede59c6c65e67ea9c6e8b054c2",
+    "attempted": 9,
+    "normalized_exact_matches": 3,
+    "mean_english_token_f1": 0.409351
+  },
+  "optimized": {
+    "path": "docs\\OHR_BENCH_SECOND_OPTIMIZED_20261002.json",
+    "sha256": "a7b6739034b729b4a7d9ab8367001ba7e41c0a001d4e92eaed64690cded3f9fb",
+    "attempted": 9,
+    "normalized_exact_matches": 5,
+    "mean_english_token_f1": 0.646296
+  },
+  "selection_sha256": "78b59530e81ea1118ef2e87248f3784ce25def6cfbd017d92ec985ba509a5776",
+  "case_count": 9,
+  "exact_match_delta": 2,
+  "f1_delta": 0.236945,
+  "better_f1_cases": 4,
+  "worse_f1_cases": 0,
+  "same_f1_cases": 5,
+  "cases": [
+    {
+      "ID": "a200233a-d43f-44a8-b50a-1ca2a818f854",
+      "question": "Who represented CyberNinjas Inc. in the emergency telephonic conference held by the Supreme Court of Arizona?",
+      "category": "text",
+      "before_answer": "Also appearing were Alexander Kolodin and Christopher Viskovic\non behalf of Defendant CyberNinjas Inc. [1]",
+      "after_answer": "Alexander Kolodin and Christopher Viskovic",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 0,
+      "after_exact_match": 1,
+      "before_f1": 0.5,
+      "after_f1": 1.0
+    },
+    {
+      "ID": "a202a18f-5813-4911-af6d-cc6ffb52950b",
+      "question": "What was the deadline for the Defendants to file a reply in the case involving the Arizona Democratic Party and Katie Hobbs?",
+      "category": "text",
+      "before_answer": "[1] IT IS FURTHER ORDERED Defendants pleadings are to be filed\nforthwith and will supplement any request no later than close of\nbusiness on Tuesday, April 27, 2021. Plaintiffs will fil\n\n[2] Also appearing was James E. Barton, II on behalf of Plaintiffs\nArizona Democratic Party, an Arizona political party and political\naction committee, and Steve Gallardo, a qualified\n\n[3] Also appearing were Emma Cone-Roddy and Josh Bendor on behalf of\nKatie Hobbs, in her official capacity as Secretary of State and Karen\nHartman-Tellez on behalf of the Maricopa Coun\n\n[4] RED any amicus brief will be filed not later\nthan the deadline for the filing of the pleadings of the party\nsupported by the amicus curiae.",
+      "after_answer": "close of business on\nThursday, April 29, 2021.",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.035398,
+      "after_f1": 0.666667
+    },
+    {
+      "ID": "85505347-a626-4c79-bd8a-bfe328059a51",
+      "question": "What is the total budget allocated to the Dept. of State in FY 2006 for U.S. Government Assistance to Moldova, combining both FSA and Non-FSA funds?",
+      "category": "table",
+      "before_answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+      "after_answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+      "before_status": "insufficient_evidence",
+      "after_status": "insufficient_evidence",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.0,
+      "after_f1": 0.0
+    },
+    {
+      "ID": "88def0fe-7ab3-4156-9209-30fda786916a",
+      "question": "What is the total budget allocated for Pre-Natal/Diagnostic Services by Abigail Pregnancy Services from November 2015 to June 2016?",
+      "category": "table",
+      "before_answer": "$35,000",
+      "after_answer": "$35,000",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 1,
+      "after_exact_match": 1,
+      "before_f1": 1.0,
+      "after_f1": 1.0
+    },
+    {
+      "ID": "a5ad3471-2feb-4b43-bb5d-774959555f65",
+      "question": "What is the total budget allocated for formula and diapers combined at Abigail Pregnancy Services for the fiscal year July 2016 - June 2017?",
+      "category": "formula",
+      "before_answer": "$2,000",
+      "after_answer": "$2,000",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 1,
+      "after_exact_match": 1,
+      "before_f1": 1.0,
+      "after_f1": 1.0
+    },
+    {
+      "ID": "a5ae9aed-7b03-4f63-bb55-fef00e877cf3",
+      "question": "If the budget for office supplies at Abigail Pregnancy Services is increased to $\\$ 5,000$ to cover print materials, and the budget for marketing and media activities is $\\$ 4,000$, what is the total budget allocated for these two categories combined?",
+      "category": "formula",
+      "before_answer": "$9,000",
+      "after_answer": "$9,000",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 1,
+      "after_exact_match": 1,
+      "before_f1": 1.0,
+      "after_f1": 1.0
+    },
+    {
+      "ID": "acba53d3-aaee-42a8-aa8a-9dcd5a7ad782",
+      "question": "What was the total number of homeless veterans in 2013, and how does it compare to the number of unsheltered veterans in the same year?",
+      "category": "chart",
+      "before_answer": null,
+      "after_answer": null,
+      "before_status": "incomplete",
+      "after_status": "incomplete",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.0,
+      "after_f1": 0.0
+    },
+    {
+      "ID": "acbd6b3b-a72e-44f8-ab4c-fc50fd089698",
+      "question": "By how much did the number of sheltered veterans decrease from 2010 to 2014?",
+      "category": "chart",
+      "before_answer": null,
+      "after_answer": "11389",
+      "before_status": "incomplete",
+      "after_status": "ok",
+      "before_exact_match": 0,
+      "after_exact_match": 1,
+      "before_f1": 0.0,
+      "after_f1": 1.0
+    },
+    {
+      "ID": "b8027f58-ed86-4d61-a999-2fb9d3445847",
+      "question": "How much is Abigail Pregnancy Services allocating for formula and diapers, and why are these items prioritized in the budget?",
+      "category": "multi",
+      "before_answer": "$1,000 for formula will be able to provide enough formula for our clients in need. [4]\n\nThe $1,000 in diapers will help Abigail Pregnancy Services keep up with the demand of diapers\nfor sizes 3-5. [2]\n\nFormula is\ndifficult because some babies need soy while others need formula for a sensitive stomach. This\nwill ensure that we have the types of the formula that the clients need for their babies as well as\nenough in supply to meet the demand. [4][4]\n\nClients are always in need of these sizes, and these are the sizes that never seem to\nbe donated to the center. This will allow the center to stock up so that the demand is met with an\nadequate supply. [2][2]",
+      "after_answer": "$1,000 for formula will be able to provide enough formula for our clients in need. The $1,000 in diapers will help Abigail Pregnancy Services keep up with the demand of diapers\nfor sizes 3-5. [4][2]\n\nFormula is\ndifficult because some babies need soy while others need formula for a sensitive stomach. This\nwill ensure that we have the types of the formula that the clients need for their babies as well as\nenough in supply to meet the demand. [4][4]\n\nClients are always in need of these sizes, and these are the sizes that never seem to\nbe donated to the center. This will allow the center to stock up so that the demand is met with an\nadequate supply. [2][2]",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.14876,
+      "after_f1": 0.15
+    }
+  ],
+  "limitations": [
+    "One run per version: model variation is not statistical significance.",
+    "Fixed small PDF corpus and resource biased sampling; no contest score conversion.",
+    "Saved outputs and scores are used verbatim; failures and regressions are retained."
+  ]
+}

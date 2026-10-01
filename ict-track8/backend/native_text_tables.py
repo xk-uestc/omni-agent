@@ -12,6 +12,9 @@ from statistics import median
 import fitz
 
 _NUMBER=re.compile(r'[$€¥]?[+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?')
+_MONEY=re.compile(r'([$€¥])([+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(m|k|bn|million|billion|thousand)?')
+_SCALES={'m':'1000000','million':'1000000','k':'1000','thousand':'1000',
+         'bn':'1000000000','billion':'1000000000'}
 
 
 def _bbox(words):
@@ -20,6 +23,126 @@ def _bbox(words):
 
 def _text(words):
     return ' '.join(w[4] for w in sorted(words,key=lambda w:w[0]))
+
+
+def _currency_panels(rows, sha, page_no, matrix, existing):
+    """Repeated amount lanes, independently bounded labels, no page-wide scale.
+
+    This supplements (never rewrites) existing explicit-header tables. An
+    adjacent printed currency suffix binds ONLY its own amount. Department
+    headings break table identity; separate panels cannot be summed merely
+    because their annotations use the same currency symbol.
+    """
+    anchors=[]
+    for index,row in enumerate(rows):
+        words=row['words']
+        for pos,w in enumerate(words):
+            match=_MONEY.fullmatch(w[4])
+            if not match:continue
+            token=w[4];parts=[w];suffix=match.group(3)
+            if not suffix and pos+1<len(words):
+                nxt=words[pos+1]
+                if nxt[4] in _SCALES and 0<=nxt[0]-w[2]<=2 and abs((nxt[1]+nxt[3])/2-row['cy'])<=2:
+                    suffix=nxt[4];token+=suffix;parts.append(nxt)
+            anchors.append({'row':index,'word':w,'parts':parts,'raw':token,
+                            'symbol':match.group(1),'numeric':match.group(2), 'suffix':suffix})
+    if len(anchors)>512:return []
+    clusters=[]
+    for anchor in sorted(anchors,key=lambda a:a['word'][2]):
+        if clusters and anchor['word'][2]-clusters[-1][0]['word'][2]<=6:
+            clusters[-1].append(anchor)
+        else:clusters.append([anchor])
+    clusters=[c for c in clusters if len({a['row'] for a in c})>=3]
+    if len(clusters)>16:return []
+    covered={tuple(f['bbox_display_pt']) for f in existing}
+    tables=[]
+    for cluster in clusters:
+        y0=min(rows[a['row']]['cy'] for a in cluster);y1=max(rows[a['row']]['cy'] for a in cluster)
+        edge=max(a['word'][2] for a in cluster)
+        neighbors=[c for c in clusters if max(a['word'][2] for a in c)<min(a['word'][0] for a in cluster)-12
+                   and min(rows[a['row']]['cy'] for a in c)<=y1 and max(rows[a['row']]['cy'] for a in c)>=y0]
+        lower=max((max(_bbox(a['parts']).x1 for a in c)+8 for c in neighbors),default=0)
+        # Cluster baselines AFTER bounding the lane. A bold total in another
+        # panel must not split this panel's normal-font label from its value.
+        lane_native=[w for row in rows for w in row['words'] if w[0]>=lower and w[2]<=edge+14]
+        lane_rows=[]
+        for w in sorted(lane_native,key=lambda w:((w[1]+w[3])/2,w[0])):
+            cy=(w[1]+w[3])/2
+            if lane_rows and abs(cy-lane_rows[-1]['cy'])<=2:lane_rows[-1]['words'].append(w)
+            else:lane_rows.append({'cy':cy,'words':[w]})
+        runs=[];run=[];headings=[]
+        def flush():
+            nonlocal run
+            if run:runs.append((run,headings[-1:]));run=[]
+        for i,row in enumerate(lane_rows):
+            local=row['words']
+            aligned=[a for a in cluster if a['word'] in local]
+            anchor=aligned[0] if len(aligned)==1 else None
+            if anchor:
+                before=[w for w in local if w[2]<=anchor['word'][0]-2]
+                remaining=[w for w in local if w not in before and w not in anchor['parts']]
+                good=bool(before and not remaining and all((not _NUMBER.fullmatch(w[4]) or re.fullmatch(r'(?:19|20)\d{2}',w[4])) and not _MONEY.fullmatch(w[4]) for w in before))
+                # Two adjacent numeric columns with only one row label are
+                # an unheaded multi-column table, not two monetary panels.
+                cy=(anchor['word'][1]+anchor['word'][3])/2
+                band=[w for source_row in rows for w in source_row['words']
+                      if abs((w[1]+w[3])/2-cy)<=2 and w[2]>lower and w[0]<edge+14]
+                if any(w[0]<lower or w[2]>edge+14 for w in band):good=False
+                ordered=sorted(local,key=lambda w:w[0])
+                if any(a[2]>b[0] for a,b in zip(ordered,ordered[1:])):good=False
+                right=[a for a in anchors if abs((a['word'][1]+a['word'][3])/2-cy)<=2 and a['word'][0]>edge+14]
+                if any(not any(w[0]>=_bbox(anchor['parts']).x1+8 and w[2]<=a['word'][0]-2
+                               and not _NUMBER.fullmatch(w[4]) and not _MONEY.fullmatch(w[4])
+                               for source_row in rows for w in source_row['words']
+                               if abs((w[1]+w[3])/2-cy)<=2) for a in right):good=False
+                if good and run and row['cy']-lane_rows[run[-1][0]]['cy']>36:flush()
+                if good:run.append((i,before,anchor));continue
+                flush();continue
+            flush()
+            # Local headings are source text, not fabricated column labels.
+            # A second monetary amount or truncated spanning text cannot head
+            # an independently bounded panel.
+            if not any(_MONEY.fullmatch(w[4]) or _NUMBER.fullmatch(w[4]) for w in local):
+                headings.append({'text':_text(local),'bbox_display_pt':list(_bbox(local)*matrix),
+                                 '_cy':row['cy']})
+        flush()
+        for run,heading in runs:
+            # Keep a total even if the native label changed font/indentation,
+            # but never certify isolated prose as a table.
+            if len(run)<3:continue
+            if len({_text(label) for _,label,_ in run})!=len(run):continue
+            if len({a['symbol'] for _,_,a in run})!=1:continue
+            runwords=[w for _,label,a in run for w in label+a['parts']]
+            rect=_bbox(runwords)
+            identity=hashlib.sha256(f'{sha}:{page_no}:currency-panel:{list(rect)}'.encode()).hexdigest()[:24]
+            title=[{k:v for k,v in h.items() if k!='_cy'} for h in heading
+                   if 0<lane_rows[run[0][0]]['cy']-h['_cy']<65]
+            facts=[]
+            for r,(i,label,a) in enumerate(run):
+                box=list(_bbox(a['parts'])*matrix)
+                if tuple(box) in covered:continue
+                suffix=a['suffix'];scale=_SCALES.get(suffix)
+                proof={'text':a['raw'],'bbox_display_pt':box,'binding':'own_adjacent_currency_suffix_only',
+                       'suffix':suffix,'multiplier':scale} if suffix else None
+                facts.append({'fact_id':f'{identity}:row:{r}:annotation','table_id':identity,
+                    'row_header':_text(label),'column_header_path':[], 'column_role':'native_currency_annotation',
+                    'row_header_bbox_display_pt':list(_bbox(label)*matrix),'bbox_display_pt':box,
+                    'raw_value':a['raw'],'source_sha256':sha,'page_no':page_no,
+                    'currency_symbol':a['symbol'],'currency':'unknown','unit':'currency_symbol:'+a['symbol'],
+                    'scale':scale,'scale_evidence':proof,'period':None,'title_context':title,
+                    'value_kind':'native_currency_annotation_only','calculator_input_eligible':False,
+                    'physical_calculator_input_eligible':False,
+                    'native_amount_domain':a['numeric'].replace(',','').replace('−','-'),
+                    'validation_scope':'native_word_alignment_not_visible_ocr_or_semantic_truth'})
+                covered.add(tuple(box))
+            if not facts:continue
+            tables.append({'table_id':identity,'status':'native_alignment_verified','table_kind':'monetary_panel_list',
+                'source_sha256':sha,'page_no':page_no,'bbox_display_pt':list(rect*matrix),
+                'column_header_paths':[],'row_headers':[_text(label) for _,label,_ in run],
+                'facts':facts,'title_context':title,'panel_x_bounds_unrotated_pt':[lower,edge+14],
+                'complete_scope':'continuous_local_native_rows_not_whole_document',
+                'calculator_input_eligible':False,'physical_calculator_input_eligible':False})
+    return tables
 
 
 def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=None):
@@ -167,5 +290,7 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                 'scope_status':'multiple_years_not_assigned_to_cells' if len(years)>1 else 'external_scope_only',
                 'complete_scope':'continuous_local_native_rows_not_whole_document','calculator_input_eligible':False}
             report['tables'].append(table);report['facts'].extend(facts)
+        for table in _currency_panels(rows,sha,page_no,matrix,report['facts']):
+            report['tables'].append(table);report['facts'].extend(table['facts'])
     report['status']='native_alignment_verified' if report['tables'] else 'incomplete'
     return report

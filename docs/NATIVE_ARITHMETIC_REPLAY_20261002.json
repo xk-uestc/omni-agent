@@ -1,0 +1,67 @@
+{
+  "created_at": "2026-10-01T17:01:48.070026+00:00",
+  "mode": "offline_pinned_pdf_arithmetic_replay",
+  "api_calls": 0,
+  "gold_used": false,
+  "semantic_review_replayed": false,
+  "note": "Historical model/source freeze is unchanged. This only validates current deterministic arithmetic against historical selected proof operands.",
+  "current_arithmetic_sha256": "137a342594113f08a8fd5998abea2d73ea0801140c866788e3dd2ca72dd84971",
+  "reports": [
+    {
+      "path": "docs\\OHR_BENCH_ORIGINAL_OPTIMIZED_20261002.json",
+      "sha256": "b38072100881ae50cc60c35c9086c82e42ebc5ae4d98be466bc13b2283c12068",
+      "historical_arithmetic_sha256": "137a342594113f08a8fd5998abea2d73ea0801140c866788e3dd2ca72dd84971",
+      "successful_native_table_cases": 2
+    },
+    {
+      "path": "docs\\OHR_BENCH_THIRD_OPTIMIZED_20261002.json",
+      "sha256": "429fa3f21b09da74494f356f2187b0165c7beb326b026794f195915c44505737",
+      "historical_arithmetic_sha256": "137a342594113f08a8fd5998abea2d73ea0801140c866788e3dd2ca72dd84971",
+      "successful_native_table_cases": 1
+    }
+  ],
+  "cases": [
+    {
+      "report": "OHR_BENCH_ORIGINAL_OPTIMIZED_20261002.json",
+      "ID": "a09648f9-bd23-4978-8330-95890857ac72",
+      "operation": "lookup",
+      "status": "PASS",
+      "original_pdf_sha256": "83ee4346330a4a0ddc66b3fc279daf35a2b4fb08cc7187dd4be56eb4ec47848f",
+      "fact_proof_match": true,
+      "original_answer": "$30.83m",
+      "replayed_answer": "$30.83m",
+      "original_numeric_result": "30.83",
+      "replayed_numeric_result": "30.83"
+    },
+    {
+      "report": "OHR_BENCH_ORIGINAL_OPTIMIZED_20261002.json",
+      "ID": "a8bc54d0-c77d-40a4-bceb-689d5c82ee74",
+      "operation": "lookup",
+      "status": "PASS",
+      "original_pdf_sha256": "83ee4346330a4a0ddc66b3fc279daf35a2b4fb08cc7187dd4be56eb4ec47848f",
+      "fact_proof_match": true,
+      "original_answer": "$30.83m",
+      "replayed_answer": "$30.83m",
+      "original_numeric_result": "30.83",
+      "replayed_numeric_result": "30.83"
+    },
+    {
+      "report": "OHR_BENCH_THIRD_OPTIMIZED_20261002.json",
+      "ID": "88df9cb3-bd73-4565-b71a-1393bd104215",
+      "operation": "sum",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "$79,000",
+      "replayed_answer": "$79,000",
+      "original_numeric_result": "79000",
+      "replayed_numeric_result": "79000"
+    }
+  ],
+  "summary": {
+    "successful_native_cases": 3,
+    "passed": 3,
+    "failed": 0,
+    "unverified": 0
+  }
+}

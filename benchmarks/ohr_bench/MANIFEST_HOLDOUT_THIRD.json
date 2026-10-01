@@ -1,0 +1,213 @@
+{
+  "dataset": "opendatalab/OHR-Bench",
+  "official_dataset_url": "https://huggingface.co/datasets/opendatalab/OHR-Bench",
+  "hf_revision": "7f833e3eda9a571a9ea545a8f6d476fa1685033d",
+  "official_code_revision": "1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7",
+  "dataset_card_license": "cc-by-4.0",
+  "pdf_usage_statement": "Official README: research purposes only, not commercial use; source PDFs retain original copyright.",
+  "data_root_default": "D:\\ICT8-OfficialDatasets\\ohr-bench",
+  "created_at": "2026-10-01T16:42:07.227722+00:00",
+  "selection_frozen_before_evaluation": true,
+  "selection_rule": "Previously downloaded original PDFs only; exclude original IDs and exact duplicate questions; stable ID order, up to 2 per fixed evidence category; no answers/evidence used for selection.",
+  "selection_limit": "Independent unseen-question resource-biased holdout <=12; same PDFs as pilot, not unseen-document or full official score.",
+  "qa_source_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/qas_v2.json",
+  "qa_sha256": "2446db28741fa9f392067ee7aae7f3b05e0d85c584069a50ddd5b1b5bc783f58",
+  "official_qa_total": 8498,
+  "selected_qa_path": "SELECTED_OFFICIAL_QA_HOLDOUT_THIRD.json",
+  "selected_qa_sha256": "bdb04ae479cf3c0a0ca907577368969ae4f4683fb86d110e35590143c83262b8",
+  "readme_sha256": "bff078b1ee88c89823b40339b09dd754893122f56cb366ec3afd88c65046a222",
+  "pdf_archive_lfs_sha256": "f9bc65f383172c4ea47940c47dfab01dd36c03a120bc0450d7a962917098c783",
+  "archive_full_sha_verified": false,
+  "archive_range_download_bytes": 307426,
+  "unsupported_selection": {
+    "reading_order": {
+      "requested": 2,
+      "selected": 0
+    },
+    "multi": {
+      "requested": 2,
+      "selected": 0
+    }
+  },
+  "cases": [
+    {
+      "ID": "a203b291-6793-46a9-a7ab-4d37799d0336",
+      "doc_name": "law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56",
+      "evidence_source": "text",
+      "evidence_page_no": 1,
+      "original_row_sha256": "656d39408fb75301413260d4876ceac5ed2a98dbeeb70a675cd48ba76cf1956b"
+    },
+    {
+      "ID": "a4f38848-cae0-4ccd-adb3-a70bc839cad6",
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "evidence_source": "text",
+      "evidence_page_no": 1,
+      "original_row_sha256": "c5b32190a6a52a83d2fcd5b1572c76a15c57f9b03f349f51b86ec9c0fbbdf4e0"
+    },
+    {
+      "ID": "88df9cb3-bd73-4565-b71a-1393bd104215",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "table",
+      "evidence_page_no": 2,
+      "original_row_sha256": "411eb57ca1c897b05e5de0236f85a832344df7652fb2a8695146f6642fea3b02"
+    },
+    {
+      "ID": "a0998ecd-803f-4c29-a9e7-626e350cc3ff",
+      "doc_name": "administration/DUDE_4530b7915538163469088b4df4044d7d",
+      "evidence_source": "table",
+      "evidence_page_no": 0,
+      "original_row_sha256": "40f473335a1ca7e590ce1e65f7b3e714219c47884dbf80754b2b4d00e7e3fb52"
+    },
+    {
+      "ID": "a72b408c-9a55-485b-93ec-c6e9b52bd0e5",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3",
+      "evidence_source": "formula",
+      "evidence_page_no": 0,
+      "original_row_sha256": "ef111720e830c116ef6a1e233b169a452110a5a5de1ed2008950d0d89a06e9c6"
+    },
+    {
+      "ID": "a72c5024-2114-418c-af48-86bde3e6b8e8",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3",
+      "evidence_source": "formula",
+      "evidence_page_no": 0,
+      "original_row_sha256": "b26d10d11b2be6f870cc0167e6025f0acbfbab17cd980256d35ba8c528c1af63"
+    },
+    {
+      "ID": "acbe4ff6-16d9-4ae1-ad6d-5389a0ece8d1",
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "evidence_source": "chart",
+      "evidence_page_no": 1,
+      "original_row_sha256": "933d69b9856e83fceb9d96f5cbfaebda20b5faeb6a905f6a3d3233d0c5ee0190"
+    },
+    {
+      "ID": "ce4023c8-e0ce-4621-8def-0c27bb3aa021",
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "evidence_source": "chart",
+      "evidence_page_no": 1,
+      "original_row_sha256": "27465a8c4e3c3919f619acdfbd8c681074bcc5f1a116bc780301a78ecb509e2a"
+    }
+  ],
+  "documents": [
+    {
+      "doc_name": "administration/DUDE_4530b7915538163469088b4df4044d7d",
+      "pdf_path": "pdfs/administration/DUDE_4530b7915538163469088b4df4044d7d.pdf",
+      "pdf_bytes": 15967,
+      "pdf_sha256": "83ee4346330a4a0ddc66b3fc279daf35a2b4fb08cc7187dd4be56eb4ec47848f",
+      "archive_member": "administration/DUDE_4530b7915538163469088b4df4044d7d.pdf",
+      "archive_member_crc32": 2197898147,
+      "gt_path": "gt/administration/DUDE_4530b7915538163469088b4df4044d7d.json",
+      "gt_sha256": "6c89740d1283244be57dd14d37a56edc15689e916b780dfc638bda49b4c2bcf4",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/administration/DUDE_4530b7915538163469088b4df4044d7d.json"
+    },
+    {
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "pdf_path": "pdfs/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.pdf",
+      "pdf_bytes": 31023,
+      "pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "archive_member": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.pdf",
+      "archive_member_crc32": 3644091755,
+      "gt_path": "gt/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.json",
+      "gt_sha256": "e8842e1b35bf45d7ad42d86d5ca71af125e7f7dc553ab1bdbc9df250a46d34aa",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.json"
+    },
+    {
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "pdf_path": "pdfs/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.pdf",
+      "pdf_bytes": 53852,
+      "pdf_sha256": "6e5185ff6b6459872ffc2b8eddf394b1d517c5641fb3695f21e9cb510deca4bc",
+      "archive_member": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.pdf",
+      "archive_member_crc32": 1838754352,
+      "gt_path": "gt/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.json",
+      "gt_sha256": "2c4d6e4503e9be6130a5e83b46b7f7d05119825323649b39a5fa19aa92956ee8",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.json"
+    },
+    {
+      "doc_name": "law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56",
+      "pdf_path": "pdfs/law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.pdf",
+      "pdf_bytes": 16190,
+      "pdf_sha256": "e5a18078bf488ca0eb5f2456996b963507b89fdc2dfde569d0d044cce8a2294d",
+      "archive_member": "law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.pdf",
+      "archive_member_crc32": 1975697794,
+      "gt_path": "gt/law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.json",
+      "gt_sha256": "803f668af87c6fb634e3d29ed6975b680ffcf1249efcd342d81a3755a01bc7e9",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56.json"
+    },
+    {
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3",
+      "pdf_path": "pdfs/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.pdf",
+      "pdf_bytes": 28544,
+      "pdf_sha256": "3b8eace7bf8d996268dfebc202873fdd8079edadfda6dcb46c3990ebc5e75918",
+      "archive_member": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.pdf",
+      "archive_member_crc32": 3536487057,
+      "gt_path": "gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.json",
+      "gt_sha256": "d3cd6f1774c87872f3bdb7b9d764a1969d484f70eeee9429ee2e32b9e3eaa40c",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.json"
+    }
+  ],
+  "parent_manifest_sha256": "7c2c132582bf88ab5982c7afc1990152b62f818a127c49a3e5517369e434bfd0",
+  "parent_case_ids": [
+    "8e685f52-dbfc-4c45-830b-b2c2ba567003",
+    "a09648f9-bd23-4978-8330-95890857ac72",
+    "81439bae-4b23-438e-b867-a07279f3f134",
+    "8e6b81a3-e9ed-459c-a80a-b2000cfcbe46",
+    "a8bc54d0-c77d-40a4-bceb-689d5c82ee74",
+    "a8bec806-be9d-4715-9b7e-e3e9744acc63",
+    "aadf21a7-8955-441c-893f-8c124aa8b5f5",
+    "aadf501a-997e-46dd-bba8-b4d857c80b00",
+    "c195d44c-0a19-4bf1-afdd-a1219ae0c6b6",
+    "c4169984-a4e0-4c71-ba6e-88281796d5fa",
+    "b4930cee-4bf1-40c2-a5f4-5205df948481",
+    "027835b7-dba4-4421-b30a-c73ca96a7846"
+  ],
+  "excluded_manifests": [
+    {
+      "manifest": "D:\\ICT8-OmniAgent\\benchmarks\\ohr_bench\\MANIFEST_HOLDOUT.json",
+      "manifest_sha256": "ac5c212287fed69a258e2365d9a52aadea9ebf5f374059fc69fac38821112cc6",
+      "selected_qa_sha256": "e320b3db5219686f4ec9a9ad6c8a01f66eb19a090d58a8232ced96eb256868e1",
+      "case_ids": [
+        "974620bd-acf2-4ead-8b35-59e27c42069a",
+        "9aee4174-0081-4c06-ac3c-b21d026c62a3",
+        "806142cd-555c-4c4c-9291-bcf6fce88410",
+        "8062053e-780d-4d5d-878e-bd7bf12ce821",
+        "a5aade63-635a-4e40-84bb-db574c56b298",
+        "a5aca28d-8390-4287-a336-09f0b740155f",
+        "aadf7ed7-79b2-4ee9-819c-508c9f145117",
+        "aae0b467-26a0-425f-bb57-20c27a85588e",
+        "88df0307-0b32-4459-ab46-afee8898a682",
+        "b6d9ee09-0aff-46ac-a177-75dfbbef2c1d"
+      ]
+    },
+    {
+      "manifest": "D:\\ICT8-OmniAgent\\benchmarks\\ohr_bench\\MANIFEST_HOLDOUT_SECOND.json",
+      "manifest_sha256": "f7c3302331450bb3012eb9c0b56654784de7ea8945eb334df52c6eacb7dfb916",
+      "selected_qa_sha256": "78b59530e81ea1118ef2e87248f3784ce25def6cfbd017d92ec985ba509a5776",
+      "case_ids": [
+        "a200233a-d43f-44a8-b50a-1ca2a818f854",
+        "a202a18f-5813-4911-af6d-cc6ffb52950b",
+        "85505347-a626-4c79-bd8a-bfe328059a51",
+        "88def0fe-7ab3-4156-9209-30fda786916a",
+        "a5ad3471-2feb-4b43-bb5d-774959555f65",
+        "a5ae9aed-7b03-4f63-bb55-fef00e877cf3",
+        "acba53d3-aaee-42a8-aa8a-9dcd5a7ad782",
+        "acbd6b3b-a72e-44f8-ab4c-fc50fd089698",
+        "b8027f58-ed86-4d61-a999-2fb9d3445847"
+      ]
+    }
+  ],
+  "category_counts": {
+    "text": 2,
+    "table": 2,
+    "formula": 2,
+    "chart": 2,
+    "reading_order": 0,
+    "multi": 0
+  },
+  "category_eligible_counts": {
+    "text": 4,
+    "table": 2,
+    "formula": 5,
+    "chart": 4,
+    "reading_order": 0,
+    "multi": 0
+  }
+}

@@ -75,6 +75,9 @@ def collect_files(root: Path = ROOT, *, include_public_assets: bool = False, pro
             if not path.is_file():
                 continue
             relative = path.relative_to(root)
+            # Local experiments are preserved in the workspace, not released as production code.
+            if relative.parts[:2] == ("tools", "prototypes"):
+                continue
             if any(part in EXCLUDED_PARTS for part in relative.parts):
                 continue
             public_database = include_public_assets and relative.as_posix() == 'benchmarks/chinook/Chinook.sqlite'

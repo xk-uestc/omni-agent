@@ -37,15 +37,30 @@ def annotation_arithmetic(facts, operation):
         raise ValueError('native_annotation_column_period_scope_mismatch')
     if operation == 'sum' and any(re.search(r'\b(?:total|subtotal)\b|合计|总计|小计', f.get('row_header', ''), re.I) for f in facts):
         raise ValueError('native_annotation_total_components_unsupported')
-    if any(f['unit'] == 'unknown' or f.get('scale') is not None for f in facts):
+    if any(f['unit'] == 'unknown' for f in facts):
         raise ValueError('native_annotation_unit_or_scale_unbound')
     values = []
+    suffixes=[]
     for fact in facts:
         raw = fact['raw_value']
-        if not re.fullmatch(r'[$€¥]?[+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?', raw):
+        literal=re.fullmatch(r'([$€¥]?)([+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(%|m|k|bn|million|billion|thousand)?',raw)
+        if literal is None:
             raise ValueError('native_annotation_literal_invalid')
+        suffix=literal.group(3) or ''
+        scales={'m':'1000000','million':'1000000','k':'1000','thousand':'1000',
+                'bn':'1000000000','billion':'1000000000'}
+        if fact.get('scale') is not None or suffix in scales:
+            proof=fact.get('scale_evidence')
+            if (not literal.group(1) or suffix not in scales or fact.get('scale')!=scales[suffix]
+                    or not isinstance(proof,dict) or proof.get('binding')!='own_adjacent_currency_suffix_only'
+                    or proof.get('suffix')!=suffix or proof.get('text')!=raw
+                    or proof.get('multiplier')!=scales[suffix]
+                    or not isinstance(fact.get('bbox_display_pt'),list) or len(fact['bbox_display_pt'])!=4
+                    or proof.get('bbox_display_pt')!=fact.get('bbox_display_pt')):
+                raise ValueError('native_annotation_unit_or_scale_unbound')
+        suffixes.append(suffix)
         try:
-            values.append(Decimal(raw.lstrip('$€¥').rstrip('%').replace(',', '').replace('−', '-')))
+            values.append(Decimal(literal.group(2).replace(',', '').replace('−', '-')))
         except InvalidOperation as exc:
             raise ValueError('native_annotation_literal_invalid') from exc
     # Coefficient digit counts miss exponent gaps (1 + 0.000...001).
@@ -78,10 +93,11 @@ def annotation_arithmetic(facts, operation):
         answer = format(total, 'f')
     else:
         symbol = facts[0]['raw_value'][0] if facts[0]['raw_value'][0] in '$€¥' else ''
-        suffix = '%' if facts[0]['raw_value'].endswith('%') else ''
+        suffix = suffixes[0]
         answer = symbol + format(total, ',f') + suffix
     return {'answer': answer, 'operation': operation, 'operands': [f['raw_value'] for f in facts],
             'numeric_result': format(total, 'f'), 'unit': 'ratio' if operation == 'ratio' else facts[0]['unit'],
+            'scale': None if operation=='ratio' else facts[0].get('scale'),
             'computation_domain': 'same_table_literal_numeric_annotations_not_inferred_physical_quantity',
             'physical_calculator_input_eligible': False}
 
@@ -165,6 +181,7 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                         wire_facts.append({'selection_id': key, 'row_label': fact['row_header'],
                             'column_header_path': fact['column_header_path'], 'raw_value': fact['raw_value'],
                             'unit': fact['unit'], 'currency': fact.get('currency', 'unknown'), 'scale': fact.get('scale'),
+                            'scale_evidence': deepcopy(fact.get('scale_evidence')),
                             'period': fact.get('period'), 'value_kind': fact.get('value_kind')})
                     registries.append({'document_id': d['document_id'], 'page_no': page,
                         'source_sha256': d['sha256'], 'table_key': f'T{len(registries)+1:03d}',
@@ -211,7 +228,9 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'comparison, explanation or unseen narrative calculations, abstain; do not answer only one part. '
                 'currency=unknown and scale=null retain literal annotations: they do NOT require guessing an ISO '
                 'currency or multiplier and do NOT require abstention for requested raw annotation arithmetic. '
-                'Do not infer currency codes, counts or multipliers. Bind entity and period using complete page '
+                'An explicit scale_evidence binds only its own printed adjacent currency suffix; never extend '
+                'a summary suffix to unsuffixed rows or other panels. Prefer lookup of an explicitly requested '
+                'printed total over recomputing components. Do not infer currency codes, counts or multipliers. Bind entity and period using complete page '
                 'context and table scope. Never return a numeric answer.',
                 {'question': question, 'native_table_registry': deepcopy(registries),
                  'complete_table_page_contexts': deepcopy(page_contexts)}, selection_schema,
@@ -269,7 +288,7 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
         trace['status'] = 'model_reviewed_native_annotation_computation'
         scope = {'row_labels': [f['row_header'] for f in selected], 'column_header_paths': [f['column_header_path'] for f in selected],
                  'period': selected[0].get('period'), 'period_scope_text': selected[0].get('period_scope_text', []),
-                 'unit': computation['unit'], 'currency': 'unknown', 'scale': None,
+                 'unit': computation['unit'], 'currency': 'unknown', 'scale': computation['scale'],
                  'computation_domain': computation['computation_domain'], 'calculator_input_eligible': False}
         recheck()
         return {'status': 'ok', 'question': question, 'answer': computation['answer'], 'answer_mode': 'native_table_model_reviewed',

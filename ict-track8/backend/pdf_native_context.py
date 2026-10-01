@@ -12,7 +12,7 @@ from .grounded_generation import (_ENGLISH_ACTUAL_HEADING, _ENGLISH_FORECAST_HEA
 from .native_continuation import (choose_continuation, continuation_state,
                                   enrich_native_line_styles)
 
-EXTRACTION_VERSION = 'original-native-complete-block-context-v2'
+EXTRACTION_VERSION = 'original-native-complete-block-context-v3'
 _UNIT = re.compile(r'(?:%|[$€£¥]|USD|EUR|GBP|CNY|RMB|dollars?|euros?|millions?|billions?|thousands?|mn|bn|m|k)', re.I)
 _NUMERIC_END = re.compile(r'\d(?:[\d,.]*\d)?\s*$')
 
@@ -74,6 +74,7 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
         return None
     members = [block]
     continuation_members = None
+    column_transition = None
     # Re-read native geometry above, then preserve the entire anchor before
     # adding only the unique successor's first explicitly closed sentence.
     # An open prose block cannot fall back to its incomplete old fragment.
@@ -85,6 +86,7 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
             return None
         text = continuation['text']
         continuation_members = continuation['members']
+        column_transition = continuation.get('column_transition')
     unit_insertions = []
     # All-page uniqueness: a unit cannot attach to two competing number lines.
     for unit in ordered:
@@ -216,4 +218,5 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
             'mode': 'original_native_complete_continuation' if continuation_members else 'original_native_complete_block',
             'members': ([_member(item) for item in prefix_members] + continuation_members
                         if continuation_members else [_member(b) for b in members]), 'reading_order': order,
-            'unit_insertions': unit_insertions, 'calculator_input_eligible': False}
+            'unit_insertions': unit_insertions, 'column_transition': column_transition,
+            'calculator_input_eligible': False}

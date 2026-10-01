@@ -113,6 +113,47 @@ def _first_closed_end(text):
     return None
 
 
+def _column_wrap(block, following, ordered, order, column, next_column, height):
+    """Certify only a bottom-to-top transition between adjacent native lanes.
+
+    This supplies layout evidence, not inferred text or semantic entailment.
+    The caller still retains the whole anchor, rejects headings/style changes,
+    and requires the successor's first explicit sentence closure.
+    """
+    bands = order.get('column_bands_pt', [])
+    if (order.get('mode') != 'native_columns' or not 2 <= len(bands) <= 4
+            or column is None or next_column != column + 1):
+        return None
+    left, right = bands[column], bands[next_column]
+    if any(not _box([band.get(key) for key in ('x0', 'y0', 'x1', 'y1')]) for band in bands):
+        return None
+    bb, fb = block['bbox_fitz_unrotated_pt'], following['bbox_fitz_unrotated_pt']
+    if (left['x1'] >= right['x0']
+            or abs(left['y0'] - right['y0']) > 2 * height
+            or abs(left['y1'] - right['y1']) > 2 * height
+            or min(left['y1'] - left['y0'], right['y1'] - right['y0']) < 4 * height
+            or not 0 <= left['y1'] - bb[3] <= height
+            or not 0 <= fb[1] - right['y0'] <= height):
+        return None
+    assigned = [_column(item, order) for item in ordered]
+    known = [value for value in assigned if value is not None]
+    if known != sorted(known):
+        return None
+    in_left = [item for item, lane in zip(ordered, assigned) if lane == column]
+    in_right = [item for item, lane in zip(ordered, assigned) if lane == next_column]
+    if not in_left or not in_right or in_left[-1] is not block or in_right[0] is not following:
+        return None
+    previous = sorted(block.get('native_lines', []), key=lambda line: (line['bbox'][1], line['bbox'][0]))
+    current = sorted(following.get('native_lines', []), key=lambda line: (line['bbox'][1], line['bbox'][0]))
+    if (not previous or not current or previous[-1].get('native_style') is None
+            or current[0].get('native_style') is None
+            or previous[-1]['native_style'] != current[0]['native_style']):
+        return None
+    return {'method': 'adjacent_native_lane_bottom_to_top', 'from_column': column,
+            'to_column': next_column, 'from_band': dict(left), 'to_band': dict(right),
+            'same_boundary_font_style': True, 'intervening_lane_blocks': 0}
+
+
 def _member(block, start, end):
     text = block['normalized_text']
     lines = []
@@ -197,8 +238,16 @@ def choose_continuation(block, ordered, order, max_chars=1800):
     # Earlier complete sentences may precede the final open sentence.
     if text.rstrip().endswith(tuple('.。!?！？')):
         return refuse('ambiguous_anchor_boundary')
-    column = _column(block, order)
-    if column is None or _column(following, order) != column:
+    column, next_column = _column(block, order), _column(following, order)
+    native = block.get('native_lines') or []
+    heights = [line['bbox'][3] - line['bbox'][1] for line in native if _box(line.get('bbox'))]
+    if not heights:
+        return refuse('line_geometry_unavailable')
+    height = sorted(heights)[len(heights) // 2]
+    column_transition = None
+    if column != next_column:
+        column_transition = _column_wrap(block, following, ordered, order, column, next_column, height)
+    if column is None or next_column != column and column_transition is None:
         return refuse('cross_column_or_ambiguous')
     first_line = suffix.strip().splitlines()[0]
     if (re.match(r'^(?:#{1,6}\s|\[[^\]]+\])', first_line)
@@ -226,17 +275,12 @@ def choose_continuation(block, ordered, order, max_chars=1800):
             and previous_lines[-1]['native_style'] != next_lines[0]['native_style']):
         return refuse('native_font_style_boundary')
     bb, fb = block['bbox_fitz_unrotated_pt'], following['bbox_fitz_unrotated_pt']
-    native = block.get('native_lines') or []
-    heights = [line['bbox'][3] - line['bbox'][1] for line in native if _box(line.get('bbox'))]
-    if not heights:
-        return refuse('line_geometry_unavailable')
-    height = sorted(heights)[len(heights) // 2]
     gap = fb[1] - bb[3]
-    if not (0 <= gap <= 2 * height + 4 and abs(fb[0] - bb[0]) <= height
+    if column_transition is None and not (0 <= gap <= 2 * height + 4 and abs(fb[0] - bb[0]) <= height
             and bb[0] < fb[2] and fb[0] < bb[2]):
         return refuse('not_geometrically_adjacent')
     competitors = [item for item in ordered if item is not block and item is not following
-                   and _column(item, order) == column
+                   and _column(item, order) == column and column_transition is None
                    and bb[3] <= item['bbox_fitz_unrotated_pt'][1] <= fb[3]
                    and item['bbox_fitz_unrotated_pt'][0] < fb[2]
                    and fb[0] < item['bbox_fitz_unrotated_pt'][2]]
@@ -274,5 +318,6 @@ def choose_continuation(block, ordered, order, max_chars=1800):
     return {'text': combined, 'reason': None, 'source_sha256': sha,
             'evidence_sha256': _sha(combined), 'members': members,
             'column': column, 'max_chars': max_chars,
+            'column_transition': column_transition,
             'mode': 'unique_native_successor_first_closed_sentence_prototype',
             'calculator_input_eligible': False}

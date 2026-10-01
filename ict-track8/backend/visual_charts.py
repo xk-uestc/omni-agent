@@ -12,11 +12,77 @@ import hashlib
 import json
 import math
 import re
+from fractions import Fraction
 
 import fitz
 
 _VERSION = 'native-annotated-vector-line-v1'
 _NUM = re.compile(r'([+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(%?)')
+
+
+def compute_chart_annotations(facts, operation):
+    """Exact arithmetic in one native annotation domain, never inferred units.
+
+    Inputs must still be replayed against the source manifest by the caller.
+    Nonterminating ratios abstain rather than inventing a rounded value.
+    """
+    if operation not in {'lookup', 'sum', 'difference', 'ratio'} or not 1 <= len(facts) <= 12:
+        raise ValueError('chart_arithmetic_operands_invalid')
+    if (operation == 'lookup' and len(facts) != 1 or operation == 'sum' and len(facts) < 2
+            or operation in {'difference', 'ratio'} and len(facts) != 2):
+        raise ValueError('chart_arithmetic_operands_invalid')
+    if len({f['fact_id'] for f in facts}) != len(facts):
+        raise ValueError('chart_arithmetic_duplicate_operand')
+    if len({(f['source_sha256'], f['page_no'], f['chart_id'], f['unit'], f.get('scale')) for f in facts}) != 1:
+        raise ValueError('chart_arithmetic_scope_mismatch')
+    if any(f.get('scale') is not None for f in facts):
+        raise ValueError('chart_arithmetic_scale_unbound')
+    if operation == 'sum' and any(re.search(r'\b(?:total|subtotal)\b|合计|总计|小计', f['series'], re.I) for f in facts):
+        raise ValueError('chart_arithmetic_total_components_unsupported')
+    values, suffixes = [], set()
+    for fact in facts:
+        raw = fact['raw_value']
+        if not isinstance(raw, str) or len(raw) > 512:
+            raise ValueError('chart_arithmetic_literal_budget')
+        parsed = _numeric(raw)
+        if parsed is None or str(parsed[0]) != fact['numeric_value']:
+            raise ValueError('chart_arithmetic_literal_mismatch')
+        values.append(Fraction(parsed[0]))
+        suffixes.add(parsed[1])
+    if len(suffixes) != 1:
+        raise ValueError('chart_arithmetic_unit_mismatch')
+    if operation == 'lookup':
+        value = values[0]
+    elif operation == 'sum':
+        value = sum(values, Fraction(0))
+    elif operation == 'difference':
+        value = values[0] - values[1]
+    else:
+        if values[1] == 0:
+            raise ValueError('chart_arithmetic_zero_denominator')
+        value = values[0] / values[1]
+    denominator, twos, fives = value.denominator, 0, 0
+    while denominator % 2 == 0:
+        twos += 1
+        denominator //= 2
+    while denominator % 5 == 0:
+        fives += 1
+        denominator //= 5
+    if denominator != 1:
+        raise ValueError('chart_arithmetic_nonterminating_ratio')
+    places = max(twos, fives)
+    if places > 2048:
+        raise ValueError('chart_arithmetic_result_budget')
+    scaled = value.numerator * 2 ** (places - twos) * 5 ** (places - fives)
+    digits = str(abs(scaled)).zfill(places + 1)
+    literal = (digits[:-places] + '.' + digits[-places:]).rstrip('0').rstrip('.') if places else digits
+    literal = ('-' if scaled < 0 else '') + literal
+    suffix = next(iter(suffixes)) if operation != 'ratio' else ''
+    return {'operation': operation, 'answer': facts[0]['raw_value'] if operation == 'lookup' else literal + suffix, 'numeric_result': literal,
+            'operand_fact_ids': [f['fact_id'] for f in facts], 'operands': [f['raw_value'] for f in facts],
+            'unit': 'ratio' if operation == 'ratio' else facts[0]['unit'], 'scale': None,
+            'computation_domain': 'same_chart_native_annotation_arithmetic_not_inferred_physical_quantity',
+            'calculator_input_eligible': False}
 
 
 def _numeric(text):

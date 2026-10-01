@@ -1,0 +1,135 @@
+{
+  "scope": "paired_resource_biased_official_query_subset_not_full_benchmark_or_unseen_document",
+  "baseline": {
+    "path": "docs\\OHR_BENCH_THIRD_BASELINE_20261002.json",
+    "sha256": "3bbce9120fa718a7655851b36b48ced2d4e7025d4e216304b2715a868c96e388",
+    "attempted": 8,
+    "normalized_exact_matches": 1,
+    "mean_english_token_f1": 0.288525
+  },
+  "optimized": {
+    "path": "docs\\OHR_BENCH_THIRD_OPTIMIZED_20261002.json",
+    "sha256": "429fa3f21b09da74494f356f2187b0165c7beb326b026794f195915c44505737",
+    "attempted": 8,
+    "normalized_exact_matches": 1,
+    "mean_english_token_f1": 0.293733
+  },
+  "selection_sha256": "bdb04ae479cf3c0a0ca907577368969ae4f4683fb86d110e35590143c83262b8",
+  "case_count": 8,
+  "exact_match_delta": 0,
+  "f1_delta": 0.005208,
+  "better_f1_cases": 1,
+  "worse_f1_cases": 0,
+  "same_f1_cases": 7,
+  "cases": [
+    {
+      "ID": "a203b291-6793-46a9-a7ab-4d37799d0336",
+      "question": "What was the outcome of the request for an emergency stay in the case involving the Arizona Democratic Party and Katie Hobbs?",
+      "category": "text",
+      "before_answer": "IT IS ORDERED the request for an emergency stay is denied. [1]",
+      "after_answer": "IT IS ORDERED the request for an emergency stay is denied.",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.625,
+      "after_f1": 0.666667
+    },
+    {
+      "ID": "a4f38848-cae0-4ccd-adb3-a70bc839cad6",
+      "question": "Which cities have successfully ended chronic homelessness among veterans as part of the efforts to end homelessness across the Nation?",
+      "category": "text",
+      "before_answer": "Salt Lake\nCity, Utah and Phoenix, Arizona",
+      "after_answer": "Salt Lake\nCity, Utah and Phoenix, Arizona",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.666667,
+      "after_f1": 0.666667
+    },
+    {
+      "ID": "88df9cb3-bd73-4565-b71a-1393bd104215",
+      "question": "What is the total budget allocated for Personnel and Marketing & Media Activities combined in the 2016-2017 budget for Abigail Pregnancy Services?",
+      "category": "table",
+      "before_answer": "$79,000",
+      "after_answer": "$79,000",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 1,
+      "after_exact_match": 1,
+      "before_f1": 1.0,
+      "after_f1": 1.0
+    },
+    {
+      "ID": "a0998ecd-803f-4c29-a9e7-626e350cc3ff",
+      "question": "What is the percentage of the total USAID budget allocated to Democratic Reform and Private Sector Initiatives combined?",
+      "category": "table",
+      "before_answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+      "after_answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+      "before_status": "insufficient_evidence",
+      "after_status": "insufficient_evidence",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.0,
+      "after_f1": 0.0
+    },
+    {
+      "ID": "a72b408c-9a55-485b-93ec-c6e9b52bd0e5",
+      "question": "What is the total available supply of NS raisins for the 2003-04 crop year, given that acquisitions through the week ending June 19, 2004, were 296,625 tons and the carryin inventory was 129,345 tons?",
+      "category": "formula",
+      "before_answer": "[1] regulation percentages are 70 percent\nfree and 30 percent reserve. Free\ntonnage raisins may be sold by handlers\nto any market. Reserve raisins must be\nheld in a pool for the accoun\n\n[2] 207,638 tons of free tonnage raisins\nacquired by handlers from producers\nthrough the week ending June 19, 2004, plus 129,345 tons of 2002–03 carryin NS\nand Oleate inventory, equate\n\n[3] small entities acting on their own\nbehalf. Thus, both statutes have small\nentity orientation and compatibility.\nThere are approximately 20 handlers\nof California raisins who are su\n\n[4] May 2004 are\n1,859 tons greater than free tonnage\nshipments during the same period last\nyear. Adding the 1,859 tons to the 3,855\ntons equates to a total of 5,714 tons of\nreserve be",
+      "after_answer": "[1] regulation percentages are 70 percent\nfree and 30 percent reserve. Free\ntonnage raisins may be sold by handlers\nto any market. Reserve raisins must be\nheld in a pool for the accoun\n\n[2] 207,638 tons of free tonnage raisins\nacquired by handlers from producers\nthrough the week ending June 19, 2004, plus 129,345 tons of 2002–03 carryin NS\nand Oleate inventory, equate\n\n[3] small entities acting on their own\nbehalf. Thus, both statutes have small\nentity orientation and compatibility.\nThere are approximately 20 handlers\nof California raisins who are su\n\n[4] May 2004 are\n1,859 tons greater than free tonnage\nshipments during the same period last\nyear. Adding the 1,859 tons to the 3,855\ntons equates to a total of 5,714 tons of\nreserve be",
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.016529,
+      "after_f1": 0.016529
+    },
+    {
+      "ID": "a72c5024-2114-418c-af48-86bde3e6b8e8",
+      "question": "If the volume regulation percentages for 2003-04 crop NS raisins are 70 percent free and 30 percent reserve, how many tons of NS raisins are allocated to the reserve pool if the total available supply is 425,970 tons?",
+      "category": "formula",
+      "before_answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+      "after_answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+      "before_status": "insufficient_evidence",
+      "after_status": "insufficient_evidence",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.0,
+      "after_f1": 0.0
+    },
+    {
+      "ID": "acbe4ff6-16d9-4ae1-ad6d-5389a0ece8d1",
+      "question": "Calculate the percentage decline in the total number of homeless veterans from 2010 to 2014.",
+      "category": "chart",
+      "before_answer": null,
+      "after_answer": null,
+      "before_status": "incomplete",
+      "after_status": "incomplete",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.0,
+      "after_f1": 0.0
+    },
+    {
+      "ID": "ce4023c8-e0ce-4621-8def-0c27bb3aa021",
+      "question": "What is the percentage decrease in the number of homeless veterans from 2010 to 2014?",
+      "category": "chart",
+      "before_answer": null,
+      "after_answer": null,
+      "before_status": "incomplete",
+      "after_status": "incomplete",
+      "before_exact_match": 0,
+      "after_exact_match": 0,
+      "before_f1": 0.0,
+      "after_f1": 0.0
+    }
+  ],
+  "limitations": [
+    "One run per version: model variation is not statistical significance.",
+    "Fixed small PDF corpus and resource biased sampling; no contest score conversion.",
+    "Saved outputs and scores are used verbatim; failures and regressions are retained."
+  ]
+}

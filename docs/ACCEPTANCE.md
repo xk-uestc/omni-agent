@@ -142,3 +142,21 @@
 最终修补后：完整本地回归 **1890 passed / 0 failed / 1 告警**，原 PDF 选中事实和算术重放 **7/7**；原始来源约束提前传给 SQL 模型后，独立真实定向 **2/2**，包括此前连续失败的 `sql_to_document`。5 次 API 全 completed、19924 tokens、源码起止一致。报告分别为 `SPAN_TABLE_SOURCE_CONTEXT_FINAL_REGRESSION_20261001.json`、`NATIVE_ARITHMETIC_FINAL_REPLAY_20261001.json`、`REAL_MODEL_SOURCE_CONTEXT_TARGETED_20261001.json`。未重跑修补后全部44题，不能拼接称44/44。
 
 新程序 ZIP `ICT8-program-20261001-span-table-source-context.zip`：manifest/凭据排除校验通过，独立解压目录 **12/12** 实际 HTTP 检查通过，见 `PACKAGE_SMOKE_SPAN_TABLE_SOURCE_CONTEXT_20261001.json`。包含源码、样本、dense 权重及小型公开资产；大型官方原件外置，沿用现场依赖。无模型启动验收不替代上面的真实 API 评测。
+
+## 2026-10-02 PDF 问答第二轮优化
+
+已接入原文 quote-ID 定位、多栏金额表及局部印刷倍率、严格 native 跨栏续句、有独立完整问题复核的图表精确算术，前端展示操作数与计算记录。完整本地回归 **1964 passed / 0 failed / 1 告警 / 12 subtests passed**，见 `PDF_QUESTION_FINAL_REGRESSION_20261002.json`。
+
+冻结同题配对真实评测如下；“原12题”来自 OpenDataLab OHR-Bench 的官方行小样本，**不是赛事官方12题**。
+
+| 对照范围 | 精确匹配：基线 → 新版 | token F1：基线 → 新版 |
+|---|---|---|
+| 已曝光原12题 | 4/12 → 6/12 | 0.418948 → 0.668750 |
+| 已曝光第二组9题 | 3/9 → 5/9 | 0.409351 → 0.646296 |
+| 同文档库新8 query首次测试 | 1/8 → 1/8 | 0.288525 → 0.293733 |
+
+29题没有 EM/F1 退步，独立审查确认同组输入/金标/原件相同、源码起止稳定、三个新版源码一致。Sheltered Veterans 图表差值已实际正确回答 `43,437 - 32,048 = 11,389`，选中事实与计算由原 PDF 再提取重放一致；未知单位/倍率不推断。
+
+六次运行共115次授权 API、303633可见 tokens，全部 completed、0失败、0丢失，仅 `gpt-6-luna` / medium。所有失败保留；新8题准确率没有提高，F1只增加0.005208，不能宣称泛化达标或换算比赛分数。百分比下降、多部分图表比较和部分跨页公式仍未解决。没有在最新代码上重跑全部44道跨源开发题，不拼接历史定向成绩宣称44/44。
+
+详细证据见 `PDF_QUESTION_OPTIMIZATION_20261002.md` 与三个 `OHR_*_PAIRED_COMPARISON_20261002.json`。新程序包名为 `ICT8-program-20261002-pdf-question-v2.zip`；隔离包验收生成记录为 `PACKAGE_SMOKE_PDF_QUESTION_V2_20261002.json`，独立于被验 ZIP。大型官方原件外置、凭据排除，沿用预装依赖。总体赛题仍有未完成能力。

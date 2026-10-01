@@ -103,9 +103,10 @@ function appendAnswer(host,result){
     }
     if(result.answer_mode==='visual_chart_native_annotated'){
       const scope=result.answer_scope||{};
-      host.append(element('p',`原生图表标签 · 系列：${scope.series||'未声明'} · 年份：${scope.year??'未声明'} · 单位：${scope.unit==='unknown'?'原图未明确声明':scope.unit||'未声明'}`,'muted'));
-      host.append(element('p','数值来自原页文字标签，模型仅核对图表、系列和年份；不作为物理量计算输入。','muted'));
-      const context=element('details');context.append(element('summary','图表标题、范围和完整核验记录'),element('pre',JSON.stringify(scope,null,2)));host.append(context);
+      const computed=result.answer_strategy==='model_reviewed_native_chart_arithmetic';
+      host.append(element('p',`原生图表标签 · 系列：${scope.series||'见操作数'} · 年份：${scope.year??'见操作数'} · 单位：${scope.unit==='unknown'?'原图未明确声明':scope.unit||'未声明'}`,'muted'));
+      host.append(element('p',computed?'程序由原生数值标注精确计算，完整问题和操作数经独立模型复核；不作为已证明物理量输入。':'数值来自原页文字标签，模型核对图表、系列和年份；不作为物理量计算输入。','muted'));
+      const context=element('details');context.append(element('summary','图表标题、范围和完整核验记录'),element('pre',JSON.stringify({scope,computation:result.computation,review:result.semantic_review},null,2)));host.append(context);
     }
   }
 }
