@@ -83,7 +83,7 @@ def collect_files(root: Path = ROOT, *, include_public_assets: bool = False) -> 
             if _is_runtime_report(path):
                 continue
             files.append(path)
-    for name in ("README.md", "AGENTS.md", ".gitignore"):
+    for name in ("README.md", "AGENTS.md", ".gitignore", ".gitattributes"):
         if (root / name).is_file():
             files.append(root / name)
     return sorted(files, key=lambda item: item.relative_to(root).as_posix())
