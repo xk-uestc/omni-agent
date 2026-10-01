@@ -26,6 +26,12 @@ def digest(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def implementation_snapshot():
+    files = [*sorted((ROOT / 'ict-track8/backend').rglob('*.py')),
+             ROOT / 'tools/evaluate_ohr_bench.py', ROOT / 'tools/model_runtime.py']
+    return {path.relative_to(ROOT).as_posix(): digest(path.read_bytes()) for path in files}
+
+
 def checked_path(data_root, relative):
     path = (data_root / relative).resolve()
     if not path.is_relative_to(data_root.resolve()):
@@ -217,12 +223,7 @@ def main():
               'dataset_revision': manifest['hf_revision'], 'official_code_revision': manifest['official_code_revision'],
               'selection_sha256': manifest['selected_qa_sha256'], 'selection_limit': manifest['selection_limit'],
               'manifest_sha256': digest(args.manifest.read_bytes()), 'store_path': str(store_path.resolve()),
-              'implementation_file_sha256': {name: digest((ROOT / name).read_bytes()) for name in (
-                  'tools/evaluate_ohr_bench.py', 'ict-track8/backend/knowledge_store.py',
-                  'ict-track8/backend/chunk_cleaning.py', 'ict-track8/backend/dense_retrieval.py',
-                  'ict-track8/backend/grounded_generation.py', 'ict-track8/backend/responses_client.py',
-                  'ict-track8/backend/pdf_native_context.py', 'ict-track8/backend/pdf_page_index.py',
-                  'ict-track8/backend/visual_routing.py')},
+              'implementation_file_sha256': implementation_snapshot(),
               'gold_used_as_corpus_or_model_input': False, 'official_pages_zero_based_project_pages_one_based': True,
               'model_enabled': args.with_model, 'model_workers': 1, 'documents': [], 'cases': [],
               'limits': ['Only 7 selected documents are candidate corpus, not 8,500+ full benchmark pages.',
@@ -313,6 +314,10 @@ def main():
     if report['status'] == 'running':
         report['status'] = 'measured_with_failures_retained'
     report['summary'] = summarise_cases(report['cases'])
+    report['implementation_file_sha256_end'] = implementation_snapshot()
+    report['implementation_stable'] = report['implementation_file_sha256'] == report['implementation_file_sha256_end']
+    if not report['implementation_stable']:
+        report['status'] = 'implementation_changed_during_run_not_final_acceptance'
     report['api_audits'] = [a for row in report['cases'] for a in row.get('generation', {}).get('api_audits', [])]
     if client:
         from evaluate_model import summarise_audits

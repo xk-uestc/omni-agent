@@ -120,7 +120,11 @@ class JsonDocumentRetriever:
         ]
         return cls(documents)
 
-    def search(self, query: str, *, top_k: int = 4) -> list[DocumentHit]:
+    def search(self, query: str, *, top_k: int = 4, candidate_limit: int = 20) -> list[DocumentHit]:
+        # Public callers retain the twenty-result contract. The store may
+        # explicitly request a bounded larger pool for evidence selection.
+        if type(candidate_limit) is not int or not 20 <= candidate_limit <= 100:
+            raise ValueError('candidate_limit must be between 20 and 100')
         query_terms = tuple(dict.fromkeys(_tokenize(query)))
         if not query_terms:
             return []
@@ -180,7 +184,7 @@ class JsonDocumentRetriever:
             )
             for item in hits
         ]
-        return enriched[: max(1, min(20, int(top_k)))]
+        return enriched[: max(1, min(candidate_limit, int(top_k)))]
 
     @staticmethod
     def _snippet(content: str, matched: set[str], width: int = 180) -> str:

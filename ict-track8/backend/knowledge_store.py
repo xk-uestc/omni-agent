@@ -342,7 +342,7 @@ class KnowledgeStore:
                 return []
         contents = {record.document_id: record.content for record in records}
         page_coverage = _page_scope_coverage(records, query)
-        hits = JsonDocumentRetriever(records).search(query, top_k=max(20, top_k * 5))
+        hits = JsonDocumentRetriever(records).search(query, top_k=max(20, top_k * 5), candidate_limit=100)
         # Explicit years/numbers are grounding anchors. Title matches alone cannot satisfy them.
         anchors = tuple(dict.fromkeys(re.findall(r'(?<![\w.])\d{4}(?!\d)', query)))
         def ranking(hit):
@@ -357,18 +357,28 @@ class KnowledgeStore:
                      if hit.metadata['dense_cosine'] >= 0.35]
             hits = reciprocal_rank_fusion(hits, dense)
             hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
+        from .evidence_coverage import select_coverage_hits
+        hits = hits[:max(20, top_k * 5)]
+        coverage_selection = select_coverage_hits(query, hits, contents, ranking, top_k)
         selected, counts = [], {}
-        for hit in hits:
+        for hit, selection_step in zip(coverage_selection.hits, coverage_selection.audit['steps']):
             source = hit.metadata['document_id']
-            if counts.get(source, 0) >= 2:
-                continue
             role = 'primary' if not selected else 'supporting'
             score, anchor_count = ranking(hit)
             selected.append(DocumentHit(hit.document_id, hit.title, hit.score, hit.matched_terms, hit.snippet, hit.source_uri,
                 {**hit.metadata, 'ranking_score': score, 'anchor_match_count': anchor_count,
                  'page_scope_coverage': page_coverage.get((source, hit.metadata.get('page_no')), 0),
                  'page_scope_method': 'body_only_idf_coverage_rerank_not_generation_evidence',
-                 'identifier_anchors': list(identifiers), 'evidence_role': role}))
+                 'identifier_anchors': list(identifiers), 'evidence_role': role,
+                 'evidence_selection': {
+                     'method': coverage_selection.audit['method'],
+                     'semantic_sufficiency': 'not_evaluated',
+                     'new_lexical_facets': selection_step['new_lexical_facets'],
+                     'body_sha256': selection_step['body_sha256'],
+                     'utility': selection_step['utility'],
+                     'uncovered_lexical_facets': coverage_selection.audit['uncovered_lexical_facets'],
+                     'selection_budget_exhausted': coverage_selection.audit['selection_budget_exhausted'],
+                 }}))
             counts[source] = counts.get(source, 0) + 1
             if len(selected) >= top_k:
                 break

@@ -17,7 +17,7 @@ from typing import Any
 from .document_analysis import DocumentAnalyzer
 from .formula_binding import FormulaBinder, ParameterEvidence
 from .knowledge_store import SourceIntegrityError, SourceRevisionError
-from .sql_evidence import aggregate_evidence
+from .sql_evidence import aggregate_evidence, dimension_evidence
 from .fusion_constraints import SourceConstraintError, VerifiedFormulaTarget, bind_source_constraints
 
 
@@ -360,6 +360,7 @@ class DependencyAgent:
             if result['status'] != 'ok' or not result['rows']:
                 raise DependencyPlanError(result.get('clarification') or '结构化查询未产生可用结果')
             result['aggregate_cells'], ambiguous = aggregate_evidence(result)
+            result['dimension_values'] = dimension_evidence(result)
             result['aggregate_cell_contract'] = {
                 'address': ['table', 'column', 'function', 'row'],
                 'source': 'actual_verified_plan_and_executed_rows',

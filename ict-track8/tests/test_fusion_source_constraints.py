@@ -259,6 +259,22 @@ def test_same_physical_metric_with_two_local_filters_cannot_hide_first_filter():
     assert 'source_metric_semantics_mismatch' in verify_required_intent(actual, required)
 
 
+@pytest.mark.parametrize('field,value,code', [
+    ('missing', 'zero', 'source_metric_missing_policy_mismatch'),
+    ('unit', 'yuan', 'source_metric_unit_mismatch'),
+    ('currency', 'USD', 'source_metric_currency_mismatch'),
+])
+def test_metric_semantic_rejection_has_static_specific_diagnostic(field, value, code):
+    required = QueryPlan(table='unseen_table', metrics=[
+        MetricSpec('amount', 'unseen_table', 'amount', 'SUM', '金额', unit='万元', currency='CNY', missing='null')])
+    actual = deepcopy(required)
+    setattr(actual.metrics[0], field, value)
+    errors = verify_required_intent(actual, required)
+    assert 'source_metric_semantics_mismatch' in errors
+    assert code in errors
+    assert verify_required_intent(deepcopy(required), required) == []
+
+
 def test_table_identifier_substring_is_not_an_explicit_source():
     with pytest.raises(SourceConstraintError):
         extract_source_clauses('按文档核算PreOrdersArchive的费用', {'tables': [{'name': 'Orders'}]})

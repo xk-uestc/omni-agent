@@ -8,6 +8,23 @@ from __future__ import annotations
 from collections import Counter
 
 
+def dimension_evidence(result):
+    """Raw physical dimension addresses independent of display aliases."""
+    plan, rows = result.get('plan', {}), result.get('rows', [])
+    dimensions = plan.get('dimensions', [])
+    values = {}
+    for column in dimensions:
+        if (not isinstance(column, str) or dimensions.count(column) != 1
+                or plan.get('dimension_transforms', {}).get(column, 'raw') != 'raw'):
+            continue
+        table = plan.get('dimension_tables', {}).get(column, plan.get('table'))
+        label = plan.get('dimension_labels', {}).get(column, column)
+        if not isinstance(table, str) or not table or any(not isinstance(row, dict) or label not in row for row in rows):
+            continue
+        values.setdefault(table, {})[column] = [row[label] for row in rows]
+    return values
+
+
 def aggregate_evidence(result):
     plan = result.get('plan', {})
     metrics = plan.get('metrics', [])

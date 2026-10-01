@@ -480,12 +480,28 @@ def verify_required_intent(actual: QueryPlan, required: QueryPlan):
         index = next((index for index, candidate in enumerate(remaining) if match(candidate)), None)
         if index is None:
             errors.append('source_metric_semantics_mismatch')
+            # Diagnose only an unambiguous physical metric. Static codes
+            # retain no rejected model text or provider response content.
+            physical = [candidate for candidate in remaining
+                        if (candidate.table, candidate.column, candidate.function)
+                        == (metric.table, metric.column, metric.function)]
+            if len(physical) == 1:
+                candidate = physical[0]
+                if _filters(actual, candidate.filters) != _filters(required, metric.filters):
+                    errors.append('source_metric_local_filters_mismatch')
+                if candidate.missing != metric.missing:
+                    errors.append('source_metric_missing_policy_mismatch')
+                if metric.unit != 'unknown' and candidate.unit != metric.unit:
+                    errors.append('source_metric_unit_mismatch')
+                if metric.currency is not None and candidate.currency != metric.currency:
+                    errors.append('source_metric_currency_mismatch')
             break
         remaining.pop(index)
     if expected_metrics and remaining:
         errors.append('source_metric_semantics_mismatch')
     if (_freeze([item.expression for item in actual.derived_metrics]) != _freeze([item.expression for item in required.derived_metrics])):
         errors.append('source_metric_semantics_mismatch')
+        errors.append('source_derived_metric_expression_mismatch')
     return list(dict.fromkeys(errors))
 
 

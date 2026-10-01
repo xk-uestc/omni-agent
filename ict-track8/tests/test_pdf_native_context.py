@@ -28,6 +28,134 @@ def test_containing_block_recovers_label_and_name_without_trusting_chunk_metadat
     assert not result['calculator_input_eligible']
 
 
+def test_real_pdf_open_prose_continues_only_to_first_closed_sentence():
+    raw = pdf([(45, 80, 'Only approved orders.\nThe policy does not cover'),
+               (45, 127, 'water damage. Other unrelated details are omitted.')])
+    result = extract_native_context(raw, 1, 'The policy does not cover')
+    assert result and result['text'] == 'Only approved orders.\nThe policy does not cover\nwater damage.'
+    assert result['mode'] == 'original_native_complete_continuation'
+    assert len(result['members']) == 2
+    assert result['members'][1]['source_range'] == [0, len('water damage.')]
+    assert result['members'][1]['lines'][0]['selected_range'] == [0, len('water damage.')]
+    assert result['source_sha256'] and not result['calculator_input_eligible']
+
+
+def test_real_pdf_large_continuation_block_does_not_require_whole_block_in_budget():
+    suffix = 'water damage.\n' + '\n'.join(f'Unrelated supplementary information number {i} is recorded separately.' for i in range(40))
+    raw = pdf([(45, 80, 'Only approved orders.\nThe policy does not cover'), (45, 127, suffix)])
+    result = extract_native_context(raw, 1, 'The policy does not cover', max_chars=120)
+    assert result and result['text'].endswith('\nwater damage.')
+    assert 'supplementary' not in result['text']
+    assert extract_native_context(raw, 1, 'The policy does not cover', max_chars=60) is None
+
+
+@pytest.mark.parametrize('following', [
+    'New results:\nwater damage.',
+    'water damage without a closed sentence',
+])
+def test_real_pdf_open_prose_with_unverified_continuation_returns_no_fragment(following):
+    raw = pdf([(45, 80, 'Only approved orders.\nThe policy does not cover'), (45, 127, following)])
+    assert extract_native_context(raw, 1, 'The policy does not cover') is None
+
+
+def test_real_pdf_open_prose_without_successor_is_not_a_complete_answer():
+    raw = pdf([(45, 100, 'Only approved orders.\nThe policy does not cover')])
+    assert extract_native_context(raw, 1, 'The policy does not cover') is None
+
+
+def test_real_pdf_forecast_heading_and_whole_condition_survive_continuation():
+    raw = pdf([(45, 40, 'Forecast data.'),
+               (45, 100, 'Only approved orders.\nProjected revenue may reach'),
+               (45, 147, '100 dollars. The later amount is unrelated.')])
+    result = extract_native_context(raw, 1, 'Projected revenue may reach')
+    assert result and result['text'] == 'Forecast data.\nOnly approved orders.\nProjected revenue may reach\n100 dollars.'
+    assert len(result['members']) == 3
+
+
+def test_real_pdf_cross_column_successor_cannot_complete_open_prose():
+    raw = pdf([(45, 80, 'Only approved orders.\nThe policy does not cover'),
+               (330, 127, 'water damage. Other unrelated details are omitted.')])
+    assert extract_native_context(raw, 1, 'The policy does not cover') is None
+
+
+def test_real_pdf_closed_prose_and_numeric_year_row_keep_native_contract():
+    for source in ('The policy does not cover water damage.', 'Budget: 2026'):
+        raw = pdf([(45, 100, source)])
+        result = extract_native_context(raw, 1, source)
+        assert result and result['text'] == source
+
+
+def test_real_pdf_condition_unit_prefix_and_literal_claim_validation_survive():
+    from backend.grounded_generation import GroundedGenerator
+    from backend.responses_client import GenerationError
+    raw = pdf([(45, 80, 'Applicable conditions: approved orders.\nUnits: USD.\nRevenue may reach'),
+               (45, 140, '100 dollars. The later amount is unrelated.')])
+    result = extract_native_context(raw, 1, 'Revenue may reach')
+    assert result and result['text'].startswith('Applicable conditions: approved orders.\nUnits: USD.')
+    full = result['text']
+    assert GroundedGenerator.validate({'abstain': False, 'claims': [
+        {'text': full, 'support': [{'citation_id': 1, 'quote': full}]}]}, {1: full})
+    with pytest.raises(GenerationError):
+        GroundedGenerator.validate({'abstain': False, 'claims': [
+            {'text': '100 dollars', 'support': [{'citation_id': 1, 'quote': '100 dollars'}]}]}, {1: full})
+
+
+@pytest.mark.parametrize('source', ['Orders are not', 'Refunds exclude', 'Revenue may reach'])
+def test_short_open_fragment_cannot_be_returned_as_native_complete_block(source):
+    raw = pdf([(45, 80, source)])
+    assert extract_native_context(raw, 1, source) is None
+
+
+@pytest.mark.parametrize('following', [
+    'Refunds are handled separately.',
+    'new exclusions\nWater damage is excluded.',
+    'new exclusions\nwater damage is excluded.',
+])
+def test_independent_sentence_and_unstyled_lowercase_heading_do_not_join(following):
+    raw = pdf([(45, 80, 'The policy does not cover'), (45, 125, following)])
+    assert extract_native_context(raw, 1, 'The policy does not cover') is None
+
+
+@pytest.mark.parametrize('following', ['100 USD.', '100.\nUSD', '100. USD'])
+def test_numeric_continuation_cannot_drop_explicit_currency_or_be_mistaken_for_heading(following):
+    raw = pdf([(45, 80, 'Projected revenue may reach'), (45, 125, following)])
+    result = extract_native_context(raw, 1, 'Projected revenue may reach')
+    assert result and result['text'].endswith(following)
+    assert 'USD' in result['text'] and not result['calculator_input_eligible']
+    assert result['members'][-1]['source_range'][1] == len(following)
+
+
+def test_numeric_unit_extension_is_complete_or_over_budget_never_cropped():
+    raw = pdf([(45, 80, 'Projected revenue may reach'), (45, 125, '100.\nUSD')])
+    prefix_budget = len('Projected revenue may reach\n100.')
+    assert extract_native_context(raw, 1, 'Projected revenue may reach', max_chars=prefix_budget) is None
+
+
+def test_fresh_native_font_boundary_prevents_lowercase_heading_join():
+    document = fitz.open()
+    page = document.new_page()
+    page.insert_text((45, 80), 'The policy does not cover', fontsize=10)
+    page.insert_text((45, 125), 'new exclusions.', fontsize=14)
+    raw = document.tobytes()
+    document.close()
+    assert extract_native_context(raw, 1, 'The policy does not cover') is None
+
+
+def test_immediately_adjacent_separate_condition_heading_is_not_dropped():
+    raw = pdf([(45, 40, 'Applicable conditions: approved orders.'),
+               (45, 80, 'The policy does not cover'), (45, 125, 'water damage.')])
+    result = extract_native_context(raw, 1, 'The policy does not cover')
+    assert result and result['text'].startswith('Applicable conditions: approved orders.\n')
+    assert len(result['members']) == 3
+    assert extract_native_context(raw, 1, 'The policy does not cover', max_chars=65) is None
+
+
+def test_separate_declared_scope_with_unproved_paragraph_gap_returns_no_context():
+    raw = pdf([(45, 40, 'Applicable conditions: approved orders.'),
+               (45, 150, 'The policy does not cover'), (45, 190, 'water damage.')])
+    assert extract_native_context(raw, 1, 'The policy does not cover') is None
+
+
 def test_unrelated_column_is_excluded():
     raw = pdf([(45, 100, 'Left column contains the unique requested fact.'),
                (330, 100, 'Right column describes an unrelated independent fact.'),

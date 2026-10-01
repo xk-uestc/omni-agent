@@ -77,6 +77,46 @@ def test_single_turn_model_rewrite_cannot_change_original_year_or_region(tmp_pat
     assert 'original_single_source_question_preserved' in result['trace'][0]['normalizations']
 
 
+def test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification(tmp_path):
+    engine = Nl2SqlEngine(initialize_database(tmp_path / 'sales.sqlite'))
+    agent = OmniAgent(engine, KnowledgeStore(tmp_path / 'knowledge'), ConversationStore())
+    first = agent.query('2024年华南地区销售额', session_id='known')
+    assert first['status'] == 'ok'
+    class Planner:
+        audit = {'status': 'completed', 'http_status': 200}
+        def __init__(self):
+            self.contexts = []
+        def generate(self, instructions, context, schema, **kwargs):
+            self.contexts.append(context)
+            assert '2024年' in context['question'] and '华南' in context['question'] and '订单数' in context['question']
+            assert context['actual_question'] == '那订单数呢'
+            return {'route': 'clarify' if len(self.contexts) == 1 else 'sql',
+                    'effective_question': context['question'], 'clarification': '请提供年份地区', 'tasks_json': '[]'}
+    planner = Planner()
+    agent.client = planner
+    result = agent.query('那订单数呢', session_id='known')
+    assert result['status'] == 'ok' and result['route'] == 'sql'
+    assert result['planner_source'] == 'model_validated' and len(planner.contexts) == 2
+    assert result['context_resolution']['mode'] == 'server_verified_sql_followup'
+    assert planner.contexts[1]['plan_completion_feedback']['errors'] == ['verified_sql_scope_requires_sql_route']
+    assert result['trace'][0]['attempts'][0]['validation'] == 'requested_operation_missing'
+
+
+def test_complete_new_sql_question_with_followup_particle_clears_prior_planning_scope(tmp_path):
+    engine = Nl2SqlEngine(initialize_database(tmp_path / 'sales.sqlite'))
+    agent = OmniAgent(engine, KnowledgeStore(tmp_path / 'knowledge'), ConversationStore())
+    agent.query('2025年华东地区销售额', session_id='fresh')
+    class Planner:
+        def generate(self, instructions, context, schema, **kwargs):
+            assert context['history'] == []
+            return {'route': 'sql', 'effective_question': '2025年华东地区销售额', 'clarification': '', 'tasks_json': '[]'}
+    agent.client = Planner()
+    result = agent.query('那2024年华北地区订单数呢', session_id='fresh')
+    assert result['status'] == 'ok'
+    assert result['effective_question'] == '那2024年华北地区订单数呢'
+    assert '2024-01-01' in result['result']['parameters'] and '华北' in result['result']['parameters']
+
+
 def test_sql_followup_uses_verified_replacement_instead_of_model_added_grouping(tmp_path):
     database = initialize_database(tmp_path/'sales.sqlite')
     class VerboseRewrite:

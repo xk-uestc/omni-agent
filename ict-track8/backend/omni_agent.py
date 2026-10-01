@@ -14,6 +14,7 @@ from .plan_requirements import requested_operations, completion_errors
 from .fusion_constraints import SourceConstraintError
 from .fusion_history import (resolve_fusion_followup, verify_inherited_document_tasks,
                              verified_fusion_context)
+from .sql_history_scope import resolve_sql_followup_scope
 
 
 PLAN_SCHEMA = object_schema({'route': {'type': 'string', 'enum': ['sql', 'document', 'fusion', 'clarify']},
@@ -42,6 +43,8 @@ search_fact: {evidence:引用search整个结果,scope:适用对象,label:事实�
 例如scope="紧急工单",label="首次响应",unit="小时"，返回可溯源value/unit等；缺失或冲突时停止。
 document_formula: {document_id,label}；返回 expression/parameters/source_uri/locator。
 document_cell: {document_id,where:{列名:实际值},column:列名}；返回 value/unit/source_uri/locator。
+document_cell.where 只包含用户明确给定的筛选条件，不能从预览猜出输出值后再把输出列加入where。
+按年份和比率寻找地区时，where只使用原问题的年份/比率；读取地区作为结果，不预填一个地区。
 document_fact: {document_id,label}；仅用于真实label:值行，返回value等。自然句子事实禁止用document_fact，必须search→search_fact，明确scope、label和unit；核对阈值必须继续执行实际compare，不能用检索替代比较。
 policy_select: {document_id,as_of:YYYY-MM-DD,label:明确政策要素}；要求文档明确生效日期，返回value等。
 calculate: {formula:引用定位结果,parameters:{变量名:引用}}，禁止手工填literal。
@@ -60,6 +63,9 @@ compare的left/right必须引用数值证据完整结果path:[]，不能仅引�
 阈值核对须search→search_fact→document_cell→compare；不得只检索两份材料后当成完成比较。
 引用格式：{ref:前步ID,path:[字段名或非负数组下标]}，引用整个结果用path:[]。
 SQL结果含rows、plan、provenance，引用值必须path:["rows",行下标,实际列标签]。
+SQL地区/客户等原始维度值优先使用稳定物理引用path:["dimension_values",真实表名,真实列名,行下标]，不要猜中文展示别名。
+SQL排名结果驱动文档检索时，query使用[维度引用,原问题要求检索的逐字目标]；不要添加未要求的文档标题、固定地区、年份、其他过滤或返回格式文字。
+如果server_context_resolution.mode=server_verified_sql_followup，question已由服务器核验补全，按该问题规划SQL，不要因为actual_question省略年份/地区而再次澄清。
 时间、单位、公式变量必须严格匹配。规划不能把2026预测增长用于2024基准；缺信息要clarify。
 歧义、缺必要参数不能随机选；clarification 给简短澄清问题。最多16个工具，最少必要步骤。
 不要为纯文档问答过度规划。最后一步必须产出用户所需结果。'''
@@ -178,7 +184,13 @@ class OmniAgent:
                     question, history, self.engine, self.knowledge)
             except SourceConstraintError as exc:
                 history_error = exc.code
-        fresh_scope = (fusion_history_audit.get('reason') == 'server_verified_self_contained_sql'
+        if not history_error and inherited is None:
+            sql_scope, sql_audit = resolve_sql_followup_scope(question, history, self.engine)
+            if sql_audit.get('mode') == 'server_verified_sql_followup':
+                scope_question, fusion_history_audit = sql_scope, sql_audit
+            elif sql_audit.get('reason') == 'self_contained_sql':
+                fusion_history_audit = sql_audit
+        fresh_scope = (fusion_history_audit.get('reason') in {'server_verified_self_contained_sql', 'self_contained_sql'}
                        or bool(re.search(r'^(?:换个主题|换一个主题|换个问题|新问题)', question)))
         planning_history = () if fresh_scope else history
         started = time.perf_counter()
@@ -220,6 +232,8 @@ class OmniAgent:
                     tasks_for_check = json.loads(plan['tasks_json'])
                     rejection_code = None
                     errors = completion_errors(requirements, plan['route'], tasks_for_check)
+                    if fusion_history_audit.get('mode') == 'server_verified_sql_followup' and plan['route'] != 'sql':
+                        errors.append('verified_sql_scope_requires_sql_route')
                     audit = dict(getattr(self.client, 'audit', {}))
                     planning_attempts.append({'attempt': attempt+1, 'validation': 'complete' if not errors else 'requested_operation_missing',
                                               'errors': errors, 'api_audit': audit})
@@ -294,7 +308,7 @@ class OmniAgent:
         # can silently inject a filter, aggregation, or second question before
         # the SQL/claim validators ever see the user's actual request. Resolve
         # genuine short follow-ups with history; otherwise execute the original.
-        followup = bool(history and re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$', question))
+        followup = bool(history and not fresh_scope and re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$', question))
         if route in {'sql', 'document'}:
             # A trailing 呢 does not make a complete SQL question dependent.
             # Across topics there is no verified single-source context;
@@ -302,7 +316,10 @@ class OmniAgent:
             if effective != question:
                 planning_notes.append('original_single_source_question_preserved')
             effective = question
-        if route == 'sql' and followup and (history[-1].state or {}).get('route') == 'sql':
+        if route == 'sql' and fusion_history_audit.get('mode') == 'server_verified_sql_followup':
+            effective = scope_question
+            planning_notes.append('server_verified_sql_followup_slots')
+        elif route == 'sql' and followup and (history[-1].state or {}).get('route') == 'sql':
             resolved, resolution = self.engine.contextualize(history[-1].effective_question, question)
             if resolution.get('mode') == 'merged':
                 effective = resolved

@@ -7,9 +7,12 @@ import re
 from .chunk_cleaning import DocumentChunker
 from .evidence_context import text_sha256
 from .grounded_generation import (_ENGLISH_ACTUAL_HEADING, _ENGLISH_FORECAST_HEADING,
-                                  _FORECAST_HEADING)
+                                  _FORECAST_HEADING, _DECLARED_UNIT_HEADING,
+                                  _DECLARED_CONDITION_HEADING, MAX_LOCAL_SCOPE_HEADINGS)
+from .native_continuation import (choose_continuation, continuation_state,
+                                  enrich_native_line_styles)
 
-EXTRACTION_VERSION = 'original-native-complete-block-context-v1'
+EXTRACTION_VERSION = 'original-native-complete-block-context-v2'
 _UNIT = re.compile(r'(?:%|[$€£¥]|USD|EUR|GBP|CNY|RMB|dollars?|euros?|millions?|billions?|thousands?|mn|bn|m|k)', re.I)
 _NUMERIC_END = re.compile(r'\d(?:[\d,.]*\d)?\s*$')
 
@@ -22,7 +25,8 @@ def _member(block):
     return {**{key: block.get(key) for key in ('block_id', 'native_block_id', 'native_column_part',
             'bbox_fitz_unrotated_pt', 'text_sha256')},
             'lines': [{'line_index': i, 'bbox_fitz_unrotated_pt': line.get('bbox'),
-                       'text_sha256': text_sha256(line['text'])}
+                       'text_sha256': text_sha256(line['text']),
+                       'native_style': line.get('native_style')}
                       for i, line in enumerate(block.get('native_lines', []))]}
 
 
@@ -56,6 +60,7 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
             blocks = DocumentChunker._pdf_text_blocks(page)
             if len(blocks) > 20000:
                 return None
+            enrich_native_line_styles(blocks, page)
             ordered, order = DocumentChunker._pdf_reading_order(blocks, page.rect.width)
     except Exception:
         return None
@@ -68,6 +73,18 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
     if len(text) > max_chars:
         return None
     members = [block]
+    continuation_members = None
+    # Re-read native geometry above, then preserve the entire anchor before
+    # adding only the unique successor's first explicitly closed sentence.
+    # An open prose block cannot fall back to its incomplete old fragment.
+    state = continuation_state(text)
+    if state in ('open', 'unknown'):
+        continuation = choose_continuation(block, ordered,
+            {**order, 'source_sha256': hashlib.sha256(raw).hexdigest()}, max_chars=max_chars)
+        if continuation['text'] is None:
+            return None
+        text = continuation['text']
+        continuation_members = continuation['members']
     unit_insertions = []
     # All-page uniqueness: a unit cannot attach to two competing number lines.
     for unit in ordered:
@@ -122,6 +139,10 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
             continue
         # Only the complete reconstructed physical line occurring once is
         # eligible. Preserve its left-hand label and all other literal runs.
+        # Numeric native-line insertion cannot splice a reconstructed prose
+        # continuation; its literal member ranges are independently pinned.
+        if continuation_members is not None:
+            continue
         lines = text.splitlines()
         indices = [i for i, line in enumerate(lines) if line.strip() == normalized_line]
         if len(indices) != 1:
@@ -135,6 +156,28 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
         unit_insertions.append({'numeric_block_id': block['block_id'], 'unit_block_id': unit['block_id'],
                                 'native_line_text_sha256': text_sha256(line_text),
                                 'method': 'unique_numeric_line_right_touch_same_baseline'})
+    # Preserve only an immediate chain of explicit condition/unit headings
+    # whose fresh native geometry proves same-column paragraph adjacency.
+    # Never search backwards past an intervening fact or section to borrow a
+    # declaration. Unknown layout and an excessive chain fail closed.
+    declared_headings = []
+    owner = block
+    for previous in reversed(ordered[:ordered.index(block)]):
+        value = previous['normalized_text'].strip().rstrip('.。')
+        if not (_DECLARED_UNIT_HEADING.fullmatch(value) or _DECLARED_CONDITION_HEADING.fullmatch(value)):
+            break
+        pb, ob = previous['bbox_fitz_unrotated_pt'], owner['bbox_fitz_unrotated_pt']
+        pc, oc = _column(previous, order), _column(owner, order)
+        native = previous.get('native_lines') or []
+        heights = [line['bbox'][3] - line['bbox'][1] for line in native if line.get('bbox')]
+        if (pc is None or pc != oc or not heights
+                or not (0 <= ob[1] - pb[3] <= 2 * min(heights) + 4)
+                or abs(ob[0] - pb[0]) > min(heights)):
+            return None
+        declared_headings.insert(0, previous)
+        if len(declared_headings) > MAX_LOCAL_SCOPE_HEADINGS:
+            return None
+        owner = previous
     # Preserve a preceding explicit forecast heading in the same column.
     # Spanning headings apply only when they physically cover the anchor.
     column = _column(block, order)
@@ -159,14 +202,18 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
         if not order.get('column_bands_pt') and not (pb[0] < bb[2] and bb[0] < pb[2]):
             continue
         effective_heading = previous if forecast else None
-    if effective_heading:
-        text = effective_heading['normalized_text'] + '\n' + text
-        members.insert(0, effective_heading)
+    prefix_members = [item for item in ordered
+                      if item is effective_heading or any(item is declared for declared in declared_headings)]
+    if prefix_members:
+        text = '\n'.join(item['normalized_text'] for item in prefix_members) + '\n' + text
+        members = prefix_members + members
     if len(text) > max_chars or anchor not in _compact(text):
         return None
     return {'text': text, 'source_sha256': hashlib.sha256(raw).hexdigest(), 'page_no': page_no,
             'evidence_sha256': text_sha256(text), 'text_sha256': text_sha256(text),
             'evidence_chars': len(text), 'max_chars': max_chars,
-            'extraction_version': EXTRACTION_VERSION, 'mode': 'original_native_complete_block',
-            'members': [_member(b) for b in members], 'reading_order': order,
+            'extraction_version': EXTRACTION_VERSION,
+            'mode': 'original_native_complete_continuation' if continuation_members else 'original_native_complete_block',
+            'members': ([_member(item) for item in prefix_members] + continuation_members
+                        if continuation_members else [_member(b) for b in members]), 'reading_order': order,
             'unit_insertions': unit_insertions, 'calculator_input_eligible': False}

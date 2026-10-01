@@ -8,6 +8,7 @@ from dataclasses import fields
 from .fusion_constraints import SourceConstraintError, extract_source_clauses, verify_required_intent
 from .nl2sql.models import QueryPlan, FilterSpec, HavingSpec, MetricSpec, DerivedMetricSpec
 from .nl2sql.security import execute_read_only
+from .sql_evidence import dimension_evidence
 
 
 def _reject(code='sql_document_scope_unverified'):
@@ -93,10 +94,15 @@ def _reference_and_target(task):
     if len(refs) != 1 or any(not isinstance(p, (str, dict)) for p in parts):
         _reject()
     ref = refs[0]
-    if (set(ref) != {'ref', 'path'} or not isinstance(ref['ref'], str) or not isinstance(ref['path'], list)
-            or len(ref['path']) != 3 or ref['path'][0] != 'rows' or type(ref['path'][1]) is not int
-            or not 0 <= ref['path'][1] < 100 or not isinstance(ref['path'][2], str)
-            or not ref['path'][2] or len(ref['path'][2]) > 128):
+    if set(ref) != {'ref', 'path'} or not isinstance(ref['ref'], str) or not isinstance(ref['path'], list):
+        _reject()
+    path = ref['path']
+    row_reference = (len(path) == 3 and path[0] == 'rows' and type(path[1]) is int and 0 <= path[1] < 100
+                     and isinstance(path[2], str) and 0 < len(path[2]) <= 128)
+    physical_reference = (len(path) == 4 and path[0] == 'dimension_values'
+                          and all(isinstance(part, str) and 0 < len(part) <= 128 for part in path[1:3])
+                          and type(path[3]) is int and 0 <= path[3] < 100)
+    if not (row_reference or physical_reference):
         _reject()
     literals = ''.join(p for p in parts if isinstance(p, str))
     # Only optional search request verbs are nonsemantic wrappers. Constant
@@ -152,10 +158,14 @@ def authorize_sql_document_search(original_question, tasks, engine):
         if len(providers) != 1:
             _reject()
         provider_ids.add(ref['ref'])
+        physical = ref['path'][0] == 'dimension_values'
+        if physical and ref['path'][1:3] != [table, column]:
+            _reject()
         bundle['bindings'].append({'search_task_id': task['id'], 'sql_task_id': ref['ref'],
             'dimension_label': label, 'dimension_table': table, 'dimension_column': column,
             'qualifier': match.group(0)[:match.group(0).index(label) + len(label)],
-            'target_text': target, 'row_index': ref['path'][1], 'output_column': ref['path'][2],
+            'target_text': target, 'row_index': ref['path'][3] if physical else ref['path'][1],
+            'output_column': None if physical else ref['path'][2], 'reference_path': list(ref['path']),
             'scope_question': clauses[0].text})
     if len(provider_ids) != 1:
         _reject()
@@ -172,7 +182,7 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
         _reject()
     binding = bindings[0]
     ref, target = _reference_and_target(task)
-    if (ref['ref'] != binding['sql_task_id'] or ref['path'] != ['rows', binding['row_index'], binding['output_column']]
+    if (ref['ref'] != binding['sql_task_id'] or ref['path'] != binding['reference_path']
             or target != _canonical(binding['target_text'])):
         _reject()
     result = results.get(binding['sql_task_id'])
@@ -185,6 +195,8 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
             or provenance.get('result_completeness') != 'within_return_limit'):
         _reject()
     dimension = binding['dimension_column']
+    output_column = plan.get('dimension_labels', {}).get(dimension, dimension)
+    physical = binding['reference_path'][0] == 'dimension_values'
     dimensions = {(link.table, link.column) for link in engine.analyze_slots(binding['dimension_label'])['dimensions']}
     if dimensions != {(binding['dimension_table'], dimension)}:
         _reject()
@@ -192,7 +204,7 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
             or plan.get('dimensions') != [dimension]
             or plan.get('dimension_tables', {}).get(dimension, plan.get('table')) != binding['dimension_table']
             or plan.get('dimension_transforms', {}).get(dimension, 'raw') != 'raw'
-            or plan.get('dimension_labels', {}).get(dimension, dimension) != binding['output_column']):
+            or not physical and output_column != binding['output_column']):
         _reject()
     rows = result.get('rows')
     if not isinstance(rows, list) or not rows or not all(isinstance(row, dict) for row in rows):
@@ -204,10 +216,17 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
     by_id = {t['id']: t for t in tasks}
     for candidate in relevant:
         actual_ref, actual_target = _reference_and_target(by_id[candidate['search_task_id']])
-        if (actual_ref != {'ref': candidate['sql_task_id'], 'path': ['rows', candidate['row_index'], candidate['output_column']]}
+        if (actual_ref != {'ref': candidate['sql_task_id'], 'path': candidate['reference_path']}
                 or actual_target != _canonical(candidate['target_text'])):
             _reject()
-    value = rows[binding['row_index']].get(binding['output_column'])
+    value = rows[binding['row_index']].get(output_column)
+    if physical:
+        rebuilt = dimension_evidence(result)
+        if result.get('dimension_values') != rebuilt:
+            _reject()
+        actual_values = rebuilt.get(binding['dimension_table'], {}).get(dimension, [])
+        if len(actual_values) != len(rows) or actual_values[binding['row_index']] != value:
+            _reject()
     if not isinstance(value, str) or not value.strip() or len(value) > 500:
         _reject()
     # The self-reported SQL/hash checks consistency only. Independently plan
@@ -246,7 +265,8 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
         _reject()
     return {'status': 'verified', 'scope': 'actual_rank1_dimension_reference_and_complete_ties',
             'sql_task_id': binding['sql_task_id'], 'row_index': binding['row_index'],
-            'output_column': binding['output_column'], 'value': value, 'target_text': binding['target_text'],
+            'output_column': output_column, 'reference_path': binding['reference_path'],
+            'value': value, 'target_text': binding['target_text'],
             'result_verification': 'independent_original_scope_rules_and_complete_physical_result_replay',
             'independent_query_hash': hashlib.sha256(json.dumps({'sql': canonical_sql, 'parameters': canonical_parameters},
                 ensure_ascii=False, default=str, sort_keys=True).encode()).hexdigest()[:16]}

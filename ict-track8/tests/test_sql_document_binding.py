@@ -12,6 +12,7 @@ from backend.nl2sql.seed import initialize_database
 from backend.sql_document_binding import authorize_sql_document_search, validate_sql_document_search
 from backend.dependency_agent import DependencyAgent
 from backend.knowledge_store import KnowledgeStore
+from backend.sql_evidence import dimension_evidence
 
 
 QUESTION = '先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。'
@@ -54,6 +55,34 @@ def test_actual_rank1_reference_retains_original_search_target(engine):
     audit = validate(engine, tasks, bundle, results)
     assert audit['status'] == 'verified' and audit['value'] == '华东'
     assert audit['target_text'] == '冠军团队的方法'
+
+
+def test_physical_dimension_reference_never_guesses_display_alias(engine):
+    tasks = graph()
+    tasks[1]['args']['query'][0]['path'] = ['dimension_values', 'sales_orders', 'region', 0]
+    tasks, bundle, results = prepared(engine, tasks)
+    result = results['winner']
+    original_label = result['plan']['dimension_labels'].get('region', 'region')
+    result['plan']['dimension_labels']['region'] = '任意地区展示标签'
+    for row in result['rows']:
+        row['任意地区展示标签'] = row.pop(original_label)
+    # Recompile this legitimate label variant and run it, preserving the
+    # independent original-scope proof and exact actual SQL/hash consistency.
+    from backend.sql_document_binding import _typed_result_plan
+    from backend.nl2sql.security import execute_read_only
+    plan = _typed_result_plan(result['plan'])
+    sql, parameters = engine.planner.build_sql(plan)
+    with engine._connect() as connection:
+        columns, rows = execute_read_only(connection, sql, parameters)
+    result.update(sql=sql, parameters=list(parameters), columns=list(columns), rows=list(rows))
+    result['provenance']['query_hash'] = hashlib.sha256(json.dumps({'sql': sql, 'parameters': list(parameters)},
+        ensure_ascii=False, default=str, sort_keys=True).encode()).hexdigest()[:16]
+    result['dimension_values'] = dimension_evidence(result)
+    audit = validate(engine, tasks, bundle, results)
+    assert audit['value'] == '华东' and audit['output_column'] == '任意地区展示标签'
+    result['dimension_values']['sales_orders']['region'][0] = '华南'
+    with pytest.raises(SourceConstraintError):
+        validate(engine, tasks, bundle, results)
 
 
 @pytest.mark.parametrize('query', ['华东冠军团队的方法', ['华东', '冠军团队的方法'],

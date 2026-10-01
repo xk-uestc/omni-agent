@@ -1,0 +1,16 @@
+{
+  "project_root": "D:/ICT8-OmniAgent",
+  "command": "python -m pytest ict-track8/tests -q",
+  "observed_result": {
+    "passed": 1531,
+    "failed": 0,
+    "warnings": 1,
+    "duration_seconds": 64.72,
+    "exit_code": 0
+  },
+  "warning": "StarletteDeprecationWarning: httpx with starlette.testclient is deprecated",
+  "targeted_command": "python -m pytest ict-track8/tests/test_pdf_context_generation.py ict-track8/tests/test_pdf_native_context.py ict-track8/tests/test_native_continuation.py -q",
+  "targeted_result": {"passed": 59, "failed": 0, "duration_seconds": 0.85, "exit_code": 0},
+  "evidence_type": "Observed terminal output transcribed after completion; not a machine-generated pytest report",
+  "scope": "Local regression only; does not establish real-model accuracy or official benchmark performance"
+}
