@@ -1,0 +1,694 @@
+{
+  "package": "D:\\ICT8-Backups\\ICT8-program-20261002-round3-quality.zip",
+  "package_sha256": "e77d0d2ef6921b72ce3f1df573dafc31f02dbaca0ba56edabd477fcd4c26c3ef",
+  "extracted_workspace": "D:\\ICT8-Backups\\package-smoke-u1r6yy08",
+  "python": "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "environment_scope": "preinstalled_python_dependencies_not_clean_OS",
+  "model_enabled": false,
+  "api_calls": 0,
+  "checks": {
+    "health": true,
+    "no_model": true,
+    "dense": true,
+    "frontend": true,
+    "exact_sample_ids": true,
+    "exact_sample_metadata": true,
+    "original_hashes": true,
+    "real_sql_29584": true,
+    "ordinary_rag": true,
+    "ordinary_pdf_rag": true,
+    "actual_fusion": true,
+    "pdf_page_provenance": true
+  },
+  "status": "passed",
+  "verification": {
+    "ok": true,
+    "package": "D:\\ICT8-Backups\\ICT8-program-20261002-round3-quality.zip",
+    "file_count": 595,
+    "errors": []
+  },
+  "base_url": "http://127.0.0.1:56165",
+  "observed_results": {
+    "docx_rag": {
+      "status": "ok",
+      "answer": "[1] 顾客签收商品后7日内可以申请无理由退货。退货期限从签收次日开始计算。\n\n[2] 1.1 申请期限\n\n[3] 退货需提供订单编号、签收记录和商品照片,客服先核对资格再安排取件。\n\n[4] 定制商品及已激活软件不适用无理由退货,质量问题仍按售后条例处理。",
+      "citations": 4
+    },
+    "pdf_rag": {
+      "status": "ok",
+      "answer": "[1] 标准硬件产品的保修期为12个月,自签收日期起算。\n\n[2] 维修需记录产品序列号、订单号和故障描述,保存检测报告。\n\n[3] 更换配件不会自动重置整机保修期限,延保服务必须以独立合同为依据。此文件为合成演",
+      "citations": 3
+    },
+    "fusion": {
+      "status": "ok",
+      "trace_id": "48f26c57e1a687bf613e",
+      "results": {
+        "formula": {
+          "expression": "销售额/订单数",
+          "parameters": [
+            "销售额",
+            "订单数"
+          ],
+          "label": "客单价",
+          "source_uri": "/api/v1/knowledge/documents/metric-definitions/original",
+          "locator": "body:paragraph:5",
+          "chunk_id": "994252e14202f91c266385f7",
+          "sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10"
+        },
+        "sales": {
+          "status": "ok",
+          "result_state": "rows",
+          "notices": [],
+          "question": "2025年华东销售额和订单数",
+          "rewritten_question": "2025年华东销售额和订单数",
+          "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__m1\" AS (SELECT COUNT(*) AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\", \"__m1\".\"__value\" AS \"订单数\" FROM \"__m0\" CROSS JOIN \"__m1\") SELECT \"销售额\", \"订单数\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "华东",
+            "2025-01-01",
+            "2026-01-01",
+            "华东",
+            100
+          ],
+          "columns": [
+            "销售额",
+            "订单数"
+          ],
+          "rows": [
+            {
+              "销售额": 29584.0,
+              "订单数": 3
+            }
+          ],
+          "plan": {
+            "table": "sales_orders",
+            "metric_table": "sales_orders",
+            "metric_column": "sales_amount",
+            "metric_function": "SUM",
+            "metric_label": "销售额",
+            "analysis_mode": "aggregate",
+            "dimensions": [],
+            "dimension_tables": {},
+            "dimension_transforms": {},
+            "dimension_labels": {},
+            "filters": [
+              {
+                "column": "order_date",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+                "table": "sales_orders"
+              },
+              {
+                "column": "region",
+                "operator": "=",
+                "value": "华东",
+                "source_text": "华东",
+                "explanation": "限定 region ∈ {华东}",
+                "table": "sales_orders"
+              }
+            ],
+            "having": null,
+            "links": [
+              {
+                "source_text": "订单数",
+                "table": "sales_orders",
+                "column": "order_id",
+                "role": "metric",
+                "score": 0.82,
+                "matched_alias": "订单数",
+                "metric_function": null
+              },
+              {
+                "source_text": "销售额",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "role": "metric",
+                "score": 0.82,
+                "matched_alias": "销售额",
+                "metric_function": null
+              }
+            ],
+            "join_tables": [],
+            "join_conditions": [],
+            "join_path": [],
+            "join_alternatives": [],
+            "order_desc": true,
+            "limit": 100,
+            "confidence": 0.64,
+            "rewritten_question": "2025年华东销售额和订单数",
+            "comparison_mode": "none",
+            "comparison_period": {},
+            "clarification": null,
+            "clarification_code": null,
+            "clarification_options": [],
+            "assumptions": [
+              "日期参数格式：iso_text",
+              "使用表 sales_orders 的只读聚合查询"
+            ],
+            "planner_source": "rules",
+            "top_n": null,
+            "fan_out": false,
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "华东",
+                "订单数",
+                "销售额"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "intent_audit": {
+              "question": "2025年华东销售额和订单数",
+              "metric": {
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "label": "销售额"
+              },
+              "filters": [
+                {
+                  "column": "order_date",
+                  "operator": "RANGE",
+                  "value": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_text": "2025年",
+                  "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+                  "table": "sales_orders"
+                },
+                {
+                  "column": "region",
+                  "operator": "=",
+                  "value": "华东",
+                  "source_text": "华东",
+                  "explanation": "限定 region ∈ {华东}",
+                  "table": "sales_orders"
+                }
+              ],
+              "time_range": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "group_by": [],
+              "comparison": "none",
+              "comparison_window": null,
+              "top_n": null,
+              "confidence": 0.64,
+              "unresolved": [],
+              "execution_allowed": true,
+              "planner_source": "rules",
+              "planner_audit": {},
+              "metrics": [
+                {
+                  "id": "m0",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "function": "SUM",
+                  "label": "销售额",
+                  "unit": "currency",
+                  "currency": "CNY",
+                  "missing": "null",
+                  "filters": []
+                },
+                {
+                  "id": "m1",
+                  "table": "sales_orders",
+                  "column": "order_id",
+                  "function": "COUNT",
+                  "label": "订单数",
+                  "unit": "count",
+                  "currency": null,
+                  "missing": "null",
+                  "filters": []
+                }
+              ],
+              "derived_metrics": [],
+              "grain_audit": {
+                "strategy": "aggregate_each_fact_then_join",
+                "metrics": [
+                  {
+                    "metric_id": "m0",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "function": "SUM",
+                    "native_grain": [
+                      "order_id"
+                    ],
+                    "unit": "currency",
+                    "currency": "CNY",
+                    "missing": "null",
+                    "filter_strategy": "many_to_one",
+                    "dimension_path": [],
+                    "filter_path": []
+                  },
+                  {
+                    "metric_id": "m1",
+                    "table": "sales_orders",
+                    "column": "order_id",
+                    "function": "COUNT",
+                    "native_grain": [
+                      "order_id"
+                    ],
+                    "unit": "count",
+                    "currency": null,
+                    "missing": "null",
+                    "filter_strategy": "many_to_one",
+                    "dimension_path": [],
+                    "filter_path": []
+                  }
+                ],
+                "formulas": [],
+                "null_group_alignment": "IS",
+                "order_metric": "m0",
+                "ordering": "metric"
+              },
+              "semantic_audit": {
+                "catalog_version": "demo-sales-2026-10-01",
+                "catalog_sha256": "08289b001330555c0b47282c6a2ad2331bb845a5ff66794c7cddc0f2209addc8",
+                "bindings": [
+                  {
+                    "metric_id": "m0",
+                    "definition_id": "revenue"
+                  },
+                  {
+                    "metric_id": "m1",
+                    "definition_id": "orders"
+                  }
+                ]
+              }
+            },
+            "planner_audit": {},
+            "model_plan_diagnostics": {},
+            "metrics": [
+              {
+                "id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "label": "销售额",
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filters": []
+              },
+              {
+                "id": "m1",
+                "table": "sales_orders",
+                "column": "order_id",
+                "function": "COUNT",
+                "label": "订单数",
+                "unit": "count",
+                "currency": null,
+                "missing": "null",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "order_metric": null,
+            "grain_audit": {
+              "strategy": "aggregate_each_fact_then_join",
+              "metrics": [
+                {
+                  "metric_id": "m0",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "function": "SUM",
+                  "native_grain": [
+                    "order_id"
+                  ],
+                  "unit": "currency",
+                  "currency": "CNY",
+                  "missing": "null",
+                  "filter_strategy": "many_to_one",
+                  "dimension_path": [],
+                  "filter_path": []
+                },
+                {
+                  "metric_id": "m1",
+                  "table": "sales_orders",
+                  "column": "order_id",
+                  "function": "COUNT",
+                  "native_grain": [
+                    "order_id"
+                  ],
+                  "unit": "count",
+                  "currency": null,
+                  "missing": "null",
+                  "filter_strategy": "many_to_one",
+                  "dimension_path": [],
+                  "filter_path": []
+                }
+              ],
+              "formulas": [],
+              "null_group_alignment": "IS",
+              "order_metric": "m0",
+              "ordering": "metric"
+            },
+            "semantic_audit": {
+              "catalog_version": "demo-sales-2026-10-01",
+              "catalog_sha256": "08289b001330555c0b47282c6a2ad2331bb845a5ff66794c7cddc0f2209addc8",
+              "bindings": [
+                {
+                  "metric_id": "m0",
+                  "definition_id": "revenue"
+                },
+                {
+                  "metric_id": "m1",
+                  "definition_id": "orders"
+                }
+              ]
+            },
+            "output_metrics": []
+          },
+          "explanation": [
+            "识别指标：销售额（SUM）",
+            "查询表：sales_orders",
+            "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+            "限定 region ∈ {华东}",
+            "日期参数格式：iso_text",
+            "使用表 sales_orders 的只读聚合查询",
+            "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+          ],
+          "provenance": {
+            "source_type": "structured_database",
+            "database": "demo_sales.sqlite",
+            "table": "sales_orders",
+            "row_count": 1,
+            "row_limit": 100,
+            "result_completeness": "within_return_limit",
+            "query_hash": "51cbd502a15ed991",
+            "field_links": [
+              {
+                "source_text": "订单数",
+                "table": "sales_orders",
+                "column": "order_id",
+                "role": "metric",
+                "score": 0.82,
+                "matched_alias": "订单数",
+                "metric_function": null
+              },
+              {
+                "source_text": "销售额",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "role": "metric",
+                "score": 0.82,
+                "matched_alias": "销售额",
+                "metric_function": null
+              }
+            ],
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "华东",
+                "订单数",
+                "销售额"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "consistency": "sqlite_read_transaction",
+            "source_revision": "fa7fd36fecda675f5357839cb443f42ec4ff8dddfde28ff9ae466cd9f9eeb16b",
+            "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+            "grain_audit": {
+              "strategy": "aggregate_each_fact_then_join",
+              "metrics": [
+                {
+                  "metric_id": "m0",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "function": "SUM",
+                  "native_grain": [
+                    "order_id"
+                  ],
+                  "unit": "currency",
+                  "currency": "CNY",
+                  "missing": "null",
+                  "filter_strategy": "many_to_one",
+                  "dimension_path": [],
+                  "filter_path": []
+                },
+                {
+                  "metric_id": "m1",
+                  "table": "sales_orders",
+                  "column": "order_id",
+                  "function": "COUNT",
+                  "native_grain": [
+                    "order_id"
+                  ],
+                  "unit": "count",
+                  "currency": null,
+                  "missing": "null",
+                  "filter_strategy": "many_to_one",
+                  "dimension_path": [],
+                  "filter_path": []
+                }
+              ],
+              "formulas": [],
+              "null_group_alignment": "IS",
+              "order_metric": "m0",
+              "ordering": "metric"
+            },
+            "result_cells": [
+              {
+                "row": 0,
+                "column": "销售额",
+                "query_hash": "51cbd502a15ed991",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "销售额"
+                }
+              },
+              {
+                "row": 0,
+                "column": "订单数",
+                "query_hash": "51cbd502a15ed991",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "订单数"
+                }
+              }
+            ]
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "aggregate_cells": {
+            "sales_orders": {
+              "sales_amount": {
+                "SUM": [
+                  {
+                    "value": 29584.0,
+                    "source_uri": "sql://51cbd502a15ed991",
+                    "locator": "rows/0/销售额",
+                    "unit": "CNY",
+                    "metric": {
+                      "id": "m0",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "label": "销售额"
+                    }
+                  }
+                ]
+              },
+              "order_id": {
+                "COUNT": [
+                  {
+                    "value": 3,
+                    "source_uri": "sql://51cbd502a15ed991",
+                    "locator": "rows/0/订单数",
+                    "unit": "count",
+                    "metric": {
+                      "id": "m1",
+                      "table": "sales_orders",
+                      "column": "order_id",
+                      "function": "COUNT",
+                      "label": "订单数"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "dimension_values": {},
+          "aggregate_cell_contract": {
+            "address": [
+              "table",
+              "column",
+              "function",
+              "row"
+            ],
+            "source": "actual_verified_plan_and_executed_rows",
+            "ambiguous_addresses_not_exposed": []
+          }
+        },
+        "calculate": {
+          "status": "ok",
+          "expression": "销售额/订单数",
+          "value": 9861.333333333334,
+          "formula_source": "/api/v1/knowledge/documents/metric-definitions/original",
+          "formula_locator": "body:paragraph:5",
+          "parameters": {
+            "销售额": {
+              "value": 29584.0,
+              "source_uri": "sql://51cbd502a15ed991",
+              "locator": "rows/0/销售额",
+              "unit": "CNY"
+            },
+            "订单数": {
+              "value": 3,
+              "source_uri": "sql://51cbd502a15ed991",
+              "locator": "rows/0/订单数",
+              "unit": "count"
+            }
+          },
+          "unit_validation": "validated",
+          "result_unit": "CNY*count^-1",
+          "result_dimension": {
+            "count": -1,
+            "CNY": 1
+          },
+          "normalized_parameters": {
+            "销售额": 29584.0,
+            "订单数": 3
+          },
+          "trace": [
+            {
+              "stage": "formula_parse",
+              "status": "validated",
+              "parameters": [
+                "销售额",
+                "订单数"
+              ]
+            },
+            {
+              "stage": "parameter_binding",
+              "status": "complete",
+              "sources": [
+                "sql://51cbd502a15ed991",
+                "sql://51cbd502a15ed991"
+              ]
+            },
+            {
+              "stage": "safe_calculation",
+              "status": "complete",
+              "value": 9861.333333333334
+            }
+          ],
+          "parameter_semantics_validation": {
+            "status": "verified",
+            "scope": "formula_parameters_to_executed_physical_aggregate_slots",
+            "bindings": [
+              {
+                "parameter": "销售额",
+                "source_type": "sql",
+                "task_id": "sales",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "row": 0,
+                "verification": "server_catalog_or_exact_schema_parameter_semantics"
+              },
+              {
+                "parameter": "订单数",
+                "source_type": "sql",
+                "task_id": "sales",
+                "table": "sales_orders",
+                "column": "order_id",
+                "function": "COUNT",
+                "row": 0,
+                "verification": "server_catalog_or_exact_schema_parameter_semantics"
+              }
+            ]
+          },
+          "temporal_validation": {
+            "status": "not_inferred"
+          }
+        }
+      },
+      "trace": [
+        {
+          "trace_id": "48f26c57e1a687bf613e",
+          "task_id": "formula",
+          "tool": "document_formula",
+          "dependencies": [],
+          "status": "complete",
+          "latency_ms": 9.601
+        },
+        {
+          "trace_id": "48f26c57e1a687bf613e",
+          "task_id": "sales",
+          "tool": "sql",
+          "dependencies": [],
+          "status": "complete",
+          "latency_ms": 6.723
+        },
+        {
+          "trace_id": "48f26c57e1a687bf613e",
+          "task_id": "calculate",
+          "tool": "calculate",
+          "dependencies": [
+            "formula",
+            "sales"
+          ],
+          "status": "complete",
+          "latency_ms": 16.958
+        }
+      ],
+      "source_validation": {
+        "status": "verified",
+        "documents": {
+          "metric-definitions": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10"
+        },
+        "scope": "selected_original_hash_and_logical_version_not_semantic_truth"
+      },
+      "edges": [
+        {
+          "from": "formula",
+          "to": "calculate"
+        },
+        {
+          "from": "sales",
+          "to": "calculate"
+        }
+      ],
+      "user_constraint_validation": {
+        "status": "not_provided",
+        "scope": "explicit_server_bound_sql_source_clauses",
+        "bindings": []
+      }
+    }
+  },
+  "health": {
+    "ok": true,
+    "service": "ict-track8-nl2sql",
+    "database": "demo_sales.sqlite",
+    "document_source": "independent_corpus",
+    "planner_source": "rules",
+    "retrieval": {
+      "mode": "bm25_dense_rrf",
+      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+      "dense_answer_threshold": 0.6
+    },
+    "generation": {
+      "mode": "attributed_extracts",
+      "model": null
+    },
+    "configuration_warnings": []
+  },
+  "sample_count": 16,
+  "owned_server_stopped": true,
+  "server_exception_types": [],
+  "server_exception_stack": []
+}
