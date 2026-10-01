@@ -63,7 +63,7 @@ def _is_runtime_report(path: Path) -> bool:
 
 def collect_files(root: Path = ROOT, *, include_public_assets: bool = False) -> list[Path]:
     files: list[Path] = []
-    directories = [root / name for name in ("ict-track8", "docs", "tools", "samples", "specification", "scripts")]
+    directories = [root / name for name in ("ict-track8", "docs", "tools", "samples", "specification", "scripts", "delivery")]
     if include_public_assets:
         directories.extend([root / "models", root / "benchmarks"])
     for directory in directories:

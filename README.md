@@ -17,6 +17,7 @@
 | `samples` | 实际多格式示例文件，明确标注为合成样本 |
 | `docs` | 需求验收、架构、原始迁移哈希清单与技术说明 |
 | `tools` | 独立迁移、启动、评测与交付工具 |
+| `delivery` | 当前Word/PDF报告、匿名答辩PPT、架构图、实测依赖与证据清单 |
 | `backups` | 已校验基线 ZIP，仅本地保留 |
 
 ## 快速启动
@@ -55,6 +56,10 @@ python ict-track8/scripts/verify_package.py dist/ict8-complete.zip
 ```
 
 Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产包包含公开模型权重、Chinook及许可；源码包可省略 `--with-public-assets` 并根据公开下载清单恢复资产。依赖仍需按requirements安装，真实模型密钥单独配置。开发题成绩不代表官方未知题准确率。
+
+`delivery/requirements-tested.txt`固定当前实测的直接依赖版本；`delivery/ENVIRONMENT.json`另记录全部已安装包、Python及平台。它是实测环境记录，不是跨平台wheel锁或离线安装包。默认OCR为RapidOCR；可选Tesseract未在当前环境安装或验收。
+
+正式材料见`delivery/README.md`。报告区分当前开发验收、模型鉴权失败和待执行实验；决赛材料为准备稿，未套用尚未提供的组委会模板。
 
 ```powershell
 cd ict-track8
