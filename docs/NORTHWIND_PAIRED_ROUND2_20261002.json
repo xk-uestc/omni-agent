@@ -1,0 +1,405 @@
+{
+  "scope": "paired_public_example_database_authored_questions_system_execution_not_official_nl2sql_benchmark",
+  "baseline": {
+    "path": "docs\\NORTHWIND_BASELINE_20261002.json",
+    "sha256": "cb56fe1aa2bd37bd6a15447220fa2fd642ae96915b11389d95b4b109e98dfb2f",
+    "passed": 10,
+    "total": 16,
+    "model_validated_passed": 10,
+    "fallback_passed": 0,
+    "retained_api_calls": 16,
+    "dropped_api_calls": 0,
+    "completed_api_calls": 15,
+    "reported_tokens": 74247
+  },
+  "optimized": {
+    "path": "docs\\NORTHWIND_OPTIMIZED_20261002.json",
+    "sha256": "dfe61403a0ae0ec9f803ffba9b0eda6969c4b5506293371469b81075a49700f8",
+    "passed": 8,
+    "total": 16,
+    "model_validated_passed": 8,
+    "fallback_passed": 0,
+    "retained_api_calls": 16,
+    "dropped_api_calls": 0,
+    "completed_api_calls": 14,
+    "reported_tokens": 67562
+  },
+  "better_cases": 1,
+  "worse_cases": 3,
+  "cases": [
+    {
+      "id": "N001",
+      "category": "count",
+      "question": "Products 表一共有多少条产品记录？",
+      "before_pass": true,
+      "after_pass": true,
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N002",
+      "category": "sum",
+      "question": "Products 表所有产品的 UnitsInStock 库存数量合计是多少？",
+      "before_pass": true,
+      "after_pass": true,
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N003",
+      "category": "filter_average",
+      "question": "Products 中 Discontinued 为字符串 0 的产品，其 UnitPrice 平均值是多少？不要推断币种。",
+      "before_pass": true,
+      "after_pass": false,
+      "before_status": "ok",
+      "after_status": "clarification",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N004",
+      "category": "max",
+      "question": "Orders 表中 Freight 的最大值是多少？",
+      "before_pass": true,
+      "after_pass": true,
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N005",
+      "category": "distinct",
+      "question": "Customers 表的 Country 一共有多少个不同的非空国家值？",
+      "before_pass": true,
+      "after_pass": true,
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N006",
+      "category": "null",
+      "question": "Orders 中 ShippedDate 为空的订单共有多少条？",
+      "before_pass": false,
+      "after_pass": true,
+      "before_status": "clarification",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": false,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N007",
+      "category": "group",
+      "question": "按 Customers.Country 分组，统计每个国家的客户记录数。",
+      "before_pass": true,
+      "after_pass": true,
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N008",
+      "category": "join_group",
+      "question": "按 Categories.CategoryName 产品类别分组，统计 Products.UnitsInStock 的库存总量；通过 Products.CategoryID 与 Categories.CategoryID 关联。",
+      "before_pass": true,
+      "after_pass": false,
+      "before_status": "ok",
+      "after_status": "clarification",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N009",
+      "category": "join_count",
+      "question": "按 Suppliers.Country 供应商国家分组，统计 Products 产品记录数，通过 Products.SupplierID 关联 Suppliers.SupplierID。",
+      "before_pass": false,
+      "after_pass": false,
+      "before_status": "clarification",
+      "after_status": "clarification",
+      "before_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N010",
+      "category": "join_filter_sum",
+      "question": "ShipCountry 为 Germany 的 Orders 订单，其 Order Details 明细中的 Quantity 合计是多少？两个表通过 OrderID 关联。",
+      "before_pass": false,
+      "after_pass": false,
+      "before_status": "clarification",
+      "after_status": "clarification",
+      "before_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N011",
+      "category": "foreign_key_group",
+      "question": "按 Employees.LastName 分组，统计其负责的 Orders 订单 Freight 合计；通过 EmployeeID 关联。",
+      "before_pass": true,
+      "after_pass": false,
+      "before_status": "ok",
+      "after_status": "clarification",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N012",
+      "category": "date_half_open",
+      "question": "按 Orders.OrderDate 筛选 2020 年，统计 Orders 订单记录数，包含 2020-01-01，不包含 2021-01-01。",
+      "before_pass": true,
+      "after_pass": true,
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N013",
+      "category": "date_month_group",
+      "question": "按 Orders.OrderDate 的月份分组，统计 2020 年每个月的 Freight 合计，年范围为 2020-01-01 至 2021-01-01 的左闭右开区间。",
+      "before_pass": true,
+      "after_pass": true,
+      "before_status": "ok",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": true,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N014",
+      "category": "join_distinct_date",
+      "question": "按 Customers.Country 分组，统计 2020 年下过订单的不同 Customers.CustomerID 客户数量。Customers 与 Orders 通过 CustomerID 关联，订单日期使用 Orders.OrderDate。",
+      "before_pass": false,
+      "after_pass": false,
+      "before_status": "clarification",
+      "after_status": "clarification",
+      "before_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": false,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N015",
+      "category": "dense_rank_ties",
+      "question": "按 Categories.CategoryName 分组，以 Products.UnitsInStock 库存合计降序排名，返回前 3 个名次，包含并列名次及其库存合计。",
+      "before_pass": false,
+      "after_pass": false,
+      "before_status": "clarification",
+      "after_status": "ok",
+      "before_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": true,
+        "execution_result": false,
+        "ranking_order": false,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      }
+    },
+    {
+      "id": "N016",
+      "category": "scalar_subquery_having",
+      "question": "按 Categories.CategoryName 计算 Products.UnitsInStock 库存合计，只返回库存合计大于所有类别库存合计平均值的类别及其合计。",
+      "before_pass": false,
+      "after_pass": false,
+      "before_status": "clarification",
+      "after_status": "clarification",
+      "before_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": true,
+        "complete_api_history": true
+      },
+      "after_checks": {
+        "status_ok": false,
+        "execution_result": false,
+        "ranking_order": true,
+        "only_allowed_verified_calls": false,
+        "complete_api_history": true
+      }
+    }
+  ],
+  "limitations": [
+    "One run per version cannot isolate model variation or prove statistical significance.",
+    "System execution may include rules fallback; strict model-validated success is counted separately.",
+    "Schema-explicit authored questions and one public database do not prove general cross-domain accuracy.",
+    "Saved outputs/checks are used verbatim; no answers, reference SQL or failures are edited."
+  ]
+}

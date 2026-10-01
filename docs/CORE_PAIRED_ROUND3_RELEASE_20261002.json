@@ -1,0 +1,32 @@
+{
+  "scope": "paired_exposed_synthetic_core_development_suite_not_official_accuracy",
+  "baseline": {
+    "report": "REAL_MODEL_CORE_ROUND2_20261002.json",
+    "sha256": "378ac6156c0cbb310cf362c536fc5e8f82060b26e99c40df436f0cddf52c4eff",
+    "passed": 43,
+    "total": 44
+  },
+  "release": {
+    "report": "REAL_MODEL_CORE_ROUND3_RELEASE_20261002.json",
+    "sha256": "f857a65cc24a9759d210616936fe74da705693ad203b31bfbc86d10e64f865f2",
+    "passed": 41,
+    "total": 44
+  },
+  "cases_sha256": "21a19d31ca58a3155245c9d006295d186710e6c180cad758501c7c63193150bb",
+  "database_sha256": "f3e34a247bdc35966fb643892bd0c65b055560050a0a11e86ee37c34c339f294",
+  "same_inputs_verified": true,
+  "complete_unique_case_ids_verified": true,
+  "better_cases": 1,
+  "worse_cases": 3,
+  "changes": [
+    {"id": "qa-04", "before_pass": true, "after_pass": false, "reason": "correct_document_answer_but_strict_model_router_failed_after_single_source_task_not_discardable"},
+    {"id": "multiple_documents", "before_pass": false, "after_pass": true, "reason": "two_source_response_duration_comparison_and_dependencies_passed"},
+    {"id": "cross-turn-1", "before_pass": true, "after_pass": false, "reason": "fusion_task_normalization_rejected_then_clarification"},
+    {"id": "cross-turn-2", "before_pass": true, "after_pass": false, "reason": "source_scope_unverified_after_failed_previous_turn"}
+  ],
+  "limitations": [
+    "Original outputs, checks and failures retained; no scoring change or selective case rerun.",
+    "One run per implementation cannot distinguish model variation from causal program changes.",
+    "NL2SQL improvement does not imply every core workflow improved."
+  ]
+}

@@ -14,6 +14,7 @@ from .t2s import to_simplified
 from .models import ColumnInfo, ForeignKeyInfo, LinkCandidate, TableInfo
 from .schema_profile import infer_rules
 from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
+from .question_roles import association_scope, field_owners, filter_only, group_fields, record_count_subject
 
 
 _TOKEN_RE = re.compile(r"[a-zA-Z0-9_]+|[\u3400-\u9fff]")
@@ -198,8 +199,10 @@ class SchemaLinker:
         )
 
     def link(self, question: str, tables: Iterable[TableInfo]) -> list[LinkCandidate]:
-        normalized = normalize_text(question)
         tables = tuple(tables)
+        normalized, _, _ = association_scope(question, tables)
+        ownership = field_owners(normalized, tables)
+        explicit_groups = group_fields(normalized, tables)
         table_names = {table.name for table in tables}
         rules = self._effective_rules(tables)
         links: list[LinkCandidate] = []
@@ -297,9 +300,10 @@ class SchemaLinker:
             native_positions = list(re.finditer(re.escape(native), normalized))
             standalone = any(not any(start <= match.start() and match.end() <= end and end-start > len(native)
                                      for start, end, _, _, _ in protected) for match in native_positions)
-            if len(native) >= 3 and standalone:
+            if len(native) >= 3 and (standalone or ownership.get(rule.column) == {rule.table}):
                 for alias in rule.aliases:
-                    explicit_concepts.setdefault((rule.role, normalize_text(alias)), set()).add((rule.table, rule.column))
+                    if rule.column not in ownership or rule.table in ownership[rule.column]:
+                        explicit_concepts.setdefault((rule.role, normalize_text(alias)), set()).add((rule.table, rule.column))
         def disfavored(link):
             choices = explicit_concepts.get((link.role, normalize_text(link.matched_alias)), set())
             return len(choices) == 1 and (link.table, link.column) not in choices
@@ -315,6 +319,28 @@ class SchemaLinker:
                 for other in links
             )
         ]
+        # Actual physical mentions outrank generic aliases. A filter field is
+        # not a requested measure; ownership cannot be inferred from confidence.
+        for column, owners in ownership.items():
+            for owner in owners:
+                info = next(c for t in tables if t.name == owner for c in t.columns if c.name == column)
+                rule = next((r for r in rules if (r.table, r.column) == (owner, column)), None)
+                role = rule.role if rule else ('metric' if not is_date_column(column, info.data_type)
+                    and any(kind in info.data_type.upper() for kind in ('INT', 'REAL', 'NUM', 'DEC', 'DOUBLE', 'FLOAT')) else 'dimension')
+                if (owner, column) in explicit_groups:
+                    role = 'dimension'
+                if filter_only(normalized, column):
+                    role = 'filter'
+                filtered_links = [x for x in filtered_links if (x.table, x.column) != (owner, column)]
+                filtered_links.append(LinkCandidate(column, owner, column, role, .99, column,
+                    rule.metric_function if rule else None))
+        count_subject = record_count_subject(normalized, tables)
+        if count_subject:
+            subject = next(t for t in tables if t.name == count_subject)
+            keys = [c for c in subject.columns if c.primary_key]
+            if len(keys) == 1 and not any(x.role == 'metric' and x.table == count_subject for x in filtered_links):
+                cue = next(m.group() for m in re.finditer(r'记录数|记录计数|共有多少条|一共有多少条|有多少条|几条记录', normalized))
+                filtered_links.append(LinkCandidate(cue, count_subject, keys[0].name, 'metric', .98, cue, 'COUNT'))
         return sorted(filtered_links, key=lambda item: (-item.score, item.column))
 
     def _fuzzy_links(self, normalized: str, table_names: set[str], exact: list[LinkCandidate], rules: tuple[AliasRule, ...] | None = None) -> list[LinkCandidate]:

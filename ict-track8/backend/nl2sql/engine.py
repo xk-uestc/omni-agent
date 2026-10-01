@@ -23,6 +23,8 @@ from .schema import SchemaIntrospector, SchemaLinker, normalize_text
 from .security import SqlSafetyError, execute_read_only
 from .semantics import MetricCatalog
 from .value_index import ValueIndex
+from .plan_structure import canonicalize, diagnose
+from .question_roles import association_scope, binding_present, group_fields, group_grains
 
 _FOLLOWUP_CUE = re.compile(r"^(那么|那|如果是|如果|换成|改成|再看|再查|同样|也)|呢$|呢[?？]$")
 
@@ -200,6 +202,7 @@ class Nl2SqlEngine:
 
     def _model_plan(self, question: str, tables, connection, index, cache_namespace=None,
                     source_required=None) -> QueryPlan:
+        attempts, repair_attempted = [], False
         try:
             rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
             propose = getattr(self.model_plan_provider, "propose", None)
@@ -209,26 +212,64 @@ class Nl2SqlEngine:
                 model_context['scope_question_sha256'] = hashlib.sha256(source_required.source_scope_question.encode()).hexdigest()
             payload = (propose(question, tables, model_context)
                        if callable(propose) else self.model_plan_provider(question, tables))
-            plan = self.model_plan_validator.validate(payload, tables, question=question)
-            if plan.comparison_mode != "none":
-                normalized_period, period_format = self.planner.normalize_comparison_period(
-                    plan.comparison_period, tables, connection, plan,
-                    date_storage_cache=self._date_storage_cache,
-                    date_storage_cache_namespace=cache_namespace,
-                )
-                if normalized_period is None:
-                    raise ModelPlanError("模型计划的比较日期字段存储格式无法安全判断")
-                plan.comparison_period = normalized_period
-                plan.assumptions.append(f"日期参数格式：{period_format}")
-            self._check_model_grounding(plan, question, tables, index, connection,
-                                        cache_namespace=cache_namespace, rule_plan=rule_plan)
-            label_changes = self._normalize_model_labels(plan, rule_plan)
+            for attempt in range(2):
+                record = {'attempt': attempt+1, 'original_structure': diagnose(payload, tables)}
+                attempts.append(record)
+                if getattr(self.model_plan_provider, 'audit', None):
+                    record['provider'] = dict(self.model_plan_provider.audit)
+                try:
+                    checked_payload, normalizations = canonicalize(payload)
+                    record['structural_normalizations'] = normalizations
+                    plan = self.model_plan_validator.validate(checked_payload, tables, question=question)
+                    if plan.comparison_mode != "none":
+                        normalized_period, period_format = self.planner.normalize_comparison_period(
+                            plan.comparison_period, tables, connection, plan,
+                            date_storage_cache=self._date_storage_cache,
+                            date_storage_cache_namespace=cache_namespace,
+                        )
+                        if normalized_period is None:
+                            raise ModelPlanError("模型计划的比较日期字段存储格式无法安全判断")
+                        plan.comparison_period = normalized_period
+                        plan.assumptions.append(f"日期参数格式：{period_format}")
+                    self._check_model_grounding(plan, question, tables, index, connection,
+                                                cache_namespace=cache_namespace, rule_plan=rule_plan)
+                    _, bindings, invalid = association_scope(question, tables)
+                    if invalid or any(not binding_present(plan, b) for b in bindings):
+                        raise ModelPlanError('模型未保留原问题明确且可验证的关联关系')
+                    label_changes = self._normalize_model_labels(plan, rule_plan)
+                    if plan.metrics:
+                        try:
+                            MetricCompiler(self.planner).compile(plan, tables)
+                        except MetricPlanError as exc:
+                            raise ModelPlanError(str(exc)) from exc
+                    record['status'] = 'accepted'
+                    break
+                except ModelPlanError as exc:
+                    record.update(status='rejected', reason_code=self._model_rejection_code(exc),
+                                  reason=self._safe_model_rejection_reason(exc))
+                    repair = getattr(self.model_plan_provider, 'repair', None)
+                    blocked = rule_plan.clarification_code in {
+                        'ambiguous_metric', 'ambiguous_dimension', 'unverified_join_condition',
+                        'unsupported_exact_rank', 'conflicting_rank_selection'}
+                    structural = any(marker in str(exc) for marker in (
+                        '指标 ID 重复', '指标 ID 或展示列名重复', '指标 ID 无效',
+                        'metric.id', 'derived.id', 'output_metric', 'order_metric',
+                        '展示名称无效', '输出指标不存在或重复', '排序指标不存在'))
+                    # A repair fixes handles/output structure, not an unsafe
+                    # field, missing filter, changed function or source scope.
+                    if attempt or blocked or not structural or not callable(repair):
+                        raise
+                    repair_attempted = True
+                    payload = repair(question, tables, model_context,
+                        {'reason_code': record['reason_code'], 'original_structure': record['original_structure'],
+                         'constraint': 'Return one corrected full plan; original source/metric/filter/time/rank constraints remain mandatory.'})
             plan.planner_audit = {
                 "candidate_source": "external_model",
                 "final_source": "model_validated",
                 "fallback": False,
                 "decision": "accepted",
             }
+            plan.model_plan_diagnostics = {'attempts': attempts, 'repair_attempted': repair_attempted}
             if getattr(self.model_plan_provider, "audit", None):
                 plan.planner_audit["provider"] = dict(self.model_plan_provider.audit)
             if label_changes:
@@ -249,6 +290,7 @@ class Nl2SqlEngine:
                 "reason_code": self._model_rejection_code(exc),
                 "reason": rejection_reason,
             }
+            plan.model_plan_diagnostics = {'attempts': attempts, 'repair_attempted': repair_attempted}
             plan.assumptions.append(f"模型计划不可用或未通过校验（{rejection_reason}），已回退规则规划")
             return plan
 
@@ -308,7 +350,10 @@ class Nl2SqlEngine:
 
         if not isinstance(exc, ModelPlanError):
             return "provider_unavailable_or_invalid_response"
-        return "".join(ch for ch in str(exc) if ord(ch) >= 32 or ch in "\t\n")[:200]
+        text = "".join(ch for ch in str(exc) if ord(ch) >= 32 or ch in "\t\n")
+        text = re.sub(r'“[^”]*”', '“<redacted>”', text)
+        text = re.sub(r'sk-[A-Za-z0-9_-]{8,}|Bearer\s+[^\s,;]+', '<redacted>', text, flags=re.I)
+        return text[:200]
 
     @staticmethod
     def _model_rejection_code(exc: Exception) -> str:
@@ -377,6 +422,13 @@ class Nl2SqlEngine:
         # 否则模型可以用高置信度计划绕过“未知维度/未知值/不支持粒度”等门。
         if rule_plan is None:
             rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
+        if rule_plan.clarification_code in {'ambiguous_metric', 'ambiguous_dimension'}:
+            # A physical name appearing in multiple sources does not ground
+            # ownership. A high model confidence cannot replace the user's
+            # missing source/metric choice, including newly quoted schemas.
+            # Explicit owners and field selections are independently linked
+            # first and therefore do not enter this ambiguity branch.
+            raise ModelPlanError('模型计划不得绕过明确的同名字段或指标口径澄清')
         if rule_plan.clarification_code in {
             "unsupported_exact_rank", "conflicting_rank_selection",
         }:
@@ -434,19 +486,27 @@ class Nl2SqlEngine:
             actual = {(item.table or plan.table, item.column, repr(item.value)) for item in model_time_filters}
             if not expected.issubset(actual):
                 raise ModelPlanError("模型计划的时间范围与问题不一致")
-        if rule_plan.dimensions and not set(rule_plan.dimensions).issubset(set(plan.dimensions)):
+        question_grains = group_grains(normalized, tables)
+        if 'ambiguous' in question_grains.values():
+            raise ModelPlanError('模型计划不得绕过明确的时间分组粒度澄清')
+        required_dimensions = {(rule_plan.dimension_tables.get(column, rule_plan.table), column)
+                               for column in rule_plan.dimensions}
+        actual_dimensions = {(plan.dimension_tables.get(column, plan.table), column)
+                             for column in plan.dimensions}
+        if not required_dimensions.issubset(actual_dimensions):
             raise ModelPlanError("模型计划遗漏了问题中的明确分组维度")
-        extras = set(plan.dimensions) - set(rule_plan.dimensions)
+        extras = actual_dimensions - required_dimensions
         if extras and not self._grounded_dimensions(plan, extras, question, tables):
             # 模型不能把未出现在用户问题中的维度凭空加入结果，避免把总体
             # 聚合静默改变成分组聚合。只有规则层也能从问题中证明的维度才可执行。
             raise ModelPlanError("模型计划增加了问题中没有依据的分组维度")
         required_transforms = {
-            column: rule_plan.dimension_transforms.get(column, "raw")
+            (rule_plan.dimension_tables.get(column, rule_plan.table), column): question_grains.get(
+                (rule_plan.dimension_tables.get(column, rule_plan.table), column), rule_plan.dimension_transforms.get(column, "raw"))
             for column in rule_plan.dimensions
         }
         actual_transforms = {
-            column: plan.dimension_transforms.get(column, "raw")
+            (plan.dimension_tables.get(column, plan.table), column): plan.dimension_transforms.get(column, "raw")
             for column in plan.dimensions
         }
         if any(actual_transforms.get(column) != transform for column, transform in required_transforms.items()):
@@ -486,14 +546,22 @@ class Nl2SqlEngine:
     def _grounded_dimensions(self, plan, dimensions, question, tables):
         """允许规则没覆盖的表达，但必须有分组意图和实际字段/词典证据。"""
         normalized = normalize_text(question)
-        if not re.search(r"按|各|每|分组|\bby\b|\bper\b|group\s+by", question.lower()):
+        scopes = re.findall(r'按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', normalized)
+        scopes += re.findall(r'(?:各|每个|每一)([^,;。?!？；]{1,160}?)(?:的|分组|统计|计算|汇总|排名|排行|占比|$)', normalized)
+        scopes += [normalize_text(scope) for scope in re.findall(
+            r'\b(?:group\s+by|by|per)\s+([^,;。?!？；]{1,160})', question.lower())]
+        scopes = [scope for scope in scopes if not re.search(r'筛选|过滤|限定|等于|不等于|>=|<=|(?<![<>!])=', scope)]
+        if not scopes:
             return False
-        rules = self.planner.linker.rules_for(tables)
-        for column in dimensions:
-            table = plan.dimension_tables.get(column, plan.table)
-            aliases = [alias for rule in rules if rule.table == table and rule.column == column and rule.role == "dimension" for alias in rule.aliases]
-            aliases += [column, column.replace("_", " ")]
-            if not any(normalize_text(alias) in normalized for alias in aliases):
+        physical = group_fields(normalized, tables)
+        grains = group_grains(normalized, tables)
+        requested = {(link.table, link.column) for scope in scopes
+                     for link in self.planner.linker.link('按' + scope + '分组', tables)
+                     if link.role == 'dimension'}
+        for table, column in dimensions:
+            if (table, column) not in requested or (physical and (table, column) not in physical):
+                return False
+            if plan.dimension_transforms.get(column, 'raw') != grains.get((table, column), 'raw'):
                 return False
         return True
 

@@ -1,0 +1,24 @@
+{
+  "scope": "local_source_hash_audit_for_final_program_and_subsystem_evidence",
+  "core_report": "REAL_MODEL_CORE_ROUND3_RELEASE_20261002.json",
+  "core_source_files_checked": 78,
+  "core_current_source_mismatches": 0,
+  "core_implementation_stable": true,
+  "nl2sql_report": "NORTHWIND_ROUND3_RELEASE_20261002.json",
+  "nl2sql_source_files_checked": 78,
+  "nl2sql_current_source_mismatches": 0,
+  "nl2sql_implementation_stable": true,
+  "rag_reports": [
+    "OHR_EXPOSED_FINAL_DEVELOPMENT_20261002.json",
+    "OHR_ROUND3_FINAL_DEVELOPMENT_20261002.json"
+  ],
+  "rag_matching_source_files_each": 57,
+  "rag_scoped_source_mismatches_each": 0,
+  "rag_implementation_stable_each": true,
+  "rag_excluded_scope": ["ict-track8/backend/nl2sql/*", "ict-track8/backend/omni_agent.py"],
+  "rag_scope_reason": "The fixed OHR evaluator invokes KnowledgeStore directly, without Omni workflow planning or SQL execution. Those components changed after the isolated RAG runs; full project hash equality is not claimed for RAG evidence.",
+  "local_regression_report": "LOCAL_REGRESSION_ROUND3_RELEASE_20261002.json",
+  "local_regression_passed": 2363,
+  "local_regression_failed": 0,
+  "frontend_node_syntax_check": "PASS"
+}

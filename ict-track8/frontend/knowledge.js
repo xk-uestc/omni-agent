@@ -91,10 +91,20 @@ function appendAnswer(host,result){
     host.append(card);
   }else if(result.answer_span_result?.status==='model_reviewed'&&result.answer){
     const span=result.answer_span_result,card=element('section',null,'citation');
-    card.append(element('small','原文短答案 · 独立模型复核','muted'),element('p',result.answer));
+    const execution=span.answer_proof?.execution;
+    card.append(element('small',execution?'原文阈值比较 · 程序计算与独立模型复核':'原文短答案 · 独立模型复核','muted'),element('p',result.answer));
+    if(execution?.answer_type==='boolean'){
+      const operators={le:'≤',ge:'≥',lt:'<',gt:'>'};
+      card.append(element('p',`问题给定值 ${execution.question_observation.quote}；原文要求 ${execution.threshold_operator_quote} ${execution.threshold_value}%。`));
+      card.append(element('p',`${execution.question_observation.value}% ${operators[execution.operation]||execution.operation} ${execution.threshold_value}% → ${execution.outcome?'满足要求':'不满足要求'}。`));
+    }
     for(const scope of span.answer_scope||[])card.append(element('small',`引用 ${scope.citation_id}：${scope.quote}`,'muted'));
     card.append(element('p','已核对原文位置并进行第二次模型复核；模型语义判断仍可能出错。','muted'));
-    const facts=element('details');facts.append(element('summary','完整事实、来源和复核记录'),element('p',result.full_fact_answer||''),element('pre',JSON.stringify(span.answer_proof,null,2)));card.append(facts);host.append(card);
+    const sourceOnly=span.evidence_contract==='raw_source_only_no_validated_facts';
+    const facts=element('details');facts.append(element('summary',sourceOnly?'原文位置、来源和复核记录':'完整事实、来源和复核记录'));
+    if(result.full_fact_answer)facts.append(element('p',result.full_fact_answer));
+    if(sourceOnly&&result.prior_generation_output){const prior=element('details');prior.append(element('summary','首次生成或摘录记录'),element('p',result.prior_generation_output));facts.append(prior);}
+    facts.append(element('pre',JSON.stringify(span.answer_proof,null,2)));card.append(facts);host.append(card);
   }else if(result.answer){
     host.append(element('p',result.answer));
     if(result.answer_mode==='native_table_model_reviewed'){
@@ -104,8 +114,15 @@ function appendAnswer(host,result){
     if(result.answer_mode==='visual_chart_native_annotated'){
       const scope=result.answer_scope||{};
       const computed=result.answer_strategy==='model_reviewed_native_chart_arithmetic';
+      const computation=result.computation||{};
+      const percentage=['percentage_change','percentage_decline'].includes(computation.operation);
       host.append(element('p',`原生图表标签 · 系列：${scope.series||'见操作数'} · 年份：${scope.year??'见操作数'} · 单位：${scope.unit==='unknown'?'原图未明确声明':scope.unit||'未声明'}`,'muted'));
-      host.append(element('p',computed?'程序由原生数值标注精确计算，完整问题和操作数经独立模型复核；不作为已证明物理量输入。':'数值来自原页文字标签，模型核对图表、系列和年份；不作为物理量计算输入。','muted'));
+      host.append(element('p',percentage?'程序用原生标注计算比例，保留精确分数并按显示规则舍入；基期、分母和完整问题经独立模型复核。':computed?'程序由原生数值标注精确计算，完整问题和操作数经独立模型复核；不作为已证明物理量输入。':'数值来自原页文字标签，模型核对图表、系列和年份；不作为物理量计算输入。','muted'));
+      if(percentage){
+        const policy=computation.display_policy||{};
+        const rounding={ROUND_HALF_UP:'四舍五入',ROUND_HALF_EVEN:'五成双舍入',ROUND_DOWN:'向零截断',ROUND_FLOOR:'向下舍入',ROUND_CEILING:'向上舍入'};
+        host.append(element('p',`基期 ${computation.baseline_year} 年 → ${computation.later_year} 年；分母 ${computation.denominator_raw_value}。显示 ${policy.decimal_places} 位小数，${rounding[policy.rounding_mode]||'见记录'}${computation.display_is_rounded?'（已舍入）':''}。`,'muted'));
+      }
       const context=element('details');context.append(element('summary','图表标题、范围和完整核验记录'),element('pre',JSON.stringify({scope,computation:result.computation,review:result.semantic_review},null,2)));host.append(context);
     }
   }

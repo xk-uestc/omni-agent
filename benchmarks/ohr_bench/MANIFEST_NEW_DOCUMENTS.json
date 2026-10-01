@@ -1,0 +1,377 @@
+{
+  "dataset": "opendatalab/OHR-Bench",
+  "official_dataset_url": "https://huggingface.co/datasets/opendatalab/OHR-Bench",
+  "hf_revision": "7f833e3eda9a571a9ea545a8f6d476fa1685033d",
+  "official_code_revision": "1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7",
+  "dataset_card_license": "cc-by-4.0",
+  "pdf_usage_statement": "Official README: research purposes only, not commercial use; source PDFs retain original copyright.",
+  "data_root_default": "D:\\ICT8-OfficialDatasets\\ohr-bench",
+  "created_at": "2026-10-01T17:21:56.268969+00:00",
+  "selection_frozen_before_evaluation": true,
+  "selection_rule": "Exclude all prior manifest and saved-run documents/IDs/exact normalized questions. Fixed seven domains; rank by missing category coverage, category diversity, PDF bytes and doc_name only; two questions/document minimum then balance category counts to 18 by stable ID. Answers/evidence/parser/model outcomes NEVER used.",
+  "selection_limit": "Unseen-document AND unseen-query resource-biased seven-domain official subset; 18 QA, 7 PDFs <=2MB each. Not full benchmark or statistically representative accuracy. Selection frozen before any PDF/GT inspection or model invocation.",
+  "qa_source_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/qas_v2.json",
+  "qa_sha256": "2446db28741fa9f392067ee7aae7f3b05e0d85c584069a50ddd5b1b5bc783f58",
+  "official_qa_total": 8498,
+  "selected_qa_path": "SELECTED_OFFICIAL_QA_NEW_DOCUMENTS.json",
+  "selected_qa_sha256": "c08c7862f23c2eae47d219ab458bf5dba1ddfa46280ef88e17fcaf92640267e3",
+  "readme_sha256": "bff078b1ee88c89823b40339b09dd754893122f56cb366ec3afd88c65046a222",
+  "pdf_archive_lfs_sha256": "f9bc65f383172c4ea47940c47dfab01dd36c03a120bc0450d7a962917098c783",
+  "archive_full_sha_verified": false,
+  "archive_range_download_bytes": 1612232,
+  "unsupported_selection": {},
+  "cases": [
+    {
+      "ID": "9af09a35-30dd-4e42-b47e-ba73be8e88d3",
+      "doc_name": "academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0",
+      "evidence_source": "text",
+      "evidence_page_no": 1,
+      "original_row_sha256": "575978d33af9796093ea3ecf56bb32a1b23461ac3aafcaf7ddd8694aaa51617b"
+    },
+    {
+      "ID": "83ee95e8-2fa6-423f-939f-781db69a8055",
+      "doc_name": "academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0",
+      "evidence_source": "table",
+      "evidence_page_no": 3,
+      "original_row_sha256": "93e56da93012b51f8124ad3dc87111e9c1ce6b09fa0c1dc5e0dbdbfd4c0b8497"
+    },
+    {
+      "ID": "aace45b9-0375-4042-9260-15305fd703a5",
+      "doc_name": "administration/DUDE_ab20a33bc0bb38bd10a5fd09d4c84de0",
+      "evidence_source": "chart",
+      "evidence_page_no": 1,
+      "original_row_sha256": "6beac67e8d124c5cece0787bd339c959a8e11e82d7a28869b6dc68a0b44a7842"
+    },
+    {
+      "ID": "b8d0ee41-8a43-444d-9d99-c3ab8a7b32b9",
+      "doc_name": "administration/DUDE_ab20a33bc0bb38bd10a5fd09d4c84de0",
+      "evidence_source": "multi",
+      "evidence_page_no": [
+        0,
+        4
+      ],
+      "original_row_sha256": "a299a0c5018afcfbc401fed7bb9304c040a6315824a95e1c2b9894ad94265883"
+    },
+    {
+      "ID": "a4ab8d78-b8e0-4d96-b5a6-32d176bd25b9",
+      "doc_name": "finance/DUDE_073c5e237cfc190effc8ff2a3b0f7fe5",
+      "evidence_source": "text",
+      "evidence_page_no": 4,
+      "original_row_sha256": "ab887a352eded102523f665a8d0f71d4ef2b9b7b9af96007519e0df5cfdeb53d"
+    },
+    {
+      "ID": "861b548d-f013-46a3-a6bb-00f11e884b80",
+      "doc_name": "finance/DUDE_073c5e237cfc190effc8ff2a3b0f7fe5",
+      "evidence_source": "table",
+      "evidence_page_no": 1,
+      "original_row_sha256": "192bd85e1302b94b259f884932f5b52c623f3b010d61f5bc6089d86eea32cca9"
+    },
+    {
+      "ID": "b83ae7d7-0bb8-429c-a88c-45be13ac783d",
+      "doc_name": "law/N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+      "evidence_source": "multi",
+      "evidence_page_no": [
+        6,
+        8
+      ],
+      "original_row_sha256": "c6ea2a4e548d88d7d017e6e6344e21075626ffe4953e6ad55a3db605db3e855e"
+    },
+    {
+      "ID": "2f3342b5-d3c4-41d0-8bab-6887b3975da9",
+      "doc_name": "law/N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+      "evidence_source": "text",
+      "evidence_page_no": 6,
+      "original_row_sha256": "75066cb9ace876de7e99760799012fba3eb70ed3ee40c72e8a4902a0030f9edc"
+    },
+    {
+      "ID": "a5c0339e-2aa9-42db-b2a3-e9d095ad9ec3",
+      "doc_name": "manual/DUDE_2418cfbfb0f4130c72da92b065bb1645",
+      "evidence_source": "formula",
+      "evidence_page_no": 17,
+      "original_row_sha256": "888492017a621bd82ad403eaf1003f118c383edbb854b1b732762bc6cc0dcee6"
+    },
+    {
+      "ID": "a5c03ab7-eb15-47e0-b73b-0651725fc037",
+      "doc_name": "manual/DUDE_2418cfbfb0f4130c72da92b065bb1645",
+      "evidence_source": "formula",
+      "evidence_page_no": 17,
+      "original_row_sha256": "533baac7f9588e1700e3904f1b29203def58f0adf353a8139f55a4667cfd8a23"
+    },
+    {
+      "ID": "c22371d3-0f11-4fd4-991d-11ae0fc7349a",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4",
+      "evidence_source": "reading_order",
+      "evidence_page_no": 0,
+      "original_row_sha256": "1d246dc9aebe8ad09caaf8fe1fcf2baa3c4f8033ad047bc38757f1fd1c364922"
+    },
+    {
+      "ID": "c2270efb-2719-4758-a04c-52a4d7ac8d25",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4",
+      "evidence_source": "reading_order",
+      "evidence_page_no": 0,
+      "original_row_sha256": "570fea7c04e214f6d2cece5e5da15b12fe5834a5818a0d47265dca8a528c3f04"
+    },
+    {
+      "ID": "85d66f28-83e0-4600-9ae9-5846965da173",
+      "doc_name": "textbook/DUDE_98a39b108a879d984dbac55a5b33aab2",
+      "evidence_source": "table",
+      "evidence_page_no": 1,
+      "original_row_sha256": "933b2ec3fd969418336437cee5f2853154f8f2b36d6873ced8d24a757c8e2189"
+    },
+    {
+      "ID": "a8ef6cf7-1ce7-492c-9f58-d012e0f470f8",
+      "doc_name": "textbook/DUDE_98a39b108a879d984dbac55a5b33aab2",
+      "evidence_source": "formula",
+      "evidence_page_no": 1,
+      "original_row_sha256": "f97ca9f90f99d18c62edd45025b84c0b97720e9f6d28747e237962ff759ed7c8"
+    },
+    {
+      "ID": "a9d33e3d-233e-4709-a896-2a9476814ba4",
+      "doc_name": "academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0",
+      "evidence_source": "chart",
+      "evidence_page_no": 2,
+      "original_row_sha256": "6b0de5909d1fae8424311dd139fe8428927e397f67945cce609d66c1aacde3f3"
+    },
+    {
+      "ID": "a9d34502-c2d1-4066-bbbe-4dff7b203945",
+      "doc_name": "academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0",
+      "evidence_source": "chart",
+      "evidence_page_no": 2,
+      "original_row_sha256": "6fe2730f6d2592641d9c7067283a7af82b4109088140556bda4dfcdd2b7a5904"
+    },
+    {
+      "ID": "c228cc9a-d03a-4392-84b9-db030ce7de30",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4",
+      "evidence_source": "reading_order",
+      "evidence_page_no": 0,
+      "original_row_sha256": "dfa290ae8c673ca0307f19a5be91e5c1e9ab2413d364e75bc520e0ec6aa43604"
+    },
+    {
+      "ID": "00faf28f-ea21-4aa9-bd8f-c1a95a9e57e3",
+      "doc_name": "manual/DUDE_2418cfbfb0f4130c72da92b065bb1645",
+      "evidence_source": "multi",
+      "evidence_page_no": [
+        7,
+        10
+      ],
+      "original_row_sha256": "660bdb7c7cde4e0f39d09e27fd7bc7d96d770d92d8064a63b3c5ad2c766cadec"
+    }
+  ],
+  "documents": [
+    {
+      "doc_name": "academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0",
+      "pdf_path": "pdfs/academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0.pdf",
+      "pdf_sha256": "169e70c9fd7e84d62b36ab66174700fedeadc7f0184fb17288fd8372b8a7823b",
+      "pdf_bytes": 800216,
+      "archive_member": "academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0.pdf",
+      "archive_member_crc32": 14612641,
+      "gt_path": "gt/academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0.json",
+      "gt_sha256": "afe7422c9ef08ebcd4ffe0b6a3cdff2da48c887aa6e5f6cebb477ea517d0232f",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/academic/DUDE_a0039a69116e6f8fb5a243eb51d93bd0.json"
+    },
+    {
+      "doc_name": "administration/DUDE_ab20a33bc0bb38bd10a5fd09d4c84de0",
+      "pdf_path": "pdfs/administration/DUDE_ab20a33bc0bb38bd10a5fd09d4c84de0.pdf",
+      "pdf_sha256": "4bec36fdb854be2a9693fcec621277bbf24cc393d4e41c7819922448e6cbc728",
+      "pdf_bytes": 163288,
+      "archive_member": "administration/DUDE_ab20a33bc0bb38bd10a5fd09d4c84de0.pdf",
+      "archive_member_crc32": 380280579,
+      "gt_path": "gt/administration/DUDE_ab20a33bc0bb38bd10a5fd09d4c84de0.json",
+      "gt_sha256": "e616cfeaf2cca0da6ea9af31866e43332bf1595e6c04c3c012b75fb598314c08",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/administration/DUDE_ab20a33bc0bb38bd10a5fd09d4c84de0.json"
+    },
+    {
+      "doc_name": "finance/DUDE_073c5e237cfc190effc8ff2a3b0f7fe5",
+      "pdf_path": "pdfs/finance/DUDE_073c5e237cfc190effc8ff2a3b0f7fe5.pdf",
+      "pdf_sha256": "8b54e4a5093564f9b982e9f0cd56759f07a271fa14395c42477298d4a133fafd",
+      "pdf_bytes": 109424,
+      "archive_member": "finance/DUDE_073c5e237cfc190effc8ff2a3b0f7fe5.pdf",
+      "archive_member_crc32": 4089997090,
+      "gt_path": "gt/finance/DUDE_073c5e237cfc190effc8ff2a3b0f7fe5.json",
+      "gt_sha256": "13db791034294aa30c727ae5c853fcd12e05684bbc7f4fd9585538dd3deffd62",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/finance/DUDE_073c5e237cfc190effc8ff2a3b0f7fe5.json"
+    },
+    {
+      "doc_name": "law/N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT",
+      "pdf_path": "pdfs/law/N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT.pdf",
+      "pdf_sha256": "3953c584128911fc482f27450a7f8d6078cf170605d23ebb14b559a8af5a338e",
+      "pdf_bytes": 76346,
+      "archive_member": "law/N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT.pdf",
+      "archive_member_crc32": 963935500,
+      "gt_path": "gt/law/N2KINC_10_16_1997-EX-10.16-SPONSORSHIP AGREEMENT.json",
+      "gt_sha256": "15d53078fbbfe264f44333b497ee99b717e53aeca9af91b2e5be10847a0bed5f",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/law/N2KINC_10_16_1997-EX-10.16-SPONSORSHIP%20AGREEMENT.json"
+    },
+    {
+      "doc_name": "manual/DUDE_2418cfbfb0f4130c72da92b065bb1645",
+      "pdf_path": "pdfs/manual/DUDE_2418cfbfb0f4130c72da92b065bb1645.pdf",
+      "pdf_sha256": "e82401c7d6cf933058fefa54d5dfb02cd54cba18f12b653241343cd73fd4bf10",
+      "pdf_bytes": 239372,
+      "archive_member": "manual/DUDE_2418cfbfb0f4130c72da92b065bb1645.pdf",
+      "archive_member_crc32": 2419906629,
+      "gt_path": "gt/manual/DUDE_2418cfbfb0f4130c72da92b065bb1645.json",
+      "gt_sha256": "5c5695149447c604b8612b6d8d86a295ecee1de33cc034fb78f0d36c4ca67856",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/manual/DUDE_2418cfbfb0f4130c72da92b065bb1645.json"
+    },
+    {
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4",
+      "pdf_path": "pdfs/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4.pdf",
+      "pdf_sha256": "b6afa25a02c6e5fe274b9fcb106343b7f683aab84f20314d8fa066a4b95d3dd2",
+      "pdf_bytes": 30305,
+      "archive_member": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4.pdf",
+      "archive_member_crc32": 255222437,
+      "gt_path": "gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4.json",
+      "gt_sha256": "dfb2adc9114f096945b1f1fd65e369d45f53965a08a96084a0fb5449e9bb8c35",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_4.json"
+    },
+    {
+      "doc_name": "textbook/DUDE_98a39b108a879d984dbac55a5b33aab2",
+      "pdf_path": "pdfs/textbook/DUDE_98a39b108a879d984dbac55a5b33aab2.pdf",
+      "pdf_sha256": "2ab9be4f0d101f661cea20e42dcad5e8581342f9e32591630016946bd96ea781",
+      "pdf_bytes": 271500,
+      "archive_member": "textbook/DUDE_98a39b108a879d984dbac55a5b33aab2.pdf",
+      "archive_member_crc32": 1257597226,
+      "gt_path": "gt/textbook/DUDE_98a39b108a879d984dbac55a5b33aab2.json",
+      "gt_sha256": "766bf43a67f6477f16252e73264342286cec56c1fb544ee9e9fc051c18dbb503",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/textbook/DUDE_98a39b108a879d984dbac55a5b33aab2.json"
+    }
+  ],
+  "evaluation_scope": "new_documents_and_queries_official_resource_bounded_subset",
+  "excluded_document_count": 7,
+  "excluded_query_count": 39,
+  "exclusion_inputs": [
+    {
+      "path": "benchmarks/ohr_bench/MANIFEST.json",
+      "sha256": "7c2c132582bf88ab5982c7afc1990152b62f818a127c49a3e5517369e434bfd0"
+    },
+    {
+      "path": "benchmarks/ohr_bench/MANIFEST_HOLDOUT.json",
+      "sha256": "ac5c212287fed69a258e2365d9a52aadea9ebf5f374059fc69fac38821112cc6"
+    },
+    {
+      "path": "benchmarks/ohr_bench/MANIFEST_HOLDOUT_SECOND.json",
+      "sha256": "f7c3302331450bb3012eb9c0b56654784de7ea8945eb334df52c6eacb7dfb916"
+    },
+    {
+      "path": "benchmarks/ohr_bench/MANIFEST_HOLDOUT_THIRD.json",
+      "sha256": "3a97031e77de0c10df3dac197df9234d52b3ce071ec7df2814710352cc9dfa40"
+    },
+    {
+      "path": "docs/OHR_BENCH_COMPLETE_CONTEXT_GUARD_REPLAY_20261001.json",
+      "sha256": "76f37f39d9477584ae0ffc947d90af725a7b308f93a7c0561b4aec68e500bde2"
+    },
+    {
+      "path": "docs/OHR_BENCH_CONTEXT_REPLAY_20261001.json",
+      "sha256": "e0275c6186de7fbd9dda3e1130ed5b7dbcee53e887eab0bb94fed77b195d88d3"
+    },
+    {
+      "path": "docs/OHR_BENCH_CONTEXT_SCORE_REPLAY_20261001.json",
+      "sha256": "6f31208d6875dcacd98cb7eccbd0c9fc448fa8f1b59875e88b0845a4c40d3fca"
+    },
+    {
+      "path": "docs/OHR_BENCH_COVERAGE_CONTINUATION_REPLAY_20261001.json",
+      "sha256": "e220235ad0e104469d381bea80b4f3934c122d4eeac45389a9f60a02437fbc16"
+    },
+    {
+      "path": "docs/OHR_BENCH_HOLDOUT_FIRST_20261001.json",
+      "sha256": "e9c945499c56b0affea7fb4d7f587fbfc3dd69ce2f42c1a8beb35ab5aa5c86b7"
+    },
+    {
+      "path": "docs/OHR_BENCH_HOLDOUT_REPLAY_20261001.json",
+      "sha256": "b37d46e7e3dcd7e19a9a49d77efd936594b6888b71116f4e047b033bf6a2e23c"
+    },
+    {
+      "path": "docs/OHR_BENCH_HOLDOUT_SECOND_FIRST_20261001.json",
+      "sha256": "6c0001efb19bb9ed39eebc6081cd041fd4c3929a2eabaf4ef864b1bde6d9b76d"
+    },
+    {
+      "path": "docs/OHR_BENCH_LAYOUT_MODEL_REPLAY_20261001.json",
+      "sha256": "4b4259b568c05c67d694607af83ecdd7d804467fd21b1f93efdae17b6ebc4a97"
+    },
+    {
+      "path": "docs/OHR_BENCH_LAYOUT_VERIFIED_SCORE_20261001.json",
+      "sha256": "3e92875b93fe074a133ad93ee42264c9a802b414fa0d3805ab39281093f17c25"
+    },
+    {
+      "path": "docs/OHR_BENCH_LOCAL_FIRST_20261001.json",
+      "sha256": "913a26369aadcc442f85a873f109ccccd1c8a51f06a5522d6328b84119b21131"
+    },
+    {
+      "path": "docs/OHR_BENCH_LOCAL_SCORE_FIRST_20261001.json",
+      "sha256": "0ef545160e11f11916262213021b2291393f8124388c5e9accf1181b18fd1ea5"
+    },
+    {
+      "path": "docs/OHR_BENCH_MODEL_FIRST_20261001.json",
+      "sha256": "ee4c0ba125c3fbd4461e6a800f20182469142d569a106d4957ccdcdcadd2bdbe"
+    },
+    {
+      "path": "docs/OHR_BENCH_MODEL_SCORE_FIRST_20261001.json",
+      "sha256": "98925c2b438578d827afd5f317aed80a8ff9e28463c9c3d45c693a746c03d457"
+    },
+    {
+      "path": "docs/OHR_BENCH_MODEL_VERIFIED_SCORE_20261001.json",
+      "sha256": "2613842567bfdcaeb7aa5418a76580e2da1c9126f4e8a124882c93ddc6b55c41"
+    },
+    {
+      "path": "docs/OHR_BENCH_NATIVE_CONTEXT_REPLAY_20261001.json",
+      "sha256": "8e204f620e22dcdeb4393221601d5a4fec17250fe4c9c851a2d5c85cd0aebe20"
+    },
+    {
+      "path": "docs/OHR_BENCH_ORIGINAL_BASELINE_20261002.json",
+      "sha256": "94e492ff2bde731176030582ee7262b2ffd9e713fd17a82d2b7678d0a683fe8f"
+    },
+    {
+      "path": "docs/OHR_BENCH_ORIGINAL_OPTIMIZED_20261002.json",
+      "sha256": "b38072100881ae50cc60c35c9086c82e42ebc5ae4d98be466bc13b2283c12068"
+    },
+    {
+      "path": "docs/OHR_BENCH_PAGE_CONTEXT_FROZEN_REPLAY_20261001.json",
+      "sha256": "4847e7d6005ce671000a36264db11122ae3821811c4b72aff1133017e0424748"
+    },
+    {
+      "path": "docs/OHR_BENCH_SECOND_BASELINE_20261002.json",
+      "sha256": "67383804a8b1ed285b21b23657e50afbc851d3ede59c6c65e67ea9c6e8b054c2"
+    },
+    {
+      "path": "docs/OHR_BENCH_SECOND_OPTIMIZED_20261002.json",
+      "sha256": "a7b6739034b729b4a7d9ab8367001ba7e41c0a001d4e92eaed64690cded3f9fb"
+    },
+    {
+      "path": "docs/OHR_BENCH_SPAN_TABLE_FINAL_REPLAY_20261001.json",
+      "sha256": "39ed13c9b6e0de9ecc465dbea961925eac46023ee0485c2ca2ec46ed4914e82b"
+    },
+    {
+      "path": "docs/OHR_BENCH_SPAN_TABLE_REPLAY_20261001.json",
+      "sha256": "f26df3c18e1cfd703685d4b911058643c4f05f8057f86f02574c99ac44e068a8"
+    },
+    {
+      "path": "docs/OHR_BENCH_THIRD_BASELINE_20261002.json",
+      "sha256": "3bbce9120fa718a7655851b36b48ced2d4e7025d4e216304b2715a868c96e388"
+    },
+    {
+      "path": "docs/OHR_BENCH_THIRD_OPTIMIZED_20261002.json",
+      "sha256": "429fa3f21b09da74494f356f2187b0165c7beb326b026794f195915c44505737"
+    },
+    {
+      "path": "docs/OHR_BENCH_TYPED_CHART_REPLAY_20261001.json",
+      "sha256": "9743251702e1acb19dde6dffec1bcf2f371e41503c21ae67483fac431c557d99"
+    }
+  ],
+  "excluded_doc_names": [
+    "administration/DUDE_4530b7915538163469088b4df4044d7d",
+    "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+    "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+    "law/DUDE_6cd4b999973e3787ac703d4417881ad2",
+    "law/DUDE_8c8f5a5a1488c3aa27dafb5d5a7b1f56",
+    "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2",
+    "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3"
+  ],
+  "category_counts": {
+    "text": 3,
+    "table": 3,
+    "chart": 3,
+    "multi": 3,
+    "formula": 3,
+    "reading_order": 3
+  }
+}

@@ -40,7 +40,7 @@ def compare(baseline_path, optimized_path):
         return {k: run['summary']['model'][k] for k in
                 ('attempted', 'normalized_exact_matches', 'mean_english_token_f1')}
     bm, am = metrics(before), metrics(after)
-    return {'scope': 'paired_resource_biased_official_query_subset_not_full_benchmark_or_unseen_document',
+    return {'scope': 'paired_resource_biased_official_query_subset_not_full_benchmark',
             'baseline': {'path': str(baseline_path), 'sha256': hashlib.sha256(baseline_raw).hexdigest(), **bm},
             'optimized': {'path': str(optimized_path), 'sha256': hashlib.sha256(optimized_raw).hexdigest(), **am},
             'selection_sha256': before['selection_sha256'], 'case_count': len(changes),

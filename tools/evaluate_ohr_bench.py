@@ -207,6 +207,7 @@ def summarise_cases(cases):
                            'grounded_substantive_answers': sum(row.get('answer_mode') == 'model_grounded' and row.get('status') == 'ok' for row in models),
                            'model_abstentions': sum(row.get('answer_mode') == 'model_grounded' and row.get('status') == 'insufficient_evidence' for row in models),
                            'extractive_fallbacks': sum(row.get('answer_mode') == 'extractive_fallback' for row in models),
+                           'source_span_answers': sum(row.get('answer_mode') == 'source_span_model_reviewed' and row.get('status') == 'ok' for row in models),
                            'native_chart_answers': sum(row.get('answer_mode') == 'visual_chart_native_annotated' and row.get('status') == 'ok' for row in models),
                            'normalized_exact_matches': sum(row.get('scores', {}).get('normalized_exact_match', 0) for row in models),
                            'mean_english_token_f1': round(sum(row.get('scores', {}).get('english_token_f1', 0) for row in models) / len(models), 6),
@@ -223,7 +224,7 @@ def summarise_cases(cases):
             'mean_english_token_f1_all_questions': round(sum(row['projection_scores']['english_token_f1'] for row in projected) / len(models), 6),
             'metric_scope': 'separate_verified_display_field_unprojected_questions_count_zero_not_replacement_for_raw_answer_score',
         }
-        reviewed_span = [row for row in models if row.get('answer_strategy') in {'model_reviewed_source_span', 'model_reviewed_span'}
+        reviewed_span = [row for row in models if row.get('answer_strategy') in {'model_reviewed_source_span', 'model_reviewed_span', 'evidence_first_literal_source_span'}
                          and row.get('answer_span_result', {}).get('status') == 'model_reviewed' and row.get('status') == 'ok']
         native_table = [row for row in models if row.get('answer_mode') == 'native_table_model_reviewed' and row.get('status') == 'ok']
         result['model_reviewed_span'] = _separate_answer_summary(reviewed_span, len(cases), 'scores',
@@ -243,6 +244,7 @@ def main():
     parser.add_argument('--with-model', action='store_true')
     parser.add_argument('--reuse-store', type=Path, help='Reuse only previously ingested actual PDFs with exact manifest hashes')
     parser.add_argument('--skip-rendered-ocr', action='store_true', help='Explicitly skip separate raster OCR diagnostics, not native ingest OCR')
+    parser.add_argument('--development-replay', action='store_true', help='Previously exposed questions/documents; never label this run an unseen first test')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
     manifest, data_root, questions = load_frozen(args.manifest, args.data_root)
@@ -264,6 +266,7 @@ def main():
     if args.reuse_store and {row['document_id'] for row in store.list_documents()} != {doc_id(row['doc_name']) for row in manifest['documents']}:
         parser.error('Reuse corpus documents differ from frozen original PDF set')
     report = {'created_at': datetime.now(timezone.utc).isoformat(), 'scope': 'official_ohr_bench_frozen_resource_biased_pilot_actual_pdf_corpus',
+              'evaluation_purpose': 'exposed_development_replay' if args.development_replay else 'frozen_subset_exposure_status_requires_selection_audit',
               'dataset_revision': manifest['hf_revision'], 'official_code_revision': manifest['official_code_revision'],
               'selection_sha256': manifest['selected_qa_sha256'], 'selection_limit': manifest['selection_limit'],
               'manifest_sha256': digest(args.manifest.read_bytes()), 'store_path': str(store_path.resolve()),

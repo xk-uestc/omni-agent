@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import math
 import time
+import unicodedata
 from datetime import date
 from collections.abc import Mapping
 from typing import Any, Protocol
@@ -135,18 +136,14 @@ class ModelPlanValidator:
         if payload.get("version", 1) != 1:
             raise ModelPlanError("不支持的模型计划版本")
         by_name = {table.name: table for table in tables}
-        table_name = self._identifier(payload.get("table"), "table")
-        table = by_name.get(table_name)
-        if table is None:
-            raise ModelPlanError(f"模型选择了不存在的表: {table_name}")
+        table_name = self._schema_table(payload.get("table"), "table", by_name)
+        table = by_name[table_name]
         metric = payload.get("metric")
         if not isinstance(metric, Mapping):
             raise ModelPlanError("metric 必须是对象")
-        metric_table_name = self._identifier(metric.get("table", table_name), "metric.table")
-        metric_table = by_name.get(metric_table_name)
-        if metric_table is None:
-            raise ModelPlanError(f"模型选择了不存在的指标表: {metric_table_name}")
-        metric_column = self._identifier(metric.get("column"), "metric.column")
+        metric_table_name = self._schema_table(metric.get("table", table_name), "metric.table", by_name)
+        metric_table = by_name[metric_table_name]
+        metric_column = self._schema_identifier(metric.get("column"), "metric.column")
         metric_column_info = self._column(by_name, metric_table_name, metric_column, "metric.column")
         function = str(metric.get("function", "")).upper()
         if function not in _FUNCTIONS:
@@ -177,7 +174,7 @@ class ModelPlanValidator:
         }
         if comparison_mode != "none":
             required_tables.add(comparison_period["date_table"])
-        path_hint = self._path_hint(payload.get("join_path"))
+        path_hint = self._path_hint(payload.get("join_path"), by_name)
         joins = self.join_resolver.resolve_joins(table_name, required_tables, tables, path_hint=path_hint)
         if joins is None:
             raise ModelPlanError("模型计划中的表没有可验证的外键 JOIN 路径")
@@ -308,8 +305,8 @@ class ModelPlanValidator:
         mode = str(raw.get("mode", "")).strip()
         if mode not in {"同比", "环比"}:
             raise ModelPlanError("comparison.mode 只能是 同比 或 环比")
-        table = ModelPlanValidator._identifier(raw.get("date_table"), "comparison.date_table")
-        column = ModelPlanValidator._identifier(raw.get("date_column"), "comparison.date_column")
+        table = ModelPlanValidator._schema_table(raw.get("date_table"), "comparison.date_table", by_name)
+        column = ModelPlanValidator._schema_identifier(raw.get("date_column"), "comparison.date_column")
         date_info = ModelPlanValidator._column(by_name, table, column, "comparison.date_column")
         if not ModelPlanValidator._date(date_info.name, date_info.data_type):
             raise ModelPlanError("comparison.date_column 必须是日期列")
@@ -341,8 +338,8 @@ class ModelPlanValidator:
         for item in raw:
             if not isinstance(item, Mapping):
                 raise ModelPlanError("dimension 项必须是对象")
-            table = self._identifier(item.get("table", metric_table), "dimension.table")
-            column = self._identifier(item.get("column"), "dimension.column")
+            table = self._schema_table(item.get("table", metric_table), "dimension.table", by_name)
+            column = self._schema_identifier(item.get("column"), "dimension.column")
             info = self._column(by_name, table, column, "dimension.column")
             if table == metric_table and column == metric_column:
                 raise ModelPlanError("指标列不能同时作为分组维度")
@@ -367,8 +364,8 @@ class ModelPlanValidator:
         for item in raw:
             if not isinstance(item, Mapping):
                 raise ModelPlanError("filter 项必须是对象")
-            table = self._identifier(item.get("table"), "filter.table")
-            column = self._identifier(item.get("column"), "filter.column")
+            table = self._schema_table(item.get("table"), "filter.table", by_name)
+            column = self._schema_identifier(item.get("column"), "filter.column")
             info = self._column(by_name, table, column, "filter.column")
             operator = str(item.get("operator", "")).upper().strip()
             value = item.get("value")
@@ -409,7 +406,7 @@ class ModelPlanValidator:
         return HavingSpec(operator, mode, value, str(raw.get("source_text") or "having"), str(raw.get("explanation") or "模型聚合过滤"))
 
     @staticmethod
-    def _path_hint(raw: Any) -> str | None:
+    def _path_hint(raw: Any, by_name: dict[str, TableInfo]) -> str | None:
         if raw is None:
             return None
         if isinstance(raw, str):
@@ -418,16 +415,41 @@ class ModelPlanValidator:
             parts = raw
         else:
             raise ModelPlanError("join_path 必须是 'a>b>c' 或表名数组")
-        if len(parts) < 2 or any(not part or not part.isidentifier() for part in parts):
+        if len(parts) < 2 or any('>' in part for part in parts):
             raise ModelPlanError("join_path 含有非法表名")
+        for part in parts:
+            ModelPlanValidator._schema_table(part, 'join_path.table', by_name)
         return ">".join(parts)
+
+    @staticmethod
+    def _schema_identifier(value: Any, field: str) -> str:
+        """Preserve an exact physical name; existence is checked separately.
+
+        SQLite quoted identifiers are not Python identifiers. Spaces, dots,
+        hyphens and doubled quotes are legitimate names in imported business
+        schemas. None is a SQL fragment: callers bind tables/columns to the
+        actual introspected allowlist and compilers always double-quote them.
+        Do not strip or normalize names, which would select a different source.
+        Internal metric IDs deliberately retain the stricter contract below.
+        """
+        if (not isinstance(value, str) or not value or not value.strip() or len(value) > 128
+                or any(unicodedata.category(character) == 'Cc' for character in value)):
+            raise ModelPlanError(f"{field} 必须是有界且无控制字符的物理标识符")
+        return value
+
+    @staticmethod
+    def _schema_table(value: Any, field: str, by_name: dict[str, TableInfo]) -> str:
+        name = ModelPlanValidator._schema_identifier(value, field)
+        if name not in by_name:
+            raise ModelPlanError(f"{field} 不存在: {name}")
+        return name
 
     @staticmethod
     def _identifier(value: Any, field: str) -> str:
         if not isinstance(value, str) or not value or len(value) > 128:
             raise ModelPlanError(f"{field} 必须是非空标识符")
-        # 允许中文和其他 Unicode 标识符，以支持迁移到非英文 Schema；仍拒绝
-        # 引号、空白、点号和 SQL 片段，真正的存在性由调用方再次校验。
+        # These are logical metric/derived IDs, never physical schema names.
+        # Keep the small identifier contract for expression references.
         if not value.isidentifier():
             raise ModelPlanError(f"{field} 含有非法字符")
         return value

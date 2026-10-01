@@ -23,6 +23,9 @@ class LocalBgeEmbedder:
         self._model = self._tokenizer = None
         manifest = json.loads((self.path / 'ASSET_MANIFEST.json').read_text(encoding='utf-8'))
         self.identity = manifest['model'] + '@' + manifest['revision']
+        # This bundled encoder is a Chinese model. Do not present its English
+        # similarity scores as an equally supported retrieval channel.
+        self.supported_query_languages = ('zh',) if manifest['model'] == 'BAAI/bge-small-zh-v1.5' else None
         for item in manifest['files']:
             file = self.path / Path(item['path']).name
             if hashlib.sha256(file.read_bytes()).hexdigest() != item['sha256']:

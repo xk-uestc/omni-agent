@@ -14,7 +14,7 @@ from typing import Any
 
 from .chunk_cleaning import DocumentChunker
 from .cross_source import DocumentHit, DocumentRecord, JsonDocumentRetriever, _tokenize
-from .evidence_context import (MAX_EVIDENCE_CHARS, MAX_EVIDENCE_ITEMS,
+from .evidence_context import (MAX_EVIDENCE_CHARS, MAX_NATIVE_EVIDENCE_CHARS, MAX_EVIDENCE_ITEMS,
                                MAX_TOTAL_EVIDENCE_CHARS, bounded_prefix, text_sha256)
 
 SAFE_ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}')
@@ -351,7 +351,13 @@ class KnowledgeStore:
             coverage = page_coverage.get((hit.metadata['document_id'], hit.metadata.get('page_no')), 0)
             return raw * (1 + 0.35 * anchor_matches) * (1 + 2 * coverage), anchor_matches
         hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
-        if self.dense_index:
+        query_language = ('en' if not re.search(r'[\u3400-\u9fff]', query)
+                          and len(re.findall(r'[A-Za-z]{2,}', query)) >= 3 else 'zh_or_mixed')
+        encoder_languages = (getattr(self.dense_index.embedder, 'supported_query_languages', None)
+                             if self.dense_index else None)
+        unsupported_language = bool(query_language == 'en' and encoder_languages
+                                    and 'en' not in encoder_languages)
+        if self.dense_index and not unsupported_language:
             from .dense_retrieval import reciprocal_rank_fusion
             dense = [hit for hit in self.dense_index.search(query, records, top_k=max(20, top_k * 5))
                      if hit.metadata['dense_cosine'] >= 0.35]
@@ -367,6 +373,9 @@ class KnowledgeStore:
             score, anchor_count = ranking(hit)
             selected.append(DocumentHit(hit.document_id, hit.title, hit.score, hit.matched_terms, hit.snippet, hit.source_uri,
                 {**hit.metadata, 'ranking_score': score, 'anchor_match_count': anchor_count,
+                 'retrieval_language_policy': {'query_language': query_language,
+                     'encoder_languages': list(encoder_languages) if encoder_languages else None,
+                     'strategy': 'lexical_unsupported_encoder_language' if unsupported_language else 'configured_retrieval'},
                  'page_scope_coverage': page_coverage.get((source, hit.metadata.get('page_no')), 0),
                  'page_scope_method': 'body_only_idf_coverage_rerank_not_generation_evidence',
                  'identifier_anchors': list(identifiers), 'evidence_role': role,
@@ -429,7 +438,9 @@ class KnowledgeStore:
             result['trace'].append({'stage': 'generation_evidence', 'selected_count': len(generation_citations),
                                     'total_chars': sum(len(hit['generation_evidence']['text']) for hit in generation_citations),
                                     'omitted': omitted, 'max_items': MAX_EVIDENCE_ITEMS,
-                                    'max_chars_per_item': MAX_EVIDENCE_CHARS, 'max_total_chars': MAX_TOTAL_EVIDENCE_CHARS})
+                                    'max_chars_per_item': MAX_EVIDENCE_CHARS,
+                                    'max_native_chars_per_item': MAX_NATIVE_EVIDENCE_CHARS,
+                                    'max_total_chars': MAX_TOTAL_EVIDENCE_CHARS})
             if not generation_citations:
                 result['trace'].append({'stage': 'grounded_generation', 'status': 'no_safe_bounded_evidence',
                                         'fallback': 'attributed_extracts'})
@@ -452,6 +463,43 @@ class KnowledgeStore:
                 # silently retain evidence from a removed/replaced source.
                 self._verify_citation_sources(result['citations'])
                 self._verify_generation_chunks(generation_citations)
+            # Recover a literal answer from the source when fact generation
+            # abstains or fails semantic validation. Provider failures are not
+            # evidence failures and must never trigger further API requests.
+            if (result['answer_mode'] == 'extractive_fallback'
+                    or result['answer_mode'] == 'model_grounded' and result.get('status') == 'insufficient_evidence'):
+                from .grounded_span_answer import GroundedSpanAnswer, _completed
+                from .source_span_answer import replay_source_span_proof
+                client = self.generator.client
+                attempts = result.get('generation_attempts', [])
+                audits = [attempt.get('provider_audit', {}) for attempt in attempts]
+                last_audit = getattr(client, 'audit', {})
+                if (getattr(client, 'model', None) == 'gpt-6-luna'
+                        and getattr(client, 'reasoning', None) == 'medium'
+                        and attempts and all(attempt.get('validation_status') in {'validated', 'rejected'}
+                            and attempt.get('error_category') != 'provider_unavailable' for attempt in attempts)
+                        and _completed(last_audit) and all(_completed(audit) for audit in audits)):
+                    try:
+                        source_span = GroundedSpanAnswer(client).source_answer(question, generation_citations)
+                        verified = False
+                        if source_span['status'] == 'model_reviewed':
+                            fresh, fresh_omitted = self._generation_citations(result['citations'])
+                            verified = (fresh == generation_citations and fresh_omitted == omitted
+                                        and replay_source_span_proof(question, source_span, fresh))
+                            self._verify_generation_chunks(fresh)
+                        if verified:
+                            result['prior_generation_output'] = result['answer']
+                            result.update(status='ok', answer=source_span['answer_value'], claims=[],
+                                answer_mode='source_span_model_reviewed',
+                                answer_strategy='evidence_first_literal_source_span', answer_span_result=source_span)
+                        result['trace'].append({'stage': 'evidence_first_source_span',
+                            'status': 'model_reviewed' if verified else 'source_replay_failed'
+                                if source_span['status'] == 'model_reviewed' else source_span['status'],
+                            'reason': source_span.get('reason'), 'model_audits': source_span['model_audits'],
+                            'evidence_contract': 'raw_source_only_no_validated_facts'})
+                    finally:
+                        self._verify_citation_sources(result['citations'])
+                        self._verify_generation_chunks(generation_citations)
             if result['answer_mode'] == 'model_grounded' and result.get('claims'):
                 def unchanged_generation_snapshot(fresh, fresh_omitted):
                     # Omissions known before generation are legitimate scope
@@ -511,6 +559,18 @@ class KnowledgeStore:
                         finally:
                             self._verify_citation_sources(result['citations'])
                             self._verify_generation_chunks(generation_citations)
+            if result['answer_mode'] == 'model_grounded' and result.get('status') == 'ok':
+                from .typed_span_execution import boolean_question
+                span = result.get('answer_span_result') or {}
+                answer = result.get('answer', '')
+                if (boolean_question(question) and '%' in answer
+                        and not (span.get('status') == 'model_reviewed' and span.get('answer_type') == 'boolean')):
+                    result['full_fact_answer'] = answer
+                    result['answer'] = '当前证据含阈值，但尚未完成对问题的可核验判断。'
+                    result['status'] = 'insufficient_evidence'
+                    result['answer_strategy'] = 'incomplete_boolean_abstention'
+                    result['trace'].append({'stage': 'whole_boolean_answer', 'status': 'incomplete',
+                        'reason': 'threshold_quote_is_not_boolean_answer', 'complete_facts_retained': True})
         return result
 
     def _verify_citation_sources(self, citations):
@@ -552,30 +612,29 @@ class KnowledgeStore:
                         or not hit['snippet'].strip() or hit['snippet'] not in chunk['text']):
                     raise SourceIntegrityError('检索摘录与权威切片或来源不一致。')
                 reason = None
+                native_eligible = (chunk['modality'] == 'pdf' and chunk['content_type'] == 'paragraph'
+                                   and not chunk['metadata'].get('ocr_status'))
                 if (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
                         and not _verified_pdf_row(chunk)):
                     reason = 'pdf_table_layout_not_verified'
                 elif len(selected) >= MAX_EVIDENCE_ITEMS:
                     reason = 'evidence_item_limit'
                 else:
-                    limit = min(MAX_EVIDENCE_CHARS, MAX_TOTAL_EVIDENCE_CHARS - total)
+                    limit = min(MAX_NATIVE_EVIDENCE_CHARS if native_eligible else MAX_EVIDENCE_CHARS,
+                                MAX_TOTAL_EVIDENCE_CHARS - total)
                     text, end, truncated = bounded_prefix(chunk['text'], max(0, limit))
-                    if not text.strip():
+                    if not text.strip() and not native_eligible:
                         reason = 'no_complete_fact_within_budget'
                 if reason:
                     omitted.append({'citation_id': hit['citation_id'], 'reason': reason})
                     continue
                 native_context = None
-                coordinates = chunk['metadata'].get('coordinate_evidence') or {}
-                if (chunk['modality'] == 'pdf' and chunk['content_type'] == 'paragraph'
-                        and coordinates.get('bbox_status') == 'exact_block'
-                        and len(coordinates.get('layout_block_ids') or []) == 1
-                        and not chunk['metadata'].get('ocr_status')):
-                    from .pdf_native_context import extract_native_context
+                if native_eligible:
+                    from .pdf_native_context import extract_native_page_context
                     document_id = chunk['document_id']
                     if document_id not in originals:
                         originals[document_id] = self.verify_source(document_id, expected_sha256=row[1]).read_bytes()
-                    native_context = extract_native_context(originals[document_id], page_no=chunk['page_no'],
+                    native_context = extract_native_page_context(originals[document_id], page_no=chunk['page_no'],
                                                             anchor_text=chunk['text'], max_chars=limit)
                     if native_context is None:
                         # Missing required headings, ambiguous native anchors
@@ -620,11 +679,11 @@ class KnowledgeStore:
                             and not _verified_pdf_row(chunk))):
                     raise SourceRevisionError('执行中权威资料切片发生变化，请重新执行。')
                 if evidence.get('native_context') is not None:
-                    from .pdf_native_context import extract_native_context
+                    from .pdf_native_context import extract_native_page_context
                     document_id = chunk['document_id']
                     if document_id not in originals:
                         originals[document_id] = self.verify_source(document_id, expected_sha256=evidence['source_sha256']).read_bytes()
-                    current = extract_native_context(originals[document_id], page_no=chunk['page_no'],
+                    current = extract_native_page_context(originals[document_id], page_no=chunk['page_no'],
                                                      anchor_text=chunk['text'], max_chars=evidence['native_context_max_chars'])
                     if current != evidence['native_context'] or evidence['text'] != current['text']:
                         raise SourceRevisionError('执行中原PDF上下文或原生布局发生变化，请重新执行。')

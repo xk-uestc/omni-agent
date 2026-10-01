@@ -14,12 +14,13 @@ def obj(properties):
 
 STRING = {"type": "string"}
 NULLABLE_STRING = {"type": ["string", "null"]}
+LOGICAL_ID = {"type": "string", "pattern": r"^[A-Za-z_][A-Za-z0-9_]*$", "maxLength": 64}
 SCALAR = {"anyOf": [{"type": "string"}, {"type": "number"}, {"type": "null"}]}
 FILTER = obj({"table": STRING, "column": STRING,
               "operator": {"type": "string", "enum": ["=", "!=", ">", ">=", "<", "<=", "LIKE", "RANGE", "BETWEEN", "IN", "NOT IN"]},
               "value": {"anyOf": [SCALAR, {"type": "array", "items": SCALAR}]}, "source_text": STRING})
 DIMENSION = obj({"table": STRING, "column": STRING, "transform": {"type": "string", "enum": ["raw", "month", "year"]}, "label": STRING})
-METRIC = obj({"id": STRING, "table": STRING, "column": STRING,
+METRIC = obj({"id": LOGICAL_ID, "table": STRING, "column": STRING,
               "function": {"type": "string", "enum": ["SUM", "AVG", "COUNT", "COUNT_DISTINCT", "MIN", "MAX"]},
               "label": STRING, "unit": {"type": "string", "minLength": 1, "maxLength": 40},
               "currency": {"type": ["string", "null"], "maxLength": 10},
@@ -34,7 +35,7 @@ HAVING = obj({"operator": {"type": "string", "enum": [">", ">=", "<", "<="]},
 PLAN_SCHEMA = obj({"plan": obj({
     "version": {"type": "integer", "enum": [2]},
     "metrics": {"type": "array", "items": METRIC},
-    "derived_metrics": {"type": "array", "items": obj({"id": STRING, "label": STRING, "expression": {"$ref": "#/$defs/expression"}})},
+    "derived_metrics": {"type": "array", "items": obj({"id": LOGICAL_ID, "label": STRING, "expression": {"$ref": "#/$defs/expression"}})},
     "dimensions": {"type": "array", "items": DIMENSION}, "filters": {"type": "array", "items": FILTER},
     "analysis_mode": {"type": "string", "enum": ["aggregate", "rank", "share"]},
     "having": {"anyOf": [HAVING, {"type": "null"}]},
@@ -56,6 +57,12 @@ RANGE 是半开区间[start,end)，BETWEEN 是闭区间。日期按 reference_da
 unit必须是1至40字符的非空字符串。源Schema/指标词典未声明单位时用unknown；未声明币种时currency为null，不能猜币种或用空unit。
 结果 limit 最大100；同一事实分配到多个子维度需要业务分摊规则，不能使用 SUM(DISTINCT amount)。
 为每个过滤保留准确 source_text。SQL执行和语义审查由服务器完成。"""
+INSTRUCTIONS += """
+内部metrics/derived_metrics的id仅为唯一ASCII标识符，例如m0/m1/d0；不是展示标签或SQL表名。
+order_metric、output_metrics和expression.ref必须准确引用这些id，所有输出label不得重名。
+JOIN关系中的字段只用于验证关系，不能因出现ID字段就新增统计指标或分组。
+验证反馈仅允许修正结构与遗漏的原始约束，不能更改问题、发明新指标或绕过澄清。
+"""
 
 INSTRUCTIONS += """
 verified_intent 是服务端从原始用户问题、真实值索引和业务词典独立提取的显式约束，不是可执行计划。
@@ -105,7 +112,7 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
     def __call__(self, question, tables):
         return self.propose(question, tables, None)
 
-    def propose(self, question, tables, verified_intent):
+    def propose(self, question, tables, verified_intent, *, validation_feedback=None):
         # Request-local context: concurrent questions must never overwrite a
         # shared provider's verified intent, catalogue or reference date.
         context = {"question": question, "schema": [t.to_dict() for t in tables],
@@ -113,7 +120,10 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
                    "metric_catalog": self.catalog.model_context() if self.catalog else None}
         if verified_intent is not None:
             context["verified_intent"] = verified_intent
-        for attempt in range(self.max_retries + 1):
+        if validation_feedback is not None:
+            context['validation_feedback'] = validation_feedback
+        retry_budget = self.max_retries if validation_feedback is None else 0
+        for attempt in range(retry_budget + 1):
             try:
                 parsed = self.client.generate(INSTRUCTIONS, context, PLAN_SCHEMA, name='nl2sql_plan', max_tokens=6000)
                 break
@@ -122,9 +132,12 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
                 # Retry transport errors and temporary HTTP failures only.
                 # Completed but invalid output and 401 are not retried.
                 retryable = status == 429 or status is not None and status >= 500 or self.client.audit.get('http_status') is None
-                if attempt >= self.max_retries or not retryable:
+                if attempt >= retry_budget or not retryable:
                     raise ModelPlanError("真实模型规划服务暂不可用") from exc
                 time.sleep(0.05 * (2**attempt))
         if not isinstance(parsed.get("plan"), dict):
             raise ModelPlanError("模型响应缺少计划对象")
         return parsed["plan"]
+
+    def repair(self, question, tables, verified_intent, feedback):
+        return self.propose(question, tables, verified_intent, validation_feedback=feedback)

@@ -153,6 +153,8 @@ class QueryPlan:
     intent_audit: dict[str, Any] = field(default_factory=dict)
     # 模型/规则规划来源审计：只记录安全的类别和最终决策，不保存模型原文。
     planner_audit: dict[str, Any] = field(default_factory=dict)
+    # Bounded structural diagnostics, with values/labels/opaque IDs hashed.
+    model_plan_diagnostics: dict[str, Any] = field(default_factory=dict)
     # v2: 每个事实表独立聚合，再按共享维度合并，禁止明细表互相放大。
     metrics: list[MetricSpec] = field(default_factory=list)
     derived_metrics: list[DerivedMetricSpec] = field(default_factory=list)

@@ -1,0 +1,108 @@
+{
+  "created_at": "2026-10-01T17:26:18.544401+00:00",
+  "scope": "new_schema_public_sample_with_synthetic_development_queries_not_official_benchmark",
+  "selection_frozen_before_system_execution": true,
+  "model_called": false,
+  "questions_path": "questions.json",
+  "questions_sha256": "6dce97f294c8822160663785480060a8ee3b96fd50a854adafb93617f80f114b",
+  "asset_manifest_sha256": "41513926d8fa17020cdf63ece68e044800b4156f463f55d1e7ec8624ab65149c",
+  "database_sha256": "2f4f5c68dfcd33ba27373eae48c7a4869800c68095ee0f9f0da494f83382a877",
+  "data_root_default": "D:\\ICT8-OfficialDatasets\\northwind",
+  "database_path": "northwind.db",
+  "cases": [
+    {
+      "id": "N001",
+      "category": "count",
+      "row_sha256": "2b8965beb33de8a2362fe09a36c3c223088ca848b240037e6e32650993b763ea"
+    },
+    {
+      "id": "N002",
+      "category": "sum",
+      "row_sha256": "aedf764a18d88d487304bec73616e3c01958feaefbad57ec650e9024d74541ee"
+    },
+    {
+      "id": "N003",
+      "category": "filter_average",
+      "row_sha256": "9a523ca9ee132d7889027b82522eb67dfa59e9b6297cb51b5f356c2de38808c6"
+    },
+    {
+      "id": "N004",
+      "category": "max",
+      "row_sha256": "3cd8049df211b136aff22b8f3adfa628487a4f6531fbc75ec374d00b03b16c20"
+    },
+    {
+      "id": "N005",
+      "category": "distinct",
+      "row_sha256": "b0367db78c53f180ff8470c4ee80366b0a9845753817c32ae701a7b08531cab2"
+    },
+    {
+      "id": "N006",
+      "category": "null",
+      "row_sha256": "b871e5487978b43fa0adf1a0ff3e845ca8d4aa7cce218fdcaf39cc89a2b4723a"
+    },
+    {
+      "id": "N007",
+      "category": "group",
+      "row_sha256": "4973840e41f287a7b8e73851f589afca6aeab770c92812754809d26e1b6c0238"
+    },
+    {
+      "id": "N008",
+      "category": "join_group",
+      "row_sha256": "ce456e9036a1893eec8b1b7d05b4741677eee8a11554daaec7068d440d841bff"
+    },
+    {
+      "id": "N009",
+      "category": "join_count",
+      "row_sha256": "cbdbfd7a04c80e2f29638104aedd7522edf8ae5a0a467a889ce253d0f82fec8c"
+    },
+    {
+      "id": "N010",
+      "category": "join_filter_sum",
+      "row_sha256": "92af7810286a2df84470118b57b55cbfd70ef35c53473f8828f037b9ae64318e"
+    },
+    {
+      "id": "N011",
+      "category": "foreign_key_group",
+      "row_sha256": "f46df683394971433db11fd9901b505e16b7ad682c9b7f974cbac19d18086dd6"
+    },
+    {
+      "id": "N012",
+      "category": "date_half_open",
+      "row_sha256": "6e8639c2626647b1b010525ed12aa7ef9d037381f4be6c93852a9bfa07c2c5bb"
+    },
+    {
+      "id": "N013",
+      "category": "date_month_group",
+      "row_sha256": "23b9b67b2e5a3ee8d8901f7ccf5288069a216aaa50d98e279690576e2f2c726d"
+    },
+    {
+      "id": "N014",
+      "category": "join_distinct_date",
+      "row_sha256": "4abe74a616b28d12bd3dc3f35285dd485fa0fbfa55586a50fe792e1c7817c086"
+    },
+    {
+      "id": "N015",
+      "category": "dense_rank_ties",
+      "row_sha256": "26949d5fdb4e6d8c31809ef1a27a8e6f45b25354453baf48d96b26c89558b15e"
+    },
+    {
+      "id": "N016",
+      "category": "scalar_subquery_having",
+      "row_sha256": "3d6d0028dca51b332114039983e65d1435fc846f63031debc3c43667f0bf52a1"
+    }
+  ],
+  "scoring": {
+    "reference_sql_usage": "scoring_connection_only_never_provider_or_aliases_or_catalog",
+    "rows": "multiset of typed cell values per row; aliases and column ordering ignored; duplicate rows retained",
+    "numeric_absolute_tolerance": "0.0000001",
+    "ranking": "result set plus explicit descending numeric order for ranking question",
+    "failure_policy": "all sixteen cases retained, refusal/exception scored unsuccessful"
+  },
+  "limitations": [
+    "New domain/schema, not unseen official NL2SQL benchmark queries.",
+    "Synthetic schema-explicit Chinese questions include literal table/column names; not representative unassisted user accuracy.",
+    "Northwind is a community port/extension of a sample database, not an official Microsoft publication.",
+    "One run/version cannot establish statistical significance."
+  ],
+  "private_project_data_used": false
+}

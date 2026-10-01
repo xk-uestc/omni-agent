@@ -20,16 +20,38 @@ _VERSION = 'native-annotated-vector-line-v1'
 _NUM = re.compile(r'([+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(%?)')
 
 
-def compute_chart_annotations(facts, operation):
+def _format_percentage(value, policy):
+    """Round a rational for display without changing its saved exact value."""
+    if (not isinstance(policy,dict) or type(policy.get('decimal_places')) is not int
+            or not 0<=policy['decimal_places']<=10
+            or policy.get('rounding_mode') not in {'ROUND_HALF_UP','ROUND_HALF_EVEN','ROUND_DOWN','ROUND_FLOOR','ROUND_CEILING'}):
+        raise ValueError('chart_percentage_display_policy_invalid')
+    places=policy['decimal_places'];mode=policy['rounding_mode']
+    magnitude=abs(value.numerator)*10**places
+    whole,remainder=divmod(magnitude,value.denominator)
+    increment=(mode=='ROUND_HALF_UP' and 2*remainder>=value.denominator
+               or mode=='ROUND_HALF_EVEN' and (2*remainder>value.denominator
+                   or 2*remainder==value.denominator and whole%2==1)
+               or mode=='ROUND_FLOOR' and value<0 and remainder!=0
+               or mode=='ROUND_CEILING' and value>0 and remainder!=0)
+    whole+=int(increment)
+    digits=str(whole).zfill(places+1)
+    text=digits[:-places]+'.'+digits[-places:] if places else digits
+    return ('-' if value<0 and whole else '')+text,remainder!=0
+
+
+def compute_chart_annotations(facts, operation, *, display_policy=None):
     """Exact arithmetic in one native annotation domain, never inferred units.
 
     Inputs must still be replayed against the source manifest by the caller.
-    Nonterminating ratios abstain rather than inventing a rounded value.
+    Nonterminating raw ratios abstain. Percentage operations retain an exact
+    Fraction and separately disclose bounded, question-bound display rounding.
     """
-    if operation not in {'lookup', 'sum', 'difference', 'ratio'} or not 1 <= len(facts) <= 12:
+    percentage=operation in {'percentage_change','percentage_decline'}
+    if operation not in {'lookup', 'sum', 'difference', 'ratio','percentage_change','percentage_decline'} or not 1 <= len(facts) <= 12:
         raise ValueError('chart_arithmetic_operands_invalid')
     if (operation == 'lookup' and len(facts) != 1 or operation == 'sum' and len(facts) < 2
-            or operation in {'difference', 'ratio'} and len(facts) != 2):
+            or operation in {'difference', 'ratio','percentage_change','percentage_decline'} and len(facts) != 2):
         raise ValueError('chart_arithmetic_operands_invalid')
     if len({f['fact_id'] for f in facts}) != len(facts):
         raise ValueError('chart_arithmetic_duplicate_operand')
@@ -51,6 +73,36 @@ def compute_chart_annotations(facts, operation):
         suffixes.add(parsed[1])
     if len(suffixes) != 1:
         raise ValueError('chart_arithmetic_unit_mismatch')
+    if percentage:
+        # Percent change is temporal, not an arbitrary ratio of two unrelated
+        # categories. Baseline is always first and owns the denominator.
+        if (facts[0]['series']!=facts[1]['series']
+                or any(type(f.get('year')) is not int for f in facts)
+                or facts[0]['year']>=facts[1]['year']):
+            raise ValueError('chart_percentage_temporal_scope_invalid')
+        baseline,later=values
+        if baseline<=0:
+            raise ValueError('chart_percentage_positive_baseline_required')
+        if operation=='percentage_decline' and later>baseline:
+            raise ValueError('chart_percentage_decline_direction_invalid')
+        delta=later-baseline if operation=='percentage_change' else baseline-later
+        value=delta/baseline*100
+        policy=dict({'decimal_places':2,'rounding_mode':'ROUND_HALF_UP',
+                     'precision_source':'default_two_decimal_places'} if display_policy is None else display_policy)
+        literal,rounded=_format_percentage(value,policy)
+        return {'operation':operation,'answer':literal+'%','numeric_result':literal,
+                'numeric_result_kind':'rounded_percentage_display' if rounded else 'exact_percentage_display',
+                'exact_fraction':{'numerator':str(value.numerator),'denominator':str(value.denominator)},
+                'display_policy':policy,'display_is_rounded':rounded,
+                'formula':'(later - baseline) / baseline * 100' if operation=='percentage_change'
+                          else '(baseline - later) / baseline * 100',
+                'baseline_fact_id':facts[0]['fact_id'],'later_fact_id':facts[1]['fact_id'],
+                'baseline_year':facts[0]['year'],'later_year':facts[1]['year'],
+                'denominator_fact_id':facts[0]['fact_id'],'denominator_raw_value':facts[0]['raw_value'],
+                'operand_fact_ids':[f['fact_id'] for f in facts],'operands':[f['raw_value'] for f in facts],
+                'unit':'percent','scale':None,'operand_unit':facts[0]['unit'],
+                'computation_domain':'same_series_temporal_native_annotation_percentage_not_inferred_physical_quantity',
+                'calculator_input_eligible':False}
     if operation == 'lookup':
         value = values[0]
     elif operation == 'sum':

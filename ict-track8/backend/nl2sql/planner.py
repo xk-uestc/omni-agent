@@ -27,6 +27,7 @@ from .models import FilterSpec, HavingSpec, QueryPlan, TableInfo
 from .schema import SchemaLinker, normalize_text
 from .value_index import ValueIndex
 from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
+from .question_roles import association_scope, binding_present, group_fields, group_grains
 
 _DEFAULT_MAX_JOIN_HOPS = 4
 _JOIN_HINT_RE = re.compile(r"\[join_path:([A-Za-z0-9_.>\-]+)\]")
@@ -114,6 +115,11 @@ class SingleTablePlanner:
         hints = _FIELD_HINT_RE.findall(clean_question)
         clean_question = _FIELD_HINT_RE.sub("", clean_question)
         clean_question, ignored_instructions = _strip_unsafe_instruction_noise(clean_question)
+        clean_question, association_bindings, invalid_associations = association_scope(clean_question, tables)
+        if invalid_associations:
+            invalid = QueryPlan(rewritten_question=question)
+            return self._clarify(invalid, 'unverified_join_condition',
+                '关联条件未能唯一绑定到真实外键，请明确关联字段与来源。', .2)
         normalized = normalize_text(clean_question)
         links = self.linker.link(clean_question, tables)
         for role, target_table, target_column in hints:
@@ -249,6 +255,8 @@ class SingleTablePlanner:
                 consumed.append("所在")
                 break
         dimension_links = [link for link in links if link is not qualifier_link]
+        if 'ambiguous' in group_grains(normalized, tables).values():
+            return self._clarify(plan, 'ambiguous_time_grain', '同一日期字段包含多种分组粒度，请明确按月或按年。', 0.3)
         if any(word in normalized for word in ('按月','每月')) and any(word in normalized for word in ('按年','每年')):
             return self._clarify(plan,'ambiguous_time_grain','同时请求了按月和按年，请明确一种时间分组粒度。',0.3)
         (
@@ -261,7 +269,8 @@ class SingleTablePlanner:
             if grain in plan.dimension_transforms.values():
                 consumed.extend(cue for cue in cues if cue in normalized)
 
-        explicit_grouping = any(word in normalized for word in ("各", "每个", "按", "分别", "分组"))
+        grouping_question = re.sub(r'按[^,;。?!？；]{1,160}?(?:筛选|过滤|限定)', '', normalized)
+        explicit_grouping = any(word in grouping_question for word in ("各", "每个", "按", "分别", "分组"))
         unsupported_grain = re.search(r"(按周|按天|按日|每天|每日|每周|按季度|每季度)", normalized)
         if unsupported_grain:
             return self._clarify(
@@ -281,7 +290,10 @@ class SingleTablePlanner:
                 self._dimension_options(tables),
             )
         dimension_aliases: dict[str, set[tuple[str, str]]] = {}
+        explicit_group_fields = group_fields(normalized, tables)
         for link in dimension_links:
+            if explicit_group_fields and (link.table, link.column) not in explicit_group_fields:
+                continue
             if self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column)):
                 continue
             dimension_aliases.setdefault(normalize_text(link.matched_alias), set()).add((link.table, link.column))
@@ -304,6 +316,8 @@ class SingleTablePlanner:
                 for target_table, column in sorted(columns)
             ]
             return self._clarify(plan, "ambiguous_dimension", f"“{alias}”对应多个可分组字段，请明确业务口径。", 0.3, options)
+        if plan.dimensions and explicit_group_fields and '分组' in normalized:
+            consumed.append('分组')
 
         plan.analysis_mode = self._analysis_mode(normalized)
         consumed.extend(word for word in _ANALYSIS_WORDS if word in normalized)
@@ -473,6 +487,7 @@ class SingleTablePlanner:
             *(plan.dimension_tables.get(column, table.name) for column in plan.dimensions),
             *(item.table or table.name for item in plan.filters),
         }
+        required_tables.update(name for b in association_bindings for name in (b['child'], b['parent']))
         if plan.comparison_mode != "none":
             required_tables.add(plan.comparison_period["date_table"])
         required_tables.discard(None)
@@ -491,6 +506,8 @@ class SingleTablePlanner:
                 plan, "ambiguous_join_path", "识别到多条同样合理的外键 JOIN 路径，请选择要使用的业务关系。", 0.3,
                 [{"value": item["signature"], "label": item["label"]} for item in plan.join_alternatives],
             )
+        if any(not binding_present(plan, binding) for binding in association_bindings):
+            return self._clarify(plan, 'unverified_join_condition', '计划未保留原问题明确指定的外键关系。', .2)
         if plan.join_path:
             plan.assumptions.append("外键验证 JOIN 路径：" + " -> ".join([table.name, *[item["to_table"] for item in plan.join_path]]))
             plan.fan_out = any(item.get("cardinality") == "one_to_many" for item in plan.join_path)
@@ -1255,10 +1272,15 @@ class SingleTablePlanner:
         dimension_tables: dict[str, str] = {}
         dimension_transforms: dict[str, str] = {}
         dimension_labels: dict[str, str] = {}
-        explicit = any(word in question for word in ("各", "每个", "按", "分别", "分组", "前", "top", "超过", "大于", "高于", "低于", "小于", "不超过", "至少", "排名", "占比", "倒数", "最高的", "最低的"))
+        grouping_question = re.sub(r'按[^,;。?!？；]{1,160}?(?:筛选|过滤|限定)', '', question)
+        explicit = any(word in grouping_question for word in ("各", "每个", "按", "分别", "分组", "前", "top", "超过", "大于", "高于", "低于", "小于", "不超过", "至少", "排名", "占比", "倒数", "最高的", "最低的"))
         explicit = explicit or bool(lexicon.parse_ordinal_ranks(question))
+        named_group_fields = group_fields(question, tables)
+        named_group_grains = group_grains(question, tables)
         for link in links:
             if link.role != "dimension" or link.column == metric_column or link.column in seen:
+                continue
+            if named_group_fields and (link.table, link.column) not in named_group_fields:
                 continue
             if link.table == table.name and any(
                 candidate.table == table.name and candidate.column == link.column and candidate.role == "metric"
@@ -1266,12 +1288,16 @@ class SingleTablePlanner:
             ):
                 continue
             is_date = self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column))
-            if is_date and not any(word in question for word in _TREND_WORDS):
+            if is_date and not any(word in question for word in _TREND_WORDS) and (link.table, link.column) not in named_group_fields:
                 continue
             if explicit or is_date:
                 dimensions.append(link.column)
                 dimension_tables[link.column] = link.table
-                if is_date and any(word in question for word in ("按年", "每年")):
+                explicit_grain = named_group_grains.get((link.table, link.column))
+                if is_date and explicit_grain in {'month', 'year'}:
+                    dimension_transforms[link.column] = explicit_grain
+                    dimension_labels[link.column] = '月份' if explicit_grain == 'month' else '年份'
+                elif is_date and any(word in question for word in ("按年", "每年")):
                     dimension_transforms[link.column] = "year"
                     dimension_labels[link.column] = "年份"
                 elif is_date and any(word in question for word in ("按月", "每月", "趋势")):

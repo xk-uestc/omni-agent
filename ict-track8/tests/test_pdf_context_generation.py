@@ -82,7 +82,8 @@ def test_pdf_context_source_snapshot_detects_mutation(tmp_path, monkeypatch, mut
     assert len(client.calls) == 1
 
 
-def test_forecast_context_budget_failure_never_falls_back_to_isolated_anchor(tmp_path, monkeypatch):
+@pytest.mark.parametrize('budget_name', ['MAX_NATIVE_EVIDENCE_CHARS', 'MAX_TOTAL_EVIDENCE_CHARS'])
+def test_forecast_context_budget_failure_never_falls_back_to_isolated_anchor(tmp_path, monkeypatch, budget_name):
     import backend.knowledge_store as module
     pdf = fitz.open()
     page = pdf.new_page()
@@ -93,7 +94,10 @@ def test_forecast_context_budget_failure_never_falls_back_to_isolated_anchor(tmp
     store = KnowledgeStore(tmp_path)
     store.ingest(raw, document_id='forecast', title='Forecast', modality='pdf', filename='forecast.pdf')
     hit = store.search('Revenue')[0]
-    monkeypatch.setattr(module, 'MAX_EVIDENCE_CHARS', 30)
+    # Native regions now have their own per-item budget. Both that limit and
+    # the shared total limit must reject a context whose forecast heading
+    # cannot fit, rather than expose an isolated observed-looking value.
+    monkeypatch.setattr(module, budget_name, 30)
     citations, omitted = store._generation_citations([{'citation_id': 1, **hit.to_dict()}])
     assert citations == []
     assert omitted == [{'citation_id': 1, 'reason': 'native_complete_context_unavailable'}]

@@ -6,6 +6,9 @@ import re
 
 
 MAX_EVIDENCE_CHARS = 1800
+# Fresh native paragraphs/tables may exceed a retrieval chunk. Plain text
+# prefixes keep their old cap; the independent aggregate cap remains fixed.
+MAX_NATIVE_EVIDENCE_CHARS = 3200
 MAX_TOTAL_EVIDENCE_CHARS = 12000
 MAX_EVIDENCE_ITEMS = 8
 _ABBREVIATIONS = frozenset({
