@@ -1,0 +1,25 @@
+{
+  "scope": "synthetic_scope_review_after_15d1b98_no_new_frozen_questions",
+  "command": "python -m pytest ict-track8/tests/test_complete_sql_results_round5.py ict-track8/tests/test_nl2sql_api_audit.py ict-track8/tests/test_nl2sql_baseline.py ict-track8/tests/test_nl2sql_v2.py ict-track8/tests/test_metric_compiler.py ict-track8/tests/test_nl2sql_generalization_round2.py ict-track8/tests/test_nl2sql_round3_roles_repair.py -q",
+  "exit_code": 0,
+  "passed": 289,
+  "skipped": 2,
+  "warnings": 1,
+  "elapsed_seconds": 19.30,
+  "new_scope_cases": 18,
+  "behavior": [
+    "list ten rows and unknown counts with fetch/get/retrieve/output/emit reject",
+    "row-count guard does not skip requests merely because descriptive text exceeds forty characters",
+    "numeric row caps and explicit all rows share a consistent verb set",
+    "row caps plus including all ties or qualified Chinese ties reject",
+    "row caps plus preserve all tied rows or same-score Chinese requests reject"
+  ],
+  "model_api_calls": 0,
+  "new_frozen_questions_or_oracles_read": false,
+  "adventureworks_replay_repeated": false,
+  "previous_adventureworks_reports_retain_their_original_implementation_sha": true,
+  "notes": [
+    "Previous 15d1b98 pinned artifact report describes that exact earlier implementation",
+    "This revision is verified by synthetic contracts and the related seven-file regression group"
+  ]
+}

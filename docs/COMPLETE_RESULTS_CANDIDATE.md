@@ -4,6 +4,8 @@
 
 `max_rows` 仅控制预览（最多100），默认 QueryPlan.limit=100 不再拼进完整查询的最终 SQL。“只展示50行预览，并将全部结果保存供分页下载”实际仅预览50行，完整产物仍包含所有行；请求预览200行按100行上限执行。原问题明确“返回3行”等要求仍保留参数化 LIMIT；DENSE_RANK Top-N 条件和 ORDER BY 保留，含并列行不被预览上限截断。“返回前2行（保留并列）”这类最终行数上限与保留并列冲突的输入在 SQL 执行前拒绝。未知英文数字如“return ten rows”、未能安全解析的中文行数也拒绝，不能静默撤销语义约束。
 
+英文行数请求统一覆盖 return/show/display/list/get/fetch/retrieve/output/emit；数字行数保留LIMIT，明确all rows允许完整查询，未知数字词一律拒绝。并列冲突也覆盖“包括所有并列”“保留全部同分项”“including all ties”“preserve all tied rows”等带修饰词的表达，不能因修饰词跳过冲突判断。
+
 只有 cursor 到 EOF 才发布 `complete_result.status=complete`。所有实际行写入 JSONL 产物，数组单元格保留 NULL、重复行、重复列标签和 BLOB（带类型的Base64）。模型与 UI 保持100行以内预览；`preview_cells` 是精确数组预览，旧 `rows` 字典接口仍兼容，重名列显示应使用数组预览。
 
 客户端取全部行：保存首次查询返回的 `artifact_id`、`binding_sha256`、`query_sha256`；GET `/api/v1/nl2sql/results/{artifact_id}?offset=0&page_size=100&binding_sha256=<首次绑定>&query_sha256=<首次查询hash>`，按 next_offset 翻页至 null。各页都重验完整产物 SHA、列契约、源数据库/WAL内容及 generation、生产代码 hash。不能从产物元数据自行重建初始信任；同进程引擎仅保留最近256个初始绑定，重启或淘汰后客户端必须提供首次绑定。

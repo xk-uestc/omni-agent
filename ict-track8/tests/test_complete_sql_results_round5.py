@@ -343,7 +343,10 @@ def test_http_partial_budget_failure_is_explicit_and_has_no_complete_artifact(da
 
 
 @pytest.mark.parametrize('question', ['按金额排名，返回前2行（保留并列）',
-    'return only 2 rows with ties', '排名前3名含并列，最多3行'])
+    'return only 2 rows with ties', '排名前3名含并列，最多3行',
+    'return only 2 rows including all ties', '按金额排名，返回前2行（包括所有并列）',
+    'list 2 rows while retaining order, including all the equal-score ties',
+    'return 2 rows and preserve all tied rows', '返回前2行，并保留全部的同分项'])
 def test_rank_ties_and_explicit_row_cap_conflict_fails_closed(question):
     plan = base_plan(top_n=2)
     with pytest.raises(SqlSafetyError, match='conflicts_with_ties'):
@@ -372,10 +375,23 @@ def test_preview_language_changes_actual_preview_only_not_complete_sql(database,
 
 
 @pytest.mark.parametrize('question', ['return ten rows', 'show at most twenty five records',
-                                     'display exactly a dozen rows', '仅展示一千行预览'])
+    'display exactly a dozen rows', '仅展示一千行预览', 'list ten rows',
+    'fetch no more than a dozen records', 'get exactly ten rows',
+    'retrieve ten rows', 'output ten rows', 'emit ten records',
+    'list ' + 'the next requested ' * 5 + 'ten rows'])
 def test_unknown_explicit_row_counts_never_silently_remove_a_limit(question):
     with pytest.raises(SqlSafetyError, match='ambiguous_or_unsupported'):
         configure_complete_scope(base_plan(), question)
+
+
+@pytest.mark.parametrize('verb', ['list', 'fetch', 'get', 'retrieve', 'output', 'emit'])
+def test_supported_row_request_verbs_preserve_limits_and_all_rows(verb):
+    limited = base_plan()
+    configure_complete_scope(limited, f'{verb} only 2 rows')
+    assert limited.semantic_row_limit == 2
+    all_rows = base_plan()
+    configure_complete_scope(all_rows, f'{verb} all rows')
+    assert all_rows.semantic_row_limit is None
 
 
 def _replace_data_and_recompute_every_public_hash(directory, receipt):
