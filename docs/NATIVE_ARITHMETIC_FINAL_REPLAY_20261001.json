@@ -1,0 +1,121 @@
+{
+  "created_at": "2026-10-01T14:56:21.617382+00:00",
+  "mode": "offline_pinned_pdf_arithmetic_replay",
+  "api_calls": 0,
+  "gold_used": false,
+  "semantic_review_replayed": false,
+  "note": "Historical model/source freeze is unchanged. This only validates current deterministic arithmetic against historical selected proof operands.",
+  "current_arithmetic_sha256": "8c401fe28d4021047f2225e3c30910c790d64d5ae1b985304e3e61a9a5f41f99",
+  "reports": [
+    {
+      "path": "docs\\OHR_BENCH_SPAN_TABLE_FINAL_REPLAY_20261001.json",
+      "sha256": "39ed13c9b6e0de9ecc465dbea961925eac46023ee0485c2ca2ec46ed4914e82b",
+      "historical_arithmetic_sha256": "e81ffbc9ae24fb519f10103a0f68a70b747dc866b5e9b287655c0de351b6755c",
+      "successful_native_table_cases": 0
+    },
+    {
+      "path": "docs\\OHR_BENCH_HOLDOUT_REPLAY_20261001.json",
+      "sha256": "b37d46e7e3dcd7e19a9a49d77efd936594b6888b71116f4e047b033bf6a2e23c",
+      "historical_arithmetic_sha256": "e81ffbc9ae24fb519f10103a0f68a70b747dc866b5e9b287655c0de351b6755c",
+      "successful_native_table_cases": 4
+    },
+    {
+      "path": "docs\\OHR_BENCH_HOLDOUT_SECOND_FIRST_20261001.json",
+      "sha256": "6c0001efb19bb9ed39eebc6081cd041fd4c3929a2eabaf4ef864b1bde6d9b76d",
+      "historical_arithmetic_sha256": "e81ffbc9ae24fb519f10103a0f68a70b747dc866b5e9b287655c0de351b6755c",
+      "successful_native_table_cases": 3
+    }
+  ],
+  "cases": [
+    {
+      "report": "OHR_BENCH_HOLDOUT_REPLAY_20261001.json",
+      "ID": "806142cd-555c-4c4c-9291-bcf6fce88410",
+      "operation": "sum",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "$49,000",
+      "replayed_answer": "$49,000",
+      "original_numeric_result": "49000",
+      "replayed_numeric_result": "49000"
+    },
+    {
+      "report": "OHR_BENCH_HOLDOUT_REPLAY_20261001.json",
+      "ID": "8062053e-780d-4d5d-878e-bd7bf12ce821",
+      "operation": "sum",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "$79,000",
+      "replayed_answer": "$79,000",
+      "original_numeric_result": "79000",
+      "replayed_numeric_result": "79000"
+    },
+    {
+      "report": "OHR_BENCH_HOLDOUT_REPLAY_20261001.json",
+      "ID": "a5aade63-635a-4e40-84bb-db574c56b298",
+      "operation": "sum",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "$9,000",
+      "replayed_answer": "$9,000",
+      "original_numeric_result": "9000",
+      "replayed_numeric_result": "9000"
+    },
+    {
+      "report": "OHR_BENCH_HOLDOUT_REPLAY_20261001.json",
+      "ID": "b6d9ee09-0aff-46ac-a177-75dfbbef2c1d",
+      "operation": "ratio",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "17.5",
+      "replayed_answer": "17.5",
+      "original_numeric_result": "17.5",
+      "replayed_numeric_result": "17.5"
+    },
+    {
+      "report": "OHR_BENCH_HOLDOUT_SECOND_FIRST_20261001.json",
+      "ID": "88def0fe-7ab3-4156-9209-30fda786916a",
+      "operation": "lookup",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "$35,000",
+      "replayed_answer": "$35,000",
+      "original_numeric_result": "35000",
+      "replayed_numeric_result": "35000"
+    },
+    {
+      "report": "OHR_BENCH_HOLDOUT_SECOND_FIRST_20261001.json",
+      "ID": "a5ad3471-2feb-4b43-bb5d-774959555f65",
+      "operation": "sum",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "$2,000",
+      "replayed_answer": "$2,000",
+      "original_numeric_result": "2000",
+      "replayed_numeric_result": "2000"
+    },
+    {
+      "report": "OHR_BENCH_HOLDOUT_SECOND_FIRST_20261001.json",
+      "ID": "a5ae9aed-7b03-4f63-bb55-fef00e877cf3",
+      "operation": "sum",
+      "status": "PASS",
+      "original_pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "fact_proof_match": true,
+      "original_answer": "$9,000",
+      "replayed_answer": "$9,000",
+      "original_numeric_result": "9000",
+      "replayed_numeric_result": "9000"
+    }
+  ],
+  "summary": {
+    "successful_native_cases": 7,
+    "passed": 7,
+    "failed": 0,
+    "unverified": 0
+  }
+}

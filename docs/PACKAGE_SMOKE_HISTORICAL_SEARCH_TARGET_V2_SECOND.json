@@ -1,0 +1,55 @@
+{
+  "package": "D:\\ICT8-Backups\\ICT8-program-20261001-search-target-v2.zip",
+  "package_sha256": "8154c0d2bfa1b938aae2bc75b66754194b250353983e6f30e3e95a2e1a289756",
+  "extracted_workspace": "D:\\ICT8-Backups\\package-smoke-8gj8qv6b",
+  "python": "C:\\Users\\lenovo\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "environment_scope": "preinstalled_python_dependencies_not_clean_OS",
+  "model_enabled": false,
+  "api_calls": 0,
+  "checks": {
+    "health": true,
+    "no_model": true,
+    "dense": true,
+    "frontend": true,
+    "exact_sample_ids": true,
+    "exact_sample_metadata": true,
+    "original_hashes": true,
+    "real_sql_29584": true,
+    "ordinary_rag": false,
+    "actual_fusion": false,
+    "pdf_page_provenance": true
+  },
+  "status": "failed_checks",
+  "verification": {
+    "ok": true,
+    "package": "D:\\ICT8-Backups\\ICT8-program-20261001-search-target-v2.zip",
+    "file_count": 476,
+    "errors": []
+  },
+  "base_url": "http://127.0.0.1:52174",
+  "check_errors": {
+    "ordinary_rag": {
+      "error_type": "HTTPError",
+      "code": "HTTP Error 500: Internal Server Error"
+    }
+  },
+  "health": {
+    "ok": true,
+    "service": "ict-track8-nl2sql",
+    "database": "demo_sales.sqlite",
+    "document_source": "independent_corpus",
+    "planner_source": "rules",
+    "retrieval": {
+      "mode": "bm25_dense_rrf",
+      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+      "dense_answer_threshold": 0.6
+    },
+    "generation": {
+      "mode": "attributed_extracts",
+      "model": null
+    },
+    "configuration_warnings": []
+  },
+  "sample_count": 16,
+  "owned_server_stopped": true
+}

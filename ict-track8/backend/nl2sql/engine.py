@@ -198,11 +198,16 @@ class Nl2SqlEngine:
         )
         return self.metric_catalog.apply(plan, expansion) if self.metric_catalog else plan
 
-    def _model_plan(self, question: str, tables, connection, index, cache_namespace=None) -> QueryPlan:
+    def _model_plan(self, question: str, tables, connection, index, cache_namespace=None,
+                    source_required=None) -> QueryPlan:
         try:
             rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
             propose = getattr(self.model_plan_provider, "propose", None)
-            payload = (propose(question, tables, self._verified_model_intent(rule_plan))
+            model_context = self._verified_model_intent(source_required or rule_plan)
+            if source_required is not None:
+                model_context['source'] = 'independent_original_source_scope_in_execution_snapshot'
+                model_context['scope_question_sha256'] = hashlib.sha256(source_required.source_scope_question.encode()).hexdigest()
+            payload = (propose(question, tables, model_context)
                        if callable(propose) else self.model_plan_provider(question, tables))
             plan = self.model_plan_validator.validate(payload, tables, question=question)
             if plan.comparison_mode != "none":
@@ -574,11 +579,8 @@ class Nl2SqlEngine:
         row_cap = int(max_rows or self.max_rows)
         with self._connect() as connection:
             tables, index, revision = self._snapshot_for(connection)
-            if self.model_plan_provider is None:
-                plan = self._rules_plan(question, tables, connection, index, cache_namespace=revision)
-            else:
-                plan = self._model_plan(question, tables, connection, index, cache_namespace=revision)
             source_constraint_audit = None
+            current_required, errors = None, []
             if required_intent is not None:
                 if not isinstance(required_intent, QueryPlan):
                     raise ValueError("源约束必须由服务器规则提取器生成")
@@ -590,10 +592,13 @@ class Nl2SqlEngine:
                 scope_question = getattr(required_intent, "source_scope_question", None)
                 if not isinstance(scope_question, str) or not scope_question.strip() or len(scope_question) > 1000:
                     raise ValueError("源约束缺少服务器保存的原始来源子句")
-                current_required = self._rules_plan(scope_question, tables, connection, index,
-                                                     cache_namespace=revision)
                 subset = getattr(required_intent, "source_metric_subset", None)
                 try:
+                    try:
+                        current_required = self._rules_plan(scope_question, tables, connection, index,
+                                                           cache_namespace=revision)
+                    except (KeyError, StopIteration):
+                        raise SourceConstraintError('source_scope_unverified')
                     if subset is not None:
                         current_required = server_project_required_intent(current_required, subset)
                     dynamic_filters = getattr(required_intent, "source_dynamic_filters", None)
@@ -616,9 +621,21 @@ class Nl2SqlEngine:
                             current_required, dynamic_filters, tables=tables,
                             scope_question=scope_question,
                         )
-                    errors = verify_required_intent(plan, current_required)
+                    if current_required.clarification or current_required.coverage.get('unresolved'):
+                        raise SourceConstraintError('source_scope_unverified')
+                    current_required.source_scope_question = scope_question
                 except SourceConstraintError as exc:
                     errors = [exc.code]
+            if errors:
+                plan = QueryPlan(rewritten_question=question)
+            elif self.model_plan_provider is None:
+                plan = self._rules_plan(question, tables, connection, index, cache_namespace=revision)
+            else:
+                plan = self._model_plan(question, tables, connection, index, cache_namespace=revision,
+                                        source_required=current_required)
+            if required_intent is not None:
+                if not errors:
+                    errors = verify_required_intent(plan, current_required)
                 source_constraint_audit = {
                     "status": "verified" if not errors else "rejected",
                     "error_codes": list(errors),

@@ -168,6 +168,30 @@ def safe_audits(client):
     return [{key: row[key] for key in fields if key in row} for row in client.audit_history]
 
 
+def answer_output_fields(result, gold):
+    """Score the actual program output; alternative renderings stay separate."""
+    fields = {'answer': result['answer'], 'scores': answer_scores(result['answer'], gold)}
+    for key in ('answer_strategy', 'answer_span_result', 'answer_scope', 'computation',
+                'semantic_review', 'semantic_verification', 'calculator_input_eligible', 'chart_binding'):
+        if key in result:
+            fields[key] = result[key]
+    if 'full_fact_answer' in result:
+        fields['full_fact_answer'] = result['full_fact_answer']
+        fields['full_fact_scores'] = answer_scores(result['full_fact_answer'], gold)
+    projection = result.get('answer_projection', {})
+    if projection.get('status') == 'verified':
+        fields['answer_projection'] = projection
+        fields['projection_scores'] = answer_scores(projection['answer_value'], gold)
+    return fields
+
+
+def _separate_answer_summary(rows, total, score_key, scope):
+    return {'count': len(rows), 'total_questions': total,
+            'normalized_exact_matches': sum(row.get(score_key, {}).get('normalized_exact_match', 0) for row in rows),
+            'mean_english_token_f1_all_questions': round(sum(row.get(score_key, {}).get('english_token_f1', 0) for row in rows) / total, 6) if total else None,
+            'metric_scope': scope}
+
+
 def summarise_cases(cases):
     result = {'attempted': len(cases)}
     for mode in ('bm25', 'hybrid'):
@@ -190,13 +214,25 @@ def summarise_cases(cases):
         grounded = [row for row in models if row.get('answer_mode') == 'model_grounded']
         result['model']['grounded_only_count'] = len(grounded)
         result['model']['grounded_only_mean_english_token_f1'] = round(sum(row['scores']['english_token_f1'] for row in grounded) / len(grounded), 6) if grounded else None
-        projected = [row for row in models if row.get('answer_projection', {}).get('status') == 'verified']
+        projected = [row for row in models if row.get('answer_projection', {}).get('status') == 'verified'
+                     and row.get('answer_strategy') not in {'model_reviewed_source_span', 'model_reviewed_span'}
+                     and row.get('answer_mode') != 'native_table_model_reviewed']
         result['typed_projection'] = {
             'verified_count': len(projected), 'total_questions': len(models),
             'normalized_exact_matches': sum(row['projection_scores']['normalized_exact_match'] for row in projected),
             'mean_english_token_f1_all_questions': round(sum(row['projection_scores']['english_token_f1'] for row in projected) / len(models), 6),
             'metric_scope': 'separate_verified_display_field_unprojected_questions_count_zero_not_replacement_for_raw_answer_score',
         }
+        reviewed_span = [row for row in models if row.get('answer_strategy') in {'model_reviewed_source_span', 'model_reviewed_span'}
+                         and row.get('answer_span_result', {}).get('status') == 'model_reviewed' and row.get('status') == 'ok']
+        native_table = [row for row in models if row.get('answer_mode') == 'native_table_model_reviewed' and row.get('status') == 'ok']
+        result['model_reviewed_span'] = _separate_answer_summary(reviewed_span, len(cases), 'scores',
+            'model_reviewed_literal_source_span_not_deterministic_typed_projection_all_questions_denominator')
+        result['native_table_model_reviewed'] = _separate_answer_summary(native_table, len(cases), 'scores',
+            'model_reviewed_native_table_computation_not_formal_entailment_all_questions_denominator')
+        full = [row for row in models if 'full_fact_scores' in row]
+        result['full_fact_answer'] = _separate_answer_summary(full, len(cases), 'full_fact_scores',
+            'retained_full_fact_rendering_diagnostic_not_primary_program_answer_score')
     return result
 
 
@@ -234,7 +270,7 @@ def main():
               'implementation_file_sha256': implementation_snapshot(),
               'gold_used_as_corpus_or_model_input': False, 'official_pages_zero_based_project_pages_one_based': True,
               'model_enabled': args.with_model, 'model_workers': 1, 'documents': [], 'cases': [],
-              'limits': ['Only 7 selected documents are candidate corpus, not 8,500+ full benchmark pages.',
+              'limits': [f"Only {len(manifest['documents'])} selected documents are candidate corpus, not 8,500+ full benchmark pages.",
                          'Document/page hits are proxy diagnostics, not official text-block recall.',
                          'English normalization/F1/LCS reproduce lightweight definitions from pinned official src/metric/common.py; not complete official evaluator protocol.',
                          'Lexical gold substring is not semantic correctness and can match irrelevant numeric occurrences.',
@@ -301,7 +337,7 @@ def main():
                     if citation['metadata'].get('document_id') == doc_id(row['doc_name'])
                     and citation['metadata'].get('page_no') in expected_pages(row))
                 entry['generation'] = {'status': result['status'], 'answer_mode': result['answer_mode'],
-                                       'answer': result['answer'], 'scores': answer_scores(result['answer'], row['answers']),
+                                       **answer_output_fields(result, row['answers']),
                                        'citations': result['citations'], 'generation_attempts': result.get('generation_attempts', []),
                                        'trace': result.get('trace', []),
                                        'scoring_only_model_evidence': {
@@ -309,14 +345,6 @@ def main():
                                            'gold_answer_lexically_present': answer_scores(model_evidence, row['answers'])['normalized_gold_substring'],
                                        },
                                        'wall_ms': round((time.perf_counter() - started) * 1000, 3)}
-                if result.get('answer_mode') == 'visual_chart_native_annotated':
-                    entry['generation']['chart_binding'] = result.get('chart_binding')
-                    entry['generation']['answer_scope'] = result.get('answer_scope')
-                    entry['generation']['calculator_input_eligible'] = result.get('calculator_input_eligible')
-                projection = result.get('answer_projection', {})
-                if projection.get('status') == 'verified':
-                    entry['generation']['answer_projection'] = projection
-                    entry['generation']['projection_scores'] = answer_scores(projection['answer_value'], row['answers'])
             except Exception as exc:
                 entry['generation'] = {'status': 'failed', 'error_type': type(exc).__name__, 'wall_ms': round((time.perf_counter()-started)*1000, 3)}
             entry['generation']['api_audits'] = safe_audits(client)

@@ -87,10 +87,20 @@ function appendAnswer(host,result){
       if(value!=null&&value!==''&&(!Array.isArray(value)||value.length))card.append(element('small',`${label}：${Array.isArray(value)?value.join('；'):typeof value==='object'?JSON.stringify(value):value}`,'muted'));
     }
     card.append(element('p','唯一性限于本次已核验的证据；完整原文和引用保留在下方。','muted'));
-    if(result.answer){const fact=element('details');fact.append(element('summary','完整事实与引用'),element('p',result.answer));card.append(fact);}
+    if(result.full_fact_answer||result.answer){const fact=element('details');fact.append(element('summary','完整事实与引用'),element('p',result.full_fact_answer||result.answer));card.append(fact);}
     host.append(card);
+  }else if(result.answer_span_result?.status==='model_reviewed'&&result.answer){
+    const span=result.answer_span_result,card=element('section',null,'citation');
+    card.append(element('small','原文短答案 · 独立模型复核','muted'),element('p',result.answer));
+    for(const scope of span.answer_scope||[])card.append(element('small',`引用 ${scope.citation_id}：${scope.quote}`,'muted'));
+    card.append(element('p','已核对原文位置并进行第二次模型复核；模型语义判断仍可能出错。','muted'));
+    const facts=element('details');facts.append(element('summary','完整事实、来源和复核记录'),element('p',result.full_fact_answer||''),element('pre',JSON.stringify(span.answer_proof,null,2)));card.append(facts);host.append(card);
   }else if(result.answer){
     host.append(element('p',result.answer));
+    if(result.answer_mode==='native_table_model_reviewed'){
+      host.append(element('p','原生表格行列经独立模型复核；金额由服务器按原文数字精确计算。未声明的币种、倍率保持未知。','muted'));
+      const details=element('details');details.append(element('summary','表格行列、期间和计算步骤'),element('pre',JSON.stringify({scope:result.answer_scope,computation:result.computation,review:result.semantic_review},null,2)));host.append(details);
+    }
     if(result.answer_mode==='visual_chart_native_annotated'){
       const scope=result.answer_scope||{};
       host.append(element('p',`原生图表标签 · 系列：${scope.series||'未声明'} · 年份：${scope.year??'未声明'} · 单位：${scope.unit==='unknown'?'原图未明确声明':scope.unit||'未声明'}`,'muted'));

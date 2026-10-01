@@ -125,6 +125,20 @@
 
 官方 OHR 原 PDF pilot 仍为 EM 0/12；源码 hardening、本地1456项或已曝光44题的40项通过均不能证明多模态未知题达标。词法覆盖选择和原生块续句目前仅有隔离原型，尚未进入生产或官方实测。总体目标保持未完成。
 
-最新已完成完整回归860 passed / 0 failed / 1告警，见 `LOCAL_REGRESSION_REPORT.json`；最新单源路由补丁已通过完整本地回归。API stub不算真实模型效果；开发成绩不能直接换算比赛分数或获奖等级。
+`LOCAL_REGRESSION_REPORT.json` 指向最近一次实际完整回归，上文 860 等数字仅对应历史版本。API stub 不算真实模型效果；开发成绩不能直接换算比赛分数或获奖等级。
 
 `delivery` 为历史材料快照，SOURCE_MANIFEST只对应生成时证据。本轮不更新PPT/Word/PDF，程序包用 `--program-only` 排除。OHR/AdventureWorks大型原始资产在D盘外置，程序包保留manifest、工具、许可与边界；仅有工具不代表用户无需下载即可运行官方数据评测。
+
+## 2026-10-01 原文短答案和无框预算表优化
+
+本轮官方原 12 题回放 **EM 4/12，F1 0.438393**，历史 typed/chart 基线为 **2/12，0.313369**。首批新 10 题从首次 **0/10，0.014286** 到修改后回放 **4/10，0.414286**；第二批新 9 query 首测 **3/9，0.409351**。所有失败保留，原 PDF 和官方行哈希核对，不用 GT 代替实际文档输入。新 query 同文档已曝光，不称新文档盲测。
+
+已接入完整事实保留的原文短答案、独立问题范围复核和原生无框预算表的 lookup/sum/ratio。模型复核标签与确定性投影分开，未知币种和倍率不推断，annotation-domain 结果不得当成已证明物理参数。预算数值由程序计算，不让模型编金额。
+
+真实开发题第十轮 **42/44**，第十一轮 **43/44**；第十一轮 108 次调用均 completed、0 丢失、441912 tokens，源码起止一致。剩余 `sql_to_document` 的实际排名聚合不符合来源约束，仍拒绝，未降低校验放行。开发成绩不是官方未知题成绩。
+
+算术审查另发现 Decimal 指数跨度精度风险，修补后的本地回归和原源事实重放独立记录；不把修补前真实 API 报告说成修补后全量实测。详见 `SPAN_TABLE_OPTIMIZATION_20261001.md`。复杂跨栏、图表计算和长文多跳仍未达标，总体赛题保持未完成。
+
+最终修补后：完整本地回归 **1890 passed / 0 failed / 1 告警**，原 PDF 选中事实和算术重放 **7/7**；原始来源约束提前传给 SQL 模型后，独立真实定向 **2/2**，包括此前连续失败的 `sql_to_document`。5 次 API 全 completed、19924 tokens、源码起止一致。报告分别为 `SPAN_TABLE_SOURCE_CONTEXT_FINAL_REGRESSION_20261001.json`、`NATIVE_ARITHMETIC_FINAL_REPLAY_20261001.json`、`REAL_MODEL_SOURCE_CONTEXT_TARGETED_20261001.json`。未重跑修补后全部44题，不能拼接称44/44。
+
+新程序 ZIP `ICT8-program-20261001-span-table-source-context.zip`：manifest/凭据排除校验通过，独立解压目录 **12/12** 实际 HTTP 检查通过，见 `PACKAGE_SMOKE_SPAN_TABLE_SOURCE_CONTEXT_20261001.json`。包含源码、样本、dense 权重及小型公开资产；大型官方原件外置，沿用现场依赖。无模型启动验收不替代上面的真实 API 评测。

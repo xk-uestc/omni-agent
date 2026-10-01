@@ -36,7 +36,8 @@ def test_store_projects_with_original_full_answer(tmp_path, text, question, valu
     store, _ = make_store(tmp_path, text)
     result = store.answer(question)
     assert result['answer_mode'] == 'model_grounded'
-    assert text in result['answer']
+    assert text in result['full_fact_answer']
+    assert result['answer'] == value
     assert result['answer_projection']['answer_value'] == value
     assert result['answer_projection']['claims'] == result['claims']
     assert result['trace'][-1]['status'] == 'verified'

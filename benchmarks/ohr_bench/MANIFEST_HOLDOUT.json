@@ -1,0 +1,177 @@
+{
+  "dataset": "opendatalab/OHR-Bench",
+  "official_dataset_url": "https://huggingface.co/datasets/opendatalab/OHR-Bench",
+  "hf_revision": "7f833e3eda9a571a9ea545a8f6d476fa1685033d",
+  "official_code_revision": "1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7",
+  "dataset_card_license": "cc-by-4.0",
+  "pdf_usage_statement": "Official README: research purposes only, not commercial use; source PDFs retain original copyright.",
+  "data_root_default": "D:\\ICT8-OfficialDatasets\\ohr-bench",
+  "created_at": "2026-10-01T14:03:11.890908+00:00",
+  "selection_frozen_before_evaluation": true,
+  "selection_rule": "Previously downloaded original PDFs only; exclude original IDs and exact duplicate questions; stable ID order, up to 2 per fixed evidence category; no answers/evidence used for selection.",
+  "selection_limit": "Independent unseen-question resource-biased holdout <=12; same PDFs as pilot, not unseen-document or full official score.",
+  "qa_source_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/qas_v2.json",
+  "qa_sha256": "2446db28741fa9f392067ee7aae7f3b05e0d85c584069a50ddd5b1b5bc783f58",
+  "official_qa_total": 8498,
+  "selected_qa_path": "SELECTED_OFFICIAL_QA_HOLDOUT.json",
+  "selected_qa_sha256": "e320b3db5219686f4ec9a9ad6c8a01f66eb19a090d58a8232ced96eb256868e1",
+  "readme_sha256": "bff078b1ee88c89823b40339b09dd754893122f56cb366ec3afd88c65046a222",
+  "pdf_archive_lfs_sha256": "f9bc65f383172c4ea47940c47dfab01dd36c03a120bc0450d7a962917098c783",
+  "archive_full_sha_verified": false,
+  "archive_range_download_bytes": 307426,
+  "unsupported_selection": {
+    "reading_order": {
+      "requested": 2,
+      "selected": 0
+    }
+  },
+  "cases": [
+    {
+      "ID": "974620bd-acf2-4ead-8b35-59e27c42069a",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3",
+      "evidence_source": "text",
+      "evidence_page_no": 0,
+      "original_row_sha256": "0c31b4a4c5cb74d191e912a8b5a7528d4e3747bd2af2acd1f01259984b2c579f"
+    },
+    {
+      "ID": "9aee4174-0081-4c06-ac3c-b21d026c62a3",
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2",
+      "evidence_source": "text",
+      "evidence_page_no": 0,
+      "original_row_sha256": "8b3e62ab658f97cec9c069448b42f172eeb01fde41c55e86fb0237f5e362b0c4"
+    },
+    {
+      "ID": "806142cd-555c-4c4c-9291-bcf6fce88410",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "table",
+      "evidence_page_no": 0,
+      "original_row_sha256": "83ed67231cb3dadd9432ea9959dfe6816bdf590924b53888af671a0eba078b18"
+    },
+    {
+      "ID": "8062053e-780d-4d5d-878e-bd7bf12ce821",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "table",
+      "evidence_page_no": 2,
+      "original_row_sha256": "85bc0f49e5265ba6ffafe50fd074c22c5c2fe465b78323df83ff7b1698a31188"
+    },
+    {
+      "ID": "a5aade63-635a-4e40-84bb-db574c56b298",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "formula",
+      "evidence_page_no": 0,
+      "original_row_sha256": "af9e1108d3856308e9f767876cc47b09598b7c214b7666281896244689d6ffa9"
+    },
+    {
+      "ID": "a5aca28d-8390-4287-a336-09f0b740155f",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "formula",
+      "evidence_page_no": 0,
+      "original_row_sha256": "be06fa41c06cd25c8399bdd6043b969d006eac6963c08e0d62751e9195d43805"
+    },
+    {
+      "ID": "aadf7ed7-79b2-4ee9-819c-508c9f145117",
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "evidence_source": "chart",
+      "evidence_page_no": 1,
+      "original_row_sha256": "f8a0730afefabdb9f21eb7c7b8271f4a7ac87a7cddf76a3dfa6664c2fbb5f486"
+    },
+    {
+      "ID": "aae0b467-26a0-425f-bb57-20c27a85588e",
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "evidence_source": "chart",
+      "evidence_page_no": 1,
+      "original_row_sha256": "4dd710b1fbcfe8c2d7e553c621ba22bc1bf097762b8e1f9a03957f5965f698e3"
+    },
+    {
+      "ID": "88df0307-0b32-4459-ab46-afee8898a682",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "multi",
+      "evidence_page_no": 0,
+      "original_row_sha256": "0a9d103e696fd3bda9fbb592b8fa6479b670961cbedc62e8ea722ec8910c1eb2"
+    },
+    {
+      "ID": "b6d9ee09-0aff-46ac-a177-75dfbbef2c1d",
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "evidence_source": "multi",
+      "evidence_page_no": 0,
+      "original_row_sha256": "f61d4c74b556a7b0667cfb6a46b93a99b5627ce960bf04a43fbff47d579b89db"
+    }
+  ],
+  "documents": [
+    {
+      "doc_name": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159",
+      "pdf_path": "pdfs/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.pdf",
+      "pdf_bytes": 31023,
+      "pdf_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+      "archive_member": "administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.pdf",
+      "archive_member_crc32": 3644091755,
+      "gt_path": "gt/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.json",
+      "gt_sha256": "e8842e1b35bf45d7ad42d86d5ca71af125e7f7dc553ab1bdbc9df250a46d34aa",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/administration/DUDE_a77d8e23b8ff302d04dd6254e4a67159.json"
+    },
+    {
+      "doc_name": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1",
+      "pdf_path": "pdfs/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.pdf",
+      "pdf_bytes": 53852,
+      "pdf_sha256": "6e5185ff6b6459872ffc2b8eddf394b1d517c5641fb3695f21e9cb510deca4bc",
+      "archive_member": "finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.pdf",
+      "archive_member_crc32": 1838754352,
+      "gt_path": "gt/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.json",
+      "gt_sha256": "2c4d6e4503e9be6130a5e83b46b7f7d05119825323649b39a5fa19aa92956ee8",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/finance/DUDE_6ce088baadf80dedef254f3a10fd1ae1.json"
+    },
+    {
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2",
+      "pdf_path": "pdfs/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.pdf",
+      "pdf_bytes": 28741,
+      "pdf_sha256": "87cf26189a02b186dcc243f31353e1f27512f48d60aa9678bcb96cbc29949f6a",
+      "archive_member": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.pdf",
+      "archive_member_crc32": 2776791606,
+      "gt_path": "gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.json",
+      "gt_sha256": "404bd53c460a311979fff601169aed3da16f3af0d653c26c096f1926dc51a6bb",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_2.json"
+    },
+    {
+      "doc_name": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3",
+      "pdf_path": "pdfs/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.pdf",
+      "pdf_bytes": 28544,
+      "pdf_sha256": "3b8eace7bf8d996268dfebc202873fdd8079edadfda6dcb46c3990ebc5e75918",
+      "archive_member": "news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.pdf",
+      "archive_member_crc32": 3536487057,
+      "gt_path": "gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.json",
+      "gt_sha256": "d3cd6f1774c87872f3bdb7b9d764a1969d484f70eeee9429ee2e32b9e3eaa40c",
+      "gt_url": "https://raw.githubusercontent.com/opendatalab/OHR-Bench/1f421eb428f9f5b8ac0bc8064d6ad1f13fab7af7/data/retrieval_base/gt/news/omnidocbench_newspaper_fe5ed29024932fad071afc53807b16ba_3.json"
+    }
+  ],
+  "parent_manifest_sha256": "7c2c132582bf88ab5982c7afc1990152b62f818a127c49a3e5517369e434bfd0",
+  "parent_case_ids": [
+    "8e685f52-dbfc-4c45-830b-b2c2ba567003",
+    "a09648f9-bd23-4978-8330-95890857ac72",
+    "81439bae-4b23-438e-b867-a07279f3f134",
+    "8e6b81a3-e9ed-459c-a80a-b2000cfcbe46",
+    "a8bc54d0-c77d-40a4-bceb-689d5c82ee74",
+    "a8bec806-be9d-4715-9b7e-e3e9744acc63",
+    "aadf21a7-8955-441c-893f-8c124aa8b5f5",
+    "aadf501a-997e-46dd-bba8-b4d857c80b00",
+    "c195d44c-0a19-4bf1-afdd-a1219ae0c6b6",
+    "c4169984-a4e0-4c71-ba6e-88281796d5fa",
+    "b4930cee-4bf1-40c2-a5f4-5205df948481",
+    "027835b7-dba4-4421-b30a-c73ca96a7846"
+  ],
+  "category_counts": {
+    "text": 2,
+    "table": 2,
+    "formula": 2,
+    "chart": 2,
+    "reading_order": 0,
+    "multi": 2
+  },
+  "category_eligible_counts": {
+    "text": 8,
+    "table": 6,
+    "formula": 9,
+    "chart": 8,
+    "reading_order": 0,
+    "multi": 3
+  }
+}

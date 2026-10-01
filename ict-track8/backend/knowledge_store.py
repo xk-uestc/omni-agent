@@ -401,6 +401,10 @@ class KnowledgeStore:
         chart_result, chart_trace = route_visual_chart_question(self, question, hits, document_id=document_id, page_no=page_no)
         if chart_result is not None:
             return chart_result
+        from .native_table_question import route_native_table_question
+        table_result, table_trace = route_native_table_question(self, question, hits, document_id=document_id, page_no=page_no)
+        if table_result is not None:
+            return table_result
         query_terms = set(_tokenize(question))
         # This local baseline returns attributed quotations, not inferred factual claims.
         selected = [hit for hit in hits if len(query_terms.intersection(hit.matched_terms)) >= min(2, len(query_terms))
@@ -414,6 +418,7 @@ class KnowledgeStore:
                           {'stage': 'evidence_selection', 'selected_count': len(selected), 'generation': 'extractive'}]}
         result['trace'].append(visual_trace)
         result['trace'].append(chart_trace)
+        result['trace'].append(table_trace)
         if self.generator and selected:
             from .responses_client import GenerationError
             generation_citations, omitted = self._generation_citations(result['citations'])
@@ -448,23 +453,64 @@ class KnowledgeStore:
                 self._verify_citation_sources(result['citations'])
                 self._verify_generation_chunks(generation_citations)
             if result['answer_mode'] == 'model_grounded' and result.get('claims'):
+                def unchanged_generation_snapshot(fresh, fresh_omitted):
+                    # Omissions known before generation are legitimate scope
+                    # limits. Only an exactly unchanged selected snapshot and
+                    # omission ledger may authorize the later projection.
+                    return fresh_omitted == omitted and fresh == generation_citations
                 from .typed_answer import bind_answer_slot, replay_answer_proof
                 projection = bind_answer_slot(question, result['claims'], generation_citations)
                 if projection['status'] == 'verified':
                     # Rehydrate from the pinned original and database, rather
                     # than replaying against the model's mutable input object.
                     fresh, fresh_omitted = self._generation_citations(result['citations'])
-                    verified = not fresh_omitted and replay_answer_proof(question, projection, fresh)
+                    verified = (unchanged_generation_snapshot(fresh, fresh_omitted)
+                                and replay_answer_proof(question, projection, fresh))
                     self._verify_citation_sources(result['citations'])
                     self._verify_generation_chunks(fresh)
                     if verified:
                         result['answer_projection'] = projection
+                        result['full_fact_answer'] = result['answer']
+                        result['answer'] = projection['answer_value']
+                        result['answer_strategy'] = 'deterministic_typed_projection'
                     result['trace'].append({'stage': 'typed_answer_projection',
                                             'status': 'verified' if verified else 'proof_replay_failed',
-                                            'original_answer_retained': True})
+                                            'complete_facts_retained': True,
+                                            'full_fact_answer_field': 'full_fact_answer' if verified else 'answer'})
                 else:
                     result['trace'].append({'stage': 'typed_answer_projection', 'status': 'unsupported',
                                             'reason': projection['reason'], 'original_answer_retained': True})
+                    client = self.generator.client
+                    if (getattr(client, 'model', None) == 'gpt-6-luna'
+                            and getattr(client, 'reasoning', None) == 'medium'):
+                        from .grounded_span_answer import GroundedSpanAnswer, replay_literal_proof
+                        span_result = None
+                        try:
+                            span_result = GroundedSpanAnswer(client).answer(question, result['claims'], generation_citations)
+                            if span_result['status'] == 'model_reviewed':
+                                fresh, fresh_omitted = self._generation_citations(result['citations'])
+                                verified = (unchanged_generation_snapshot(fresh, fresh_omitted)
+                                            and replay_literal_proof(question, span_result, fresh))
+                                self._verify_generation_chunks(fresh)
+                                if verified:
+                                    result['full_fact_answer'] = result['answer']
+                                    result['answer'] = span_result['answer_value']
+                                    result['answer_strategy'] = 'model_reviewed_source_span'
+                                    result['answer_span_result'] = span_result
+                                result['trace'].append({'stage': 'grounded_span_answer',
+                                    'status': 'model_reviewed' if verified else 'literal_replay_failed',
+                                    'semantic_verification': 'independent_model_review_not_formal_entailment',
+                                    'model_audits': span_result['model_audits'], 'complete_facts_retained': True,
+                                    'full_fact_answer_field': 'full_fact_answer' if verified else 'answer'})
+                            else:
+                                result['trace'].append({'stage': 'grounded_span_answer', 'status': 'unsupported',
+                                    'reason': span_result['reason'], 'model_audits': span_result['model_audits'],
+                                    'original_answer_retained': True})
+                                if span_result.get('literal_error_code') is not None:
+                                    result['trace'][-1]['literal_error_code'] = span_result['literal_error_code']
+                        finally:
+                            self._verify_citation_sources(result['citations'])
+                            self._verify_generation_chunks(generation_citations)
         return result
 
     def _verify_citation_sources(self, citations):

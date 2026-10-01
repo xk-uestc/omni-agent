@@ -65,6 +65,7 @@ verified_intent.metrics明确提供的missing、unit、currency及指标局部fi
 missing=null表示遵循SQL原生空值语义，不能擅自改成zero；只有明确零填充业务口径才使用missing=zero。
 明确filters必须完整保留真实value和operator，RANGE必须保持[start,end)半开边界，不能换BETWEEN。
 dimensions为空表示未确认分组，不得把日期过滤误当日期分组；保留已确认时间粒度。
+verified_intent的analysis_mode、top_n、order_desc、having、comparison_mode及comparison_period必须完整保留；排名数量是DENSE_RANK名次范围（包含并列），不能遗漏或用返回行数limit替代。
 只引用有依据的槽位，不得从clarification_code中猜测缺失值；口径缺失需保持不确定性。
 """
 
