@@ -1,11 +1,11 @@
 """Responses API 的真实规划适配器；模型只提出计划，不获得 SQL 执行权。"""
 from __future__ import annotations
 
-import json
-import threading
+import time
 from datetime import date
 
-from .model_contract import HttpModelPlanProvider, ModelPlanError, parse_model_json
+from .model_contract import HttpModelPlanProvider, ModelPlanError
+from ..responses_client import StructuredResponses, GenerationError
 
 
 def obj(properties):
@@ -66,51 +66,44 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
         super().__init__(base_url.rstrip("/") + "/responses", token, timeout=timeout, max_retries=max_retries, session=session)
         self.model, self.reasoning_effort = model, reasoning_effort
         self.catalog, self.reference_date = metric_catalog, reference_date or date.today()
-        self._local = threading.local()
+        self.client = StructuredResponses(base_url, token, model=model, reasoning=reasoning_effort,
+                                          timeout=timeout, session=self.session)
 
     @property
     def audit(self):
-        return getattr(self._local, "audit", {})
+        audit = self.client.audit
+        if audit:
+            audit['reasoning_effort'] = self.reasoning_effort
+            audit['response_status'] = audit['status']
+        return audit
+
+    @property
+    def audit_history(self):
+        return self.client.audit_history
+
+    @property
+    def audit_dropped_count(self):
+        return self.client.audit_dropped_count
+
+    def reset_audit(self):
+        self.client.reset_audit()
 
     def __call__(self, question, tables):
-        import requests
-        self._local.audit = {}
-        payload = {"model": self.model, "store": False, "reasoning": {"effort": self.reasoning_effort},
-                   "max_output_tokens": 6000, "instructions": INSTRUCTIONS,
-                   "input": json.dumps({"question": question, "schema": [t.to_dict() for t in tables],
-                                        "reference_date": self.reference_date.isoformat(),
-                                        "metric_catalog": self.catalog.model_context() if self.catalog else None}, ensure_ascii=False),
-                   "text": {"format": {"type": "json_schema", "name": "nl2sql_plan", "strict": True, "schema": PLAN_SCHEMA}}}
-        headers = {"Authorization": f"Bearer {self.token}", "Content-Type": "application/json", "Accept": "application/json"}
+        context = {"question": question, "schema": [t.to_dict() for t in tables],
+                   "reference_date": self.reference_date.isoformat(),
+                   "metric_catalog": self.catalog.model_context() if self.catalog else None}
         for attempt in range(self.max_retries + 1):
             try:
-                response = self.session.post(self.url, json=payload, headers=headers, timeout=self.timeout)
-                response.raise_for_status()
+                parsed = self.client.generate(INSTRUCTIONS, context, PLAN_SCHEMA, name='nl2sql_plan', max_tokens=6000)
                 break
-            except requests.RequestException as exc:
-                status = getattr(getattr(exc, "response", None), "status_code", None)
-                if attempt >= self.max_retries or status is not None and status != 429 and status < 500:
+            except GenerationError as exc:
+                status = exc.status
+                # Retry transport errors and temporary HTTP failures only.
+                # Completed but invalid output and 401 are not retried.
+                retryable = status == 429 or status is not None and status >= 500 or self.client.audit.get('http_status') is None
+                if attempt >= self.max_retries or not retryable:
                     raise ModelPlanError("真实模型规划服务暂不可用") from exc
-        try:
-            data = response.json()
-        except (ValueError, TypeError) as exc:
-            raise ModelPlanError("模型响应 JSON 无效") from exc
-        if not isinstance(data, dict) or data.get("status") != "completed":
-            raise ModelPlanError("模型响应未完成，不执行部分计划")
-        text = []
-        for output in data.get("output", []):
-            if output.get("type") != "message":
-                continue
-            for content in output.get("content", []):
-                if content.get("type") == "refusal":
-                    raise ModelPlanError("模型拒绝生成查询计划")
-                if content.get("type") == "output_text":
-                    text.append(content.get("text", ""))
-        parsed = parse_model_json("".join(text))
+                time.sleep(0.05 * (2**attempt))
         if not isinstance(parsed.get("plan"), dict):
             raise ModelPlanError("模型响应缺少计划对象")
-        usage = data.get("usage") or {}
-        self._local.audit = {"provider": "responses", "model": self.model, "reasoning_effort": self.reasoning_effort,
-                             "input_tokens": usage.get("input_tokens"), "output_tokens": usage.get("output_tokens"),
-                             "response_status": "completed"}
         return parsed["plan"]

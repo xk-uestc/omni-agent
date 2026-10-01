@@ -98,6 +98,18 @@ def main():
                 report['checks']['dense'] = answer['retrieval']['mode']=='bm25_dense_rrf'
                 sql = requests.post(base+'/api/v1/omni/query',json={'question':'2025年华东地区销售额'},timeout=10).json()
                 report['checks']['sql'] = sql['result']['rows'][0]['销售额']==29584
+                threshold_tasks = [
+                    {'id':'search','tool':'search','args':{'query':'紧急工单首次响应时间'}},
+                    {'id':'fact','tool':'search_fact','args':{'evidence':{'ref':'search','path':[]},'scope':'紧急工单','label':'首次响应','unit':'小时'}},
+                    {'id':'standard','tool':'document_cell','args':{'document_id':'service-thresholds','where':{'工单优先级':'紧急','适用版本':'2025'},'column':'首次响应小时'}},
+                    {'id':'compare','tool':'compare','args':{'left':{'ref':'fact','path':[]},'right':{'ref':'standard','path':[]},'operator':'le'}},
+                ]
+                threshold = requests.post(base+'/api/v1/fusion/execute',json={'tasks':threshold_tasks},timeout=60).json()
+                compared = threshold.get('results',{}).get('compare',{})
+                report['checks']['two_source_threshold_comparison'] = (
+                    threshold['status']=='ok' and compared.get('matched') is True and compared.get('operator')=='le'
+                    and compared.get('left',{}).get('value')==compared.get('right',{}).get('value')==2
+                    and compared['left']['source_uri']!=compared['right']['source_uri'])
                 with closing(sqlite3.connect(extracted/'ict-track8/data/demo_sales.sqlite')) as connection:
                     minimum, maximum = connection.execute('SELECT MIN(sales_amount),MAX(sales_amount) FROM sales_orders').fetchone()
                 extremes = []

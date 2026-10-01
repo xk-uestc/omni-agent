@@ -1,0 +1,119 @@
+{
+  "created_at": "2026-10-01T03:04:54.239261+00:00",
+  "scope": "real_api_synthetic_development_cases_not_public_or_blind_accuracy",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "python": "3.12.10",
+  "planned_cases": 44,
+  "case_groups": {
+    "document": 13,
+    "sql": 19,
+    "formula": 3,
+    "forecast": 3,
+    "document_to_sql": 1,
+    "sql_to_document": 1,
+    "threshold": 2,
+    "policy": 1,
+    "clarification": 1
+  },
+  "cases": [],
+  "passed": 0,
+  "total": 0,
+  "status": "authentication_failed",
+  "preflight": [
+    {
+      "provider": "responses",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "operation": "model_preflight",
+      "http_status": 401,
+      "status": "failed",
+      "model_verified": false,
+      "call_index": 1,
+      "latency_ms": 716.777
+    }
+  ],
+  "api_summary": {
+    "calls": 1,
+    "retained_calls": 1,
+    "dropped_calls": 0,
+    "completed_calls": 0,
+    "failed_calls": 1,
+    "tokens": {
+      "input_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 1,
+        "complete": false
+      },
+      "output_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 1,
+        "complete": false
+      },
+      "total_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 1,
+        "complete": false
+      },
+      "cached_input_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 1,
+        "complete": false
+      },
+      "reasoning_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 1,
+        "complete": false
+      }
+    },
+    "api_latency_ms": 716.777,
+    "usd_cost": null,
+    "pricing_status": "third_party_price_not_supplied_no_estimate"
+  },
+  "not_run": [
+    "generated_rag",
+    "qa-01",
+    "qa-02",
+    "qa-03",
+    "qa-04",
+    "qa-05",
+    "qa-06",
+    "qa-07",
+    "qa-08",
+    "qa-09",
+    "qa-10",
+    "qa-11",
+    "sql-华东-2024-销售额",
+    "sql-华东-2024-订单数",
+    "sql-华东-2025-销售额",
+    "sql-华东-2025-订单数",
+    "sql-华南-2024-销售额",
+    "sql-华南-2024-订单数",
+    "sql-华南-2025-销售额",
+    "sql-华南-2025-订单数",
+    "sql-华北-2024-销售额",
+    "sql-华北-2024-订单数",
+    "sql-华北-2025-销售额",
+    "sql-华北-2025-订单数",
+    "formula_sql",
+    "forecast_three_sources",
+    "document_to_sql",
+    "sql_to_document",
+    "multiple_documents",
+    "version_policy",
+    "cross-turn-1",
+    "cross-turn-2",
+    "cross-turn-3",
+    "cross-turn-4",
+    "cross-turn-5",
+    "cross-topic-switch",
+    "cross-explicit-reset",
+    "sql-turn-1",
+    "sql-turn-2",
+    "sql-turn-3",
+    "sql-turn-4",
+    "sql-turn-5",
+    "clarify-missing-metric",
+    "clarify-refill"
+  ]
+}

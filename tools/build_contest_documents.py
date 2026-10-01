@@ -191,7 +191,7 @@ def main():
                  ('预测','PDF公式→SQL基准→Excel增长率','年份与单位'),
                  ('地区问数','Excel地区→SQL过滤','实际单元格与地区'),
                  ('冠军经验','SQL排名→冠军实体→文档检索','实体与引用'),
-                 ('阈值比较','文档检索→Excel阈值→比较','来源与数值')]
+                 ('阈值比较','检索→来源事实→Excel→le比较','原文、数值与单位')]
     qa = f"{hybrid['qa_pass']}/{hybrid['qa_total']}"
     sql = f"{hybrid['sql_pass']}/{hybrid['sql_total']}"
     fusion = f"{hybrid['fusion_pass']}/{hybrid['fusion_total']}"
@@ -214,7 +214,7 @@ def main():
         ('M06', '文档公式与数据结合', 'AST、来源绑定、单位与预测年份守卫'),
         ('M07', '非标准目录', '8份实际PDF首次2/8→8/8；原文件行号'),
         ('M08', '复杂度自适应', 'PageSignal及900字/80重叠复杂切片'),
-        ('M09', '低质OCR恢复', '10种合成扰动，原图8/10→增强10/10'),
+        ('M09', '文档质量综合评估', 'OCR8/10→10/10；繁体/错字待验收'),
     ]
     claims = [
         ('问数开发验收', sql, '规则规划、合成开发题'),
@@ -308,7 +308,7 @@ def main():
              '指定API实际探测：/v1/models、/models和/v1/responses均401。models失败不能直接判断模型不存在；401只说明请求未通过鉴权。当前没有可用的真实生成成绩。',
              '鉴权恢复后依次运行probe_model.py与evaluate_model.py --full，检查返回model、provider、usage及回退标签。禁止用成功的规则SQL替代真实模型能力证明。'),
         page('有界DAG与跨源工具',
-             'dependency_agent.py支持sql、search、document_formula、cell、fact、calculate、policy_select、compare。每一步ID唯一；ref/path形成实际依赖图，上游失败时下游不执行。',
+             'dependency_agent.py支持sql、search、search_fact、document_formula、cell、fact、calculate、policy_select、compare。每一步ID唯一；ref/path形成实际依赖图，上游失败时下游不执行。',
              '计划最大16步；先验证依赖、循环、工具白名单与参数契约。运行trace记录输入证据、结果与状态，前端展示实际调用链，不展示虚构的模型内部思考。',
              '工具输出分离数值、单位、来源与验证状态。数据型参数只能引用SQL单元格、XLSX或已定位文档，不接受literal代替可信来源。',
              '融合五流程已通过明确计划验收；未知自然语言转复杂计划的鲁棒性需gpt-6-luna实测。'),
@@ -375,7 +375,7 @@ def main():
         page('部署、成本与生产前置',
              '当前包含本地95,827,648字节BGE权重与Chinook，在线生成依赖指定API。CPU检索可独立运行；OCR与模型首载占用单独统计。',
              '生产前需要数据权限、租户隔离、审计、配置轮换、限流与故障恢复。现有只读SQL和开发本机绑定解决执行边界，不等同数据库所有表都可以向所有用户开放。',
-             'API成本当前未取得有效usage，后续按每题token、工具调用次数、缓存命中及重试统计。压缩包验收使用已有Python环境，不是无依赖离线安装镜像。'),
+             '真实评测准备44题，SQL内部也接真实规划器；每题汇总路由、生成、SQL及重试，usage缺失保持未知。唯一预检401，题目未执行，不估费用。压缩包不是无依赖离线安装镜像。'),
         page('材料依据与最终提交门槛',
              '全部量化结论对应docs中的原始JSON，delivery/SOURCE_MANIFEST.json保存本轮材料来源SHA。报告和PPT不包含用户名、单位、密钥或真实客户信息。',
              '最终提交门槛：有效gpt-6-luna实测；五类跨源与五轮模型验收；独立保留集；依赖锁；材料页数与匿名检查；完整资产新目录启动；逐文件哈希；官方模板检查。',

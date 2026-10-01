@@ -36,11 +36,12 @@ python tools/run_server.py --port 8030
 
 ```powershell
 python tools/probe_model.py
+python tools/evaluate_model.py --full --preview
 python tools/evaluate_model.py --full
 python tools/run_server.py --with-model --port 8030
 ```
 
-当前真实探测返回 HTTP 401，见 `docs/MODEL_API_PROBE.json`。有效凭据就绪前默认演示使用规则规划和原文摘录，不把回退当作真实模型验收。
+当前真实预检仍返回 HTTP 401，见 `docs/REAL_MODEL_REPORT.json`。`--preview`不读取凭据或联网；`--full`内置单次预检，401/403停止后续题。44题覆盖问数、生成问答、五类跨源、连续五轮及澄清回填，SQL内部也接真实模型。默认演示使用规则和原文摘录，不把回退当作模型通过。
 
 ### 可重现评测与打包
 
@@ -62,7 +63,7 @@ Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产�
 `delivery/requirements-tested.txt`固定当前实测的直接依赖版本；`delivery/ENVIRONMENT.json`另记录全部已安装包、Python及平台。它是实测环境记录，不是跨平台wheel锁或离线安装包。默认OCR为RapidOCR；可选Tesseract未在当前环境安装或验收。
 
 正式材料见`delivery/README.md`。报告区分当前开发验收、模型鉴权失败和待执行实验；决赛材料为准备稿，未套用尚未提供的组委会模板。
-最新完整本地回归468项通过；实际临时副本故障首次4/10、修复后10/10，含原文件证据校验、SQL与会话锁、硬重启五轮及pending澄清恢复，见`docs/FAULT_RECOVERY_UPDATE_20261001.md`。差旅Schema首次6/8→8/8、实际PDF目录首次2/8→8/8的失败证据继续保留。统一澄清、时间顺序与刷新追问见`docs/OUTLINE_CLARIFICATION_UPDATE_20261001.md`。正式材料依据当前JSON重新生成；真实模型401与未知任务仍待验收，不把契约stub当模型成绩。
+最新完整本地回归524项通过；第五类已完成带来源事实与Excel阈值的实际比较，见`docs/MODEL_VALIDATION_UPDATE_20261001.md`。实际故障首次4/10→10/10、差旅Schema首次6/8→8/8、PDF目录首次2/8→8/8，首次失败均保留。正式材料依据当前JSON更新；真实模型401与未知任务仍待验收，不把stub算模型成绩。
 
 ```powershell
 cd ict-track8

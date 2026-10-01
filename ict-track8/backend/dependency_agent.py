@@ -23,7 +23,7 @@ class DependencyPlanError(ValueError):
 
 
 class DependencyAgent:
-    TOOLS = {'sql', 'search', 'document_formula', 'document_cell', 'document_fact', 'calculate', 'policy_select', 'compare'}
+    TOOLS = {'sql', 'search', 'search_fact', 'document_formula', 'document_cell', 'document_fact', 'calculate', 'policy_select', 'compare'}
 
     def __init__(self, sql_engine, knowledge_store):
         self.sql_engine = sql_engine
@@ -134,8 +134,11 @@ class DependencyAgent:
                 raise DependencyPlanError('版本选择必须含文档、适用日期和政策要素')
             return select_policy(self.knowledge_store.document(args['document_id']), as_of=args['as_of'], label=args['label'])
         if tool == 'compare':
-            if set(args) != {'left', 'right'}:
+            if set(args) not in ({'left', 'right'}, {'left', 'right', 'operator'}):
                 raise DependencyPlanError('证据比较必须有两个来源')
+            operator = args.get('operator', 'eq')
+            if operator not in {'eq', 'ne', 'lt', 'le', 'gt', 'ge'}:
+                raise DependencyPlanError('比较运算符未受支持')
             for key in ('left', 'right'):
                 ref = original_args[key]
                 if not isinstance(ref, dict) or ref.get('path') != [] or ref.get('ref') not in results:
@@ -147,8 +150,17 @@ class DependencyAgent:
             values = (left['value'], right['value'])
             if unit_left != unit_right:
                 raise DependencyPlanError('不同单位不能直接比较，请先完成单位换算')
+            if any(isinstance(v, bool) or type(v) in (int, float) and not math.isfinite(v) for v in values):
+                raise DependencyPlanError('比较不能使用布尔值或非有限数值')
+            numeric = all(type(v) in (int, float) and math.isfinite(v) for v in values)
+            if operator not in {'eq', 'ne'} and (not numeric or unit_left == 'unknown'):
+                raise DependencyPlanError('大小比较必须使用单位明确的有限数值事实')
+            matched = {'eq': lambda: values[0] == values[1], 'ne': lambda: values[0] != values[1],
+                       'lt': lambda: values[0] < values[1], 'le': lambda: values[0] <= values[1],
+                       'gt': lambda: values[0] > values[1], 'ge': lambda: values[0] >= values[1]}[operator]()
             return {'status': 'equal' if values[0] == values[1] else 'different', 'left': left, 'right': right,
-                    'unit': unit_left, 'difference': values[0]-values[1] if all(type(v) in (int, float) for v in values) else None}
+                    'unit': unit_left, 'operator': operator, 'matched': matched,
+                    'difference': values[0]-values[1] if numeric else None}
         if tool == 'sql':
             if set(args) != {'question'}:
                 raise DependencyPlanError('SQL 工具只接受自然语言 question')
@@ -163,6 +175,15 @@ class DependencyAgent:
             if not hits:
                 raise DependencyPlanError('没有文档证据')
             return {'hits': [hit.to_dict() for hit in hits]}
+        if tool == 'search_fact':
+            from .evidence_fact import extract_search_fact
+            if set(args) != {'evidence', 'scope', 'label', 'unit'}:
+                raise DependencyPlanError('检索事实定位参数非法')
+            ref = original_args['evidence']
+            if not isinstance(ref, dict) or ref.get('path') != [] or ref.get('ref') not in results:
+                raise DependencyPlanError('事实必须直接引用前步检索证据，不能填入literal')
+            return extract_search_fact(self.knowledge_store, args['evidence'],
+                                       scope=args['scope'], label=args['label'], unit=args['unit'])
         if tool in {'document_formula', 'document_cell', 'document_fact'}:
             document = self.knowledge_store.document(args['document_id'])
             if tool == 'document_formula':

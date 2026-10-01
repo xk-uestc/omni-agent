@@ -56,7 +56,7 @@ def main():
         ('three_source_forecast', [task('definition','document_formula',{'document_id':'forecast-report','label':'目标销售额'}),task('base','sql',{'question':'2025年华东地区销售额'}),task('growth','document_cell',{'document_id':'region-targets','where':{'地区':'华东','年份':2026},'column':'目标增长率'}),task('result','calculate',{'formula':ref('definition'),'parameters':{'基准销售额':ref('base',['rows',0,'销售额']),'目标增长率':ref('growth')}})],29584*1.12),
         ('document_to_sql',[task('region','document_cell',{'document_id':'region-targets','where':{'地区':'华东','年份':2026},'column':'地区'}),task('result','sql',{'question':['2025年',ref('region',['value']),'地区销售额']})],None),
         ('sql_to_document',[task('ranking','sql',{'question':'2025年各地区销售额排名'}),task('result','search',{'query':[ref('ranking',['rows',0,'region']),'冠军经验']})],None),
-        ('multiple_documents',[task('policy','search',{'query':'紧急工单首次响应时间'}),task('standard','document_cell',{'document_id':'service-thresholds','where':{'工单优先级':'紧急','适用版本':'2025'},'column':'首次响应小时'})],None),
+        ('multiple_documents',[task('policy','search',{'query':'紧急工单首次响应时间'}),task('fact','search_fact',{'evidence':ref('policy'),'scope':'紧急工单','label':'首次响应','unit':'小时'}),task('standard','document_cell',{'document_id':'service-thresholds','where':{'工单优先级':'紧急','适用版本':'2025'},'column':'首次响应小时'}),task('result','compare',{'left':ref('fact'),'right':ref('standard'),'operator':'le'})],None),
     ]
     fusion = []
     agent = DependencyAgent(engine, store)
@@ -70,7 +70,8 @@ def main():
         if name == 'sql_to_document':
             passed = passed and any(hit['metadata']['document_id'] == 'champion-method' and '华东' in hit['snippet'] for hit in result['results']['result']['hits'])
         if name == 'multiple_documents':
-            passed = passed and result['results']['standard']['value'] == 2 and any('2小时' in hit['snippet'] for hit in result['results']['policy']['hits'])
+            final = result['results'].get('result', {})
+            passed = passed and final.get('matched') is True and final.get('operator') == 'le' and final['left']['value'] == final['right']['value'] == 2
         fusion.append({'name': name, 'pass': passed, 'result': result})
     report = {'created_at': datetime.now(timezone.utc).isoformat(), 'environment': {'python': platform.python_version(), 'platform': platform.platform()},
               'scope': 'local_synthetic_acceptance_not_public_benchmark', 'planner': 'rules', 'generation': 'attributed_extracts', 'retrieval': store.retrieval_health(),

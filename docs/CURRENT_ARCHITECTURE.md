@@ -20,7 +20,7 @@ SQL规划不能执行模型提供的裸SQL；所有计划进入同一指标、Sc
 | 解析及OCR | chunk_cleaning.py、ocr.py、text_structure.py | 六种格式、真实中文ONNX、区域/bbox、质量重试 |
 | 检索 | dense_retrieval.py、cross_source.py | BGE本地CLS归一化、BM25、RRF与实体编号范围 |
 | 有依据生成 | grounded_generation.py、responses_client.py | 结构化claims+literal quote，数字及引用核对；失败明确摘录回退 |
-| 多跳 | dependency_agent.py | sql/search/document_formula/cell/fact/calculate/policy_select/compare |
+| 多跳 | dependency_agent.py、evidence_fact.py | sql/search/search_fact/document_formula/cell/fact/calculate/policy_select/compare |
 | 单位及政策 | formula_binding.py、unit_algebra.py、policy_evidence.py | AST计算、单位尺度、生效日期、重叠拒绝 |
 | 会话 | session.py | SQLite结构化状态、TTL和容量、重启恢复、主题切换 |
 | 前端 | frontend/index.html、knowledge.html、capabilities.html | SQL/引用/工具链/验收状态实际展示 |
@@ -32,6 +32,9 @@ SQL规划不能执行模型提供的裸SQL；所有计划进入同一指标、Sc
 公式必须引用实际文档定位结果；数值必须引用SQL结果单元格或文档单元格证据，不接受literal冒充来源。
 缺失、歧义、非有限数字、零分母、冲突币种或已知预测年份不符时返回incomplete，前端不将中间结果展示为最终答案。
 原文件完整性错误、存储不可用、工具契约错误分别返回evidence_integrity_failed、storage_unavailable、tool_contract_failed；failed_task、skipped_tasks与实际依赖边保留，后续工具不执行。
+search_fact引用前步search完整结果，重核原文件SHA、chunk、locator和逐字摘录。只提取同一条款内适用对象、要素与显式单位对应的唯一数值；范围、冲突、否定、疑问或下界条款拒绝。这是有界字面事实解析，不是通用语义蕴含模型。
+compare支持eq/ne/lt/le/gt/ge；大小比较要求明确一致单位与有限数值。售后阈值实际执行检索→事实→Excel→le比较，保留两来源与matched结果。
+Responses核对响应声明model与请求型号，缺失/错误型号拒绝，允许同名日期快照。每线程最多64条脱敏审计，超限明示丢弃数，usage缺失保持未知；该核对不证明第三方网关底层模型身份。
 
 ## 解析与检索
 
@@ -67,10 +70,11 @@ API对文件大小、工具数、查询长度、行数、文档解析并发、�
 
 ## 效果与局限
 
-最近本地回归468项通过（2026-10-01）。合成QA11/11、SQL12/12、跨源五流程5/5，公共Chinook开发题12/12，干扰Schema9/9。新差旅Schema首次6/8，聚合词消费修复后8/8；实际PDF目录首次2/8、修复后8/8；均保留首次失败，是自编审计与开发回归，不是盲测。单/多指标趋势按时间升序，显式排名继续按指标排序。
+最近本地回归524项通过（2026-10-01）。合成QA11/11、SQL12/12、跨源五流程5/5，第五类已产出实际比较。公共Chinook开发题12/12，干扰Schema9/9。新差旅Schema首次6/8、修复后8/8；PDF目录首次2/8、修复后8/8；均保留首次失败，是开发回归，不是盲测。单/多指标趋势按时间升序，显式排名按指标排序。
 实际临时副本故障审计首次4/10、修复后10/10，含原文件篡改/缺失、SQL缺库/锁、kill子服务后五轮与pending澄清恢复、会话锁503及解锁后历史保持。500页来源校验后全局语义热P50=523.822ms、P95=618.806ms，首次全局5.390s；不含OCR或外部生成，也不是新进程完整冷启动。
 十种合成OCR扰动原图8/10、增强10/10；这是本地成对对照，不能外推大规模文档准确率。
 指定gpt-6-luna目前真实请求401，因此通用自然语言多源规划、模型语义忠实度、模型吞吐与成本尚不能宣布通过。
+真实评测已准备44题，含两组连续五轮、五类跨源、主题切换/重置及澄清回填；SQL内部也接真实Responses规划器。单次预检401后题目全部未执行，见REAL_MODEL_REPORT.json。
 报告数据均在docs/*REPORT.json；旧模型证据放history，不混入当前模型结论。
 
 ## 复现与后续验收

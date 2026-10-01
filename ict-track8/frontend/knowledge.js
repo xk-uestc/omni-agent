@@ -87,7 +87,7 @@ if(mode==='forecast')return[task('definition','document_formula',{document_id:'f
 if(mode==='policy')return[task('previous','policy_select',{document_id:'policy-history',as_of:'2024-12-31',label:'无理由退货期限'}),task('current','policy_select',{document_id:'policy-history',as_of:'2025-01-01',label:'无理由退货期限'}),task('comparison','compare',{left:ref('previous'),right:ref('current')})];
 if(mode==='doc_sql')return[task('region','document_cell',{document_id:'region-targets',where:{地区:region,年份:2026},column:'地区'}),task('result','sql',{question:[`${year}年`,ref('region',['value']),'地区销售额']})];
 if(mode==='sql_doc')return[task('ranking','sql',{question:`${year}年各地区销售额排名`}),task('result','search',{query:[ref('ranking',['rows',0,'region']),'销售冠军经验']})];
-return[task('policy','search',{query:'紧急工单首次响应时间'}),task('standard','document_cell',{document_id:'service-thresholds',where:{工单优先级:'紧急',适用版本:'2025'},column:'首次响应小时'})];}
+return[task('policy','search',{query:'紧急工单首次响应时间'}),task('fact','search_fact',{evidence:ref('policy'),scope:'紧急工单',label:'首次响应',unit:'小时'}),task('standard','document_cell',{document_id:'service-thresholds',where:{工单优先级:'紧急',适用版本:'2025'},column:'首次响应小时'}),task('result','compare',{left:ref('fact'),right:ref('standard'),operator:'le'})];}
 $('execute').addEventListener('click',async()=>{
   $('execute').disabled=true;$('fusion').replaceChildren(element('p','工具执行中…'));
   try{
@@ -98,7 +98,7 @@ $('execute').addEventListener('click',async()=>{
     if(data.status!=='ok')$('fusion').append(element('p',`计算未完成：${data.error}。中间结果仅供审计。`,'error'));
     const final=data.status==='ok'?Object.values(data.results).at(-1):null;
     if(final?.value!=null)$('fusion').append(element('p',`${final.value}${final.result_unit?' '+final.result_unit:''}`,'value'));
-    if(final?.left&&final?.right)$('fusion').append(element('p',`${final.left.value} → ${final.right.value} · ${final.status==='equal'?'未变化':'已变化'}`,'value'));
+    if(final?.left&&final?.right){const symbols={eq:'=',ne:'≠',lt:'<',le:'≤',gt:'>',ge:'≥'};const message=final.operator==='le'?`文档要求 ${final.left.value} ${final.unit} ≤ 标准 ${final.right.value} ${final.unit} · ${final.matched?'符合':'不符合'}`:`${final.left.value} ${symbols[final.operator]??'↔'} ${final.right.value} · ${final.status==='equal'?'未变化':'已变化'}`;$('fusion').append(element('p',message,'value'));}
     if(final?.rows)$('fusion').append(element('pre',JSON.stringify(final.rows,null,2)));
     if(final?.hits)final.hits.forEach(hit=>{const box=element('article',null,'citation');box.append(element('b',hit.title),element('pre',hit.snippet),originalLink(hit.metadata.document_id,'原文'));$('fusion').append(box);});
     const detail=element('details');detail.append(element('summary','核对计算输入、SQL、来源及依赖关系'),element('pre',JSON.stringify(data,null,2)));$('fusion').append(detail);

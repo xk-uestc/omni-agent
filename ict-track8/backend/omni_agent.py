@@ -26,12 +26,15 @@ fusion 的 tasks_json 是JSON数组，每项只能有 id/tool/args，1至16项�
 sql: {question:自然语言或由字符串与引用组成的数组}，禁止raw SQL。
 SQL工具的question应是简短业务问题，如“2025年华东地区销售额和订单数”，不含输出列命名指令、SQL函数或ISO日期区间说明。
 search: {query:自然语言或字符串与引用数组}。
+search_fact: {evidence:引用search整个结果,scope:适用对象,label:事实要素,unit:显式单位}；
+例如scope="紧急工单",label="首次响应",unit="小时"，返回可溯源value/unit等；缺失或冲突时停止。
 document_formula: {document_id,label}；返回 expression/parameters/source_uri/locator。
 document_cell: {document_id,where:{列名:实际值},column:列名}；返回 value/unit/source_uri/locator。
 document_fact: {document_id,label}；只定位真实文本中label:值，返回value等。
 policy_select: {document_id,as_of:YYYY-MM-DD,label:明确政策要素}；要求文档明确生效日期，返回value等。
 calculate: {formula:引用定位结果,parameters:{变量名:引用}}，禁止手工填literal。
-compare: {left:引用,right:引用}；两个证据的值比较，不直接比较search结果。
+compare: {left:引用,right:引用,operator:可选eq/ne/lt/le/gt/ge}；两个证据的值比较，不直接比较search结果。
+阈值核对须search→search_fact→document_cell→compare；不得只检索两份材料后当成完成比较。
 引用格式：{ref:前步ID,path:[字段名或非负数组下标]}，引用整个结果用path:[]。
 SQL结果含rows、plan、provenance，引用值必须path:["rows",行下标,实际列标签]。
 时间、单位、公式变量必须严格匹配。规划不能把2026预测增长用于2024基准；缺信息要clarify。

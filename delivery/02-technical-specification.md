@@ -83,7 +83,7 @@ tools/model_runtime.py仅读取runtime/model_config.json；模型只允许gpt-6-
 
 ## 有界DAG与跨源工具
 
-dependency_agent.py支持sql、search、document_formula、cell、fact、calculate、policy_select、compare。每一步ID唯一；ref/path形成实际依赖图，上游失败时下游不执行。
+dependency_agent.py支持sql、search、search_fact、document_formula、cell、fact、calculate、policy_select、compare。每一步ID唯一；ref/path形成实际依赖图，上游失败时下游不执行。
 
 计划最大16步；先验证依赖、循环、工具白名单与参数契约。运行trace记录输入证据、结果与状态，前端展示实际调用链，不展示虚构的模型内部思考。
 
@@ -132,7 +132,7 @@ policy_evidence.py按明确生效日期选版本，重叠或缺失阻止答案�
 | 实际故障开发审计 | 4/10 → 10/10 | 临时文件/数据库/HTTP子服务，首次失败保留 |
 | 真实gpt-6-luna | authentication_failed | models及responses探测401，未有模型成绩 |
 
-本地468项回归主要检验实现契约、异常与安全路径；不能把单元测试数量作为准确率分母。开发问数比较结果，问答核对事实与原文，跨源核对数值及来源依赖。差旅新Schema首次6/8修复后8/8，PDF目录首次2/8修复后8/8，首次失败保留。
+本地524项回归主要检验实现契约、异常与安全路径；不能把单元测试数量作为准确率分母。开发问数比较结果，问答核对事实与原文，跨源核对数值及来源依赖。差旅新Schema首次6/8修复后8/8，PDF目录首次2/8修复后8/8，首次失败保留。
 
 评测输入、结果、运行脚本和范围标记一起入包。history中的旧模型结果只属于历史资料，不纳入gpt-6-luna评测。
 
