@@ -191,11 +191,12 @@ def main():
                    or not 0 <= row['preview_rows'] <= 100 for row in artifact['cases'])):
         raise ValueError('complete_artifact_development_verification_failed')
     observed_path = args.sakila_run_directory / 'observed.jsonl'
-    if (digest(observed_path) != manifest['observed_sha256'] or
+    observed_raw = observed_path.read_bytes()
+    if (hashlib.sha256(observed_raw).hexdigest() != manifest['observed_sha256'] or
             sakila['run_manifest_sha256'] != manifest_sha or manifest['reference_opened'] is not False
             or manifest['requested_model'] != 'gpt-6-luna' or manifest['reasoning'] != 'medium'):
         raise ValueError('sakila_provenance_mismatch')
-    observations = [json.loads(line) for line in observed_path.read_text(encoding='utf-8').splitlines()]
+    observations = [json.loads(line) for line in observed_raw.decode('utf-8').splitlines()]
     if (len(observations) != 56 or len({row['case_id'] for row in observations}) != 56
             or {row['case_id'] for row in observations} != {row['case_id'] for row in sakila['cases']}
             or sakila['scorer_sha256'] != digest(ROOT / 'tools/score_cross_schema_round5.py')
@@ -211,6 +212,8 @@ def main():
     previous_core, core_baseline_sha = load(DOCS / core_baseline_name)
     previous_sakila, sakila_baseline_sha = load(DOCS / sakila_baseline_name)
     rag_paired = compare(DOCS / 'OHR_ROUND5_UNSEEN_ACCEPTANCE_20261002.json', DOCS / rag_name)
+    if rag_paired['optimized']['sha256'] != rag_sha:
+        raise ValueError('rag_report_changed_during_sealing')
     report = {'created_at': datetime.now(timezone.utc).isoformat(),
         'scope': 'fixed_source_round6_evidence_not_four_core_goal_completion',
         'source_audit': 'PASS', 'same_final_backend': True, 'backend_files_verified': len(sources[0]),
