@@ -57,7 +57,12 @@ class StructuredResponses:
     def audit_dropped_count(self):
         return max(0, getattr(self._local, 'calls', 0) - len(self.audit_history))
 
+    @property
+    def audit_generation(self):
+        return getattr(self._local, 'audit_generation', 0)
+
     def reset_audit(self):
+        self._local.audit_generation = self.audit_generation + 1
         self._local.audit = {}
         self._local.history = deque(maxlen=64)
         self._local.calls = 0

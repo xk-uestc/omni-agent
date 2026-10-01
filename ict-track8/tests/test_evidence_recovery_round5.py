@@ -1,11 +1,13 @@
 from copy import deepcopy
+import time
 
 import pytest
 
-from backend.evidence_recovery import plan_evidence_recovery, recovery_eligible
+from backend.evidence_recovery import audit_boundary, plan_evidence_recovery, recovery_eligible
 from backend.grounded_generation import GroundedGenerator
 from backend.knowledge_store import KnowledgeStore, SourceRevisionError
-from backend.responses_client import GenerationError
+from backend.evidence_context import MAX_TOTAL_EVIDENCE_CHARS, text_sha256
+from backend.responses_client import GenerationError, StructuredResponses
 
 
 def completed(operation='grounded_answer'):
@@ -141,6 +143,79 @@ def test_successful_answer_or_failed_provider_never_gets_recovery():
     assert not recovery_eligible(result, client)
 
 
+def test_earlier_provider_failure_in_same_answer_blocks_recovery_even_when_latest_completed():
+    client = Client()
+    failed = {**completed('native_table_fact_selection'), 'status': 'failed',
+              'http_status': 503, 'model_verified': False}
+    client.audit_history = [failed, completed(), completed('source_span_selection')]
+    client.audit = client.audit_history[-1]
+    result = {'status': 'insufficient_evidence', 'answer_mode': 'model_grounded',
+              'generation_attempts': [{'validation_status': 'validated', 'provider_audit': completed()}]}
+    assert not recovery_eligible(result, client)
+
+
+def test_previous_answer_failure_does_not_disable_independent_new_answer_recovery():
+    client = Client()
+    client.audit_history = [{**completed(), 'status': 'failed', 'http_status': 503}]
+    boundary = audit_boundary(client)
+    client.audit = completed()
+    client.audit_history.append(client.audit)
+    result = {'status': 'insufficient_evidence', 'answer_mode': 'model_grounded',
+              'generation_attempts': [{'validation_status': 'validated', 'provider_audit': completed()}]}
+    assert recovery_eligible(result, client, answer_audit_start=boundary)
+    assert not recovery_eligible(result, client)
+
+
+def test_missing_current_answer_audits_fail_closed_but_old_answer_eviction_is_allowed():
+    client = Client()
+    client.audit = completed()
+    client.audit_history = [completed()]
+    client.audit_dropped_count = 10
+    result = {'status': 'insufficient_evidence', 'answer_mode': 'model_grounded',
+              'generation_attempts': [{'validation_status': 'validated', 'provider_audit': completed()}]}
+    assert recovery_eligible(result, client, answer_audit_start=(0, 10))
+    assert not recovery_eligible(result, client, answer_audit_start=(0, 9))
+    assert not recovery_eligible(result, client, answer_audit_start=(0, 12))
+    assert not recovery_eligible(result, client, answer_audit_start=None)
+
+
+@pytest.mark.parametrize('prior_calls', [0, 3])
+def test_audit_reset_cannot_hide_this_answers_failure_even_after_counter_catches_up(prior_calls):
+    client = StructuredResponses('http://127.0.0.1', 'synthetic', model='gpt-6-luna')
+    for _ in range(prior_calls):
+        client._record(completed(), time.perf_counter())
+    boundary = audit_boundary(client)
+    client._record({**completed(), 'status': 'failed', 'http_status': 503}, time.perf_counter())
+    client.reset_audit()
+    for _ in range(prior_calls + 1):
+        client._record(completed(), time.perf_counter())
+    result = {'status': 'insufficient_evidence', 'answer_mode': 'model_grounded',
+              'generation_attempts': [{'validation_status': 'validated', 'provider_audit': completed()}]}
+    assert not recovery_eligible(result, client, answer_audit_start=boundary)
+    # Reset between independent requests is valid when the new request takes
+    # its own epoch and count snapshot.
+    new_boundary = audit_boundary(client)
+    client._record(completed(), time.perf_counter())
+    assert recovery_eligible(result, client, answer_audit_start=new_boundary)
+
+
+def test_store_scopes_all_model_calls_including_routing_failure(tmp_path, monkeypatch):
+    client = Client()
+    store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))
+    ingest(store, 'Harbor dispatch includes seasonal warnings.', 'case')
+    answer_hits = store._answer_hits
+    def failed_route(*args, **kwargs):
+        failed = {**completed('native_table_fact_selection'), 'status': 'failed',
+                  'http_status': 503, 'model_verified': False}
+        client.audit = failed
+        client.audit_history.append(failed)
+        return answer_hits(*args, **kwargs)
+    monkeypatch.setattr(store, '_answer_hits', failed_route)
+    result = store.answer('What does harbor dispatch include after written approval?')
+    assert result['status'] == 'insufficient_evidence'
+    assert not any(call['operation'] == 'evidence_recovery_queries' for call in client.calls)
+
+
 def test_source_replaced_during_navigation_cannot_authorize_old_facts(tmp_path, monkeypatch):
     client = Client()
     store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))
@@ -155,3 +230,80 @@ def test_source_replaced_during_navigation_cannot_authorize_old_facts(tmp_path, 
     monkeypatch.setattr(client, 'generate', replace)
     with pytest.raises(SourceRevisionError):
         store.answer('What does harbor dispatch include after written approval?')
+
+
+def test_navigation_sees_original_condition_beyond_retrieval_preview(tmp_path):
+    store = KnowledgeStore(tmp_path)
+    text = ('Harbor dispatch covers routine maintenance. ' + 'Routine operational notes. ' * 20
+            + 'After written approval, the lighthouse dispatch window starts at dawn.')
+    ingest(store, text, 'case')
+    hits = store.search('harbor dispatch', top_k=1)
+    assert 'window starts at dawn' not in hits[0].snippet
+    citations, _ = store._generation_citations([
+        {'citation_id': 1, **hits[0].to_dict()}])
+    # Poisoned convenience metadata must never become the model context.
+    hits[0].metadata['raw_page_text'] = 'FORGED secret approval at midnight'
+    hits[0].metadata['raw_text'] = 'FORGED secret approval at midnight'
+    client = Client()
+    _, audit = plan_evidence_recovery('When does harbor dispatch start?', hits, client,
+                                      source_contexts=citations)
+    fragment = client.calls[0]['context']['retrieved_fragments'][0]
+    assert fragment['fragment_mode'] == 'authoritative_context'
+    assert 'window starts at dawn' in fragment['fragment']
+    assert 'FORGED' not in fragment['fragment']
+    assert audit['navigation_contexts'][0]['sha256'] == text_sha256(fragment['fragment'])
+    assert audit['navigation_total_chars'] <= MAX_TOTAL_EVIDENCE_CHARS
+
+
+def test_store_reconstructs_navigation_context_and_replays_after_call(tmp_path, monkeypatch):
+    client = Client()
+    store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))
+    ingest(store, 'Harbor dispatch includes seasonal warnings.', 'case')
+    calls = []
+    verify = store._verify_generation_chunks
+    def observe(citations):
+        if any(call['operation'] == 'evidence_recovery_queries' for call in client.calls):
+            calls.append('after_navigation')
+        else:
+            calls.append('before_navigation')
+        return verify(citations)
+    monkeypatch.setattr(store, '_verify_generation_chunks', observe)
+    result = store.answer('What does harbor dispatch include after written approval?')
+    assert 'before_navigation' in calls and 'after_navigation' in calls
+    assert result['trace'][-1]['navigation_contexts'][0]['mode'] == 'authoritative_context'
+
+
+@pytest.mark.parametrize('field,value', [('text', 'forged'), ('source_sha256', '0' * 64),
+    ('source_locator', 'other'), ('page_no', 99)])
+def test_mismatched_original_navigation_context_never_calls_provider(tmp_path, field, value):
+    store = KnowledgeStore(tmp_path)
+    ingest(store, 'Harbor dispatch includes seasonal warnings.', 'case')
+    hits = store.search('harbor dispatch', top_k=1)
+    contexts, _ = store._generation_citations([{'citation_id': 1, **hits[0].to_dict()}])
+    contexts[0]['generation_evidence'][field] = value
+    client = Client()
+    with pytest.raises(ValueError, match='context_contract_mismatch'):
+        plan_evidence_recovery('harbor dispatch', hits, client, source_contexts=contexts)
+    assert client.calls == []
+
+
+def test_navigation_combines_original_context_and_previews_under_same_total_budget(tmp_path):
+    store = KnowledgeStore(tmp_path)
+    for index in range(8):
+        ingest(store, 'Harbor dispatch includes seasonal warnings.', f'case-{index}')
+    hits = store.search('harbor dispatch', top_k=8)
+    contexts, _ = store._generation_citations([
+        {'citation_id': i, **hit.to_dict()} for i, hit in enumerate(hits, 1)])
+    # Omitted first preview cannot consume the budget reserved for originals.
+    contexts = contexts[1:]
+    for item in contexts:
+        evidence = item['generation_evidence']
+        evidence['text'] = 'x' * 1700
+        evidence['evidence_sha256'] = text_sha256(evidence['text'])
+    client = Client()
+    _, audit = plan_evidence_recovery('harbor dispatch', hits, client, source_contexts=contexts)
+    assert audit['navigation_total_chars'] <= MAX_TOTAL_EVIDENCE_CHARS
+    assert audit['navigation_contexts'][0]['mode'] == 'excerpt_navigation_only'
+    contexts[0]['generation_evidence']['text'] = 'x' * MAX_TOTAL_EVIDENCE_CHARS
+    with pytest.raises(ValueError, match='context_budget_exceeded'):
+        plan_evidence_recovery('harbor dispatch', hits, Client(), source_contexts=contexts)

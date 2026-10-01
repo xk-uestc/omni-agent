@@ -1,0 +1,112 @@
+{
+  "plan_version": "round5-cross-schema-draft-v1",
+  "prepared_on": "2026-10-02",
+  "status": "draft_no_questions_no_model_calls",
+  "baseline_ready": false,
+  "model_api_calls": 0,
+  "task_backend_edits": false,
+  "task_existing_evaluator_edits": false,
+  "unseen_questions_revealed_to_implementation_agent": false,
+  "existing_development_dataset": {
+    "name": "AdventureWorks three-table official CSV SQLite port",
+    "exposure_status": "exposed_schema_and_six_questions_used_for_development",
+    "source_repository": "https://github.com/microsoft/sql-server-samples",
+    "source_commit": "1346b94fab23bfa7edfdb32afae52282ddc3bfaa",
+    "source_prefix": "samples/databases/adventure-works/oltp-install-script/",
+    "license": "MIT",
+    "dataset_directory": "D:/ICT8-OfficialDatasets/adventureworks",
+    "database_file": "adventureworks-subset.sqlite",
+    "database_sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+    "dataset_manifest_sha256": "0e9f0df781f64b173addef00f71ea71da589e782631203e71036d2f14de716d2",
+    "source_ddl_sha256": "d979f036750f9c7b4fb7be3d58cdbb596a74f864a6325998501b3a96c6ad53f9",
+    "license_sha256": "201f3705979e932c92cd3c6ddbddf4dc3c71dcc5a82089a1e4018227cfe1cf09",
+    "questions_sha256": "bf97202958ef41ee287d1bed9b6776a48630dd458103ae6ca4752fe2b726dbb8",
+    "schema_only_sha256": "5a853d394c62d8fcbaa4184f6bba2d61564815538bd28d3a0ec5cf78c9154f03",
+    "schema_hash_encoding": "UTF-8 JSON, ensure_ascii=False, sort_keys=True, separators=(',',':'); table names sorted; each object contains table,ddl,columns,foreign_keys; SQLite PRAGMA returned row order retained",
+    "tables": [
+      {"table": "Customer", "rows": 19820, "columns": 7, "primary_key_columns": 1, "internal_foreign_keys": 1},
+      {"table": "SalesOrderHeader", "rows": 31465, "columns": 26, "primary_key_columns": 1, "internal_foreign_keys": 2},
+      {"table": "SalesTerritory", "rows": 10, "columns": 10, "primary_key_columns": 1, "internal_foreign_keys": 0}
+    ],
+    "verified_null_profile_examples": {
+      "Customer.PersonID": 701,
+      "Customer.StoreID": 18484,
+      "SalesOrderHeader.ShipDate": 0,
+      "SalesOrderHeader.SalesPersonID": 27659,
+      "SalesOrderHeader.Comment": 31465
+    },
+    "development_reports": [
+      {"file": "docs/ADVENTUREWORKS_SQLITE_PORT_FIRST_RUN_20261001.json", "created_at": "2026-10-01T06:02:32.144339+00:00", "passed": 0, "total": 6, "model_api_calls": 0},
+      {"file": "docs/ADVENTUREWORKS_SQLITE_QUALIFICATION_REPLAY_20261001.json", "created_at": "2026-10-01T06:08:43.241683+00:00", "passed": 0, "total": 6, "model_api_calls": 0},
+      {"file": "docs/ADVENTUREWORKS_SQLITE_PORT_SECOND_RUN_20261001.json", "created_at": "2026-10-01T06:13:38.918416+00:00", "passed": 4, "total": 6, "model_api_calls": 0}
+    ],
+    "historical_case_records": 18,
+    "unique_historical_questions": 6,
+    "implementation_history_evidence": {
+      "git_commit": "172de260e2d08601b71a13ce1dca88719c34899d",
+      "committed_at": "2026-10-01T14:50:59+08:00",
+      "scope": "Frozen authored questions, import/evaluation tools, dedicated audit tests and generic schema field qualification change committed together.",
+      "generic_implementation": "ict-track8/backend/nl2sql/schema.py:275",
+      "dedicated_audit_test": "ict-track8/tests/test_adventureworks_port_audit.py:63",
+      "production_special_case_search": "No AdventureWorks name or selected table/field identifiers found in backend/nl2sql Python files during this audit; ordinary generic business vocabulary remains."
+    },
+    "limitations": [
+      "Authored six-question development audit; not official question score or unseen schema baseline.",
+      "Only selected SQLite port tested; no native SQL Server/PostgreSQL support inferred.",
+      "Nine external foreign keys omitted by existing subset; no composite primary keys selected.",
+      "Two large-group questions require 19119 rows and currently return 100; must remain failed complete results.",
+      "Complete AdventureWorks source DDL was already downloaded before this proposal."
+    ]
+  },
+  "preferred_new_source_candidate": {
+    "name": "Microsoft WideWorldImporters OLTP official public sample",
+    "source_repository": "https://github.com/microsoft/sql-server-samples",
+    "source_directory_candidate": "samples/databases/wide-world-importers",
+    "source_commit": null,
+    "official_release_asset_url": null,
+    "raw_asset_sha256": null,
+    "sqlite_database_sha256": null,
+    "schema_sha256": null,
+    "license_verified": false,
+    "acquired": false,
+    "actual_sqlite_schema_constructed": false,
+    "prior_use_search": "On 2026-10-02, before writing this proposal directory, no match for WideWorldImporters, wide-world-importers or wideworld in docs/benchmarks/tools/backend/tests text search; this is repository evidence, not proof of universal model novelty.",
+    "planned_business_scopes": ["sales", "purchasing", "inventory"],
+    "port_boundary": "Official SQL Server backup/script data exported and audited into SQLite; never claim Microsoft native SQLite or native SQL Server backend support."
+  },
+  "alternative_new_table_scope_candidate": {
+    "name": "AdventureWorks purchasing/production/HR CSV scopes",
+    "source_repository": "https://github.com/microsoft/sql-server-samples",
+    "source_commit": "1346b94fab23bfa7edfdb32afae52282ddc3bfaa",
+    "source_prefix": "samples/databases/adventure-works/oltp-install-script/",
+    "source_ddl_already_available": true,
+    "new_csvs_acquired": false,
+    "actual_sqlite_schema_constructed": false,
+    "exposure_label": "new_actual_table_scope_first_use_candidate_not_unseen_source_ddl",
+    "planned_business_scopes": ["purchasing", "production", "human_resources"],
+    "verified_source_ddl_properties": ["composite primary keys", "multiple explicit date roles", "nullable fields", "cross-business internal foreign keys"],
+    "raw_asset_sha256": null,
+    "sqlite_database_sha256": null,
+    "schema_sha256": null
+  },
+  "planned_denominators": {
+    "independent_queries": 36,
+    "business_scopes": 3,
+    "independent_queries_per_scope": 12,
+    "difficulty_families": 6,
+    "queries_per_difficulty_family": 6,
+    "five_turn_sessions": 4,
+    "turns_per_session": 5,
+    "session_turns": 20,
+    "primary_total_turns": 56,
+    "legacy_development_queries_reported_separately": 6
+  },
+  "readiness_blockers": [
+    "Acquire and pin verified official new source assets and license.",
+    "Construct audited actual SQLite snapshot, preserving PK/composite/FK/NULL/date/type semantics or disclosing limitations.",
+    "Freeze business scopes and all difficulty quotas before system execution.",
+    "Independent author and reviewer must validate real reference SQL and complete expected rows without using the system planner.",
+    "Freeze isolated system-input and scoring-only payload hashes, evaluator hashes and implementation hashes.",
+    "Implement and audit a new standalone runner without editing existing running evaluator sources; no model run authorized by this draft."
+  ]
+}

@@ -416,17 +416,24 @@ class KnowledgeStore:
     def answer(self, question: str, *, top_k=4, document_id=None, page_no=None) -> dict[str, Any]:
         if not question.strip() or len(question) > 1000:
             raise ValueError('问题为空或超出长度上限')
+        from .evidence_recovery import audit_boundary, recovery_eligible, plan_evidence_recovery
+        client = getattr(self.generator, 'client', None)
+        answer_audit_start = audit_boundary(client)
         hits = self.search(question, top_k=top_k, **({'document_id': document_id} if document_id is not None else {}),
                            **({'page_no': page_no} if page_no is not None else {}))
         result = self._answer_hits(question, hits, document_id=document_id, page_no=page_no)
-        from .evidence_recovery import recovery_eligible, plan_evidence_recovery
-        client = getattr(self.generator, 'client', None)
-        if not recovery_eligible(result, client):
+        if not recovery_eligible(result, client, answer_audit_start=answer_audit_start):
             return result
         navigation_sources = [{'metadata': hit.metadata} for hit in hits]
         self._verify_citation_sources(navigation_sources)
         self._verify_citation_sources(result['citations'])
-        queries, audit = plan_evidence_recovery(question, hits, client)
+        navigation_citations, navigation_omitted = self._generation_citations([
+            {'citation_id': index, **hit.to_dict()} for index, hit in enumerate(hits, 1)])
+        self._verify_generation_chunks(navigation_citations)
+        queries, audit = plan_evidence_recovery(question, hits, client,
+                                              source_contexts=navigation_citations)
+        self._verify_generation_chunks(navigation_citations)
+        audit['navigation_omitted'] = navigation_omitted
         self._verify_citation_sources(navigation_sources)
         if not queries:
             result['trace'].append(audit)
