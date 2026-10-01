@@ -55,10 +55,19 @@ RANGE 是半开区间[start,end)，BETWEEN 是闭区间。日期按 reference_da
 结果 limit 最大100；同一事实分配到多个子维度需要业务分摊规则，不能使用 SUM(DISTINCT amount)。
 为每个过滤保留准确 source_text。SQL执行和语义审查由服务器完成。"""
 
+INSTRUCTIONS += """
+verified_intent 是服务端从原始用户问题、真实值索引和业务词典独立提取的显式约束，不是可执行计划。
+你仍须根据问题和Schema独立提出完整plan，且服务器会再次验证字段、安全、语义和这些约束。
+明确metrics的table/column/function/label必须保留；COUNT不能擅自改成COUNT_DISTINCT，不能改业务展示标签。
+明确filters必须完整保留真实value和operator，RANGE必须保持[start,end)半开边界，不能换BETWEEN。
+dimensions为空表示未确认分组，不得把日期过滤误当日期分组；保留已确认时间粒度。
+只引用有依据的槽位，不得从clarification_code中猜测缺失值；口径缺失需保持不确定性。
+"""
+
 
 class ResponsesModelPlanProvider(HttpModelPlanProvider):
     def __init__(self, base_url, token, *, model, reasoning_effort="medium", metric_catalog=None, reference_date=None,
-                 timeout=45.0, max_retries=1, session=None):
+                 timeout=45.0, max_retries=1, session=None, http_headers=None):
         if not model or not isinstance(model, str):
             raise ValueError("必须明确配置模型名称")
         if reasoning_effort not in {"low", "medium", "high", "xhigh"}:
@@ -67,7 +76,7 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
         self.model, self.reasoning_effort = model, reasoning_effort
         self.catalog, self.reference_date = metric_catalog, reference_date or date.today()
         self.client = StructuredResponses(base_url, token, model=model, reasoning=reasoning_effort,
-                                          timeout=timeout, session=self.session)
+                                          timeout=timeout, session=self.session, http_headers=http_headers)
 
     @property
     def audit(self):
@@ -89,9 +98,16 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
         self.client.reset_audit()
 
     def __call__(self, question, tables):
+        return self.propose(question, tables, None)
+
+    def propose(self, question, tables, verified_intent):
+        # Request-local context: concurrent questions must never overwrite a
+        # shared provider's verified intent, catalogue or reference date.
         context = {"question": question, "schema": [t.to_dict() for t in tables],
                    "reference_date": self.reference_date.isoformat(),
                    "metric_catalog": self.catalog.model_context() if self.catalog else None}
+        if verified_intent is not None:
+            context["verified_intent"] = verified_intent
         for attempt in range(self.max_retries + 1):
             try:
                 parsed = self.client.generate(INSTRUCTIONS, context, PLAN_SCHEMA, name='nl2sql_plan', max_tokens=6000)

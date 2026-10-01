@@ -19,6 +19,7 @@ import requests
 from .models import DerivedMetricSpec, FilterSpec, HavingSpec, LinkCandidate, MetricSpec, QueryPlan, TableInfo
 from .metric_compiler import MetricCompiler, MetricPlanError
 from .planner import SingleTablePlanner
+from .date_semantics import is_date_column
 
 
 class ModelPlanError(ValueError):
@@ -310,7 +311,7 @@ class ModelPlanValidator:
         table = ModelPlanValidator._identifier(raw.get("date_table"), "comparison.date_table")
         column = ModelPlanValidator._identifier(raw.get("date_column"), "comparison.date_column")
         date_info = ModelPlanValidator._column(by_name, table, column, "comparison.date_column")
-        if not ModelPlanValidator._date(date_info.name):
+        if not ModelPlanValidator._date(date_info.name, date_info.data_type):
             raise ModelPlanError("comparison.date_column 必须是日期列")
         fields = ("current_start", "current_end", "previous_start", "previous_end")
         period = {"date_table": table, "date_column": column}
@@ -350,7 +351,7 @@ class ModelPlanValidator:
             transform = str(item.get("transform", "raw")).lower()
             if transform not in _TRANSFORMS:
                 raise ModelPlanError(f"不支持的 dimension transform: {transform}")
-            if transform != "raw" and not self._date(info.name):
+            if transform != "raw" and not self._date(info.name, info.data_type):
                 raise ModelPlanError("month/year 变换只能作用于日期列")
             dimensions.append(column)
             tables[column] = table
@@ -385,7 +386,7 @@ class ModelPlanValidator:
                 normalized = value
             else:
                 raise ModelPlanError(f"不支持的过滤运算符: {operator}")
-            if operator in {">", ">=", "<", "<="} | _RANGE_OPERATORS and not (self._numeric(info.data_type) or self._date(info.name)):
+            if operator in {">", ">=", "<", "<="} | _RANGE_OPERATORS and not (self._numeric(info.data_type) or self._date(info.name, info.data_type)):
                 raise ModelPlanError("大小比较只能作用于数值列或日期列")
             result.append(FilterSpec(column, operator, normalized, str(item.get("source_text") or column), str(item.get("explanation") or "模型过滤"), table))
         return result
@@ -454,9 +455,8 @@ class ModelPlanValidator:
         return any(kind in str(data_type).upper() for kind in ("INT", "REAL", "NUM", "DEC", "DOUBLE", "FLOAT"))
 
     @staticmethod
-    def _date(column: str) -> bool:
-        value = column.lower()
-        return value.endswith("date") or value.endswith("time") or value in {"date", "日期", "时间"}
+    def _date(column: str, data_type: str = '') -> bool:
+        return is_date_column(column, data_type)
 
     @staticmethod
     def _limit(value: Any) -> int:

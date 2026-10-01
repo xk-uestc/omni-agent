@@ -1,0 +1,24 @@
+{
+  "scope": "observed_local_browser_interaction_synthetic_examples_not_accuracy_benchmark",
+  "page": "http://127.0.0.1:8030/knowledge.html",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "evidence_source": "rendered_result_and_details_JSON_read_from_page_DOM",
+  "cases": [
+    {"question": "2025年华东地区销售额", "route": "sql", "planner_source": "model_validated", "status": "ok", "context_turns": 0, "value": 29584},
+    {
+      "question": "根据经营预测PDF公式、区域目标Excel中华东2026年的增长率，以及数据库2025年华东销售额，算2026年目标销售额。",
+      "route": "fusion", "planner_source": "model_validated", "status": "ok", "context_turns": 1,
+      "expression": "基准销售额*(1+目标增长率)", "value": 33134.08, "result_unit": "CNY",
+      "parameters": {"基准销售额": 29584, "目标增长率": 0.12},
+      "formula_locator": "page:1:block:8", "excel_locator": "sheet:标准数据:row:2/column:目标增长率",
+      "sql_locator": "rows/0/销售额", "source_validation": "verified",
+      "temporal_validation": {"status": "verified", "base_year": 2025, "target_year": 2026},
+      "completed_tools": ["document_formula", "document_cell", "sql", "calculate"],
+      "edges": [{"from":"base_revenue","to":"target_revenue"},{"from":"formula","to":"target_revenue"},{"from":"growth_rate","to":"target_revenue"}]
+    }
+  ],
+  "passed": 2,
+  "total": 2,
+  "limit": "Representative browser success does not prove general multi-turn stability; targeted forecast follow-up still had a label-reference failure."
+}

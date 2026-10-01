@@ -198,6 +198,25 @@ def main():
                 report['checks']['same_original_restored'] = restored.ok and restored.content==raw
                 report['checks']['frontend'] = requests.get(base+'/knowledge.html',timeout=5).status_code==200
                 report['checks']['ocr'] = requests.get(base+'/api/v1/documents/ocr/health',timeout=15).json()['ready']
+                scan = extracted/'samples/documents/service-scan-upside-down.png'
+                scan_raw = scan.read_bytes()
+                scan_payload = {'image_base64':base64.b64encode(scan_raw).decode(),'language':'chi_sim+eng'}
+                scan_result = requests.post(base+'/api/v1/documents/ocr',json=scan_payload,timeout=90).json()
+                report['checks']['ocr_page_orientation'] = (
+                    scan_result.get('metadata',{}).get('orientation',{}).get('rotation_ccw_degrees')==180
+                    and 'page_orientation_detected' in scan_result.get('warnings',[])
+                    and scan_result['text'].startswith('售后响应通知'))
+                preview = requests.post(base+'/api/v1/documents/image-enhance',json={
+                    'image_base64':scan_payload['image_base64'],'transforms':['rotate_to_upright'],'rotation_degrees':180},timeout=30)
+                preview_result = requests.post(base+'/api/v1/documents/ocr',json={
+                    'image_base64':preview.json()['image_base64'],'language':'chi_sim+eng'},timeout=90).json() if preview.ok else {}
+                report['checks']['ocr_rotation_preview'] = (
+                    preview.ok and preview_result.get('metadata',{}).get('orientation',{}).get('rotation_ccw_degrees')==0
+                    and scan.read_bytes()==scan_raw)
+                orientation_audit = subprocess.run([sys.executable,str(extracted/'tools/evaluate_orientation.py')],
+                    cwd=extracted,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=240)
+                orientation_report = json.loads((extracted/'docs/ORIENTATION_REPORT.json').read_text(encoding='utf-8'))
+                report['checks']['actual_orientation_audit'] = orientation_audit.returncode==0 and orientation_report['passed']==orientation_report['total']==13
                 print(json.dumps(report['checks'],ensure_ascii=False),flush=True)
             finally:
                 process.terminate()

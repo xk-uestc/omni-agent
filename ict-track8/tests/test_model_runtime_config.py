@@ -42,3 +42,18 @@ def test_user_host_and_model_loaded_without_key_in_return(runtime, monkeypatch):
     assert result['model'] == 'gpt-6-luna'
     assert 'test-only' not in json.dumps(result)
     assert module.os.environ['ICT8_OPENAI_BASE_URL'] == 'https://spacetimeai.cc/v1'
+
+
+def test_local_header_loaded_and_stale_header_cleared(runtime, monkeypatch):
+    module, path = runtime
+    monkeypatch.setenv('ICT8_OPENAI_HEADERS', '{}')
+    config = {'model': 'gpt-6-luna', 'base_url': 'https://spacetimeai.cc/v1',
+              'api_key': 'test-only', 'http_headers': {'x-openai-actor-authorization': 'actor-test'}}
+    path.write_text(json.dumps(config), encoding='utf-8')
+    result = module.enable_local_model()
+    assert module.local_model_headers() == config['http_headers']
+    assert 'actor-test' not in json.dumps(result)
+    del config['http_headers']
+    path.write_text(json.dumps(config), encoding='utf-8')
+    module.enable_local_model()
+    assert module.local_model_headers() == {}

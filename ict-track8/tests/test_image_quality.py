@@ -58,3 +58,34 @@ def test_image_enhancer_rejects_unknown_or_invalid_crop():
         ImageEnhancer().enhance(source, transforms=("invented",))
     with pytest.raises(ValueError, match="crop_box"):
         ImageEnhancer().enhance(source, transforms=("crop",), crop_box=(0, 0, 999, 999))
+
+
+@pytest.mark.parametrize('degrees,size,order',[(90,(2,3),[3,0,4,1,5,2]),
+                                             (180,(3,2),[5,4,3,2,1,0]),
+                                             (270,(2,3),[2,5,1,4,0,3])])
+def test_preview_api_accepts_quarter_and_half_turns_and_preserves_actual_pixels(degrees,size,order):
+    import base64
+    from fastapi.testclient import TestClient
+    from backend.app import app
+    colors = [(255,0,0),(0,255,0),(0,0,255),(255,255,0),(0,255,255),(255,0,255)]
+    source = Image.new('RGB',(3,2))
+    source.putdata(colors)
+    buffer = BytesIO()
+    source.save(buffer,format='PNG')
+    response = TestClient(app).post('/api/v1/documents/image-enhance',json={
+        'image_base64':base64.b64encode(buffer.getvalue()).decode(),
+        'transforms':['rotate_to_upright'],'rotation_degrees':degrees})
+    assert response.status_code==200 and response.json()['ocr_executed'] is False
+    with Image.open(BytesIO(base64.b64decode(response.json()['image_base64']))) as result:
+        assert result.size==size and list(result.getdata())==[colors[index] for index in order]
+
+
+@pytest.mark.parametrize('degrees',[-361,361])
+def test_preview_api_rejects_out_of_range_rotation(degrees):
+    import base64
+    from fastapi.testclient import TestClient
+    from backend.app import app
+    response = TestClient(app).post('/api/v1/documents/image-enhance',json={
+        'image_base64':base64.b64encode(image_bytes()).decode(),
+        'transforms':['rotate_to_upright'],'rotation_degrees':degrees})
+    assert response.status_code==422

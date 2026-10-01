@@ -20,6 +20,10 @@ def main():
     if args.with_model:
         from model_runtime import enable_local_model
         enable_local_model(args.model)
+        # Several bounded upstream calls can form one dependent request.
+        # Preserve explicit operator settings; allow their progress stream to
+        # outlive the single-call transport timeout in the model demo.
+        os.environ.setdefault('ICT8_STREAM_TIMEOUT', '300')
     os.environ.setdefault('ICT8_KNOWLEDGE_ROOT', str(ROOT / 'runtime/knowledge'))
     os.environ.setdefault('ICT8_OCR_ENGINE', 'rapidocr')
     os.environ.setdefault('ICT8_SESSION_DB', str(ROOT / 'runtime/sessions.sqlite'))

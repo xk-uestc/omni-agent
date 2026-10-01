@@ -1,0 +1,72 @@
+{
+  "scope": "collaborating_agent_authored_first_domain_audit_not_official_or_strict_blind_test",
+  "domain": "subscription_billing",
+  "assumptions": [
+    "账单金额是账单面额，不自动将待支付或已作废账单排除；问题要求的状态过滤才适用。",
+    "账单日期是统计日期，日期范围左闭右开。",
+    "单个租户可以使用多种方案；按租户或方案分组时通过外键关联账单。",
+    "TopN金额没有并列；排序由金额降序决定。"
+  ],
+  "cases": [
+    {
+      "id": "HF01", "category": "aggregate", "question": "全部订阅账单的账单金额合计是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单", "ordered": false
+    },
+    {
+      "id": "HF02", "category": "average", "question": "已支付的订阅账单，平均账单金额是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"avg"},
+      "gold_sql": "SELECT AVG(账单金额) AS 平均账单金额 FROM 订阅账单 WHERE 账单状态='已支付'", "ordered": false
+    },
+    {
+      "id": "HF03", "category": "year", "question": "2025年订阅账单的账单金额合计是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2026-01-01'", "ordered": false
+    },
+    {
+      "id": "HF04", "category": "half_year", "question": "2025年上半年已支付的订阅账单，账单金额合计是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2025-07-01' AND 账单状态='已支付'", "ordered": false
+    },
+    {
+      "id": "HF05", "category": "quarter", "question": "2025年第二季度已支付的订阅账单，账单金额合计是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-04-01' AND 账单日期<'2025-07-01' AND 账单状态='已支付'", "ordered": false
+    },
+    {
+      "id": "HF06", "category": "group", "question": "按账单状态统计2025年订阅账单的账单金额合计。",
+      "dimensions": [{"table":"订阅账单","column":"账单状态"}], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT 账单状态,SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2026-01-01' GROUP BY 账单状态", "ordered": false
+    },
+    {
+      "id": "HF07", "category": "join_industry", "question": "按租户的行业统计2025年已支付订阅账单的账单金额合计。",
+      "dimensions": [{"table":"租户","column":"行业"}], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT t.行业,SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付' GROUP BY t.行业", "ordered": false
+    },
+    {
+      "id": "HF08", "category": "join_plan", "question": "按方案名称统计2025年已支付订阅账单的账单金额合计。",
+      "dimensions": [{"table":"订阅方案","column":"方案名称"}], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT p.方案名称,SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 订阅方案 p ON b.方案编号=p.方案编号 WHERE b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付' GROUP BY p.方案名称", "ordered": false
+    },
+    {
+      "id": "HF09", "category": "entity_multivalue", "question": "松林科技或云帆科技在2025年的已支付订阅账单，账单金额合计是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE t.租户名称 IN ('松林科技','云帆科技') AND b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付'", "ordered": false
+    },
+    {
+      "id": "HF10", "category": "negative_filter", "question": "2025年订阅账单中，排除已作废的账单后，账单金额合计是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2026-01-01' AND 账单状态<>'已作废'", "ordered": false
+    },
+    {
+      "id": "HF11", "category": "topn_join", "question": "2025年已支付订阅账单的账单金额合计最高的前3个租户名称分别是什么？同时列出金额。",
+      "dimensions": [{"table":"租户","column":"租户名称"}], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT t.租户名称,SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付' GROUP BY t.租户名称 ORDER BY SUM(b.账单金额) DESC LIMIT 3", "ordered": true
+    },
+    {
+      "id": "HF12", "category": "entity_join", "question": "教育培训行业租户在2025年的已支付订阅账单，账单金额合计是多少？",
+      "dimensions": [], "metric": {"table":"订阅账单","column":"账单金额","aggregation":"sum"},
+      "gold_sql": "SELECT SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE t.行业='教育培训' AND b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付'", "ordered": false
+    }
+  ]
+}

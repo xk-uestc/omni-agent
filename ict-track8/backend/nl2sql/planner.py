@@ -26,6 +26,7 @@ from . import lexicon
 from .models import FilterSpec, HavingSpec, QueryPlan, TableInfo
 from .schema import SchemaLinker, normalize_text
 from .value_index import ValueIndex
+from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
 
 _DEFAULT_MAX_JOIN_HOPS = 4
 _JOIN_HINT_RE = re.compile(r"\[join_path:([A-Za-z0-9_.>\-]+)\]")
@@ -39,7 +40,7 @@ _AGGREGATE_CUES = (
 )
 _AVERAGE_THRESHOLD_RE = re.compile(r"(?:高于|超过|大于|低于|小于|不低于|不高于)(?:整体|全部|总体)?(?:的)?平均")
 _TREND_WORDS = ("趋势", "按月", "按年", "按日期", "每天", "每月", "每年", "按季度")
-_GENERIC_TIME_ALIASES = {"日期", "时间", "月份", "月度", "按月", "年份", "按年", "年度", "每月", "每年"}
+_GENERIC_TIME_ALIASES = GENERIC_TIME_ALIASES
 _MAX_LIMIT = 100
 _COVERAGE_STRUCTURAL_WORDS = (
     "订单", "工单", "明细", "金额", "总额", "总金额", "销售额", "收入", "销售",
@@ -235,7 +236,10 @@ class SingleTablePlanner:
             plan.dimension_tables,
             plan.dimension_transforms,
             plan.dimension_labels,
-        ) = self._choose_dimensions(dimension_links, normalized, table, plan.metric_column, links)
+        ) = self._choose_dimensions(dimension_links, normalized, table, plan.metric_column, links, tables=tables)
+        for grain, cues in (('month', ('按月', '每月')), ('year', ('按年', '每年'))):
+            if grain in plan.dimension_transforms.values():
+                consumed.extend(cue for cue in cues if cue in normalized)
 
         explicit_grouping = any(word in normalized for word in ("各", "每个", "按", "分别", "分组"))
         unsupported_grain = re.search(r"(按周|按天|按日|每天|每日|每周|按季度|每季度)", normalized)
@@ -258,7 +262,7 @@ class SingleTablePlanner:
             )
         dimension_aliases: dict[str, set[tuple[str, str]]] = {}
         for link in dimension_links:
-            if self._is_date_column(link.column):
+            if self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column)):
                 continue
             dimension_aliases.setdefault(normalize_text(link.matched_alias), set()).add((link.table, link.column))
         ambiguous_dimensions = {
@@ -309,8 +313,12 @@ class SingleTablePlanner:
         plan.assumptions.extend(time_parse.assumptions)
         if time_parse.error_code:
             return self._clarify(plan, time_parse.error_code, time_parse.error_message or "时间范围无法确定。", 0.3)
-        date_binding = self._bind_date_column(links, tables, plan.metric_table, reachable, plan)
-        self._rebind_date_dimensions(plan, tables, reachable)
+        needs_date_role = (time_parse.single is not None or bool(plan.dimension_transforms)
+                           or any(word in normalized for word in ('同比', '环比')))
+        date_binding = self._bind_date_column(links, tables, plan.metric_table, reachable, plan) if needs_date_role else None
+        self._rebind_date_dimensions(plan, tables, reachable, links)
+        if plan.clarification:
+            return plan
 
         comparison_words = tuple(word for word in ("同比", "环比") if word in normalized)
         consumed.extend(comparison_words)
@@ -355,6 +363,23 @@ class SingleTablePlanner:
                 f"限制时间 [{start}, {end})，时间字段 {date_binding[0]}.{date_binding[1]}", date_binding[0],
             ))
             plan.assumptions.append(f"日期参数格式：{date_params[2]}")
+
+        # SQLite strftime does not interpret Unix epochs without an explicit
+        # conversion. Until calendar grouping supports that conversion, refuse
+        # it instead of collapsing all numeric timestamps into a NULL group.
+        for column, transform in plan.dimension_transforms.items():
+            if transform not in {'month', 'year'}:
+                continue
+            binding = (plan.dimension_tables.get(column, plan.table), column)
+            actual, params = self._date_parameters(binding, tables, connection,
+                '2000-01-01', '2000-01-02', plan,
+                cache=date_storage_cache, cache_namespace=date_storage_cache_namespace)
+            if actual is None:
+                return self._clarify(plan, 'ambiguous_date_storage',
+                    '时间分组字段的日期存储格式无法安全判断，请明确格式。', 0.25)
+            if params[2] != 'iso_text':
+                return self._clarify(plan, 'unsupported_time_storage',
+                    '当前月/年分组仅支持ISO文本日期，数值时间戳的日历分组尚未实现。', 0.3)
 
         # ---- 实体值
         linked_columns = {(link.table, link.column) for link in links}
@@ -468,6 +493,7 @@ class SingleTablePlanner:
             )
 
         # ---- 覆盖率守卫
+        consumed.extend(self._selected_schema_subjects(clean_question, plan, tables))
         unresolved = self._coverage_guard(normalized, consumed)
         plan.coverage = {
             "consumed": sorted({item for item in consumed if item}),
@@ -490,6 +516,39 @@ class SingleTablePlanner:
         return plan
 
     # ================================================================ helpers: planning
+    @staticmethod
+    def _schema_column_type(tables, table_name, column_name):
+        return next((column.data_type for table in tables if table.name == table_name
+                     for column in table.columns if column.name == column_name), '')
+
+    @staticmethod
+    def _selected_schema_subjects(question, plan, tables):
+        """Consume only native names backed by the already chosen query graph.
+
+        Column-name substrings are not separate subject mentions. English names
+        require identifier boundaries in the original question (before spaces
+        are removed by coverage normalization).
+        """
+        normalized = normalize_text(question)
+        selected = {plan.table, plan.metric_table, *plan.join_tables}
+        subjects = []
+        for table in tables:
+            native = normalize_text(table.name)
+            if table.name not in selected or len(native) < 2:
+                continue
+            if re.fullmatch(r'[a-z0-9_]+', native) and not re.search(
+                    r'(?<![A-Za-z0-9_])' + re.escape(table.name) + r'(?![A-Za-z0-9_])', question, re.IGNORECASE):
+                continue
+            column_spans = [match.span() for candidate in tables for column in candidate.columns
+                            if len(normalize_text(column.name)) > len(native)
+                            for match in re.finditer(re.escape(normalize_text(column.name)), normalized)]
+            positions = list(re.finditer(re.escape(native), normalized))
+            if any(not any(start <= match.start() and match.end() <= end for start, end in column_spans)
+                   and not lexicon.NEGATION_BEFORE.search(normalized[max(0, match.start()-8):match.start()])
+                   for match in positions):
+                subjects.append(native)
+        return subjects
+
     @staticmethod
     def _clarify(plan: QueryPlan, code: str, message: str, confidence: float, options: list[dict[str, str]] | None = None) -> QueryPlan:
         plan.clarification = message
@@ -530,7 +589,7 @@ class SingleTablePlanner:
         options: list[dict[str, str]] = []
         seen: set[str] = set()
         for rule in self.linker.rules_for(tables):
-            if rule.role == "dimension" and rule.table in names and rule.column not in seen and rule.aliases and not self._is_date_column(rule.column):
+            if rule.role == "dimension" and rule.table in names and rule.column not in seen and rule.aliases and not self._is_date_column(rule.column, self._schema_column_type(tables, rule.table, rule.column)):
                 seen.add(rule.column)
                 options.append({"value": rule.column, "label": f"{prefix}{rule.aliases[0]}{suffix}"})
         return options[:6]
@@ -647,17 +706,26 @@ class SingleTablePlanner:
 
     def _bind_date_column(self, links, tables, metric_table, reachable, plan: QueryPlan) -> tuple[str, str] | None:
         by_name = {table.name: table for table in tables}
-        explicit = [link for link in links if link.role == "dimension" and self._is_date_column(link.column)]
-        for link in explicit:
-            if link.table in reachable or normalize_text(link.matched_alias) not in _GENERIC_TIME_ALIASES:
-                return link.table, link.column
+        explicit = [link for link in links if link.role == "dimension"
+                    and self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column))]
+        specific = {(link.table, link.column) for link in explicit
+                    if normalize_text(link.matched_alias) not in _GENERIC_TIME_ALIASES}
+        if len(specific) == 1:
+            return next(iter(specific))
+        if len(specific) > 1:
+            self._ambiguous_date_role(plan, sorted(specific))
+            return None
         candidates = sorted(
             (distance, name, column.name)
             for name, distance in reachable.items()
             for column in by_name[name].columns
-            if self._is_date_column(column.name)
+            if self._is_date_column(column.name, column.data_type)
         )
         if not candidates:
+            return None
+        nearest = [(name, column) for distance, name, column in candidates if distance == candidates[0][0]]
+        if len(nearest) > 1:
+            self._ambiguous_date_role(plan, nearest)
             return None
         _, name, column = candidates[0]
         if explicit:
@@ -665,6 +733,11 @@ class SingleTablePlanner:
         elif candidates[0][0] > 0:
             plan.assumptions.append(f"时间条件使用与指标多对一关联的日期字段 {name}.{column}")
         return name, column
+
+    def _ambiguous_date_role(self, plan, roles):
+        return self._clarify(plan, 'ambiguous_date_column',
+            '存在多个同样可用的日期字段，请明确按哪个时间口径统计。', 0.3,
+            [{'value': f'{table}.{column}', 'label': f'{table}.{column}'} for table, column in roles])
 
     @staticmethod
     def _date_parameters(binding, tables, connection, start: str, end: str, plan: QueryPlan, *, cache=None, cache_namespace=None):
@@ -796,19 +869,29 @@ class SingleTablePlanner:
             date_storage_cache_namespace=date_storage_cache_namespace,
         )
 
-    def _rebind_date_dimensions(self, plan: QueryPlan, tables, reachable) -> None:
+    def _rebind_date_dimensions(self, plan: QueryPlan, tables, reachable, links=()) -> None:
         by_name = {table.name: table for table in tables}
         for column in list(plan.dimensions):
             source_table = plan.dimension_tables.get(column, plan.table)
-            if not self._is_date_column(column) or source_table in reachable:
+            if not self._is_date_column(column, self._schema_column_type(tables, source_table, column)) or source_table in reachable:
+                continue
+            if any(link.table == source_table and link.column == column
+                   and normalize_text(link.matched_alias) not in _GENERIC_TIME_ALIASES for link in links):
+                # A named role is business intent, even outside the metric's
+                # many-to-one neighborhood. Join safety must validate that role;
+                # replacing it with a nearer date would change the question.
                 continue
             candidates = sorted(
                 (distance, name, info.name)
                 for name, distance in reachable.items()
                 for info in by_name[name].columns
-                if self._is_date_column(info.name)
+                if self._is_date_column(info.name, info.data_type)
             )
             if not candidates:
+                continue
+            nearest = [(name, name_column) for distance, name, name_column in candidates if distance == candidates[0][0]]
+            if len(nearest) > 1:
+                self._ambiguous_date_role(plan, nearest)
                 continue
             _, name, new_column = candidates[0]
             index = plan.dimensions.index(column)
@@ -1085,7 +1168,8 @@ class SingleTablePlanner:
             return table.name, "order_id", "COUNT", "订单数"
         return None
 
-    def _choose_dimensions(self, links: list, question: str, table: TableInfo, metric_column: str, all_links: list | None = None):
+    def _choose_dimensions(self, links: list, question: str, table: TableInfo, metric_column: str, all_links: list | None = None, *, tables=None):
+        tables = tuple(tables) if tables is not None else (table,)
         seen: set[str] = set()
         dimensions: list[str] = []
         dimension_tables: dict[str, str] = {}
@@ -1100,7 +1184,7 @@ class SingleTablePlanner:
                 for candidate in (all_links or ())
             ):
                 continue
-            is_date = self._is_date_column(link.column)
+            is_date = self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column))
             if is_date and not any(word in question for word in _TREND_WORDS):
                 continue
             if explicit or is_date:
@@ -1124,14 +1208,14 @@ class SingleTablePlanner:
         by_name = {table.name: table for table in tables}
         seen: set[tuple[str, str]] = set()
         for link in links:
-            if link.role != "dimension" or SingleTablePlanner._is_date_column(link.column):
+            if link.role != "dimension":
                 continue
             target_table = by_name.get(link.table)
             if target_table is None or (link.table, link.column) in seen:
                 continue
             seen.add((link.table, link.column))
             column = next((item for item in target_table.columns if item.name == link.column), None)
-            if column is None or column.data_type.upper() not in {"TEXT", "CHAR", "VARCHAR", "DATE", "DATETIME"}:
+            if column is None or SingleTablePlanner._is_date_column(column.name, column.data_type) or column.data_type.upper() not in {"TEXT", "CHAR", "VARCHAR", "DATE", "DATETIME"}:
                 continue
             values = connection.execute(
                 f"SELECT DISTINCT {_quote(column.name)} FROM {_quote(target_table.name)} WHERE {_quote(column.name)} IS NOT NULL LIMIT 5001"
@@ -1143,9 +1227,8 @@ class SingleTablePlanner:
         return result
 
     @staticmethod
-    def _is_date_column(column: str) -> bool:
-        normalized = normalize_text(column)
-        return normalized in {"date", "日期", "时间", "orderdate", "createddate", "updateddate"} or normalized.endswith("date") or normalized.endswith("time")
+    def _is_date_column(column: str, data_type: str = '') -> bool:
+        return is_date_column(column, data_type)
 
     # ================================================================ JOIN graph
     def _adjacency(self, by_name: dict[str, TableInfo]) -> dict[str, list[tuple[str, str, str]]]:

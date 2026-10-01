@@ -1,0 +1,8 @@
+# Optional OCR adapter only; not part of the tested default RapidOCR runtime.
+# Install separately: python -m pip install -r ict-track8/requirements-tesseract.txt
+# Also requires a separately installed tesseract executable on PATH and language
+# data matching the OCR request's language field (for example chi_sim and eng).
+# pip does not install
+# the executable or language data. Set ICT8_OCR_ENGINE=tesseract to opt in.
+# Neither this Python adapter nor the executable was tested in this environment.
+pytesseract>=0.3.10

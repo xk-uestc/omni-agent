@@ -13,6 +13,7 @@ from typing import Iterable
 from .t2s import to_simplified
 from .models import ColumnInfo, ForeignKeyInfo, LinkCandidate, TableInfo
 from .schema_profile import infer_rules
+from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
 
 
 _TOKEN_RE = re.compile(r"[a-zA-Z0-9_]+|[\u3400-\u9fff]")
@@ -240,7 +241,7 @@ class SchemaLinker:
                 if not column_name or column_name not in normalized:
                     continue
                 data_type = column.data_type.upper()
-                role = "metric" if any(kind in data_type for kind in ("INT", "REAL", "NUM", "DEC", "DOUBLE", "FLOAT")) else "dimension"
+                role = "metric" if not is_date_column(column.name, data_type) and any(kind in data_type for kind in ("INT", "REAL", "NUM", "DEC", "DOUBLE", "FLOAT")) else "dimension"
                 links.append(
                     LinkCandidate(
                         source_text=column.name,
@@ -253,9 +254,13 @@ class SchemaLinker:
                 )
         if any(word in normalized for word in ('按月', '按年', '每月', '每年')):
             metric_tables = {link.table for link in links if link.role == 'metric'}
-            if len(metric_tables) == 1:
+            column_types = {(table.name, column.name): column.data_type for table in tables for column in table.columns}
+            explicit_date_role = any(link.role == 'dimension'
+                and is_date_column(link.column, column_types.get((link.table, link.column), ''))
+                and normalize_text(link.matched_alias) not in GENERIC_TIME_ALIASES for link in links)
+            if len(metric_tables) == 1 and not explicit_date_role:
                 table = next(table for table in tables if table.name in metric_tables)
-                dates = [column for column in table.columns if normalize_text(column.name).endswith(('date', 'time'))]
+                dates = [column for column in table.columns if is_date_column(column.name, column.data_type)]
                 if len(dates) == 1 and not any(link.table == table.name and link.column == dates[0].name for link in links):
                     cue = next(word for word in ('按月', '按年', '每月', '每年') if word in normalized)
                     links.append(LinkCandidate(cue, table.name, dates[0].name, 'dimension', 0.8, cue))

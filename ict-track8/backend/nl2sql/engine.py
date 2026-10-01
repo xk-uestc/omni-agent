@@ -200,7 +200,10 @@ class Nl2SqlEngine:
 
     def _model_plan(self, question: str, tables, connection, index, cache_namespace=None) -> QueryPlan:
         try:
-            payload = self.model_plan_provider(question, tables)
+            rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
+            propose = getattr(self.model_plan_provider, "propose", None)
+            payload = (propose(question, tables, self._verified_model_intent(rule_plan))
+                       if callable(propose) else self.model_plan_provider(question, tables))
             plan = self.model_plan_validator.validate(payload, tables, question=question)
             if plan.comparison_mode != "none":
                 normalized_period, period_format = self.planner.normalize_comparison_period(
@@ -212,7 +215,9 @@ class Nl2SqlEngine:
                     raise ModelPlanError("模型计划的比较日期字段存储格式无法安全判断")
                 plan.comparison_period = normalized_period
                 plan.assumptions.append(f"日期参数格式：{period_format}")
-            self._check_model_grounding(plan, question, tables, index, connection, cache_namespace=cache_namespace)
+            self._check_model_grounding(plan, question, tables, index, connection,
+                                        cache_namespace=cache_namespace, rule_plan=rule_plan)
+            label_changes = self._normalize_model_labels(plan, rule_plan)
             plan.planner_audit = {
                 "candidate_source": "external_model",
                 "final_source": "model_validated",
@@ -221,6 +226,8 @@ class Nl2SqlEngine:
             }
             if getattr(self.model_plan_provider, "audit", None):
                 plan.planner_audit["provider"] = dict(self.model_plan_provider.audit)
+            if label_changes:
+                plan.planner_audit["label_normalizations"] = label_changes
             return plan
         except Exception as exc:  # 任意 provider/校验异常都只影响"提议"，不影响可用性
             if not self.model_fallback:
@@ -239,6 +246,56 @@ class Nl2SqlEngine:
             }
             plan.assumptions.append(f"模型计划不可用或未通过校验（{rejection_reason}），已回退规则规划")
             return plan
+
+    @staticmethod
+    def _verified_model_intent(plan: QueryPlan) -> dict[str, Any]:
+        """Expose grounded slots, never a generated SQL or executable rule plan."""
+        metrics = [asdict(metric) for metric in plan.metrics]
+        if not metrics and plan.metric_column and plan.metric_function:
+            metrics = [{"table": plan.metric_table or plan.table, "column": plan.metric_column,
+                        "function": plan.metric_function, "label": plan.metric_label}]
+        return {"source": "independent_explicit_slot_extraction", "metrics": metrics,
+                "filters": [item.to_dict() for item in plan.filters],
+                "dimensions": [{"table": plan.dimension_tables.get(column, plan.table),
+                    "column": column, "transform": plan.dimension_transforms.get(column, "raw"),
+                    "label": plan.dimension_labels.get(column, column)} for column in plan.dimensions],
+                "analysis_mode": plan.analysis_mode, "top_n": plan.top_n,
+                "order_desc": plan.order_desc, "having": asdict(plan.having) if plan.having else None,
+                "comparison_mode": plan.comparison_mode, "comparison_period": dict(plan.comparison_period),
+                "clarification_code": plan.clarification_code,
+                "unresolved": list(plan.coverage.get("unresolved", []))}
+
+    @staticmethod
+    def _normalize_model_labels(plan: QueryPlan, rule_plan: QueryPlan) -> list[dict[str, Any]]:
+        """Canonicalize presentation only after independent semantic validation.
+
+        Matching physical source and aggregation prevents a display alias from
+        disguising a different metric. Ambiguous business labels remain intact.
+        """
+        candidates: dict[tuple, set[str]] = {}
+        for metric in rule_plan.metrics:
+            candidates.setdefault((metric.table, metric.column, metric.function), set()).add(metric.label)
+        if not rule_plan.metrics and rule_plan.metric_label:
+            candidates.setdefault((rule_plan.metric_table or rule_plan.table,
+                                   rule_plan.metric_column, rule_plan.metric_function), set()).add(rule_plan.metric_label)
+        changes = []
+        for metric in plan.metrics:
+            labels = candidates.get((metric.table, metric.column, metric.function), set())
+            if len(labels) == 1:
+                label = next(iter(labels))
+                if metric.label != label:
+                    changes.append({"metric_id": metric.id, "from": metric.label, "to": label,
+                                    "reason": "verified_business_metric_label"})
+                    metric.label = label
+        labels = candidates.get((plan.metric_table or plan.table, plan.metric_column, plan.metric_function), set())
+        if len(labels) == 1:
+            label = next(iter(labels))
+            if plan.metric_label != label:
+                if not plan.metrics:
+                    changes.append({"metric_id": None, "from": plan.metric_label, "to": label,
+                                    "reason": "verified_business_metric_label"})
+                plan.metric_label = label
+        return changes
 
     @staticmethod
     def _safe_model_rejection_reason(exc: Exception) -> str:
@@ -280,7 +337,7 @@ class Nl2SqlEngine:
                 return code
         return "model_contract_or_grounding_rejected"
 
-    def _check_model_grounding(self, plan: QueryPlan, question: str, tables, index: ValueIndex, connection=None, *, cache_namespace=None) -> None:
+    def _check_model_grounding(self, plan: QueryPlan, question: str, tables, index: ValueIndex, connection=None, *, cache_namespace=None, rule_plan=None) -> None:
         """模型计划的最低可信条件：置信度、来源依据和显式槽位完整性。"""
 
         if plan.confidence < self.model_min_confidence:
@@ -312,7 +369,8 @@ class Nl2SqlEngine:
         # 通过“高置信度”静默丢掉用户明确写出的时间、取值或分组条件。
         # 即使规则规划器最终需要澄清，也要保留它已经安全识别出的槽位；
         # 否则模型可以用高置信度计划绕过“未知维度/未知值/不支持粒度”等门。
-        rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
+        if rule_plan is None:
+            rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
         if rule_plan.metrics:
             expected = {(m.table, m.column, m.function) for m in rule_plan.metrics}
             actual = {(m.table, m.column, m.function) for m in plan.metrics}

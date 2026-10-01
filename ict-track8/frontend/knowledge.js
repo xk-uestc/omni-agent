@@ -64,6 +64,8 @@ function element(tag,text,className){const e=document.createElement(tag);if(text
 async function request(path,payload){const r=await fetch(base+path,{method:payload?'POST':'GET',headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined});const data=await r.json();if(!r.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
 async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();data.documents.forEach(doc=>{const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
+const qualityLabels={page_orientation_detected:'检测到颠倒或侧转，请核对原图',page_skew_detected:'检测到页面倾斜',page_orientation_undetermined:'文字不足或方向混杂，无法判定页面方向',page_exif_orientation_corrected:'已按EXIF方向信息校正OCR输入'};
+function qualityMessage(code){return qualityLabels[code]||code;}
 function showError(host,error){host.replaceChildren(element('p',error.message,'error'));}
 $('upload').addEventListener('submit',async event=>{event.preventDefault();const file=$('file').files[0];if(!file)return;const button=event.target.querySelector('button');button.disabled=true;try{if(file.size>20*1024*1024)throw Error('单个文件不能超过20 MiB');const ext=file.name.split('.').pop().toLowerCase();const modality=['png','jpg','jpeg','webp'].includes(ext)?'image':ext;const bytes=new Uint8Array(await file.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));await request('/api/v1/knowledge/ingest',{document_id:'upload-'+crypto.randomUUID(),title:$('title').value||file.name,filename:file.name,modality,file_base64:btoa(binary),language:'chi_sim+eng'});await refresh();event.target.reset();}catch(e){$('status').textContent=e.message;}finally{button.disabled=false;}});
 $('ask').addEventListener('submit',async event=>{
@@ -126,5 +128,36 @@ $('text-quality-form').addEventListener('submit',async event=>{
         box.append(element('p',result.warning,'muted'),element('pre',result.revised_text));host.append(box);
       }catch(error){host.append(element('p',error.message,'error'));}finally{preview.disabled=false;}
     });
+  }catch(error){showError(host,error);}finally{button.disabled=false;}
+});
+
+$('scan-quality-form').addEventListener('submit',async event=>{
+  event.preventDefault();const button=event.target.querySelector('button'),host=$('scan-quality-result'),file=$('scan-file').files[0];
+  if(!file)return;button.disabled=true;host.replaceChildren(element('p','本地OCR检测中…'));
+  try{
+    if(file.size>8*1024*1024)throw Error('检测图片不能超过8 MiB');
+    const bytes=new Uint8Array(await file.arrayBuffer());let binary='';
+    for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+    const source=btoa(binary),data=await request('/api/v1/documents/ocr',{image_base64:source,language:'chi_sim+eng',max_attempts:3});
+    const orientation=data.metadata?.orientation,quality=data.metadata?.input_quality;
+    host.replaceChildren(element('p',`识别状态：${data.status} · ${data.attempts.length}次有界尝试`));
+    if(quality)host.append(element('p',`图像质量估计：${quality.quality_score}；${quality.width} × ${quality.height}。这是图像启发式分数，不是识别准确率。`,'muted'));
+    if(orientation?.status==='estimated')host.append(element('p',`方向估计：逆时针${orientation.rotation_ccw_degrees}°；倾斜${orientation.skew_ccw_degrees}°。依据${orientation.eligible_lines}条可靠文字框。`));
+    else host.append(element('p','方向无法判定，请核对原图；不会自动给出旋转预览。','muted'));
+    if(data.warnings.length)host.append(element('p',data.warnings.map(qualityMessage).join('；'),'muted'));
+    host.append(element('pre',data.text||'未识别到可靠文字'));
+    if(orientation?.status==='estimated'&&Math.abs(orientation.correction_ccw_degrees)>=2){
+      const preview=element('button','生成校正预览'),previewResult=element('div');preview.type='button';host.append(preview,previewResult);
+      preview.addEventListener('click',async()=>{
+        preview.disabled=true;previewResult.replaceChildren(element('p','正在生成校正预览…'));
+        try{
+          const corrected=await request('/api/v1/documents/image-enhance',{image_base64:source,transforms:['rotate_to_upright'],rotation_degrees:-orientation.correction_ccw_degrees});
+          const figure=element('figure'),image=element('img'),caption=element('figcaption','校正预览：只改变显示方向，原文件与知识库保持原样。请人工核对。');
+          image.src='data:image/png;base64,'+corrected.image_base64;image.alt='扫描件方向校正预览';image.style.maxWidth='100%';image.style.maxHeight='380px';
+          figure.append(image,caption);previewResult.replaceChildren(figure);preview.remove();
+        }catch(error){showError(previewResult,error);preview.disabled=false;}
+      });
+    }
+    const details=element('details');details.append(element('summary','查看检测依据、坐标帧、原图SHA和尝试记录'),element('pre',JSON.stringify(data,null,2)));host.append(details);
   }catch(error){showError(host,error);}finally{button.disabled=false;}
 });

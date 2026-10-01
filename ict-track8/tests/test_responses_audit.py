@@ -54,6 +54,35 @@ def generate(c):
     return c.generate('private-instructions', {'private_input': 'should-not-appear'}, {})
 
 
+def test_gateway_header_reaches_both_transports_without_audit_exposure():
+    session = Session([Response(payload())])
+    headers = {'x-openai-actor-authorization': 'private-actor'}
+    c = StructuredResponses('https://spacetimeai.cc/v1', 'private-test-token',
+                            model='gpt-6-luna', http_headers=headers, session=session)
+    generate(c)
+    p = ResponsesModelPlanProvider('https://spacetimeai.cc/v1', 'private-test-token',
+                                   model='gpt-6-luna', http_headers=headers, session=session)
+    assert p('销售额', ()) == {}
+    assert len(session.calls) == 2
+    for _, request in session.calls:
+        assert request['headers']['x-openai-actor-authorization'] == 'private-actor'
+        assert request['headers']['Authorization'] == 'Bearer private-test-token'
+        assert request['json']['model'] == 'gpt-6-luna'
+        assert request['json']['store'] is False
+        assert request['allow_redirects'] is False
+    assert 'private-actor' not in json.dumps([c.audit_history, p.audit_history])
+
+
+@pytest.mark.parametrize('destination,headers', [
+    ('https://example.com/v1', {'x-openai-actor-authorization': 'actor'}),
+    ('https://spacetimeai.cc/v1', {'Authorization': 'override'}),
+    ('https://spacetimeai.cc/v1', {'x-openai-actor-authorization': 'actor\r\nInjected: yes'}),
+])
+def test_custom_header_cannot_override_auth_inject_or_leak_to_another_host(destination, headers):
+    with pytest.raises(ValueError):
+        StructuredResponses(destination, 'test-only', model='gpt-6-luna', http_headers=headers)
+
+
 @pytest.mark.parametrize('model', ['gpt-6-luna', 'gpt-6-luna-2026-09-01'])
 def test_returned_model_is_verified_and_all_usage_is_preserved(model):
     c = client(payload(model=model))

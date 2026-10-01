@@ -25,6 +25,18 @@ def enable_local_model(model='gpt-6-luna'):
         os.environ['ICT8_OPENAI_API_KEY'] = config['api_key']
         os.environ['ICT8_OPENAI_MODEL'] = model
         os.environ['ICT8_OPENAI_REASONING'] = config.get('reasoning', 'medium')
+        headers = config.get('http_headers', {})
+        if (not isinstance(headers, dict) or any(
+                name != 'x-openai-actor-authorization' or not isinstance(value, str)
+                or not value or len(value) > 256 or '\r' in value or '\n' in value
+                for name, value in headers.items())):
+            raise ValueError('项目模型请求头配置无效')
+        os.environ['ICT8_OPENAI_HEADERS'] = json.dumps(headers)
         os.environ['ICT8_GENERATION_PROVIDER'] = 'responses'
         os.environ['ICT8_PLAN_PROVIDER'] = 'responses'
         return {'model': model, 'reasoning': config.get('reasoning', 'medium'), 'credential_source': 'project_local_excluded_file'}
+
+
+def local_model_headers():
+    """Return only the explicitly configured gateway header, never bearer auth."""
+    return json.loads(os.environ.get('ICT8_OPENAI_HEADERS', '{}'))

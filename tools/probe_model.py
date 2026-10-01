@@ -5,7 +5,7 @@ import requests
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from model_runtime import enable_local_model
+from model_runtime import enable_local_model, local_model_headers
 
 
 def main():
@@ -14,7 +14,7 @@ def main():
               'base_url': os.environ['ICT8_OPENAI_BASE_URL'], 'checks': [], 'status': 'unavailable'}
     try:
         response = requests.get(os.environ['ICT8_OPENAI_BASE_URL'] + '/models',
-            headers={'Authorization': 'Bearer ' + os.environ['ICT8_OPENAI_API_KEY']}, timeout=(10,30), allow_redirects=False)
+            headers={**local_model_headers(), 'Authorization': 'Bearer ' + os.environ['ICT8_OPENAI_API_KEY']}, timeout=(10,30), allow_redirects=False)
         result = {'models_http_status': response.status_code}
         report['checks'].append({'endpoint':'/v1/models', 'http_status':response.status_code})
         if response.ok:
@@ -23,12 +23,12 @@ def main():
         print(json.dumps(result,ensure_ascii=False))
         if response.status_code == 401:
             root = os.environ['ICT8_OPENAI_BASE_URL'].removesuffix('/v1')
-            root_response = requests.get(root + '/models', headers={'Authorization':'Bearer ' + os.environ['ICT8_OPENAI_API_KEY']}, timeout=(10,30), allow_redirects=False)
+            root_response = requests.get(root + '/models', headers={**local_model_headers(), 'Authorization':'Bearer ' + os.environ['ICT8_OPENAI_API_KEY']}, timeout=(10,30), allow_redirects=False)
             report['checks'].append({'endpoint':'/models', 'http_status':root_response.status_code})
             print(json.dumps({'root_models_http_status': root_response.status_code}))
         sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'ict-track8'))
         from backend.responses_client import StructuredResponses, GenerationError, object_schema
-        client = StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'], os.environ['ICT8_OPENAI_API_KEY'], model='gpt-6-luna')
+        client = StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'], os.environ['ICT8_OPENAI_API_KEY'], model='gpt-6-luna', http_headers=local_model_headers())
         try:
             result = client.generate('返回ok=true', {}, object_schema({'ok': {'type':'boolean'}}), max_tokens=1000)
             report['checks'].append({'endpoint':'/v1/responses', 'http_status':200, 'structured_valid':result.get('ok') is True})

@@ -1,21 +1,20 @@
 {
-  "created_at": "2026-10-01T00:04:56.247656+00:00",
+  "created_at": "2026-10-01T04:59:53.919977+00:00",
   "model": "gpt-6-luna",
+  "reasoning": "medium",
   "base_url": "https://spacetimeai.cc/v1",
+  "scope": "saved_preflight_derived_from_completed_second_run_not_live_health",
+  "source_report": "docs/REAL_MODEL_SECOND_RUN_20261001.json",
   "checks": [
     {
-      "endpoint": "/v1/models",
-      "http_status": 401
-    },
-    {
-      "endpoint": "/models",
-      "http_status": 401
-    },
-    {
       "endpoint": "/v1/responses",
-      "http_status": 401,
-      "structured_valid": false
+      "http_status": 200,
+      "structured_valid": true,
+      "response_model": "gpt-6-luna",
+      "model_verified": true
     }
   ],
-  "status": "authentication_failed"
+  "models_endpoint": "not_retested_after_credential_update",
+  "initial_failure_report": "docs/MODEL_API_PROBE_INITIAL_20261001.json",
+  "status": "ready"
 }

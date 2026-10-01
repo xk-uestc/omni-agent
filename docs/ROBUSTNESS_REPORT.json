@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-10-01T00:09:16.207620+00:00",
+  "created_at": "2026-10-01T04:18:13.149233+00:00",
   "scope": "synthetic_pair_corruption_not_OHR_benchmark",
   "environment": {
     "python": "3.12.10",
@@ -166,12 +166,65 @@
               "confidence": 0.9777084308512071
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": 0.0,
+            "eligible_lines": 5,
+            "confidence": 0.9999,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.134,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              1400,
+              650
+            ],
+            "sha256": "e95fe6dc9a5c4cfc29cb0e63be3038831e5cfe1d981c4efe95a7e92d823f2639"
+          },
           "timings_seconds": [
-            0.7859198000223842,
-            0.006008148193359375,
-            1.5348567962646484
+            0.39462259999709204,
+            0.004010915756225586,
+            0.9063458442687988
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "9ceeb12747d949588ddb41b9b51b1a66d33ca147237079e7f740bd726f849501",
+          "input_quality": {
+            "width": 1400,
+            "height": 650,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.9695,
+            "contrast": 0.1243,
+            "edge_energy": 0.0217,
+            "resolution_score": 0.7406,
+            "quality_score": 0.4424,
+            "issues": [
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -201,17 +254,17 @@
           "sharpen"
         ]
       },
-      "latency_ms": 8982.048
+      "latency_ms": 5497.487
     },
     {
       "variant": "rotate180",
       "baseline_correct": true,
       "pipeline_correct": true,
-      "baseline_text": "本通知仅用于OCR和证据定位测试。\n生效日期：2025年1月1日。\n一般工单：首次响应时间为24小时\n紧急工单：首次响应时间为2小时。\n售后响应通知 (合成样本)",
+      "baseline_text": "售后响应通知 (合成样本)\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。",
       "pipeline": {
         "status": "ok",
         "executor": "rapidocr",
-        "text": "本通知仅用于OCR和证据定位测试。\n生效日期：2025年1月1日。\n一般工单：首次响应时间为24小时\n紧急工单：首次响应时间为2小时。\n售后响应通知 (合成样本)",
+        "text": "售后响应通知 (合成样本)\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。",
         "confidence": 0.9910686917893299,
         "selected_transforms": [],
         "attempts": [
@@ -245,75 +298,33 @@
             "error": null
           }
         ],
-        "warnings": [],
+        "warnings": [
+          "page_orientation_detected"
+        ],
         "metadata": {
           "provider": "rapidocr",
           "regions": [
             {
               "bbox": [
                 [
-                  758.0,
-                  126.0
-                ],
-                [
-                  1341.0,
-                  129.0
-                ],
-                [
-                  1340.0,
-                  170.0
-                ],
-                [
-                  758.0,
-                  167.0
-                ]
-              ],
-              "text": "本通知仅用于OCR和证据定位测试。",
-              "confidence": 0.9693517316790188
-            },
-            {
-              "bbox": [
-                [
-                  895.0,
-                  232.0
+                  908.0,
+                  548.0
                 ],
                 [
                   1339.0,
-                  235.0
+                  548.0
                 ],
                 [
                   1339.0,
-                  273.0
+                  588.0
                 ],
                 [
-                  895.0,
-                  270.0
+                  908.0,
+                  588.0
                 ]
               ],
-              "text": "生效日期：2025年1月1日。",
-              "confidence": 0.998858904838562
-            },
-            {
-              "bbox": [
-                [
-                  759.0,
-                  339.0
-                ],
-                [
-                  1335.0,
-                  337.0
-                ],
-                [
-                  1335.0,
-                  375.0
-                ],
-                [
-                  759.0,
-                  377.0
-                ]
-              ],
-              "text": "一般工单：首次响应时间为24小时",
-              "confidence": 0.9997035339474678
+              "text": "售后响应通知 (合成样本)",
+              "confidence": 0.9919263170315669
             },
             {
               "bbox": [
@@ -340,32 +351,129 @@
             {
               "bbox": [
                 [
-                  908.0,
-                  548.0
+                  759.0,
+                  339.0
                 ],
                 [
-                  1339.0,
-                  548.0
+                  1335.0,
+                  337.0
                 ],
                 [
-                  1339.0,
-                  588.0
+                  1335.0,
+                  375.0
                 ],
                 [
-                  908.0,
-                  588.0
+                  759.0,
+                  377.0
                 ]
               ],
-              "text": "售后响应通知 (合成样本)",
-              "confidence": 0.9919263170315669
+              "text": "一般工单：首次响应时间为24小时",
+              "confidence": 0.9997035339474678
+            },
+            {
+              "bbox": [
+                [
+                  895.0,
+                  232.0
+                ],
+                [
+                  1339.0,
+                  235.0
+                ],
+                [
+                  1339.0,
+                  273.0
+                ],
+                [
+                  895.0,
+                  270.0
+                ]
+              ],
+              "text": "生效日期：2025年1月1日。",
+              "confidence": 0.998858904838562
+            },
+            {
+              "bbox": [
+                [
+                  758.0,
+                  126.0
+                ],
+                [
+                  1341.0,
+                  129.0
+                ],
+                [
+                  1340.0,
+                  170.0
+                ],
+                [
+                  758.0,
+                  167.0
+                ]
+              ],
+              "text": "本通知仅用于OCR和证据定位测试。",
+              "confidence": 0.9693517316790188
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 180,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": -180.0,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.205,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              1400,
+              650
+            ],
+            "sha256": "0e844800d89b7608841783f746e0e73f5e18aa7731d8a579e0bbb0747d0205fc"
+          },
           "timings_seconds": [
-            0.8379265000112355,
-            0.008938074111938477,
-            0.8061385154724121
+            0.3714122000092175,
+            0.004006624221801758,
+            0.24524760246276855
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "be7345b25de5f6a8d748d571e4bc571d045be4efbc8143c2ea7b94429ff35979",
+          "input_quality": {
+            "width": 1400,
+            "height": 650,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.9695,
+            "contrast": 0.1243,
+            "edge_energy": 0.0217,
+            "resolution_score": 0.7406,
+            "quality_score": 0.4424,
+            "issues": [
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -395,17 +503,17 @@
           "sharpen"
         ]
       },
-      "latency_ms": 9132.655
+      "latency_ms": 4753.544
     },
     {
       "variant": "rotate90",
       "baseline_correct": true,
       "pipeline_correct": true,
-      "baseline_text": "一般工单：首次响应时间为24小时。\n本通知仅用于OCR和证据定位测试\n紧急工单：首次响应时间为2小时\n生效日期：2025年1月1日。\n售后响应通知 (合成样本）",
+      "baseline_text": "售后响应通知 (合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
       "pipeline": {
         "status": "ok",
         "executor": "rapidocr",
-        "text": "一般工单：首次响应时间为24小时。\n本通知仅用于OCR和证据定位测试\n紧急工单：首次响应时间为2小时\n生效日期：2025年1月1日。\n售后响应通知 (合成样本）",
+        "text": "售后响应通知 (合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试",
         "confidence": 0.9913892071498068,
         "selected_transforms": [],
         "attempts": [
@@ -439,53 +547,33 @@
             "error": null
           }
         ],
-        "warnings": [],
+        "warnings": [
+          "page_orientation_detected"
+        ],
         "metadata": {
           "provider": "rapidocr",
           "regions": [
             {
               "bbox": [
                 [
-                  271.0,
-                  755.0
+                  62.0,
+                  910.0
                 ],
                 [
-                  314.0,
-                  755.0
+                  105.0,
+                  910.0
                 ],
                 [
-                  316.0,
-                  1331.0
-                ],
-                [
-                  273.0,
-                  1331.0
-                ]
-              ],
-              "text": "一般工单：首次响应时间为24小时。",
-              "confidence": 0.9992772656328538
-            },
-            {
-              "bbox": [
-                [
-                  483.0,
-                  759.0
-                ],
-                [
-                  524.0,
-                  759.0
-                ],
-                [
-                  524.0,
+                  105.0,
                   1341.0
                 ],
                 [
-                  483.0,
+                  62.0,
                   1341.0
                 ]
               ],
-              "text": "本通知仅用于OCR和证据定位测试",
-              "confidence": 0.9988400228321552
+              "text": "售后响应通知 (合成样本）",
+              "confidence": 0.955700172827794
             },
             {
               "bbox": [
@@ -512,6 +600,28 @@
             {
               "bbox": [
                 [
+                  271.0,
+                  755.0
+                ],
+                [
+                  314.0,
+                  755.0
+                ],
+                [
+                  316.0,
+                  1331.0
+                ],
+                [
+                  273.0,
+                  1331.0
+                ]
+              ],
+              "text": "一般工单：首次响应时间为24小时。",
+              "confidence": 0.9992772656328538
+            },
+            {
+              "bbox": [
+                [
                   379.0,
                   896.0
                 ],
@@ -534,32 +644,85 @@
             {
               "bbox": [
                 [
-                  62.0,
-                  910.0
+                  483.0,
+                  759.0
                 ],
                 [
-                  105.0,
-                  910.0
+                  524.0,
+                  759.0
                 ],
                 [
-                  105.0,
+                  524.0,
                   1341.0
                 ],
                 [
-                  62.0,
+                  483.0,
                   1341.0
                 ]
               ],
-              "text": "售后响应通知 (合成样本）",
-              "confidence": 0.955700172827794
+              "text": "本通知仅用于OCR和证据定位测试",
+              "confidence": 0.9988400228321552
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 90,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": -90.0,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.0,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              650,
+              1400
+            ],
+            "sha256": "72ae6e6ec9bfd2e40aa189aaad26c1ca2ea5d74d131cd54f79d2614c61040ba7"
+          },
           "timings_seconds": [
-            0.8395927999808919,
-            0.0070035457611083984,
-            0.7821879386901855
+            0.42262399999890476,
+            0.0035071372985839844,
+            0.2925581932067871
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "6815993d0560c2066c32214bc4391a6a0b0c4f58bfd12b4d4ec75c1c80166b44",
+          "input_quality": {
+            "width": 650,
+            "height": 1400,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.9694,
+            "contrast": 0.1247,
+            "edge_energy": 0.0217,
+            "resolution_score": 0.7406,
+            "quality_score": 0.4428,
+            "issues": [
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -589,7 +752,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 8309.316
+      "latency_ms": 4916.965
     },
     {
       "variant": "blur1.5",
@@ -748,12 +911,65 @@
               "confidence": 0.9969292808981502
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": 0.0,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.153,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              1400,
+              650
+            ],
+            "sha256": "30b054165aed143e327661112d33af4d985b35781892d9366fcc65ad8f924cf9"
+          },
           "timings_seconds": [
-            0.401548299996648,
-            0.0037755966186523438,
-            0.33133578300476074
+            0.3738129000121262,
+            0.004000425338745117,
+            0.23050284385681152
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "be66e5aeadcd533fa0059fd0f259cda81e371613e9c9f1cbd6cd4a094788c6a2",
+          "input_quality": {
+            "width": 1400,
+            "height": 650,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.97,
+            "contrast": 0.1098,
+            "edge_energy": 0.0157,
+            "resolution_score": 0.7406,
+            "quality_score": 0.4096,
+            "issues": [
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -783,7 +999,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 3971.373
+      "latency_ms": 3468.726
     },
     {
       "variant": "low_contrast",
@@ -944,12 +1160,71 @@
               "confidence": 0.9963613450527191
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": 0.0,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.198,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              1400,
+              650
+            ],
+            "sha256": "0212d17b9d274aebcbaf89d7b0cd19548f50c9ffec37a4cb78155151468dd2c9"
+          },
           "timings_seconds": [
-            0.4437720999994781,
-            0.003997325897216797,
-            0.9138760566711426
+            0.3677107999974396,
+            0.004001140594482422,
+            0.8203446865081787
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "008b230c80a66337805895b78471770ad3d1e58e0a87e3a0a340f9a7637d18fc",
+          "input_quality": {
+            "width": 1400,
+            "height": 650,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.969,
+            "contrast": 0.0314,
+            "edge_energy": 0.0058,
+            "resolution_score": 0.7406,
+            "quality_score": 0.3064,
+            "issues": [
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "low_contrast",
+                "severity": "warning",
+                "message": "对比度偏低"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "reduce_highlights",
+              "contrast",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -985,7 +1260,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 4772.075
+      "latency_ms": 3957.435
     },
     {
       "variant": "downsample",
@@ -1144,12 +1419,71 @@
               "confidence": 0.9976244084537029
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": 0.0,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.246,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              560,
+              260
+            ],
+            "sha256": "6aea1843379748d3ef181fe4af366342c0cdc3b6992c610b1d8b885175494d7f"
+          },
           "timings_seconds": [
-            0.4458963999932166,
-            0.006504058837890625,
-            0.3868880271911621
+            0.38208000001031905,
+            0.004506349563598633,
+            0.36481237411499023
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "e822dd91dbd8a933b8fb3d37d4cbffc29e0174c055189c8cc3824e3c571b96bb",
+          "input_quality": {
+            "width": 560,
+            "height": 260,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.968,
+            "contrast": 0.1252,
+            "edge_energy": 0.0209,
+            "resolution_score": 0.1185,
+            "quality_score": 0.223,
+            "issues": [
+              {
+                "code": "low_resolution",
+                "severity": "warning",
+                "message": "短边分辨率偏低"
+              },
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "upscale",
+              "reduce_highlights",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -1185,7 +1519,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 6484.556
+      "latency_ms": 5695.28
     },
     {
       "variant": "small_text",
@@ -1344,12 +1678,71 @@
               "confidence": 0.9941778741776943
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": 0.0,
+            "eligible_lines": 5,
+            "confidence": 0.9999,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.0,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              280,
+              130
+            ],
+            "sha256": "66fd1a4129c4d788acfaad9bb6f5afbc9f3728f0e929c4571edbe1632d70f254"
+          },
           "timings_seconds": [
-            0.4114058999984991,
-            0.005472421646118164,
-            0.33590078353881836
+            0.39873119999538176,
+            0.003998756408691406,
+            0.260845422744751
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "dd0dee70858db873f34ffaf8a1f5ceace519a89c1923c43727bdee5d17e8ed81",
+          "input_quality": {
+            "width": 280,
+            "height": 130,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.9683,
+            "contrast": 0.1137,
+            "edge_energy": 0.0209,
+            "resolution_score": 0.0296,
+            "quality_score": 0.1816,
+            "issues": [
+              {
+                "code": "low_resolution",
+                "severity": "warning",
+                "message": "短边分辨率偏低"
+              },
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "upscale",
+              "reduce_highlights",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -1385,7 +1778,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 6186.964
+      "latency_ms": 5504.435
     },
     {
       "variant": "dark",
@@ -1546,12 +1939,71 @@
               "confidence": 0.9962138086557388
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": 0.0,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.0,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              1400,
+              650
+            ],
+            "sha256": "7f434b5222cfcaaf4d79c8e879dde2d4604dbb25f3233b56ae36bf9032cc3d2f"
+          },
           "timings_seconds": [
-            0.4006574999948498,
-            0.0050048828125,
-            0.9840655326843262
+            0.45740859999204986,
+            0.0055005550384521484,
+            0.9922358989715576
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "4890bde4bcf628b73057988204af791b9d51d0dbf552b8bb139a67df45d67631",
+          "input_quality": {
+            "width": 1400,
+            "height": 650,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.1141,
+            "contrast": 0.0147,
+            "edge_energy": 0.0027,
+            "resolution_score": 0.7406,
+            "quality_score": 0.2813,
+            "issues": [
+              {
+                "code": "underexposed",
+                "severity": "warning",
+                "message": "图像偏暗"
+              },
+              {
+                "code": "low_contrast",
+                "severity": "warning",
+                "message": "对比度偏低"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "brighten",
+              "contrast",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -1587,7 +2039,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 4389.319
+      "latency_ms": 4124.56
     },
     {
       "variant": "washed_out",
@@ -1749,12 +2201,71 @@
               "confidence": 0.99720473960042
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.0,
+            "correction_ccw_degrees": 0.0,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.201,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              1400,
+              650
+            ],
+            "sha256": "a883bfbf71906947903079de719480536218d06526adff49614b78b3e6ca47a4"
+          },
           "timings_seconds": [
-            0.4550928999960888,
-            0.0040776729583740234,
-            0.3880438804626465
+            0.3865282000042498,
+            0.003998279571533203,
+            0.39973878860473633
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "d611fcaedfe3f9f83831ab9b9cb7bcc2cd115140cbc44dd402a870c90fa8eb4d",
+          "input_quality": {
+            "width": 1400,
+            "height": 650,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.9674,
+            "contrast": 0.005,
+            "edge_energy": 0.0009,
+            "resolution_score": 0.7406,
+            "quality_score": 0.2666,
+            "issues": [
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "low_contrast",
+                "severity": "warning",
+                "message": "对比度偏低"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "reduce_highlights",
+              "contrast",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -1790,7 +2301,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 3226.189
+      "latency_ms": 3044.016
     },
     {
       "variant": "blur3",
@@ -1949,12 +2460,65 @@
               "confidence": 0.9976990558207035
             }
           ],
+          "orientation": {
+            "status": "estimated",
+            "method": "ocr_line_geometry_and_local_0_180_classifier",
+            "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+            "rotation_ccw_degrees": 0,
+            "skew_ccw_degrees": -0.146,
+            "correction_ccw_degrees": 0.146,
+            "eligible_lines": 5,
+            "confidence": 1.0,
+            "confidence_kind": "mean_line_classification_not_page_accuracy",
+            "source_image_modified": false,
+            "correction_scope": "ocr_text_regions_only",
+            "line_agreement": 1.0,
+            "angle_mad_degrees": 0.146,
+            "reason": null
+          },
+          "reading_order": "geometric_upright_line_order_not_multicolumn_layout",
+          "coordinate_frame": {
+            "scope": "ocr_executor_input",
+            "size_px": [
+              1400,
+              650
+            ],
+            "sha256": "dde8d3bb47cb9f4a7aec3072d94d064ddcb906b3e3aa00477e983f77f446932d"
+          },
           "timings_seconds": [
-            0.37480479999794625,
-            0.003991842269897461,
-            0.2607440948486328
+            0.41888209999888204,
+            0.004003047943115234,
+            0.27587103843688965
           ],
-          "language_model": "Chinese_English"
+          "language_model": "Chinese_English",
+          "source_image_sha256": "9fd4043dbc755d3f56eb4877d683d338cf04e16014f257b2904ee7161f7e6fe7",
+          "input_quality": {
+            "width": 1400,
+            "height": 650,
+            "mode": "RGB",
+            "exif_orientation": null,
+            "brightness": 0.9702,
+            "contrast": 0.0965,
+            "edge_energy": 0.0091,
+            "resolution_score": 0.7406,
+            "quality_score": 0.3756,
+            "issues": [
+              {
+                "code": "overexposed",
+                "severity": "warning",
+                "message": "图像偏亮"
+              },
+              {
+                "code": "blurred",
+                "severity": "warning",
+                "message": "边缘能量偏低，可能模糊"
+              }
+            ],
+            "recommended_transforms": [
+              "reduce_highlights",
+              "sharpen"
+            ]
+          }
         }
       },
       "quality": {
@@ -1984,7 +2548,7 @@
           "sharpen"
         ]
       },
-      "latency_ms": 4819.23
+      "latency_ms": 4405.713
     }
   ],
   "query_pairs": [

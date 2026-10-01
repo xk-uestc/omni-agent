@@ -9,6 +9,8 @@ import platform
 import sqlite3
 import sys
 import time
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -71,6 +73,37 @@ def summarise_audits(audits, dropped=0):
             'completed_calls': sum(a.get('status') == 'completed' for a in audits), 'failed_calls': sum(a.get('status') != 'completed' for a in audits),
             'tokens': totals, 'api_latency_ms': round(sum(a.get('latency_ms', 0) for a in audits), 3),
             'usd_cost': None, 'pricing_status': 'third_party_price_not_supplied_no_estimate'}
+
+
+def select_cases(cases, requested_ids):
+    """Expand selected conversational cases with every preceding session turn.
+
+    Keep the original suite order, never rewrite context_turns or silently drop
+    earlier turns that contributed to the observed failure.
+    """
+    requested = set(requested_ids)
+    known = {row['id'] for row in cases}
+    unknown = requested - known
+    if unknown:
+        raise ValueError('未知测试ID: ' + ', '.join(sorted(unknown)))
+    selected = set(requested)
+    latest_session_position = {}
+    for position, row in enumerate(cases):
+        if row['id'] in requested and row.get('session_id'):
+            latest_session_position[row['session_id']] = position
+    for position, row in enumerate(cases):
+        if row.get('session_id') in latest_session_position and position <= latest_session_position[row['session_id']]:
+            selected.add(row['id'])
+    return [row for row in cases if row['id'] in selected]
+
+
+def report_output(value=None):
+    path = (ROOT / (value or 'docs/REAL_MODEL_REPORT.json')).resolve()
+    if path.suffix.lower() != '.json' or not path.is_relative_to((ROOT/'docs').resolve()):
+        raise ValueError('验收报告必须是项目docs目录内的JSON文件')
+    if value is not None and path.exists():
+        raise ValueError('指定报告已存在，不能覆盖历史证据')
+    return path
 
 
 def collect_audits(clients):
@@ -141,9 +174,12 @@ def evaluate_result(row, result, database):
     return checks
 
 
-def execute_cases(agent, clients, cases, database):
+def execute_cases(agent, clients, cases, database, *, on_record=None, stop_event=None):
     records, stopped = [], None
     for row in cases:
+        if stop_event is not None and stop_event.is_set():
+            stopped = 'authentication_or_access_rejected'
+            break
         for client in clients.values():
             client.reset_audit()
         started = time.perf_counter()
@@ -161,9 +197,34 @@ def execute_cases(agent, clients, cases, database):
                   'api_audits': audits, 'api_summary': summarise_audits(audits, dropped)}
         records.append(record)
         print(json.dumps({'id': row['id'], 'pass': record['pass'], 'checks': checks}, ensure_ascii=False), flush=True)
+        if on_record:
+            on_record(record)
         if any(a.get('http_status') in {401, 403} for a in audits):
             stopped = 'authentication_or_access_rejected'
+            if stop_event is not None:
+                stop_event.set()
             break
+    return records, stopped
+
+
+def execute_grouped(agent, clients, cases, database, *, workers=1, on_record=None):
+    """Parallelize independent conversations, preserving every session's order."""
+    if workers == 1:
+        return execute_cases(agent, clients, cases, database, on_record=on_record)
+    groups = {}
+    for row in cases:
+        key = ('session', row['session_id']) if row.get('session_id') else ('case', row['id'])
+        groups.setdefault(key, []).append(row)
+    stop_event, records, stopped = threading.Event(), [], None
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [pool.submit(execute_cases, agent, clients, group, database,
+                               on_record=on_record, stop_event=stop_event) for group in groups.values()]
+        for future in as_completed(futures):
+            completed, reason = future.result()
+            records.extend(completed)
+            stopped = stopped or reason
+    order = {row['id']: index for index, row in enumerate(cases)}
+    records.sort(key=lambda record: order[record['id']])
     return records, stopped
 
 
@@ -171,21 +232,41 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', choices=[MODEL], default=MODEL)
     parser.add_argument('--full', action='store_true')
+    parser.add_argument('--case-ids', nargs='+', help='定向题ID；逗号或空格分隔，自动包含该会话的所有前置轮')
+    parser.add_argument('--output', help='新验收报告路径；必须位于项目docs，不覆盖既有历史报告')
+    parser.add_argument('--workers', type=int, choices=(1, 2, 3), default=1,
+                        help='独立会话并行数；同一多轮会话始终顺序执行')
     parser.add_argument('--preview', action='store_true', help='不读取密钥、不联网，列出验收题及判据')
     args = parser.parse_args()
-    cases = suite() if args.full else suite()[:1]
+    all_cases = suite()
+    requested_ids = [identifier.strip() for value in (args.case_ids or [])
+                     for identifier in value.split(',') if identifier.strip()]
+    try:
+        if args.case_ids and not requested_ids:
+            raise ValueError('定向题ID不能为空')
+        cases = select_cases(all_cases, requested_ids) if requested_ids else all_cases if args.full else all_cases[:1]
+        output = report_output(args.output)
+    except ValueError as exc:
+        parser.error(str(exc))
     if args.preview:
         print(json.dumps({'mode': 'preview_no_credentials_no_api', 'model': MODEL, 'planned_cases': len(cases),
+                          'requested_case_ids': requested_ids, 'output': str(output),
                           'case_groups': dict(Counter(row['kind'] for row in cases)), 'cases': cases}, ensure_ascii=False, indent=2))
         return 0
-    from model_runtime import enable_local_model
+    from model_runtime import enable_local_model, local_model_headers
     from backend.responses_client import StructuredResponses, GenerationError, object_schema
     enable_local_model(args.model)
-    client = StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'], os.environ['ICT8_OPENAI_API_KEY'], model=MODEL, reasoning=os.environ['ICT8_OPENAI_REASONING'])
+    client = StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'], os.environ['ICT8_OPENAI_API_KEY'], model=MODEL, reasoning=os.environ['ICT8_OPENAI_REASONING'], http_headers=local_model_headers())
     report = {'created_at': datetime.now(timezone.utc).isoformat(), 'scope': 'real_api_synthetic_development_cases_not_public_or_blind_accuracy',
               'model': MODEL, 'reasoning': client.reasoning, 'python': platform.python_version(),
+              'workers': args.workers,
               'planned_cases': len(cases), 'case_groups': dict(Counter(row['kind'] for row in cases)),
               'cases': [], 'passed': 0, 'total': 0, 'status': 'preflight_failed'}
+    if requested_ids:
+        report['scope'] = 'real_api_targeted_development_cases_with_required_history_not_full_suite'
+        report['requested_case_ids'] = requested_ids
+        report['history_prerequisite_case_ids'] = [row['id'] for row in cases if row['id'] not in requested_ids]
+    output.parent.mkdir(parents=True, exist_ok=True)
     try:
         preflight = client.generate('只返回ok=true。', {}, object_schema({'ok': {'type': 'boolean'}}), name='model_preflight', max_tokens=1000)
         if preflight.get('ok') is not True:
@@ -195,7 +276,7 @@ def main():
         report['api_summary'] = summarise_audits(client.audit_history)
         report['status'] = 'authentication_failed' if client.audit.get('http_status') == 401 else 'preflight_failed'
         report['not_run'] = [row['id'] for row in cases]
-        (ROOT/'docs/REAL_MODEL_REPORT.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+        output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
         print(json.dumps({'status': report['status'], 'http_status': client.audit.get('http_status'), 'planned_cases': len(cases), 'executed_cases': 0}, ensure_ascii=False))
         return 1
     report['preflight'] = client.audit_history
@@ -207,18 +288,30 @@ def main():
     from backend.omni_agent import OmniAgent
     from backend.session import ConversationStore
     database = ROOT/'ict-track8/data/demo_sales.sqlite'
-    provider = ResponsesModelPlanProvider(os.environ['ICT8_OPENAI_BASE_URL'], os.environ['ICT8_OPENAI_API_KEY'], model=MODEL, reasoning_effort=client.reasoning)
+    provider = ResponsesModelPlanProvider(os.environ['ICT8_OPENAI_BASE_URL'], os.environ['ICT8_OPENAI_API_KEY'], model=MODEL, reasoning_effort=client.reasoning, http_headers=local_model_headers())
     engine = Nl2SqlEngine(database, model_plan_provider=provider)
     provider.catalog, provider.reference_date = engine.metric_catalog, engine.reference_date
     store = KnowledgeStore(ROOT/'runtime/knowledge', embedder=LocalBgeEmbedder(ROOT/'models/bge-small-zh-v1.5'), generator=GroundedGenerator(client))
     agent = OmniAgent(engine, store, ConversationStore(), client)
-    records, stopped = execute_cases(agent, {'omni_and_generation': client, 'nl2sql': provider}, cases, database)
+    progress_lock, progress_records = threading.Lock(), []
+    order = {row['id']: index for index, row in enumerate(cases)}
+    progress_path = ROOT/'runtime/model-evaluation-progress.json'
+    progress_path.parent.mkdir(parents=True, exist_ok=True)
+    def save_progress(record):
+        with progress_lock:
+            progress_records.append(record)
+            ordered = sorted(progress_records, key=lambda item: order[item['id']])
+            progress_path.write_text(json.dumps({**report, 'status': 'running',
+                'cases': ordered, 'total': len(ordered), 'passed': sum(item['pass'] for item in ordered)},
+                ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+    records, stopped = execute_grouped(agent, {'omni_and_generation': client, 'nl2sql': provider}, cases, database,
+                                      workers=args.workers, on_record=save_progress)
     audits = [*report['preflight'], *(a for row in records for a in row['api_audits'])]
     dropped = sum(row['api_summary']['dropped_calls'] for row in records)
     report.update(cases=records, passed=sum(r['pass'] for r in records), total=len(records),
                   status=stopped or ('passed' if all(r['pass'] for r in records) else 'some_cases_failed'),
-                  api_summary=summarise_audits(audits, dropped), not_run=[row['id'] for row in cases[len(records):]])
-    (ROOT/'docs/REAL_MODEL_REPORT.json').write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
+                  api_summary=summarise_audits(audits, dropped), not_run=[row['id'] for row in cases if row['id'] not in {record['id'] for record in records}])
+    output.write_text(json.dumps(report, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     return 0 if report['status'] == 'passed' else 1
 
 

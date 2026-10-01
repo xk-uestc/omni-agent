@@ -8,6 +8,7 @@ import time
 from collections import deque
 
 import requests
+from urllib.parse import urlsplit
 
 
 class GenerationError(ValueError):
@@ -21,12 +22,23 @@ def object_schema(properties):
 
 
 class StructuredResponses:
-    def __init__(self, base_url, token, *, model, reasoning='medium', timeout=60, session=None):
+    def __init__(self, base_url, token, *, model, reasoning='medium', timeout=60, session=None, http_headers=None):
         if not base_url.startswith(('https://', 'http://127.0.0.1')) or not token or not model:
             raise ValueError('模型服务必须明确配置 URL、密钥与模型')
         self.url, self.token, self.model = base_url.rstrip('/') + '/responses', token, model
         self.reasoning, self.timeout = reasoning, timeout
         self.session = session or requests.Session()
+        headers = http_headers or {}
+        if (not isinstance(headers, dict) or any(
+                name != 'x-openai-actor-authorization' or not isinstance(value, str)
+                or not value or len(value) > 256 or '\r' in value or '\n' in value
+                for name, value in headers.items())):
+            raise ValueError('模型请求头配置无效')
+        destination = urlsplit(base_url)
+        if headers and (destination.scheme != 'https' or destination.hostname != 'spacetimeai.cc'
+                        or destination.port not in (None, 443)):
+            raise ValueError('自定义模型请求头仅允许指定网关')
+        self.http_headers = dict(headers)
         self._local = threading.local()
 
     @property
@@ -70,7 +82,7 @@ class StructuredResponses:
                 'text': {'format': {'type': 'json_schema', 'name': name, 'strict': True, 'schema': schema}}}
         try:
             response = self.session.post(self.url, json=body,
-                headers={'Authorization': 'Bearer ' + self.token, 'Content-Type': 'application/json'},
+                headers={**self.http_headers, 'Authorization': 'Bearer ' + self.token, 'Content-Type': 'application/json'},
                 timeout=(10, self.timeout), allow_redirects=False)
             audit['http_status'] = response.status_code
             if not 200 <= response.status_code < 300:

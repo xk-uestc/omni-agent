@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from .models import TableInfo
+from .date_semantics import is_date_column
 
 
 _IDENTIFIER_RE = re.compile(r"[A-Z]+(?=[A-Z][a-z]|\d|$)|[A-Z]?[a-z]+|\d+")
@@ -140,11 +141,6 @@ def _default_metric_function(tokens: tuple[str, ...], primary_key: bool) -> str 
     return None
 
 
-def _is_date(tokens: tuple[str, ...], column: str) -> bool:
-    joined = _canonical(tokens)
-    return any(token in tokens for token in ("date", "time", "datetime", "timestamp")) or joined.endswith(("date", "time"))
-
-
 def _count_aliases(table: str, column: str, tokens: tuple[str, ...], primary_key: bool) -> tuple[str, ...]:
     if not primary_key:
         return ()
@@ -173,19 +169,21 @@ def infer_rules(tables: Iterable[TableInfo], *, infer_entity_counts: bool = True
         single_primary_key = sum(column.primary_key for column in table.columns) == 1
         for column in table.columns:
             tokens = split_identifier(column.name)
-            if not tokens:
+            if not tokens and not is_date_column(column.name, column.data_type):
                 continue
+            tokens = tokens or (column.name,)
             joined = _canonical(tokens)
             aliases: list[str] = []
             role = "dimension"
             confidence = 0.56
             metric_function = None
 
-            date_column = _is_date(tokens, column.name)
+            date_column = is_date_column(column.name, column.data_type)
             numeric = _is_numeric(column.data_type)
             measure = _is_measure(tokens, column.data_type)
             id_column = joined.endswith("id") or column.primary_key or column.name in foreign_keys
             if date_column:
+                aliases.extend((column.name, '日期', '时间'))
                 for context in table_context:
                     aliases.append(f"{context}日期")
                 role = "dimension"
@@ -230,7 +228,7 @@ def infer_rules(tables: Iterable[TableInfo], *, infer_entity_counts: bool = True
                 aliases.extend(metric_aliases)
                 aliases.extend(f"{context}{alias}" for context in table_context for alias in metric_aliases)
 
-            aliases = list(dict.fromkeys(alias for alias in aliases if alias and alias != column.name))
+            aliases = list(dict.fromkeys(alias for alias in aliases if alias and (date_column or alias != column.name)))
             if aliases:
                 result.append(ProfileRule(table.name, column.name, tuple(aliases), role, confidence, metric_function))
     return tuple(result)

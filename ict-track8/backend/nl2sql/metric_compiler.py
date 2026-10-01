@@ -12,6 +12,7 @@ from dataclasses import replace
 from typing import Any
 
 from .models import MetricSpec, QueryPlan, TableInfo
+from .date_semantics import is_date_column
 
 
 class MetricPlanError(ValueError):
@@ -131,6 +132,9 @@ class MetricCompiler:
                 expr = self._ref(target_table, c)
                 transform = plan.dimension_transforms.get(c, "raw")
                 if transform in {"month", "year"}:
+                    info = next(col for col in by_name[target_table].columns if col.name == c)
+                    if not is_date_column(info.name, info.data_type):
+                        raise MetricPlanError('时间分组需要可验证的日期字段')
                     expr = f"strftime('{ '%Y-%m' if transform == 'month' else '%Y' }', {expr})"
                 elif transform != "raw":
                     raise MetricPlanError("不支持的时间粒度")

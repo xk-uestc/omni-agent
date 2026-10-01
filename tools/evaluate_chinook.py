@@ -29,7 +29,8 @@ def main():
         from model_runtime import enable_local_model
         from backend.nl2sql.responses_provider import ResponsesModelPlanProvider
         enable_local_model()
-        provider=ResponsesModelPlanProvider(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],model='gpt-6-luna',max_retries=0)
+        from model_runtime import local_model_headers
+        provider=ResponsesModelPlanProvider(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],model='gpt-6-luna',max_retries=0,http_headers=local_model_headers())
     engine=Nl2SqlEngine(path,model_plan_provider=provider,metric_catalog_path=ROOT/'benchmarks/chinook/no_catalog.json')
     records=[]
     with sqlite3.connect(path.resolve().as_uri()+'?mode=ro',uri=True) as connection:

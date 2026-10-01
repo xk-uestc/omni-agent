@@ -1,0 +1,36 @@
+{
+  "observed_date": "2026-10-01",
+  "python": {
+    "implementation": "CPython",
+    "version": "3.12.10"
+  },
+  "platform": {
+    "system": "Windows",
+    "release": "11",
+    "architecture": "AMD64"
+  },
+  "dependency_evidence": {
+    "method": "importlib.metadata.version for installed distribution metadata",
+    "tested_direct_dependencies": "ict-track8/requirements-tested.txt",
+    "general_constraints": "ict-track8/requirements.txt",
+    "selected_runtime_dependencies": {
+      "numpy": "1.26.4",
+      "onnxruntime": "1.24.4"
+    },
+    "installation_source": "Not independently audited; installed version metadata does not establish wheel origin or integrity."
+  },
+  "default_ocr": "rapidocr",
+  "optional_tesseract": {
+    "requirements": "ict-track8/requirements-tesseract.txt",
+    "python_adapter_installed": false,
+    "validated": false,
+    "external_requirements": ["tesseract executable on PATH", "matching language data"]
+  },
+  "reproduction_limits": [
+    "The direct dependency version list is not a complete transitive dependency lockfile.",
+    "No offline wheel bundle is included; installing dependencies requires an appropriate package source and compatible wheels.",
+    "Validation used the existing Python dependency environment, not a newly provisioned virtual environment.",
+    "Other Python versions, operating systems, GPU runtimes, and package sources were not validated by this environment record.",
+    "Model credentials are configured separately and are excluded from the program package."
+  ]
+}

@@ -358,6 +358,7 @@ class DocumentChunker:
                             "ocr_status": ocr_info.get("status"),
                             "ocr_attempts": ocr_info.get("attempts", []),
                             "ocr_selected_transforms": ocr_info.get("selected_transforms", []),
+                            "ocr_metadata": ocr_info.get("metadata", {}),
                             "coordinate_evidence": coordinate_evidence,
                         },
                     )
@@ -634,6 +635,7 @@ class DocumentChunker:
                     "ocr_attempts": ocr_result.get("attempts", []),
                     "ocr_selected_transforms": ocr_result.get("selected_transforms", []),
                     "ocr_executor": ocr_result.get("executor"),
+                    "ocr_orientation": ocr_result.get("metadata", {}).get("orientation"),
                 }
             )
             image_text = f"Embedded image: {PurePosixPath(relationship.target_ref).name}"
@@ -650,6 +652,7 @@ class DocumentChunker:
                 warnings.append(f"embedded_image_ocr_text_limit_exceeded:{relationship.target_ref}")
                 continue
             ocr_warnings = list(ocr_result.get("warnings") or [])
+            warnings.extend(ocr_warnings)
             if ocr_result.get("status") != "ok":
                 ocr_warnings.append(f"ocr_status:{ocr_result.get('status', 'unknown')}")
             confidence = self._bounded_quality(ocr_result.get("confidence"))
@@ -677,6 +680,7 @@ class DocumentChunker:
                             "attempts": ocr_result.get("attempts", []),
                             "selected_transforms": ocr_result.get("selected_transforms", []),
                             "ocr_executor": ocr_result.get("executor"),
+                            "ocr_metadata": ocr_result.get("metadata", {}),
                             "raw_text": paragraph,
                         },
                     )
@@ -912,10 +916,12 @@ class DocumentChunker:
                     chunks.append(chunk)
         else:
             warnings.append("ocr_returned_no_text")
+        warnings.extend(ocr_warnings)
         self._check_chunk_limit(chunks)
         return self._result(
             document_id, "image", chunks, warnings,
-            extra_stats={"image_count": 1, "ocr_status": ocr_result.get("status"), "ocr_confidence": ocr_result.get("confidence"), "ocr_attempt_count": len(ocr_result.get("attempts") or [])},
+            extra_stats={"image_count": 1, "ocr_status": ocr_result.get("status"), "ocr_confidence": ocr_result.get("confidence"), "ocr_attempt_count": len(ocr_result.get("attempts") or []),
+                         "ocr_orientation": ocr_result.get("metadata", {}).get("orientation")},
         )
 
     def _make_chunks(
@@ -1406,6 +1412,8 @@ class DocumentChunker:
             "render_size_px": payload.get("render_size_px"),
             "render_scale": payload.get("render_scale"),
             "source_text_sha256": hashlib.sha256(source_text.encode("utf-8")).hexdigest(),
+            "orientation": payload.get("metadata", {}).get("orientation"),
+            "coordinate_frame": payload.get("metadata", {}).get("coordinate_frame"),
         }
 
     @staticmethod

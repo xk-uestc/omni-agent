@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import hashlib
 import os
 import re
 import shutil
@@ -20,7 +21,7 @@ from typing import Any, Protocol
 import requests
 from PIL import Image
 
-from .image_quality import ImageEnhancer, ImageQualityAnalyzer
+from .image_quality import MAX_PIXELS, ImageEnhancer, ImageQualityAnalyzer
 from .config import env_float
 
 
@@ -188,6 +189,20 @@ class OcrPipeline:
         self.analyzer = analyzer or ImageQualityAnalyzer()
         self.enhancer = enhancer or ImageEnhancer()
 
+    @staticmethod
+    def _finish(status, executor, response, transforms, attempts, warnings, image_bytes, quality):
+        from .orientation_quality import orientation_warnings
+        metadata = dict(response.metadata)
+        metadata['source_image_sha256'] = hashlib.sha256(image_bytes).hexdigest()
+        if hasattr(quality,'to_dict'):
+            metadata['input_quality'] = quality.to_dict()
+        if 'orientation' in metadata:
+            warnings = [*warnings,*orientation_warnings(metadata['orientation'])]
+        if getattr(quality,'exif_orientation',None) not in (None,1):
+            warnings = [*warnings,'page_exif_orientation_corrected']
+        return OcrPipelineResult(status,executor,response.text,response.confidence,transforms,
+                                 tuple(attempts),tuple(dict.fromkeys(warnings)),metadata)
+
     def run(self, image_bytes: bytes, *, language: str = "eng", max_attempts: int = 3) -> OcrPipelineResult:
         if not image_bytes:
             raise ValueError("图片不能为空")
@@ -228,12 +243,12 @@ class OcrPipeline:
                     # Enhancement is a candidate, not permission to discard a better baseline.
                     selected = best if best.text and (best.confidence is None or best.confidence >= self.CONFIDENCE_THRESHOLD) else response
                     selected_transforms = best_transforms if selected is best else transforms
-                    return OcrPipelineResult("ok", self.executor.name, selected.text, selected.confidence, selected_transforms, tuple(attempts), tuple(warnings), selected.metadata)
+                    return self._finish("ok",self.executor.name,selected,selected_transforms,attempts,warnings,image_bytes,quality)
             except (OcrExecutionError, ValueError) as exc:
                 attempts.append(OcrAttempt(index, transforms, "failed", 0, None, str(exc)))
                 warnings.append(str(exc))
         status = "low_confidence" if best.text else "failed"
-        return OcrPipelineResult(status, self.executor.name, best.text, best.confidence, best_transforms, tuple(attempts), tuple(dict.fromkeys(warnings)), best.metadata)
+        return self._finish(status,self.executor.name,best,best_transforms,attempts,warnings,image_bytes,quality)
 
     def health(self) -> dict[str, Any]:
         probe = getattr(self.executor, "health", None)
@@ -292,7 +307,16 @@ class RapidOcrExecutor:
         if self._model is None:
             try:
                 from rapidocr_onnxruntime import RapidOCR
-                self._model = RapidOCR(intra_op_num_threads=2, inter_op_num_threads=1)
+                from .orientation_quality import assess_text_orientation
+                class AuditedRapidOCR(RapidOCR):
+                    # Observe the existing pass before recognition-score filtering.
+                    # No second inference, classifier substitution or shared global state.
+                    orientation_evidence = None
+                    def get_final_res(self, dt_boxes, cls_res, rec_res, det_elapse, cls_elapse, rec_elapse):
+                        boxes = dt_boxes.tolist() if hasattr(dt_boxes,'tolist') else dt_boxes
+                        self.orientation_evidence = assess_text_orientation(boxes,cls_res,rec_res)
+                        return super().get_final_res(dt_boxes,cls_res,rec_res,det_elapse,cls_elapse,rec_elapse)
+                self._model = AuditedRapidOCR(intra_op_num_threads=2, inter_op_num_threads=1)
             except Exception as exc:
                 raise OcrExecutionError("RapidOCR 模型不可用，请安装独立项目依赖") from exc
         return self._model
@@ -309,13 +333,29 @@ class RapidOcrExecutor:
         if language not in {"eng", "chi_sim", "chi_sim+eng", "zh", "en"}:
             raise OcrExecutionError("RapidOCR 本配置只支持中文简体/英文；不得冒充其他语言识别")
         try:
+            with Image.open(BytesIO(image_bytes)) as image:
+                if image.width*image.height>MAX_PIXELS:
+                    raise OcrExecutionError('图片像素数超过安全上限')
+                input_size = [image.width,image.height]
             with self._lock:
-                results, timings = self._load()(image_bytes, use_cls=True)
+                model = self._load()
+                model.orientation_evidence = None
+                results, timings = model(image_bytes, use_cls=True)
+                orientation = model.orientation_evidence
+                if orientation is None:
+                    from .orientation_quality import assess_text_orientation
+                    orientation = assess_text_orientation([],[],[])
             regions = [{'bbox': [[float(x), float(y)] for x, y in row[0]], 'text': str(row[1]), 'confidence': float(row[2])} for row in (results or [])]
+            from .orientation_quality import upright_reading_order
+            regions = upright_reading_order(regions,input_size,orientation)
             text = '\n'.join(item['text'] for item in regions)
             total = sum(len(item['text']) for item in regions)
             confidence = sum(item['confidence'] * len(item['text']) for item in regions) / total if total else 0.0
-            return OcrResponse(text, confidence, {"provider": self.name, "regions": regions, "timings_seconds": [float(t) for t in (timings or [])], "language_model": "Chinese_English"})
+            return OcrResponse(text, confidence, {"provider": self.name, "regions": regions,
+                "orientation":orientation,
+                "reading_order":"geometric_upright_line_order_not_multicolumn_layout" if orientation['status']=='estimated' else 'engine_order_orientation_undetermined',
+                "coordinate_frame":{"scope":"ocr_executor_input","size_px":input_size,"sha256":hashlib.sha256(image_bytes).hexdigest()},
+                "timings_seconds": [float(t) for t in (timings or [])], "language_model": "Chinese_English"})
         except OcrExecutionError:
             raise
         except Exception as exc:

@@ -1,0 +1,3058 @@
+{
+  "created_at": "2026-10-01T05:17:33.757605+00:00",
+  "scope": "actual_http_sse_and_model_generation_synthetic_development_not_accuracy_benchmark",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "health": {
+    "ok": true,
+    "service": "ict-track8-nl2sql",
+    "database": "demo_sales.sqlite",
+    "document_source": "independent_corpus",
+    "planner_source": "responses_model_with_validated_rules_fallback",
+    "retrieval": {
+      "mode": "bm25_dense_rrf",
+      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+      "dense_answer_threshold": 0.6
+    },
+    "generation": {
+      "mode": "responses",
+      "model": "gpt-6-luna"
+    },
+    "configuration_warnings": []
+  },
+  "static_pages": {
+    "/": {
+      "status": 200,
+      "bytes": 25005
+    },
+    "/knowledge.html": {
+      "status": 200,
+      "bytes": 6126
+    },
+    "/capabilities.html": {
+      "status": 200,
+      "bytes": 2130
+    },
+    "/api/v1/specification": {
+      "status": 200,
+      "bytes": 599625
+    }
+  },
+  "cases": [
+    {
+      "id": "http_stream_sql",
+      "checks": {
+        "done_received": true,
+        "no_error": true,
+        "real_sql_plan": true,
+        "correct_value": true,
+        "actual_progress": true
+      },
+      "pass": true,
+      "events": [
+        {
+          "event": "trace",
+          "data": {
+            "trace_id": "30d9bc257ad8c451",
+            "stage": "intent",
+            "status": "completed",
+            "input": "2025年华东地区销售额",
+            "effective_question": "2025年华东地区销售额",
+            "context_turns": 0,
+            "context_rewrite": {
+              "mode": "none"
+            },
+            "output": "hybrid_structured_document"
+          }
+        },
+        {
+          "event": "trace",
+          "data": {
+            "trace_id": "30d9bc257ad8c451",
+            "stage": "structured_query",
+            "status": "ok",
+            "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+            "parameters": [
+              "2025-01-01",
+              "2026-01-01",
+              "华东",
+              100
+            ],
+            "rows": 1,
+            "field_links": [
+              {
+                "source_text": "sales_amount",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "role": "metric",
+                "score": 1.0,
+                "matched_alias": "销售额",
+                "metric_function": null
+              }
+            ],
+            "plan": {
+              "table": "sales_orders",
+              "metric_table": "sales_orders",
+              "metric_column": "sales_amount",
+              "metric_function": "SUM",
+              "metric_label": "销售额",
+              "analysis_mode": "aggregate",
+              "dimensions": [],
+              "dimension_tables": {},
+              "dimension_transforms": {},
+              "dimension_labels": {},
+              "filters": [
+                {
+                  "column": "order_date",
+                  "operator": "RANGE",
+                  "value": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_text": "2025年",
+                  "explanation": "模型过滤",
+                  "table": "sales_orders"
+                },
+                {
+                  "column": "region",
+                  "operator": "=",
+                  "value": "华东",
+                  "source_text": "华东",
+                  "explanation": "模型过滤",
+                  "table": "sales_orders"
+                }
+              ],
+              "having": null,
+              "links": [
+                {
+                  "source_text": "sales_amount",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "role": "metric",
+                  "score": 1.0,
+                  "matched_alias": "销售额",
+                  "metric_function": null
+                }
+              ],
+              "join_tables": [],
+              "join_conditions": [],
+              "join_path": [],
+              "join_alternatives": [],
+              "order_desc": true,
+              "limit": 100,
+              "confidence": 1.0,
+              "rewritten_question": "2025年华东地区销售额",
+              "comparison_mode": "none",
+              "comparison_period": {},
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": [],
+              "assumptions": [
+                "模型计划已通过 Schema、外键图和只读执行契约校验"
+              ],
+              "planner_source": "model_validated",
+              "top_n": null,
+              "fan_out": false,
+              "coverage": {},
+              "intent_audit": {
+                "question": "2025年华东地区销售额",
+                "metric": {
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "function": "SUM",
+                  "label": "销售额"
+                },
+                "filters": [
+                  {
+                    "column": "order_date",
+                    "operator": "RANGE",
+                    "value": [
+                      "2025-01-01",
+                      "2026-01-01"
+                    ],
+                    "source_text": "2025年",
+                    "explanation": "模型过滤",
+                    "table": "sales_orders"
+                  },
+                  {
+                    "column": "region",
+                    "operator": "=",
+                    "value": "华东",
+                    "source_text": "华东",
+                    "explanation": "模型过滤",
+                    "table": "sales_orders"
+                  }
+                ],
+                "time_range": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "group_by": [],
+                "comparison": "none",
+                "comparison_window": null,
+                "top_n": null,
+                "confidence": 1.0,
+                "unresolved": [],
+                "execution_allowed": true,
+                "planner_source": "model_validated",
+                "planner_audit": {
+                  "candidate_source": "external_model",
+                  "final_source": "model_validated",
+                  "fallback": false,
+                  "decision": "accepted",
+                  "provider": {
+                    "provider": "responses",
+                    "model": "gpt-6-luna",
+                    "reasoning": "medium",
+                    "operation": "nl2sql_plan",
+                    "http_status": 200,
+                    "status": "completed",
+                    "model_verified": true,
+                    "response_model": "gpt-6-luna",
+                    "input_tokens": 2252,
+                    "output_tokens": 248,
+                    "total_tokens": 2500,
+                    "cached_input_tokens": 0,
+                    "reasoning_tokens": 55,
+                    "call_index": 1,
+                    "latency_ms": 7699.948,
+                    "reasoning_effort": "medium",
+                    "response_status": "completed"
+                  }
+                },
+                "metrics": [
+                  {
+                    "id": "revenue",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "function": "SUM",
+                    "label": "销售额",
+                    "unit": "currency",
+                    "currency": "CNY",
+                    "missing": "null",
+                    "filters": []
+                  }
+                ],
+                "derived_metrics": [],
+                "grain_audit": {
+                  "strategy": "aggregate_each_fact_then_join",
+                  "metrics": [
+                    {
+                      "metric_id": "revenue",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "native_grain": [
+                        "order_id"
+                      ],
+                      "unit": "currency",
+                      "currency": "CNY",
+                      "missing": "null",
+                      "filter_strategy": "many_to_one",
+                      "dimension_path": [],
+                      "filter_path": []
+                    }
+                  ],
+                  "formulas": [],
+                  "null_group_alignment": "IS",
+                  "order_metric": "revenue",
+                  "ordering": "metric"
+                },
+                "semantic_audit": {}
+              },
+              "planner_audit": {
+                "candidate_source": "external_model",
+                "final_source": "model_validated",
+                "fallback": false,
+                "decision": "accepted",
+                "provider": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2252,
+                  "output_tokens": 248,
+                  "total_tokens": 2500,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 55,
+                  "call_index": 1,
+                  "latency_ms": 7699.948,
+                  "reasoning_effort": "medium",
+                  "response_status": "completed"
+                }
+              },
+              "metrics": [
+                {
+                  "id": "revenue",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "function": "SUM",
+                  "label": "销售额",
+                  "unit": "currency",
+                  "currency": "CNY",
+                  "missing": "null",
+                  "filters": []
+                }
+              ],
+              "derived_metrics": [],
+              "order_metric": null,
+              "grain_audit": {
+                "strategy": "aggregate_each_fact_then_join",
+                "metrics": [
+                  {
+                    "metric_id": "revenue",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "function": "SUM",
+                    "native_grain": [
+                      "order_id"
+                    ],
+                    "unit": "currency",
+                    "currency": "CNY",
+                    "missing": "null",
+                    "filter_strategy": "many_to_one",
+                    "dimension_path": [],
+                    "filter_path": []
+                  }
+                ],
+                "formulas": [],
+                "null_group_alignment": "IS",
+                "order_metric": "revenue",
+                "ordering": "metric"
+              },
+              "semantic_audit": {},
+              "output_metrics": [
+                "revenue"
+              ]
+            },
+            "explanation": [
+              "识别指标：销售额（SUM）",
+              "查询表：sales_orders",
+              "模型过滤",
+              "模型过滤",
+              "模型计划已通过 Schema、外键图和只读执行契约校验",
+              "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+            ],
+            "query_hash": "fd75bc4ca5382419"
+          }
+        },
+        {
+          "event": "trace",
+          "data": {
+            "trace_id": "30d9bc257ad8c451",
+            "stage": "document_retrieval",
+            "status": "completed",
+            "query": "2025年华东地区销售额 ('2025-01-01', '2026-01-01') 华东 29584.0",
+            "hit_count": 4,
+            "sources": [
+              "3b24c37b205308830696611f",
+              "b92764ea28e7790ca01a46c3",
+              "c6b13af35a2b779ae46adf99",
+              "2f6ed532af0785ff755a3f7c"
+            ],
+            "candidates": [
+              {
+                "document_id": "3b24c37b205308830696611f",
+                "title": "销售额统计口径",
+                "score": 0.032018442622950824,
+                "matched_terms": [
+                  "01",
+                  "2025",
+                  "售额",
+                  "销售额",
+                  "销售",
+                  "2026"
+                ],
+                "snippet": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+                "metadata": {
+                  "raw_text": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                  "raw_page_text": "销售额统计口径\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计，单位为人民币元。演示库中的记录代表已入账销售\n\n，不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月，2025年统计区间为2025-01-01至2026-01-01，不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数，销量采用数量合计，不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时，应按订单粒度统计订单金额，防止重复累加。退款需要单独的退款事\n\n实表，没有该表时不得给出净销售额。",
+                  "ocr_status": null,
+                  "ocr_attempts": [],
+                  "ocr_selected_transforms": [],
+                  "coordinate_evidence": {
+                    "bbox_status": "exact_block",
+                    "layout_block_ids": [
+                      7
+                    ],
+                    "source_bbox_pdf_user_pt": [
+                      78.0,
+                      589.9088,
+                      515.14,
+                      601.1618
+                    ],
+                    "source_bbox_fitz_unrotated_pt": [
+                      78.0,
+                      240.728,
+                      515.14,
+                      251.981
+                    ],
+                    "page_bbox_pdf_user_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "source_bbox_fitz_display_pt": [
+                      78.0,
+                      240.728,
+                      515.14,
+                      251.981
+                    ],
+                    "source_bbox_render_px": null,
+                    "page_geometry": {
+                      "rotation_degrees": 0,
+                      "rotation_source": "pdf_page_rotate",
+                      "media_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "crop_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_rect_fitz_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_size_pt": [
+                        595.2756,
+                        841.8898
+                      ],
+                      "coordinate_systems": {
+                        "pdf_user_space": {
+                          "origin": "bottom_left",
+                          "unit": "pt"
+                        },
+                        "fitz_unrotated_text_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "fitz_display_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "render_pixel_space": {
+                          "origin": "top_left",
+                          "unit": "px"
+                        }
+                      },
+                      "mappings": {
+                        "pdf_user_to_fitz_unrotated": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          -1.0,
+                          0.0,
+                          841.889771
+                        ],
+                        "fitz_unrotated_to_display": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          0.0,
+                          0.0
+                        ],
+                        "fitz_display_to_render_pixel": null
+                      },
+                      "render": null,
+                      "mapping_status": "complete"
+                    },
+                    "render_input_sha256": null,
+                    "render_size_px": null,
+                    "render_scale": null
+                  },
+                  "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                  "original_document_id": "revenue-policy",
+                  "document_id": "revenue-policy",
+                  "chunk_id": "3b24c37b205308830696611f",
+                  "source_locator": "page:1:block:8",
+                  "page_no": 1,
+                  "sheet_name": null,
+                  "row_start": null,
+                  "row_end": null,
+                  "title_path": [
+                    "第一章 销售额统计口径",
+                    "1.2 时间"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 16.722484,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 1.0,
+                  "bm25_rank": 1,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.632831,
+                  "dense_rank": 4,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 2,
+                  "rrf_score": 0.032018442622950824,
+                  "ranking_score": 0.0544313524590164,
+                  "anchor_match_count": 2,
+                  "identifier_anchors": [],
+                  "evidence_role": "primary"
+                }
+              },
+              {
+                "document_id": "b92764ea28e7790ca01a46c3",
+                "title": "2026经营预测报告",
+                "score": 0.031024531024531024,
+                "matched_terms": [
+                  "2026",
+                  "2025",
+                  "售额",
+                  "销售额",
+                  "销售"
+                ],
+                "snippet": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                "source_uri": "/api/v1/knowledge/documents/forecast-report/original",
+                "metadata": {
+                  "raw_text": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                  "raw_page_text": "2026经营预测报告\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 经营预测\n\n1.1 基准\n\n2026年目标增长率为12%，预测基准为2025年销售额。该目标是经营计划，不是已实现增长\n\n。\n\n1.2 公式\n\n目标销售额 = 基准销售额 * (1 + 目标增长率)\n\n1.3 敏感性\n\n保守目标增长率为8%，积极目标增长率为18%。三种情景均保留相同币种。\n\n1.4 风险\n\n目标完成率需要实际销售额和计划目标同时存在。不能将预测数据写入实际业绩，不能把\n\n口径变化误判为业务增长。",
+                  "ocr_status": null,
+                  "ocr_attempts": [],
+                  "ocr_selected_transforms": [],
+                  "coordinate_evidence": {
+                    "bbox_status": "exact_block",
+                    "layout_block_ids": [
+                      4,
+                      5
+                    ],
+                    "source_bbox_pdf_user_pt": [
+                      78.0,
+                      625.9088,
+                      511.587,
+                      655.1618
+                    ],
+                    "source_bbox_fitz_unrotated_pt": [
+                      78.0,
+                      186.728,
+                      511.587,
+                      215.981
+                    ],
+                    "page_bbox_pdf_user_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "source_bbox_fitz_display_pt": [
+                      78.0,
+                      186.728,
+                      511.587,
+                      215.981
+                    ],
+                    "source_bbox_render_px": null,
+                    "page_geometry": {
+                      "rotation_degrees": 0,
+                      "rotation_source": "pdf_page_rotate",
+                      "media_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "crop_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_rect_fitz_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_size_pt": [
+                        595.2756,
+                        841.8898
+                      ],
+                      "coordinate_systems": {
+                        "pdf_user_space": {
+                          "origin": "bottom_left",
+                          "unit": "pt"
+                        },
+                        "fitz_unrotated_text_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "fitz_display_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "render_pixel_space": {
+                          "origin": "top_left",
+                          "unit": "px"
+                        }
+                      },
+                      "mappings": {
+                        "pdf_user_to_fitz_unrotated": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          -1.0,
+                          0.0,
+                          841.889771
+                        ],
+                        "fitz_unrotated_to_display": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          0.0,
+                          0.0
+                        ],
+                        "fitz_display_to_render_pixel": null
+                      },
+                      "render": null,
+                      "mapping_status": "complete"
+                    },
+                    "render_input_sha256": null,
+                    "render_size_px": null,
+                    "render_scale": null
+                  },
+                  "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+                  "original_document_id": "forecast-report",
+                  "document_id": "forecast-report",
+                  "chunk_id": "b92764ea28e7790ca01a46c3",
+                  "source_locator": "page:1:block:5",
+                  "page_no": 1,
+                  "sheet_name": null,
+                  "row_start": null,
+                  "row_end": null,
+                  "title_path": [
+                    "第一章 经营预测",
+                    "1.1 基准"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 10.236126,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 0.6121,
+                  "bm25_rank": 3,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.589144,
+                  "dense_rank": 6,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 5,
+                  "rrf_score": 0.031024531024531024,
+                  "ranking_score": 0.05274170274170274,
+                  "anchor_match_count": 2,
+                  "identifier_anchors": [],
+                  "evidence_role": "supporting"
+                }
+              },
+              {
+                "document_id": "c6b13af35a2b779ae46adf99",
+                "title": "区域目标表",
+                "score": 0.03252247488101534,
+                "matched_terms": [
+                  "地区",
+                  "华东",
+                  "售额",
+                  "销售额",
+                  "2026",
+                  "销售"
+                ],
+                "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+                "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                "metadata": {
+                  "table_name": "标准数据",
+                  "headers": [
+                    "地区",
+                    "年份",
+                    "目标销售额_人民币元",
+                    "目标增长率"
+                  ],
+                  "values": [
+                    {
+                      "raw_value": "华东",
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 2026,
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 40000,
+                      "number_format": "\"¥\"#,##0.00"
+                    },
+                    {
+                      "raw_value": 0.12,
+                      "number_format": "0.0%"
+                    }
+                  ],
+                  "part_no": null,
+                  "part_count": 1,
+                  "hidden_sheet": false,
+                  "header_row": 1,
+                  "header_confidence": 1.0,
+                  "header_decision": "selected",
+                  "hidden_rows": [],
+                  "hidden_columns": [],
+                  "merged_ranges": [],
+                  "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                  "original_document_id": "region-targets",
+                  "document_id": "region-targets",
+                  "chunk_id": "c6b13af35a2b779ae46adf99",
+                  "source_locator": "sheet:标准数据:row:2",
+                  "page_no": null,
+                  "sheet_name": "标准数据",
+                  "row_start": 2,
+                  "row_end": 2,
+                  "title_path": [
+                    "标准数据"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 15.735778,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 0.941,
+                  "bm25_rank": 2,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.746301,
+                  "dense_rank": 1,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 1,
+                  "rrf_score": 0.03252247488101534,
+                  "ranking_score": 0.04390534108937071,
+                  "anchor_match_count": 1,
+                  "identifier_anchors": [],
+                  "evidence_role": "supporting"
+                }
+              },
+              {
+                "document_id": "2f6ed532af0785ff755a3f7c",
+                "title": "区域目标表",
+                "score": 0.031754032258064516,
+                "matched_terms": [
+                  "地区",
+                  "售额",
+                  "销售额",
+                  "2026",
+                  "销售"
+                ],
+                "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+                "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                "metadata": {
+                  "table_name": "标准数据",
+                  "headers": [
+                    "地区",
+                    "年份",
+                    "目标销售额_人民币元",
+                    "目标增长率"
+                  ],
+                  "values": [
+                    {
+                      "raw_value": "华南",
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 2026,
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 32000,
+                      "number_format": "\"¥\"#,##0.00"
+                    },
+                    {
+                      "raw_value": 0.1,
+                      "number_format": "0.0%"
+                    }
+                  ],
+                  "part_no": null,
+                  "part_count": 1,
+                  "hidden_sheet": false,
+                  "header_row": 1,
+                  "header_confidence": 1.0,
+                  "header_decision": "selected",
+                  "hidden_rows": [],
+                  "hidden_columns": [],
+                  "merged_ranges": [],
+                  "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                  "original_document_id": "region-targets",
+                  "document_id": "region-targets",
+                  "chunk_id": "2f6ed532af0785ff755a3f7c",
+                  "source_locator": "sheet:标准数据:row:3",
+                  "page_no": null,
+                  "sheet_name": "标准数据",
+                  "row_start": 3,
+                  "row_end": 3,
+                  "title_path": [
+                    "标准数据"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 11.433059,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 0.6837,
+                  "bm25_rank": 4,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.692697,
+                  "dense_rank": 2,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 3,
+                  "rrf_score": 0.031754032258064516,
+                  "ranking_score": 0.0428679435483871,
+                  "anchor_match_count": 1,
+                  "identifier_anchors": [],
+                  "evidence_role": "supporting"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "event": "trace",
+          "data": {
+            "trace_id": "30d9bc257ad8c451",
+            "stage": "evidence_fusion",
+            "status": "completed",
+            "structured_rows": 1,
+            "document_sources": 4,
+            "selected_evidence": [
+              {
+                "document_id": "3b24c37b205308830696611f",
+                "title": "销售额统计口径",
+                "snippet": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+                "role": "primary"
+              },
+              {
+                "document_id": "b92764ea28e7790ca01a46c3",
+                "title": "2026经营预测报告",
+                "snippet": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                "source_uri": "/api/v1/knowledge/documents/forecast-report/original",
+                "role": "supporting"
+              },
+              {
+                "document_id": "c6b13af35a2b779ae46adf99",
+                "title": "区域目标表",
+                "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+                "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                "role": "supporting"
+              },
+              {
+                "document_id": "2f6ed532af0785ff755a3f7c",
+                "title": "区域目标表",
+                "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+                "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                "role": "supporting"
+              }
+            ]
+          }
+        },
+        {
+          "event": "audit",
+          "data": {
+            "audit_contract_version": 1,
+            "execution_path": "ict8_structured_document",
+            "mode": "structured_document",
+            "status": "ok",
+            "query": {
+              "original": "2025年华东地区销售额",
+              "effective": "2025年华东地区销售额",
+              "sparse": "2025年华东地区销售额 ('2025-01-01', '2026-01-01') 华东 29584.0"
+            },
+            "retrieval": {
+              "channels": [
+                "bm25",
+                "dense",
+                "hybrid"
+              ],
+              "candidates": [
+                {
+                  "chunk_id": "3b24c37b205308830696611f",
+                  "heading": "销售额统计口径",
+                  "excerpt": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                  "selected": true,
+                  "evidence_role": "supporting",
+                  "bm25_raw": 16.722484,
+                  "bm25_relative": 1.0,
+                  "retrieval_channel": "hybrid",
+                  "source_uri": "/api/v1/knowledge/documents/revenue-policy/original"
+                },
+                {
+                  "chunk_id": "b92764ea28e7790ca01a46c3",
+                  "heading": "2026经营预测报告",
+                  "excerpt": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                  "selected": true,
+                  "evidence_role": "supporting",
+                  "bm25_raw": 10.236126,
+                  "bm25_relative": 0.6121,
+                  "retrieval_channel": "hybrid",
+                  "source_uri": "/api/v1/knowledge/documents/forecast-report/original"
+                },
+                {
+                  "chunk_id": "c6b13af35a2b779ae46adf99",
+                  "heading": "区域目标表",
+                  "excerpt": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+                  "selected": true,
+                  "evidence_role": "supporting",
+                  "bm25_raw": 15.735778,
+                  "bm25_relative": 0.941,
+                  "retrieval_channel": "hybrid",
+                  "source_uri": "/api/v1/knowledge/documents/region-targets/original"
+                },
+                {
+                  "chunk_id": "2f6ed532af0785ff755a3f7c",
+                  "heading": "区域目标表",
+                  "excerpt": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+                  "selected": true,
+                  "evidence_role": "supporting",
+                  "bm25_raw": 11.433059,
+                  "bm25_relative": 0.6837,
+                  "retrieval_channel": "hybrid",
+                  "source_uri": "/api/v1/knowledge/documents/region-targets/original"
+                }
+              ],
+              "candidate_count": 4,
+              "filtered_count": 0
+            },
+            "evidence": {
+              "selected": [
+                {
+                  "chunk_id": "3b24c37b205308830696611f",
+                  "heading": "销售额统计口径",
+                  "excerpt": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                  "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+                  "role": "primary"
+                },
+                {
+                  "chunk_id": "b92764ea28e7790ca01a46c3",
+                  "heading": "2026经营预测报告",
+                  "excerpt": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                  "source_uri": "/api/v1/knowledge/documents/forecast-report/original",
+                  "role": "supporting"
+                },
+                {
+                  "chunk_id": "c6b13af35a2b779ae46adf99",
+                  "heading": "区域目标表",
+                  "excerpt": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+                  "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                  "role": "supporting"
+                },
+                {
+                  "chunk_id": "2f6ed532af0785ff755a3f7c",
+                  "heading": "区域目标表",
+                  "excerpt": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+                  "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                  "role": "supporting"
+                }
+              ],
+              "context_chars": 280
+            },
+            "structured": {
+              "status": "ok",
+              "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+              "query_hash": "fd75bc4ca5382419",
+              "rows": 1,
+              "field_links": [
+                {
+                  "source_text": "sales_amount",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "role": "metric",
+                  "score": 1.0,
+                  "matched_alias": "销售额",
+                  "metric_function": null
+                }
+              ]
+            },
+            "availability": {
+              "bm25": true,
+              "dense": true,
+              "rrf": false,
+              "rerank": false
+            }
+          }
+        },
+        {
+          "event": "done",
+          "data": {
+            "status": "ok",
+            "trace_id": "30d9bc257ad8c451",
+            "question": "2025年华东地区销售额",
+            "effective_question": "2025年华东地区销售额",
+            "context_turns": 0,
+            "answer": "结构化查询返回 1 行，SQL 和字段映射已记录。首行结果：销售额=29584.0文档证据：销售额统计口径（匹配 01, 2025, 售额, 销售额, 销售, 2026）；2026经营预测报告（匹配 2026, 2025, 售额, 销售额, 销售）；区域目标表（匹配 地区, 华东, 售额, 销售额, 2026, 销售）；区域目标表（匹配 地区, 售额, 销售额, 2026, 销售）",
+            "structured": {
+              "status": "ok",
+              "result_state": "rows",
+              "notices": [],
+              "question": "2025年华东地区销售额",
+              "rewritten_question": "2025年华东地区销售额",
+              "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+              "parameters": [
+                "2025-01-01",
+                "2026-01-01",
+                "华东",
+                100
+              ],
+              "columns": [
+                "销售额"
+              ],
+              "rows": [
+                {
+                  "销售额": 29584.0
+                }
+              ],
+              "plan": {
+                "table": "sales_orders",
+                "metric_table": "sales_orders",
+                "metric_column": "sales_amount",
+                "metric_function": "SUM",
+                "metric_label": "销售额",
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [
+                  {
+                    "column": "order_date",
+                    "operator": "RANGE",
+                    "value": [
+                      "2025-01-01",
+                      "2026-01-01"
+                    ],
+                    "source_text": "2025年",
+                    "explanation": "模型过滤",
+                    "table": "sales_orders"
+                  },
+                  {
+                    "column": "region",
+                    "operator": "=",
+                    "value": "华东",
+                    "source_text": "华东",
+                    "explanation": "模型过滤",
+                    "table": "sales_orders"
+                  }
+                ],
+                "having": null,
+                "links": [
+                  {
+                    "source_text": "sales_amount",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "role": "metric",
+                    "score": 1.0,
+                    "matched_alias": "销售额",
+                    "metric_function": null
+                  }
+                ],
+                "join_tables": [],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "confidence": 1.0,
+                "rewritten_question": "2025年华东地区销售额",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": null,
+                "clarification_options": [],
+                "assumptions": [
+                  "模型计划已通过 Schema、外键图和只读执行契约校验"
+                ],
+                "planner_source": "model_validated",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {
+                  "question": "2025年华东地区销售额",
+                  "metric": {
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "function": "SUM",
+                    "label": "销售额"
+                  },
+                  "filters": [
+                    {
+                      "column": "order_date",
+                      "operator": "RANGE",
+                      "value": [
+                        "2025-01-01",
+                        "2026-01-01"
+                      ],
+                      "source_text": "2025年",
+                      "explanation": "模型过滤",
+                      "table": "sales_orders"
+                    },
+                    {
+                      "column": "region",
+                      "operator": "=",
+                      "value": "华东",
+                      "source_text": "华东",
+                      "explanation": "模型过滤",
+                      "table": "sales_orders"
+                    }
+                  ],
+                  "time_range": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "group_by": [],
+                  "comparison": "none",
+                  "comparison_window": null,
+                  "top_n": null,
+                  "confidence": 1.0,
+                  "unresolved": [],
+                  "execution_allowed": true,
+                  "planner_source": "model_validated",
+                  "planner_audit": {
+                    "candidate_source": "external_model",
+                    "final_source": "model_validated",
+                    "fallback": false,
+                    "decision": "accepted",
+                    "provider": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "nl2sql_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2252,
+                      "output_tokens": 248,
+                      "total_tokens": 2500,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 55,
+                      "call_index": 1,
+                      "latency_ms": 7699.948,
+                      "reasoning_effort": "medium",
+                      "response_status": "completed"
+                    }
+                  },
+                  "metrics": [
+                    {
+                      "id": "revenue",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "label": "销售额",
+                      "unit": "currency",
+                      "currency": "CNY",
+                      "missing": "null",
+                      "filters": []
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "grain_audit": {
+                    "strategy": "aggregate_each_fact_then_join",
+                    "metrics": [
+                      {
+                        "metric_id": "revenue",
+                        "table": "sales_orders",
+                        "column": "sales_amount",
+                        "function": "SUM",
+                        "native_grain": [
+                          "order_id"
+                        ],
+                        "unit": "currency",
+                        "currency": "CNY",
+                        "missing": "null",
+                        "filter_strategy": "many_to_one",
+                        "dimension_path": [],
+                        "filter_path": []
+                      }
+                    ],
+                    "formulas": [],
+                    "null_group_alignment": "IS",
+                    "order_metric": "revenue",
+                    "ordering": "metric"
+                  },
+                  "semantic_audit": {}
+                },
+                "planner_audit": {
+                  "candidate_source": "external_model",
+                  "final_source": "model_validated",
+                  "fallback": false,
+                  "decision": "accepted",
+                  "provider": {
+                    "provider": "responses",
+                    "model": "gpt-6-luna",
+                    "reasoning": "medium",
+                    "operation": "nl2sql_plan",
+                    "http_status": 200,
+                    "status": "completed",
+                    "model_verified": true,
+                    "response_model": "gpt-6-luna",
+                    "input_tokens": 2252,
+                    "output_tokens": 248,
+                    "total_tokens": 2500,
+                    "cached_input_tokens": 0,
+                    "reasoning_tokens": 55,
+                    "call_index": 1,
+                    "latency_ms": 7699.948,
+                    "reasoning_effort": "medium",
+                    "response_status": "completed"
+                  }
+                },
+                "metrics": [
+                  {
+                    "id": "revenue",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "function": "SUM",
+                    "label": "销售额",
+                    "unit": "currency",
+                    "currency": "CNY",
+                    "missing": "null",
+                    "filters": []
+                  }
+                ],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {
+                  "strategy": "aggregate_each_fact_then_join",
+                  "metrics": [
+                    {
+                      "metric_id": "revenue",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "native_grain": [
+                        "order_id"
+                      ],
+                      "unit": "currency",
+                      "currency": "CNY",
+                      "missing": "null",
+                      "filter_strategy": "many_to_one",
+                      "dimension_path": [],
+                      "filter_path": []
+                    }
+                  ],
+                  "formulas": [],
+                  "null_group_alignment": "IS",
+                  "order_metric": "revenue",
+                  "ordering": "metric"
+                },
+                "semantic_audit": {},
+                "output_metrics": [
+                  "revenue"
+                ]
+              },
+              "explanation": [
+                "识别指标：销售额（SUM）",
+                "查询表：sales_orders",
+                "模型过滤",
+                "模型过滤",
+                "模型计划已通过 Schema、外键图和只读执行契约校验",
+                "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "database": "demo_sales.sqlite",
+                "table": "sales_orders",
+                "row_count": 1,
+                "query_hash": "fd75bc4ca5382419",
+                "field_links": [
+                  {
+                    "source_text": "sales_amount",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "role": "metric",
+                    "score": 1.0,
+                    "matched_alias": "销售额",
+                    "metric_function": null
+                  }
+                ],
+                "coverage": {},
+                "consistency": "sqlite_read_transaction",
+                "source_revision": "55d9785df8266e9051d9bb66b587bf2ac146b8811335a97dc062899965b464de",
+                "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+                "grain_audit": {
+                  "strategy": "aggregate_each_fact_then_join",
+                  "metrics": [
+                    {
+                      "metric_id": "revenue",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "native_grain": [
+                        "order_id"
+                      ],
+                      "unit": "currency",
+                      "currency": "CNY",
+                      "missing": "null",
+                      "filter_strategy": "many_to_one",
+                      "dimension_path": [],
+                      "filter_path": []
+                    }
+                  ],
+                  "formulas": [],
+                  "null_group_alignment": "IS",
+                  "order_metric": "revenue",
+                  "ordering": "metric"
+                },
+                "result_cells": [
+                  {
+                    "row": 0,
+                    "column": "销售额",
+                    "query_hash": "fd75bc4ca5382419",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "销售额"
+                    }
+                  }
+                ]
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "document_query": "2025年华东地区销售额 ('2025-01-01', '2026-01-01') 华东 29584.0",
+            "document_evidence": [
+              {
+                "document_id": "3b24c37b205308830696611f",
+                "title": "销售额统计口径",
+                "score": 0.032018442622950824,
+                "matched_terms": [
+                  "01",
+                  "2025",
+                  "售额",
+                  "销售额",
+                  "销售",
+                  "2026"
+                ],
+                "snippet": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+                "metadata": {
+                  "raw_text": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                  "raw_page_text": "销售额统计口径\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计，单位为人民币元。演示库中的记录代表已入账销售\n\n，不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月，2025年统计区间为2025-01-01至2026-01-01，不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数，销量采用数量合计，不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时，应按订单粒度统计订单金额，防止重复累加。退款需要单独的退款事\n\n实表，没有该表时不得给出净销售额。",
+                  "ocr_status": null,
+                  "ocr_attempts": [],
+                  "ocr_selected_transforms": [],
+                  "coordinate_evidence": {
+                    "bbox_status": "exact_block",
+                    "layout_block_ids": [
+                      7
+                    ],
+                    "source_bbox_pdf_user_pt": [
+                      78.0,
+                      589.9088,
+                      515.14,
+                      601.1618
+                    ],
+                    "source_bbox_fitz_unrotated_pt": [
+                      78.0,
+                      240.728,
+                      515.14,
+                      251.981
+                    ],
+                    "page_bbox_pdf_user_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "source_bbox_fitz_display_pt": [
+                      78.0,
+                      240.728,
+                      515.14,
+                      251.981
+                    ],
+                    "source_bbox_render_px": null,
+                    "page_geometry": {
+                      "rotation_degrees": 0,
+                      "rotation_source": "pdf_page_rotate",
+                      "media_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "crop_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_rect_fitz_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_size_pt": [
+                        595.2756,
+                        841.8898
+                      ],
+                      "coordinate_systems": {
+                        "pdf_user_space": {
+                          "origin": "bottom_left",
+                          "unit": "pt"
+                        },
+                        "fitz_unrotated_text_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "fitz_display_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "render_pixel_space": {
+                          "origin": "top_left",
+                          "unit": "px"
+                        }
+                      },
+                      "mappings": {
+                        "pdf_user_to_fitz_unrotated": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          -1.0,
+                          0.0,
+                          841.889771
+                        ],
+                        "fitz_unrotated_to_display": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          0.0,
+                          0.0
+                        ],
+                        "fitz_display_to_render_pixel": null
+                      },
+                      "render": null,
+                      "mapping_status": "complete"
+                    },
+                    "render_input_sha256": null,
+                    "render_size_px": null,
+                    "render_scale": null
+                  },
+                  "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                  "original_document_id": "revenue-policy",
+                  "document_id": "revenue-policy",
+                  "chunk_id": "3b24c37b205308830696611f",
+                  "source_locator": "page:1:block:8",
+                  "page_no": 1,
+                  "sheet_name": null,
+                  "row_start": null,
+                  "row_end": null,
+                  "title_path": [
+                    "第一章 销售额统计口径",
+                    "1.2 时间"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 16.722484,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 1.0,
+                  "bm25_rank": 1,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.632831,
+                  "dense_rank": 4,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 2,
+                  "rrf_score": 0.032018442622950824,
+                  "ranking_score": 0.0544313524590164,
+                  "anchor_match_count": 2,
+                  "identifier_anchors": [],
+                  "evidence_role": "primary"
+                }
+              },
+              {
+                "document_id": "b92764ea28e7790ca01a46c3",
+                "title": "2026经营预测报告",
+                "score": 0.031024531024531024,
+                "matched_terms": [
+                  "2026",
+                  "2025",
+                  "售额",
+                  "销售额",
+                  "销售"
+                ],
+                "snippet": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                "source_uri": "/api/v1/knowledge/documents/forecast-report/original",
+                "metadata": {
+                  "raw_text": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                  "raw_page_text": "2026经营预测报告\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 经营预测\n\n1.1 基准\n\n2026年目标增长率为12%，预测基准为2025年销售额。该目标是经营计划，不是已实现增长\n\n。\n\n1.2 公式\n\n目标销售额 = 基准销售额 * (1 + 目标增长率)\n\n1.3 敏感性\n\n保守目标增长率为8%，积极目标增长率为18%。三种情景均保留相同币种。\n\n1.4 风险\n\n目标完成率需要实际销售额和计划目标同时存在。不能将预测数据写入实际业绩，不能把\n\n口径变化误判为业务增长。",
+                  "ocr_status": null,
+                  "ocr_attempts": [],
+                  "ocr_selected_transforms": [],
+                  "coordinate_evidence": {
+                    "bbox_status": "exact_block",
+                    "layout_block_ids": [
+                      4,
+                      5
+                    ],
+                    "source_bbox_pdf_user_pt": [
+                      78.0,
+                      625.9088,
+                      511.587,
+                      655.1618
+                    ],
+                    "source_bbox_fitz_unrotated_pt": [
+                      78.0,
+                      186.728,
+                      511.587,
+                      215.981
+                    ],
+                    "page_bbox_pdf_user_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "source_bbox_fitz_display_pt": [
+                      78.0,
+                      186.728,
+                      511.587,
+                      215.981
+                    ],
+                    "source_bbox_render_px": null,
+                    "page_geometry": {
+                      "rotation_degrees": 0,
+                      "rotation_source": "pdf_page_rotate",
+                      "media_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "crop_box_pdf_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_rect_fitz_pt": [
+                        0.0,
+                        0.0,
+                        595.2756,
+                        841.8898
+                      ],
+                      "display_size_pt": [
+                        595.2756,
+                        841.8898
+                      ],
+                      "coordinate_systems": {
+                        "pdf_user_space": {
+                          "origin": "bottom_left",
+                          "unit": "pt"
+                        },
+                        "fitz_unrotated_text_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "fitz_display_space": {
+                          "origin": "top_left",
+                          "unit": "pt"
+                        },
+                        "render_pixel_space": {
+                          "origin": "top_left",
+                          "unit": "px"
+                        }
+                      },
+                      "mappings": {
+                        "pdf_user_to_fitz_unrotated": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          -1.0,
+                          0.0,
+                          841.889771
+                        ],
+                        "fitz_unrotated_to_display": [
+                          1.0,
+                          0.0,
+                          0.0,
+                          1.0,
+                          0.0,
+                          0.0
+                        ],
+                        "fitz_display_to_render_pixel": null
+                      },
+                      "render": null,
+                      "mapping_status": "complete"
+                    },
+                    "render_input_sha256": null,
+                    "render_size_px": null,
+                    "render_scale": null
+                  },
+                  "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+                  "original_document_id": "forecast-report",
+                  "document_id": "forecast-report",
+                  "chunk_id": "b92764ea28e7790ca01a46c3",
+                  "source_locator": "page:1:block:5",
+                  "page_no": 1,
+                  "sheet_name": null,
+                  "row_start": null,
+                  "row_end": null,
+                  "title_path": [
+                    "第一章 经营预测",
+                    "1.1 基准"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 10.236126,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 0.6121,
+                  "bm25_rank": 3,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.589144,
+                  "dense_rank": 6,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 5,
+                  "rrf_score": 0.031024531024531024,
+                  "ranking_score": 0.05274170274170274,
+                  "anchor_match_count": 2,
+                  "identifier_anchors": [],
+                  "evidence_role": "supporting"
+                }
+              },
+              {
+                "document_id": "c6b13af35a2b779ae46adf99",
+                "title": "区域目标表",
+                "score": 0.03252247488101534,
+                "matched_terms": [
+                  "地区",
+                  "华东",
+                  "售额",
+                  "销售额",
+                  "2026",
+                  "销售"
+                ],
+                "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+                "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                "metadata": {
+                  "table_name": "标准数据",
+                  "headers": [
+                    "地区",
+                    "年份",
+                    "目标销售额_人民币元",
+                    "目标增长率"
+                  ],
+                  "values": [
+                    {
+                      "raw_value": "华东",
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 2026,
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 40000,
+                      "number_format": "\"¥\"#,##0.00"
+                    },
+                    {
+                      "raw_value": 0.12,
+                      "number_format": "0.0%"
+                    }
+                  ],
+                  "part_no": null,
+                  "part_count": 1,
+                  "hidden_sheet": false,
+                  "header_row": 1,
+                  "header_confidence": 1.0,
+                  "header_decision": "selected",
+                  "hidden_rows": [],
+                  "hidden_columns": [],
+                  "merged_ranges": [],
+                  "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                  "original_document_id": "region-targets",
+                  "document_id": "region-targets",
+                  "chunk_id": "c6b13af35a2b779ae46adf99",
+                  "source_locator": "sheet:标准数据:row:2",
+                  "page_no": null,
+                  "sheet_name": "标准数据",
+                  "row_start": 2,
+                  "row_end": 2,
+                  "title_path": [
+                    "标准数据"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 15.735778,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 0.941,
+                  "bm25_rank": 2,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.746301,
+                  "dense_rank": 1,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 1,
+                  "rrf_score": 0.03252247488101534,
+                  "ranking_score": 0.04390534108937071,
+                  "anchor_match_count": 1,
+                  "identifier_anchors": [],
+                  "evidence_role": "supporting"
+                }
+              },
+              {
+                "document_id": "2f6ed532af0785ff755a3f7c",
+                "title": "区域目标表",
+                "score": 0.031754032258064516,
+                "matched_terms": [
+                  "地区",
+                  "售额",
+                  "销售额",
+                  "2026",
+                  "销售"
+                ],
+                "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+                "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                "metadata": {
+                  "table_name": "标准数据",
+                  "headers": [
+                    "地区",
+                    "年份",
+                    "目标销售额_人民币元",
+                    "目标增长率"
+                  ],
+                  "values": [
+                    {
+                      "raw_value": "华南",
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 2026,
+                      "number_format": "General"
+                    },
+                    {
+                      "raw_value": 32000,
+                      "number_format": "\"¥\"#,##0.00"
+                    },
+                    {
+                      "raw_value": 0.1,
+                      "number_format": "0.0%"
+                    }
+                  ],
+                  "part_no": null,
+                  "part_count": 1,
+                  "hidden_sheet": false,
+                  "header_row": 1,
+                  "header_confidence": 1.0,
+                  "header_decision": "selected",
+                  "hidden_rows": [],
+                  "hidden_columns": [],
+                  "merged_ranges": [],
+                  "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                  "original_document_id": "region-targets",
+                  "document_id": "region-targets",
+                  "chunk_id": "2f6ed532af0785ff755a3f7c",
+                  "source_locator": "sheet:标准数据:row:3",
+                  "page_no": null,
+                  "sheet_name": "标准数据",
+                  "row_start": 3,
+                  "row_end": 3,
+                  "title_path": [
+                    "标准数据"
+                  ],
+                  "quality": 1.0,
+                  "warnings": [],
+                  "bm25_raw": 11.433059,
+                  "retrieval_channel": "hybrid",
+                  "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                  "bm25_relative": 0.6837,
+                  "bm25_rank": 4,
+                  "retrieval_channels": [
+                    "bm25",
+                    "dense"
+                  ],
+                  "dense_cosine": 0.692697,
+                  "dense_rank": 2,
+                  "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                  "rrf_rank": 3,
+                  "rrf_score": 0.031754032258064516,
+                  "ranking_score": 0.0428679435483871,
+                  "anchor_match_count": 1,
+                  "identifier_anchors": [],
+                  "evidence_role": "supporting"
+                }
+              }
+            ],
+            "trace": [
+              {
+                "stage": "intent",
+                "status": "completed",
+                "input": "2025年华东地区销售额",
+                "effective_question": "2025年华东地区销售额",
+                "context_turns": 0,
+                "context_rewrite": {
+                  "mode": "none"
+                },
+                "output": "hybrid_structured_document"
+              },
+              {
+                "stage": "structured_query",
+                "status": "ok",
+                "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+                "parameters": [
+                  "2025-01-01",
+                  "2026-01-01",
+                  "华东",
+                  100
+                ],
+                "rows": 1,
+                "field_links": [
+                  {
+                    "source_text": "sales_amount",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "role": "metric",
+                    "score": 1.0,
+                    "matched_alias": "销售额",
+                    "metric_function": null
+                  }
+                ],
+                "plan": {
+                  "table": "sales_orders",
+                  "metric_table": "sales_orders",
+                  "metric_column": "sales_amount",
+                  "metric_function": "SUM",
+                  "metric_label": "销售额",
+                  "analysis_mode": "aggregate",
+                  "dimensions": [],
+                  "dimension_tables": {},
+                  "dimension_transforms": {},
+                  "dimension_labels": {},
+                  "filters": [
+                    {
+                      "column": "order_date",
+                      "operator": "RANGE",
+                      "value": [
+                        "2025-01-01",
+                        "2026-01-01"
+                      ],
+                      "source_text": "2025年",
+                      "explanation": "模型过滤",
+                      "table": "sales_orders"
+                    },
+                    {
+                      "column": "region",
+                      "operator": "=",
+                      "value": "华东",
+                      "source_text": "华东",
+                      "explanation": "模型过滤",
+                      "table": "sales_orders"
+                    }
+                  ],
+                  "having": null,
+                  "links": [
+                    {
+                      "source_text": "sales_amount",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "role": "metric",
+                      "score": 1.0,
+                      "matched_alias": "销售额",
+                      "metric_function": null
+                    }
+                  ],
+                  "join_tables": [],
+                  "join_conditions": [],
+                  "join_path": [],
+                  "join_alternatives": [],
+                  "order_desc": true,
+                  "limit": 100,
+                  "confidence": 1.0,
+                  "rewritten_question": "2025年华东地区销售额",
+                  "comparison_mode": "none",
+                  "comparison_period": {},
+                  "clarification": null,
+                  "clarification_code": null,
+                  "clarification_options": [],
+                  "assumptions": [
+                    "模型计划已通过 Schema、外键图和只读执行契约校验"
+                  ],
+                  "planner_source": "model_validated",
+                  "top_n": null,
+                  "fan_out": false,
+                  "coverage": {},
+                  "intent_audit": {
+                    "question": "2025年华东地区销售额",
+                    "metric": {
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "label": "销售额"
+                    },
+                    "filters": [
+                      {
+                        "column": "order_date",
+                        "operator": "RANGE",
+                        "value": [
+                          "2025-01-01",
+                          "2026-01-01"
+                        ],
+                        "source_text": "2025年",
+                        "explanation": "模型过滤",
+                        "table": "sales_orders"
+                      },
+                      {
+                        "column": "region",
+                        "operator": "=",
+                        "value": "华东",
+                        "source_text": "华东",
+                        "explanation": "模型过滤",
+                        "table": "sales_orders"
+                      }
+                    ],
+                    "time_range": [
+                      "2025-01-01",
+                      "2026-01-01"
+                    ],
+                    "group_by": [],
+                    "comparison": "none",
+                    "comparison_window": null,
+                    "top_n": null,
+                    "confidence": 1.0,
+                    "unresolved": [],
+                    "execution_allowed": true,
+                    "planner_source": "model_validated",
+                    "planner_audit": {
+                      "candidate_source": "external_model",
+                      "final_source": "model_validated",
+                      "fallback": false,
+                      "decision": "accepted",
+                      "provider": {
+                        "provider": "responses",
+                        "model": "gpt-6-luna",
+                        "reasoning": "medium",
+                        "operation": "nl2sql_plan",
+                        "http_status": 200,
+                        "status": "completed",
+                        "model_verified": true,
+                        "response_model": "gpt-6-luna",
+                        "input_tokens": 2252,
+                        "output_tokens": 248,
+                        "total_tokens": 2500,
+                        "cached_input_tokens": 0,
+                        "reasoning_tokens": 55,
+                        "call_index": 1,
+                        "latency_ms": 7699.948,
+                        "reasoning_effort": "medium",
+                        "response_status": "completed"
+                      }
+                    },
+                    "metrics": [
+                      {
+                        "id": "revenue",
+                        "table": "sales_orders",
+                        "column": "sales_amount",
+                        "function": "SUM",
+                        "label": "销售额",
+                        "unit": "currency",
+                        "currency": "CNY",
+                        "missing": "null",
+                        "filters": []
+                      }
+                    ],
+                    "derived_metrics": [],
+                    "grain_audit": {
+                      "strategy": "aggregate_each_fact_then_join",
+                      "metrics": [
+                        {
+                          "metric_id": "revenue",
+                          "table": "sales_orders",
+                          "column": "sales_amount",
+                          "function": "SUM",
+                          "native_grain": [
+                            "order_id"
+                          ],
+                          "unit": "currency",
+                          "currency": "CNY",
+                          "missing": "null",
+                          "filter_strategy": "many_to_one",
+                          "dimension_path": [],
+                          "filter_path": []
+                        }
+                      ],
+                      "formulas": [],
+                      "null_group_alignment": "IS",
+                      "order_metric": "revenue",
+                      "ordering": "metric"
+                    },
+                    "semantic_audit": {}
+                  },
+                  "planner_audit": {
+                    "candidate_source": "external_model",
+                    "final_source": "model_validated",
+                    "fallback": false,
+                    "decision": "accepted",
+                    "provider": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "nl2sql_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2252,
+                      "output_tokens": 248,
+                      "total_tokens": 2500,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 55,
+                      "call_index": 1,
+                      "latency_ms": 7699.948,
+                      "reasoning_effort": "medium",
+                      "response_status": "completed"
+                    }
+                  },
+                  "metrics": [
+                    {
+                      "id": "revenue",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "label": "销售额",
+                      "unit": "currency",
+                      "currency": "CNY",
+                      "missing": "null",
+                      "filters": []
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "order_metric": null,
+                  "grain_audit": {
+                    "strategy": "aggregate_each_fact_then_join",
+                    "metrics": [
+                      {
+                        "metric_id": "revenue",
+                        "table": "sales_orders",
+                        "column": "sales_amount",
+                        "function": "SUM",
+                        "native_grain": [
+                          "order_id"
+                        ],
+                        "unit": "currency",
+                        "currency": "CNY",
+                        "missing": "null",
+                        "filter_strategy": "many_to_one",
+                        "dimension_path": [],
+                        "filter_path": []
+                      }
+                    ],
+                    "formulas": [],
+                    "null_group_alignment": "IS",
+                    "order_metric": "revenue",
+                    "ordering": "metric"
+                  },
+                  "semantic_audit": {},
+                  "output_metrics": [
+                    "revenue"
+                  ]
+                },
+                "explanation": [
+                  "识别指标：销售额（SUM）",
+                  "查询表：sales_orders",
+                  "模型过滤",
+                  "模型过滤",
+                  "模型计划已通过 Schema、外键图和只读执行契约校验",
+                  "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+                ],
+                "query_hash": "fd75bc4ca5382419"
+              },
+              {
+                "stage": "document_retrieval",
+                "status": "completed",
+                "query": "2025年华东地区销售额 ('2025-01-01', '2026-01-01') 华东 29584.0",
+                "hit_count": 4,
+                "sources": [
+                  "3b24c37b205308830696611f",
+                  "b92764ea28e7790ca01a46c3",
+                  "c6b13af35a2b779ae46adf99",
+                  "2f6ed532af0785ff755a3f7c"
+                ],
+                "candidates": [
+                  {
+                    "document_id": "3b24c37b205308830696611f",
+                    "title": "销售额统计口径",
+                    "score": 0.032018442622950824,
+                    "matched_terms": [
+                      "01",
+                      "2025",
+                      "售额",
+                      "销售额",
+                      "销售",
+                      "2026"
+                    ],
+                    "snippet": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                    "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+                    "metadata": {
+                      "raw_text": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                      "raw_page_text": "销售额统计口径\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计，单位为人民币元。演示库中的记录代表已入账销售\n\n，不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月，2025年统计区间为2025-01-01至2026-01-01，不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数，销量采用数量合计，不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时，应按订单粒度统计订单金额，防止重复累加。退款需要单独的退款事\n\n实表，没有该表时不得给出净销售额。",
+                      "ocr_status": null,
+                      "ocr_attempts": [],
+                      "ocr_selected_transforms": [],
+                      "coordinate_evidence": {
+                        "bbox_status": "exact_block",
+                        "layout_block_ids": [
+                          7
+                        ],
+                        "source_bbox_pdf_user_pt": [
+                          78.0,
+                          589.9088,
+                          515.14,
+                          601.1618
+                        ],
+                        "source_bbox_fitz_unrotated_pt": [
+                          78.0,
+                          240.728,
+                          515.14,
+                          251.981
+                        ],
+                        "page_bbox_pdf_user_pt": [
+                          0.0,
+                          0.0,
+                          595.2756,
+                          841.8898
+                        ],
+                        "source_bbox_fitz_display_pt": [
+                          78.0,
+                          240.728,
+                          515.14,
+                          251.981
+                        ],
+                        "source_bbox_render_px": null,
+                        "page_geometry": {
+                          "rotation_degrees": 0,
+                          "rotation_source": "pdf_page_rotate",
+                          "media_box_pdf_pt": [
+                            0.0,
+                            0.0,
+                            595.2756,
+                            841.8898
+                          ],
+                          "crop_box_pdf_pt": [
+                            0.0,
+                            0.0,
+                            595.2756,
+                            841.8898
+                          ],
+                          "display_rect_fitz_pt": [
+                            0.0,
+                            0.0,
+                            595.2756,
+                            841.8898
+                          ],
+                          "display_size_pt": [
+                            595.2756,
+                            841.8898
+                          ],
+                          "coordinate_systems": {
+                            "pdf_user_space": {
+                              "origin": "bottom_left",
+                              "unit": "pt"
+                            },
+                            "fitz_unrotated_text_space": {
+                              "origin": "top_left",
+                              "unit": "pt"
+                            },
+                            "fitz_display_space": {
+                              "origin": "top_left",
+                              "unit": "pt"
+                            },
+                            "render_pixel_space": {
+                              "origin": "top_left",
+                              "unit": "px"
+                            }
+                          },
+                          "mappings": {
+                            "pdf_user_to_fitz_unrotated": [
+                              1.0,
+                              0.0,
+                              0.0,
+                              -1.0,
+                              0.0,
+                              841.889771
+                            ],
+                            "fitz_unrotated_to_display": [
+                              1.0,
+                              0.0,
+                              0.0,
+                              1.0,
+                              0.0,
+                              0.0
+                            ],
+                            "fitz_display_to_render_pixel": null
+                          },
+                          "render": null,
+                          "mapping_status": "complete"
+                        },
+                        "render_input_sha256": null,
+                        "render_size_px": null,
+                        "render_scale": null
+                      },
+                      "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                      "original_document_id": "revenue-policy",
+                      "document_id": "revenue-policy",
+                      "chunk_id": "3b24c37b205308830696611f",
+                      "source_locator": "page:1:block:8",
+                      "page_no": 1,
+                      "sheet_name": null,
+                      "row_start": null,
+                      "row_end": null,
+                      "title_path": [
+                        "第一章 销售额统计口径",
+                        "1.2 时间"
+                      ],
+                      "quality": 1.0,
+                      "warnings": [],
+                      "bm25_raw": 16.722484,
+                      "retrieval_channel": "hybrid",
+                      "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                      "bm25_relative": 1.0,
+                      "bm25_rank": 1,
+                      "retrieval_channels": [
+                        "bm25",
+                        "dense"
+                      ],
+                      "dense_cosine": 0.632831,
+                      "dense_rank": 4,
+                      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                      "rrf_rank": 2,
+                      "rrf_score": 0.032018442622950824,
+                      "ranking_score": 0.0544313524590164,
+                      "anchor_match_count": 2,
+                      "identifier_anchors": [],
+                      "evidence_role": "primary"
+                    }
+                  },
+                  {
+                    "document_id": "b92764ea28e7790ca01a46c3",
+                    "title": "2026经营预测报告",
+                    "score": 0.031024531024531024,
+                    "matched_terms": [
+                      "2026",
+                      "2025",
+                      "售额",
+                      "销售额",
+                      "销售"
+                    ],
+                    "snippet": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                    "source_uri": "/api/v1/knowledge/documents/forecast-report/original",
+                    "metadata": {
+                      "raw_text": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                      "raw_page_text": "2026经营预测报告\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 经营预测\n\n1.1 基准\n\n2026年目标增长率为12%，预测基准为2025年销售额。该目标是经营计划，不是已实现增长\n\n。\n\n1.2 公式\n\n目标销售额 = 基准销售额 * (1 + 目标增长率)\n\n1.3 敏感性\n\n保守目标增长率为8%，积极目标增长率为18%。三种情景均保留相同币种。\n\n1.4 风险\n\n目标完成率需要实际销售额和计划目标同时存在。不能将预测数据写入实际业绩，不能把\n\n口径变化误判为业务增长。",
+                      "ocr_status": null,
+                      "ocr_attempts": [],
+                      "ocr_selected_transforms": [],
+                      "coordinate_evidence": {
+                        "bbox_status": "exact_block",
+                        "layout_block_ids": [
+                          4,
+                          5
+                        ],
+                        "source_bbox_pdf_user_pt": [
+                          78.0,
+                          625.9088,
+                          511.587,
+                          655.1618
+                        ],
+                        "source_bbox_fitz_unrotated_pt": [
+                          78.0,
+                          186.728,
+                          511.587,
+                          215.981
+                        ],
+                        "page_bbox_pdf_user_pt": [
+                          0.0,
+                          0.0,
+                          595.2756,
+                          841.8898
+                        ],
+                        "source_bbox_fitz_display_pt": [
+                          78.0,
+                          186.728,
+                          511.587,
+                          215.981
+                        ],
+                        "source_bbox_render_px": null,
+                        "page_geometry": {
+                          "rotation_degrees": 0,
+                          "rotation_source": "pdf_page_rotate",
+                          "media_box_pdf_pt": [
+                            0.0,
+                            0.0,
+                            595.2756,
+                            841.8898
+                          ],
+                          "crop_box_pdf_pt": [
+                            0.0,
+                            0.0,
+                            595.2756,
+                            841.8898
+                          ],
+                          "display_rect_fitz_pt": [
+                            0.0,
+                            0.0,
+                            595.2756,
+                            841.8898
+                          ],
+                          "display_size_pt": [
+                            595.2756,
+                            841.8898
+                          ],
+                          "coordinate_systems": {
+                            "pdf_user_space": {
+                              "origin": "bottom_left",
+                              "unit": "pt"
+                            },
+                            "fitz_unrotated_text_space": {
+                              "origin": "top_left",
+                              "unit": "pt"
+                            },
+                            "fitz_display_space": {
+                              "origin": "top_left",
+                              "unit": "pt"
+                            },
+                            "render_pixel_space": {
+                              "origin": "top_left",
+                              "unit": "px"
+                            }
+                          },
+                          "mappings": {
+                            "pdf_user_to_fitz_unrotated": [
+                              1.0,
+                              0.0,
+                              0.0,
+                              -1.0,
+                              0.0,
+                              841.889771
+                            ],
+                            "fitz_unrotated_to_display": [
+                              1.0,
+                              0.0,
+                              0.0,
+                              1.0,
+                              0.0,
+                              0.0
+                            ],
+                            "fitz_display_to_render_pixel": null
+                          },
+                          "render": null,
+                          "mapping_status": "complete"
+                        },
+                        "render_input_sha256": null,
+                        "render_size_px": null,
+                        "render_scale": null
+                      },
+                      "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+                      "original_document_id": "forecast-report",
+                      "document_id": "forecast-report",
+                      "chunk_id": "b92764ea28e7790ca01a46c3",
+                      "source_locator": "page:1:block:5",
+                      "page_no": 1,
+                      "sheet_name": null,
+                      "row_start": null,
+                      "row_end": null,
+                      "title_path": [
+                        "第一章 经营预测",
+                        "1.1 基准"
+                      ],
+                      "quality": 1.0,
+                      "warnings": [],
+                      "bm25_raw": 10.236126,
+                      "retrieval_channel": "hybrid",
+                      "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                      "bm25_relative": 0.6121,
+                      "bm25_rank": 3,
+                      "retrieval_channels": [
+                        "bm25",
+                        "dense"
+                      ],
+                      "dense_cosine": 0.589144,
+                      "dense_rank": 6,
+                      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                      "rrf_rank": 5,
+                      "rrf_score": 0.031024531024531024,
+                      "ranking_score": 0.05274170274170274,
+                      "anchor_match_count": 2,
+                      "identifier_anchors": [],
+                      "evidence_role": "supporting"
+                    }
+                  },
+                  {
+                    "document_id": "c6b13af35a2b779ae46adf99",
+                    "title": "区域目标表",
+                    "score": 0.03252247488101534,
+                    "matched_terms": [
+                      "地区",
+                      "华东",
+                      "售额",
+                      "销售额",
+                      "2026",
+                      "销售"
+                    ],
+                    "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+                    "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                    "metadata": {
+                      "table_name": "标准数据",
+                      "headers": [
+                        "地区",
+                        "年份",
+                        "目标销售额_人民币元",
+                        "目标增长率"
+                      ],
+                      "values": [
+                        {
+                          "raw_value": "华东",
+                          "number_format": "General"
+                        },
+                        {
+                          "raw_value": 2026,
+                          "number_format": "General"
+                        },
+                        {
+                          "raw_value": 40000,
+                          "number_format": "\"¥\"#,##0.00"
+                        },
+                        {
+                          "raw_value": 0.12,
+                          "number_format": "0.0%"
+                        }
+                      ],
+                      "part_no": null,
+                      "part_count": 1,
+                      "hidden_sheet": false,
+                      "header_row": 1,
+                      "header_confidence": 1.0,
+                      "header_decision": "selected",
+                      "hidden_rows": [],
+                      "hidden_columns": [],
+                      "merged_ranges": [],
+                      "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                      "original_document_id": "region-targets",
+                      "document_id": "region-targets",
+                      "chunk_id": "c6b13af35a2b779ae46adf99",
+                      "source_locator": "sheet:标准数据:row:2",
+                      "page_no": null,
+                      "sheet_name": "标准数据",
+                      "row_start": 2,
+                      "row_end": 2,
+                      "title_path": [
+                        "标准数据"
+                      ],
+                      "quality": 1.0,
+                      "warnings": [],
+                      "bm25_raw": 15.735778,
+                      "retrieval_channel": "hybrid",
+                      "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                      "bm25_relative": 0.941,
+                      "bm25_rank": 2,
+                      "retrieval_channels": [
+                        "bm25",
+                        "dense"
+                      ],
+                      "dense_cosine": 0.746301,
+                      "dense_rank": 1,
+                      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                      "rrf_rank": 1,
+                      "rrf_score": 0.03252247488101534,
+                      "ranking_score": 0.04390534108937071,
+                      "anchor_match_count": 1,
+                      "identifier_anchors": [],
+                      "evidence_role": "supporting"
+                    }
+                  },
+                  {
+                    "document_id": "2f6ed532af0785ff755a3f7c",
+                    "title": "区域目标表",
+                    "score": 0.031754032258064516,
+                    "matched_terms": [
+                      "地区",
+                      "售额",
+                      "销售额",
+                      "2026",
+                      "销售"
+                    ],
+                    "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+                    "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                    "metadata": {
+                      "table_name": "标准数据",
+                      "headers": [
+                        "地区",
+                        "年份",
+                        "目标销售额_人民币元",
+                        "目标增长率"
+                      ],
+                      "values": [
+                        {
+                          "raw_value": "华南",
+                          "number_format": "General"
+                        },
+                        {
+                          "raw_value": 2026,
+                          "number_format": "General"
+                        },
+                        {
+                          "raw_value": 32000,
+                          "number_format": "\"¥\"#,##0.00"
+                        },
+                        {
+                          "raw_value": 0.1,
+                          "number_format": "0.0%"
+                        }
+                      ],
+                      "part_no": null,
+                      "part_count": 1,
+                      "hidden_sheet": false,
+                      "header_row": 1,
+                      "header_confidence": 1.0,
+                      "header_decision": "selected",
+                      "hidden_rows": [],
+                      "hidden_columns": [],
+                      "merged_ranges": [],
+                      "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                      "original_document_id": "region-targets",
+                      "document_id": "region-targets",
+                      "chunk_id": "2f6ed532af0785ff755a3f7c",
+                      "source_locator": "sheet:标准数据:row:3",
+                      "page_no": null,
+                      "sheet_name": "标准数据",
+                      "row_start": 3,
+                      "row_end": 3,
+                      "title_path": [
+                        "标准数据"
+                      ],
+                      "quality": 1.0,
+                      "warnings": [],
+                      "bm25_raw": 11.433059,
+                      "retrieval_channel": "hybrid",
+                      "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                      "bm25_relative": 0.6837,
+                      "bm25_rank": 4,
+                      "retrieval_channels": [
+                        "bm25",
+                        "dense"
+                      ],
+                      "dense_cosine": 0.692697,
+                      "dense_rank": 2,
+                      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                      "rrf_rank": 3,
+                      "rrf_score": 0.031754032258064516,
+                      "ranking_score": 0.0428679435483871,
+                      "anchor_match_count": 1,
+                      "identifier_anchors": [],
+                      "evidence_role": "supporting"
+                    }
+                  }
+                ]
+              },
+              {
+                "stage": "evidence_fusion",
+                "status": "completed",
+                "structured_rows": 1,
+                "document_sources": 4,
+                "selected_evidence": [
+                  {
+                    "document_id": "3b24c37b205308830696611f",
+                    "title": "销售额统计口径",
+                    "snippet": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+                    "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+                    "role": "primary"
+                  },
+                  {
+                    "document_id": "b92764ea28e7790ca01a46c3",
+                    "title": "2026经营预测报告",
+                    "snippet": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+                    "source_uri": "/api/v1/knowledge/documents/forecast-report/original",
+                    "role": "supporting"
+                  },
+                  {
+                    "document_id": "c6b13af35a2b779ae46adf99",
+                    "title": "区域目标表",
+                    "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+                    "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                    "role": "supporting"
+                  },
+                  {
+                    "document_id": "2f6ed532af0785ff755a3f7c",
+                    "title": "区域目标表",
+                    "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+                    "source_uri": "/api/v1/knowledge/documents/region-targets/original",
+                    "role": "supporting"
+                  }
+                ]
+              }
+            ],
+            "warnings": [],
+            "latency_ms": 7755.27,
+            "session_id": null
+          }
+        }
+      ],
+      "duration_seconds": 7.75
+    },
+    {
+      "id": "http_document_generation",
+      "checks": {
+        "route": true,
+        "real_router": true,
+        "status": true,
+        "real_generation": true,
+        "expected_fact": true,
+        "sources": true
+      },
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "question": "标准硬件产品保修期有多久？",
+        "effective_question": "标准硬件产品保修期有多久？",
+        "route": "document",
+        "planner_source": "model_validated",
+        "session_id": null,
+        "context_turns": 0,
+        "state": {
+          "route": "document",
+          "sources": [
+            "warranty-policy",
+            "warranty-policy"
+          ]
+        },
+        "result": {
+          "status": "ok",
+          "question": "标准硬件产品保修期有多久？",
+          "answer_mode": "model_grounded",
+          "answer": "标准硬件产品的保修期为12个月,自签收日期起算。 [1]",
+          "citations": [
+            {
+              "citation_id": 1,
+              "document_id": "0226ff4e8d2849682173ee48",
+              "title": "保修规则",
+              "score": 0.03278688524590164,
+              "matched_terms": [
+                "保修",
+                "件产",
+                "件产品",
+                "准硬",
+                "准硬件",
+                "标准硬",
+                "硬件产",
+                "保修期",
+                "修期",
+                "硬件",
+                "产品",
+                "标准"
+              ],
+              "snippet": "标准硬件产品的保修期为12个月,自签收日期起算。",
+              "source_uri": "/api/v1/knowledge/documents/warranty-policy/original",
+              "metadata": {
+                "raw_text": "标准硬件产品的保修期为12个月,自签收日期起算。",
+                "raw_page_text": "保修规则\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 产品保修\n\n一、期限\n\n标准硬件产品的保修期为12个月，自签收日期起算。\n\n二、覆盖范围\n\n保修覆盖正常使用条件下的材料及制造缺陷，不覆盖人为损坏和未经授权的拆机。\n\n三、流程\n\n维修需记录产品序列号、订单号和故障描述，保存检测报告。\n\n四、解释\n\n更换配件不会自动重置整机保修期限，延保服务必须以独立合同为依据。此文件为合成演\n\n示政策，不代表任何企业实际承诺。",
+                "ocr_status": null,
+                "ocr_attempts": [],
+                "ocr_selected_transforms": [],
+                "coordinate_evidence": {
+                  "bbox_status": "exact_block",
+                  "layout_block_ids": [
+                    4
+                  ],
+                  "source_bbox_pdf_user_pt": [
+                    78.0,
+                    643.9088,
+                    330.164,
+                    655.1618
+                  ],
+                  "source_bbox_fitz_unrotated_pt": [
+                    78.0,
+                    186.728,
+                    330.164,
+                    197.981
+                  ],
+                  "page_bbox_pdf_user_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "source_bbox_fitz_display_pt": [
+                    78.0,
+                    186.728,
+                    330.164,
+                    197.981
+                  ],
+                  "source_bbox_render_px": null,
+                  "page_geometry": {
+                    "rotation_degrees": 0,
+                    "rotation_source": "pdf_page_rotate",
+                    "media_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "crop_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_rect_fitz_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_size_pt": [
+                      595.2756,
+                      841.8898
+                    ],
+                    "coordinate_systems": {
+                      "pdf_user_space": {
+                        "origin": "bottom_left",
+                        "unit": "pt"
+                      },
+                      "fitz_unrotated_text_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "fitz_display_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "render_pixel_space": {
+                        "origin": "top_left",
+                        "unit": "px"
+                      }
+                    },
+                    "mappings": {
+                      "pdf_user_to_fitz_unrotated": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        -1.0,
+                        0.0,
+                        841.889771
+                      ],
+                      "fitz_unrotated_to_display": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0
+                      ],
+                      "fitz_display_to_render_pixel": null
+                    },
+                    "render": null,
+                    "mapping_status": "complete"
+                  },
+                  "render_input_sha256": null,
+                  "render_size_px": null,
+                  "render_scale": null
+                },
+                "source_sha256": "e09ac68bbb2f1f7a0f22bfe3f7ad9109fc9ed8c4d6d966778443b74aa09a455d",
+                "original_document_id": "warranty-policy",
+                "document_id": "warranty-policy",
+                "chunk_id": "0226ff4e8d2849682173ee48",
+                "source_locator": "page:1:block:5",
+                "page_no": 1,
+                "sheet_name": null,
+                "row_start": null,
+                "row_end": null,
+                "title_path": [
+                  "一、期限"
+                ],
+                "quality": 1.0,
+                "warnings": [],
+                "bm25_raw": 50.057072,
+                "retrieval_channel": "hybrid",
+                "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                "bm25_relative": 1.0,
+                "bm25_rank": 1,
+                "retrieval_channels": [
+                  "bm25",
+                  "dense"
+                ],
+                "dense_cosine": 0.763044,
+                "dense_rank": 1,
+                "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                "rrf_rank": 1,
+                "rrf_score": 0.03278688524590164,
+                "ranking_score": 0.03278688524590164,
+                "anchor_match_count": 0,
+                "identifier_anchors": [],
+                "evidence_role": "primary"
+              }
+            },
+            {
+              "citation_id": 2,
+              "document_id": "3f50eea7d6b2fb4d22ccf214",
+              "title": "保修规则",
+              "score": 0.03200204813108039,
+              "matched_terms": [
+                "保修",
+                "保修期",
+                "修期"
+              ],
+              "snippet": "更换配件不会自动重置整机保修期限,延保服务必须以独立合同为依据。此文件为合成演",
+              "source_uri": "/api/v1/knowledge/documents/warranty-policy/original",
+              "metadata": {
+                "raw_text": "更换配件不会自动重置整机保修期限,延保服务必须以独立合同为依据。此文件为合成演",
+                "raw_page_text": "保修规则\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 产品保修\n\n一、期限\n\n标准硬件产品的保修期为12个月，自签收日期起算。\n\n二、覆盖范围\n\n保修覆盖正常使用条件下的材料及制造缺陷，不覆盖人为损坏和未经授权的拆机。\n\n三、流程\n\n维修需记录产品序列号、订单号和故障描述，保存检测报告。\n\n四、解释\n\n更换配件不会自动重置整机保修期限，延保服务必须以独立合同为依据。此文件为合成演\n\n示政策，不代表任何企业实际承诺。",
+                "ocr_status": null,
+                "ocr_attempts": [],
+                "ocr_selected_transforms": [],
+                "coordinate_evidence": {
+                  "bbox_status": "exact_block",
+                  "layout_block_ids": [
+                    10
+                  ],
+                  "source_bbox_pdf_user_pt": [
+                    78.0,
+                    535.9088,
+                    507.0,
+                    547.1618
+                  ],
+                  "source_bbox_fitz_unrotated_pt": [
+                    78.0,
+                    294.728,
+                    507.0,
+                    305.981
+                  ],
+                  "page_bbox_pdf_user_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "source_bbox_fitz_display_pt": [
+                    78.0,
+                    294.728,
+                    507.0,
+                    305.981
+                  ],
+                  "source_bbox_render_px": null,
+                  "page_geometry": {
+                    "rotation_degrees": 0,
+                    "rotation_source": "pdf_page_rotate",
+                    "media_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "crop_box_pdf_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_rect_fitz_pt": [
+                      0.0,
+                      0.0,
+                      595.2756,
+                      841.8898
+                    ],
+                    "display_size_pt": [
+                      595.2756,
+                      841.8898
+                    ],
+                    "coordinate_systems": {
+                      "pdf_user_space": {
+                        "origin": "bottom_left",
+                        "unit": "pt"
+                      },
+                      "fitz_unrotated_text_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "fitz_display_space": {
+                        "origin": "top_left",
+                        "unit": "pt"
+                      },
+                      "render_pixel_space": {
+                        "origin": "top_left",
+                        "unit": "px"
+                      }
+                    },
+                    "mappings": {
+                      "pdf_user_to_fitz_unrotated": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        -1.0,
+                        0.0,
+                        841.889771
+                      ],
+                      "fitz_unrotated_to_display": [
+                        1.0,
+                        0.0,
+                        0.0,
+                        1.0,
+                        0.0,
+                        0.0
+                      ],
+                      "fitz_display_to_render_pixel": null
+                    },
+                    "render": null,
+                    "mapping_status": "complete"
+                  },
+                  "render_input_sha256": null,
+                  "render_size_px": null,
+                  "render_scale": null
+                },
+                "source_sha256": "e09ac68bbb2f1f7a0f22bfe3f7ad9109fc9ed8c4d6d966778443b74aa09a455d",
+                "original_document_id": "warranty-policy",
+                "document_id": "warranty-policy",
+                "chunk_id": "3f50eea7d6b2fb4d22ccf214",
+                "source_locator": "page:1:block:11",
+                "page_no": 1,
+                "sheet_name": null,
+                "row_start": null,
+                "row_end": null,
+                "title_path": [
+                  "四、解释"
+                ],
+                "quality": 1.0,
+                "warnings": [],
+                "bm25_raw": 11.215925,
+                "retrieval_channel": "hybrid",
+                "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                "bm25_relative": 0.2241,
+                "bm25_rank": 2,
+                "retrieval_channels": [
+                  "bm25",
+                  "dense"
+                ],
+                "dense_cosine": 0.540943,
+                "dense_rank": 3,
+                "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+                "rrf_rank": 2,
+                "rrf_score": 0.03200204813108039,
+                "ranking_score": 0.03200204813108039,
+                "anchor_match_count": 0,
+                "identifier_anchors": [],
+                "evidence_role": "supporting"
+              }
+            }
+          ],
+          "retrieval": {
+            "mode": "bm25_dense_rrf",
+            "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+            "dense_answer_threshold": 0.6
+          },
+          "trace": [
+            {
+              "stage": "document_retrieval",
+              "channel": "bm25_dense_rrf",
+              "candidate_count": 4
+            },
+            {
+              "stage": "evidence_selection",
+              "selected_count": 2,
+              "generation": "extractive"
+            },
+            {
+              "stage": "grounded_generation",
+              "status": "validated",
+              "model": "gpt-6-luna"
+            }
+          ],
+          "claims": [
+            {
+              "support": [
+                {
+                  "citation_id": 1,
+                  "quote": "标准硬件产品的保修期为12个月,自签收日期起算。"
+                }
+              ],
+              "text": "标准硬件产品的保修期为12个月,自签收日期起算。"
+            }
+          ],
+          "generation_audit": {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "grounded_answer",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 483,
+            "output_tokens": 73,
+            "total_tokens": 556,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 0,
+            "call_index": 2,
+            "latency_ms": 9890.272
+          },
+          "support_validation": "bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof"
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "model_validated",
+            "route": "document",
+            "latency_ms": 5904.108,
+            "error": null,
+            "normalizations": []
+          },
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25_dense_rrf",
+            "candidate_count": 4
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 2,
+            "generation": "extractive"
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "validated",
+            "model": "gpt-6-luna"
+          }
+        ],
+        "audit_id": "7a851b3fe02c563530068b03"
+      },
+      "duration_seconds": 15.843
+    }
+  ],
+  "passed": 2,
+  "total": 2,
+  "ok": true
+}

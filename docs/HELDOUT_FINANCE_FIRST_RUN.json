@@ -1,0 +1,1724 @@
+{
+  "created_at": "2026-10-01T04:43:07.192958+00:00",
+  "scope": "collaborating_agent_authored_first_domain_audit_not_official_or_strict_blind_test",
+  "post_exposure_scope": "development_cases_if_used_for_subsequent_tuning",
+  "model": null,
+  "real_model_called": false,
+  "few_shot_examples": 0,
+  "domain_specific_alias_files": 0,
+  "metric_catalog": null,
+  "python": "3.12.10",
+  "input_manifest": {
+    "scope": "collaborating_agent_authored_frozen_first_domain_audit",
+    "hash_contract": "SHA256 of UTF-8 input bytes with CRLF normalized to LF; no other normalization",
+    "frozen_before_first_execution": true,
+    "cases": 12,
+    "files": [
+      {
+        "path": "questions.json",
+        "sha256": "d28f836e337f2cb207196b2041d949079a12fa27b6ba2c844aa02df74de1439d"
+      },
+      {
+        "path": "schema.sql",
+        "sha256": "5a3f32301619bd3db977834221160031f5ecc10623f794a5cc3047978d13e1fb"
+      }
+    ]
+  },
+  "database_unchanged_after_queries": true,
+  "field_match_contract": "source table/column/aggregation and dimensions; cosmetic aggregate labels are not scored",
+  "value_match_contract": "all output fields, numeric rounding to 6 decimals; TopN order is checked",
+  "passed": 0,
+  "field_matched": 0,
+  "value_matched": 0,
+  "total": 12,
+  "cases": [
+    {
+      "id": "HF01",
+      "category": "aggregate",
+      "question": "全部订阅账单的账单金额合计是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          10820.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单金额"
+      ],
+      "latency_ms": 8.946,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "全部订阅账单的账单金额合计是多少？",
+        "rewritten_question": "全部订阅账单的账单金额合计是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "全部订阅账单的账单金额合计是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "问题中的“全部订阅账单”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "clarification_code": "unresolved_terms",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "合计",
+              "账单金额"
+            ],
+            "unresolved": [
+              "全部订阅账单"
+            ],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "全部订阅账单的账单金额合计是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [
+              "全部订阅账单"
+            ],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "问题中的“全部订阅账单”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "问题中的“全部订阅账单”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+        "clarification_code": "unresolved_terms",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF02",
+      "category": "average",
+      "question": "已支付的订阅账单，平均账单金额是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "avg"
+      },
+      "gold_sql": "SELECT AVG(账单金额) AS 平均账单金额 FROM 订阅账单 WHERE 账单状态='已支付'",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          614.2857142857143
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "平均账单金额"
+      ],
+      "latency_ms": 1.136,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "已支付的订阅账单，平均账单金额是多少？",
+        "rewritten_question": "已支付的订阅账单，平均账单金额是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "AVG",
+          "metric_label": "平均账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "账单状态",
+              "operator": "=",
+              "value": "已支付",
+              "source_text": "已支付",
+              "explanation": "限定 账单状态 ∈ {已支付}",
+              "table": "订阅账单"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "已支付的订阅账单，平均账单金额是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "问题中的“订阅账单”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "clarification_code": "unresolved_terms",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "已支付",
+              "平均",
+              "账单金额"
+            ],
+            "unresolved": [
+              "订阅账单"
+            ],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "已支付的订阅账单，平均账单金额是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "AVG",
+              "label": "平均账单金额"
+            },
+            "filters": [
+              {
+                "column": "账单状态",
+                "operator": "=",
+                "value": "已支付",
+                "source_text": "已支付",
+                "explanation": "限定 账单状态 ∈ {已支付}",
+                "table": "订阅账单"
+              }
+            ],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [
+              "订阅账单"
+            ],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "问题中的“订阅账单”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "问题中的“订阅账单”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+        "clarification_code": "unresolved_terms",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF03",
+      "category": "year",
+      "question": "2025年订阅账单的账单金额合计是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2026-01-01'",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          8420.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单金额"
+      ],
+      "latency_ms": 1.119,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "2025年订阅账单的账单金额合计是多少？",
+        "rewritten_question": "2025年订阅账单的账单金额合计是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "2025年订阅账单的账单金额合计是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "2025年订阅账单的账单金额合计是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF04",
+      "category": "half_year",
+      "question": "2025年上半年已支付的订阅账单，账单金额合计是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2025-07-01' AND 账单状态='已支付'",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          3500.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单金额"
+      ],
+      "latency_ms": 0.968,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "2025年上半年已支付的订阅账单，账单金额合计是多少？",
+        "rewritten_question": "2025年上半年已支付的订阅账单，账单金额合计是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "2025年上半年已支付的订阅账单，账单金额合计是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "2025年上半年已支付的订阅账单，账单金额合计是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF05",
+      "category": "quarter",
+      "question": "2025年第二季度已支付的订阅账单，账单金额合计是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-04-01' AND 账单日期<'2025-07-01' AND 账单状态='已支付'",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          2000.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单金额"
+      ],
+      "latency_ms": 1.03,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "2025年第二季度已支付的订阅账单，账单金额合计是多少？",
+        "rewritten_question": "2025年第二季度已支付的订阅账单，账单金额合计是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "2025年第二季度已支付的订阅账单，账单金额合计是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "2025年第二季度已支付的订阅账单，账单金额合计是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF06",
+      "category": "group",
+      "question": "按账单状态统计2025年订阅账单的账单金额合计。",
+      "dimensions": [
+        {
+          "table": "订阅账单",
+          "column": "账单状态"
+        }
+      ],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT 账单状态,SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2026-01-01' GROUP BY 账单状态",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          "已作废",
+          300.0
+        ],
+        [
+          "已支付",
+          7200.0
+        ],
+        [
+          "待支付",
+          920.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单状态",
+        "账单金额"
+      ],
+      "latency_ms": 1.131,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按账单状态统计2025年订阅账单的账单金额合计。",
+        "rewritten_question": "按账单状态统计2025年订阅账单的账单金额合计。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "账单状态"
+          ],
+          "dimension_tables": {
+            "账单状态": "订阅账单"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单状态",
+              "table": "订阅账单",
+              "column": "账单状态",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "账单状态",
+              "metric_function": null
+            },
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按账单状态统计2025年订阅账单的账单金额合计。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按账单状态统计2025年订阅账单的账单金额合计。",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "订阅账单",
+                "column": "账单状态",
+                "grain": "raw",
+                "label": "账单状态"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF07",
+      "category": "join_industry",
+      "question": "按租户的行业统计2025年已支付订阅账单的账单金额合计。",
+      "dimensions": [
+        {
+          "table": "租户",
+          "column": "行业"
+        }
+      ],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT t.行业,SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付' GROUP BY t.行业",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          "教育培训",
+          550.0
+        ],
+        [
+          "科研",
+          900.0
+        ],
+        [
+          "软件服务",
+          3700.0
+        ],
+        [
+          "零售",
+          2050.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "行业",
+        "账单金额"
+      ],
+      "latency_ms": 1.016,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按租户的行业统计2025年已支付订阅账单的账单金额合计。",
+        "rewritten_question": "按租户的行业统计2025年已支付订阅账单的账单金额合计。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "行业"
+          ],
+          "dimension_tables": {
+            "行业": "租户"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "行业",
+              "table": "租户",
+              "column": "行业",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "行业",
+              "metric_function": null
+            },
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按租户的行业统计2025年已支付订阅账单的账单金额合计。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按租户的行业统计2025年已支付订阅账单的账单金额合计。",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "租户",
+                "column": "行业",
+                "grain": "raw",
+                "label": "行业"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF08",
+      "category": "join_plan",
+      "question": "按方案名称统计2025年已支付订阅账单的账单金额合计。",
+      "dimensions": [
+        {
+          "table": "订阅方案",
+          "column": "方案名称"
+        }
+      ],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT p.方案名称,SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 订阅方案 p ON b.方案编号=p.方案编号 WHERE b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付' GROUP BY p.方案名称",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          "专业版",
+          1800.0
+        ],
+        [
+          "企业版",
+          5300.0
+        ],
+        [
+          "基础版",
+          100.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "方案名称",
+        "账单金额"
+      ],
+      "latency_ms": 0.993,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按方案名称统计2025年已支付订阅账单的账单金额合计。",
+        "rewritten_question": "按方案名称统计2025年已支付订阅账单的账单金额合计。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "方案名称"
+          ],
+          "dimension_tables": {
+            "方案名称": "订阅方案"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "方案名称",
+              "table": "订阅方案",
+              "column": "方案名称",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "方案名称",
+              "metric_function": null
+            },
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "按方案名称统计2025年已支付订阅账单的账单金额合计。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按方案名称统计2025年已支付订阅账单的账单金额合计。",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "订阅方案",
+                "column": "方案名称",
+                "grain": "raw",
+                "label": "方案名称"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF09",
+      "category": "entity_multivalue",
+      "question": "松林科技或云帆科技在2025年的已支付订阅账单，账单金额合计是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE t.租户名称 IN ('松林科技','云帆科技') AND b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付'",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          3700.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单金额"
+      ],
+      "latency_ms": 0.965,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "松林科技或云帆科技在2025年的已支付订阅账单，账单金额合计是多少？",
+        "rewritten_question": "松林科技或云帆科技在2025年的已支付订阅账单，账单金额合计是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "松林科技或云帆科技在2025年的已支付订阅账单，账单金额合计是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "松林科技或云帆科技在2025年的已支付订阅账单，账单金额合计是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF10",
+      "category": "negative_filter",
+      "question": "2025年订阅账单中，排除已作废的账单后，账单金额合计是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT SUM(账单金额) AS 账单金额 FROM 订阅账单 WHERE 账单日期>='2025-01-01' AND 账单日期<'2026-01-01' AND 账单状态<>'已作废'",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          8120.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单金额"
+      ],
+      "latency_ms": 0.945,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "2025年订阅账单中，排除已作废的账单后，账单金额合计是多少？",
+        "rewritten_question": "2025年订阅账单中，排除已作废的账单后，账单金额合计是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "2025年订阅账单中，排除已作废的账单后，账单金额合计是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "2025年订阅账单中，排除已作废的账单后，账单金额合计是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF11",
+      "category": "topn_join",
+      "question": "2025年已支付订阅账单的账单金额合计最高的前3个租户名称分别是什么？同时列出金额。",
+      "dimensions": [
+        {
+          "table": "租户",
+          "column": "租户名称"
+        }
+      ],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT t.租户名称,SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付' GROUP BY t.租户名称 ORDER BY SUM(b.账单金额) DESC LIMIT 3",
+      "ordered": true,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          "青禾商贸",
+          2050.0
+        ],
+        [
+          "松林科技",
+          2050.0
+        ],
+        [
+          "云帆科技",
+          1650.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "租户名称",
+        "账单金额"
+      ],
+      "latency_ms": 1.007,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "2025年已支付订阅账单的账单金额合计最高的前3个租户名称分别是什么？同时列出金额。",
+        "rewritten_question": "2025年已支付订阅账单的账单金额合计最高的前3个租户名称分别是什么？同时列出金额。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "租户名称"
+          ],
+          "dimension_tables": {
+            "租户名称": "租户"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "租户名称",
+              "table": "租户",
+              "column": "租户名称",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "租户名称",
+              "metric_function": null
+            },
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "2025年已支付订阅账单的账单金额合计最高的前3个租户名称分别是什么？同时列出金额。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": 3,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "2025年已支付订阅账单的账单金额合计最高的前3个租户名称分别是什么？同时列出金额。",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "租户",
+                "column": "租户名称",
+                "grain": "raw",
+                "label": "租户名称"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": 3,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "HF12",
+      "category": "entity_join",
+      "question": "教育培训行业租户在2025年的已支付订阅账单，账单金额合计是多少？",
+      "dimensions": [],
+      "metric": {
+        "table": "订阅账单",
+        "column": "账单金额",
+        "aggregation": "sum"
+      },
+      "gold_sql": "SELECT SUM(b.账单金额) AS 账单金额 FROM 订阅账单 b JOIN 租户 t ON b.租户编号=t.租户编号 WHERE t.行业='教育培训' AND b.账单日期>='2025-01-01' AND b.账单日期<'2026-01-01' AND b.账单状态='已支付'",
+      "ordered": false,
+      "status_ok": false,
+      "field_match": false,
+      "value_match": false,
+      "pass": false,
+      "expected": [
+        [
+          550.0
+        ]
+      ],
+      "observed": [],
+      "gold_columns": [
+        "账单金额"
+      ],
+      "latency_ms": 0.989,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "教育培训行业租户在2025年的已支付订阅账单，账单金额合计是多少？",
+        "rewritten_question": "教育培训行业租户在2025年的已支付订阅账单，账单金额合计是多少？",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "订阅账单",
+          "metric_table": "订阅账单",
+          "metric_column": "账单金额",
+          "metric_function": "SUM",
+          "metric_label": "总账单金额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "行业",
+              "table": "租户",
+              "column": "行业",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "行业",
+              "metric_function": null
+            },
+            {
+              "source_text": "账单金额",
+              "table": "订阅账单",
+              "column": "账单金额",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "账单金额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "教育培训行业租户在2025年的已支付订阅账单，账单金额合计是多少？",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+          "clarification_code": "missing_date_column",
+          "clarification_options": [],
+          "assumptions": [
+            "问题中的繁体字已按简体归一化后解析"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "教育培训行业租户在2025年的已支付订阅账单，账单金额合计是多少？",
+            "metric": {
+              "table": "订阅账单",
+              "column": "账单金额",
+              "function": "SUM",
+              "label": "总账单金额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "subscriptions.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "clarification_code": "missing_date_column",
+        "clarification_options": []
+      }
+    }
+  ]
+}

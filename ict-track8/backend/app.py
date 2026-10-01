@@ -101,6 +101,7 @@ if os.getenv("ICT8_PLAN_PROVIDER", "").strip().lower() == "responses":
     if responses_token and responses_model:
         model_plan_provider = ResponsesModelPlanProvider(responses_url, responses_token, model=responses_model,
             reasoning_effort=os.getenv("ICT8_OPENAI_REASONING", "medium").strip(),
+            http_headers=json.loads(os.getenv('ICT8_OPENAI_HEADERS', '{}')),
             timeout=env_float("ICT8_PLAN_TIMEOUT", 45.0, minimum=0.1, maximum=60.0, warnings=CONFIG_WARNINGS),
             max_retries=env_int("ICT8_PLAN_RETRIES", 1, minimum=0, maximum=2, warnings=CONFIG_WARNINGS))
         planner_source = "responses_model_with_validated_rules_fallback"
@@ -173,7 +174,8 @@ if os.getenv('ICT8_GENERATION_PROVIDER', '').lower() == 'responses':
     from .responses_client import StructuredResponses
     generation_client = StructuredResponses(os.getenv('ICT8_OPENAI_BASE_URL', 'https://api.openai.com/v1'),
         os.getenv('ICT8_OPENAI_API_KEY', '') or os.getenv('OPENAI_API_KEY', ''),
-        model=os.getenv('ICT8_OPENAI_MODEL', ''), reasoning=os.getenv('ICT8_OPENAI_REASONING', 'medium'))
+        model=os.getenv('ICT8_OPENAI_MODEL', ''), reasoning=os.getenv('ICT8_OPENAI_REASONING', 'medium'),
+        http_headers=json.loads(os.getenv('ICT8_OPENAI_HEADERS', '{}')))
 generator = None
 if generation_client:
     from .grounded_generation import GroundedGenerator
@@ -338,7 +340,7 @@ class ImageQualityRequest(BaseModel):
 
 class ImageEnhancementRequest(ImageQualityRequest):
     transforms: list[str] = Field(default_factory=list, max_length=8)
-    rotation_degrees: float = Field(default=0.0, ge=-45.0, le=45.0)
+    rotation_degrees: float = Field(default=0.0, ge=-360.0, le=360.0)
     crop_box: list[int] | None = Field(default=None, min_length=4, max_length=4)
     max_dimension: int = Field(default=2400, ge=1, le=6000)
 

@@ -30,6 +30,40 @@ def test_suite_has_both_initial_tasks_five_fusion_types_and_five_turns(evaluator
     assert next(r for r in cases if r['id'] == 'cross-explicit-reset')['reset_context'] is True
 
 
+def test_targeted_selection_includes_all_prior_session_turns_in_suite_order(evaluator):
+    rows = evaluator.select_cases(evaluator.suite(), ['sql-turn-5', 'qa-02', 'cross-turn-2'])
+    assert [row['id'] for row in rows] == ['qa-02', 'cross-turn-1', 'cross-turn-2',
+        'sql-turn-1', 'sql-turn-2', 'sql-turn-3', 'sql-turn-4', 'sql-turn-5']
+    assert [row['context_turns'] for row in rows if row['id'].startswith('sql-turn')] == list(range(5))
+    assert evaluator.select_cases(evaluator.suite(), ['qa-02', 'qa-02']) == [
+        row for row in evaluator.suite() if row['id'] == 'qa-02']
+
+
+def test_targeted_selection_rejects_unknown_id_before_api(evaluator, monkeypatch):
+    with pytest.raises(ValueError, match='未知测试ID'):
+        evaluator.select_cases(evaluator.suite(), ['not-a-case'])
+    import model_runtime
+    monkeypatch.setattr(model_runtime, 'enable_local_model', lambda model: pytest.fail('must not load credentials'))
+    monkeypatch.setattr('sys.argv', ['evaluate_model.py', '--case-ids', 'not-a-case'])
+    with pytest.raises(SystemExit) as exc:
+        evaluator.main()
+    assert exc.value.code == 2
+
+
+def test_report_output_is_bounded_and_never_overwrites_history(evaluator, monkeypatch, tmp_path):
+    monkeypatch.setattr(evaluator, 'ROOT', tmp_path)
+    (tmp_path/'docs').mkdir()
+    prior = tmp_path/'docs/first.json'
+    prior.write_text('{"passed":11}')
+    assert evaluator.report_output('docs/new.json') == tmp_path/'docs/new.json'
+    with pytest.raises(ValueError, match='覆盖历史'):
+        evaluator.report_output('docs/first.json')
+    with pytest.raises(ValueError, match='docs'):
+        evaluator.report_output('runtime/model_config.json')
+    with pytest.raises(ValueError, match='JSON'):
+        evaluator.report_output('docs/output.txt')
+
+
 def test_rule_sql_correct_value_is_still_not_real_model_pass(evaluator, tmp_path):
     database = initialize_database(tmp_path/'db.sqlite')
     row = evaluator.case('sql', '2025年华东销售额', 'sql', region='华东', year=2025, metric='销售额')
@@ -75,6 +109,41 @@ def test_audits_include_omni_generator_and_sql_component(evaluator):
     assert audits[-1]['component'] == 'nl2sql' and dropped == 0
 
 
+def test_parallel_groups_preserve_session_order_and_original_report_order(evaluator, monkeypatch):
+    import threading
+    barrier = threading.Barrier(2)
+    seen = {}
+    def execute(agent, clients, cases, database, **kwargs):
+        barrier.wait(timeout=3)
+        rows = []
+        for row in cases:
+            seen.setdefault(row['session_id'], []).append(row['id'])
+            record = {**row, 'pass': True}
+            rows.append(record)
+            if kwargs['on_record']:
+                kwargs['on_record'](record)
+        return rows, None
+    monkeypatch.setattr(evaluator, 'execute_cases', execute)
+    cases = [{'id': 'a1', 'session_id': 'a'}, {'id': 'b1', 'session_id': 'b'},
+             {'id': 'a2', 'session_id': 'a'}, {'id': 'b2', 'session_id': 'b'}]
+    callbacks = []
+    records, stopped = evaluator.execute_grouped(None, {}, cases, None, workers=2, on_record=callbacks.append)
+    assert stopped is None and [row['id'] for row in records] == ['a1', 'b1', 'a2', 'b2']
+    assert seen == {'a': ['a1', 'a2'], 'b': ['b1', 'b2']}
+    assert len(callbacks) == 4
+
+
+def test_auth_stop_event_prevents_sending_next_case(evaluator):
+    import threading
+    stop = threading.Event()
+    stop.set()
+    class ForbiddenAgent:
+        def query(self, *args, **kwargs):
+            raise AssertionError('must not submit a new API request after authentication failure')
+    records, reason = evaluator.execute_cases(ForbiddenAgent(), {}, [{'id': 'not-sent'}], None, stop_event=stop)
+    assert not records and reason == 'authentication_or_access_rejected'
+
+
 def test_401_preflight_stops_all_cases_and_report_contains_no_secret(evaluator, monkeypatch, tmp_path):
     from backend.responses_client import GenerationError
     import backend.responses_client as responses
@@ -100,3 +169,32 @@ def test_401_preflight_stops_all_cases_and_report_contains_no_secret(evaluator, 
     assert report['status'] == 'authentication_failed'
     assert report['total'] == report['passed'] == 0 and report['not_run'] == ['not-executed']
     assert 'private-test-only' not in text
+
+
+def test_targeted_401_writes_only_requested_new_report_with_history(evaluator, monkeypatch, tmp_path):
+    from backend.responses_client import GenerationError
+    import backend.responses_client as responses
+    import model_runtime
+    class Denied:
+        reasoning = 'medium'
+        audit = {'http_status': 401}
+        audit_history = [{'model': 'gpt-6-luna', 'status': 'failed', 'http_status': 401}]
+        def generate(self, *args, **kwargs):
+            raise GenerationError('denied', status=401)
+    monkeypatch.setattr(responses, 'StructuredResponses', lambda *args, **kwargs: Denied())
+    monkeypatch.setattr(model_runtime, 'enable_local_model', lambda model: None)
+    monkeypatch.setenv('ICT8_OPENAI_BASE_URL', 'https://example.com/v1')
+    monkeypatch.setenv('ICT8_OPENAI_API_KEY', 'private-test-only')
+    monkeypatch.setenv('ICT8_OPENAI_REASONING', 'medium')
+    monkeypatch.setattr(evaluator, 'ROOT', tmp_path)
+    monkeypatch.setattr(evaluator, 'suite', lambda: [{'id':'turn1','kind':'sql','session_id':'s'},
+        {'id':'turn2','kind':'sql','session_id':'s'}, {'id':'other','kind':'sql'}])
+    monkeypatch.setattr('sys.argv', ['evaluate_model.py', '--case-ids', 'turn2', '--output', 'docs/targeted.json'])
+    assert evaluator.main() == 1
+    assert not (tmp_path/'docs/REAL_MODEL_REPORT.json').exists()
+    report = json.loads((tmp_path/'docs/targeted.json').read_text())
+    assert report['planned_cases'] == 2
+    assert report['requested_case_ids'] == ['turn2']
+    assert report['history_prerequisite_case_ids'] == ['turn1']
+    assert report['not_run'] == ['turn1', 'turn2']
+    assert report['scope'].endswith('not_full_suite')

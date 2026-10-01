@@ -1,0 +1,378 @@
+{
+  "created_at": "2026-10-01T04:15:30.273580+00:00",
+  "scope": "actual_local_ocr_synthetic_orientation_development_audit_not_blind_accuracy",
+  "external_model_called": false,
+  "passed": 13,
+  "total": 13,
+  "cases": [
+    {
+      "id": "upright",
+      "expected_rotation_ccw": 0,
+      "expected_skew_ccw": 0,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "9ceeb12747d949588ddb41b9b51b1a66d33ca147237079e7f740bd726f849501",
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 0,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": 0.0,
+        "eligible_lines": 5,
+        "confidence": 0.9999,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.134,
+        "reason": null
+      },
+      "warnings": [],
+      "text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。"
+    },
+    {
+      "id": "counterclockwise90",
+      "expected_rotation_ccw": 90,
+      "expected_skew_ccw": 0,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "6815993d0560c2066c32214bc4391a6a0b0c4f58bfd12b4d4ec75c1c80166b44",
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 90,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": -90.0,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.0,
+        "reason": null
+      },
+      "warnings": [
+        "page_orientation_detected"
+      ],
+      "text": "售后响应通知 (合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试"
+    },
+    {
+      "id": "upside_down",
+      "expected_rotation_ccw": 180,
+      "expected_skew_ccw": 0,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "be7345b25de5f6a8d748d571e4bc571d045be4efbc8143c2ea7b94429ff35979",
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 180,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": -180.0,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.205,
+        "reason": null
+      },
+      "warnings": [
+        "page_orientation_detected"
+      ],
+      "text": "售后响应通知 (合成样本)\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。"
+    },
+    {
+      "id": "clockwise90",
+      "expected_rotation_ccw": 270,
+      "expected_skew_ccw": 0,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "c9603d8e0327daee086dfd6c9a09f43ac8741bd9903d347584ddfe70d75b4b13",
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 270,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": 90.0,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.194,
+        "reason": null
+      },
+      "warnings": [
+        "page_orientation_detected"
+      ],
+      "text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时\n一般工单：首次响应时间为24小时\n生效日期：2025年1月1日\n本通知仅用于OCR和证据定位测试。"
+    },
+    {
+      "id": "skew_ccw7",
+      "expected_rotation_ccw": 0,
+      "expected_skew_ccw": 7,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "85bcec1761e01c384fe3aeda6bfec76fbb527c2c1cf50c48297f0ec5d0534496",
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 0,
+        "skew_ccw_degrees": 6.798,
+        "correction_ccw_degrees": -6.798,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.118,
+        "reason": null
+      },
+      "warnings": [
+        "page_skew_detected"
+      ],
+      "text": "售后响应通知 （合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。"
+    },
+    {
+      "id": "skew_cw7",
+      "expected_rotation_ccw": 0,
+      "expected_skew_ccw": -7,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "8b977e83a9a5c90c2a3272d8c6df3b1b767a1e0bcee5a5d221f081dfe88b72c9",
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 0,
+        "skew_ccw_degrees": -7.037,
+        "correction_ccw_degrees": 7.037,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.093,
+        "reason": null
+      },
+      "warnings": [
+        "page_skew_detected"
+      ],
+      "text": "售后响应通知（合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。"
+    },
+    {
+      "id": "upside_down_skew7",
+      "expected_rotation_ccw": 180,
+      "expected_skew_ccw": 7,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "d1dad6931672c3dd07e88347f1a150db5e5ed4113d6b108316bda054c6707588",
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 180,
+        "skew_ccw_degrees": 6.807,
+        "correction_ccw_degrees": 173.193,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.126,
+        "reason": null
+      },
+      "warnings": [
+        "page_orientation_detected",
+        "page_skew_detected"
+      ],
+      "text": "售后响应通知 (合成样本）\n紧急工单：首次响应时间为2小时。\n一般工单：首次响应时间为24小时。\n生效日期：2025年1月1日。\n本通知仅用于OCR和证据定位测试。"
+    },
+    {
+      "id": "blank",
+      "expected_rotation_ccw": null,
+      "expected_skew_ccw": null,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "240c78b7e3991613fe2c17af574b81a6cea42b347888f2db3774089806acdab0",
+      "orientation": {
+        "status": "undetermined",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": null,
+        "skew_ccw_degrees": null,
+        "correction_ccw_degrees": null,
+        "eligible_lines": 0,
+        "confidence": null,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "reason": "insufficient_reliable_text_lines"
+      },
+      "warnings": [
+        "page_orientation_undetermined"
+      ],
+      "text": ""
+    },
+    {
+      "id": "illustration_without_text",
+      "expected_rotation_ccw": null,
+      "expected_skew_ccw": null,
+      "passed": true,
+      "detection_passed": true,
+      "recognition_passed": true,
+      "reading_order_passed": true,
+      "alert_passed": true,
+      "original_sha256": "d510c3876aeab37a6966b40acf207e507d2d3d61686e71c8795e94bee28a1bac",
+      "orientation": {
+        "status": "undetermined",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": null,
+        "skew_ccw_degrees": null,
+        "correction_ccw_degrees": null,
+        "eligible_lines": 0,
+        "confidence": null,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "reason": "insufficient_reliable_text_lines"
+      },
+      "warnings": [
+        "page_orientation_undetermined"
+      ],
+      "text": ""
+    },
+    {
+      "id": "ingest_preserves_source_and_orientation_alert",
+      "passed": true,
+      "source_preserved": true,
+      "review_required": true,
+      "warnings": [
+        "page_orientation_detected"
+      ],
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 180,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": -180.0,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.205,
+        "reason": null
+      }
+    },
+    {
+      "id": "docx_scan_preserves_orientation_evidence",
+      "passed": true,
+      "source_preserved": true,
+      "warnings": [
+        "page_orientation_detected"
+      ],
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 180,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": -180.0,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.205,
+        "reason": null
+      }
+    },
+    {
+      "id": "pdf_scan_preserves_orientation_evidence",
+      "passed": true,
+      "source_preserved": true,
+      "warnings": [
+        "page_1:page_orientation_detected",
+        "page_1:ocr_status:ok"
+      ],
+      "orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 180,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": -180.0,
+        "eligible_lines": 5,
+        "confidence": 1.0,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.139,
+        "reason": null
+      }
+    },
+    {
+      "id": "corrected_preview_is_upright_without_overwriting_source",
+      "passed": true,
+      "source_preserved": true,
+      "preview_orientation": {
+        "status": "estimated",
+        "method": "ocr_line_geometry_and_local_0_180_classifier",
+        "scope": "horizontal_printed_text_page_estimate_not_semantic_truth",
+        "rotation_ccw_degrees": 0,
+        "skew_ccw_degrees": -0.0,
+        "correction_ccw_degrees": 0.0,
+        "eligible_lines": 5,
+        "confidence": 0.9999,
+        "confidence_kind": "mean_line_classification_not_page_accuracy",
+        "source_image_modified": false,
+        "correction_scope": "ocr_text_regions_only",
+        "line_agreement": 1.0,
+        "angle_mad_degrees": 0.134,
+        "reason": null
+      }
+    }
+  ]
+}
