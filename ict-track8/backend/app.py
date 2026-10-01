@@ -7,6 +7,7 @@ import binascii
 import hmac
 import os
 import json
+import sqlite3
 import queue
 import threading
 import time
@@ -24,7 +25,7 @@ from .cross_source import CrossSourceAgent, JsonDocumentRetriever
 from .clarification import ClarificationResolver, ClarificationSelection
 from .document_analysis import DocumentAnalyzer, PageSignal
 from .formula_binding import FormulaBinder, ParameterEvidence
-from .knowledge_store import KnowledgeStore
+from .knowledge_store import KnowledgeStore, SourceIntegrityError
 from .dependency_agent import DependencyAgent
 from .image_quality import ImageEnhancer, ImageQualityAnalyzer
 from .pdf_ingest import PdfIngestor
@@ -184,6 +185,15 @@ if os.getenv("ICT8_KNOWLEDGE_ROOT", "").strip():
     agent = CrossSourceAgent(engine, document_retriever)
 clarification_resolver = ClarificationResolver()
 app = FastAPI(title="ICT Track 8 Structured QA", version="0.1.0")
+
+
+@app.exception_handler(sqlite3.DatabaseError)
+@app.exception_handler(OSError)
+async def storage_unavailable_handler(request: Request, exc: Exception):
+    # Do not replace persistent state with a new in-memory identity on failure.
+    # The caller can retry after the actual resource has been repaired.
+    return JSONResponse(status_code=503,headers={'Retry-After':'2'},content={'detail':{
+        'code':'storage_unavailable','message':'数据存储暂不可用，请恢复文件或解除数据库锁后重试。'}})
 allowed_origins = [
     item.strip()
     for item in os.getenv("ICT8_CORS_ORIGINS", "http://127.0.0.1:8021,http://localhost:8021").split(",")
@@ -362,7 +372,9 @@ def omni_query(request: OmniRequest):
     try:
         return OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
             request.question, session_id=request.session_id, reset_context=request.reset_context)
-    except (ValueError, OSError) as exc:
+    except SourceIntegrityError as exc:
+        raise HTTPException(status_code=409,detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
+    except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
 
 
@@ -461,6 +473,8 @@ def knowledge_document(document_id: str):
         return knowledge_store.document(document_id)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail="文档不存在") from exc
+    except SourceIntegrityError as exc:
+        raise HTTPException(status_code=409, detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
@@ -480,6 +494,8 @@ def knowledge_original(document_id: str):
 def knowledge_query(request: KnowledgeQueryRequest):
     try:
         return knowledge_store.answer(request.question, top_k=request.top_k)
+    except SourceIntegrityError as exc:
+        raise HTTPException(status_code=409, detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 

@@ -4,6 +4,7 @@ No credential is copied and no remote model is called. Report lives next to ZIP.
 """
 import argparse
 import hashlib
+import io
 import json
 import os
 import socket
@@ -34,6 +35,22 @@ def main():
         raise ValueError('压缩包校验失败，不能执行')
     report = {'package_sha256':hashlib.sha256(package.read_bytes()).hexdigest(),
               'manifest_verified':True, 'real_model_test':'not_run', 'checks':{}}
+    local_config = ROOT/'runtime/model_config.json'
+    if local_config.exists():
+        # Also check literal credentials that do not match the generic sk- regex.
+        # The private configuration is never copied into the disposable project.
+        local_secret = json.loads(local_config.read_text(encoding='utf-8'))['api_key'].encode()
+        secret_absent = True
+        with zipfile.ZipFile(package) as archive:
+            for name in archive.namelist():
+                data = archive.read(name)
+                secret_absent = secret_absent and local_secret not in data
+                if name.endswith(('.docx','.pptx')):
+                    with zipfile.ZipFile(io.BytesIO(data)) as office:
+                        secret_absent = secret_absent and all(local_secret not in office.read(item) for item in office.namelist())
+        report['checks']['local_credential_absent'] = secret_absent
+        if not secret_absent:
+            raise ValueError('包中检测到本机凭据；不执行，不输出凭据')
     (ROOT/'runtime').mkdir(exist_ok=True)
     if args.work_dir:
         args.work_dir.mkdir(parents=True,exist_ok=True)
@@ -128,6 +145,17 @@ def main():
                 original = requests.get(base+'/api/v1/knowledge/documents/smoke-source-lines/original',timeout=5)
                 warranty = next(chunk for chunk in detail['chunks'] if 'Warranty is' in chunk['text'])
                 report['checks']['source_line_locators'] = uploaded.ok and original.content==raw and warranty['source_locator']=='lines:11-11'
+                # Mutate only the disposable extracted corpus. A candidate from
+                # cached chunks/vectors must not survive changed original bytes.
+                asset = extracted/'runtime/knowledge/assets'/detail['asset']
+                asset.write_bytes(b'changed in disposable package verification')
+                try:
+                    broken = requests.get(base+'/api/v1/knowledge/documents/smoke-source-lines',timeout=5)
+                    report['checks']['tampered_original_refused'] = broken.status_code==409 and broken.json()['detail']['code']=='evidence_integrity_failed'
+                finally:
+                    asset.write_bytes(raw)
+                restored = requests.get(base+'/api/v1/knowledge/documents/smoke-source-lines/original',timeout=5)
+                report['checks']['same_original_restored'] = restored.ok and restored.content==raw
                 report['checks']['frontend'] = requests.get(base+'/knowledge.html',timeout=5).status_code==200
                 report['checks']['ocr'] = requests.get(base+'/api/v1/documents/ocr/health',timeout=15).json()['ready']
                 print(json.dumps(report['checks'],ensure_ascii=False),flush=True)

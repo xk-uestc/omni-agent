@@ -26,6 +26,10 @@ const read = async name => JSON.parse(await fs.readFile(path.join(root,'docs',na
 const hybrid = (await read('HYBRID_ACCEPTANCE_REPORT.json')).summary;
 const rag = await read('RAG_SCALE_REPORT.json');
 const chinook = await read('CHINOOK_RULES_REPORT.json');
+const regression = await read('LOCAL_REGRESSION_REPORT.json');
+const faults = await read('FAULT_RECOVERY_REPORT.json');
+if(!regression.ok || faults.passed!==faults.total) throw new Error('Current regression or fault audit failed');
+const large=rag.records.find(r=>r.pages===500).global_semantic_query;
 const p = Presentation.create({slideSize:{width:1280,height:720}});
 const navy='#162B3C', blue='#176B87', gray='#526371';
 
@@ -85,7 +89,7 @@ s=slide('NL2SQL：结构化计划与安全执行','依据：backend/nl2sql/；do
 rows(s,[['字段与值共同链接','显式字段优先；Unicode归一化与值词边界'],['JOIN粒度核验','复合键、关系路径与防扇出；歧义进入澄清'],['计划经过统一安全门','模型不能执行裸SQL；参数化与只读AST验证'],['开发实测','Chinook 12/12；11/40/80表干扰9/9']]);
 
 s=slide('多模态入库与可回看的来源','依据：samples/manifest.json、backend/knowledge_store.py、ocr.py。');
-rows(s,[['15份实际样本','六种格式，自建合成CC0；不使用客户私有资料'],['结构定位','保留页、行、单元格、标题路径与OCR区域'],['真实OCR','RapidOCR ONNX CPU；三次以内恢复尝试'],['原文件回看','内容寻址与SHA核验；文档来源属于独立项目']]);
+rows(s,[['15份实际样本','六种格式，自建合成CC0；不使用客户私有资料'],['结构定位','页、行、单元格、OCR区域；PDF目录首次2/8修复后8/8'],['真实OCR','RapidOCR ONNX CPU；三次以内恢复尝试'],['原文件核验','检索/公式命中后重查SHA；篡改或缺失停止']]);
 
 s=slide('混合检索与编号约束','依据：backend/dense_retrieval.py、cross_source.py；docs/RAG_SCALE_REPORT.json。');
 rows(s,[['BGE + BM25 + RRF','真实本地向量与词匹配融合，保留各路排名'],['编号限定证据范围','CASE0005不能命中CASE00050；缺失编号拒答'],['引用与数字核验','原文存在不等于完整语义蕴含，保持明确边界'],['阈值仍需独立校准','开发门槛不作为公开泛化准确率证明']]);
@@ -95,11 +99,11 @@ table(s,[['来源','取值或公式','核验条件'],['文档','预测 = 基准 
 text(s,'合成开发例子；年份或币种冲突时停止输出最终结论',76,587,1128,58,25,gray);
 
 s=slide('五类跨源流程与实际依赖','依据：HYBRID_ACCEPTANCE_REPORT.json；dependency_agent.py。');
-table(s,[['场景','数据依赖','校验'],['预测','文档公式 → SQL基准 → Excel参数','年份 / 单位'],['回款','SQL金额 → Excel费率','百分数尺度'],['门槛','SQL指标 → 文档阈值','原文 / 量纲'],['政策','历史条款 → 问题日期','生效 / 重叠'],['客户口径','SQL实体 → 文档说明','实体 / 引用']], [240,588,300],157,430);
+table(s,[['场景','数据依赖','校验'],['客单价','文档公式 / SQL销售额与订单数','来源 / 零分母'],['预测','PDF公式 / SQL基准 / Excel参数','年份 / 单位'],['地区问数','Excel地区作为SQL过滤','单元格 / 实体'],['冠军经验','SQL排名的实体用于文档检索','实体 / 引用'],['阈值比较','文档事实与Excel阈值','来源 / 数值']], [240,588,300],157,430);
 text(s,'五流程工具计划已验收；未知自然语言模型规划仍待实测',76,610,1128,54,24,gray);
 
 s=slide('中级任务：问数侧','依据：官方九项中级任务；docs/ACCEPTANCE.md M01-M05。');
-rows(s,[['要素识别与改写','NFKC、别名、值词边界；文本扰动5/5'],['跨域与低示例','Chinook 11表，0 few-shot开发验收'],['主动澄清','指标、值、时间和JOIN候选回填'],['复杂结构','数十表链接、JOIN、聚合、嵌套与粒度核验']]);
+rows(s,[['要素识别与改写','NFKC、别名、值词边界；文本扰动5/5'],['跨域与低示例','Chinook 12/12；差旅新Schema首次6/8修复后8/8'],['主动澄清','指标/角色、时间与趋势粒度；刷新后继续追问'],['复杂结构','数十表链接、JOIN、聚合、嵌套与粒度核验']]);
 
 s=slide('中级任务：文档与计算侧','依据：docs/ACCEPTANCE.md M06-M09；ROBUSTNESS_REPORT.json。');
 rows(s,[['文档公式绑定','AST计算，来源参数、单位尺度与年份守卫'],['非标准目录','多种标题层级；行号与层级跳跃告警'],['复杂度路由','实际PageSignal；复杂路径900字 / 80字重叠'],['低质量恢复','保留原图候选；置信度选优仍是启发式']]);
@@ -117,14 +121,11 @@ text(s,'同一组10种合成扰动；只证明本组关键事实恢复，不能�
 
 s=slide('文档规模与全局语义延迟','依据：docs/RAG_SCALE_REPORT.json；文字PDF在线混合摘录，不含OCR与外部生成。');
 table(s,[['页数','切片数','热P50 / ms','热P95 / ms'],...rag.records.map(r=>[String(r.pages),String(r.chunks),String(r.global_semantic_query.warm.p50_ms),String(r.global_semantic_query.warm.p95_ms)])], [240,240,324,324],172,275);
-text(s,'500页首次全局回答约16.1秒',76,493,1128,60,34,blue,true);
-text(s,'冷编码、热缓存、编号查询与全局语义分别报告',76,580,1128,65,29,gray);
+text(s,`500页首次全局回答 ${(large.first_answer_ms/1000).toFixed(3)} 秒`,76,493,1128,60,34,blue,true);
+text(s,'首次全局编码与热缓存单列，非新进程完整冷启动',76,580,1128,65,29,gray);
 
-s=slide('五轮会话与失败恢复','依据：实际网页五轮验证；session.py、docs/DEMO_SCRIPT.md。');
-text(s,'2025华东 → 华南 → 2024 → 订单数 → 华北',76,160,1128,78,33,blue,true);
-text(s,'29584 → 22992 → 4998 → 1 → 1',76,263,1128,82,39,navy,true);
-text(s,'SQLite保存结构化槽位；重启恢复，主题变化清空旧条件',76,395,1128,95,30);
-text(s,'错年份、缺参数、零分母或冲突币种：保留trace并停止结论',76,530,1128,96,29,gray);
+s=slide('五轮会话与实际故障恢复','依据：FAULT_RECOVERY_FIRST_RUN.json、FAULT_RECOVERY_REPORT.json、LOCAL_REGRESSION_REPORT.json。');
+rows(s,[['五轮硬重启','kill子服务后恢复：29584 / 22992 / 4998 / 1 / 1'],['澄清与会话锁','pending选项跨重启；锁定503，解锁保留历史'],['故障实际审计',`相同十项首次4/10，修复后${faults.passed}/${faults.total}；不改主服务`],['完整本地回归',`${regression.passed}项通过；源文件、缺库、锁定失败均停止后步`]]);
 
 s=slide('实用创新与转化价值','依据：公式/单位/日期守卫与公开资产验包；不申报已证实的SOTA领先。');
 rows(s,[['可计算证据契约','公式、参数、时间与量纲共同决定能否计算'],['可核验的执行链','依赖来自实际工具引用；失败原因与原文可回看'],['独立可复现交付','公开权重、Schema、样本、许可与精确依赖'],['价值证据边界','尚无真实用户收益；不虚构节省工时或商业回报']]);

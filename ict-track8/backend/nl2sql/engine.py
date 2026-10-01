@@ -9,6 +9,7 @@ import re
 import sqlite3
 import threading
 from dataclasses import asdict
+from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -82,13 +83,17 @@ class Nl2SqlEngine:
         self._lock = threading.Lock()
 
     # ------------------------------------------------------------------ infra
-    def _connect(self) -> sqlite3.Connection:
+    @contextmanager
+    def _connect(self):
         if not self.database_path.exists():
             raise FileNotFoundError(f"数据库不存在: {self.database_path.name}")
         uri = f"file:{self.database_path.resolve().as_posix()}?mode=ro"
         connection = sqlite3.connect(uri, uri=True, timeout=2.0, check_same_thread=False)
         connection.row_factory = None
-        return connection
+        try:
+            yield connection
+        finally:
+            connection.close()
 
     def _snapshot_for(self, connection: sqlite3.Connection) -> tuple[tuple[TableInfo, ...], ValueIndex]:
         """Schema 与取值索引按 (文件指纹, schema_version) 缓存，避免每次查询全表扫描。"""

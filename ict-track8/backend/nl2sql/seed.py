@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 
@@ -62,7 +63,7 @@ def initialize_database(path: str | Path, *, force: bool = False) -> Path:
     destination.parent.mkdir(parents=True, exist_ok=True)
     if force and destination.exists():
         destination.unlink()
-    with sqlite3.connect(destination) as connection:
+    with closing(sqlite3.connect(destination)) as connection, connection:
         connection.executescript(SCHEMA_SQL)
         connection.execute("PRAGMA foreign_keys = ON")
         connection.executemany(

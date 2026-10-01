@@ -9,11 +9,13 @@ import hashlib
 import json
 import math
 import re
+import sqlite3
 import time
 from typing import Any
 
 from .document_analysis import DocumentAnalyzer
 from .formula_binding import FormulaBinder, ParameterEvidence
+from .knowledge_store import SourceIntegrityError
 
 
 class DependencyPlanError(ValueError):
@@ -113,12 +115,16 @@ class DependencyAgent:
                 trace.append(event)
                 if on_event:
                     on_event(dict(event))
-            except (ValueError, KeyError, TypeError, SyntaxError, OverflowError) as exc:
-                event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'failed', 'error': str(exc)[:200], 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
+            except (ValueError, KeyError, TypeError, SyntaxError, OverflowError, OSError, sqlite3.DatabaseError) as exc:
+                code = 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else 'tool_contract_failed'
+                message = '数据源暂不可读取，请恢复文件或解除数据库锁后重新执行。' if code=='storage_unavailable' else str(exc)[:200]
+                event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'failed', 'error': message, 'error_code':code, 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
                 trace.append(event)
                 if on_event:
                     on_event(dict(event))
-                return {'status': 'incomplete', 'trace_id': trace_id, 'results': results, 'trace': trace, 'failed_task': task['id'], 'error': str(exc)[:200]}
+                return {'status': 'incomplete', 'trace_id': trace_id, 'results': results, 'trace': trace, 'failed_task': task['id'], 'error': message,
+                        'error_code':code,'skipped_tasks':[later['id'] for later in ordered[len(trace):]],
+                        'edges':[{'from':dependency,'to':key} for key,refs in dependencies.items() for dependency in sorted(refs)]}
         return {'status': 'ok', 'trace_id': trace_id, 'results': results, 'trace': trace, 'edges': [{'from': dependency, 'to': key} for key, refs in dependencies.items() for dependency in sorted(refs)]}
 
     def execute(self, tool, args, original_args, results):

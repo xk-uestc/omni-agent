@@ -1,6 +1,7 @@
 """Render the actual exported PDFs and record objective delivery constraints."""
 import hashlib
 import json
+import os
 import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -10,7 +11,7 @@ from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT/'delivery'
-PREVIEW = ROOT/'runtime/document-preview'
+PREVIEW = Path(os.environ.get('ICT8_DOCUMENT_PREVIEW', str(ROOT/'runtime/document-preview')))
 
 
 def main():
@@ -55,10 +56,15 @@ def main():
         ppt_info={'slides':len(slides),'within_limit':len(slides)<=20,
                   'metadata_author':author.text if author is not None else '',
                   'local_credential_in_slide_xml':False}
-    report={'pdfs':result,'presentation':ppt_info,'claim':'PDF geometry and page counts, not semantic correctness or native PowerPoint behavior'}
+    report={'pdfs':result,'presentation':ppt_info,
+            'renderer':{'canonical_docx_renderer':'unavailable','reason':'bundled runtime has no LibreOffice soffice.exe',
+                        'actual_pdf_export':'WPS kwps.Application','page_images':'PyMuPDF rasterization of actual WPS PDFs'},
+            'ok': all(r['within_limit'] and r['pages_nonempty'] and all(not p['out_of_page_blocks'] and not p['replacement_characters'] for p in r['page_checks']) for r in result) and ppt_info['within_limit'],
+            'claim':'PDF geometry and page counts, not semantic correctness or native PowerPoint behavior'}
     (OUT/'MATERIAL_VALIDATION.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
     print(json.dumps({'pdfs':[{k:r[k] for k in ('path','pages','within_limit')} for r in result], 'presentation':ppt_info},ensure_ascii=False))
+    return 0 if report['ok'] else 1
 
 
 if __name__=='__main__':
-    main()
+    raise SystemExit(main())

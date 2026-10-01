@@ -16,4 +16,4 @@
 - `RELIABILITY_UPDATE_20261001.md`：规划上下文、聚合覆盖与原文件行号修复，以及本轮回归口径。
 - `history/REAL_MODEL_REPORT_PRE_LUNA.json`：旧模型历史实验，不是gpt-6-luna验收。
 
-正式材料已在delivery制作并校验，为ade1b60快照。本轮代码/评测另见可靠性更新；最终定稿需更新材料及完整独立评测，不用快照替代新实验结果。
+正式材料在delivery依据当前JSON重新生成，包含差旅Schema、PDF目录、统一澄清和故障恢复更新。来源哈希保存在SOURCE_MANIFEST。最新执行证据见FAULT_RECOVERY_UPDATE_20261001.md；真实模型401、未知题与官方模板仍待验收。

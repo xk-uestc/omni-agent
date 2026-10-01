@@ -3,6 +3,7 @@
 Synthetic searchable text pages; excludes OCR and external model generation.
 """
 import json
+import argparse
 import platform
 import statistics
 import sys
@@ -48,12 +49,15 @@ def stats(values):
 
 
 def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--work-dir',type=Path,help='独立性能样本与缓存目录，避免占满项目盘')
+    args=parser.parse_args()
     embedder = LocalBgeEmbedder(ROOT/'models/bge-small-zh-v1.5')
     records = []
     # Each run has a new corpus so cold measurements do not reuse old vectors.
     run = str(time.time_ns())
     for pages in (10, 100, 500):
-        store = KnowledgeStore(ROOT/'runtime/rag-scale'/run/str(pages), embedder=embedder)
+        store = KnowledgeStore((args.work_dir or ROOT/'runtime/rag-scale')/run/str(pages), embedder=embedder)
         raw = make_pdf(pages)
         start = time.perf_counter()
         ingested = store.ingest(raw, document_id='contracts', title='合成合同档案', modality='pdf', filename='contracts.pdf')

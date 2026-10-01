@@ -17,6 +17,10 @@ SAFE_ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}')
 SUPPORTED = {'pdf', 'docx', 'xlsx', 'txt', 'md', 'image'}
 
 
+class SourceIntegrityError(ValueError):
+    """A cached excerpt cannot be used when its actual source is unavailable."""
+
+
 class KnowledgeStore:
     def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None):
         self.root = Path(root)
@@ -147,13 +151,29 @@ class KnowledgeStore:
                 raise KeyError(document_id)
             result = json.loads(row[0])
             result['chunks'] = [json.loads(item[0]) for item in connection.execute('SELECT payload FROM chunks WHERE document_id=? ORDER BY rowid', (document_id,))]
-            return result
+        self._verified_asset(result)
+        return result
+
+    def verify_source(self, document_id):
+        self.validate_id(document_id)
+        with self.connect() as connection:
+            row = connection.execute('SELECT payload FROM documents WHERE document_id=?',(document_id,)).fetchone()
+            if row is None:
+                raise KeyError(document_id)
+        return self._verified_asset(json.loads(row[0]))
+
+    def _verified_asset(self, document):
+        path = self.assets / document['asset']
+        try:
+            if path.is_symlink() or path.resolve().parent != self.assets.resolve() or hashlib.sha256(path.read_bytes()).hexdigest() != document['sha256']:
+                raise SourceIntegrityError('原文件完整性检查失败，请恢复匹配的原文件或重新入库。')
+        except OSError as exc:
+            raise SourceIntegrityError('原文件不可读取，请恢复匹配的原文件或重新入库。') from exc
+        return path
 
     def original(self, document_id):
         document = self.document(document_id)
         path = self.assets / document['asset']
-        if path.is_symlink() or path.resolve().parent != self.assets.resolve() or hashlib.sha256(path.read_bytes()).hexdigest() != document['sha256']:
-            raise ValueError('原文件完整性校验失败')
         return path, document['filename']
 
     def records(self):
@@ -218,6 +238,10 @@ class KnowledgeStore:
             counts[source] = counts.get(source, 0) + 1
             if len(selected) >= top_k:
                 break
+        # Verify only the selected source files, not the entire corpus. Dense
+        # and BM25 caches cannot turn stale excerpts into verified evidence.
+        for source in counts:
+            self.verify_source(source)
         return selected
 
     def answer(self, question: str, *, top_k=4) -> dict[str, Any]:
