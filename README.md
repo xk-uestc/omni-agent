@@ -17,7 +17,7 @@
 | `samples` | 实际多格式示例文件，明确标注为合成样本 |
 | `docs` | 需求验收、架构、原始迁移哈希清单与技术说明 |
 | `tools` | 独立迁移、启动、评测与交付工具 |
-| `delivery` | 当前Word/PDF报告、匿名答辩PPT、架构图、实测依赖与证据清单 |
+| `delivery` | 历史参赛材料快照；本轮仅更新程序，程序包不包含此目录 |
 | `backups` | 已校验基线 ZIP，仅本地保留 |
 
 ## 快速启动
@@ -53,8 +53,9 @@ python tools/evaluate_schema_scale.py
 python tools/evaluate_domain_transfer.py
 python tools/evaluate_pdf_outline.py
 python tools/evaluate_robustness.py
+python tools/evaluate_text_quality.py
 python tools/evaluate_rag_scale.py
-python ict-track8/scripts/package_delivery.py --with-public-assets --output dist/ict8-complete.zip
+python ict-track8/scripts/package_delivery.py --program-only --with-public-assets --output dist/ict8-complete.zip
 python ict-track8/scripts/verify_package.py dist/ict8-complete.zip
 ```
 
@@ -62,8 +63,8 @@ Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产�
 
 `delivery/requirements-tested.txt`固定当前实测的直接依赖版本；`delivery/ENVIRONMENT.json`另记录全部已安装包、Python及平台。它是实测环境记录，不是跨平台wheel锁或离线安装包。默认OCR为RapidOCR；可选Tesseract未在当前环境安装或验收。
 
-正式材料见`delivery/README.md`。报告区分当前开发验收、模型鉴权失败和待执行实验；决赛材料为准备稿，未套用尚未提供的组委会模板。
-最新完整本地回归524项通过；第五类已完成带来源事实与Excel阈值的实际比较，见`docs/MODEL_VALIDATION_UPDATE_20261001.md`。实际故障首次4/10→10/10、差旅Schema首次6/8→8/8、PDF目录首次2/8→8/8，首次失败均保留。正式材料依据当前JSON更新；真实模型401与未知任务仍待验收，不把stub算模型成绩。
+本轮只更新程序，不制作PPT/Word/PDF；历史材料仍在本地delivery，程序包通过--program-only排除。运行安装以ict-track8/requirements.txt为准。
+最新完整本地回归536项通过；第五类完成带来源事实与Excel阈值的实际比较。新增OpenCC繁简检索、文字质量告警和确认校正预览，15组成对开发审计通过；有限错字词表，不是通用中文纠错。真实模型401与未知任务仍待验收，不把stub算模型成绩。
 
 ```powershell
 cd ict-track8

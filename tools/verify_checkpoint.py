@@ -91,6 +91,15 @@ def main():
                 else:
                     raise RuntimeError('空目录启动超时')
                 report['checks']['health'] = response.json()['ok']
+                original_text = '緊急工單首欠響應為2小時。'
+                quality = requests.post(base+'/api/v1/documents/text-quality',json={'text':original_text},timeout=10).json()
+                repair = requests.post(base+'/api/v1/documents/text-repair',json={
+                    'text':original_text,'source_sha256':quality['source_sha256'],
+                    'accepted_ids':[item['id'] for item in quality['typo_candidates']]},timeout=10).json()
+                report['checks']['text_quality_confirmed_preview'] = repair['revised_text']=='紧急工单首次响应为2小时。' and repair['original_preserved']
+                stale = requests.post(base+'/api/v1/documents/text-repair',json={
+                    'text':original_text+'。','source_sha256':quality['source_sha256'],'accepted_ids':[]},timeout=10)
+                report['checks']['text_quality_stale_source_refused'] = stale.status_code==422
                 documents = requests.get(base+'/api/v1/knowledge/documents',timeout=5).json()['documents']
                 report['checks']['documents'] = len(documents)==15
                 answer = requests.post(base+'/api/v1/knowledge/query',json={'question':'标准硬件产品保修期有多久？'},timeout=60).json()

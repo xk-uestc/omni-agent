@@ -1,0 +1,159 @@
+{
+  "created_at": "2026-10-01T03:28:47.191524+00:00",
+  "scope": "bounded_lexicon_and_script_development_pairs_not_general_spelling_or_blind_accuracy",
+  "normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+  "python": "3.12.10",
+  "pairs": [
+    {
+      "id": "traditional",
+      "source": "緊急工單應在2小時內首次響應。",
+      "expected": "紧急工单应在2小时内首次响应。",
+      "actual": "紧急工单应在2小时内首次响应。",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "716a4e94f60f39a817dc63474aa172a0990b041e2ae1536107c5545d3a13fb08"
+    },
+    {
+      "id": "traditional_formula",
+      "source": "目標銷售額 = 基準銷售額 * (1 + 目標增長率)",
+      "expected": "目标销售额 = 基准销售额 * (1 + 目标增长率)",
+      "actual": "目标销售额 = 基准销售额 * (1 + 目标增长率)",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "22f15dfd5e1f8573dfa53038052639f681490918552360df984cb67fed2efdfe"
+    },
+    {
+      "id": "mixed",
+      "source": "保修期為12个月，金額1,234.50元。",
+      "expected": "保修期为12个月，金额1,234.50元。",
+      "actual": "保修期为12个月，金额1,234.50元。",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "7b42d19767b2e4a3b69d3ed7cc3caa35159c9c0b35698db4b3502099ad278c4e"
+    },
+    {
+      "id": "context_name",
+      "source": "乾隆年間，張先生簽訂訂單。",
+      "expected": "乾隆年间，张先生签订订单。",
+      "actual": "乾隆年间，张先生签订订单。",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "71f9913c1c031e94eeb8c7b67dcaa522ed028f290104d4312de3f61eef729145"
+    },
+    {
+      "id": "typo_sales",
+      "source": "销受额为123元。",
+      "expected": "销售额为123元。",
+      "actual": "销售额为123元。",
+      "passed": true,
+      "reviewed_typo_count": 1,
+      "source_sha256": "76b6155bee6b8472c4df3d55baff75f879489bc01ac37e65ee621f17b4ce296f"
+    },
+    {
+      "id": "typo_warranty",
+      "source": "保修其为12个月。",
+      "expected": "保修期为12个月。",
+      "actual": "保修期为12个月。",
+      "passed": true,
+      "reviewed_typo_count": 1,
+      "source_sha256": "2a7ced99e909d542fb8284169aabdcc0ba47ef5884ae7ad7a40d267d5898f391"
+    },
+    {
+      "id": "typo_response",
+      "source": "首欠响应为2小时。",
+      "expected": "首次响应为2小时。",
+      "actual": "首次响应为2小时。",
+      "passed": true,
+      "reviewed_typo_count": 1,
+      "source_sha256": "3c8cf02268a7d819fab0f98693975566f6d5c960281ba3a17b40cb7946501626"
+    },
+    {
+      "id": "traditional_typo",
+      "source": "緊急工單首欠響應為2小時。",
+      "expected": "紧急工单首次响应为2小时。",
+      "actual": "紧急工单首次响应为2小时。",
+      "passed": true,
+      "reviewed_typo_count": 1,
+      "source_sha256": "2244e8fba5d17accf5b1d542ec9445f1d14c7cecb42a1fb5e71c6940d540cb57"
+    },
+    {
+      "id": "typo_return",
+      "source": "退货申清应在7日内提交。",
+      "expected": "退货申请应在7日内提交。",
+      "actual": "退货申请应在7日内提交。",
+      "passed": true,
+      "reviewed_typo_count": 1,
+      "source_sha256": "6d78f1dec1aa67c0a37b0010d48c0a5147c87e97acd96814edacc8a9f85a21d4"
+    },
+    {
+      "id": "typo_expense",
+      "source": "报销标淮为200元。",
+      "expected": "报销标准为200元。",
+      "actual": "报销标准为200元。",
+      "passed": true,
+      "reviewed_typo_count": 1,
+      "source_sha256": "3135c29f7b10365b3b796033bdc1e9c8e130dd116e1bd9957091d9261b95a304"
+    },
+    {
+      "id": "typo_amount",
+      "source": "订单金颔为10元。",
+      "expected": "订单金额为10元。",
+      "actual": "订单金额为10元。",
+      "passed": true,
+      "reviewed_typo_count": 1,
+      "source_sha256": "0cfac75f1f353335e610e313f1142b0d4f2fa9729f1b829c5c4de61716c012a4"
+    },
+    {
+      "id": "unknown_numeric_not_guessed",
+      "source": "保修期为l2个月，金额O元。",
+      "expected": "保修期为l2个月，金额O元。",
+      "actual": "保修期为l2个月，金额O元。",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "0e02b2f97427f0f492a5c65d51598d867cde1297f993e307ef1149879dc06c7b"
+    },
+    {
+      "id": "code_preserved",
+      "source": "`銷售額`，政策為2小時。",
+      "expected": "`銷售額`，政策为2小时。",
+      "actual": "`銷售額`，政策为2小时。",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "e1c86143dcc17365b25878cda05609dde28f4197a550977ff64b33744a8359f3"
+    },
+    {
+      "id": "url_preserved",
+      "source": "https://x.test/訂單，網頁連結。",
+      "expected": "https://x.test/訂單，网页连结。",
+      "actual": "https://x.test/訂單，网页连结。",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "2ba5a8828e9e55104610c16d2c86bc9d0572f3a1fe3b51f22b0d85ed32085b2d"
+    },
+    {
+      "id": "unchanged",
+      "source": "合同CASE0005：响应2小时。",
+      "expected": "合同CASE0005：响应2小时。",
+      "actual": "合同CASE0005：响应2小时。",
+      "passed": true,
+      "reviewed_typo_count": 0,
+      "source_sha256": "0075c56d8939cd8782940e52e4a3a2aa8d70513147b4c09f969c74dc2be4f349"
+    }
+  ],
+  "retrieval": {
+    "cross_script_status": "ok",
+    "literal_citations": true,
+    "original_bytes_preserved": true,
+    "source_hash_preserved": true
+  },
+  "summary": {
+    "passed": 15,
+    "total": 15
+  },
+  "limits": [
+    "finite_typo_lexicon",
+    "unknown_numeric_ocr_errors_not_corrected",
+    "typo_changes_require_confirmation",
+    "no_model_called"
+  ]
+}

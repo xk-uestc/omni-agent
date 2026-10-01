@@ -13,8 +13,9 @@
 - `ROBUSTNESS_REPORT.json`：真实OCR的原图/增强成对结果。
 - `MODEL_API_PROBE.json`：用户指定gpt-6-luna的最近真实鉴权结果。
 - `REAL_MODEL_REPORT.json`、`MODEL_VALIDATION_UPDATE_20261001.md`：本轮单次预检401、44题未执行；完整调用审计与第五类实际比较修复。
+- `TEXT_QUALITY_FIRST_RUN.json`、`TEXT_QUALITY_REPORT.json`：繁简、有限错字及原文保留开发对照，首次13/14，修复扩展15/15。
 - `DOMAIN_TRANSFER_FIRST_RUN.json`、`DOMAIN_TRANSFER_REPORT.json`：新差旅Schema首轮6/8与修复后8/8，明确为自编审计/开发回归。
 - `RELIABILITY_UPDATE_20261001.md`：规划上下文、聚合覆盖与原文件行号修复，以及本轮回归口径。
 - `history/REAL_MODEL_REPORT_PRE_LUNA.json`：旧模型历史实验，不是gpt-6-luna验收。
 
-正式材料在delivery依据当前JSON重新生成，包含差旅Schema、PDF目录、统一澄清和故障恢复更新。来源哈希保存在SOURCE_MANIFEST。最新执行证据见FAULT_RECOVERY_UPDATE_20261001.md；真实模型401、未知题与官方模板仍待验收。
+按用户要求本轮只更新程序，不制作参赛PPT/Word/PDF。delivery及其SOURCE_MANIFEST是本轮文字质量更新前的历史快照，程序包排除此目录。真实模型401、未知题等仍待验收。

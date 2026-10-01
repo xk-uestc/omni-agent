@@ -61,9 +61,11 @@ def _is_runtime_report(path: Path) -> bool:
     )
 
 
-def collect_files(root: Path = ROOT, *, include_public_assets: bool = False) -> list[Path]:
+def collect_files(root: Path = ROOT, *, include_public_assets: bool = False, program_only: bool = False) -> list[Path]:
     files: list[Path] = []
     directories = [root / name for name in ("ict-track8", "docs", "tools", "samples", "specification", "scripts", "delivery")]
+    if program_only:
+        directories = [directory for directory in directories if directory.name != 'delivery']
     if include_public_assets:
         directories.extend([root / "models", root / "benchmarks"])
     for directory in directories:
@@ -89,8 +91,8 @@ def collect_files(root: Path = ROOT, *, include_public_assets: bool = False) -> 
     return sorted(files, key=lambda item: item.relative_to(root).as_posix())
 
 
-def build_package(output: Path, *, root: Path = ROOT, include_public_assets: bool = False) -> dict[str, object]:
-    files = collect_files(root, include_public_assets=include_public_assets)
+def build_package(output: Path, *, root: Path = ROOT, include_public_assets: bool = False, program_only: bool = False) -> dict[str, object]:
+    files = collect_files(root, include_public_assets=include_public_assets, program_only=program_only)
     if include_public_assets:
         for directory in ('models/bge-small-zh-v1.5', 'benchmarks/chinook'):
             asset_manifest = json.loads((root / directory / 'ASSET_MANIFEST.json').read_text(encoding='utf-8'))
@@ -115,6 +117,7 @@ def build_package(output: Path, *, root: Path = ROOT, include_public_assets: boo
             "format": 1,
             "package": "ict-track8-source",
             "public_assets_included": include_public_assets,
+            "program_only": program_only,
             # 不写入本机绝对路径，避免交付包泄露工作区布局并保持可复现。
             "generated_from": "ict-track8-source-tree",
             "file_count": len(entries),
@@ -133,8 +136,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, default=ROOT / "dist" / "ict-track8-source.zip")
     parser.add_argument('--with-public-assets', action='store_true', help='包含本地Dense模型权重、公开Chinook库与许可，不包含任何运行凭据')
+    parser.add_argument('--program-only', action='store_true', help='不包含delivery中的PPT、Word、PDF参赛材料；保留源码、样本、评测与依赖')
     args = parser.parse_args()
-    report = build_package(args.output, include_public_assets=args.with_public_assets)
+    report = build_package(args.output, include_public_assets=args.with_public_assets, program_only=args.program_only)
     print(json.dumps({key:value for key,value in report.items() if key != 'manifest'}, ensure_ascii=False, indent=2))
 
 

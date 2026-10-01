@@ -130,7 +130,9 @@ class KnowledgeStore:
                   'routing': {'chunk_strategy': 'complex_adaptive_900' if complex_split else 'hierarchical' if any(chunk['title_path'] for chunk in parsed['chunks']) else 'paragraph',
                               'formula_tool': any(formula['status'] in {'requires_parameters','evaluated'} for formula in analysis['formulas']),
                               'ocr_executed': any(chunk['content_type'].startswith('ocr') or chunk['metadata'].get('ocr_executor') for chunk in parsed['chunks']),
-                              'review_required': analysis['quality_score']<0.6 or bool(parsed['warnings'])}}
+                              'review_required': analysis['quality_score']<0.6 or bool(parsed['warnings']) or
+                                  bool(analysis['metrics']['text_quality']['typo_candidate_count']) or
+                                  'unrecognized_character' in analysis['metrics']['text_quality']['warnings']}}
         with self.connect() as connection:
             connection.execute('DELETE FROM documents WHERE document_id=?', (document_id,))
             connection.execute('INSERT INTO documents VALUES(?,?,?,?,?,?)', (document_id, title, modality, filename, digest, json.dumps(record, ensure_ascii=False)))

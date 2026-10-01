@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import hashlib
+import difflib
 import json
 import re
 import time
@@ -18,6 +19,7 @@ from pathlib import Path
 from typing import Any, Callable, Protocol
 
 from .nl2sql.engine import Nl2SqlEngine
+from .text_quality import simplify_for_retrieval, NORMALIZATION_ID
 
 
 _TOKEN_RE = re.compile(r"[a-zA-Z0-9_]+|[\u3400-\u9fff]+")
@@ -36,7 +38,7 @@ def _tokenize(text: str) -> tuple[str, ...]:
     """
 
     tokens: list[str] = []
-    for raw in _TOKEN_RE.findall(text or ""):
+    for raw in _TOKEN_RE.findall(simplify_for_retrieval(text or "")):
         value = raw.lower()
         if not value.strip():
             continue
@@ -158,7 +160,7 @@ class JsonDocumentRetriever:
                     matched_terms=matched[:12],
                     snippet=self._snippet(document.content, matched),
                     source_uri=document.source_uri,
-                    metadata={**document.metadata, "bm25_raw": round(score, 6), "retrieval_channel": "bm25"},
+                    metadata={**document.metadata, "bm25_raw": round(score, 6), "retrieval_channel": "bm25", "text_normalization": NORMALIZATION_ID},
                 )
             )
         hits.sort(key=lambda item: (-item.score, item.document_id))
@@ -182,8 +184,17 @@ class JsonDocumentRetriever:
 
     @staticmethod
     def _snippet(content: str, matched: set[str], width: int = 180) -> str:
-        positions = [content.find(term) for term in matched if content.find(term) >= 0]
-        start = max(0, min(positions) - 50) if positions else 0
+        normalized = simplify_for_retrieval(content)
+        positions = [normalized.find(term) for term in matched if normalized.find(term) >= 0]
+        position = min(positions) if positions else 0
+        # Map the retrieval-only normalized offset back to the literal source.
+        # OpenCC phrase conversion is not assumed to preserve string length.
+        if normalized != content and positions:
+            for tag, a0, a1, b0, b1 in difflib.SequenceMatcher(None, content, normalized).get_opcodes():
+                if b0 <= position < b1:
+                    position = a0 + (position-b0 if tag == 'equal' else 0)
+                    break
+        start = max(0, position - 50)
         return content[start : start + width].strip()
 
 

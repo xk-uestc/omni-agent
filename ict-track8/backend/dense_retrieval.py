@@ -9,6 +9,7 @@ import threading
 from pathlib import Path
 
 from .cross_source import DocumentHit
+from .text_quality import simplify_for_retrieval, NORMALIZATION_ID
 
 
 class DenseRetrievalError(ValueError):
@@ -38,7 +39,7 @@ class LocalBgeEmbedder:
                 torch.set_num_threads(2)
                 self._tokenizer = AutoTokenizer.from_pretrained(self.path, local_files_only=True, trust_remote_code=False)
                 self._model = AutoModel.from_pretrained(self.path, local_files_only=True, trust_remote_code=False, use_safetensors=True).eval()
-            prefixed = [('为这个句子生成表示以用于检索相关文章：' + text) if query else text for text in texts]
+            prefixed = [('为这个句子生成表示以用于检索相关文章：' + simplify_for_retrieval(text)) if query else simplify_for_retrieval(text) for text in texts]
             tokens = self._tokenizer(prefixed, padding=True, truncation=True, max_length=512, return_tensors='pt')
             with torch.inference_mode():
                 output = self._model(**tokens).last_hidden_state[:, 0]
@@ -54,7 +55,7 @@ class DenseIndex:
             connection.execute('CREATE TABLE IF NOT EXISTS vectors (cache_key TEXT PRIMARY KEY, payload TEXT NOT NULL)')
 
     def vectors(self, records):
-        keys = [hashlib.sha256((self.embedder.identity + '\0' + record.title + '\0' + record.content).encode()).hexdigest() for record in records]
+        keys = [hashlib.sha256((self.embedder.identity + '\0' + NORMALIZATION_ID + '\0' + record.title + '\0' + record.content).encode()).hexdigest() for record in records]
         with self._lock:
             with self.store.connect() as connection:
                 cached = {row[0]: json.loads(row[1]) for row in connection.execute('SELECT cache_key,payload FROM vectors')}

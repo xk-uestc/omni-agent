@@ -206,7 +206,11 @@ class DocumentAnalyzer:
         formulas = self._formulas(combined_text)
         issues: list[dict[str, Any]] = []
         metrics = self._metrics(combined_text, lines, page_list, headings, formulas)
+        from .text_quality import text_quality
+        metrics['text_quality'] = text_quality(combined_text)
         quality = self._quality(metrics, issues)
+        for warning in metrics['text_quality']['warnings']:
+            issues.append({'code': warning, 'action': 'review_text_repair_preview', 'original_preserved': True})
         complexity = self._complexity(metrics)
         ocr_retry_plan = self._ocr_retry_plan(page_list)
         return DocumentAnalysis(

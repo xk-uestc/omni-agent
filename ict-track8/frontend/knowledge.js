@@ -63,7 +63,7 @@ function renderOmni(box,question,data,activeSession){
 function element(tag,text,className){const e=document.createElement(tag);if(text!=null)e.textContent=String(text);if(className)e.className=className;return e;}
 async function request(path,payload){const r=await fetch(base+path,{method:payload?'POST':'GET',headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined});const data=await r.json();if(!r.ok)throw Error(typeof data.detail==='string'?data.detail:JSON.stringify(data.detail));return data;}
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
-async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();data.documents.forEach(doc=>{const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));$('documents').append(item);});$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
+async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();data.documents.forEach(doc=>{const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
 function showError(host,error){host.replaceChildren(element('p',error.message,'error'));}
 $('upload').addEventListener('submit',async event=>{event.preventDefault();const file=$('file').files[0];if(!file)return;const button=event.target.querySelector('button');button.disabled=true;try{if(file.size>20*1024*1024)throw Error('单个文件不能超过20 MiB');const ext=file.name.split('.').pop().toLowerCase();const modality=['png','jpg','jpeg','webp'].includes(ext)?'image':ext;const bytes=new Uint8Array(await file.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));await request('/api/v1/knowledge/ingest',{document_id:'upload-'+crypto.randomUUID(),title:$('title').value||file.name,filename:file.name,modality,file_base64:btoa(binary),language:'chi_sim+eng'});await refresh();event.target.reset();}catch(e){$('status').textContent=e.message;}finally{button.disabled=false;}});
 $('ask').addEventListener('submit',async event=>{
@@ -105,3 +105,26 @@ $('execute').addEventListener('click',async()=>{
   }catch(e){showError($('fusion'),e);}finally{$('execute').disabled=false;}
 });
 refresh().catch(e=>{$('status').textContent=e.message;});
+
+$('text-quality-form').addEventListener('submit',async event=>{
+  event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
+  const source=$('quality-text').value,host=$('text-quality-result');host.replaceChildren(element('p','检查中…'));
+  try{
+    const report=await request('/api/v1/documents/text-quality',{text:source});
+    host.replaceChildren(element('p',`繁简转换涉及 ${report.changed_lines} 行 · 疑似错字 ${report.typo_candidate_count} 处`));
+    host.append(element('p','繁简预览（不是原文引用）','muted'),element('pre',report.simplified_preview));
+    const options=element('div');
+    report.typo_candidates.forEach(item=>{const label=element('label'),check=element('input');check.type='checkbox';check.value=item.id;
+      label.append(check,document.createTextNode(`第${item.line_no}行：${item.before} → ${item.after}（需确认）`));options.append(label,element('br'));});
+    host.append(options);const preview=element('button','生成已确认的校正预览');preview.type='button';host.append(preview);
+    preview.addEventListener('click',async()=>{
+      if($('quality-text').value!==source){host.append(element('p','输入已变化，请重新检查。','error'));return;}
+      preview.disabled=true;
+      try{const result=await request('/api/v1/documents/text-repair',{text:source,source_sha256:report.source_sha256,
+        accepted_ids:[...options.querySelectorAll('input:checked')].map(item=>item.value),simplify:true});
+        host.querySelector('[data-repair-preview]')?.remove();const box=element('div');box.dataset.repairPreview='true';
+        box.append(element('p',result.warning,'muted'),element('pre',result.revised_text));host.append(box);
+      }catch(error){host.append(element('p',error.message,'error'));}finally{preview.disabled=false;}
+    });
+  }catch(error){showError(host,error);}finally{button.disabled=false;}
+});

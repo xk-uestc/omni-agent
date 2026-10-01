@@ -297,6 +297,16 @@ class FormulaParameterRequest(BaseModel):
     unit: str = Field(default="unknown", max_length=64)
 
 
+class TextQualityRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=20_000)
+
+
+class TextRepairRequest(TextQualityRequest):
+    source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    accepted_ids: list[str] = Field(default_factory=list, max_length=100)
+    simplify: bool = True
+
+
 class FormulaCalculationRequest(BaseModel):
     expression: str = Field(min_length=1, max_length=300)
     parameters: dict[str, FormulaParameterRequest] = Field(default_factory=dict, max_length=32)
@@ -655,6 +665,21 @@ def calculate_document_formula(request: FormulaCalculationRequest) -> dict[str, 
             formula_source=request.formula_source, formula_locator=request.formula_locator)
     except (ValueError, SyntaxError, OverflowError) as exc:
         raise HTTPException(status_code=422, detail={"code": "invalid_formula_binding", "message": str(exc)[:200]}) from exc
+
+
+@app.post('/api/v1/documents/text-quality')
+def analyze_text_quality(request: TextQualityRequest):
+    from .text_quality import text_quality
+    return text_quality(request.text, include_preview=True)
+
+
+@app.post('/api/v1/documents/text-repair')
+def preview_text_repair(request: TextRepairRequest):
+    from .text_quality import repair_preview
+    try:
+        return repair_preview(**request.model_dump())
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @app.post("/api/v1/documents/image-quality")
