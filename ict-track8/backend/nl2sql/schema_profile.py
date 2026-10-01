@@ -119,6 +119,11 @@ def _table_context(table: str) -> tuple[str, ...]:
     return tuple(dict.fromkeys(aliases))
 
 
+def table_aliases(table: str) -> tuple[str, ...]:
+    """Existing Schema-derived table names; these do not translate row values."""
+    return (table, *_table_context(table))
+
+
 def _is_numeric(data_type: str) -> bool:
     upper = str(data_type or "").upper()
     return any(token in upper for token in _NUMERIC_TYPES)

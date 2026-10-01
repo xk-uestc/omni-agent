@@ -14,7 +14,8 @@ from .t2s import to_simplified
 from .models import ColumnInfo, ForeignKeyInfo, LinkCandidate, TableInfo
 from .schema_profile import infer_rules
 from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
-from .question_roles import association_scope, field_owners, filter_only, group_fields, record_count_subject
+from .question_roles import (association_scope, field_owners, filter_only, group_fields,
+                             record_count_subject, alias_owner_prefix, alias_in_group)
 
 
 _TOKEN_RE = re.compile(r"[a-zA-Z0-9_]+|[\u3400-\u9fff]")
@@ -207,6 +208,12 @@ class SchemaLinker:
         rules = self._effective_rules(tables)
         links: list[LinkCandidate] = []
         linked_pairs: set[tuple[str, str]] = set()
+        prefix_cache = {}
+        alias_tables = {}
+        for rule in rules:
+            if rule.table in table_names:
+                for alias in rule.aliases:
+                    alias_tables.setdefault(normalize_text(alias), set()).add(rule.table)
         for rule in rules:
             if rule.table not in table_names:
                 continue
@@ -221,18 +228,20 @@ class SchemaLinker:
                 if rule.confidence is None
                 else min(0.99, rule.confidence + min(0.2, len(normalize_text(alias)) * 0.02))
             )
-            links.append(
-                LinkCandidate(
-                    source_text=alias,
-                    table=rule.table,
-                    column=rule.column,
-                    role=rule.role,
-                score=round(score, 3),
-                matched_alias=alias,
-                metric_function=rule.metric_function,
-                )
-            )
-            linked_pairs.add((rule.table, rule.column))
+            for mention in re.finditer(re.escape(normalize_text(alias)), normalized):
+                prefix_key = (mention.start(), normalize_text(alias))
+                if prefix_key not in prefix_cache:
+                    prefix_cache[prefix_key] = alias_owner_prefix(
+                        normalized, mention.start(), tables, alias_tables[normalize_text(alias)])
+                prefix_start, owners = prefix_cache[prefix_key]
+                if len(owners) == 1 and rule.table not in owners:
+                    continue
+                role = ('dimension' if alias_in_group(normalized, mention.start(), mention.end())
+                        else rule.role)
+                matched = normalized[prefix_start:mention.end()] if len(owners) == 1 else alias
+                links.append(LinkCandidate(alias, rule.table, rule.column, role,
+                                           round(score, 3), matched, rule.metric_function))
+                linked_pairs.add((rule.table, rule.column))
         links.extend(self._fuzzy_links(normalized, table_names, links, rules))
         # 没有业务词典时仍按真实字段名链接，数值列默认作为指标，其他列作为维度。
         for table in tables:
@@ -307,15 +316,19 @@ class SchemaLinker:
         def disfavored(link):
             choices = explicit_concepts.get((link.role, normalize_text(link.matched_alias)), set())
             return len(choices) == 1 and (link.table, link.column) not in choices
+        def dominated(link, other):
+            small, large = normalize_text(link.matched_alias), normalize_text(other.matched_alias)
+            if (other is link or other.table != link.table or other.role != link.role
+                    or len(large) <= len(small) or small not in large):
+                return False
+            larger_spans = [match.span() for match in re.finditer(re.escape(large), normalized)]
+            return all(any(start <= match.start() and match.end() <= end for start, end in larger_spans)
+                       for match in re.finditer(re.escape(small), normalized))
         filtered_links = [
             link
             for link in links
             if not shadowed(link) and not disfavored(link) and not any(
-                other is not link
-                and other.table == link.table
-                and other.role == link.role
-                and len(normalize_text(other.matched_alias)) > len(normalize_text(link.matched_alias))
-                and normalize_text(link.matched_alias) in normalize_text(other.matched_alias)
+                dominated(link, other)
                 for other in links
             )
         ]

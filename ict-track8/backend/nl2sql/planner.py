@@ -202,11 +202,11 @@ class SingleTablePlanner:
             # Only consume aggregate words implemented by the selected slot.
             # A comparison against an average is a HAVING condition, not AVG.
             aggregate_text = _AVERAGE_THRESHOLD_RE.sub("", normalized)
-            requested_functions = {function for _, function in self._aggregate_matches(aggregate_text)}
+            requested_functions = {function for _, function in self._aggregate_matches(aggregate_text, links)}
             if len(requested_functions) > 1:
                 return self._clarify(plan, "ambiguous_aggregation",
                     "同一指标包含多个聚合口径，请分别查询或明确要使用的聚合函数。", 0.3)
-            consumed.extend(cue for cue, function in self._aggregate_matches(aggregate_text)
+            consumed.extend(cue for cue, function in self._aggregate_matches(aggregate_text, links)
                             if function == plan.metric_function)
         if multiple_requested:
             from .models import MetricSpec
@@ -214,13 +214,13 @@ class SingleTablePlanner:
             for i, link in enumerate(all_metric_links):
                 clause = self._metric_clause(normalized, link)
                 aggregate_text = _AVERAGE_THRESHOLD_RE.sub("", clause)
-                functions = {fn for _, fn in self._aggregate_matches(aggregate_text)}
+                functions = {fn for _, fn in self._aggregate_matches(aggregate_text, [link])}
                 if len(functions) > 1:
                     return self._clarify(plan, 'ambiguous_aggregation', '同一指标包含多个聚合口径，请分别查询或明确聚合函数。', 0.3)
                 picked = self._choose_metric([link], clause, by_name[link.table])
                 if picked:
                     mt, mc, fn, label = picked
-                    consumed.extend(cue for cue, function in self._aggregate_matches(aggregate_text) if function == fn)
+                    consumed.extend(cue for cue, function in self._aggregate_matches(aggregate_text, [link]) if function == fn)
                     plan.metrics.append(MetricSpec(f"m{i}", mt, mc, fn, label,
                                                   "count" if fn in {"COUNT", "COUNT_DISTINCT"} else "unknown"))
             if len(plan.metrics) > 8:
@@ -236,7 +236,7 @@ class SingleTablePlanner:
         # declared NOT NULL fields establish equivalence without reading data.
         for link in all_metric_links:
             clause = self._metric_clause(normalized, link)
-            explicit_count = bool(re.search(r'(?:记录计数|记录数|计数)', self._count_cue_text(clause)))
+            explicit_count = bool(re.search(r'(?:记录计数|记录数|计数)', self._count_cue_text(clause, [link])))
             column_table = next(item for item in tables if item.name == link.table)
             column = next(item for item in column_table.columns if item.name == link.column)
             integer_pk = (column.primary_key and column.data_type.upper().strip() == 'INTEGER'
@@ -1242,7 +1242,7 @@ class SingleTablePlanner:
             local = self._metric_clause(question, link)
             if '去重计数' in local:
                 return link.table, link.column, 'COUNT_DISTINCT', f'去重数{label}'
-            if re.search(r'(?:记录计数|记录数|计数)', local):
+            if re.search(r'(?:记录计数|记录数|计数)', self._count_cue_text(local, [link])):
                 return link.table, link.column, 'COUNT', f'记录数{label}'
             if link.column == "customer_id":
                 return link.table, link.column, "COUNT_DISTINCT", "客户数"
@@ -1253,7 +1253,8 @@ class SingleTablePlanner:
             explicit_aggregate = next((
                 (function, label_prefix)
                 for cues, function, label_prefix in _AGGREGATE_CUES
-                if any(cue in aggregate_text for cue in cues)
+                if any(cue in (self._count_cue_text(aggregate_text, [link]) if function == 'COUNT'
+                               else aggregate_text) for cue in cues)
             ), None)
             if explicit_aggregate:
                 function, label_prefix = explicit_aggregate
@@ -1334,14 +1335,22 @@ class SingleTablePlanner:
         return before + alias + after
 
     @staticmethod
-    def _count_cue_text(question):
+    def _count_cue_text(question, links=()):
         # The shorter 计数 cue must not falsely make 去重计数 a second COUNT.
-        return question.replace('去重计数', '')
+        text = question.replace('去重计数', '')
+        field_spans = [mention.span() for link in links
+                       for mention in re.finditer(re.escape(normalize_text(link.matched_alias)), text)]
+        # “统计数量” contains the characters “计数” across the syntax/field
+        # boundary. It is not a request to COUNT; “数量计数” remains explicit.
+        for cue in reversed(list(re.finditer('计数', text))):
+            if any(cue.start() < end and start < cue.end() for start, end in field_spans):
+                text = text[:cue.start()] + '  ' + text[cue.end():]
+        return text
 
     @classmethod
-    def _aggregate_matches(cls, question):
+    def _aggregate_matches(cls, question, links=()):
         return [(cue, function) for cues, function, _ in _AGGREGATE_CUES
-                for cue in cues if cue in (cls._count_cue_text(question) if function == 'COUNT' else question)]
+                for cue in cues if cue in (cls._count_cue_text(question, links) if function == 'COUNT' else question)]
 
     def _choose_dimensions(self, links: list, question: str, table: TableInfo, metric_column: str, all_links: list | None = None, *, tables=None):
         tables = tuple(tables) if tables is not None else (table,)

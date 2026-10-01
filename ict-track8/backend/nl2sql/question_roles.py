@@ -11,6 +11,7 @@ import unicodedata
 
 from .t2s import to_simplified
 from .date_semantics import is_date_column
+from .schema_profile import table_aliases
 
 
 def normalized(text):
@@ -23,6 +24,44 @@ def mentions(text, name):
 
 def named_tables(text, tables):
     return {table.name for table in tables if mentions(text, table.name)}
+
+
+def alias_owner_prefix(text, start, tables, alias_tables=None):
+    """Bind an immediately preceding real table/known alias, never global context.
+
+    Shared table aliases retain all owners. Unknown source words remain in the
+    question for the existing coverage guard rather than becoming authority.
+    """
+    candidates = []
+    for table in tables:
+        for alias in table_aliases(table.name):
+            pattern = (r'(?<![a-z0-9_])' + re.escape(normalized(alias))
+                       + r'(?:表的|中的|内的|里的|的|表中|中|\.)?$')
+            match = re.search(pattern, text[:start])
+            # “各客户的金额” identifies a grouping subject, not the owner
+            # of the subsequent metric. Negated subjects authorize no owner.
+            if match and not re.search(
+                    r'(?:各|每个|每一|除了|除去|除|不含|不包括|不包含|排除|剔除|非)$',
+                    text[:match.start()]):
+                candidates.append((match.start(), table.name, alias == table.name))
+    if not candidates:
+        return start, set()
+    first = min(position for position, _, _ in candidates)
+    chosen = {owner for position, owner, _ in candidates if position == first}
+    native = any(is_native for position, _, is_native in candidates if position == first)
+    # A business subject can name a related filter (“高等级客户的销售额”).
+    # A Chinese table alias owns a field only if that field concept exists
+    # there. A literal Schema owner never borrows a field from another table.
+    if len(chosen) == 1 and not native and alias_tables is not None and not chosen & alias_tables:
+        return start, set()
+    return first, chosen
+
+
+def alias_in_group(text, start, end):
+    """Only this occurrence's local grouping clause gives a numeric alias a role."""
+    return any(group.start(1) <= start and end <= group.end(1)
+               and not re.search(r'筛选|过滤|限定', group.group(1))
+               for group in re.finditer(r'按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', text))
 
 
 def _qualified_fields(text, tables):
