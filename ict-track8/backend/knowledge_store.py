@@ -6,7 +6,9 @@ import json
 import re
 import sqlite3
 import unicodedata
+from collections import Counter
 from contextlib import contextmanager
+from math import log
 from pathlib import Path
 from typing import Any
 
@@ -17,6 +19,30 @@ from .evidence_context import (MAX_EVIDENCE_CHARS, MAX_EVIDENCE_ITEMS,
 
 SAFE_ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}')
 SUPPORTED = {'pdf', 'docx', 'xlsx', 'txt', 'md', 'image'}
+_RETRIEVAL_STOP_WORDS = frozenset('a an the what which who whom whose is are was were be been being '
+    'do does did how to of for from in on at by with and or as this that these those '
+    'it its please tell me can could would should according document report'.split())
+
+
+def _page_scope_coverage(records, query):
+    """Body-only, IDF-weighted coverage of each original document page.
+
+    Page neighbors affect ranking only. They never become model evidence or
+    override explicit identifier filters. Titles and metadata do not establish
+    the presence of a requested entity/year in the original page body.
+    """
+    pages = {}
+    for record in records:
+        key = (record.metadata['document_id'], record.metadata.get('page_no'))
+        pages.setdefault(key, set()).update(_tokenize(record.content))
+    terms = set(_tokenize(query)) - _RETRIEVAL_STOP_WORDS
+    if not terms or not pages:
+        return {}
+    frequencies = Counter(term for page in pages.values() for term in page if term in terms)
+    weights = {term: log(1 + (len(pages) + .5) / (frequencies[term] + .5)) for term in terms}
+    denominator = sum(weights.values())
+    return {key: sum(weights[term] for term in terms.intersection(body)) / denominator
+            for key, body in pages.items()}
 
 
 class SourceIntegrityError(ValueError):
@@ -315,13 +341,15 @@ class KnowledgeStore:
             if not records:
                 return []
         contents = {record.document_id: record.content for record in records}
+        page_coverage = _page_scope_coverage(records, query)
         hits = JsonDocumentRetriever(records).search(query, top_k=max(20, top_k * 5))
         # Explicit years/numbers are grounding anchors. Title matches alone cannot satisfy them.
         anchors = tuple(dict.fromkeys(re.findall(r'(?<![\w.])\d{4}(?!\d)', query)))
         def ranking(hit):
             anchor_matches = sum(bool(re.search(r'(?<!\d)' + re.escape(anchor) + r'(?!\d)', contents[hit.document_id])) for anchor in anchors)
             raw = float(hit.metadata.get('rrf_score', hit.metadata.get('bm25_raw', 0)))
-            return raw * (1 + 0.35 * anchor_matches), anchor_matches
+            coverage = page_coverage.get((hit.metadata['document_id'], hit.metadata.get('page_no')), 0)
+            return raw * (1 + 0.35 * anchor_matches) * (1 + 2 * coverage), anchor_matches
         hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
         if self.dense_index:
             from .dense_retrieval import reciprocal_rank_fusion
@@ -337,7 +365,10 @@ class KnowledgeStore:
             role = 'primary' if not selected else 'supporting'
             score, anchor_count = ranking(hit)
             selected.append(DocumentHit(hit.document_id, hit.title, hit.score, hit.matched_terms, hit.snippet, hit.source_uri,
-                {**hit.metadata, 'ranking_score': score, 'anchor_match_count': anchor_count, 'identifier_anchors': list(identifiers), 'evidence_role': role}))
+                {**hit.metadata, 'ranking_score': score, 'anchor_match_count': anchor_count,
+                 'page_scope_coverage': page_coverage.get((source, hit.metadata.get('page_no')), 0),
+                 'page_scope_method': 'body_only_idf_coverage_rerank_not_generation_evidence',
+                 'identifier_anchors': list(identifiers), 'evidence_role': role}))
             counts[source] = counts.get(source, 0) + 1
             if len(selected) >= top_k:
                 break
@@ -415,14 +446,15 @@ class KnowledgeStore:
             self.verify_source(source, expected_sha256=digest)
 
     def _generation_citations(self, citations):
-        """Rehydrate actual hit chunks only; never use caller-supplied full text.
+        """Rehydrate hit chunks and bounded, original-native PDF contexts.
 
-        PDF rows are not expanded until geometric table/column provenance is
-        reliable. This stage does not fetch whole pages, neighbors, gold or
-        headings from unrelated chunks and does not alter retrieval rankings.
+        A native context must be reconstructed from the pinned PDF bytes,
+        never from raw_page_text or caller-provided metadata. Unverified
+        table rows retain their existing rejection gate. Retrieval excerpts
+        and rankings stay unchanged; model input has its own source ledger.
         """
         self._verify_citation_sources(citations)
-        selected, omitted, total = [], [], 0
+        selected, omitted, total, originals = [], [], 0, {}
         with self.connect() as connection:
             for hit in citations:
                 metadata = hit['metadata']
@@ -454,19 +486,46 @@ class KnowledgeStore:
                 if reason:
                     omitted.append({'citation_id': hit['citation_id'], 'reason': reason})
                     continue
-                selected.append({**hit, 'generation_evidence': {
+                native_context = None
+                coordinates = chunk['metadata'].get('coordinate_evidence') or {}
+                if (chunk['modality'] == 'pdf' and chunk['content_type'] == 'paragraph'
+                        and coordinates.get('bbox_status') == 'exact_block'
+                        and len(coordinates.get('layout_block_ids') or []) == 1
+                        and not chunk['metadata'].get('ocr_status')):
+                    from .pdf_native_context import extract_native_context
+                    document_id = chunk['document_id']
+                    if document_id not in originals:
+                        originals[document_id] = self.verify_source(document_id, expected_sha256=row[1]).read_bytes()
+                    native_context = extract_native_context(originals[document_id], page_no=chunk['page_no'],
+                                                            anchor_text=chunk['text'], max_chars=limit)
+                    if native_context is None:
+                        # Missing required headings, ambiguous native anchors
+                        # and complete-block budget failures cannot authorize
+                        # the old, smaller excerpt with its scope removed.
+                        omitted.append({'citation_id': hit['citation_id'],
+                                        'reason': 'native_complete_context_unavailable'})
+                        continue
+                    text, end, truncated = native_context['text'], None, False
+                evidence = {
                     'text': text, 'source_sha256': row[1],
                     'chunk_sha256': text_sha256(chunk['text']), 'evidence_sha256': text_sha256(text),
-                    'offset_start': 0, 'offset_end': end, 'truncated': truncated,
+                    'chunk_payload_sha256': text_sha256(json.dumps(chunk, ensure_ascii=False, sort_keys=True)),
+                    'offset_start': None if native_context else 0, 'offset_end': end, 'truncated': truncated,
                     'source_locator': chunk['source_locator'], 'page_no': chunk['page_no'],
-                    'original_chars': len(chunk['text']), 'evidence_chars': len(text),
-                    'mode': 'authoritative_hit_chunk_complete_prefix',
-                }})
+                    'original_chars': len(text) if native_context else len(chunk['text']), 'evidence_chars': len(text),
+                    'mode': 'authoritative_pdf_native_block_context' if native_context else 'authoritative_hit_chunk_complete_prefix',
+                }
+                if native_context:
+                    evidence['anchor_original_chars'] = len(chunk['text'])
+                    evidence['native_context'] = native_context
+                    evidence['native_context_max_chars'] = limit
+                selected.append({**hit, 'generation_evidence': evidence})
                 total += len(text)
         self._verify_citation_sources(selected)
         return selected, omitted
 
     def _verify_generation_chunks(self, citations):
+        originals = {}
         with self.connect() as connection:
             for hit in citations:
                 row = connection.execute('SELECT payload FROM chunks WHERE chunk_id=? AND document_id=?',
@@ -474,9 +533,19 @@ class KnowledgeStore:
                 chunk = json.loads(row[0]) if row else None
                 evidence = hit['generation_evidence']
                 if (chunk is None or text_sha256(chunk['text']) != evidence['chunk_sha256']
+                        or text_sha256(json.dumps(chunk, ensure_ascii=False, sort_keys=True)) != evidence['chunk_payload_sha256']
                         or chunk['metadata'].get('source_sha256') != evidence['source_sha256']
                         or chunk['source_locator'] != evidence['source_locator']
                         or chunk['page_no'] != evidence['page_no']
                         or (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
                             and not _verified_pdf_row(chunk))):
                     raise SourceRevisionError('执行中权威资料切片发生变化，请重新执行。')
+                if evidence.get('native_context') is not None:
+                    from .pdf_native_context import extract_native_context
+                    document_id = chunk['document_id']
+                    if document_id not in originals:
+                        originals[document_id] = self.verify_source(document_id, expected_sha256=evidence['source_sha256']).read_bytes()
+                    current = extract_native_context(originals[document_id], page_no=chunk['page_no'],
+                                                     anchor_text=chunk['text'], max_chars=evidence['native_context_max_chars'])
+                    if current != evidence['native_context'] or evidence['text'] != current['text']:
+                        raise SourceRevisionError('执行中原PDF上下文或原生布局发生变化，请重新执行。')

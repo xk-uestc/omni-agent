@@ -121,7 +121,7 @@ def test_shared_budget_applies_to_main_and_direct_visual_calls(tmp_path, monkeyp
     slots.release()
 
 
-def test_page_budget_is_explicit_and_no_model_called(tmp_path):
+def test_long_narrative_pdf_returns_to_text_route_without_visual_model(tmp_path):
     store, client, _ = store_with_grid(tmp_path)
     with fitz.open() as document:
         for _ in range(13):
@@ -129,9 +129,44 @@ def test_page_budget_is_explicit_and_no_model_called(tmp_path):
         raw = document.tobytes()
     store.ingest(raw, document_id='large', title='Large PDF', modality='pdf', filename='large.pdf')
     result, trace = route_visual_table_question(store, 'West 2025 Actual', [], document_id='large')
-    assert result['status'] == 'incomplete' and trace['status'] == 'candidate_page_budget_exceeded' and not client.calls
-    main = store.answer('West 2025 Actual', document_id='large')
-    assert main['status'] == 'incomplete' and main['answer'] is None and not client.calls
+    assert result is None and trace['status'] == 'no_complete_grid_key' and not client.calls
+    assert trace['page_indexes'][0]['page_count'] == 13
+    assert trace['page_indexes'][0]['complete'] is True
+    assert trace['page_indexes'][0]['status'] == 'built_complete'
+    assert trace['limits']['pages_per_source'] == 1000
+    assert trace['limits']['index_build_seconds_per_source'] == 60
+    assert ':algorithm:' in trace['page_indexes'][0]['extractor_version']
+    result, trace = route_visual_table_question(store, 'West 2025 Actual', [], document_id='large')
+    assert result is None and trace['page_indexes'][0]['status'] == 'cache_hit'
+
+
+def test_late_duplicate_in_long_pdf_never_selects_early_grid(tmp_path):
+    store, client, _ = store_with_grid(tmp_path)
+    with fitz.open() as document, fitz.open(stream=grid_pdf(), filetype='pdf') as grid:
+        document.insert_pdf(grid)
+        for _ in range(12):
+            document.new_page().insert_text((40, 40), 'Narrative only')
+        document.insert_pdf(grid)
+        raw = document.tobytes()
+    store.ingest(raw, document_id='long', title='Long grid', modality='pdf', filename='long.pdf')
+    for _ in range(2):
+        result, trace = route_visual_table_question(store, 'West 2025 Actual', [], document_id='long')
+        assert result['status'] == 'incomplete' and trace['complete_key_matches'] == 2
+        assert [option['page_no'] for option in result['source_options']] == [1, 14]
+        assert not client.calls
+
+
+def test_source_replacement_cannot_use_prior_page_index(tmp_path):
+    store, client, _ = store_with_grid(tmp_path)
+    assert store.answer('West 2025 Actual', document_id='grid')['status'] == 'ok'
+    client.calls.clear()
+    with fitz.open() as document:
+        document.new_page().insert_text((40, 40), 'West 2025 Actual narrative, grid removed.')
+        raw = document.tobytes()
+    store.ingest(raw, document_id='grid', title='Replacement', modality='pdf', filename='grid.pdf')
+    result, trace = route_visual_table_question(store, 'West 2025 Actual', [], document_id='grid')
+    assert result is None and trace['status'] == 'no_complete_grid_key'
+    assert trace['page_indexes'][0]['status'] == 'built_complete' and not client.calls
 
 
 def test_explicit_page_resolves_duplicates_in_a_source(tmp_path):

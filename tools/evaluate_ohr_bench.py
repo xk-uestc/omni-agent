@@ -220,7 +220,9 @@ def main():
               'implementation_file_sha256': {name: digest((ROOT / name).read_bytes()) for name in (
                   'tools/evaluate_ohr_bench.py', 'ict-track8/backend/knowledge_store.py',
                   'ict-track8/backend/chunk_cleaning.py', 'ict-track8/backend/dense_retrieval.py',
-                  'ict-track8/backend/grounded_generation.py', 'ict-track8/backend/responses_client.py')},
+                  'ict-track8/backend/grounded_generation.py', 'ict-track8/backend/responses_client.py',
+                  'ict-track8/backend/pdf_native_context.py', 'ict-track8/backend/pdf_page_index.py',
+                  'ict-track8/backend/visual_routing.py')},
               'gold_used_as_corpus_or_model_input': False, 'official_pages_zero_based_project_pages_one_based': True,
               'model_enabled': args.with_model, 'model_workers': 1, 'documents': [], 'cases': [],
               'limits': ['Only 7 selected documents are candidate corpus, not 8,500+ full benchmark pages.',
@@ -282,9 +284,21 @@ def main():
             started = time.perf_counter()
             try:
                 result = query_generated(store, row['questions'])
+                # Scoring-only: inspect exact model input, not public short
+                # retrieval snippets or raw_page_text that was never sent.
+                model_evidence = '\n\n'.join(
+                    citation.get('generation_evidence', {}).get('text', '')
+                    for citation in result.get('citations', [])
+                    if citation['metadata'].get('document_id') == doc_id(row['doc_name'])
+                    and citation['metadata'].get('page_no') in expected_pages(row))
                 entry['generation'] = {'status': result['status'], 'answer_mode': result['answer_mode'],
                                        'answer': result['answer'], 'scores': answer_scores(result['answer'], row['answers']),
                                        'citations': result['citations'], 'generation_attempts': result.get('generation_attempts', []),
+                                       'trace': result.get('trace', []),
+                                       'scoring_only_model_evidence': {
+                                           'evidence_text_lcs_recall': reference_lcs_recall(model_evidence, row['evidence_context']),
+                                           'gold_answer_lexically_present': answer_scores(model_evidence, row['answers'])['normalized_gold_substring'],
+                                       },
                                        'wall_ms': round((time.perf_counter() - started) * 1000, 3)}
             except Exception as exc:
                 entry['generation'] = {'status': 'failed', 'error_type': type(exc).__name__, 'wall_ms': round((time.perf_counter()-started)*1000, 3)}
