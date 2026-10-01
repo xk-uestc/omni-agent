@@ -17,4 +17,6 @@
 
 代码、报告和PPT共用项目已有证据。对应Markdown和构建脚本保留，更新实验后可重新生成。Word对应PDF由本机WPS真实导出，PPT经过Artifact Tool的结构、布局、原生图表数据与导入校验。当前尚未在原生Microsoft PowerPoint中验证。
 
+本目录的四份Word/PDF及PPT对应ade1b60材料快照，不包含后续差旅Schema、上下文检索和原文件行号修复。最新执行证据见docs/RELIABILITY_UPDATE_20261001.md。SOURCE_MANIFEST保留生成时的来源哈希；正式提交前需重新生成材料，而不能把快照宣称为最新定稿。
+
 完整公开资产压缩包仍需要先安装Python依赖；真实模型配置单独保留于本机runtime，不随包传递。

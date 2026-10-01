@@ -105,9 +105,9 @@ class Nl2SqlEngine:
             self._snapshot_key, self._snapshot = key, (tables, index)
             return self._snapshot
 
-    def schema(self) -> dict[str, Any]:
+    def schema(self, *, include_row_count: bool = True) -> dict[str, Any]:
         with self._connect() as connection:
-            tables = self.introspector.introspect(connection)
+            tables = self.introspector.introspect(connection,include_row_count=include_row_count)
         return {"tables": [table.to_dict() for table in tables], "source": "sqlite_read_only"}
 
     # ------------------------------------------------------------------ planning

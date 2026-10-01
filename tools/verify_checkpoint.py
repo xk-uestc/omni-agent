@@ -7,11 +7,13 @@ import hashlib
 import json
 import os
 import socket
+import sqlite3
 import subprocess
 import sys
 import tempfile
 import time
 import zipfile
+from contextlib import closing
 from pathlib import Path
 
 import requests
@@ -24,6 +26,7 @@ from scripts.verify_package import verify_package
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('package', type=Path)
+    parser.add_argument('--work-dir', type=Path, help='新目录验收的临时父目录；默认使用系统临时目录，避免占满项目盘')
     args = parser.parse_args()
     package = args.package.resolve()
     verified = verify_package(package)
@@ -32,7 +35,9 @@ def main():
     report = {'package_sha256':hashlib.sha256(package.read_bytes()).hexdigest(),
               'manifest_verified':True, 'real_model_test':'not_run', 'checks':{}}
     (ROOT/'runtime').mkdir(exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='package-smoke-', dir=ROOT/'runtime') as directory:
+    if args.work_dir:
+        args.work_dir.mkdir(parents=True,exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='package-smoke-', dir=args.work_dir) as directory:
         extracted = Path(directory)
         with zipfile.ZipFile(package) as archive:
             archive.extractall(extracted)
@@ -76,6 +81,23 @@ def main():
                 report['checks']['dense'] = answer['retrieval']['mode']=='bm25_dense_rrf'
                 sql = requests.post(base+'/api/v1/omni/query',json={'question':'2025年华东地区销售额'},timeout=10).json()
                 report['checks']['sql'] = sql['result']['rows'][0]['销售额']==29584
+                with closing(sqlite3.connect(extracted/'ict-track8/data/demo_sales.sqlite')) as connection:
+                    minimum, maximum = connection.execute('SELECT MIN(sales_amount),MAX(sales_amount) FROM sales_orders').fetchone()
+                extremes = []
+                for cue, expected in (('最小值',minimum),('最大值',maximum)):
+                    answer = requests.post(base+'/api/v1/omni/query',json={'question':'销售额'+cue},timeout=10).json()
+                    result = answer['result']
+                    extremes.append(answer['status']=='ok' and list(result['rows'][0].values())[0]==expected)
+                report['checks']['sql_extremes'] = all(extremes)
+                import base64
+                raw = b'\n\n# Manual\n\n\nReturn within 7 days.\n\n\n## Warranty\n\nWarranty is 12 months.'
+                uploaded = requests.post(base+'/api/v1/knowledge/ingest',json={
+                    'document_id':'smoke-source-lines','title':'Manual','modality':'md','filename':'manual.md',
+                    'file_base64':base64.b64encode(raw).decode()},timeout=10)
+                detail = requests.get(base+'/api/v1/knowledge/documents/smoke-source-lines',timeout=5).json()
+                original = requests.get(base+'/api/v1/knowledge/documents/smoke-source-lines/original',timeout=5)
+                warranty = next(chunk for chunk in detail['chunks'] if 'Warranty is' in chunk['text'])
+                report['checks']['source_line_locators'] = uploaded.ok and original.content==raw and warranty['source_locator']=='lines:11-11'
                 report['checks']['frontend'] = requests.get(base+'/knowledge.html',timeout=5).status_code==200
                 report['checks']['ocr'] = requests.get(base+'/api/v1/documents/ocr/health',timeout=15).json()['ready']
                 print(json.dumps(report['checks'],ensure_ascii=False),flush=True)

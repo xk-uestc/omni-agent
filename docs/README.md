@@ -12,6 +12,8 @@
 - `CHINOOK_RULES_REPORT.json`、`SCHEMA_SCALE_REPORT.json`：公开数据库开发题与合成干扰表。
 - `ROBUSTNESS_REPORT.json`：真实OCR的原图/增强成对结果。
 - `MODEL_API_PROBE.json`：用户指定gpt-6-luna的最近真实鉴权结果。
+- `DOMAIN_TRANSFER_FIRST_RUN.json`、`DOMAIN_TRANSFER_REPORT.json`：新差旅Schema首轮6/8与修复后8/8，明确为自编审计/开发回归。
+- `RELIABILITY_UPDATE_20261001.md`：规划上下文、聚合覆盖与原文件行号修复，以及本轮回归口径。
 - `history/REAL_MODEL_REPORT_PRE_LUNA.json`：旧模型历史实验，不是gpt-6-luna验收。
 
-最终技术文档、PPT、创新自述及完整独立评测仍须在功能和效果稳定后制作，不用历史报告替代。
+正式材料已在delivery制作并校验，为ade1b60快照。本轮代码/评测另见可靠性更新；最终定稿需更新材料及完整独立评测，不用快照替代新实验结果。

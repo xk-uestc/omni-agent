@@ -49,6 +49,7 @@ python tools/create_sample_corpus.py --ingest
 python tools/evaluate_independent.py --dense
 python tools/evaluate_chinook.py
 python tools/evaluate_schema_scale.py
+python tools/evaluate_domain_transfer.py
 python tools/evaluate_robustness.py
 python tools/evaluate_rag_scale.py
 python ict-track8/scripts/package_delivery.py --with-public-assets --output dist/ict8-complete.zip
@@ -60,6 +61,7 @@ Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产�
 `delivery/requirements-tested.txt`固定当前实测的直接依赖版本；`delivery/ENVIRONMENT.json`另记录全部已安装包、Python及平台。它是实测环境记录，不是跨平台wheel锁或离线安装包。默认OCR为RapidOCR；可选Tesseract未在当前环境安装或验收。
 
 正式材料见`delivery/README.md`。报告区分当前开发验收、模型鉴权失败和待执行实验；决赛材料为准备稿，未套用尚未提供的组委会模板。
+最新本地回归415项通过；差旅新Schema自编审计首次6/8、修复后8/8，原始失败保留。规划上下文测试为捕获stub；不当作真实模型效果。当前可靠性修复见`docs/RELIABILITY_UPDATE_20261001.md`；正式材料仍为ade1b60快照，最终定稿需更新。
 
 ```powershell
 cd ict-track8

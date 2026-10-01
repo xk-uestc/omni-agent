@@ -4,7 +4,10 @@ from .document_analysis import DocumentAnalyzer
 
 
 def chunk_text(chunker, text, *, document_id, modality):
-    lines = chunker.clean_text(text).splitlines()
+    # Whole-document cleaning collapses blank lines, shifting every subsequent
+    # locator away from its original file. Clean each source line separately.
+    raw_lines = text.replace('\r\n', '\n').replace('\r', '\n').split('\n')
+    lines = [chunker.clean_text(line) for line in raw_lines]
     explicit = {item.line_no: item for item in DocumentAnalyzer._headings(lines)}
     chunks, warnings, stack, body = [], [], [], []
     body_start = 1
@@ -33,6 +36,8 @@ def chunk_text(chunker, text, *, document_id, modality):
                 metadata={'heading_rule': heading.rule if heading else 'bracket_heuristic', 'declared_level': level}))
         else:
             if not body:
+                if not line:
+                    continue
                 body_start = number
             body.append(line)
     flush(len(lines))

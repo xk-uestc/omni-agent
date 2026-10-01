@@ -31,6 +31,13 @@ _DEFAULT_MAX_JOIN_HOPS = 4
 _JOIN_HINT_RE = re.compile(r"\[join_path:([A-Za-z0-9_.>\-]+)\]")
 _FIELD_HINT_RE = re.compile(r"\[field:(metric|dimension):([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z_][A-Za-z0-9_]*)\]")
 _ANALYSIS_WORDS = ("排名", "排行", "名次", "占比", "份额", "比例")
+_AGGREGATE_CUES = (
+    (("平均", "均价", "均值", "均分", "平均值"), "AVG", "平均"),
+    (("最高值", "最大值", "单笔最高", "单次最高"), "MAX", "最高"),
+    (("最低值", "最小值", "单笔最低", "单次最低"), "MIN", "最低"),
+    (("总计", "总和", "合计"), "SUM", "总"),
+)
+_AVERAGE_THRESHOLD_RE = re.compile(r"(?:高于|超过|大于|低于|小于|不低于|不高于)(?:整体|全部|总体)?(?:的)?平均")
 _TREND_WORDS = ("趋势", "按月", "按年", "按日期", "每天", "每月", "每年", "按季度")
 _GENERIC_TIME_ALIASES = {"日期", "时间", "月份", "月度", "按月", "年份", "按年", "年度", "每月", "每年"}
 _MAX_LIMIT = 100
@@ -181,6 +188,17 @@ class SingleTablePlanner:
                 0.18, self._metric_options(tables),
             )
         plan.metric_table, plan.metric_column, plan.metric_function, plan.metric_label = metric
+        if not multiple_requested:
+            # Only consume aggregate words implemented by the selected slot.
+            # A comparison against an average is a HAVING condition, not AVG.
+            aggregate_text = _AVERAGE_THRESHOLD_RE.sub("", normalized)
+            requested_functions = {function for cues, function, _ in _AGGREGATE_CUES
+                                   if any(cue in aggregate_text for cue in cues)}
+            if len(requested_functions) > 1:
+                return self._clarify(plan, "ambiguous_aggregation",
+                    "同一指标包含多个聚合口径，请分别查询或明确要使用的聚合函数。", 0.3)
+            consumed.extend(cue for cues, function, _ in _AGGREGATE_CUES
+                            if function == plan.metric_function for cue in cues if cue in aggregate_text)
         if multiple_requested:
             from .models import MetricSpec
             by_name = {item.name: item for item in tables}
@@ -1021,15 +1039,10 @@ class SingleTablePlanner:
             if link.column.lower().replace("_", "").endswith("id") and any(word in link.matched_alias for word in ("数", "数量", "笔", "量")):
                 function = "COUNT" if link.table == table.name and '去重' not in question else "COUNT_DISTINCT"
                 return link.table, link.column, function, label
-            average_threshold = re.search(r"(?:高于|超过|大于|低于|小于|不低于|不高于)(?:整体|全部|总体)?(?:的)?平均", question)
+            average_threshold = _AVERAGE_THRESHOLD_RE.search(question)
             explicit_aggregate = next((
                 (function, label_prefix)
-                for cues, function, label_prefix in (
-                    (("平均", "均价", "均值", "均分", "平均值"), "AVG", "平均"),
-                    (("最高值", "最大值", "单笔最高", "单次最高"), "MAX", "最高"),
-                    (("最低值", "最小值", "单笔最低", "单次最低"), "MIN", "最低"),
-                    (("总计", "总和", "合计"), "SUM", "总"),
-                )
+                for cues, function, label_prefix in _AGGREGATE_CUES
                 if any(cue in question for cue in cues)
                 and not (function == "AVG" and average_threshold)
             ), None)

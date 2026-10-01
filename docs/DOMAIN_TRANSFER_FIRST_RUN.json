@@ -1,0 +1,1462 @@
+{
+  "created_at": "2026-10-01T01:08:53.860476+00:00",
+  "scope": "authored_new_schema_audit_not_blind_holdout",
+  "model": null,
+  "few_shot_examples": 0,
+  "domain_alias_rules": 0,
+  "python": "3.12.10",
+  "case_sha256": "906cfa7d55d7c8aeb195257f09da70b8ce96cb7712054be435f29911fb98c680",
+  "passed": 6,
+  "total": 8,
+  "cases": [
+    {
+      "id": "claim_sum",
+      "question": "Claims ApprovedAmount合计",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Claims",
+      "expected": [
+        [
+          2100.5
+        ]
+      ],
+      "observed": [
+        [
+          2100.5
+        ]
+      ],
+      "pass": true,
+      "route": "sql",
+      "status": "ok",
+      "latency_ms": 15.175,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Claims ApprovedAmount合计",
+        "rewritten_question": "Claims ApprovedAmount合计",
+        "sql": "SELECT SUM(\"Claims\".\"ApprovedAmount\") AS \"总ApprovedAmount\" FROM \"Claims\" ORDER BY SUM(\"Claims\".\"ApprovedAmount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "总ApprovedAmount"
+        ],
+        "rows": [
+          {
+            "总ApprovedAmount": 2100.5
+          }
+        ],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "SUM",
+          "metric_label": "总ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "Claims ApprovedAmount合计",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Claims 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "approvedamount"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Claims ApprovedAmount合计",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "SUM",
+              "label": "总ApprovedAmount"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.48,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：总ApprovedAmount（SUM）",
+          "查询表：Claims",
+          "使用表 Claims 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite",
+          "table": "Claims",
+          "row_count": 1,
+          "query_hash": "21d6564b0b1a675b",
+          "field_links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "approvedamount"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "总ApprovedAmount",
+              "query_hash": "21d6564b0b1a675b",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "总ApprovedAmount"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "claim_average",
+      "question": "Claims ApprovedAmount平均值",
+      "gold_sql": "SELECT AVG(ApprovedAmount) FROM Claims",
+      "expected": [
+        [
+          350.0833333333333
+        ]
+      ],
+      "observed": [
+        [
+          350.0833333333333
+        ]
+      ],
+      "pass": true,
+      "route": "sql",
+      "status": "ok",
+      "latency_ms": 1.971,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Claims ApprovedAmount平均值",
+        "rewritten_question": "Claims ApprovedAmount平均值",
+        "sql": "SELECT AVG(\"Claims\".\"ApprovedAmount\") AS \"平均ApprovedAmount\" FROM \"Claims\" ORDER BY AVG(\"Claims\".\"ApprovedAmount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "平均ApprovedAmount"
+        ],
+        "rows": [
+          {
+            "平均ApprovedAmount": 350.0833333333333
+          }
+        ],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "AVG",
+          "metric_label": "平均ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.48,
+          "rewritten_question": "Claims ApprovedAmount平均值",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Claims 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "approvedamount"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Claims ApprovedAmount平均值",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "AVG",
+              "label": "平均ApprovedAmount"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.48,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：平均ApprovedAmount（AVG）",
+          "查询表：Claims",
+          "使用表 Claims 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite",
+          "table": "Claims",
+          "row_count": 1,
+          "query_hash": "629a09f322e50399",
+          "field_links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "approvedamount"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "平均ApprovedAmount",
+              "query_hash": "629a09f322e50399",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "平均ApprovedAmount"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "department_sum",
+      "question": "按Claims Department统计ApprovedAmount",
+      "gold_sql": "SELECT Department,SUM(ApprovedAmount) FROM Claims GROUP BY Department",
+      "expected": [
+        [
+          "研发一部",
+          1050.5
+        ],
+        [
+          "营销二部",
+          1050.0
+        ]
+      ],
+      "observed": [
+        [
+          "研发一部",
+          1050.5
+        ],
+        [
+          "营销二部",
+          1050.0
+        ]
+      ],
+      "pass": true,
+      "route": "sql",
+      "status": "ok",
+      "latency_ms": 2.236,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按Claims Department统计ApprovedAmount",
+        "rewritten_question": "按Claims Department统计ApprovedAmount",
+        "sql": "SELECT \"Claims\".\"Department\", SUM(\"Claims\".\"ApprovedAmount\") AS \"ApprovedAmount\" FROM \"Claims\" GROUP BY \"Claims\".\"Department\" ORDER BY SUM(\"Claims\".\"ApprovedAmount\") DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "Department",
+          "ApprovedAmount"
+        ],
+        "rows": [
+          {
+            "Department": "研发一部",
+            "ApprovedAmount": 1050.5
+          },
+          {
+            "Department": "营销二部",
+            "ApprovedAmount": 1050.0
+          }
+        ],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "SUM",
+          "metric_label": "ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "Department"
+          ],
+          "dimension_tables": {
+            "Department": "Claims"
+          },
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            },
+            {
+              "source_text": "Department",
+              "table": "Claims",
+              "column": "Department",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Department",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.62,
+          "rewritten_question": "按Claims Department统计ApprovedAmount",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Claims 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "approvedamount",
+              "department"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "按Claims Department统计ApprovedAmount",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "SUM",
+              "label": "ApprovedAmount"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "Claims",
+                "column": "Department",
+                "grain": "raw",
+                "label": "Department"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.62,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：ApprovedAmount（SUM）",
+          "查询表：Claims",
+          "使用表 Claims 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite",
+          "table": "Claims",
+          "row_count": 2,
+          "query_hash": "6a570995cda32fc0",
+          "field_links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            },
+            {
+              "source_text": "Department",
+              "table": "Claims",
+              "column": "Department",
+              "role": "dimension",
+              "score": 0.7,
+              "matched_alias": "Department",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "approvedamount",
+              "department"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "Department",
+              "query_hash": "6a570995cda32fc0",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "Department"
+              }
+            },
+            {
+              "row": 0,
+              "column": "ApprovedAmount",
+              "query_hash": "6a570995cda32fc0",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "ApprovedAmount"
+              }
+            },
+            {
+              "row": 1,
+              "column": "Department",
+              "query_hash": "6a570995cda32fc0",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "Department"
+              }
+            },
+            {
+              "row": 1,
+              "column": "ApprovedAmount",
+              "query_hash": "6a570995cda32fc0",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "ApprovedAmount"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "year_filter",
+      "question": "2025年Claims ApprovedAmount合计",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Claims WHERE ClaimDate>='2025-01-01' AND ClaimDate<'2026-01-01'",
+      "expected": [
+        [
+          1350.5
+        ]
+      ],
+      "observed": [
+        [
+          1350.5
+        ]
+      ],
+      "pass": true,
+      "route": "sql",
+      "status": "ok",
+      "latency_ms": 2.122,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "2025年Claims ApprovedAmount合计",
+        "rewritten_question": "2025年Claims ApprovedAmount合计",
+        "sql": "SELECT SUM(\"Claims\".\"ApprovedAmount\") AS \"总ApprovedAmount\" FROM \"Claims\" WHERE \"Claims\".\"ClaimDate\" >= ? AND \"Claims\".\"ClaimDate\" < ? ORDER BY SUM(\"Claims\".\"ApprovedAmount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          100
+        ],
+        "columns": [
+          "总ApprovedAmount"
+        ],
+        "rows": [
+          {
+            "总ApprovedAmount": 1350.5
+          }
+        ],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "SUM",
+          "metric_label": "总ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "ClaimDate",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Claims.ClaimDate",
+              "table": "Claims"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.58,
+          "rewritten_question": "2025年Claims ApprovedAmount合计",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "日期参数格式：iso_text",
+            "使用表 Claims 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "2025年",
+              "approvedamount"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "2025年Claims ApprovedAmount合计",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "SUM",
+              "label": "总ApprovedAmount"
+            },
+            "filters": [
+              {
+                "column": "ClaimDate",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Claims.ClaimDate",
+                "table": "Claims"
+              }
+            ],
+            "time_range": [
+              "2025-01-01",
+              "2026-01-01"
+            ],
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.58,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：总ApprovedAmount（SUM）",
+          "查询表：Claims",
+          "限制时间 [2025-01-01, 2026-01-01)，时间字段 Claims.ClaimDate",
+          "日期参数格式：iso_text",
+          "使用表 Claims 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite",
+          "table": "Claims",
+          "row_count": 1,
+          "query_hash": "78e5d135220c6a6e",
+          "field_links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "2025年",
+              "approvedamount"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "总ApprovedAmount",
+              "query_hash": "78e5d135220c6a6e",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "总ApprovedAmount"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "status_filter",
+      "question": "已报销的Claims ApprovedAmount合计",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Claims WHERE State='已报销'",
+      "expected": [
+        [
+          1300.5
+        ]
+      ],
+      "observed": [
+        [
+          1300.5
+        ]
+      ],
+      "pass": true,
+      "route": "sql",
+      "status": "ok",
+      "latency_ms": 1.941,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "已报销的Claims ApprovedAmount合计",
+        "rewritten_question": "已报销的Claims ApprovedAmount合计",
+        "sql": "SELECT SUM(\"Claims\".\"ApprovedAmount\") AS \"总ApprovedAmount\" FROM \"Claims\" WHERE \"Claims\".\"State\" = ? ORDER BY SUM(\"Claims\".\"ApprovedAmount\") DESC LIMIT ?",
+        "parameters": [
+          "已报销",
+          100
+        ],
+        "columns": [
+          "总ApprovedAmount"
+        ],
+        "rows": [
+          {
+            "总ApprovedAmount": 1300.5
+          }
+        ],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "SUM",
+          "metric_label": "总ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "State",
+              "operator": "=",
+              "value": "已报销",
+              "source_text": "已报销",
+              "explanation": "限定 State ∈ {已报销}",
+              "table": "Claims"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.58,
+          "rewritten_question": "已报销的Claims ApprovedAmount合计",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "使用表 Claims 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "approvedamount",
+              "已报销"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "已报销的Claims ApprovedAmount合计",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "SUM",
+              "label": "总ApprovedAmount"
+            },
+            "filters": [
+              {
+                "column": "State",
+                "operator": "=",
+                "value": "已报销",
+                "source_text": "已报销",
+                "explanation": "限定 State ∈ {已报销}",
+                "table": "Claims"
+              }
+            ],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.58,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：总ApprovedAmount（SUM）",
+          "查询表：Claims",
+          "限定 State ∈ {已报销}",
+          "使用表 Claims 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite",
+          "table": "Claims",
+          "row_count": 1,
+          "query_hash": "b0f1935565747fb1",
+          "field_links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "approvedamount",
+              "已报销"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "总ApprovedAmount",
+              "query_hash": "b0f1935565747fb1",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "总ApprovedAmount"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "combined_filter",
+      "question": "2025年研发一部已报销的Claims ApprovedAmount合计",
+      "gold_sql": "SELECT SUM(ApprovedAmount) FROM Claims WHERE ClaimDate>='2025-01-01' AND ClaimDate<'2026-01-01' AND Department='研发一部' AND State='已报销'",
+      "expected": [
+        [
+          550.5
+        ]
+      ],
+      "observed": [
+        [
+          550.5
+        ]
+      ],
+      "pass": true,
+      "route": "sql",
+      "status": "ok",
+      "latency_ms": 2.489,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "2025年研发一部已报销的Claims ApprovedAmount合计",
+        "rewritten_question": "2025年研发一部已报销的Claims ApprovedAmount合计",
+        "sql": "SELECT SUM(\"Claims\".\"ApprovedAmount\") AS \"总ApprovedAmount\" FROM \"Claims\" WHERE \"Claims\".\"ClaimDate\" >= ? AND \"Claims\".\"ClaimDate\" < ? AND \"Claims\".\"Department\" = ? AND \"Claims\".\"State\" = ? ORDER BY SUM(\"Claims\".\"ApprovedAmount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "研发一部",
+          "已报销",
+          100
+        ],
+        "columns": [
+          "总ApprovedAmount"
+        ],
+        "rows": [
+          {
+            "总ApprovedAmount": 550.5
+          }
+        ],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "SUM",
+          "metric_label": "总ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "ClaimDate",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Claims.ClaimDate",
+              "table": "Claims"
+            },
+            {
+              "column": "Department",
+              "operator": "=",
+              "value": "研发一部",
+              "source_text": "研发一部",
+              "explanation": "限定 Department ∈ {研发一部}",
+              "table": "Claims"
+            },
+            {
+              "column": "State",
+              "operator": "=",
+              "value": "已报销",
+              "source_text": "已报销",
+              "explanation": "限定 State ∈ {已报销}",
+              "table": "Claims"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.58,
+          "rewritten_question": "2025年研发一部已报销的Claims ApprovedAmount合计",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "日期参数格式：iso_text",
+            "使用表 Claims 的只读聚合查询"
+          ],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "2025年",
+              "approvedamount",
+              "已报销",
+              "研发一部"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "2025年研发一部已报销的Claims ApprovedAmount合计",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "SUM",
+              "label": "总ApprovedAmount"
+            },
+            "filters": [
+              {
+                "column": "ClaimDate",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 Claims.ClaimDate",
+                "table": "Claims"
+              },
+              {
+                "column": "Department",
+                "operator": "=",
+                "value": "研发一部",
+                "source_text": "研发一部",
+                "explanation": "限定 Department ∈ {研发一部}",
+                "table": "Claims"
+              },
+              {
+                "column": "State",
+                "operator": "=",
+                "value": "已报销",
+                "source_text": "已报销",
+                "explanation": "限定 State ∈ {已报销}",
+                "table": "Claims"
+              }
+            ],
+            "time_range": [
+              "2025-01-01",
+              "2026-01-01"
+            ],
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.58,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：总ApprovedAmount（SUM）",
+          "查询表：Claims",
+          "限制时间 [2025-01-01, 2026-01-01)，时间字段 Claims.ClaimDate",
+          "限定 Department ∈ {研发一部}",
+          "限定 State ∈ {已报销}",
+          "日期参数格式：iso_text",
+          "使用表 Claims 的只读聚合查询",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite",
+          "table": "Claims",
+          "row_count": 1,
+          "query_hash": "a7532eddf0ac7fdd",
+          "field_links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "coverage": {
+            "consumed": [
+              "2025年",
+              "approvedamount",
+              "已报销",
+              "研发一部"
+            ],
+            "unresolved": [],
+            "ignored_instruction_spans": []
+          },
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "总ApprovedAmount",
+              "query_hash": "a7532eddf0ac7fdd",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "总ApprovedAmount"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "min_amount",
+      "question": "Claims ApprovedAmount最小值",
+      "gold_sql": "SELECT MIN(ApprovedAmount) FROM Claims",
+      "expected": [
+        [
+          100.0
+        ]
+      ],
+      "observed": [],
+      "pass": false,
+      "route": "sql",
+      "status": "clarification",
+      "latency_ms": 1.286,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Claims ApprovedAmount最小值",
+        "rewritten_question": "Claims ApprovedAmount最小值",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "MIN",
+          "metric_label": "最低ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "Claims ApprovedAmount最小值",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "问题中的“最小值”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "clarification_code": "unresolved_terms",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "approvedamount"
+            ],
+            "unresolved": [
+              "最小值"
+            ],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Claims ApprovedAmount最小值",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "MIN",
+              "label": "最低ApprovedAmount"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [
+              "最小值"
+            ],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "问题中的“最小值”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite"
+        },
+        "clarification": "问题中的“最小值”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+        "clarification_code": "unresolved_terms",
+        "clarification_options": []
+      }
+    },
+    {
+      "id": "max_amount",
+      "question": "Claims ApprovedAmount最大值",
+      "gold_sql": "SELECT MAX(ApprovedAmount) FROM Claims",
+      "expected": [
+        [
+          800.0
+        ]
+      ],
+      "observed": [],
+      "pass": false,
+      "route": "sql",
+      "status": "clarification",
+      "latency_ms": 1.269,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "Claims ApprovedAmount最大值",
+        "rewritten_question": "Claims ApprovedAmount最大值",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": "Claims",
+          "metric_table": "Claims",
+          "metric_column": "ApprovedAmount",
+          "metric_function": "MAX",
+          "metric_label": "最高ApprovedAmount",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "ApprovedAmount",
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "role": "metric",
+              "score": 0.7,
+              "matched_alias": "ApprovedAmount",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "confidence": 0.3,
+          "rewritten_question": "Claims ApprovedAmount最大值",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "问题中的“最大值”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+          "clarification_code": "unresolved_terms",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "rules",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {
+            "consumed": [
+              "approvedamount"
+            ],
+            "unresolved": [
+              "最大值"
+            ],
+            "ignored_instruction_spans": []
+          },
+          "intent_audit": {
+            "question": "Claims ApprovedAmount最大值",
+            "metric": {
+              "table": "Claims",
+              "column": "ApprovedAmount",
+              "function": "MAX",
+              "label": "最高ApprovedAmount"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.3,
+            "unresolved": [
+              "最大值"
+            ],
+            "execution_allowed": false,
+            "planner_source": "rules",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "问题中的“最大值”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "claims.sqlite"
+        },
+        "clarification": "问题中的“最大值”暂无法安全解析为查询条件。请改写为明确的时间、取值或阈值，避免给出错误结果。",
+        "clarification_code": "unresolved_terms",
+        "clarification_options": []
+      }
+    }
+  ]
+}
