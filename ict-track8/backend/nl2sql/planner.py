@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import re
 import sqlite3
-from collections import deque
+from collections import Counter, deque
 from datetime import date, datetime, timezone
 from typing import Any
 
@@ -228,6 +228,8 @@ class SingleTablePlanner:
                 consumed.append("所在")
                 break
         dimension_links = [link for link in links if link is not qualifier_link]
+        if any(word in normalized for word in ('按月','每月')) and any(word in normalized for word in ('按年','每年')):
+            return self._clarify(plan,'ambiguous_time_grain','同时请求了按月和按年，请明确一种时间分组粒度。',0.3)
         (
             plan.dimensions,
             plan.dimension_tables,
@@ -324,7 +326,8 @@ class SingleTablePlanner:
                 return self._clarify(
                     plan, "missing_comparison_period",
                     "同比需要明确年份、季度或月份，环比需要明确月份、季度或半年，例如在问题中写明“2025年”“2025年3月”或“2025年第一季度”。", 0.35,
-                    [{"value": "year", "label": "指定年份同比"}, {"value": "month", "label": "指定月份环比"}],
+                    ([{"value": "year", "label": "指定年份同比"}, {"value": "month", "label": "指定月份同比"}]
+                     if comparison_words[0]=='同比' else [{"value": "month", "label": "指定月份环比"}]),
                 )
             # 比较窗口也必须使用日期列的实际存储格式。
             period, period_format = self._comparison_parameters(
@@ -446,9 +449,12 @@ class SingleTablePlanner:
         self._role_assumptions(plan, tables, qualifier_table)
         plan.limit = _MAX_LIMIT
 
-        if any(word in normalized for word in ("趋势",)) and not plan.filters and plan.comparison_mode == "none" and not any(
+        if '趋势' in normalized and plan.comparison_mode == "none" and not any(
             plan.dimension_transforms.get(column) for column in plan.dimensions
         ):
+            if plan.filters:
+                return self._clarify(plan,'missing_time_grain','已识别筛选范围，请选择按月还是按年展示趋势。',0.4,
+                    [{'value':'monthly_trend','label':'按月趋势'},{'value':'yearly_trend','label':'按年趋势'}])
             return self._clarify(
                 plan, "missing_time_range", "趋势查询需要时间范围或时间粒度，请指定年份、月份或按月趋势。", 0.4,
                 [{"value": "year", "label": "指定年份"}, {"value": "month", "label": "指定月份"}, {"value": "monthly_trend", "label": "按月趋势"}],
@@ -495,16 +501,28 @@ class SingleTablePlanner:
     def _metric_options(self, tables: tuple[TableInfo, ...]) -> list[dict[str, str]]:
         names = {table.name for table in tables}
         options: list[dict[str, str]] = []
+        origins: list[tuple[str, str]] = []
         seen: set[tuple[str, str]] = set()
         for rule in self.linker.rules_for(tables):
             if rule.role == "metric" and rule.table in names and (rule.table, rule.column) not in seen and rule.aliases:
                 seen.add((rule.table, rule.column))
                 options.append({"value": rule.column, "label": rule.aliases[0]})
+                origins.append((rule.table,rule.column))
         if not options:
             for table in tables:
                 for column in table.columns:
                     if any(kind in column.data_type.upper() for kind in ("INT", "REAL", "NUM", "DEC", "DOUBLE", "FLOAT")) and not column.primary_key:
                         options.append({"value": column.name, "label": column.name})
+                        origins.append((table.name,column.name))
+        # Equal names in different tables are different choices. Preserve the
+        # short legacy values only when both field and displayed label are unique.
+        value_counts = Counter(option['value'] for option in options)
+        label_counts = Counter(option['label'] for option in options)
+        for index,option in enumerate(options):
+            if value_counts[option['value']]>1 or label_counts[option['label']]>1:
+                table,column = origins[index]
+                option['value'] = f'{table}.{column}'
+                option['label'] = f"{option['label']}（{table}.{column}）"
         return options[:6]
 
     def _dimension_options(self, tables: tuple[TableInfo, ...], *, prefix: str = "按", suffix: str = "") -> list[dict[str, str]]:
@@ -891,6 +909,13 @@ class SingleTablePlanner:
             return sql, tuple(parameters)
         if plan.analysis_mode == "rank":
             sql += f' ORDER BY "排名" ASC, {_quote(metric_label)} {direction}'
+        elif plan.analysis_mode == 'aggregate' and '趋势' in plan.rewritten_question and any(
+                plan.dimension_transforms.get(column) in {'month','year'} for column in plan.dimensions):
+            time_groups = [expression for column, expression in zip(plan.dimensions, groups)
+                           if plan.dimension_transforms.get(column) in {'month','year'}]
+            other_groups = [expression for column, expression in zip(plan.dimensions, groups)
+                            if plan.dimension_transforms.get(column) not in {'month','year'}]
+            sql += ' ORDER BY ' + ', '.join(expression+' ASC' for expression in time_groups+other_groups)
         else:
             sql += f" ORDER BY {metric_expression} {direction}"
         sql += " LIMIT ?"
@@ -1053,7 +1078,8 @@ class SingleTablePlanner:
             if average_requested and not average_threshold:
                 return link.table, link.column, "AVG", f"平均{label}"
             if link.metric_function:
-                return link.table, link.column, link.metric_function, label
+                return link.table, link.column, link.metric_function, (
+                    f"平均{label}" if link.metric_function=='AVG' and not label.startswith('平均') else label)
             return link.table, link.column, "SUM", label
         if any(word in question for word in ("多少订单", "几笔订单", "订单量")) and any(c.name == "order_id" for c in table.columns):
             return table.name, "order_id", "COUNT", "订单数"
@@ -1080,12 +1106,12 @@ class SingleTablePlanner:
             if explicit or is_date:
                 dimensions.append(link.column)
                 dimension_tables[link.column] = link.table
-                if is_date and any(word in question for word in ("按月", "每月", "趋势")):
-                    dimension_transforms[link.column] = "month"
-                    dimension_labels[link.column] = "月份"
-                elif is_date and any(word in question for word in ("按年", "每年")):
+                if is_date and any(word in question for word in ("按年", "每年")):
                     dimension_transforms[link.column] = "year"
                     dimension_labels[link.column] = "年份"
+                elif is_date and any(word in question for word in ("按月", "每月", "趋势")):
+                    dimension_transforms[link.column] = "month"
+                    dimension_labels[link.column] = "月份"
                 seen.add(link.column)
         return dimensions, dimension_tables, dimension_transforms, dimension_labels
 

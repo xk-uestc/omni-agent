@@ -249,13 +249,23 @@ class MetricCompiler:
                 visible.append('"__rank" AS "排名"')
         if not isinstance(plan.limit, int) or isinstance(plan.limit, bool) or not 1 <= plan.limit <= 1000:
             raise MetricPlanError("结果上限无效")
-        sql = "WITH " + ", ".join(ctes) + f" SELECT {', '.join(visible)} FROM {source}{where} ORDER BY {sort} {direction}"
-        if dim_labels:
+        chronological = not ranked and plan.analysis_mode=='aggregate' and '趋势' in plan.rewritten_question and any(
+            plan.dimension_transforms.get(column) in {'month','year'} for column in plan.dimensions)
+        sql = "WITH " + ", ".join(ctes) + f" SELECT {', '.join(visible)} FROM {source}{where} ORDER BY "
+        if chronological:
+            time_labels = [label for column,label in zip(plan.dimensions,dim_labels)
+                           if plan.dimension_transforms.get(column) in {'month','year'}]
+            other_labels = [label for label in dim_labels if label not in time_labels]
+            sql += ', '.join(quote(label)+' ASC' for label in time_labels+other_labels)
+        else:
+            sql += f'{sort} {direction}'
+        if dim_labels and not chronological:
             sql += ", " + ", ".join(quote(label) for label in dim_labels)
         sql += " LIMIT ?"
         params.append(plan.limit)
         plan.grain_audit = {"strategy": "aggregate_each_fact_then_join", "metrics": audits,
-                            "formulas": formula_audit, "null_group_alignment": "IS", "order_metric": sort_id}
+                            "formulas": formula_audit, "null_group_alignment": "IS", "order_metric": None if chronological else sort_id,
+                            "ordering": 'time_ascending' if chronological else 'metric'}
         return sql, tuple(params)
 
     def _expression(self, node, expressions, types, params, count, depth):

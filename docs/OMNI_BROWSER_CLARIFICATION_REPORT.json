@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-01",
+  "scope": "actual_browser_development_acceptance",
+  "url": "http://127.0.0.1:8030/knowledge.html",
+  "model_called": false,
+  "planner_source": "rules_basic",
+  "checks": [
+    {"id":"metric_choices","input":"2025年华东地区的情况","observed":["销售额","销量","平均单价","订单数","客户数（sales_orders.customer_id）","客户数（customers.customer_id）"],"pass":true},
+    {"id":"average_price","action":"选择平均单价","observed":2265.6666666666665,"contract":"每条订单等权AVG(unit_price)，不是加权均价","pass":true},
+    {"id":"reload_followup","action":"页面重载后输入那华南呢","effective_question":"2025年华南地区的情况平均单价","context_turns":2,"observed":2799,"pass":true},
+    {"id":"yoy_time_editor","input":"销售额同比","action":"指定年份同比→2025→确认时间","effective_question":"销售额同比 2025年","observed":{"本期销售额":70563,"同期销售额":24489,"同比(%)":188.1416146024746},"pass":true},
+    {"id":"trend_two_clarifications","input":"销售额趋势","action":"指定年份→2025→确认时间→按月趋势","intermediate":"已识别筛选范围，请选择按月还是按年展示趋势。","effective_question":"销售额趋势 2025年 按月","pass":true},
+    {"id":"trend_chronology","input":"2025年按月销售额趋势","observed":[{"月份":"2025-01","销售额":15196},{"月份":"2025-02","销售额":7197},{"月份":"2025-03","销售额":13794},{"月份":"2025-04","销售额":4792},{"月份":"2025-05","销售额":4398},{"月份":"2025-06","销售额":4193},{"月份":"2025-07","销售额":9596},{"月份":"2025-08","销售额":11397}],"pass":true},
+    {"id":"new_dialogue_isolation","action":"新对话→那华南呢","context_turns":0,"observed":"当前数据源没有识别出可查询的数据表，请说明业务对象或数据主题。","pass":true}
+  ],
+  "screenshot": "docs/evidence/omni-clarification-browser.jpg",
+  "limitations": ["代表性UI闭环，不是所有Schema选项穷举","合成开发库，不代表官方准确率","不包含真实模型验收","刷新保留会话条件，不恢复历史消息展示"]
+}

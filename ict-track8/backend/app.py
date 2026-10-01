@@ -345,6 +345,7 @@ class ClarificationRequest(BaseModel):
     clarification_code: str = Field(min_length=1, max_length=80)
     selected_value: str = Field(min_length=1, max_length=120)
     selected_label: str | None = Field(default=None, max_length=120)
+    selected_time: str | None = Field(default=None, max_length=32)
     session_id: str | None = Field(default=None, max_length=128)
     top_k_documents: int = Field(default=4, ge=1, le=10)
 
@@ -363,6 +364,32 @@ def omni_query(request: OmniRequest):
             request.question, session_id=request.session_id, reset_context=request.reset_context)
     except (ValueError, OSError) as exc:
         raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
+
+
+@app.post('/api/v1/omni/clarify')
+def omni_clarify(request: ClarificationRequest):
+    """Validate the offered selection and retain the unified conversation state."""
+    from .omni_agent import OmniAgent
+    try:
+        if request.session_id:
+            history = conversation_store.context(request.session_id)
+            pending = (history[-1].state or {}) if history else {}
+            if pending.get('pending_question') != request.original_question:
+                raise HTTPException(status_code=409,detail='该澄清已过期，请重新提交问题。')
+        offered = engine.answer(request.original_question).to_dict()
+        if offered['status'] != 'clarification' or offered['clarification_code'] != request.clarification_code:
+            raise HTTPException(status_code=400,detail='澄清类型与当前问题不匹配。')
+        selected = next((option for option in offered['clarification_options']
+                         if option['value']==request.selected_value),None)
+        if selected is None:
+            raise HTTPException(status_code=400,detail='请选择服务端提供的有效选项。')
+        question = clarification_resolver.apply(request.original_question,ClarificationSelection(
+            code=request.clarification_code,value=selected['value'],label=selected.get('label'),time_value=request.selected_time))
+        # A user-confirmed choice already fixes a slot. Do not send it back to
+        # the top-level model for another rewrite that could discard the hint.
+        return OmniAgent(engine,knowledge_store,conversation_store).query(question,session_id=request.session_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400,detail=str(exc)[:200]) from exc
 
 
 @app.get("/health")
@@ -666,6 +693,7 @@ def clarify(request: ClarificationRequest) -> dict[str, object]:
                 code=request.clarification_code,
                 value=request.selected_value,
                 label=request.selected_label,
+                time_value=request.selected_time,
             ),
         )
         # 澄清选择已经是用户对原问题的补全，不再把旧轮次再次拼接进来。

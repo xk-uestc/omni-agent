@@ -252,7 +252,9 @@ class DocumentChunker:
                     scanned=scanned,
                 )
             )
-            page_heading_path, body_blocks = self._pdf_blocks(text, heading_stack)
+            outline_warnings: list[str] = []
+            page_heading_path, body_blocks = self._pdf_blocks(text, heading_stack, warnings=outline_warnings)
+            page_warnings.setdefault(page_no, []).extend(outline_warnings)
             heading_stack = page_heading_path
             for block_index, (block_type, block_text, locator_suffix, block_heading_path) in enumerate(body_blocks):
                 locator = f"page:{page_no}:{locator_suffix}"
@@ -1448,7 +1450,7 @@ class DocumentChunker:
 
     @staticmethod
     def _joins_pdf_line(previous: str, current: str) -> bool:
-        if DocumentChunker._looks_like_heading(current):
+        if DocumentChunker._looks_like_heading(current) or DocumentChunker._looks_like_heading(previous):
             return False
         if re.search(r"[。！？；.!?:：]$", previous):
             return False
@@ -1458,10 +1460,19 @@ class DocumentChunker:
 
     @staticmethod
     def _looks_like_heading(line: str) -> bool:
-        return bool(re.match(r"^(?:第.{1,20}[章节篇部]|\d+(?:\.\d+){0,4}[、.． ]|[一二三四五六七八九十]+[、.．])", line))
+        return bool(DocumentAnalyzer._headings([line]))
 
-    def _pdf_blocks(self, text: str, inherited: list[str]) -> tuple[list[str], list[tuple[str, str, str, list[str]]]]:
+    def _pdf_blocks(self, text: str, inherited: list[str], *, warnings: list[str] | None = None) -> tuple[list[str], list[tuple[str, str, str, list[str]]]]:
         headings = list(inherited)
+        # Keep declared levels, not list positions: missing heading levels must
+        # not invent parents or retain a previous sibling when moving upwards.
+        stack = []
+        for title in inherited:
+            evidence = DocumentAnalyzer._headings([title])
+            level = evidence[0].level if evidence else len(stack)+1
+            if evidence and evidence[0].rule=='bracket_heuristic':
+                level = 2 if stack else 1
+            stack.append((level,title))
         body: list[tuple[str, str, str, list[str]]] = []
         lines = text.splitlines()
         current: list[str] = []
@@ -1483,10 +1494,18 @@ class DocumentChunker:
                     continue
                 flush()
                 continue
-            if self._looks_like_heading(value):
+            evidence = DocumentAnalyzer._headings([value])
+            if evidence:
                 flush()
-                level = 1 if value.startswith("第") else min(6, value.split(" ", 1)[0].count(".") + 1)
-                headings = headings[: level - 1] + [value]
+                heading = evidence[0]
+                level = (2 if stack else 1) if heading.rule=='bracket_heuristic' else heading.level
+                if warnings is not None:
+                    if stack and level > stack[-1][0]+1:
+                        warnings.append(f'outline_level_jump:heading:{len(body)+1}')
+                    if heading.rule=='bracket_heuristic':
+                        warnings.append(f'heuristic_heading:heading:{len(body)+1}')
+                stack = [(old_level,title) for old_level,title in stack if old_level < level] + [(level,value)]
+                headings = [title for _,title in stack]
                 body.append(("heading", value, f"heading:{len(body) + 1}", list(headings)))
                 continue
             is_table = "|" in value and value.count("|") >= 2 or "\t" in value or re.search(r"\s{3,}", value)

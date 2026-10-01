@@ -1,0 +1,446 @@
+{
+  "created_at": "2026-10-01T01:28:03.526732+00:00",
+  "scope": "authored_pdf_outline_audit_not_public_benchmark",
+  "model": null,
+  "case_sha256": "5ec1d160646af4679b8971775f933b5212ee3d7380f3b57dfbdfb9f5913254bc",
+  "passed": 2,
+  "total": 8,
+  "cases": [
+    {
+      "id": "numeric_siblings",
+      "pdf_sha256": "71acf687e0b3f9626cdc4029ba525d4609432d62aa67052f9ee84ef55fdf6d64",
+      "pass": false,
+      "expected_headings": [
+        "1. Services",
+        "1.1 Warranty",
+        "2. Returns"
+      ],
+      "observed_headings": [
+        "1. Services",
+        "1.1 Warranty",
+        "2. Returns"
+      ],
+      "facts": [
+        {
+          "gold": {
+            "text": "Warranty lasts 12 months.",
+            "page": 1,
+            "path": [
+              "1. Services",
+              "1.1 Warranty"
+            ]
+          },
+          "pass": true,
+          "observed": [
+            {
+              "text": "Warranty lasts 12 months.",
+              "path": [
+                "1. Services",
+                "1.1 Warranty"
+              ],
+              "page": 1,
+              "locator": "page:1:block:3"
+            }
+          ]
+        },
+        {
+          "gold": {
+            "text": "Returns accepted within 7 days.",
+            "page": 1,
+            "path": [
+              "2. Returns"
+            ]
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "Returns accepted within 7 days.",
+              "path": [
+                "1. Services",
+                "2. Returns"
+              ],
+              "page": 1,
+              "locator": "page:1:block:5"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [],
+      "observed_warnings": []
+    },
+    {
+      "id": "cjk_boundary",
+      "pdf_sha256": "ff94bf53f5c241b466b533491bf8eb537beaa951f24de5b9bcaa0d2c25abe5ab",
+      "pass": true,
+      "expected_headings": [
+        "第一章 服务",
+        "1.1 保修",
+        "1.2 退货"
+      ],
+      "observed_headings": [
+        "第一章 服务",
+        "1.1 保修",
+        "1.2 退货"
+      ],
+      "facts": [
+        {
+          "gold": {
+            "text": "保修期限为12个月。",
+            "page": 1,
+            "path": [
+              "第一章 服务",
+              "1.1 保修"
+            ]
+          },
+          "pass": true,
+          "observed": [
+            {
+              "text": "保修期限为12个月。",
+              "path": [
+                "第一章 服务",
+                "1.1 保修"
+              ],
+              "page": 1,
+              "locator": "page:1:block:3"
+            }
+          ]
+        },
+        {
+          "gold": {
+            "text": "退货期限为7日。",
+            "page": 1,
+            "path": [
+              "第一章 服务",
+              "1.2 退货"
+            ]
+          },
+          "pass": true,
+          "observed": [
+            {
+              "text": "退货期限为7日。",
+              "path": [
+                "第一章 服务",
+                "1.2 退货"
+              ],
+              "page": 1,
+              "locator": "page:1:block:5"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [],
+      "observed_warnings": []
+    },
+    {
+      "id": "markdown_pdf",
+      "pdf_sha256": "b8ad17ae22fc8cc26508a55880a00f08a9d65c90c5e8094cf0d0a515810d03d5",
+      "pass": false,
+      "expected_headings": [
+        "# Service Manual",
+        "## Warranty",
+        "## Returns"
+      ],
+      "observed_headings": [],
+      "facts": [
+        {
+          "gold": {
+            "text": "Warranty lasts 12 months.",
+            "page": 1,
+            "path": [
+              "# Service Manual",
+              "## Warranty"
+            ]
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "Warranty lasts 12 months.",
+              "path": [],
+              "page": 1,
+              "locator": "page:1:block:3"
+            }
+          ]
+        },
+        {
+          "gold": {
+            "text": "Returns accepted within 7 days.",
+            "page": 1,
+            "path": [
+              "# Service Manual",
+              "## Returns"
+            ]
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "Returns accepted within 7 days.",
+              "path": [],
+              "page": 1,
+              "locator": "page:1:block:5"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [],
+      "observed_warnings": []
+    },
+    {
+      "id": "parenthesized_cjk",
+      "pdf_sha256": "30fd1994b888d2c6d97fd061ec728aa4497008b4277922feec4cb52afcd8404d",
+      "pass": false,
+      "expected_headings": [
+        "第一章 售后",
+        "(一)保修",
+        "(二)退货"
+      ],
+      "observed_headings": [
+        "第一章 售后"
+      ],
+      "facts": [
+        {
+          "gold": {
+            "text": "保修期限为12个月。",
+            "page": 1,
+            "path": [
+              "第一章 售后",
+              "(一)保修"
+            ]
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "保修期限为12个月。",
+              "path": [
+                "第一章 售后"
+              ],
+              "page": 1,
+              "locator": "page:1:block:3"
+            }
+          ]
+        },
+        {
+          "gold": {
+            "text": "退货期限为7日。",
+            "page": 1,
+            "path": [
+              "第一章 售后",
+              "(二)退货"
+            ]
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "退货期限为7日。",
+              "path": [
+                "第一章 售后"
+              ],
+              "page": 1,
+              "locator": "page:1:block:5"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [],
+      "observed_warnings": []
+    },
+    {
+      "id": "bracket_heuristic",
+      "pdf_sha256": "58a89d7e1e67347fc761f5cdc50ab6349353a371830c2c09ae2f6236e8bce245",
+      "pass": false,
+      "expected_headings": [
+        "第一章 服务",
+        "【保修】",
+        "【退货】"
+      ],
+      "observed_headings": [
+        "第一章 服务"
+      ],
+      "facts": [
+        {
+          "gold": {
+            "text": "保修期限为12个月。",
+            "page": 1,
+            "path": [
+              "第一章 服务",
+              "【保修】"
+            ]
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "保修期限为12个月。",
+              "path": [
+                "第一章 服务"
+              ],
+              "page": 1,
+              "locator": "page:1:block:3"
+            }
+          ]
+        },
+        {
+          "gold": {
+            "text": "退货期限为7日。",
+            "page": 1,
+            "path": [
+              "第一章 服务",
+              "【退货】"
+            ]
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "退货期限为7日。",
+              "path": [
+                "第一章 服务"
+              ],
+              "page": 1,
+              "locator": "page:1:block:5"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [
+        "heuristic_heading"
+      ],
+      "observed_warnings": []
+    },
+    {
+      "id": "missing_level",
+      "pdf_sha256": "5ab1f5bb350c20c718267f49f17b92c590a9a6364c553251077b67e5080dae0c",
+      "pass": false,
+      "expected_headings": [
+        "1 General",
+        "1.2.1 Exceptions",
+        "1.3 Standard"
+      ],
+      "observed_headings": [
+        "1 General",
+        "1.2.1 Exceptions",
+        "1.3 Standard"
+      ],
+      "facts": [
+        {
+          "gold": {
+            "text": "Broken products need inspection.",
+            "page": 1,
+            "path": [
+              "1 General",
+              "1.2.1 Exceptions"
+            ]
+          },
+          "pass": true,
+          "observed": [
+            {
+              "text": "Broken products need inspection.",
+              "path": [
+                "1 General",
+                "1.2.1 Exceptions"
+              ],
+              "page": 1,
+              "locator": "page:1:block:3"
+            }
+          ]
+        },
+        {
+          "gold": {
+            "text": "Warranty lasts 12 months.",
+            "page": 1,
+            "path": [
+              "1 General",
+              "1.3 Standard"
+            ]
+          },
+          "pass": true,
+          "observed": [
+            {
+              "text": "Warranty lasts 12 months.",
+              "path": [
+                "1 General",
+                "1.3 Standard"
+              ],
+              "page": 1,
+              "locator": "page:1:block:5"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [
+        "outline_level_jump"
+      ],
+      "observed_warnings": []
+    },
+    {
+      "id": "page_inheritance",
+      "pdf_sha256": "4b888808273be7c9d83e3dbc44b810a3e087e35256f327aae868922f97f6f79d",
+      "pass": true,
+      "expected_headings": [
+        "1 General",
+        "1.1 Warranty"
+      ],
+      "observed_headings": [
+        "1 General",
+        "1.1 Warranty"
+      ],
+      "facts": [
+        {
+          "gold": {
+            "text": "Coverage continues for 12 months.",
+            "page": 2,
+            "path": [
+              "1 General",
+              "1.1 Warranty"
+            ]
+          },
+          "pass": true,
+          "observed": [
+            {
+              "text": "Coverage continues for 12 months.",
+              "path": [
+                "1 General",
+                "1.1 Warranty"
+              ],
+              "page": 2,
+              "locator": "page:2:block:1"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [],
+      "observed_warnings": []
+    },
+    {
+      "id": "quantity_is_not_heading",
+      "pdf_sha256": "c846f7320e38ff6ad9333a9fe475ee67e3ee0882cfe27273302a24cff3fbd0f5",
+      "pass": false,
+      "expected_headings": [],
+      "observed_headings": [
+        "3.5 万元"
+      ],
+      "facts": [
+        {
+          "gold": {
+            "text": "预算超过上限应人工复核。",
+            "page": 1,
+            "path": []
+          },
+          "pass": false,
+          "observed": [
+            {
+              "text": "预算超过上限应人工复核。",
+              "path": [
+                "3.5 万元"
+              ],
+              "page": 1,
+              "locator": "page:1:block:2"
+            }
+          ]
+        }
+      ],
+      "expected_warnings": [],
+      "observed_warnings": [
+        "one_or_more_pages_need_ocr",
+        "page_1:ocr_not_configured"
+      ]
+    }
+  ]
+}

@@ -1,5 +1,4 @@
 """Mixed text-outline parsing with line evidence and explicit uncertainty flags."""
-import re
 from .document_analysis import DocumentAnalyzer
 
 
@@ -22,10 +21,10 @@ def chunk_text(chunker, text, *, document_id, modality):
 
     for number, line in enumerate(lines, 1):
         heading = explicit.get(number)
-        heuristic = bool(re.fullmatch(r'【[^【】。；]{2,60}】', line))
+        heuristic = bool(heading and heading.rule == 'bracket_heuristic')
         if heading or heuristic:
             flush(number-1)
-            level = heading.level if heading else (2 if stack else 1)
+            level = (2 if stack else 1) if heuristic else heading.level
             if stack and level > stack[-1][0]+1:
                 warnings.append(f'outline_level_jump:line:{number}')
             if heuristic:

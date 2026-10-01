@@ -1,0 +1,14 @@
+{
+  "scope": "authored_pdf_outline_audit_not_public_benchmark",
+  "license": "CC0-1.0",
+  "cases": [
+    {"id":"numeric_siblings","pages":[["1. Services","1.1 Warranty","Warranty lasts 12 months.","2. Returns","Returns accepted within 7 days."]],"headings":["1. Services","1.1 Warranty","2. Returns"],"facts":[{"text":"Warranty lasts 12 months.","page":1,"path":["1. Services","1.1 Warranty"]},{"text":"Returns accepted within 7 days.","page":1,"path":["2. Returns"]}]},
+    {"id":"cjk_boundary","pages":[["第一章 服务","1.1 保修","保修期限为12个月。","1.2 退货","退货期限为7日。"]],"headings":["第一章 服务","1.1 保修","1.2 退货"],"facts":[{"text":"保修期限为12个月。","page":1,"path":["第一章 服务","1.1 保修"]},{"text":"退货期限为7日。","page":1,"path":["第一章 服务","1.2 退货"]}]},
+    {"id":"markdown_pdf","pages":[["# Service Manual","## Warranty","Warranty lasts 12 months.","## Returns","Returns accepted within 7 days."]],"headings":["# Service Manual","## Warranty","## Returns"],"facts":[{"text":"Warranty lasts 12 months.","page":1,"path":["# Service Manual","## Warranty"]},{"text":"Returns accepted within 7 days.","page":1,"path":["# Service Manual","## Returns"]}]},
+    {"id":"parenthesized_cjk","pages":[["第一章 售后","（一）保修","保修期限为12个月。","（二）退货","退货期限为7日。"]],"headings":["第一章 售后","(一)保修","(二)退货"],"facts":[{"text":"保修期限为12个月。","page":1,"path":["第一章 售后","(一)保修"]},{"text":"退货期限为7日。","page":1,"path":["第一章 售后","(二)退货"]}]},
+    {"id":"bracket_heuristic","pages":[["第一章 服务","【保修】","保修期限为12个月。","【退货】","退货期限为7日。"]],"headings":["第一章 服务","【保修】","【退货】"],"warnings":["heuristic_heading"],"facts":[{"text":"保修期限为12个月。","page":1,"path":["第一章 服务","【保修】"]},{"text":"退货期限为7日。","page":1,"path":["第一章 服务","【退货】"]}]},
+    {"id":"missing_level","pages":[["1 General","1.2.1 Exceptions","Broken products need inspection.","1.3 Standard","Warranty lasts 12 months."]],"headings":["1 General","1.2.1 Exceptions","1.3 Standard"],"warnings":["outline_level_jump"],"facts":[{"text":"Broken products need inspection.","page":1,"path":["1 General","1.2.1 Exceptions"]},{"text":"Warranty lasts 12 months.","page":1,"path":["1 General","1.3 Standard"]}]},
+    {"id":"page_inheritance","pages":[["1 General","1.1 Warranty","Warranty covers repair costs."],["Coverage continues for 12 months."]],"headings":["1 General","1.1 Warranty"],"facts":[{"text":"Coverage continues for 12 months.","page":2,"path":["1 General","1.1 Warranty"]}]},
+    {"id":"quantity_is_not_heading","pages":[["3.5 万元","预算超过上限应人工复核。"]],"headings":[],"facts":[{"text":"预算超过上限应人工复核。","page":1,"path":[]}]}
+  ]
+}

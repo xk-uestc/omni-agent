@@ -89,6 +89,36 @@ def main():
                     result = answer['result']
                     extremes.append(answer['status']=='ok' and list(result['rows'][0].values())[0]==expected)
                 report['checks']['sql_extremes'] = all(extremes)
+                session = 'checkpoint-clarification'
+                question = '2025年华东地区的情况'
+                pending = requests.post(base+'/api/v1/omni/query',json={'question':question,'session_id':session},timeout=10).json()
+                options = pending['result']['clarification_options']
+                report['checks']['distinct_metric_choices'] = (
+                    len({item['value'] for item in options})==len(options)
+                    and {'customers.customer_id','sales_orders.customer_id'} <= {item['value'] for item in options})
+                price = requests.post(base+'/api/v1/omni/clarify',json={
+                    'original_question':pending['effective_question'],'session_id':session,
+                    'clarification_code':'missing_metric','selected_value':'unit_price'},timeout=10).json()
+                with closing(sqlite3.connect(extracted/'ict-track8/data/demo_sales.sqlite')) as connection:
+                    average = connection.execute("SELECT AVG(unit_price) FROM sales_orders WHERE region='华东' AND substr(order_date,1,4)='2025'").fetchone()[0]
+                report['checks']['clarification_average_price'] = price['status']=='ok' and abs(price['result']['rows'][0]['平均单价']-average)<1e-8
+                followup = requests.post(base+'/api/v1/omni/query',json={'question':'那华南呢','session_id':session},timeout=10).json()
+                report['checks']['clarification_followup'] = followup['status']=='ok' and '2025年' in followup['effective_question'] and '华南' in followup['effective_question'] and '平均单价' in followup['effective_question']
+                question = '销售额趋势'
+                pending = requests.post(base+'/api/v1/omni/query',json={'question':question,'session_id':'checkpoint-trend'},timeout=10).json()
+                dated = requests.post(base+'/api/v1/omni/clarify',json={
+                    'original_question':pending['effective_question'],'session_id':'checkpoint-trend',
+                    'clarification_code':pending['result']['clarification_code'],
+                    'selected_value':'year','selected_time':'2025'},timeout=10).json()
+                trend = requests.post(base+'/api/v1/omni/clarify',json={
+                    'original_question':dated['effective_question'],'session_id':'checkpoint-trend',
+                    'clarification_code':'missing_time_grain','selected_value':'monthly_trend'},timeout=10).json()
+                periods = [row['月份'] for row in trend['result']['rows']]
+                report['checks']['trend_time_and_grain'] = dated['status']=='clarification' and trend['status']=='ok' and trend['result']['plan']['dimension_transforms']['order_date']=='month' and periods==sorted(periods)
+                outline = subprocess.run([sys.executable,str(extracted/'tools/evaluate_pdf_outline.py')],
+                    cwd=extracted,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True,timeout=60)
+                outline_report = json.loads((extracted/'docs/PDF_OUTLINE_REPORT.json').read_text(encoding='utf-8'))
+                report['checks']['actual_pdf_outline_gold'] = outline.returncode==0 and outline_report['passed']==outline_report['total']==8
                 import base64
                 raw = b'\n\n# Manual\n\n\nReturn within 7 days.\n\n\n## Warranty\n\nWarranty is 12 months.'
                 uploaded = requests.post(base+'/api/v1/knowledge/ingest',json={

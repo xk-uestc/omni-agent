@@ -43,7 +43,9 @@ DEFAULT_ALIAS_RULES: tuple[AliasRule, ...] = (
         "metric",
     ),
     AliasRule("sales_orders", "quantity", ("销量", "销售数量", "数量", "件数"), "metric"),
-    AliasRule("sales_orders", "unit_price", ("单价", "平均价格", "价格"), "metric"),
+    # Demo contract: mean of the per-order unit price, not their sum or a
+    # quantity-weighted price. Other schemas retain their own explicit rules.
+    AliasRule("sales_orders", "unit_price", ("平均单价", "单价", "平均价格", "价格"), "metric", metric_function="AVG"),
     AliasRule("sales_orders", "order_id", ("订单数", "订单数量", "订单", "笔数"), "metric"),
     AliasRule("sales_orders", "customer_id", ("客户数", "客户数量", "不同客户数", "去重客户"), "metric"),
     AliasRule("sales_orders", "region", ("地区", "区域", "省份", "地域"), "dimension"),

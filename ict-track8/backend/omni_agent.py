@@ -110,11 +110,13 @@ class OmniAgent:
     def basic_plan(self, question, history):
         previous = history[-1] if history else None
         followup = bool(re.search(r'^(那|改成|换成|再看|如果)|呢[？?]?$', question))
-        structured = bool(self.engine.analyze_slots(question)['metrics'])
+        slots = self.engine.analyze_slots(question)
+        structured = bool(slots['metrics'])
         document = bool(re.search(r'保修|政策|文档|手册|响应|退货|公式|标准|经验|预测|目标', question))
         if document and structured:
             return {'route': 'clarify', 'effective_question': question, 'clarification': '该问题需要跨源规划；请启用真实模型规划，或在跨源工作台明确工具步骤。', 'tasks_json': '[]'}
-        if structured or followup and previous and (previous.state or {}).get('route') == 'sql':
+        database_subject = not document and bool(slots['dimensions'] or slots['values'])
+        if structured or database_subject or followup and previous and (previous.state or {}).get('route') == 'sql':
             effective = self.engine.contextualize(previous.effective_question, question)[0] if previous and followup else question
             return {'route': 'sql', 'effective_question': effective, 'clarification': '', 'tasks_json': '[]'}
         return {'route': 'document', 'effective_question': question, 'clarification': '', 'tasks_json': '[]'}
@@ -160,7 +162,8 @@ class OmniAgent:
             result = self.engine.answer(effective).to_dict()
             state = {'route': route, 'metrics': result['plan'].get('metrics', []),
                      'filters': result['plan'].get('filters', []), 'dimensions': result['plan'].get('dimensions', []),
-                     'clarification_code': result['plan'].get('clarification_code')}
+                     'clarification_code': result['plan'].get('clarification_code'),
+                     'pending_question': effective if result['status']=='clarification' else None}
         elif route == 'document':
             result = self.knowledge.answer(effective)
             state = {'route': route, 'sources': [hit['metadata']['document_id'] for hit in result['citations']]}

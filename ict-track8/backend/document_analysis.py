@@ -17,6 +17,9 @@ _HEADING_RE = re.compile(
     r"^\s*(?:(#{1,6})\s+|第\s*[一二三四五六七八九十百千万0-9]+\s*[章节篇部]\s*|"
     r"([0-9]+(?:\.[0-9]+)*)(?:[、．]|\.(?!\d)|\s+)\s*|([一二三四五六七八九十]+)[、.．]\s*).{1,100}$"
 )
+_PAREN_HEADING_RE = re.compile(r"^[（(]([一二三四五六七八九十百0-9]+)[）)]\s*[^。；]{1,100}$")
+_BRACKET_HEADING_RE = re.compile(r"^【[^【】。；]{2,60}】$")
+_QUANTITY_LINE_RE = re.compile(r"^\d+(?:\.\d+)?\s*(?:亿元|万元|千元|元|小时|分钟|秒|千克|公斤|毫米|厘米|公里|%)(?=$|[\s，,。；;的])")
 _FORMULA_RE = re.compile(
     r"^[ \t]*(?P<label>[\u3400-\u9fffA-Za-z][\u3400-\u9fffA-Za-z0-9 _-]{0,48})[ \t]*(?:=|＝|:|：)[ \t]*"
     r"(?P<expr>[^\r\n]{1,300})$", re.MULTILINE
@@ -274,6 +277,14 @@ class DocumentAnalyzer:
         for index, line in enumerate(lines, start=1):
             value = line.strip()
             if not value or len(value) > 120:
+                continue
+            if _QUANTITY_LINE_RE.match(value):
+                continue
+            if _PAREN_HEADING_RE.fullmatch(value):
+                result.append(HeadingEvidence(value, 2, index, "parenthesized"))
+                continue
+            if _BRACKET_HEADING_RE.fullmatch(value):
+                result.append(HeadingEvidence(value, 2, index, "bracket_heuristic"))
                 continue
             match = _HEADING_RE.match(value)
             if not match:
