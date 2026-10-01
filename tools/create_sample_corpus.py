@@ -124,6 +124,24 @@ def create_samples():
     c.save()
     for document_id, filename, modality in [('service-scan', 'service-scan.png', 'image'), ('service-scan-upside-down', 'service-scan-upside-down.png', 'image'), ('service-scanned-pdf', 'service-scan.pdf', 'pdf')]:
         entries.append({'document_id': document_id, 'title': '扫描版售后响应通知', 'modality': modality, 'filename': filename})
+    # Frozen development grid: original file is shipped with its source hash.
+    # Explicit regeneration creates a new PDF version with the same demo values.
+    import fitz
+    grid_path = output / 'visual-grid-acceptance.pdf'
+    with fitz.open() as grid:
+        page = grid.new_page(width=430, height=280)
+        for x in (50, 150, 250, 350):
+            page.draw_line((x, 50), (x, 155))
+        for y in (50, 85, 120, 155):
+            page.draw_line((50, y), (350, y))
+        for r, row in enumerate([['Region', '2025 Units', '2026 Plan'], ['West', '6635', '6735'], ['East', '9200', '9500']]):
+            for c, value in enumerate(row):
+                page.insert_text((55 + c * 100, 72 + r * 35), value, fontsize=9)
+        grid_path.write_bytes(grid.tobytes())
+    entries.append({'document_id': 'visual-grid-acceptance-20261001',
+                    'title': '视觉表格验收 · 合成网格（冻结开发样本）', 'modality': 'pdf',
+                    'filename': grid_path.name,
+                    'development_lookup': {'question': 'What is West 2025 Units?', 'raw_value': '6635'}})
     for item in entries:
         path = output / item['filename']
         item.update({'sha256': hashlib.sha256(path.read_bytes()).hexdigest(), 'bytes': path.stat().st_size, 'license': 'CC0-1.0', 'synthetic': True})

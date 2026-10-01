@@ -78,7 +78,7 @@ function element(tag,text,className){const e=document.createElement(tag);if(text
 async function responseError(response){let data;try{data=await response.json();}catch{return Error(`服务请求失败（HTTP ${response.status}）`);}return Error(response.status===401?'需要服务访问授权，请在页首填写当前服务的访问令牌。':typeof data.detail==='string'?data.detail:JSON.stringify(data.detail||data));}
 async function request(path,payload){const r=await authFetch(path,{method:payload?'POST':'GET',headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined});if(!r.ok)throw await responseError(r);return r.json();}
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
-async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();documentCatalog.clear();data.documents.forEach(doc=>{documentCatalog.set(doc.document_id,doc);const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));addVisualAction(item,doc.document_id,1,doc.sha256,doc.modality);if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
+async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();documentCatalog.clear();const previousSource=$('query-document').value;$('query-document').replaceChildren(element('option','由检索定位资料'));$('query-document').firstChild.value='';data.documents.forEach(doc=>{const option=element('option',doc.title);option.value=doc.document_id;$('query-document').append(option);documentCatalog.set(doc.document_id,doc);const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));addVisualAction(item,doc.document_id,1,doc.sha256,doc.modality);if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});if(documentCatalog.has(previousSource))$('query-document').value=previousSource;$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
 
 function addVisualAction(host,documentId,pageNo,sourceSha,modality){
   const record=documentCatalog.get(documentId);
@@ -179,15 +179,22 @@ $('ask').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
   $('answer').replaceChildren(element('p','检索中…'));
   try{
-    const data=await request('/api/v1/knowledge/query',{question:$('question').value,top_k:4});
+    const selectedDocument=$('query-document').value;
+    const selectedPage=$('query-page').value;
+    if(selectedPage&&(!selectedDocument||documentCatalog.get(selectedDocument)?.modality!=='pdf'))throw Error('指定页码时请先选择PDF资料。');
+    const data=await request('/api/v1/knowledge/query',{question:$('question').value,top_k:4,...(selectedDocument?{document_id:selectedDocument}:{}),...(selectedPage?{page_no:Number(selectedPage)}:{})});
     $('answer').replaceChildren(element('small',`检索：${data.retrieval.mode} · 回答：${data.answer_mode}`,'muted'));
     if(data.answer)$('answer').append(element('p',data.answer));
+    if(data.clarification)$('answer').append(element('p',data.clarification,'error'));
+    if(data.answer_mode==='visual_grid_routed')$('answer').append(element('p','已走原页表格核验链路；唯一性限于本轮候选资料，未声明全库唯一。','muted'));
+    (data.source_options||[]).forEach(option=>{const source=element('div',null,'toolbar');source.append(element('span',`${option.title} · 第${option.page_no}页`));addVisualAction(source,option.document_id,option.page_no,option.source_sha256);$('answer').append(source);});
     data.citations.forEach(hit=>{
       const box=element('article',null,'citation');
       box.append(element('b',`[${hit.citation_id}] ${hit.title}`),element('pre',hit.snippet),element('small',`${hit.metadata.source_locator} · ${hit.metadata.retrieval_channel} · BM25 ${hit.metadata.bm25_raw??'—'} · Dense ${hit.metadata.dense_cosine??'—'} · `),originalLink(hit.metadata.document_id,'查看原文件'));
       addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256);
       $('answer').append(box);
     });
+    const trace=element('details');trace.append(element('summary','查看路由、范围与实际核验记录'),element('pre',JSON.stringify(data,null,2)));$('answer').append(trace);
   }catch(e){showError($('answer'),e);}finally{button.disabled=false;}
 });
 const ref=(node,path=[])=>({ref:node,path});const task=(id,tool,args)=>({id,tool,args});

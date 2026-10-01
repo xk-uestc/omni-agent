@@ -226,6 +226,12 @@ class KnowledgeStore:
         return path, document['filename']
 
     def visual_asset(self, document_id, *, page_no, expected_source_sha256, crop_display_pt=None):
+        from .visual_work_budget import visual_work_slot
+        with visual_work_slot():
+            return self._visual_asset(document_id, page_no=page_no, expected_source_sha256=expected_source_sha256,
+                                      crop_display_pt=crop_display_pt)
+
+    def _visual_asset(self, document_id, *, page_no, expected_source_sha256, crop_display_pt=None):
         """Render only a registered, pinned original; recheck after rendering."""
         from .visual_evidence import render_pdf_evidence
         document = self.document(document_id)
@@ -243,11 +249,17 @@ class KnowledgeStore:
         return asset
 
     def visual_table_answer(self, document_id, *, question, page_no, expected_source_sha256, crop_display_pt=None):
+        from .visual_work_budget import visual_work_slot
+        with visual_work_slot():
+            return self._visual_table_answer(document_id, question=question, page_no=page_no,
+                                             expected_source_sha256=expected_source_sha256, crop_display_pt=crop_display_pt)
+
+    def _visual_table_answer(self, document_id, *, question, page_no, expected_source_sha256, crop_display_pt=None):
         from .visual_tables import extract_pdf_tables
         from .visual_table_reader import VisualTableReader
         if self.generator is None:
             raise ValueError('视觉表格问数需要配置指定真实模型')
-        asset = self.visual_asset(document_id, page_no=page_no, expected_source_sha256=expected_source_sha256,
+        asset = self._visual_asset(document_id, page_no=page_no, expected_source_sha256=expected_source_sha256,
                                   crop_display_pt=crop_display_pt)
         path = self.verify_source(document_id, expected_sha256=expected_source_sha256)
         tables = extract_pdf_tables(path.read_bytes(), page_no=page_no, expected_source_sha256=expected_source_sha256,
@@ -276,10 +288,19 @@ class KnowledgeStore:
                  'title_path': chunk['title_path'], 'quality': chunk['quality'], 'warnings': chunk['warnings']}))
         return records
 
-    def search(self, query: str, *, top_k: int = 4) -> list[DocumentHit]:
+    def search(self, query: str, *, top_k: int = 4, document_id=None, page_no=None) -> list[DocumentHit]:
         if not isinstance(query, str) or not query.strip() or len(query) > 1000 or not 1 <= top_k <= 20:
             raise ValueError('问题或检索数量超出限制')
         records = self.records()
+        if document_id is not None:
+            document = self.document(document_id)
+            records = [record for record in records if record.metadata['document_id'] == document_id]
+            if page_no is not None:
+                if document['modality'] != 'pdf' or type(page_no) is not int or not 1 <= page_no <= int(document['stats'].get('page_count') or 1):
+                    raise ValueError('指定PDF页码超出资料范围')
+                records = [record for record in records if record.metadata.get('page_no') == page_no]
+        elif page_no is not None:
+            raise ValueError('指定页码时必须选择PDF资料')
         # Exact entity identifiers are mandatory scope constraints, not soft synonyms.
         # Dense similarity can confuse contracts differing only in a serial number.
         normalized_query = unicodedata.normalize('NFKC', query)
@@ -326,10 +347,15 @@ class KnowledgeStore:
             self.verify_source(source)
         return selected
 
-    def answer(self, question: str, *, top_k=4) -> dict[str, Any]:
+    def answer(self, question: str, *, top_k=4, document_id=None, page_no=None) -> dict[str, Any]:
         if not question.strip() or len(question) > 1000:
             raise ValueError('问题为空或超出长度上限')
-        hits = self.search(question, top_k=top_k)
+        hits = self.search(question, top_k=top_k, **({'document_id': document_id} if document_id is not None else {}),
+                           **({'page_no': page_no} if page_no is not None else {}))
+        from .visual_routing import route_visual_table_question
+        visual_result, visual_trace = route_visual_table_question(self, question, hits, document_id=document_id, page_no=page_no)
+        if visual_result is not None:
+            return visual_result
         query_terms = set(_tokenize(question))
         # This local baseline returns attributed quotations, not inferred factual claims.
         selected = [hit for hit in hits if len(query_terms.intersection(hit.matched_terms)) >= min(2, len(query_terms))
@@ -341,6 +367,7 @@ class KnowledgeStore:
                 'retrieval': self.retrieval_health(),
                 'trace': [{'stage': 'document_retrieval', 'channel': self.retrieval_health()['mode'], 'candidate_count': len(hits)},
                           {'stage': 'evidence_selection', 'selected_count': len(selected), 'generation': 'extractive'}]}
+        result['trace'].append(visual_trace)
         if self.generator and selected:
             from .responses_client import GenerationError
             generation_citations, omitted = self._generation_citations(result['citations'])

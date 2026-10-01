@@ -27,6 +27,7 @@ from .clarification import ClarificationResolver, ClarificationSelection
 from .document_analysis import DocumentAnalyzer, PageSignal
 from .formula_binding import FormulaBinder, ParameterEvidence
 from .knowledge_store import KnowledgeStore, SourceIntegrityError, SourceRevisionError
+from .visual_work_budget import VisualWorkBusy
 from .dependency_agent import DependencyAgent
 from .image_quality import ImageEnhancer, ImageQualityAnalyzer
 from .pdf_ingest import PdfIngestor
@@ -190,6 +191,12 @@ clarification_resolver = ClarificationResolver()
 app = FastAPI(title="ICT Track 8 Structured QA", version="0.1.0")
 
 
+@app.exception_handler(VisualWorkBusy)
+async def visual_work_busy_handler(request: Request, exc: VisualWorkBusy):
+    return JSONResponse(status_code=429, headers={'Retry-After': '2'}, content={'detail': {
+        'code': 'visual_render_busy', 'message': '视觉处理并发已满，请稍后重试'}})
+
+
 @app.exception_handler(sqlite3.DatabaseError)
 @app.exception_handler(OSError)
 async def storage_unavailable_handler(request: Request, exc: Exception):
@@ -329,6 +336,8 @@ class KnowledgeIngestRequest(BaseModel):
 class KnowledgeQueryRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     top_k: int = Field(default=4, ge=1, le=10)
+    document_id: str | None = Field(default=None, min_length=1, max_length=128, pattern=r'^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$')
+    page_no: int | None = Field(default=None, ge=1, le=1000, strict=True)
 
 
 class VisualEvidenceRequest(BaseModel):
@@ -520,7 +529,11 @@ def knowledge_original(document_id: str):
 @app.post("/api/v1/knowledge/query")
 def knowledge_query(request: KnowledgeQueryRequest):
     try:
-        return knowledge_store.answer(request.question, top_k=request.top_k)
+        return knowledge_store.answer(request.question, top_k=request.top_k,
+            **({'document_id': request.document_id} if request.document_id is not None else {}),
+            **({'page_no': request.page_no} if request.page_no is not None else {}))
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail='指定资料不存在') from exc
     except SourceIntegrityError as exc:
         raise HTTPException(status_code=409, detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
     except ValueError as exc:

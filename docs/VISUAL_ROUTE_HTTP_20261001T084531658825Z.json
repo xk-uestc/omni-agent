@@ -1,0 +1,255 @@
+{
+  "scope": "one_synthetic_main_http_visual_route_not_official_accuracy",
+  "question": "What is West 2025 Units?",
+  "expected_literal": "6635",
+  "explicit_document_selector_sent": false,
+  "http_requests_attempted": 1,
+  "http_status": 200,
+  "result": {
+    "status": "ok",
+    "answer_mode": "visual_grid_routed",
+    "answer": "West / 2025 Units: 6635",
+    "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+    "page_no": 1,
+    "image_evidence_id": "0f6c8fde507bb33c8246a740d0b3eab1fb382de07e41683d8a6cf8b6afdea10f",
+    "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+    "validation_scope": "native_grid_layout_not_visible_ocr_or_general_semantic_truth",
+    "clarification_code": null,
+    "fact": {
+      "fact_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+      "fact_type": "native_grid_cell_literal",
+      "status": "layout_verified",
+      "validation_scope": "native_text_layer_not_visible_ocr",
+      "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+      "evidence_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98",
+      "page_no": 1,
+      "table_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0",
+      "fact_key": {
+        "table_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0",
+        "row_index": 1,
+        "column_index": 1,
+        "row_header": "West",
+        "column_header_path": [
+          "2025 Units"
+        ]
+      },
+      "row_header_cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:0",
+      "column_header_cell_ids": [
+        "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:0:c:1"
+      ],
+      "value_cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+      "raw_value": "6635",
+      "row_header_word_ids": [
+        "page:1:word:5"
+      ],
+      "column_header_word_ids": [
+        "page:1:word:1",
+        "page:1:word:2"
+      ],
+      "value_word_ids": [
+        "page:1:word:6"
+      ],
+      "bbox_display_pt": [
+        150.0,
+        85.0,
+        250.0,
+        120.0
+      ],
+      "unit": "unknown",
+      "scale": null,
+      "numeric_validation": "not_parsed_or_unit_bound"
+    },
+    "visible_cell_verification": {
+      "status": "corroborated",
+      "scope": "selected_cell_and_internal_headers_ocr_corroboration",
+      "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+      "page_no": 1,
+      "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+      "fact_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+      "checks": [
+        {
+          "role": "row_header",
+          "cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:0",
+          "crop_sha256": "0b14ccf0c9b85fb59758a70adb85941229a1b90e27b99a6ea1ae27db341937af",
+          "comparison": "nfc_whitespace",
+          "crop_size_px": [
+            222,
+            92
+          ],
+          "status": "agrees",
+          "confidence": 0.9986597001552582
+        },
+        {
+          "role": "column_header",
+          "cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:0:c:1",
+          "crop_sha256": "52923b6e97d621026f298f49c6af93bc69d3b11c7c9392d178a1723d50cb663b",
+          "comparison": "nfc_whitespace_with_year_label_boundary",
+          "crop_size_px": [
+            222,
+            92
+          ],
+          "status": "agrees",
+          "confidence": 0.9934671786096361
+        },
+        {
+          "role": "value",
+          "cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+          "crop_sha256": "622796564d86bfbd8f45f80ee967eb65d8d9eacb26205c05d33318ad71d9ab46",
+          "comparison": "nfc_whitespace",
+          "crop_size_px": [
+            222,
+            92
+          ],
+          "status": "agrees",
+          "confidence": 0.9995714724063873
+        }
+      ],
+      "calculator_input_eligible": false,
+      "reason": null
+    },
+    "generation_audit": {
+      "provider": "responses",
+      "model": "gpt-6-luna",
+      "reasoning": "medium",
+      "operation": "visual_table_selection",
+      "http_status": 200,
+      "status": "completed",
+      "model_verified": true,
+      "image_evidence": [
+        {
+          "evidence_id": "0f6c8fde507bb33c8246a740d0b3eab1fb382de07e41683d8a6cf8b6afdea10f",
+          "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+          "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+          "page_no": 1,
+          "size_px": [
+            860,
+            560
+          ]
+        }
+      ],
+      "image_count": 1,
+      "response_model": "gpt-6-luna",
+      "input_tokens": 943,
+      "output_tokens": 95,
+      "total_tokens": 1038,
+      "cached_input_tokens": 0,
+      "reasoning_tokens": 21,
+      "call_index": 1,
+      "latency_ms": 26279.206
+    },
+    "value_source": "server_extracted_literal_grid_cell",
+    "calculator_input_eligible": false,
+    "question": "What is West 2025 Units?",
+    "document_id": "visual-grid-acceptance-20261001",
+    "citations": [
+      {
+        "citation_id": 1,
+        "document_id": "visual-grid-acceptance-20261001",
+        "title": "视觉表格验收 · 合成随机网格",
+        "snippet": "West / 2025 Units: 6635",
+        "source_uri": "/api/v1/knowledge/documents/visual-grid-acceptance-20261001/original",
+        "score": null,
+        "matched_terms": [],
+        "metadata": {
+          "document_id": "visual-grid-acceptance-20261001",
+          "page_no": 1,
+          "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+          "source_locator": "page:1",
+          "retrieval_channel": "bounded_visual_grid",
+          "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+          "validation_scope": "native_grid_layout_not_visible_ocr_or_general_semantic_truth",
+          "visible_cell_verification": {
+            "status": "corroborated",
+            "scope": "selected_cell_and_internal_headers_ocr_corroboration",
+            "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+            "page_no": 1,
+            "render_sha256": "d5d84c1bb5bd20518520d7b63f8da2bad454bb0dea656e29ca8def8e343bd040",
+            "fact_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+            "checks": [
+              {
+                "role": "row_header",
+                "cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:0",
+                "crop_sha256": "0b14ccf0c9b85fb59758a70adb85941229a1b90e27b99a6ea1ae27db341937af",
+                "comparison": "nfc_whitespace",
+                "crop_size_px": [
+                  222,
+                  92
+                ],
+                "status": "agrees",
+                "confidence": 0.9986597001552582
+              },
+              {
+                "role": "column_header",
+                "cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:0:c:1",
+                "crop_sha256": "52923b6e97d621026f298f49c6af93bc69d3b11c7c9392d178a1723d50cb663b",
+                "comparison": "nfc_whitespace_with_year_label_boundary",
+                "crop_size_px": [
+                  222,
+                  92
+                ],
+                "status": "agrees",
+                "confidence": 0.9934671786096361
+              },
+              {
+                "role": "value",
+                "cell_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+                "crop_sha256": "622796564d86bfbd8f45f80ee967eb65d8d9eacb26205c05d33318ad71d9ab46",
+                "comparison": "nfc_whitespace",
+                "crop_size_px": [
+                  222,
+                  92
+                ],
+                "status": "agrees",
+                "confidence": 0.9995714724063873
+              }
+            ],
+            "calculator_input_eligible": false,
+            "reason": null
+          },
+          "fact_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0:r:1:c:1",
+          "table_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0",
+          "bbox_display_pt": [
+            150.0,
+            85.0,
+            250.0,
+            120.0
+          ],
+          "fact_key": {
+            "table_id": "b963541600c82858121580181d33d2f5ca8a3a43bdcb082c97be725147d37f98:table:0",
+            "row_index": 1,
+            "column_index": 1,
+            "row_header": "West",
+            "column_header_path": [
+              "2025 Units"
+            ]
+          }
+        }
+      }
+    ],
+    "trace": [
+      {
+        "stage": "visual_page_routing",
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+        "candidate_document_ids": [
+          "visual-grid-acceptance-20261001"
+        ],
+        "status": "ok",
+        "model_requests_attempted": 1,
+        "limits": {
+          "documents": 4,
+          "pages": 12,
+          "source_bytes": 41943040
+        },
+        "candidate_pages": 1,
+        "complete_key_matches": 1,
+        "scope_rejections": []
+      }
+    ],
+    "retrieval": {
+      "mode": "bm25_dense_rrf",
+      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+      "dense_answer_threshold": 0.6
+    }
+  },
+  "passed": true
+}
