@@ -298,7 +298,7 @@ class OmniAgent:
             result = self.knowledge.answer(effective)
             state = {'route': route, 'sources': [hit['metadata']['document_id'] for hit in result['citations']]}
         elif route == 'fusion':
-            result = DependencyAgent(self.engine, self.knowledge).run(json.loads(plan['tasks_json']))
+            result = DependencyAgent(self.engine, self.knowledge).run(json.loads(plan['tasks_json']), original_question=question)
             state = {'route': route, 'trace_id': result['trace_id']}
         else:
             result = {'status': 'clarification', 'clarification': plan['clarification'] or '请明确查询口径和适用时间。'}

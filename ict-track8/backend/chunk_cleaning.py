@@ -277,6 +277,13 @@ class DocumentChunker:
                     block_warnings.append("repeated_page_matter_removed")
                 if block_type == "table":
                     table_rows = self._parse_pdf_table(block_text)
+                    literal_rows = [line.strip().strip('|').split('|') for line in block_text.splitlines()
+                                    if line.strip() and not re.fullmatch(r'[| :\-]+', line.strip())]
+                    literal_uniform = (bool(literal_rows) and all('|' in line for line in block_text.splitlines() if line.strip())
+                                       and len(literal_rows[0]) >= 2
+                                       and all(len(row) == len(literal_rows[0]) for row in literal_rows))
+                    current_page_header = bool(table_rows and self._looks_like_pdf_table_header(table_rows[0]))
+                    header_inherited = False
                     if table_headers and table_rows:
                         continuation_allowed = (
                             block_index == 0
@@ -297,6 +304,7 @@ class DocumentChunker:
                             else:
                                 block_warnings.append("table_continuation_unverified")
                         if table_headers:
+                            header_inherited = True
                             table_rows = [table_headers] + table_rows
                             block_heading_path = list(table_title_path or tuple(block_heading_path))
                     if table_rows and not table_headers:
@@ -317,6 +325,22 @@ class DocumentChunker:
                                 sheet_name=None,
                                 table_metadata={
                                     "page_no": page_no,
+                                    "pdf_table_structure": {
+                                        "version": "pdf-explicit-delimiter-v1",
+                                        "status": "verified" if (literal_uniform and not header_inherited
+                                            and self._looks_like_pdf_table_header(table_rows[0])
+                                            and coordinate_evidence.get('bbox_status') == 'exact_block'
+                                            and coordinate_evidence.get('source_bbox_fitz_unrotated_pt')
+                                            and not ocr_info and not block_warnings) else "unverified",
+                                        "method": "literal_pipe",
+                                        "column_count": len(literal_rows[0]) if literal_rows else 0,
+                                        "uniform_column_count": literal_uniform,
+                                        "current_page_header": current_page_header,
+                                        "header_inherited": header_inherited,
+                                        "source_locator": locator,
+                                        "source_literal_sha256": hashlib.sha256(block_text.encode('utf-8')).hexdigest(),
+                                        "coordinate_verified": coordinate_evidence.get('bbox_status') == 'exact_block',
+                                    },
                                     "ocr_evidence": self._ocr_evidence(
                                         ocr_info,
                                         language=language,
@@ -402,11 +426,14 @@ class DocumentChunker:
             document = fitz.open(stream=pdf_bytes, filetype="pdf")
             for page_no, page in enumerate(document, start=1):
                 try:
-                    extracted.append(page.get_text("text", sort=True) or "")
+                    blocks = DocumentChunker._pdf_text_blocks(page)
+                    ordered, reading_order = DocumentChunker._pdf_reading_order(blocks, float(page.cropbox.width))
+                    extracted.append('\n\n'.join(block['normalized_text'] for block in ordered))
                     page_layouts.append(
                         {
                             "geometry": DocumentChunker._pdf_page_geometry(page),
-                            "blocks": DocumentChunker._pdf_text_blocks(page),
+                            "blocks": blocks,
+                            "reading_order": reading_order,
                         }
                     )
                 except Exception:
@@ -1021,6 +1048,10 @@ class DocumentChunker:
                             "values": values,
                             "part_no": part_no if len(parts) > 1 else None,
                             "part_count": len(parts),
+                            "source_row_cells": values,
+                            "source_headers": headers,
+                            "source_row_index": source_row,
+                            "source_row_cells_sha256": hashlib.sha256(json.dumps(values, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest(),
                             **(table_metadata or {}),
                         },
                         warnings=tuple(dict.fromkeys(row_warnings + (("merged_cells_present",) if table_metadata and table_metadata.get("merged_ranges") else ()))),
@@ -1149,7 +1180,7 @@ class DocumentChunker:
     @staticmethod
     def _pdf_text_blocks(page: Any) -> list[dict[str, Any]]:
         try:
-            payload = page.get_text("dict", sort=True)
+            payload = page.get_text("dict", sort=False)
         except Exception:
             return []
         blocks: list[dict[str, Any]] = []
@@ -1159,13 +1190,50 @@ class DocumentChunker:
             if not bbox:
                 continue
             if block_type == 0:
-                lines: list[str] = []
+                native_lines: list[dict[str, Any]] = []
                 for line in block.get("lines", []):
                     line_text = "".join(str(span.get("text") or "") for span in line.get("spans", []))
                     if line_text:
-                        lines.append(line_text)
+                        native_lines.append({'text': line_text, 'bbox': DocumentChunker._rect_values(line.get('bbox'))})
+                # Sort and combine only native lines within their physical
+                # block. A shared baseline connects adjacent cells without
+                # inventing pipe separators or header:value relationships.
+                lines: list[str] = []
+                groups: list[list[dict[str, Any]]] = []
+                for native in sorted(native_lines, key=lambda item: ((item['bbox'] or bbox)[1], (item['bbox'] or bbox)[0])):
+                    box = native['bbox'] or bbox
+                    if groups and abs(box[1] - (groups[-1][0]['bbox'] or bbox)[1]) <= 2:
+                        groups[-1].append(native)
+                    else:
+                        groups.append([native])
+                for group in groups:
+                    lines.append(' '.join(item['text'].strip() for item in sorted(group, key=lambda item: (item['bbox'] or bbox)[0])))
                 normalized_text = DocumentChunker.clean_text("\n".join(lines))
                 kind = "text"
+                # MuPDF can put distinct newspaper columns into one native
+                # block. Separate only disjoint line-x components that both
+                # contain substantial text on overlapping vertical ranges;
+                # short amount cells do not authorize this column split.
+                components: list[list[dict[str, Any]]] = []
+                for native in sorted(native_lines, key=lambda item: (item['bbox'] or bbox)[0]):
+                    box = native['bbox'] or bbox
+                    if components and box[0] <= max((item['bbox'] or bbox)[2] for item in components[-1]) + 3:
+                        components[-1].append(native)
+                    else:
+                        components.append([native])
+                component_boxes = [DocumentChunker._union_rects([item['bbox'] or bbox for item in group]) for group in components]
+                split_columns = (2 <= len(components) <= 4
+                    and all(any(len(item['text'].strip()) >= 25 for item in group) for group in components)
+                    and all(min(a[3], b[3]) - max(a[1], b[1]) >= 8 for a, b in zip(component_boxes, component_boxes[1:])))
+                if split_columns:
+                    for part_index, (component, component_bbox) in enumerate(zip(components, component_boxes)):
+                        value = DocumentChunker.clean_text('\n'.join(item['text'].strip() for item in sorted(component, key=lambda item: (item['bbox'] or bbox)[1])))
+                        blocks.append({'block_id': len(blocks), 'native_block_id': block_index,
+                                       'native_column_part': part_index, 'kind': 'text',
+                                       'bbox_fitz_unrotated_pt': component_bbox, 'normalized_text': value,
+                                       'text_sha256': hashlib.sha256(value.encode('utf-8')).hexdigest(),
+                                       'char_count': len(value), 'native_lines': component})
+                    continue
             elif block_type == 1:
                 normalized_text = ""
                 kind = "image"
@@ -1174,7 +1242,8 @@ class DocumentChunker:
                 kind = f"type_{block_type}"
             blocks.append(
                 {
-                    "block_id": block_index,
+                    "block_id": len(blocks),
+                    "native_block_id": block_index,
                     "kind": kind,
                     "bbox_fitz_unrotated_pt": bbox,
                     "normalized_text": normalized_text,
@@ -1182,9 +1251,62 @@ class DocumentChunker:
                     if normalized_text
                     else None,
                     "char_count": len(normalized_text),
+                    "native_lines": native_lines if block_type == 0 else [],
                 }
             )
         return blocks
+
+    @staticmethod
+    def _pdf_reading_order(blocks: list[dict[str, Any]], page_width: float) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        """Read distinct native columns top-to-bottom, without horizontal text fusion.
+
+        Narrow substantial blocks establish disjoint x bands. At least two
+        vertically overlapping bands are required; short labels/numeric cells
+        never establish columns themselves. Wide spanning blocks delimit
+        vertical sections and retain their own source boxes.
+        """
+        text_blocks = [block for block in blocks if block['kind'] == 'text' and block['normalized_text']]
+        candidates = [block for block in text_blocks if block['char_count'] >= 30
+                      and 0 < block['bbox_fitz_unrotated_pt'][2] - block['bbox_fitz_unrotated_pt'][0] <= page_width * .55]
+        substantial = [block for block in candidates
+                       if block['bbox_fitz_unrotated_pt'][3] - block['bbox_fitz_unrotated_pt'][1] >= 20]
+        if len(substantial) >= 2:
+            # A short centered title can bridge two genuine body columns.
+            # Prefer multi-line body blocks when they provide enough anchors.
+            candidates = substantial
+        bands: list[dict[str, Any]] = []
+        for block in sorted(candidates, key=lambda item: item['bbox_fitz_unrotated_pt'][0]):
+            x0, y0, x1, y1 = block['bbox_fitz_unrotated_pt']
+            if bands and x0 <= bands[-1]['x1'] + 3:
+                band = bands[-1]
+                band.update({'x1': max(band['x1'], x1), 'y0': min(band['y0'], y0), 'y1': max(band['y1'], y1)})
+            else:
+                bands.append({'x0': x0, 'x1': x1, 'y0': y0, 'y1': y1})
+        multi = (2 <= len(bands) <= 4 and all(
+            min(a['y1'], b['y1']) - max(a['y0'], b['y0']) >= 20 for a, b in zip(bands, bands[1:])))
+        if not multi:
+            ordered = sorted(text_blocks, key=lambda item: (item['bbox_fitz_unrotated_pt'][1], item['bbox_fitz_unrotated_pt'][0], item['block_id']))
+            return ordered, {'version': 'native-bbox-columns-v1', 'mode': 'native_blocks_yx', 'column_count': 1,
+                             'block_ids': [item['block_id'] for item in ordered]}
+        assigned, spanning = [], []
+        for block in text_blocks:
+            x0, y0, x1, y1 = block['bbox_fitz_unrotated_pt']
+            column = next((i for i, band in enumerate(bands) if x0 >= band['x0'] - 5 and x1 <= band['x1'] + 5), None)
+            if column is None:
+                spanning.append(block)
+            else:
+                assigned.append((column, block))
+        spanning.sort(key=lambda item: (item['bbox_fitz_unrotated_pt'][1], item['block_id']))
+        ordered, pending = [], list(assigned)
+        for anchor in spanning:
+            boundary = anchor['bbox_fitz_unrotated_pt'][1]
+            before = [(column, block) for column, block in pending if block['bbox_fitz_unrotated_pt'][1] < boundary]
+            pending = [(column, block) for column, block in pending if block['bbox_fitz_unrotated_pt'][1] >= boundary]
+            ordered.extend(block for _, block in sorted(before, key=lambda item: (item[0], item[1]['bbox_fitz_unrotated_pt'][1], item[1]['block_id'])))
+            ordered.append(anchor)
+        ordered.extend(block for _, block in sorted(pending, key=lambda item: (item[0], item[1]['bbox_fitz_unrotated_pt'][1], item[1]['block_id'])))
+        return ordered, {'version': 'native-bbox-columns-v1', 'mode': 'native_columns', 'column_count': len(bands),
+                         'column_bands_pt': bands, 'block_ids': [item['block_id'] for item in ordered]}
 
     @staticmethod
     def _pdf_page_geometry(
@@ -1277,12 +1399,15 @@ class DocumentChunker:
     def _pdf_coordinate_evidence(page_layout: dict[str, Any], block_text: str) -> dict[str, Any]:
         geometry = dict(page_layout.get("geometry") or {})
         target = DocumentChunker.clean_text(block_text)
+        compact_target = re.sub(r'\s+', '', target)
         matches: list[dict[str, Any]] = []
         for block in page_layout.get("blocks", []):
             candidate = str(block.get("normalized_text") or "")
             if not target or not candidate:
                 continue
-            if target == candidate or target in candidate or candidate in target:
+            compact_candidate = re.sub(r'\s+', '', candidate)
+            if (target == candidate or target in candidate or candidate in target
+                    or compact_target in compact_candidate or compact_candidate in compact_target):
                 matches.append(block)
         source_boxes = [
             block["bbox_fitz_unrotated_pt"]
@@ -1318,6 +1443,7 @@ class DocumentChunker:
             "source_bbox_fitz_display_pt": effective_display_bbox,
             "source_bbox_render_px": render_bbox,
             "page_geometry": geometry,
+            "reading_order": page_layout.get('reading_order', {}),
         }
 
     @staticmethod
@@ -1436,11 +1562,6 @@ class DocumentChunker:
         changed = len(filtered) != len(lines)
         joined: list[str] = []
         for raw_line in filtered:
-            if "|" not in raw_line and ("\t" in raw_line or re.search(r"\s{3,}", raw_line)):
-                cells = re.split(r"\t+|\s{3,}", raw_line.strip())
-                cells = [cell.strip() for cell in cells if cell.strip()]
-                if len(cells) > 1:
-                    raw_line = " | ".join(cells)
             line = DocumentChunker.clean_text(raw_line)
             if not line:
                 if joined and joined[-1] != "":
@@ -1516,7 +1637,7 @@ class DocumentChunker:
                 headings = [title for _,title in stack]
                 body.append(("heading", value, f"heading:{len(body) + 1}", list(headings)))
                 continue
-            is_table = "|" in value and value.count("|") >= 2 or "\t" in value or re.search(r"\s{3,}", value)
+            is_table = "|" in value and value.count("|") >= 2
             next_type = "table" if is_table else "paragraph"
             if current and next_type != current_type:
                 flush()

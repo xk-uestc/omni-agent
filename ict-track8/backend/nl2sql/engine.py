@@ -544,7 +544,26 @@ class Nl2SqlEngine:
         return audit
 
     # ------------------------------------------------------------------ answer
-    def answer(self, question: str, *, max_rows: int | None = None) -> QueryResult:
+    def extract_required_intent(self, scope_question: str) -> QueryPlan:
+        """Extract a server-owned source clause without a model call or execution.
+
+        Dependency runs can borrow the same pinned read snapshot. The returned
+        plan is a constraint carrier, never an alternative executable plan.
+        Ambiguity stays explicit rather than accepting guessed requirements.
+        """
+        if not isinstance(scope_question, str) or not scope_question.strip() or len(scope_question) > 1000:
+            raise ValueError("源子句为空或超过长度上限")
+        with self._connect() as connection:
+            tables, index, revision = self._snapshot_for(connection)
+            plan = self._rules_plan(scope_question, tables, connection, index, cache_namespace=revision)
+            # This internal-only attribute is not part of model JSON or the
+            # public QueryPlan serialization. Keep the original source clause,
+            # not its rewritten/metric-expanded display string.
+            plan.source_scope_question = scope_question
+            return plan
+
+    def answer(self, question: str, *, max_rows: int | None = None,
+               required_intent: QueryPlan | None = None) -> QueryResult:
         if not isinstance(question, str) or not question.strip():
             raise ValueError("question 不能为空")
         row_cap = int(max_rows or self.max_rows)
@@ -554,6 +573,46 @@ class Nl2SqlEngine:
                 plan = self._rules_plan(question, tables, connection, index, cache_namespace=revision)
             else:
                 plan = self._model_plan(question, tables, connection, index, cache_namespace=revision)
+            source_constraint_audit = None
+            if required_intent is not None:
+                if not isinstance(required_intent, QueryPlan):
+                    raise ValueError("源约束必须由服务器规则提取器生成")
+                from ..fusion_constraints import (SourceConstraintError, server_project_required_intent,
+                                                  verify_required_intent)
+                # Re-extract in the actual execution snapshot. A previously
+                # extracted scope cannot authorize stale values/date storage
+                # after a concurrent source/schema change.
+                scope_question = getattr(required_intent, "source_scope_question", None)
+                if not isinstance(scope_question, str) or not scope_question.strip() or len(scope_question) > 1000:
+                    raise ValueError("源约束缺少服务器保存的原始来源子句")
+                current_required = self._rules_plan(scope_question, tables, connection, index,
+                                                     cache_namespace=revision)
+                subset = getattr(required_intent, "source_metric_subset", None)
+                try:
+                    if subset is not None:
+                        current_required = server_project_required_intent(current_required, subset)
+                    errors = verify_required_intent(plan, current_required)
+                except SourceConstraintError as exc:
+                    errors = [exc.code]
+                source_constraint_audit = {
+                    "status": "verified" if not errors else "rejected",
+                    "error_codes": list(errors),
+                    "scope_question_sha256": hashlib.sha256(scope_question.encode()).hexdigest(),
+                    "verification": "typed_original_source_clause_before_sql_execution",
+                }
+                if errors:
+                    plan.intent_audit = self._intent_audit(plan, question)
+                    plan.intent_audit["source_constraint_validation"] = source_constraint_audit
+                    message = "跨源SQL计划未保留原问题的来源、指标或过滤约束，请明确来源子句后重新规划。"
+                    return QueryResult(
+                        status="incomplete", question=question, rewritten_question=plan.rewritten_question,
+                        sql=None, parameters=(), columns=(), rows=(), plan=plan.to_dict(),
+                        explanation=(message,), clarification=message,
+                        clarification_code="source_constraint_mismatch", result_state="unexecuted",
+                        provenance={"source_type": "structured_database", "database": self.database_path.name,
+                                    "consistency": "sqlite_read_transaction",
+                                    "source_constraint_validation": source_constraint_audit},
+                    )
             compiled = None
             if not plan.clarification and (plan.metrics or plan.fan_out):
                 try:
@@ -562,6 +621,8 @@ class Nl2SqlEngine:
                     plan.clarification, plan.clarification_code = str(exc), exc.code
                     plan.confidence = 0.3
             plan.intent_audit = self._intent_audit(plan, question)
+            if source_constraint_audit is not None:
+                plan.intent_audit["source_constraint_validation"] = source_constraint_audit
             if plan.clarification:
                 return QueryResult(
                     status="clarification", question=question, rewritten_question=plan.rewritten_question,
@@ -614,6 +675,8 @@ class Nl2SqlEngine:
                 for i, row in enumerate(rows) for column in row
             ],
         }
+        if source_constraint_audit is not None:
+            provenance["source_constraint_validation"] = source_constraint_audit
         return QueryResult(
             status="ok", question=question, rewritten_question=plan.rewritten_question, sql=sql,
             parameters=parameters, columns=columns, rows=rows, plan=plan.to_dict(),

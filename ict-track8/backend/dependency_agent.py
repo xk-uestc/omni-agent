@@ -18,6 +18,7 @@ from .document_analysis import DocumentAnalyzer
 from .formula_binding import FormulaBinder, ParameterEvidence
 from .knowledge_store import SourceIntegrityError, SourceRevisionError
 from .sql_evidence import aggregate_evidence
+from .fusion_constraints import SourceConstraintError, bind_source_constraints
 
 
 class DependencyPlanError(ValueError):
@@ -103,11 +104,28 @@ class DependencyAgent:
             raise DependencyPlanError('查询文本为空或过长')
         return text
 
-    def run(self, tasks, *, on_event=None):
+    def run(self, tasks, *, on_event=None, original_question=None, source_constraints=None):
         ordered, dependencies = self.validate(tasks)
         read_scope = getattr(self.sql_engine, 'consistent_reads', None)
         with read_scope() if read_scope else nullcontext():
-            return self._run_ordered(tasks, ordered, dependencies, on_event=on_event)
+            audit = []
+            try:
+                if original_question is not None:
+                    source_constraints, audit = bind_source_constraints(original_question, tasks, self.sql_engine)
+            except SourceConstraintError as exc:
+                trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
+                return {'status': 'clarification', 'trace_id': trace_id, 'results': {}, 'trace': [],
+                        'clarification': str(exc), 'clarification_code': exc.code, 'error_code': exc.code,
+                        'skipped_tasks': [task['id'] for task in ordered], 'edges': [],
+                        'user_constraint_validation': {'status': 'unverified', 'error_code': exc.code}}
+            result = self._run_ordered(tasks, ordered, dependencies, on_event=on_event,
+                                       source_constraints=source_constraints or {})
+            result['user_constraint_validation'] = {'status': ('verified' if source_constraints else 'not_applicable')
+                                                   if original_question is not None else 'verified' if source_constraints else 'not_provided',
+                                                   'scope': 'explicit_server_bound_sql_source_clauses', 'bindings': audit}
+            if result['status'] != 'ok' and (original_question is not None or source_constraints):
+                result['user_constraint_validation']['status'] = 'incomplete'
+            return result
 
     @staticmethod
     def _document_versions(tool, result):
@@ -131,7 +149,7 @@ class DependencyAgent:
         for document_id, digest in versions.items():
             self.knowledge_store.verify_source(document_id, expected_sha256=digest)
 
-    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None):
+    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, source_constraints=None):
         results, trace = {}, []
         versions = {}
         trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
@@ -140,7 +158,9 @@ class DependencyAgent:
             try:
                 self._verify_versions(versions)
                 args = self.resolve(task['args'], results)
-                result = self.execute(task['tool'], args, task['args'], results)
+                required = (source_constraints or {}).get(task['id'])
+                result = (self.execute(task['tool'], args, task['args'], results, required_intent=required)
+                          if required is not None else self.execute(task['tool'], args, task['args'], results))
                 for document_id, digest in self._document_versions(task['tool'], result):
                     if document_id in versions and versions[document_id] != digest:
                         raise SourceRevisionError('同一资料在一个任务中出现了不同版本，请重新执行。')
@@ -152,7 +172,7 @@ class DependencyAgent:
                 if on_event:
                     on_event(dict(event))
             except (ValueError, KeyError, TypeError, SyntaxError, OverflowError, OSError, sqlite3.DatabaseError) as exc:
-                code = 'evidence_revision_changed' if isinstance(exc,SourceRevisionError) else 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else 'tool_contract_failed'
+                code = 'source_constraint_mismatch' if isinstance(exc,SourceConstraintError) else 'evidence_revision_changed' if isinstance(exc,SourceRevisionError) else 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else 'tool_contract_failed'
                 message = '数据源暂不可读取，请恢复文件或解除数据库锁后重新执行。' if code=='storage_unavailable' else str(exc)[:200]
                 event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'failed', 'error': message, 'error_code':code, 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
                 trace.append(event)
@@ -166,7 +186,7 @@ class DependencyAgent:
                                       'scope': 'selected_original_hash_and_logical_version_not_semantic_truth'},
                 'edges': [{'from': dependency, 'to': key} for key, refs in dependencies.items() for dependency in sorted(refs)]}
 
-    def execute(self, tool, args, original_args, results):
+    def execute(self, tool, args, original_args, results, *, required_intent=None):
         if tool == 'policy_select':
             from .policy_evidence import select_policy
             if set(args) != {'document_id', 'as_of', 'label'}:
@@ -214,7 +234,10 @@ class DependencyAgent:
         if tool == 'sql':
             if set(args) != {'question'}:
                 raise DependencyPlanError('SQL 工具只接受自然语言 question')
-            result = self.sql_engine.answer(self.text(args['question'])).to_dict()
+            result = (self.sql_engine.answer(self.text(args['question']), required_intent=required_intent)
+                      if required_intent is not None else self.sql_engine.answer(self.text(args['question']))).to_dict()
+            if result.get('clarification_code') == 'source_constraint_mismatch':
+                raise SourceConstraintError('source_constraint_mismatch')
             if result['status'] != 'ok' or not result['rows']:
                 raise DependencyPlanError(result.get('clarification') or '结构化查询未产生可用结果')
             result['aggregate_cells'], ambiguous = aggregate_evidence(result)

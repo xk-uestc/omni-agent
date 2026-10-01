@@ -12,6 +12,8 @@ from typing import Any
 
 from .chunk_cleaning import DocumentChunker
 from .cross_source import DocumentHit, DocumentRecord, JsonDocumentRetriever, _tokenize
+from .evidence_context import (MAX_EVIDENCE_CHARS, MAX_EVIDENCE_ITEMS,
+                               MAX_TOTAL_EVIDENCE_CHARS, bounded_prefix, text_sha256)
 
 SAFE_ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}')
 SUPPORTED = {'pdf', 'docx', 'xlsx', 'txt', 'md', 'image'}
@@ -23,6 +25,42 @@ class SourceIntegrityError(ValueError):
 
 class SourceRevisionError(SourceIntegrityError):
     """The logical document now names a different version than the used source."""
+
+
+def _verified_pdf_row(chunk):
+    """Authorize only parser-certified literal, current-page table relations.
+
+    A bbox alone does not establish columns. Legacy inferred tables and
+    inherited headers remain unverified; their raw excerpts stay available.
+    """
+    metadata = chunk.get('metadata', {})
+    structure = metadata.get('pdf_table_structure', {})
+    if not isinstance(structure, dict):
+        return False
+    if (structure.get('version') != 'pdf-explicit-delimiter-v1'
+            or structure.get('status') != 'verified'
+            or structure.get('method') != 'literal_pipe'
+            or structure.get('uniform_column_count') is not True
+            or structure.get('current_page_header') is not True
+            or structure.get('header_inherited') is not False
+            or structure.get('coordinate_verified') is not True
+            or chunk.get('content_type') != 'row'
+            or metadata.get('part_no') is not None):
+        return False
+    headers, cells = metadata.get('source_headers'), metadata.get('source_row_cells')
+    if (not isinstance(headers, list) or not isinstance(cells, list)
+            or len(headers) < 2 or len(headers) != len(cells)
+            or type(structure.get('column_count')) is not int
+            or structure['column_count'] != len(headers)
+            or not all(isinstance(value, str) for value in headers + cells)
+            or metadata.get('headers') != headers or metadata.get('values') != cells):
+        return False
+    digest = hashlib.sha256(json.dumps(cells, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest()
+    if digest != metadata.get('source_row_cells_sha256'):
+        return False
+    source_text = ' | '.join(f'{key}: {value}' for key, value in zip(headers, cells) if value != '')
+    expected = DocumentChunker.clean_text(f'{metadata.get("table_name")} | ' + ' | '.join(headers) + '\n' + source_text)
+    return bool(source_text) and chunk.get('text') == expected
 
 
 class KnowledgeStore:
@@ -187,6 +225,23 @@ class KnowledgeStore:
         path = self.assets / document['asset']
         return path, document['filename']
 
+    def visual_asset(self, document_id, *, page_no, expected_source_sha256, crop_display_pt=None):
+        """Render only a registered, pinned original; recheck after rendering."""
+        from .visual_evidence import render_pdf_evidence
+        document = self.document(document_id)
+        if document['modality'] != 'pdf':
+            raise ValueError('视觉页证据仅支持PDF原件')
+        if not isinstance(expected_source_sha256, str) or not re.fullmatch(r'[a-f0-9]{64}', expected_source_sha256):
+            raise ValueError('必须提供已核对的原文件SHA256')
+        path = self.verify_source(document_id, expected_sha256=expected_source_sha256)
+        asset = render_pdf_evidence(path.read_bytes(), page_no=page_no,
+                                    expected_source_sha256=expected_source_sha256,
+                                    crop_display_pt=crop_display_pt)
+        self.verify_source(document_id, expected_sha256=expected_source_sha256)
+        asset.manifest['document_id'] = document_id
+        asset.manifest['original_uri'] = f'/api/v1/knowledge/documents/{document_id}/original'
+        return asset
+
     def records(self):
         with self.connect() as connection:
             rows = connection.execute('SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id) ORDER BY c.rowid').fetchall()
@@ -272,8 +327,22 @@ class KnowledgeStore:
                           {'stage': 'evidence_selection', 'selected_count': len(selected), 'generation': 'extractive'}]}
         if self.generator and selected:
             from .responses_client import GenerationError
+            generation_citations, omitted = self._generation_citations(result['citations'])
+            by_id = {hit['citation_id']: hit for hit in generation_citations}
+            # Keep the public retrieval excerpt and ordering unchanged. The
+            # separate field identifies the exact authoritative model input.
+            result['citations'] = [by_id.get(hit['citation_id'], hit) for hit in result['citations']]
+            result['trace'].append({'stage': 'generation_evidence', 'selected_count': len(generation_citations),
+                                    'total_chars': sum(len(hit['generation_evidence']['text']) for hit in generation_citations),
+                                    'omitted': omitted, 'max_items': MAX_EVIDENCE_ITEMS,
+                                    'max_chars_per_item': MAX_EVIDENCE_CHARS, 'max_total_chars': MAX_TOTAL_EVIDENCE_CHARS})
+            if not generation_citations:
+                result['trace'].append({'stage': 'grounded_generation', 'status': 'no_safe_bounded_evidence',
+                                        'fallback': 'attributed_extracts'})
+                self._verify_citation_sources(result['citations'])
+                return result
             try:
-                generated = self.generator.answer(question, result['citations'])
+                generated = self.generator.answer(question, generation_citations)
                 result.update(generated)
                 result['answer_mode'] = 'model_grounded'
                 result['trace'].append({'stage': 'grounded_generation', 'status': 'validated', 'model': self.generator.client.model})
@@ -284,4 +353,87 @@ class KnowledgeStore:
                     result['generation_attempts'] = attempts
                     result['generation_repaired'] = False
                 result['trace'].append({'stage': 'grounded_generation', 'status': 'unavailable_or_invalid', 'fallback': 'attributed_extracts'})
+            finally:
+                # Neither a successful answer nor an extractive fallback may
+                # silently retain evidence from a removed/replaced source.
+                self._verify_citation_sources(result['citations'])
+                self._verify_generation_chunks(generation_citations)
         return result
+
+    def _verify_citation_sources(self, citations):
+        expected = {}
+        for hit in citations:
+            metadata = hit['metadata']
+            source, digest = metadata['document_id'], metadata['source_sha256']
+            if source in expected and expected[source] != digest:
+                raise SourceRevisionError('引用包含同一资料的不同版本，请重新执行。')
+            expected[source] = digest
+        for source, digest in expected.items():
+            self.verify_source(source, expected_sha256=digest)
+
+    def _generation_citations(self, citations):
+        """Rehydrate actual hit chunks only; never use caller-supplied full text.
+
+        PDF rows are not expanded until geometric table/column provenance is
+        reliable. This stage does not fetch whole pages, neighbors, gold or
+        headings from unrelated chunks and does not alter retrieval rankings.
+        """
+        self._verify_citation_sources(citations)
+        selected, omitted, total = [], [], 0
+        with self.connect() as connection:
+            for hit in citations:
+                metadata = hit['metadata']
+                row = connection.execute(
+                    'SELECT c.payload,d.sha256 FROM chunks c JOIN documents d USING(document_id) '
+                    'WHERE c.chunk_id=? AND c.document_id=?',
+                    (metadata['chunk_id'], metadata['document_id'])).fetchone()
+                if row is None or row[1] != metadata['source_sha256']:
+                    raise SourceRevisionError('执行中引用的资料切片已移除或换版，请重新执行。')
+                chunk = json.loads(row[0])
+                if (chunk['metadata'].get('source_sha256') != row[1]
+                        or chunk['source_locator'] != metadata['source_locator']
+                        or chunk['page_no'] != metadata.get('page_no')
+                        or hit['document_id'] != chunk['chunk_id']
+                        or hit['source_uri'] != f'/api/v1/knowledge/documents/{chunk["document_id"]}/original'
+                        or not hit['snippet'].strip() or hit['snippet'] not in chunk['text']):
+                    raise SourceIntegrityError('检索摘录与权威切片或来源不一致。')
+                reason = None
+                if (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
+                        and not _verified_pdf_row(chunk)):
+                    reason = 'pdf_table_layout_not_verified'
+                elif len(selected) >= MAX_EVIDENCE_ITEMS:
+                    reason = 'evidence_item_limit'
+                else:
+                    limit = min(MAX_EVIDENCE_CHARS, MAX_TOTAL_EVIDENCE_CHARS - total)
+                    text, end, truncated = bounded_prefix(chunk['text'], max(0, limit))
+                    if not text.strip():
+                        reason = 'no_complete_fact_within_budget'
+                if reason:
+                    omitted.append({'citation_id': hit['citation_id'], 'reason': reason})
+                    continue
+                selected.append({**hit, 'generation_evidence': {
+                    'text': text, 'source_sha256': row[1],
+                    'chunk_sha256': text_sha256(chunk['text']), 'evidence_sha256': text_sha256(text),
+                    'offset_start': 0, 'offset_end': end, 'truncated': truncated,
+                    'source_locator': chunk['source_locator'], 'page_no': chunk['page_no'],
+                    'original_chars': len(chunk['text']), 'evidence_chars': len(text),
+                    'mode': 'authoritative_hit_chunk_complete_prefix',
+                }})
+                total += len(text)
+        self._verify_citation_sources(selected)
+        return selected, omitted
+
+    def _verify_generation_chunks(self, citations):
+        with self.connect() as connection:
+            for hit in citations:
+                row = connection.execute('SELECT payload FROM chunks WHERE chunk_id=? AND document_id=?',
+                    (hit['metadata']['chunk_id'], hit['metadata']['document_id'])).fetchone()
+                chunk = json.loads(row[0]) if row else None
+                evidence = hit['generation_evidence']
+                if (chunk is None or text_sha256(chunk['text']) != evidence['chunk_sha256']
+                        or chunk['metadata'].get('source_sha256') != evidence['source_sha256']
+                        or chunk['source_locator'] != evidence['source_locator']
+                        or chunk['page_no'] != evidence['page_no']
+                        or (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
+                            and not _verified_pdf_row(chunk))):
+                    raise SourceRevisionError('执行中权威资料切片发生变化，请重新执行。')
