@@ -107,7 +107,7 @@ Dense首次缺失时运行 `python tools/fetch_public_assets.py`。完整资产�
 `ict-track8/requirements-tested.txt`记录现场metadata核对的17项直接依赖版本；`ict-track8/ENVIRONMENT.json`记录CPython3.12.10、Windows11及复现边界，两者均包含在程序包。这不是完整传递依赖lock、跨平台wheel锁或离线安装包，也未证明安装来源或全新虚拟环境可复现。默认OCR为RapidOCR；可选Tesseract依赖移至`ict-track8/requirements-tesseract.txt`，还需系统二进制与语言数据，当前未安装或验收。
 
 本轮只更新程序，不制作PPT/Word/PDF；历史材料仍在本地delivery，程序包通过--program-only排除。运行安装以ict-track8/requirements.txt为准。
-已完成的最新完整本地回归为 **860 passed、0 failed、1条Starlette弃用告警，39.78秒（报告脚本总耗时41.656秒）**，见 `docs/LOCAL_REGRESSION_REPORT.json`；包含最新单源路由补丁，完整本地回归已通过。这是本地功能契约成绩，不是模型准确率。第五类完成带来源事实与Excel阈值的实际比较。OpenCC繁简检索、文字质量告警和确认校正预览的15组开发审计通过；有限错字词表，不是通用中文纠错。实际SQLite更新与跨源中途变化审计各5/5：WAL更新刷新缓存，多步SQL固定同一读取快照，文档版本变化停止计算。无EXIF扫描件方向/倾斜、正向文字顺序和网页校正预览的图片/PDF/Word等13项开发审计通过；方向证据不足不猜测，原文件保留。
+历史工程检查点为 **860 passed、0 failed、1条Starlette弃用告警，39.78秒（报告脚本总耗时41.656秒）**；包含当时的单源路由补丁，不能用可更新的`LOCAL_REGRESSION_REPORT.json`指针证明此历史值。当前最终回归为本页顶部2858项及`LOCAL_REGRESSION_ROUND6_FINAL_REVIEWED_20261002.json`。这是本地功能合同成绩，不是模型准确率。第五类完成带来源事实与Excel阈值的实际比较。OpenCC繁简检索、文字质量告警和确认校正预览的15组开发审计通过；有限错字词表，不是通用中文纠错。实际SQLite更新与跨源中途变化审计各5/5：WAL更新刷新缓存，多步SQL固定同一读取快照，文档版本变化停止计算。无EXIF扫描件方向/倾斜、正向文字顺序和网页校正预览的图片/PDF/Word等13项开发审计通过；方向证据不足不猜测，原文件保留。
 
 程序包新目录验收见压缩包旁`.smoke.json`；历史方向包29/29，本轮最终包需核对旁报告。上述本地回归不是全新依赖环境安装、最终ZIP解包或真实模型全量通过的证明。
 
