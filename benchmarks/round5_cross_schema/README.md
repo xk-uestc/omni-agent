@@ -1,6 +1,6 @@
 # 第五轮跨 Schema 56 turn 评测
 
-✅ 当前题包版本为 Sakila v2，工具版本为 workers-v1，`baseline_ready=true`。已完成来源还原、56 turn 冻结、独立评分器、离线契约验证及默认预检。没有运行真实模型，不报告模型准确率。
+✅ 当前题包版本为Sakila v2，工具版本为workers-v1，`baseline_ready=true`。来源、56 turn、评分器及工具冻结不变。后续已完成真实模型隔离基线与第六轮验收：14/56→15/56；独立2/36→3/36，会话12/20与整段0/4持平，失败与退步保留。报告见 `docs/SAKILA_ROUND6_ISOLATED_BASELINE_20261002.json`、`docs/SAKILA_ROUND6_OPTIMIZED_ACCEPTANCE_20261002.json` 及 `docs/ROUND6_FINAL_SOURCE_AUDIT_20261002.json`。下方readiness字段中的API0/未测状态反映冻结时工具验证，不是当前运行状态；本题集不是官方榜单。
 
 本目录只有公开元数据、工具说明和历史草稿；未见问句、reference SQL、完整答案均在外部隔离目录。实施者与根代理只读取本目录及外部 READINESS；不要打开 `system_input.json`、`private` 或预览实际题目。
 

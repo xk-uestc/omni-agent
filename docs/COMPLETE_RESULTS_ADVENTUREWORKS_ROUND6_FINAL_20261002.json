@@ -1,0 +1,693 @@
+{
+  "created_at": "2026-10-01T23:31:54.980012+00:00",
+  "scope": "already_exposed_adventureworks_sqlite_development_complete_artifact_candidate_not_official_score",
+  "new_frozen_56_questions_or_oracles_read": false,
+  "old_evaluator_or_scorer_changed": false,
+  "model_api_calls": 0,
+  "domain_alias_rules": 0,
+  "source_sha256_before_after": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+  "exposed_questions_sha256": "bf97202958ef41ee287d1bed9b6776a48630dd458103ae6ca4752fe2b726dbb8",
+  "exposed_questions_frozen_lf_sha256": "bf97202958ef41ee287d1bed9b6776a48630dd458103ae6ca4752fe2b726dbb8",
+  "isolated_checkout_crlf_normalized_only_for_frozen_byte_check": false,
+  "implementation_before": {
+    "sha256": "d7763665b0beca387b340c65be59cb563d3a2c9b55b72cc31957d8b025ff4287",
+    "files": {
+      "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+      "ict-track8/backend/answer_contract.py": "df252388cf3e62596b9387bfec85044adb2eb61d20d9fbd9660382c290a154ad",
+      "ict-track8/backend/app.py": "c9e59120dad2ec0179c2b5b806c0fdfe9dd6108b368178f4d2c27527a401611c",
+      "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+      "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+      "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+      "ict-track8/backend/cross_source.py": "4b82477ea6f6c6474b2accf55f06c106d9516d5d6f06c4b836ccb5752c973606",
+      "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+      "ict-track8/backend/dependency_agent.py": "7e337802168aa7b81ce8f25514835be8da6c5bce83efdce6295b105e142d9994",
+      "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+      "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+      "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+      "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+      "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+      "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+      "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+      "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+      "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+      "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+      "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+      "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+      "ict-track8/backend/grounded_generation.py": "9c33b5dc1ff4766fab540b01f1974a157a75c7edc4114ae4dd8996750b44db8b",
+      "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+      "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+      "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+      "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+      "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+      "ict-track8/backend/native_table_question.py": "dae32ecfa71a1a26b32d538ab1debd646f38a5295f61f76fe5c71d5e1015fd0a",
+      "ict-track8/backend/native_text_tables.py": "572d66ed33cc284c14039599f971d91d65a44e1159489d1c5b68a6eec0765bec",
+      "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+      "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+      "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+      "ict-track8/backend/nl2sql/engine.py": "3e3857c14c8889b90d9ecdb652cb284b1e27d14a5ae58f6ecf48b26934fd8a5a",
+      "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+      "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+      "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+      "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+      "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+      "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+      "ict-track8/backend/nl2sql/planner.py": "4cc813ad8658986db5f04866b7b9b5d9a425c31385313660917ff4281aaef01d",
+      "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+      "ict-track8/backend/nl2sql/responses_provider.py": "2bae29b7fbae17138fbffe97dd8ab263c3ce3a2f2b2bf0afa24c7fe2aaae5cc6",
+      "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+      "ict-track8/backend/nl2sql/result_scope.py": "eff5655a8d9d087fdb39ec35c400d87905ea078e24696688a6248f5e0f987403",
+      "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+      "ict-track8/backend/nl2sql/schema_profile.py": "b0644c07c51916fdb997c14b81da9bbeedc093706712842fa23a79f210f8ea1e",
+      "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+      "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+      "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+      "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+      "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+      "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+      "ict-track8/backend/omni_agent.py": "8a81478eed7f2c52c9aff0af35bcbcb7638e3fea205980874f85840cdadf4fa0",
+      "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+      "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+      "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+      "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+      "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+      "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+      "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+      "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+      "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+      "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+      "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+      "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+      "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+      "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+      "ict-track8/backend/sql_history_scope.py": "414d8cef11b4016bd15aa7ef9c6901123dff872b97a5f7baff70dbb0da1daf20",
+      "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+      "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+      "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+      "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+      "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+      "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+      "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+      "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+      "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+      "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+      "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+      "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+      "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+      "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171",
+      "tools/verify_complete_results_candidate.py": "dc9a00e4b4b877b0bb8ea56bda00bc731aa1259562473821f6b241d1eabd4f1e",
+      "tools/evaluate_adventureworks.py": "bf022b73685c7a9f1e04eadaa11e3b3aa1362d0e00d2ce9951594206696ee902"
+    }
+  },
+  "implementation_after": {
+    "sha256": "d7763665b0beca387b340c65be59cb563d3a2c9b55b72cc31957d8b025ff4287",
+    "files": {
+      "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+      "ict-track8/backend/answer_contract.py": "df252388cf3e62596b9387bfec85044adb2eb61d20d9fbd9660382c290a154ad",
+      "ict-track8/backend/app.py": "c9e59120dad2ec0179c2b5b806c0fdfe9dd6108b368178f4d2c27527a401611c",
+      "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+      "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+      "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+      "ict-track8/backend/cross_source.py": "4b82477ea6f6c6474b2accf55f06c106d9516d5d6f06c4b836ccb5752c973606",
+      "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+      "ict-track8/backend/dependency_agent.py": "7e337802168aa7b81ce8f25514835be8da6c5bce83efdce6295b105e142d9994",
+      "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+      "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+      "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+      "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+      "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+      "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+      "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+      "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+      "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+      "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+      "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+      "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+      "ict-track8/backend/grounded_generation.py": "9c33b5dc1ff4766fab540b01f1974a157a75c7edc4114ae4dd8996750b44db8b",
+      "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+      "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+      "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+      "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+      "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+      "ict-track8/backend/native_table_question.py": "dae32ecfa71a1a26b32d538ab1debd646f38a5295f61f76fe5c71d5e1015fd0a",
+      "ict-track8/backend/native_text_tables.py": "572d66ed33cc284c14039599f971d91d65a44e1159489d1c5b68a6eec0765bec",
+      "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+      "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+      "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+      "ict-track8/backend/nl2sql/engine.py": "3e3857c14c8889b90d9ecdb652cb284b1e27d14a5ae58f6ecf48b26934fd8a5a",
+      "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+      "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+      "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+      "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+      "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+      "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+      "ict-track8/backend/nl2sql/planner.py": "4cc813ad8658986db5f04866b7b9b5d9a425c31385313660917ff4281aaef01d",
+      "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+      "ict-track8/backend/nl2sql/responses_provider.py": "2bae29b7fbae17138fbffe97dd8ab263c3ce3a2f2b2bf0afa24c7fe2aaae5cc6",
+      "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+      "ict-track8/backend/nl2sql/result_scope.py": "eff5655a8d9d087fdb39ec35c400d87905ea078e24696688a6248f5e0f987403",
+      "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+      "ict-track8/backend/nl2sql/schema_profile.py": "b0644c07c51916fdb997c14b81da9bbeedc093706712842fa23a79f210f8ea1e",
+      "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+      "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+      "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+      "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+      "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+      "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+      "ict-track8/backend/omni_agent.py": "8a81478eed7f2c52c9aff0af35bcbcb7638e3fea205980874f85840cdadf4fa0",
+      "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+      "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+      "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+      "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+      "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+      "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+      "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+      "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+      "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+      "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+      "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+      "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+      "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+      "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+      "ict-track8/backend/sql_history_scope.py": "414d8cef11b4016bd15aa7ef9c6901123dff872b97a5f7baff70dbb0da1daf20",
+      "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+      "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+      "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+      "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+      "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+      "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+      "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+      "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+      "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+      "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+      "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+      "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+      "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+      "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171",
+      "tools/verify_complete_results_candidate.py": "dc9a00e4b4b877b0bb8ea56bda00bc731aa1259562473821f6b241d1eabd4f1e",
+      "tools/evaluate_adventureworks.py": "bf022b73685c7a9f1e04eadaa11e3b3aa1362d0e00d2ce9951594206696ee902"
+    }
+  },
+  "implementation_stable": true,
+  "passed_complete_artifact_checks": 6,
+  "total_exposed_queries": 6,
+  "cases": [
+    {
+      "id": "aw-01",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 10,
+      "legacy_rows": 10,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 10,
+      "actual_artifact_rows": 10,
+      "pages_read": 1,
+      "actual_rows_sha256": "2debdcab4224bef1eaca0676773bf51e9f212bf6bcadc556512634f761d1ccbe",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "c9e5b406d941a63cb20a88370c80c30766f73a21761b9743e3c5582a78fda2a1",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "66213c0a2655e6e0f4025e07eaa1c8f45270d470d6c5c4ab294269701642f4fb",
+        "columns": [
+          "Name",
+          "记录数CustomerID"
+        ],
+        "row_count": 10,
+        "observed_rows": 10,
+        "preview_row_count": 10,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "88761c59fea647778aa178b89c687343",
+        "data_sha256": "103b42c38f5c1c22fbdaf8650c5d87af306c61952d8f21db0777612ad3d762e4",
+        "byte_count": 182,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+        "binding_sha256": "226e75a645b184fa0cdea7717baa28c320592452a1c845cf7cd3704728f42061",
+        "receipt_signature": "f5f3793e3aa21fcd012d73c5280475a756ceb1b97002849f4d8d1fa0fe74d8d7",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"SalesTerritory\".\"Name\", COUNT(*) AS \"记录数CustomerID\" FROM \"Customer\" JOIN \"SalesTerritory\" ON \"Customer\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\" GROUP BY \"SalesTerritory\".\"Name\" ORDER BY COUNT(*) DESC",
+      "parameters": [],
+      "result_status": "ok",
+      "latency_ms": 540.632
+    },
+    {
+      "id": "aw-02",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 19119,
+      "legacy_rows": 100,
+      "legacy_complete_rows_match": false,
+      "preview_rows": 100,
+      "actual_artifact_rows": 19119,
+      "pages_read": 192,
+      "actual_rows_sha256": "4963706f90c88ce67eca1aa1710f98d39fc3fa373fdadba6fc3102ab252254f9",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "faffe5246f29d47d1bba3265de8051a7262a8fe4a9425d6a44b817c9d2c1afd4",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "66213c0a2655e6e0f4025e07eaa1c8f45270d470d6c5c4ab294269701642f4fb",
+        "columns": [
+          "AccountNumber",
+          "总SubTotal"
+        ],
+        "row_count": 19119,
+        "observed_rows": 19119,
+        "preview_row_count": 100,
+        "preview_limit": 100,
+        "preview_truncated": true,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "de69a5643180448badc4cfb6005cf8bd",
+        "data_sha256": "e8f3454cd9bc905e0286cc84f804432e07846d6bfa3b7b69d876fea04eeb66fc",
+        "byte_count": 441936,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+        "binding_sha256": "174c87ddc8d31c3570e24f5bc74282cdf0cc75b83938b64faa84873c579c3d38",
+        "receipt_signature": "4dd19f8760ccca88746ef65866e273fc3f07f1ca17a4966f027441fd6b0c8653",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"Customer\".\"AccountNumber\", SUM(\"SalesOrderHeader\".\"SubTotal\") AS \"总SubTotal\" FROM \"SalesOrderHeader\" JOIN \"Customer\" ON \"SalesOrderHeader\".\"CustomerID\" = \"Customer\".\"CustomerID\" GROUP BY \"Customer\".\"AccountNumber\" ORDER BY SUM(\"SalesOrderHeader\".\"SubTotal\") DESC",
+      "parameters": [],
+      "result_status": "ok",
+      "latency_ms": 5519.841
+    },
+    {
+      "id": "aw-03",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 19119,
+      "legacy_rows": 100,
+      "legacy_complete_rows_match": false,
+      "preview_rows": 100,
+      "actual_artifact_rows": 19119,
+      "pages_read": 192,
+      "actual_rows_sha256": "16bd2f4388cc834e8308e645b41850c85d1fccbbca9fde80e6a1fcedb539956e",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "d14b6f9c8b750a9179c28c93a8e25e1948289349f5a5ab04e27a8fad99dffb0e",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "66213c0a2655e6e0f4025e07eaa1c8f45270d470d6c5c4ab294269701642f4fb",
+        "columns": [
+          "AccountNumber",
+          "记录数SalesOrderID"
+        ],
+        "row_count": 19119,
+        "observed_rows": 19119,
+        "preview_row_count": 100,
+        "preview_limit": 100,
+        "preview_truncated": true,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "5936595cc631494a874d89d8646fc577",
+        "data_sha256": "94edb3038893455ddc03d8fea440e8cb5fcd177f6e90cfaa55b4a66c6a6c6ec2",
+        "byte_count": 325140,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+        "binding_sha256": "df207cb1becd49f7ca55b0f4626950515060304435805217fad8973965b7e6b7",
+        "receipt_signature": "1ef3dde493356f3080861e17d4edaf268ef96126f56d66eb4bf4f3937dfadb4c",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"Customer\".\"AccountNumber\", COUNT(*) AS \"记录数SalesOrderID\" FROM \"SalesOrderHeader\" JOIN \"Customer\" ON \"SalesOrderHeader\".\"CustomerID\" = \"Customer\".\"CustomerID\" GROUP BY \"Customer\".\"AccountNumber\" ORDER BY COUNT(*) DESC",
+      "parameters": [],
+      "result_status": "ok",
+      "latency_ms": 5413.366
+    },
+    {
+      "id": "aw-04",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 10,
+      "legacy_rows": 10,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 10,
+      "actual_artifact_rows": 10,
+      "pages_read": 1,
+      "actual_rows_sha256": "47e3de2f557c3aea93a84a792c65e42a8d75aa62dbbfc53f31d59a42c1a34667",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "78ca7c02968cdbe06d4cca23cc1bf63854dd69e8f13e5fd3e70c3eb1c1707622",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "66213c0a2655e6e0f4025e07eaa1c8f45270d470d6c5c4ab294269701642f4fb",
+        "columns": [
+          "Name",
+          "总SubTotal"
+        ],
+        "row_count": 10,
+        "observed_rows": 10,
+        "preview_row_count": 10,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "e81e931cbad747abac7be0b6aed15ca4",
+        "data_sha256": "10f397fd1656e07e881b6074dd9d460a62b46af703bab89c2baf2060d475d40a",
+        "byte_count": 263,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+        "binding_sha256": "818275aff3b464f28eb473241fd84d8e30e13b7ff110a1db1668107321b0ffbf",
+        "receipt_signature": "b604322374cec1631c7e8cebd76f6cc13efbc5a3acf0bbdb6128c26ed0b794e9",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"SalesTerritory\".\"Name\", SUM(\"SalesOrderHeader\".\"SubTotal\") AS \"总SubTotal\" FROM \"SalesOrderHeader\" JOIN \"SalesTerritory\" ON \"SalesOrderHeader\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\" WHERE \"SalesOrderHeader\".\"OrderDate\" >= ? AND \"SalesOrderHeader\".\"OrderDate\" < ? GROUP BY \"SalesTerritory\".\"Name\" ORDER BY SUM(\"SalesOrderHeader\".\"SubTotal\") DESC",
+      "parameters": [
+        "2023-01-01",
+        "2024-01-01"
+      ],
+      "result_status": "ok",
+      "latency_ms": 292.994
+    },
+    {
+      "id": "aw-05",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 1,
+      "legacy_rows": 1,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 1,
+      "actual_artifact_rows": 1,
+      "pages_read": 1,
+      "actual_rows_sha256": "ed3c8eacb4e1a63ff36c99f2a400780a74a77bb97c78c4374e0eb816d9926260",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "22528b71cbd172f8344439b24f158917b6179fae68820a6e3d4cdc97e71fc464",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "66213c0a2655e6e0f4025e07eaa1c8f45270d470d6c5c4ab294269701642f4fb",
+        "columns": [
+          "记录数CustomerID"
+        ],
+        "row_count": 1,
+        "observed_rows": 1,
+        "preview_row_count": 1,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": null,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "00607e4a6b2f4f2dbdc7fcbd6d227286",
+        "data_sha256": "2e3e0431ebc196b4576b66b3f6be3a8a07c6862433be95104ff00316950748ce",
+        "byte_count": 7,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+        "binding_sha256": "ad142d0f57a1b431ec349ca83d6c88ef82e9132ecdaa201f0058a2d64992b6ef",
+        "receipt_signature": "6e80a56ad430e61eb6986d76f558c0eb16c15e18f3f42af7927c07de570a264f",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT COUNT(*) AS \"记录数CustomerID\" FROM \"Customer\" JOIN \"SalesTerritory\" ON \"Customer\".\"TerritoryID\" = \"SalesTerritory\".\"TerritoryID\" WHERE \"SalesTerritory\".\"CountryRegionCode\" = ? ORDER BY COUNT(*) DESC",
+      "parameters": [
+        "US"
+      ],
+      "result_status": "ok",
+      "latency_ms": 214.989
+    },
+    {
+      "id": "aw-06",
+      "checks": {
+        "status_ok": true,
+        "artifact_cursor_eof": true,
+        "all_actual_cells_equal_reference": true,
+        "preview_at_most_100": true,
+        "artifact_row_count_matches_actual": true,
+        "physical_column_roles_verified": true,
+        "rules_no_api_no_alias_catalog": true
+      },
+      "artifact_validation_pass": true,
+      "reference_rows": 3,
+      "legacy_rows": 3,
+      "legacy_complete_rows_match": true,
+      "preview_rows": 3,
+      "actual_artifact_rows": 3,
+      "pages_read": 1,
+      "actual_rows_sha256": "32da6787d34cda46a7f020cb88736368d46bb1a49b9ef708c62ac95347504d35",
+      "receipt": {
+        "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+        "status": "complete",
+        "reason": null,
+        "query_sha256": "01e566bc82902a3079565f9af299d8cf6f8a93e47c02e908bd28c7c1cc587c5c",
+        "source_revision": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+        "producer_sha256": "66213c0a2655e6e0f4025e07eaa1c8f45270d470d6c5c4ab294269701642f4fb",
+        "columns": [
+          "AccountNumber",
+          "总TotalDue"
+        ],
+        "row_count": 3,
+        "observed_rows": 3,
+        "preview_row_count": 3,
+        "preview_limit": 100,
+        "preview_truncated": false,
+        "scope": {
+          "mode": "bounded_complete_result_with_preview",
+          "semantic_row_limit": null,
+          "top_n": 3,
+          "requested_preview_limit": null,
+          "effective_preview_limit": 100,
+          "default_preview_limit_removed_from_sql": true,
+          "verification": "original_question_row_limit_and_existing_rank_filter"
+        },
+        "budgets": {
+          "max_rows": 25000,
+          "max_bytes": 8388608,
+          "max_seconds": 5.0,
+          "max_steps": 50000000,
+          "max_source_bytes": 268435456
+        },
+        "artifact_id": "08c92cfb9eb7482cac040e6002d1df5e",
+        "data_sha256": "217b63935613965c89e9ec05f2e20c5046ecf8cdac14201a9a74b6226eda271c",
+        "byte_count": 87,
+        "cursor_eof_verified": true,
+        "source_pin": {
+          "files": {
+            "database": {
+              "sha256": "c7d729c7ebbfa8d38bc8e84bea9c51544d52886cd81d65e96be28e89f7f52a7b",
+              "bytes": 9420800,
+              "generation": [
+                1053008805926603246,
+                281474978001310,
+                9420800,
+                1790834405031914900,
+                1790834404079165200
+              ]
+            }
+          },
+          "sha256": "985f4cce3d38f24c59c74dca2bf72689b93c543235d7178191f09688e71d5524",
+          "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+        },
+        "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+        "binding_sha256": "71d88d85e51b17fc8ba99af13a3dae407a893e51192b9f890190a5e06ca68165",
+        "receipt_signature": "9f0ec854ff4afdd0f8ffd323187182c5dab4830eda8abf57606ef45bfe530738",
+        "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+      },
+      "sql": "SELECT \"AccountNumber\", \"总TotalDue\" FROM (SELECT \"Customer\".\"AccountNumber\", SUM(\"SalesOrderHeader\".\"TotalDue\") AS \"总TotalDue\", DENSE_RANK() OVER (ORDER BY SUM(\"SalesOrderHeader\".\"TotalDue\") DESC) AS \"排名\" FROM \"SalesOrderHeader\" JOIN \"Customer\" ON \"SalesOrderHeader\".\"CustomerID\" = \"Customer\".\"CustomerID\" GROUP BY \"Customer\".\"AccountNumber\") AS ranked WHERE \"排名\" <= ? ORDER BY \"排名\" ASC, \"总TotalDue\" DESC",
+      "parameters": [
+        3
+      ],
+      "result_status": "ok",
+      "latency_ms": 345.088
+    }
+  ]
+}
