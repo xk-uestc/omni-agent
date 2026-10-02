@@ -178,6 +178,8 @@ body:has(.site-sidebar) > header #status { margin-left: auto; }
 .assistant .audit-summary { padding: 0; border: 0; border-radius: 0; background: transparent; }
 .assistant .audit-table-wrap { border: 0; border-radius: 0; }
 .assistant .answer { margin-top: 6px; padding-top: 18px; border-top: 1px solid var(--ui-line); }
+.assistant .tool { margin: 6px 0; padding: 0; border-radius: 0; background: transparent; }
+.assistant .out { margin: 6px 0; padding: 10px 0; border-radius: 0; background: transparent; }
 .answer .docs { gap: 0; margin-top: 16px; border-top: 1px solid var(--ui-line); }
 .answer .docs .doc {
   padding: 10px 0;
@@ -213,6 +215,13 @@ pre.syntax-highlighted::before {
   content: attr(data-language);
   font: 600 10px/1.4 ui-sans-serif, system-ui, sans-serif;
   text-transform: uppercase;
+}
+.assistant pre.syntax-highlighted {
+  border: 0;
+  border-top: 1px solid var(--ui-line);
+  border-bottom: 1px solid var(--ui-line);
+  border-radius: 0;
+  background: transparent;
 }
 .tok-keyword { color: #175fc2; font-weight: 650; }
 .tok-function { color: #7942a8; }
