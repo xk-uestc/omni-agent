@@ -86,8 +86,8 @@ function summaryRow(box,label,value,codeKind){
 }
 function renderAudit(body,data){
   const structured=data.structured||{},plan=structured.plan||{},provenance=structured.provenance||{},links=provenance.field_links||plan.links||[];
-  const audit=el("div","audit"),intro=el("div","audit-intro");intro.append(el("b","","查询审计"),el("span","","来自本次后端响应"));audit.append(intro);
-  const mapping=el("section","astep"),mappingBody=el("div","bd");mapping.append(el("h4","","① 问题改写与字段映射"));
+  const audit=el("div","audit"),intro=el("div","audit-intro");intro.append(el("b","","查询过程"),el("span","","本次查询的处理详情"));audit.append(intro);
+  const mapping=el("section","astep"),mappingBody=el("div","bd");mapping.append(el("h4","","① 问题理解与字段选择"));
   mappingBody.append(el("div","qline",data.effective_question||structured.rewritten_question||data.question||""));
   if(links.length){
     const wrap=el("div","audit-table-wrap"),table=el("table","audit-table"),head=el("thead"),tr=el("tr");
@@ -104,13 +104,13 @@ function renderAudit(body,data){
     });
     table.append(tbody);wrap.append(table);mappingBody.append(wrap);
   }else mappingBody.append(el("p","empty-state","本次未返回字段映射"));mapping.append(mappingBody);audit.append(mapping);
-  const planning=el("section","astep"),planningBody=el("div","bd"),summary=el("div","audit-summary");planning.append(el("h4","","② 查询计划与安全边界"));
+  const planning=el("section","astep"),planningBody=el("div","bd"),summary=el("div","audit-summary");planning.append(el("h4","","② 查询方案与执行说明"));
   summaryRow(summary,"数据表",plan.table,"identifier");
   summaryRow(summary,"指标",plan.metric_label||plan.metric_column,plan.metric_label?null:"identifier");
   summaryRow(summary,"聚合",plan.metric_function,"function");
   const dimensions=Object.values(plan.dimension_labels||{}).join("、");
   summaryRow(summary,"维度",dimensions||((plan.dimensions||[]).join("、")),dimensions?null:"identifier");
-  summaryRow(summary,"规划来源",plan.planner_source,"source");
+  summaryRow(summary,"方案来源",plan.planner_source,"source");
   summaryRow(summary,"数据来源",provenance.database,"database");
   planningBody.append(summary);if(structured.explanation?.length)planningBody.append(el("p","heads",structured.explanation.join("；")));
   const schemaHost=el("div","schema-mount");planningBody.append(schemaHost);renderSchemaDiagram(schemaHost,plan,links);
