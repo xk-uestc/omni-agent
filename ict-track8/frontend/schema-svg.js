@@ -293,8 +293,8 @@
         transform: `translate(${node.x + model.pad},${node.y + model.pad})`,
         "data-table": node.name,
       });
-      group.append(svgElement("rect", { class: "schema-table-box", x: 0, y: 0, width: node.width, height: node.height, rx: 6 }));
-      group.append(svgElement("rect", { class: "schema-table-head", x: 1, y: 1, width: node.width - 2, height: model.headHeight - 1, rx: 5 }));
+      group.append(svgElement("rect", { class: "schema-table-box", x: 0, y: 0, width: node.width, height: node.height }));
+      group.append(svgElement("rect", { class: "schema-table-head", x: 1, y: 1, width: node.width - 2, height: model.headHeight - 1 }));
       group.append(svgElement("text", { class: "schema-table-name", x: 12, y: 23 }, node.name));
       group.append(svgElement("text", { class: "schema-table-count", x: node.width - 12, y: 23, "text-anchor": "end" }, `${node.columns.length} 字段${node.rowCount == null ? "" : ` · ${node.rowCount} 行`}`));
 
