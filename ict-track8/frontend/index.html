@@ -273,18 +273,19 @@
       .meta { flex-wrap: wrap; gap: 5px 12px; }
     }
   </style>
+  <link rel="stylesheet" href="./modern-ui.css?v=20261002-schema-focus" />
 </head>
 <body>
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="mark">08</div>
+        <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg></div>
         <div><b>Lattice Studio</b><span>问数 · 文档 · 跨源</span></div>
       </div>
-      <button class="new-chat" id="newChat">＋ 新对话</button>
-      <a class="new-chat" href="./knowledge.html" style="margin-top:8px;display:block;text-align:center">文档资料库与跨源计算</a>
-      <a class="new-chat" href="./capabilities.html" style="margin-top:8px;display:block;text-align:center">赛题全量验收台</a>
-      <button class="new-chat" id="sixDemo" style="margin-top:8px">演示六轮追问</button>
+      <button class="new-chat" id="newChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>新对话</button>
+      <a class="new-chat" href="./knowledge.html" aria-label="文档资料库与跨源计算"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>文档资料库与跨源</a>
+      <a class="new-chat" href="./capabilities.html" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>赛题全量验收台</a>
+      <button class="new-chat" id="sixDemo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16" stroke-linecap="round"/><circle cx="8" cy="5" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="17" cy="19" r="1" fill="currentColor"/></svg>演示六轮追问</button>
       <div class="nav-label">会话记忆</div>
       <ol class="turns" id="turns"></ol>
       <div class="nav-label">查询能力</div>
@@ -298,6 +299,8 @@
     <main class="stage">
       <header class="topbar">
         <div class="model-chip">Lattice <em id="capTitle">问数推理</em></div>
+        <a class="top-route" href="./knowledge.html" title="文档资料库与跨源计算" aria-label="文档资料库与跨源计算"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料库</a>
+        <a class="top-route" href="./capabilities.html" title="赛题全量验收台" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>验收</a>
         <button class="top-new" id="newChatTop" type="button" title="新对话">＋ 新对话</button>
         <nav class="tabs">
           <button class="tab on" id="tabAsk" type="button">问数推理</button>
@@ -356,6 +359,8 @@
       </div>
     </main>
   </div>
-<script src="./app.js" defer></script>
+<script src="./schema-svg.js?v=20261002a" defer></script>
+<script src="./app.js?v=20261002-schema-focus" defer></script>
+<script src="./syntax-highlight.js?v=20261002b" defer></script>
 </body>
 </html>

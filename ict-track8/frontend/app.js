@@ -12,6 +12,8 @@ const capabilities = [
 const chevron = '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>';
 let sessionId = sessionStorage.getItem("ict8_lattice_session") || crypto.randomUUID();
 let activeController = null, busy = false, activeCapability = capabilities[0], turns = [];
+let liveSchema = { tables: [], source: null };
+let schemaLoadPromise = Promise.resolve();
 sessionStorage.setItem("ict8_lattice_session", sessionId);
 
 function el(tag, cls, value) { const n=document.createElement(tag); if(cls)n.className=cls; if(value!==undefined)n.textContent=String(value); return n; }
@@ -36,11 +38,22 @@ function selectCapability(capability) {
 async function loadMeta() {
   try {
     const [health,schema]=await Promise.all([fetch(API+"/health").then(json),fetch(API+"/api/v1/nl2sql/schema").then(json)]);
+    liveSchema={tables:Array.isArray(schema.tables)?schema.tables:[],source:schema.source||null};
     $("apiHealth").dataset.state=health.ok?"ok":"error";$("healthText").textContent=health.ok?"API 已连接":"API 异常";
     const tables=schema.tables||[],box=$("schema");box.replaceChildren();
     box.append(el("b","",health.database||"数据库"),el("div","",`${tables.length} 张表 · ${schema.source||"当前数据源"}`));
     tables.slice(0,6).forEach(t=>box.append(el("div","",`${t.name} · ${t.row_count??"?"} 行`)));
-  } catch { $("apiHealth").dataset.state="error";$("healthText").textContent="API 不可达";$("schema").textContent="无法读取当前数据源"; }
+  } catch { liveSchema={tables:[],source:null};$("apiHealth").dataset.state="error";$("healthText").textContent="API 不可达";$("schema").textContent="无法读取当前数据源"; }
+}
+function renderSchemaDiagram(host,plan,links){
+  const draw=()=>{
+    if(!host.isConnected)return;
+    if(!window.SchemaSvg){host.replaceChildren(el("p","schema-empty","数据库结构图组件未加载。"));return;}
+    host.replaceChildren(window.SchemaSvg.render(liveSchema,plan,links));
+  };
+  if(liveSchema.tables.length){requestAnimationFrame(draw);return;}
+  host.replaceChildren(el("p","schema-empty","正在读取当前数据库字段…"));
+  schemaLoadPromise.then(()=>requestAnimationFrame(draw));
 }
 function renderTurns(){ const list=$("turns");list.replaceChildren();turns.forEach((t,i)=>{
   const li=el("li"),b=el("button","turn-item");b.type="button";b.append(el("div","",`${i+1}. ${t.question}`),el("div","eff",t.status));
@@ -62,7 +75,15 @@ function appendTrace(body,item){
   button.onclick=()=>step.classList.toggle("open");tool.append(el("div","tool-bar",`状态：${item.status||"已完成"}`),el("pre","out trace-json",JSON.stringify(item,null,2)));
   panel.append(tool);step.append(button,panel);body.insertBefore(step,body.querySelector(".dots"));
 }
-function summaryRow(box,label,value){box.append(el("span","key",label),el("span","",value==null||value===""?"未返回":value));}
+function auditCodeValue(value,kind){
+  return el("code",`audit-code-value audit-code-${kind}`,value);
+}
+function summaryRow(box,label,value,codeKind){
+  const missing=value==null||value==="";
+  const output=missing?"未返回":String(value);
+  const rendered=codeKind&&!missing?auditCodeValue(output,codeKind):el("span","",output);
+  box.append(el("span","key",label),rendered);
+}
 function renderAudit(body,data){
   const structured=data.structured||{},plan=structured.plan||{},provenance=structured.provenance||{},links=provenance.field_links||plan.links||[];
   const audit=el("div","audit"),intro=el("div","audit-intro");intro.append(el("b","","查询审计"),el("span","","来自本次后端响应"));audit.append(intro);
@@ -71,16 +92,32 @@ function renderAudit(body,data){
   if(links.length){
     const wrap=el("div","audit-table-wrap"),table=el("table","audit-table"),head=el("thead"),tr=el("tr");
     ["原词","角色","目标字段","分数"].forEach(x=>tr.append(el("th","",x)));head.append(tr);table.append(head);
-    const tbody=el("tbody");links.forEach(link=>{const row=el("tr");[link.source_text,link.role,`${link.table||""}.${link.column||""}`,link.score].forEach(v=>row.append(el("td","",v??"")));tbody.append(row);});
+    const tbody=el("tbody");links.forEach(link=>{
+      const row=el("tr"),source=String(link.source_text??""),role=String(link.role??""),target=`${link.table||""}.${link.column||""}`;
+      const sourceCell=el("td"),roleCell=el("td"),targetCell=el("td"),scoreCell=el("td");
+      const machineToken=/^[A-Za-z_][A-Za-z0-9_.$:-]*$/;
+      sourceCell.append(machineToken.test(source)?auditCodeValue(source,"identifier"):document.createTextNode(source));
+      roleCell.append(machineToken.test(role)?auditCodeValue(role,"source"):document.createTextNode(role));
+      targetCell.append(target!=="."?auditCodeValue(target,"identifier"):document.createTextNode(""));
+      scoreCell.append(link.score==null?document.createTextNode(""):auditCodeValue(String(link.score),"number"));
+      row.append(sourceCell,roleCell,targetCell,scoreCell);tbody.append(row);
+    });
     table.append(tbody);wrap.append(table);mappingBody.append(wrap);
   }else mappingBody.append(el("p","empty-state","本次未返回字段映射"));mapping.append(mappingBody);audit.append(mapping);
   const planning=el("section","astep"),planningBody=el("div","bd"),summary=el("div","audit-summary");planning.append(el("h4","","② 查询计划与安全边界"));
-  summaryRow(summary,"数据表",plan.table);summaryRow(summary,"指标",plan.metric_label||plan.metric_column);summaryRow(summary,"聚合",plan.metric_function);
-  summaryRow(summary,"维度",Object.values(plan.dimension_labels||{}).join("、")||(plan.dimensions||[]).join("、"));summaryRow(summary,"规划来源",plan.planner_source);summaryRow(summary,"数据来源",provenance.database);
-  planningBody.append(summary);if(structured.explanation?.length)planningBody.append(el("p","heads",structured.explanation.join("；")));planning.append(planningBody);audit.append(planning);
+  summaryRow(summary,"数据表",plan.table,"identifier");
+  summaryRow(summary,"指标",plan.metric_label||plan.metric_column,plan.metric_label?null:"identifier");
+  summaryRow(summary,"聚合",plan.metric_function,"function");
+  const dimensions=Object.values(plan.dimension_labels||{}).join("、");
+  summaryRow(summary,"维度",dimensions||((plan.dimensions||[]).join("、")),dimensions?null:"identifier");
+  summaryRow(summary,"规划来源",plan.planner_source,"source");
+  summaryRow(summary,"数据来源",provenance.database,"database");
+  planningBody.append(summary);if(structured.explanation?.length)planningBody.append(el("p","heads",structured.explanation.join("；")));
+  const schemaHost=el("div","schema-mount");planningBody.append(schemaHost);renderSchemaDiagram(schemaHost,plan,links);
+  planning.append(planningBody);audit.append(planning);
   if(structured.sql){const sql=el("section","astep"),content=el("div","bd");sql.append(el("h4","","③ SQL 与执行结果"));
     content.append(el("pre","sqlbox",`${structured.sql}\n\n-- 参数 ${JSON.stringify(structured.parameters||[],null,2)}`));
-    if(provenance.query_hash)content.append(el("p","schema-caption",`查询哈希：${provenance.query_hash}`));sql.append(content);audit.append(sql);}
+    if(provenance.query_hash){const hash=el("p","schema-caption");hash.append(document.createTextNode("查询哈希："),auditCodeValue(provenance.query_hash,"identifier"));content.append(hash);}sql.append(content);audit.append(sql);}
   body.append(audit);
 }
 function renderTable(host,structured){
@@ -152,4 +189,4 @@ $("newChat").onclick=newChat;$("newChatTop").onclick=newChat;
 $("sixDemo").onclick=async()=>{setTab(false);for(const q of ["2025年华东地区的销售额","那华南呢","看看订单数","换成华北","换成2024年","看看销量"])await ask(q);};
 $("theme").onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";};
 $("tabAsk").onclick=()=>setTab(false);$("tabDoc").onclick=()=>setTab(true);$("docRun").onclick=analyzeDocument;
-selectCapability(activeCapability);loadMeta();
+selectCapability(activeCapability);schemaLoadPromise=loadMeta();
