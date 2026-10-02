@@ -164,6 +164,20 @@ body:has(.site-sidebar) > header #status { margin-left: auto; }
 .thought-head, .step-title { font-size: 13px; }
 .answer { font-size: 15px; }
 .answer > p:first-child { margin-top: 0; }
+.assistant .audit { gap: 0; }
+.assistant .audit .astep {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+.assistant .audit .audit-intro + .astep,
+.assistant .audit .astep + .astep { border-top: 1px solid var(--ui-line); }
+.assistant .audit .astep h4 { padding: 14px 0 4px; background: transparent; }
+.assistant .audit .astep .bd { padding: 8px 0 16px; }
+.assistant .audit-summary { padding: 0; border: 0; border-radius: 0; background: transparent; }
+.assistant .audit-table-wrap { border: 0; border-radius: 0; }
+.assistant .answer { margin-top: 6px; padding-top: 18px; border-top: 1px solid var(--ui-line); }
 .answer .docs { gap: 0; margin-top: 16px; border-top: 1px solid var(--ui-line); }
 .answer .docs .doc {
   padding: 10px 0;
