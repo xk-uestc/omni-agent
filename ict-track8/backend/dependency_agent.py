@@ -406,6 +406,13 @@ class DependencyAgent:
                         if formula.label == args['label'] and formula.status != 'rejected':
                             candidates.append({'expression': formula.normalized_expression, 'parameters': list(formula.parameters), 'label': formula.label,
                                 'source_uri': f'/api/v1/knowledge/documents/{document["document_id"]}/original', 'locator': chunk['source_locator'], 'chunk_id': chunk['chunk_id'], 'sha256': document['sha256']})
+                if document['modality'] == 'pdf':
+                    from .native_formula_pages import extract_cross_page_formulas
+                    raw = self.knowledge_store.verify_source(document['document_id'], expected_sha256=document['sha256']).read_bytes()
+                    cross_page = extract_cross_page_formulas(raw, label=args['label'], expected_sha256=document['sha256'])
+                    candidates.extend({**item, 'source_uri':f'/api/v1/knowledge/documents/{document["document_id"]}/original',
+                                       'chunk_id':None} for item in cross_page)
+                    self.knowledge_store.verify_source(document['document_id'], expected_sha256=document['sha256'])
                 unique = {item['expression']: item for item in candidates}
                 if len(unique) != 1:
                     raise DependencyPlanError('公式缺失或存在多个冲突版本')

@@ -22,7 +22,7 @@ _TEXT_TYPES = ("TEXT", "CHAR", "CLOB", "VARCHAR", "STRING")
 _MEASURE_TOKENS = {
     "age", "amount", "bytes", "cost", "count", "discount", "distance", "duration",
     "hours", "length", "milliseconds", "price", "profit", "quantity", "qty", "rating",
-    "revenue", "salary", "score", "stock", "tax", "total", "weight",
+    "rate", "revenue", "salary", "score", "stock", "tax", "total", "weight",
 }
 
 
@@ -101,7 +101,62 @@ _TOKEN_ALIASES: dict[str, tuple[str, ...]] = {
     "revenue": ("收入",),
     "amount": ("金额",),
     "duration": ("时长",),
+    "cost": ("成本", "费用"),
+    "length": ("长度",),
+    "rate": ("费率",),
+    "profit": ("利润",),
+    "weight": ("重量",),
+    "distance": ("距离",),
+    "discount": ("折扣",),
+    "tax": ("税额",),
+    "salary": ("薪资", "工资"),
+    "score": ("分数",),
+    "age": ("年龄",),
 }
+
+# Lexical translations, not database-specific business formulas. Compound
+# identifiers keep their modifiers: replacement_cost is not just generic cost.
+_ENTITY_ALIASES = {
+    **_TABLE_ALIASES,
+    "payment": ("付款", "支付"), "rental": ("租赁", "租借"),
+    "film": ("电影", "影片"), "actor": ("演员",), "staff": ("职员", "工作人员"),
+    "store": ("门店", "店铺"), "inventory": ("库存",), "language": ("语言",),
+    "supplier": ("供应商",), "shipment": ("发货", "货运"), "warehouse": ("仓库",),
+    "account": ("账户",), "transaction": ("交易",), "loan": ("贷款",),
+    "patient": ("患者",), "appointment": ("预约",), "sensor": ("传感器",),
+    "device": ("设备",), "book": ("图书",), "student": ("学生",),
+    "course": ("课程",), "project": ("项目",), "ticket": ("工单",),
+    "category": ("类别", "分类"), "city": ("城市",), "country": ("国家",),
+    "address": ("地址",),
+}
+_MODIFIER_ALIASES = {
+    **{key: values[:1] for key, values in _ENTITY_ALIASES.items()},
+    "replacement": ("替换", "重置"), "shipping": ("配送",),
+    "billing": ("账单",), "release": ("发行",), "return": ("归还",),
+    "birth": ("出生",), "purchase": ("采购",), "unit": ("单位",),
+}
+_NAMESPACE_TOKENS = {"dbo", "public", "dim", "fact", "tbl"}
+
+
+def _singular(token: str) -> str:
+    # Only known vocabulary is singularized, never arbitrary physical names.
+    if token.endswith("ies") and token[:-3] + "y" in _ENTITY_ALIASES:
+        return token[:-3] + "y"
+    if token.endswith("s") and token[:-1] in _ENTITY_ALIASES:
+        return token[:-1]
+    return token
+
+
+def _compound_aliases(tokens: tuple[str, ...]) -> tuple[str, ...]:
+    tokens = tuple(_singular(token) for token in tokens)
+    if len(tokens) < 2 or len(tokens) > 4:
+        return ()
+    modifiers = [_MODIFIER_ALIASES.get(token) for token in tokens[:-1]]
+    heads = _TOKEN_ALIASES.get(tokens[-1]) or _ENTITY_ALIASES.get(tokens[-1])
+    if not heads or any(not item for item in modifiers):
+        return ()
+    from itertools import product
+    return tuple("".join(parts) for parts in product(*modifiers, heads))
 
 _SALES_CONTEXTS = {"订单", "订单明细", "发票", "账单", "发票明细", "销售", "商品", "商品明细"}
 
@@ -111,11 +166,13 @@ def _canonical(tokens: Iterable[str]) -> str:
 
 
 def _table_context(table: str) -> tuple[str, ...]:
-    tokens = split_identifier(table)
+    tokens = tuple(_singular(token) for token in split_identifier(table))
+    while tokens and tokens[0] in _NAMESPACE_TOKENS:
+        tokens = tokens[1:]
     key = _canonical(tokens)
-    aliases: list[str] = list(_TABLE_ALIASES.get(key, ()))
-    if key.endswith("s"):
-        aliases.extend(_TABLE_ALIASES.get(key[:-1], ()))
+    aliases: list[str] = list(_ENTITY_ALIASES.get(key, ()))
+    if not aliases:
+        aliases.extend(_compound_aliases(tokens))
     return tuple(dict.fromkeys(aliases))
 
 
@@ -141,7 +198,7 @@ def _is_measure(tokens: tuple[str, ...], data_type: str) -> bool:
 def _default_metric_function(tokens: tuple[str, ...], primary_key: bool) -> str | None:
     if primary_key:
         return "COUNT_DISTINCT"
-    if any(token in {"age", "duration", "hours", "length", "milliseconds", "price", "rating", "salary", "score"} for token in tokens):
+    if any(token in {"age", "duration", "hours", "length", "milliseconds", "price", "rate", "rating", "salary", "score"} for token in tokens):
         return "AVG"
     if any(token in {"amount", "bytes", "count", "discount", "profit", "quantity", "qty", "revenue", "stock", "tax", "total", "weight"} for token in tokens):
         return "SUM"
@@ -156,9 +213,7 @@ def _count_aliases(table: str, column: str, tokens: tuple[str, ...], primary_key
         subject = _canonical(split_identifier(table))
     context = _table_context(table)
     if subject:
-        aliases = list(_TABLE_ALIASES.get(subject, ()))
-        if not aliases and subject.endswith("s"):
-            aliases.extend(_TABLE_ALIASES.get(subject[:-1], ()))
+        aliases = list(_ENTITY_ALIASES.get(_singular(subject), ()))
         if not aliases:
             aliases.extend(context)
     else:
@@ -217,6 +272,7 @@ def infer_rules(tables: Iterable[TableInfo], *, infer_entity_counts: bool = True
                 confidence = 0.55
 
             if not id_column:
+                aliases.extend(_compound_aliases(tokens))
                 aliases.extend(_TOKEN_ALIASES.get(joined, ()))
                 for token in tokens:
                     aliases.extend(_TOKEN_ALIASES.get(token, ()))

@@ -79,6 +79,8 @@ having.mode=scalar_avg表示当前同一过滤范围内各分组聚合结果的�
 
 
 class ResponsesModelPlanProvider(HttpModelPlanProvider):
+    supports_complex_queries = True
+
     def __init__(self, base_url, token, *, model, reasoning_effort="medium", metric_catalog=None, reference_date=None,
                  timeout=45.0, max_retries=1, session=None, http_headers=None):
         if not model or not isinstance(model, str):

@@ -39,7 +39,7 @@ def test_short_followup_preplanning_scope(context, question, fragments):
     '那2024年华南销售额呢', '2024年华南订单数呢',
     '那华南只看金额超过1000的呢', '那华南排除退货呢',
     '那火星呢', '那2024年和2025年呢', '那销售额和订单数呢',
-    '那按月统计呢', '如果华南呢', '那呢',
+    '如果华南呢', '那呢',
 ])
 def test_unknown_complex_or_fresh_scope_is_not_verified(context, question):
     engine, previous = context

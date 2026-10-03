@@ -13,7 +13,7 @@ import fitz
 import re
 import time
 
-from .native_text_tables import extract_native_text_tables
+from .native_text_tables import extract_native_text_tables, column_unit_declaration
 from .responses_client import GenerationError, object_schema
 from .visual_work_budget import visual_work_slot
 
@@ -24,7 +24,7 @@ REVIEW = object_schema({key: {'type': 'boolean'} for key in
      'all_requested_rows_and_columns_selected', 'no_competing_source_or_scope', 'unit_scale_and_sign_preserved')})
 
 
-def annotation_arithmetic(facts, operation):
+def annotation_arithmetic(facts, operation, *, allow_column_comparison=False):
     if operation not in {'lookup', 'sum', 'ratio', 'difference'} or not facts or len(facts) > 12:
         raise ValueError('native_annotation_operation_invalid')
     if (operation == 'lookup' and len(facts) != 1 or operation == 'sum' and len(facts) < 2
@@ -34,7 +34,19 @@ def annotation_arithmetic(facts, operation):
     if len({(f['source_sha256'], f['page_no'], f['table_id'], f['unit'], f.get('scale')) for f in facts}) != 1:
         raise ValueError('native_annotation_unit_or_table_scope_mismatch')
     if len({(tuple(f.get('column_header_path', [])), f.get('period')) for f in facts}) != 1:
-        raise ValueError('native_annotation_column_period_scope_mismatch')
+        # A year-on-year comparison is allowed only for the same named row,
+        # explicit distinct column years and otherwise identical headers.
+        def measure_path(fact):
+            return tuple(re.sub(r'(?<!\d)(?:19|20)\d{2}(?!\d)', '', part).strip()
+                         for part in fact.get('column_header_path', [])
+                         if re.sub(r'(?<!\d)(?:19|20)\d{2}(?!\d)', '', part).strip())
+        if (not allow_column_comparison or operation not in {'difference','ratio'}
+                or len({f.get('row_header') for f in facts}) != 1
+                or any(f.get('period_status') != 'explicit_column_year' or not f.get('period') for f in facts)
+                or len({f['period'] for f in facts}) != 2
+                or not measure_path(facts[0])
+                or len({measure_path(f) for f in facts}) != 1):
+            raise ValueError('native_annotation_column_period_scope_mismatch')
     if operation == 'sum' and any(re.search(r'\b(?:total|subtotal)\b|合计|总计|小计', f.get('row_header', ''), re.I) for f in facts):
         raise ValueError('native_annotation_total_components_unsupported')
     if any(f['unit'] == 'unknown' for f in facts):
@@ -47,9 +59,29 @@ def annotation_arithmetic(facts, operation):
         if literal is None:
             raise ValueError('native_annotation_literal_invalid')
         suffix=literal.group(3) or ''
+        header_proof=fact.get('unit_evidence')
+        declared=None
+        if header_proof is not None or fact['unit'].startswith('currency:'):
+            declared=column_unit_declaration(fact.get('column_header_path', []))
+            boxes=fact.get('column_header_bboxes_display_pt')
+            if (not isinstance(header_proof,dict)
+                    or header_proof.get('binding')!='own_explicit_column_header_only'
+                    or header_proof.get('header_path')!=fact.get('column_header_path')
+                    or not isinstance(boxes,list) or not boxes
+                    or any(not isinstance(box,list) or len(box)!=4 for box in boxes)
+                    or header_proof.get('header_bboxes_display_pt')!=boxes
+                    or declared['unit']!=fact['unit'] or declared['currency']!=fact.get('currency')
+                    or declared['scale']!=fact.get('scale')
+                    or header_proof.get('unit')!=fact['unit']
+                    or header_proof.get('currency')!=declared['currency']
+                    or header_proof.get('multiplier')!=declared['scale']):
+                raise ValueError('native_annotation_header_unit_proof_invalid')
         scales={'m':'1000000','million':'1000000','k':'1000','thousand':'1000',
                 'bn':'1000000000','billion':'1000000000'}
-        if fact.get('scale') is not None or suffix in scales:
+        if declared and declared['scale'] is not None:
+            if suffix or fact.get('scale_evidence')!=header_proof:
+                raise ValueError('native_annotation_unit_or_scale_unbound')
+        elif fact.get('scale') is not None or suffix in scales:
             proof=fact.get('scale_evidence')
             if (not literal.group(1) or suffix not in scales or fact.get('scale')!=scales[suffix]
                     or not isinstance(proof,dict) or proof.get('binding')!='own_adjacent_currency_suffix_only'
@@ -95,13 +127,22 @@ def annotation_arithmetic(facts, operation):
         answer = format(total, 'f')
     else:
         symbol = facts[0]['raw_value'][0] if facts[0]['raw_value'][0] in '$€¥' else ''
+        if not symbol and facts[0].get('unit_evidence') and facts[0]['unit'].startswith('currency_symbol:'):
+            symbol = facts[0]['unit'].split(':',1)[1]
         suffix = suffixes[0]
         answer = symbol + format(total, ',f') + suffix
+        if facts[0].get('unit_evidence') and not symbol and not suffix:
+            code = facts[0].get('currency', 'unknown')
+            scale_label = {'1000':'thousand', '1000000':'million', '1000000000':'billion'}.get(facts[0].get('scale'), '')
+            label = ' '.join(part for part in (code if code != 'unknown' else '', scale_label) if part)
+            if facts[0]['unit']=='percent':label='%'
+            if label:answer += ' '+label
     return {'answer': answer, 'operation': operation, 'operands': [f['raw_value'] for f in facts],
             'numeric_result': format(total, 'f'), 'unit': 'ratio' if operation == 'ratio' else facts[0]['unit'],
             'scale': None if operation=='ratio' else facts[0].get('scale'),
             'computation_domain': 'same_table_literal_numeric_annotations_not_inferred_physical_quantity',
-            'physical_calculator_input_eligible': False}
+            'physical_calculator_input_eligible': False,
+            'operand_periods': [f.get('period') for f in facts]}
 
 
 def _completed(client):
@@ -249,7 +290,7 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
             if len({facts[k][0]['document_id'] for k in plan['fact_ids']}) != 1:
                 return fallback('native_table_competing_document_operands')
             selected = [facts[k][1] for k in plan['fact_ids']]
-            computation = annotation_arithmetic(selected, plan['operation'])
+            computation = annotation_arithmetic(selected, plan['operation'], allow_column_comparison=True)
             # Values and arithmetic come from the server. The independent
             # reviewer only decides whether this answers the whole question.
             review = generate('Independently check the ORIGINAL question against ALL table candidates. '
@@ -261,8 +302,15 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'multiplier inferred, not mandatory abstention for raw annotation arithmetic. For ratio verify '
                 'fact_ids order is exactly requested numerator then denominator; reversing it MUST reject. '
                 'For difference require an explicit subtraction direction in the original question, exactly '
-                'two facts in requested minuend then subtrahend order, and the same column/period/literal unit. '
-                'Reject reversed operands or an absolute value substituted for the signed difference.',
+                'two facts in requested minuend then subtrahend order. Require the same column/period/literal unit, '
+                'or the SAME entity row with explicitly requested distinct column years and identical measure/unit headers. '
+                'Reject reversed operands or an absolute value substituted for the signed difference. '
+                'An own-column scale_evidence with binding=own_explicit_column_header_only may preserve '
+                'the literal financial notation \'000, ’000 or 000s as thousands (multiplier=1000). '
+                'This is an explicit printed header declaration, not a guessed scale. When both operands '
+                'use that declaration, arithmetic on 3 and 1 returns 2 in thousands, not 2000 in thousands. '
+                'Check the actual supplied header_path and multiplier rather than requiring the word thousand '
+                'to appear verbatim in the original header. Reject conflicting or absent evidence.',
                 {'question': question, 'all_native_table_candidates': deepcopy(registries),
                  'complete_table_page_contexts': deepcopy(page_contexts),
                  'selected_fact_ids': plan['fact_ids'], 'server_annotation_computation': computation}, REVIEW,
@@ -275,6 +323,8 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
             recheck()
         if (not _completed(client) or not isinstance(review, dict) or set(review) != set(REVIEW['properties'])
                 or any(type(review[key]) is not bool or not review[key] for key in REVIEW['properties'])):
+            trace['semantic_review_checks'] = {key: review.get(key) for key in REVIEW['properties']
+                if isinstance(review,dict) and type(review.get(key)) is bool}
             return fallback('native_table_semantic_scope_review_rejected')
         doc = facts[plan['fact_ids'][0]][0]
         page = selected[0]['page_no']
@@ -296,7 +346,8 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
         trace['status'] = 'model_reviewed_native_annotation_computation'
         scope = {'row_labels': [f['row_header'] for f in selected], 'column_header_paths': [f['column_header_path'] for f in selected],
                  'period': selected[0].get('period'), 'period_scope_text': selected[0].get('period_scope_text', []),
-                 'unit': computation['unit'], 'currency': 'unknown', 'scale': computation['scale'],
+                 'unit': computation['unit'], 'currency': selected[0].get('currency', 'unknown'), 'scale': computation['scale'],
+                 'operand_periods': computation['operand_periods'],
                  'computation_domain': computation['computation_domain'], 'calculator_input_eligible': False}
         recheck()
         return {'status': 'ok', 'question': question, 'answer': computation['answer'], 'answer_mode': 'native_table_model_reviewed',

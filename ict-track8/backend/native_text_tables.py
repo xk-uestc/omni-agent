@@ -25,6 +25,31 @@ def _text(words):
     return ' '.join(w[4] for w in sorted(words,key=lambda w:w[0]))
 
 
+def column_unit_declaration(path):
+    """Only literal declarations inside one geometrically bounded column."""
+    text = ' '.join(path)
+    codes = set(re.findall(r'\b(?:USD|EUR|GBP|CNY|JPY|CAD|AUD)\b', text))
+    symbols = set(re.findall(r'[$€£¥]', text))
+    percent = bool(re.search(r'%|\bpercent(?:age)?\b', text, re.I))
+    if len(codes) > 1 or len(symbols) > 1 or percent and (codes or symbols):
+        raise ValueError('column_unit_declaration_conflict')
+    code = next(iter(codes), None)
+    symbol = next(iter(symbols), None)
+    if code and symbol and (code, symbol) not in {
+            ('USD','$'), ('CAD','$'), ('AUD','$'), ('EUR','€'), ('GBP','£'), ('CNY','¥'), ('JPY','¥')}:
+        raise ValueError('column_unit_declaration_conflict')
+    unit = 'percent' if percent else 'currency:'+code if code else 'currency_symbol:'+symbol if symbol else 'unknown'
+    scales = {m.casefold().rstrip('s') for m in re.findall(r'\b(?:thousands?|millions?|billions?)\b', text, re.I)}
+    # Common financial header notation is a literal multiplier declaration.
+    # It must remain inside this column, never borrowed from another heading.
+    if re.search(r"(?:['’]\s*000(?:s)?\b|\b000s\b)", text, re.I):
+        scales.add('thousand')
+    if len(scales) > 1 or scales and unit == 'unknown':
+        raise ValueError('column_scale_declaration_unbound')
+    scale = _SCALES[next(iter(scales))] if scales else None
+    return {'unit':unit, 'currency':code or 'unknown', 'scale':scale, 'symbol':symbol}
+
+
 def _currency_panels(rows, sha, page_no, matrix, existing):
     """Repeated amount lanes, independently bounded labels, no page-wide scale.
 
@@ -209,19 +234,22 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                 maxima.append(max(row['numbers'][c][2] for row in data))
             if any(b-a<8 for a,b in zip(maxima,minima[1:])):reject('columns_overlap_or_no_unique_gutters');continue
             cuts=[(a+b)/2 for a,b in zip(maxima,minima[1:])]
-            bounds=[rect.x0-40,*cuts,rect.x1+40]
+            # Outer headers can be longer than their right-aligned numeric
+            # cells. Interior gutters remain bounded by the actual data rows.
+            bounds=[0,*cuts,p.rect.width]
             labels=[_text(row['labels']) for row in data]
             if len(set(labels))!=len(labels):reject('row_header_not_unique');continue
             header_rows=[]
             for row in reversed(rows[:indices[0]]):
                 if data[0]['cy']-row['cy']>65 or len(header_rows)>=3:break
-                if any(re.match(r'[$€¥]',w[4]) for w in row['words']):break
                 cells=[[] for _ in range(n)];invalid=False
                 for w in row['words']:
                     candidates=[c for c in range(n) if bounds[c]<=w[0] and w[2]<=bounds[c+1]]
                     if len(candidates)!=1:invalid=True;break
                     cells[candidates[0]].append(w)
-                if invalid or any(not cell for cell in cells):break
+                # A second header line often prints only years or units above
+                # numeric columns, leaving the row-label lane empty.
+                if invalid or any(not cell for cell in cells[1:]):break
                 if any(all(_NUMBER.fullmatch(w[4]) for w in cell) and not all(re.fullmatch(r'(?:19|20)\d{2}',w[4]) for w in cell) for cell in cells):break
                 header_rows.append(cells)
             header_rows.reverse()
@@ -256,8 +284,12 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                     'period_scope_text':period,'complete_scope':'continuous_local_native_rows_not_whole_document',
                     'calculator_input_eligible':False,'physical_calculator_input_eligible':False}
                 report['tables'].append(table);report['facts'].extend(facts);continue
-            paths=[[_text(row[c]) for row in header_rows] for c in range(n)]
+            paths=[[_text(row[c]) for row in header_rows if row[c]] for c in range(n)]
             if len({tuple(path) for path in paths})!=n:reject('column_header_paths_not_unique');continue
+            try:
+                declarations = [column_unit_declaration(path) for path in paths]
+            except ValueError as exc:
+                reject(str(exc));continue
             # Every intervening native word must be inside its unique cell;
             # narrative text cannot be swallowed as a table row or header.
             if any(a[2]>b[0] for row in data for a,b in zip(row['words'],row['words'][1:])):
@@ -271,13 +303,28 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                 for c,w in enumerate(row['numbers'],1):
                     header=' '.join(paths[c]);header_years=re.findall(r'(?<!\d)(?:19|20)\d{2}(?!\d)',header)
                     if len(set(header_years))>1:reject('column_period_scope_ambiguous');facts=[];break
-                    unit='percent' if w[4].endswith('%') else 'currency_symbol:'+w[4][0] if w[4][0] in '$€¥' else 'unknown'
+                    literal_unit='percent' if w[4].endswith('%') else 'currency_symbol:'+w[4][0] if w[4][0] in '$€¥' else 'unknown'
+                    declared = declarations[c]
+                    if literal_unit != 'unknown' and declared['unit'] != 'unknown':
+                        symbol = w[4][0] if w[4][0] in '$€¥' else None
+                        expected = {'USD':'$', 'CAD':'$', 'AUD':'$', 'EUR':'€', 'GBP':'£', 'CNY':'¥', 'JPY':'¥'}.get(declared['currency'])
+                        if ((literal_unit == 'percent') != (declared['unit'] == 'percent')
+                                or symbol and (expected or declared['symbol']) != symbol):
+                            reject('cell_and_column_unit_conflict');facts=[];break
+                    unit = declared['unit'] if declared['unit'] != 'unknown' else literal_unit
+                    header_boxes=[list(_bbox(h[c])*matrix) for h in header_rows if h[c]]
+                    unit_proof = ({'binding':'own_explicit_column_header_only', 'header_path':paths[c],
+                                   'header_bboxes_display_pt':header_boxes, 'unit':unit,
+                                   'currency':declared['currency'], 'multiplier':declared['scale']}
+                                  if declared['unit'] != 'unknown' else None)
                     facts.append({'fact_id':f'{identity}:row:{r}:column:{c}','table_id':identity,
                         'row_header':labels[r],'column_header_path':paths[c],
                         'row_header_bbox_display_pt':list(_bbox(row['labels'])*matrix),
-                        'column_header_bboxes_display_pt':[list(_bbox(h[c])*matrix) for h in header_rows],
+                        'column_header_bboxes_display_pt':header_boxes,
                         'bbox_display_pt':list(fitz.Rect(w[:4])*matrix),'raw_value':w[4],
-                        'source_sha256':sha,'page_no':page_no,'unit':unit,'scale':None,
+                        'source_sha256':sha,'page_no':page_no,'unit':unit,'scale':declared['scale'],
+                        'currency':declared['currency'], 'unit_evidence':unit_proof,
+                        'scale_evidence':unit_proof if declared['scale'] else None,
                         'period':header_years[0] if header_years else None,
                         'period_status':'explicit_column_year' if header_years else 'unknown_or_external_scope',
                         'value_kind':'native_aligned_cell_literal','calculator_input_eligible':False,

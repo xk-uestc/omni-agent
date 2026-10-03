@@ -113,9 +113,15 @@ def build_package(output: Path, *, root: Path = ROOT, include_public_assets: boo
     with zipfile.ZipFile(staging, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
         for path in files:
             relative = path.relative_to(root).as_posix()
-            data = path.read_bytes()
-            archive.writestr(relative, data)
-            entries.append({"path": relative, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()})
+            # Hash precisely the streamed bytes written to this archive. Large
+            # evaluation reports must not be copied into one in-memory object.
+            digest, size = hashlib.sha256(), 0
+            with path.open('rb') as source, archive.open(relative, 'w', force_zip64=True) as target:
+                while block := source.read(1024 * 1024):
+                    target.write(block)
+                    digest.update(block)
+                    size += len(block)
+            entries.append({"path": relative, "bytes": size, "sha256": digest.hexdigest()})
         manifest = {
             "format": 1,
             "package": "ict-track8-source",

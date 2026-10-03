@@ -1,0 +1,1191 @@
+{
+  "created_at": "2026-10-03T17:35:05.825515+00:00",
+  "scope": "authored_cross_domain_development_probe_not_official_benchmark",
+  "model_called": true,
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "planned_turns": 15,
+  "executed_turns": 15,
+  "passed_turns": 15,
+  "complete_five_turn_sessions": 3,
+  "sessions": [
+    {
+      "domain": "clinic",
+      "cases": [
+        {
+          "turn": 1,
+          "question": "中国患者数，按城市分组",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "北城",
+              1
+            ],
+            [
+              "南城",
+              1
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "北城",
+              1
+            ],
+            [
+              "南城",
+              1
+            ]
+          ],
+          "effective_question": "中国患者数，按城市分组",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "中国患者数，按城市分组"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2212,
+              "output_tokens": 94,
+              "total_tokens": 2306,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 53,
+              "call_index": 1,
+              "latency_ms": 4875.219,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2018,
+              "output_tokens": 349,
+              "total_tokens": 2367,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 180,
+              "call_index": 1,
+              "latency_ms": 26043.337,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 31781.0
+        },
+        {
+          "turn": 2,
+          "question": "那日本呢",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "西城",
+              1
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "西城",
+              1
+            ]
+          ],
+          "effective_question": "日本患者数,按城市分组",
+          "context_resolution": {
+            "mode": "server_verified_sql_followup",
+            "actual_question": "那日本呢",
+            "previous_actual_question": "中国患者数，按城市分组",
+            "base_scope_question": "中国患者数，按城市分组",
+            "scope_question": "日本患者数,按城市分组",
+            "replacements": [
+              {
+                "slot": "cities.country",
+                "from": "中国",
+                "to": "日本"
+              }
+            ],
+            "verification": "independent_rule_scope_and_saved_sql_slots"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2427,
+              "output_tokens": 34,
+              "total_tokens": 2461,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 3030.989,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2018,
+              "output_tokens": 257,
+              "total_tokens": 2275,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 83,
+              "call_index": 1,
+              "latency_ms": 12071.673,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 15468.0
+        },
+        {
+          "turn": 3,
+          "question": "换成按国家分组",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "日本",
+              1
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "日本",
+              1
+            ]
+          ],
+          "effective_question": "日本患者数,按国家分组",
+          "context_resolution": {
+            "mode": "server_verified_sql_followup",
+            "actual_question": "换成按国家分组",
+            "previous_actual_question": "那日本呢",
+            "base_scope_question": "日本患者数,按城市分组",
+            "scope_question": "日本患者数,按国家分组",
+            "replacements": [
+              {
+                "slot": "group_dimension",
+                "from": [
+                  "name"
+                ],
+                "to": [
+                  "country"
+                ]
+              }
+            ],
+            "verification": "explicit_group_change_full_scope_reparse_and_saved_sql_slots"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2572,
+              "output_tokens": 112,
+              "total_tokens": 2684,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 49,
+              "call_index": 1,
+              "latency_ms": 6744.313,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2018,
+              "output_tokens": 241,
+              "total_tokens": 2259,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 66,
+              "call_index": 1,
+              "latency_ms": 6131.932,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 13234.0
+        },
+        {
+          "turn": 4,
+          "question": "那排除北城呢",
+          "status": "clarification",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [],
+          "reference_rows_scoring_only": [],
+          "effective_question": "那排除北城呢",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "那排除北城呢",
+            "requires_clarification": true,
+            "base_scope_question": "日本患者数,按国家分组",
+            "reason": "dependent_reply_cannot_become_unfiltered_independent_query"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2668,
+              "output_tokens": 212,
+              "total_tokens": 2880,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 150,
+              "call_index": 1,
+              "latency_ms": 16474.706,
+              "component": "router"
+            }
+          ],
+          "wall_ms": 16750.0
+        },
+        {
+          "turn": 5,
+          "question": "中国患者数",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              2
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              2
+            ]
+          ],
+          "effective_question": "中国患者数",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "中国患者数"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2672,
+              "output_tokens": 107,
+              "total_tokens": 2779,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 75,
+              "call_index": 1,
+              "latency_ms": 3644.773,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1989,
+              "output_tokens": 210,
+              "total_tokens": 2199,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 63,
+              "call_index": 1,
+              "latency_ms": 5625.262,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 9672.0
+        }
+      ],
+      "all_five_pass": true,
+      "persisted_turns_after_restart": 5,
+      "source_stable": true
+    },
+    {
+      "domain": "logistics",
+      "cases": [
+        {
+          "turn": 1,
+          "question": "中国配送成本合计，按城市分组",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "南城",
+              30.0
+            ],
+            [
+              "北城",
+              10.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "北城",
+              10.0
+            ],
+            [
+              "南城",
+              30.0
+            ]
+          ],
+          "effective_question": "中国配送成本合计，按城市分组",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "中国配送成本合计，按城市分组"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2220,
+              "output_tokens": 36,
+              "total_tokens": 2256,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 3448.766,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2024,
+              "output_tokens": 249,
+              "total_tokens": 2273,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 76,
+              "call_index": 1,
+              "latency_ms": 6939.904,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 10718.0
+        },
+        {
+          "turn": 2,
+          "question": "那日本呢",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "西城",
+              90.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "西城",
+              90.0
+            ]
+          ],
+          "effective_question": "日本配送成本合计,按城市分组",
+          "context_resolution": {
+            "mode": "server_verified_sql_followup",
+            "actual_question": "那日本呢",
+            "previous_actual_question": "中国配送成本合计，按城市分组",
+            "base_scope_question": "中国配送成本合计，按城市分组",
+            "scope_question": "日本配送成本合计,按城市分组",
+            "replacements": [
+              {
+                "slot": "cities.country",
+                "from": "中国",
+                "to": "日本"
+              }
+            ],
+            "verification": "independent_rule_scope_and_saved_sql_slots"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2441,
+              "output_tokens": 36,
+              "total_tokens": 2477,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 4360.026,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2024,
+              "output_tokens": 278,
+              "total_tokens": 2302,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 87,
+              "call_index": 1,
+              "latency_ms": 8291.053,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 13203.0
+        },
+        {
+          "turn": 3,
+          "question": "换成按国家分组",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "日本",
+              90.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "日本",
+              90.0
+            ]
+          ],
+          "effective_question": "日本配送成本合计,按国家分组",
+          "context_resolution": {
+            "mode": "server_verified_sql_followup",
+            "actual_question": "换成按国家分组",
+            "previous_actual_question": "那日本呢",
+            "base_scope_question": "日本配送成本合计,按城市分组",
+            "scope_question": "日本配送成本合计,按国家分组",
+            "replacements": [
+              {
+                "slot": "group_dimension",
+                "from": [
+                  "name"
+                ],
+                "to": [
+                  "country"
+                ]
+              }
+            ],
+            "verification": "explicit_group_change_full_scope_reparse_and_saved_sql_slots"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2588,
+              "output_tokens": 74,
+              "total_tokens": 2662,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 36,
+              "call_index": 1,
+              "latency_ms": 3253.402,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2024,
+              "output_tokens": 264,
+              "total_tokens": 2288,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 86,
+              "call_index": 1,
+              "latency_ms": 11682.108,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 15391.0
+        },
+        {
+          "turn": 4,
+          "question": "那排除北城呢",
+          "status": "clarification",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [],
+          "reference_rows_scoring_only": [],
+          "effective_question": "排除城市“北城”后的日本配送成本合计；分组方式待确认。",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "那排除北城呢",
+            "requires_clarification": true,
+            "base_scope_question": "日本配送成本合计,按国家分组",
+            "reason": "dependent_reply_cannot_become_unfiltered_independent_query"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2684,
+              "output_tokens": 249,
+              "total_tokens": 2933,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 166,
+              "call_index": 1,
+              "latency_ms": 11275.351,
+              "component": "router"
+            }
+          ],
+          "wall_ms": 11688.0
+        },
+        {
+          "turn": 5,
+          "question": "中国配送成本合计",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              40.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              40.0
+            ]
+          ],
+          "effective_question": "中国配送成本合计",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "中国配送成本合计"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2713,
+              "output_tokens": 139,
+              "total_tokens": 2852,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 84,
+              "call_index": 1,
+              "latency_ms": 4314.982,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1995,
+              "output_tokens": 334,
+              "total_tokens": 2329,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 181,
+              "call_index": 1,
+              "latency_ms": 24204.963,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 28890.0
+        }
+      ],
+      "all_five_pass": true,
+      "persisted_turns_after_restart": 5,
+      "source_stable": true
+    },
+    {
+      "domain": "finance",
+      "cases": [
+        {
+          "turn": 1,
+          "question": "中国付款金额合计，按城市分组",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "南城",
+              30.0
+            ],
+            [
+              "北城",
+              10.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "北城",
+              10.0
+            ],
+            [
+              "南城",
+              30.0
+            ]
+          ],
+          "effective_question": "中国付款金额合计，按城市分组",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "中国付款金额合计，按城市分组"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2289,
+              "output_tokens": 127,
+              "total_tokens": 2416,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 65,
+              "call_index": 1,
+              "latency_ms": 16270.375,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2090,
+              "output_tokens": 259,
+              "total_tokens": 2349,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 90,
+              "call_index": 1,
+              "latency_ms": 7950.964,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 24375.0
+        },
+        {
+          "turn": 2,
+          "question": "那日本呢",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "西城",
+              90.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "西城",
+              90.0
+            ]
+          ],
+          "effective_question": "日本付款金额合计,按城市分组",
+          "context_resolution": {
+            "mode": "server_verified_sql_followup",
+            "actual_question": "那日本呢",
+            "previous_actual_question": "中国付款金额合计，按城市分组",
+            "base_scope_question": "中国付款金额合计，按城市分组",
+            "scope_question": "日本付款金额合计,按城市分组",
+            "replacements": [
+              {
+                "slot": "cities.country",
+                "from": "中国",
+                "to": "日本"
+              }
+            ],
+            "verification": "independent_rule_scope_and_saved_sql_slots"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2507,
+              "output_tokens": 110,
+              "total_tokens": 2617,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 48,
+              "call_index": 1,
+              "latency_ms": 3137.852,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2090,
+              "output_tokens": 272,
+              "total_tokens": 2362,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 91,
+              "call_index": 1,
+              "latency_ms": 6502.615,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 10063.0
+        },
+        {
+          "turn": 3,
+          "question": "换成按国家分组",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              "日本",
+              90.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              "日本",
+              90.0
+            ]
+          ],
+          "effective_question": "日本付款金额合计,按国家分组",
+          "context_resolution": {
+            "mode": "server_verified_sql_followup",
+            "actual_question": "换成按国家分组",
+            "previous_actual_question": "那日本呢",
+            "base_scope_question": "日本付款金额合计,按城市分组",
+            "scope_question": "日本付款金额合计,按国家分组",
+            "replacements": [
+              {
+                "slot": "group_dimension",
+                "from": [
+                  "name"
+                ],
+                "to": [
+                  "country"
+                ]
+              }
+            ],
+            "verification": "explicit_group_change_full_scope_reparse_and_saved_sql_slots"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2651,
+              "output_tokens": 79,
+              "total_tokens": 2730,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 41,
+              "call_index": 1,
+              "latency_ms": 3135.397,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2090,
+              "output_tokens": 168,
+              "total_tokens": 2258,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 6618.839,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 10312.0
+        },
+        {
+          "turn": 4,
+          "question": "那排除北城呢",
+          "status": "clarification",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [],
+          "reference_rows_scoring_only": [],
+          "effective_question": "确认是否排除城市“北城”后，查询日本付款金额合计并按国家分组。",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "那排除北城呢",
+            "requires_clarification": true,
+            "base_scope_question": "日本付款金额合计,按国家分组",
+            "reason": "dependent_reply_cannot_become_unfiltered_independent_query"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2744,
+              "output_tokens": 217,
+              "total_tokens": 2961,
+              "cached_input_tokens": 1792,
+              "reasoning_tokens": 136,
+              "call_index": 1,
+              "latency_ms": 9810.688,
+              "component": "router"
+            }
+          ],
+          "wall_ms": 10062.0
+        },
+        {
+          "turn": 5,
+          "question": "中国付款金额合计",
+          "status": "ok",
+          "semantic_pass": true,
+          "pass": true,
+          "actual_rows": [
+            [
+              40.0
+            ]
+          ],
+          "reference_rows_scoring_only": [
+            [
+              40.0
+            ]
+          ],
+          "effective_question": "中国付款金额合计",
+          "context_resolution": {
+            "mode": "independent",
+            "actual_question": "中国付款金额合计"
+          },
+          "clarification_code": null,
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2771,
+              "output_tokens": 117,
+              "total_tokens": 2888,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 59,
+              "call_index": 1,
+              "latency_ms": 5027.911,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2061,
+              "output_tokens": 238,
+              "total_tokens": 2299,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 90,
+              "call_index": 1,
+              "latency_ms": 9006.39,
+              "component": "sql"
+            }
+          ],
+          "wall_ms": 14375.0
+        }
+      ],
+      "all_five_pass": true,
+      "persisted_turns_after_restart": 5,
+      "source_stable": true
+    }
+  ],
+  "reference_used_as_model_input": false,
+  "implementation_file_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "edcbb64df8899d81b70a083e49c7eb9c6112523f52d6c03db83343e77a1bf383",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "dcf7f28cc7bfe4b9353e4d596a05d30be5d78d60abf8150b037133fe0b16db7e",
+    "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "3f586865972c87bb6dbb7178983ab473195f465d1ec9ab054d27bdffe309284c",
+    "ict-track8/backend/native_text_tables.py": "3bb0c79de25af4b1083bd973b2b3477dd00c8350d044dd1aa6cd2f517264cb79",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "3e3857c14c8889b90d9ecdb652cb284b1e27d14a5ae58f6ecf48b26934fd8a5a",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/responses_provider.py": "2bae29b7fbae17138fbffe97dd8ab263c3ce3a2f2b2bf0afa24c7fe2aaae5cc6",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "c03bdfd53a054671e4192ce5fcba229de460eeadb80222d26db3f5c39fcee523",
+    "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+    "ict-track8/backend/nl2sql/schema_profile.py": "859646217d7c9440ebfd0153bd2f455d13497bbb72b911ac2ff0748b166ce843",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "8a81478eed7f2c52c9aff0af35bcbcb7638e3fea205980874f85840cdadf4fa0",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "33127b8bc50858e6344c23440b4959c463a8c971493f1ff80a1139c37e6c9207",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_file_sha256_end": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "edcbb64df8899d81b70a083e49c7eb9c6112523f52d6c03db83343e77a1bf383",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "dcf7f28cc7bfe4b9353e4d596a05d30be5d78d60abf8150b037133fe0b16db7e",
+    "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "3f586865972c87bb6dbb7178983ab473195f465d1ec9ab054d27bdffe309284c",
+    "ict-track8/backend/native_text_tables.py": "3bb0c79de25af4b1083bd973b2b3477dd00c8350d044dd1aa6cd2f517264cb79",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "3e3857c14c8889b90d9ecdb652cb284b1e27d14a5ae58f6ecf48b26934fd8a5a",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/responses_provider.py": "2bae29b7fbae17138fbffe97dd8ab263c3ce3a2f2b2bf0afa24c7fe2aaae5cc6",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "c03bdfd53a054671e4192ce5fcba229de460eeadb80222d26db3f5c39fcee523",
+    "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+    "ict-track8/backend/nl2sql/schema_profile.py": "859646217d7c9440ebfd0153bd2f455d13497bbb72b911ac2ff0748b166ce843",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "8a81478eed7f2c52c9aff0af35bcbcb7638e3fea205980874f85840cdadf4fa0",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "33127b8bc50858e6344c23440b4959c463a8c971493f1ff80a1139c37e6c9207",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_stable": true,
+  "wall_seconds": 91.031
+}

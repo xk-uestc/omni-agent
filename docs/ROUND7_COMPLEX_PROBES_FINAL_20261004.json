@@ -1,0 +1,3990 @@
+{
+  "created_at": "2026-10-03T18:51:10.701371+00:00",
+  "scope": "authored_development_probes_not_official_or_blind",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "reference_used_as_model_input": false,
+  "implementation_file_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "edcbb64df8899d81b70a083e49c7eb9c6112523f52d6c03db83343e77a1bf383",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "dcf7f28cc7bfe4b9353e4d596a05d30be5d78d60abf8150b037133fe0b16db7e",
+    "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "95f13b7fe424e86105e1ffebb0eb839d60cef92eff4f74d0adbdb21a767e15c5",
+    "ict-track8/backend/native_text_tables.py": "e60c8c72e01c7172b0006d27588f6d6b94b0748576a718c6932a66be62e96145",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "e56dbec7ab0878a054aafc2a0283dc82262d76f9f89ac0953655d9fe1aa69ccb",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "d52e35b35d7a13d791af916f427bb8a3f97996399f3bb8c831f0f34482902fed",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "bfd083a3672211eed3e37e690839623396c18a6964ff97e7c5af9b1c54a35e2d",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "c03bdfd53a054671e4192ce5fcba229de460eeadb80222d26db3f5c39fcee523",
+    "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+    "ict-track8/backend/nl2sql/schema_profile.py": "859646217d7c9440ebfd0153bd2f455d13497bbb72b911ac2ff0748b166ce843",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "22f940e200f18bff5c62edb71b56f19641e2712dde4777ff3b9a492fed0c0a1a",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "047c32abb2e5c3eb692a1893e39900740ec5fb30558a2f790a171f6084eb1d13",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_file_sha256_end": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "edcbb64df8899d81b70a083e49c7eb9c6112523f52d6c03db83343e77a1bf383",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "dcf7f28cc7bfe4b9353e4d596a05d30be5d78d60abf8150b037133fe0b16db7e",
+    "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "95f13b7fe424e86105e1ffebb0eb839d60cef92eff4f74d0adbdb21a767e15c5",
+    "ict-track8/backend/native_text_tables.py": "e60c8c72e01c7172b0006d27588f6d6b94b0748576a718c6932a66be62e96145",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "e56dbec7ab0878a054aafc2a0283dc82262d76f9f89ac0953655d9fe1aa69ccb",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "d52e35b35d7a13d791af916f427bb8a3f97996399f3bb8c831f0f34482902fed",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "bfd083a3672211eed3e37e690839623396c18a6964ff97e7c5af9b1c54a35e2d",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "c03bdfd53a054671e4192ce5fcba229de460eeadb80222d26db3f5c39fcee523",
+    "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+    "ict-track8/backend/nl2sql/schema_profile.py": "859646217d7c9440ebfd0153bd2f455d13497bbb72b911ac2ff0748b166ce843",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "22f940e200f18bff5c62edb71b56f19641e2712dde4777ff3b9a492fed0c0a1a",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "047c32abb2e5c3eb692a1893e39900740ec5fb30558a2f790a171f6084eb1d13",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_stable": true,
+  "database_sha256": "7409dc3879a0f377cc693699d1d24a48f70ac592ab1fe411b7e19b54decd9f52",
+  "cases": [
+    {
+      "id": "nonnull",
+      "question": "查询payments记录总数、rental_id非空记录数以及rental_id为空的数量。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "查询payments记录总数、rental_id非空记录数以及rental_id为空的数量。",
+        "rewritten_question": "查询payments记录总数、rental_id非空记录数以及rental_id为空的数量。",
+        "sql": "SELECT COUNT(*) AS \"payment_record_count\", COUNT(\"payments\".\"rental_id\") AS \"rental_id_nonnull_count\", SUM(CASE WHEN \"payments\".\"rental_id\" IS NULL THEN ? ELSE ? END) AS \"rental_id_null_count\" FROM \"payments\" AS \"payments\"",
+        "parameters": [
+          1,
+          0
+        ],
+        "columns": [
+          "payment_record_count",
+          "rental_id_nonnull_count",
+          "rental_id_null_count"
+        ],
+        "rows": [
+          {
+            "payment_record_count": 4,
+            "rental_id_nonnull_count": 3,
+            "rental_id_null_count": 1
+          }
+        ],
+        "plan": {
+          "table": "payments",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "payments.rental_id",
+              "table": "payments",
+              "column": "rental_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.rental_id",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "查询payments记录总数、rental_id非空记录数以及rental_id为空的数量。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "查询payments记录总数、rental_id非空记录数以及rental_id为空的数量。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 736,
+                "output_tokens": 80,
+                "total_tokens": 816,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 3107.984,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [
+              {
+                "id": "o0",
+                "table": "payments",
+                "column": "id",
+                "function": "COUNT",
+                "label": "payment_record_count",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "null",
+                "filters": []
+              },
+              {
+                "id": "o1",
+                "table": "payments",
+                "column": "rental_id",
+                "function": "COUNT",
+                "label": "rental_id_nonnull_count",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "null",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "payment_record_count",
+                  "lineage": {
+                    "table": "payments",
+                    "column": "id",
+                    "operators": [
+                      "COUNT"
+                    ],
+                    "count_semantics": "physical_row_count"
+                  },
+                  "representation": "metric"
+                },
+                {
+                  "label": "rental_id_nonnull_count",
+                  "lineage": {
+                    "table": "payments",
+                    "column": "rental_id",
+                    "operators": [
+                      "COUNT"
+                    ]
+                  },
+                  "representation": "metric"
+                },
+                {
+                  "label": "rental_id_null_count",
+                  "lineage": null,
+                  "representation": "opaque_relational_expression"
+                }
+              ],
+              "sql_sha256": "a1bd68821653ea1f68eb60b649da74a0ab60fe47a01ff4f0729c132682f6f921"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 736,
+              "output_tokens": 80,
+              "total_tokens": 816,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 3107.984,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "id": "o0",
+              "table": "payments",
+              "column": "id",
+              "function": "COUNT",
+              "label": "payment_record_count",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "null",
+              "filters": []
+            },
+            {
+              "id": "o1",
+              "table": "payments",
+              "column": "rental_id",
+              "function": "COUNT",
+              "label": "rental_id_nonnull_count",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "payment_record_count",
+                "lineage": {
+                  "table": "payments",
+                  "column": "id",
+                  "operators": [
+                    "COUNT"
+                  ],
+                  "count_semantics": "physical_row_count"
+                },
+                "representation": "metric"
+              },
+              {
+                "label": "rental_id_nonnull_count",
+                "lineage": {
+                  "table": "payments",
+                  "column": "rental_id",
+                  "operators": [
+                    "COUNT"
+                  ]
+                },
+                "representation": "metric"
+              },
+              {
+                "label": "rental_id_null_count",
+                "lineage": null,
+                "representation": "opaque_relational_expression"
+              }
+            ],
+            "sql_sha256": "a1bd68821653ea1f68eb60b649da74a0ab60fe47a01ff4f0729c132682f6f921"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：payments",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "payments",
+          "row_count": 1,
+          "row_limit": 100,
+          "result_completeness": "within_return_limit",
+          "query_hash": "5aa80181d4197160",
+          "field_links": [
+            {
+              "source_text": "payments.rental_id",
+              "table": "payments",
+              "column": "rental_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.rental_id",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "d0a89c65fca849d19c46469f66f0a726002317b14e9ffc9a973cb5a39ec3179f",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "payment_record_count",
+              "query_hash": "5aa80181d4197160",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "payment_record_count"
+              }
+            },
+            {
+              "row": 0,
+              "column": "rental_id_nonnull_count",
+              "query_hash": "5aa80181d4197160",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "rental_id_nonnull_count"
+              }
+            },
+            {
+              "row": 0,
+              "column": "rental_id_null_count",
+              "query_hash": "5aa80181d4197160",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "rental_id_null_count"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          4,
+          3,
+          1
+        ]
+      ],
+      "scoring_only_reference_rows": [
+        [
+          4,
+          3,
+          1
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 863,
+          "output_tokens": 63,
+          "total_tokens": 926,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 5437.665
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 736,
+          "output_tokens": 80,
+          "total_tokens": 816,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 3107.984
+        }
+      ]
+    },
+    {
+      "id": "conditional",
+      "question": "按payments.customer_id分组，分别统计amount=0和amount>0的付款记录数，按customer_id升序。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按payments.customer_id分组，分别统计amount=0和amount>0的付款记录数，按customer_id升序。",
+        "rewritten_question": "按payments.customer_id分组，分别统计amount=0和amount>0的付款记录数，按customer_id升序。",
+        "sql": "SELECT \"p\".\"customer_id\" AS \"customer_id\", COUNT(CASE WHEN \"p\".\"amount\" = ? THEN ? END) AS \"zero_amount_payment_count\", COUNT(CASE WHEN \"p\".\"amount\" > ? THEN ? END) AS \"positive_amount_payment_count\" FROM \"payments\" AS \"p\" GROUP BY \"p\".\"customer_id\" ORDER BY \"customer_id\" ASC",
+        "parameters": [
+          0,
+          1,
+          0,
+          1
+        ],
+        "columns": [
+          "customer_id",
+          "zero_amount_payment_count",
+          "positive_amount_payment_count"
+        ],
+        "rows": [
+          {
+            "customer_id": 1,
+            "zero_amount_payment_count": 1,
+            "positive_amount_payment_count": 2
+          },
+          {
+            "customer_id": 2,
+            "zero_amount_payment_count": 0,
+            "positive_amount_payment_count": 1
+          }
+        ],
+        "plan": {
+          "table": "payments",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "customer_id"
+          ],
+          "dimension_tables": {
+            "customer_id": "payments"
+          },
+          "dimension_transforms": {
+            "customer_id": "raw"
+          },
+          "dimension_labels": {
+            "customer_id": "customer_id"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "payments.amount",
+              "table": "payments",
+              "column": "amount",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.amount",
+              "metric_function": null
+            },
+            {
+              "source_text": "payments.customer_id",
+              "table": "payments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.customer_id",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "按payments.customer_id分组，分别统计amount=0和amount>0的付款记录数，按customer_id升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按payments.customer_id分组，分别统计amount=0和amount>0的付款记录数，按customer_id升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "payments",
+                "column": "customer_id",
+                "grain": "raw",
+                "label": "customer_id"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 764,
+                "output_tokens": 80,
+                "total_tokens": 844,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 12069.545,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "customer_id",
+                  "lineage": {
+                    "table": "payments",
+                    "column": "customer_id",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "zero_amount_payment_count",
+                  "lineage": null,
+                  "representation": "opaque_relational_expression"
+                },
+                {
+                  "label": "positive_amount_payment_count",
+                  "lineage": null,
+                  "representation": "opaque_relational_expression"
+                }
+              ],
+              "sql_sha256": "bc95452897b05b2972bf35541ac54bb37e6eb3c5ff8f0249c1839965e9f1d68d"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 764,
+              "output_tokens": 80,
+              "total_tokens": 844,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 12069.545,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "customer_id",
+                "lineage": {
+                  "table": "payments",
+                  "column": "customer_id",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "zero_amount_payment_count",
+                "lineage": null,
+                "representation": "opaque_relational_expression"
+              },
+              {
+                "label": "positive_amount_payment_count",
+                "lineage": null,
+                "representation": "opaque_relational_expression"
+              }
+            ],
+            "sql_sha256": "bc95452897b05b2972bf35541ac54bb37e6eb3c5ff8f0249c1839965e9f1d68d"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：payments",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "payments",
+          "row_count": 2,
+          "row_limit": 100,
+          "result_completeness": "within_return_limit",
+          "query_hash": "70090bd70cdf6974",
+          "field_links": [
+            {
+              "source_text": "payments.amount",
+              "table": "payments",
+              "column": "amount",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.amount",
+              "metric_function": null
+            },
+            {
+              "source_text": "payments.customer_id",
+              "table": "payments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.customer_id",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "d0a89c65fca849d19c46469f66f0a726002317b14e9ffc9a973cb5a39ec3179f",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "customer_id",
+              "query_hash": "70090bd70cdf6974",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "customer_id"
+              }
+            },
+            {
+              "row": 0,
+              "column": "zero_amount_payment_count",
+              "query_hash": "70090bd70cdf6974",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "zero_amount_payment_count"
+              }
+            },
+            {
+              "row": 0,
+              "column": "positive_amount_payment_count",
+              "query_hash": "70090bd70cdf6974",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "positive_amount_payment_count"
+              }
+            },
+            {
+              "row": 1,
+              "column": "customer_id",
+              "query_hash": "70090bd70cdf6974",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "customer_id"
+              }
+            },
+            {
+              "row": 1,
+              "column": "zero_amount_payment_count",
+              "query_hash": "70090bd70cdf6974",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "zero_amount_payment_count"
+              }
+            },
+            {
+              "row": 1,
+              "column": "positive_amount_payment_count",
+              "query_hash": "70090bd70cdf6974",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "positive_amount_payment_count"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          1,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ],
+      "scoring_only_reference_rows": [
+        [
+          1,
+          1,
+          2
+        ],
+        [
+          2,
+          0,
+          1
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 869,
+          "output_tokens": 185,
+          "total_tokens": 1054,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 93,
+          "call_index": 1,
+          "latency_ms": 8851.868
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 764,
+          "output_tokens": 80,
+          "total_tokens": 844,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 12069.545
+        }
+      ]
+    },
+    {
+      "id": "nested",
+      "question": "先按payments.customer_id和rental_id合计amount，再按customer_id求每次租赁合计付款的平均值，按customer_id升序。",
+      "pass": false,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "先按payments.customer_id和rental_id合计amount，再按customer_id求每次租赁合计付款的平均值，按customer_id升序。",
+        "rewritten_question": "先按payments.customer_id和rental_id合计amount，再按customer_id求每次租赁合计付款的平均值，按customer_id升序。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": null,
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.0,
+          "rewritten_question": "先按payments.customer_id和rental_id合计amount，再按customer_id求每次租赁合计付款的平均值，按customer_id升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "SQL 的聚合层次与题意一致，但 rental_id 和 amount 都允许为 NULL。请确认 NULL rental_id 应作为一个分组、排除，还是按其他规则处理；并确认 amount 为 NULL 时是否采用 SQLite 的默认聚合语义（SUM 忽略 NULL，且 AVG 忽略 NULL 的租赁合计）。",
+          "clarification_code": "complex_query_semantic_review_rejected",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "complex_model_reviewed",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "先按payments.customer_id和rental_id合计amount，再按customer_id求每次租赁合计付款的平均值，按customer_id升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.0,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "complex_model_reviewed",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "rejected",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": false,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              }
+            }
+          },
+          "planner_audit": {},
+          "model_plan_diagnostics": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "rejected",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": false,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            }
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "SQL 的聚合层次与题意一致，但 rental_id 和 amount 都允许为 NULL。请确认 NULL rental_id 应作为一个分组、排除，还是按其他规则处理；并确认 amount 为 NULL 时是否采用 SQLite 的默认聚合语义（SUM 忽略 NULL，且 AVG 忽略 NULL 的租赁合计）。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "SQL 的聚合层次与题意一致，但 rental_id 和 amount 都允许为 NULL。请确认 NULL rental_id 应作为一个分组、排除，还是按其他规则处理；并确认 amount 为 NULL 时是否采用 SQLite 的默认聚合语义（SUM 忽略 NULL，且 AVG 忽略 NULL 的租赁合计）。",
+        "clarification_code": "complex_query_semantic_review_rejected",
+        "clarification_options": []
+      },
+      "actual_rows": [],
+      "scoring_only_reference_rows": [
+        [
+          1,
+          20.0
+        ],
+        [
+          2,
+          5.0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 876,
+          "output_tokens": 218,
+          "total_tokens": 1094,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 114,
+          "call_index": 1,
+          "latency_ms": 23146.879
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 829,
+          "output_tokens": 554,
+          "total_tokens": 1383,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 399,
+          "call_index": 2,
+          "latency_ms": 12828.489
+        }
+      ]
+    },
+    {
+      "id": "aggregate_threshold",
+      "question": "先按payments.customer_id合计amount，只返回合计金额高于所有客户合计金额平均值的customer_id和合计金额，按customer_id升序。",
+      "pass": false,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "先按payments.customer_id合计amount，只返回合计金额高于所有客户合计金额平均值的customer_id和合计金额，按customer_id升序。",
+        "rewritten_question": "先按payments.customer_id合计amount，只返回合计金额高于所有客户合计金额平均值的customer_id和合计金额，按customer_id升序。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": null,
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.0,
+          "rewritten_question": "先按payments.customer_id合计amount，只返回合计金额高于所有客户合计金额平均值的customer_id和合计金额，按customer_id升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "payments.customer_id 和 amount 都允许为 NULL，但问题未说明是否应排除 NULL customer_id、如何处理全为 NULL 的 amount，以及平均值是否应忽略这些 NULL 合计。候选 SQL 会将 NULL customer_id 作为一组，并依赖 SUM/AVG 的默认 NULL 语义；需明确这些口径后才能批准。",
+          "clarification_code": "complex_query_semantic_review_rejected",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "complex_model_reviewed",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "先按payments.customer_id合计amount，只返回合计金额高于所有客户合计金额平均值的customer_id和合计金额，按customer_id升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.0,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "complex_model_reviewed",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "rejected",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": false,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              }
+            }
+          },
+          "planner_audit": {},
+          "model_plan_diagnostics": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "rejected",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": false,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            }
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "payments.customer_id 和 amount 都允许为 NULL，但问题未说明是否应排除 NULL customer_id、如何处理全为 NULL 的 amount，以及平均值是否应忽略这些 NULL 合计。候选 SQL 会将 NULL customer_id 作为一组，并依赖 SUM/AVG 的默认 NULL 语义；需明确这些口径后才能批准。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "payments.customer_id 和 amount 都允许为 NULL，但问题未说明是否应排除 NULL customer_id、如何处理全为 NULL 的 amount，以及平均值是否应忽略这些 NULL 合计。候选 SQL 会将 NULL customer_id 作为一组，并依赖 SUM/AVG 的默认 NULL 语义；需明确这些口径后才能批准。",
+        "clarification_code": "complex_query_semantic_review_rejected",
+        "clarification_options": []
+      },
+      "actual_rows": [],
+      "scoring_only_reference_rows": [
+        [
+          1,
+          40.0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 878,
+          "output_tokens": 290,
+          "total_tokens": 1168,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 183,
+          "call_index": 1,
+          "latency_ms": 17096.714
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 826,
+          "output_tokens": 671,
+          "total_tokens": 1497,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 516,
+          "call_index": 2,
+          "latency_ms": 27496.815
+        }
+      ]
+    },
+    {
+      "id": "anti_join",
+      "question": "列出没有任何payments付款记录的customers.id和name，关联payments.customer_id=customers.id，按id升序。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "列出没有任何payments付款记录的customers.id和name，关联payments.customer_id=customers.id，按id升序。",
+        "rewritten_question": "列出没有任何payments付款记录的customers.id和name，关联payments.customer_id=customers.id，按id升序。",
+        "sql": "SELECT \"c\".\"id\" AS \"id\", \"c\".\"name\" AS \"name\" FROM \"customers\" AS \"c\" WHERE NOT EXISTS(SELECT ? AS \"1\" FROM \"payments\" AS \"p\" WHERE \"p\".\"customer_id\" = \"c\".\"id\") ORDER BY \"c\".\"id\" ASC",
+        "parameters": [
+          1
+        ],
+        "columns": [
+          "id",
+          "name"
+        ],
+        "rows": [
+          {
+            "id": 3,
+            "name": "empty"
+          }
+        ],
+        "plan": {
+          "table": "customers",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "id",
+            "name"
+          ],
+          "dimension_tables": {
+            "id": "customers",
+            "name": "customers"
+          },
+          "dimension_transforms": {
+            "id": "raw",
+            "name": "raw"
+          },
+          "dimension_labels": {
+            "id": "id",
+            "name": "name"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "customers.id",
+              "table": "customers",
+              "column": "id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "customers.id",
+              "metric_function": null
+            },
+            {
+              "source_text": "customers.name",
+              "table": "customers",
+              "column": "name",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "customers.name",
+              "metric_function": null
+            },
+            {
+              "source_text": "payments.customer_id",
+              "table": "payments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.customer_id",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "payments"
+          ],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "列出没有任何payments付款记录的customers.id和name，关联payments.customer_id=customers.id，按id升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "列出没有任何payments付款记录的customers.id和name，关联payments.customer_id=customers.id，按id升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "customers",
+                "column": "id",
+                "grain": "raw",
+                "label": "id"
+              },
+              {
+                "table": "customers",
+                "column": "name",
+                "grain": "raw",
+                "label": "name"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 748,
+                "output_tokens": 80,
+                "total_tokens": 828,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 2765.578,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "id",
+                  "lineage": {
+                    "table": "customers",
+                    "column": "id",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "name",
+                  "lineage": {
+                    "table": "customers",
+                    "column": "name",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                }
+              ],
+              "sql_sha256": "d2ea61c19330d9437f952e264bb3ba9ef4f81dbe5e61ef75cb42a37a6ee7fa93"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 748,
+              "output_tokens": 80,
+              "total_tokens": 828,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 2765.578,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "id",
+                "lineage": {
+                  "table": "customers",
+                  "column": "id",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "name",
+                "lineage": {
+                  "table": "customers",
+                  "column": "name",
+                  "operators": []
+                },
+                "representation": "dimension"
+              }
+            ],
+            "sql_sha256": "d2ea61c19330d9437f952e264bb3ba9ef4f81dbe5e61ef75cb42a37a6ee7fa93"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：customers",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "customers",
+          "row_count": 1,
+          "row_limit": 100,
+          "result_completeness": "within_return_limit",
+          "query_hash": "350d48b7244fdda4",
+          "field_links": [
+            {
+              "source_text": "customers.id",
+              "table": "customers",
+              "column": "id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "customers.id",
+              "metric_function": null
+            },
+            {
+              "source_text": "customers.name",
+              "table": "customers",
+              "column": "name",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "customers.name",
+              "metric_function": null
+            },
+            {
+              "source_text": "payments.customer_id",
+              "table": "payments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.customer_id",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "d0a89c65fca849d19c46469f66f0a726002317b14e9ffc9a973cb5a39ec3179f",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "id",
+              "query_hash": "350d48b7244fdda4",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "id"
+              }
+            },
+            {
+              "row": 0,
+              "column": "name",
+              "query_hash": "350d48b7244fdda4",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "name"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          3,
+          "empty"
+        ]
+      ],
+      "scoring_only_reference_rows": [
+        [
+          3,
+          "empty"
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 868,
+          "output_tokens": 67,
+          "total_tokens": 935,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 4264.89
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 748,
+          "output_tokens": 80,
+          "total_tokens": 828,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 2765.578
+        }
+      ]
+    },
+    {
+      "id": "latest",
+      "question": "对每个payments.customer_id取created_at最新一条，同一时刻id最大，只返回id、customer_id、amount，按customer_id升序。",
+      "pass": false,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "对每个payments.customer_id取created_at最新一条，同一时刻id最大，只返回id、customer_id、amount，按customer_id升序。",
+        "rewritten_question": "对每个payments.customer_id取created_at最新一条，同一时刻id最大，只返回id、customer_id、amount，按customer_id升序。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": null,
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": null,
+          "metric_label": null,
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.0,
+          "rewritten_question": "对每个payments.customer_id取created_at最新一条，同一时刻id最大，只返回id、customer_id、amount，按customer_id升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "复杂查询未通过结构或模型核验，请明确查询字段、关联及统计口径。",
+          "clarification_code": "complex_query_validation_failed",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "complex_model_reviewed",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "对每个payments.customer_id取created_at最新一条，同一时刻id最大，只返回id、customer_id、amount，按customer_id升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": null,
+              "label": null
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.0,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "complex_model_reviewed",
+            "planner_audit": {
+              "decision": "rejected",
+              "error_type": "GenerationError",
+              "reason": "model_proposal_failed"
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {}
+          },
+          "planner_audit": {
+            "decision": "rejected",
+            "error_type": "GenerationError",
+            "reason": "model_proposal_failed"
+          },
+          "model_plan_diagnostics": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {},
+          "output_metrics": []
+        },
+        "explanation": [
+          "复杂查询未通过结构或模型核验，请明确查询字段、关联及统计口径。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "复杂查询未通过结构或模型核验，请明确查询字段、关联及统计口径。",
+        "clarification_code": "complex_query_validation_failed",
+        "clarification_options": []
+      },
+      "actual_rows": [],
+      "scoring_only_reference_rows": [
+        [
+          3,
+          1,
+          30.0
+        ],
+        [
+          4,
+          2,
+          5.0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 875,
+          "output_tokens": 258,
+          "total_tokens": 1133,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 124,
+          "call_index": 1,
+          "latency_ms": 14957.883
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": null,
+          "status": "failed",
+          "model_verified": false,
+          "call_index": 2,
+          "latency_ms": 45014.035
+        }
+      ]
+    },
+    {
+      "id": "weighted",
+      "question": "查询payments.amount的加权平均，权重是id，即SUM(amount*id)/SUM(id)，分母为零返回NULL。",
+      "pass": false,
+      "result": {
+        "status": "clarification",
+        "result_state": "rows",
+        "notices": [],
+        "question": "查询payments.amount的加权平均，权重是id，即SUM(amount*id)/SUM(id)，分母为零返回NULL。",
+        "rewritten_question": "查询payments.amount的加权平均，权重是id，即SUM(amount*id)/SUM(id)，分母为零返回NULL。",
+        "sql": null,
+        "parameters": [],
+        "columns": [],
+        "rows": [],
+        "plan": {
+          "table": null,
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.0,
+          "rewritten_question": "查询payments.amount的加权平均，权重是id，即SUM(amount*id)/SUM(id)，分母为零返回NULL。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": "SQLite对整数除法执行整数除法；amount是REAL，但当其参与乘法时若数据为NULL则该行乘积为NULL，而分母SUM(id)仍可能计入该行的id。当前SQL未明确处理这种NULL语义，且若所有amount均为NULL但id非零，结果会是NULL；请确认是否按题面公式直接采用SQL聚合的NULL忽略规则。",
+          "clarification_code": "complex_query_semantic_review_rejected",
+          "clarification_options": [],
+          "assumptions": [],
+          "planner_source": "complex_model_reviewed",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "查询payments.amount的加权平均，权重是id，即SUM(amount*id)/SUM(id)，分母为零返回NULL。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.0,
+            "unresolved": [],
+            "execution_allowed": false,
+            "planner_source": "complex_model_reviewed",
+            "planner_audit": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "rejected",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": false,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              }
+            }
+          },
+          "planner_audit": {},
+          "model_plan_diagnostics": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "rejected",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": false,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            }
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "SQLite对整数除法执行整数除法；amount是REAL，但当其参与乘法时若数据为NULL则该行乘积为NULL，而分母SUM(id)仍可能计入该行的id。当前SQL未明确处理这种NULL语义，且若所有amount均为NULL但id非零，结果会是NULL；请确认是否按题面公式直接采用SQL聚合的NULL忽略规则。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "consistency": "sqlite_read_transaction"
+        },
+        "clarification": "SQLite对整数除法执行整数除法；amount是REAL，但当其参与乘法时若数据为NULL则该行乘积为NULL，而分母SUM(id)仍可能计入该行的id。当前SQL未明确处理这种NULL语义，且若所有amount均为NULL但id非零，结果会是NULL；请确认是否按题面公式直接采用SQL聚合的NULL忽略规则。",
+        "clarification_code": "complex_query_semantic_review_rejected",
+        "clarification_options": []
+      },
+      "actual_rows": [],
+      "scoring_only_reference_rows": [
+        [
+          12.0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 870,
+          "output_tokens": 94,
+          "total_tokens": 964,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 50,
+          "call_index": 1,
+          "latency_ms": 3685.207
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 722,
+          "output_tokens": 170,
+          "total_tokens": 892,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 4426.251
+        }
+      ]
+    },
+    {
+      "id": "fanout",
+      "question": "按customers.id统计payments付款记录数和shipments配送记录数，分别独立聚合，不能扇出；没有对应记录时为0，按customers.id升序。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "按customers.id统计payments付款记录数和shipments配送记录数，分别独立聚合，不能扇出；没有对应记录时为0，按customers.id升序。",
+        "rewritten_question": "按customers.id统计payments付款记录数和shipments配送记录数，分别独立聚合，不能扇出；没有对应记录时为0，按customers.id升序。",
+        "sql": "WITH \"payment_counts\" AS (SELECT \"payments\".\"customer_id\" AS \"customer_id\", COUNT(*) AS \"payment_record_count\" FROM \"payments\" AS \"payments\" GROUP BY \"payments\".\"customer_id\"), \"shipment_counts\" AS (SELECT \"shipments\".\"customer_id\" AS \"customer_id\", COUNT(*) AS \"shipment_record_count\" FROM \"shipments\" AS \"shipments\" GROUP BY \"shipments\".\"customer_id\") SELECT \"customers\".\"id\" AS \"customer_id\", COALESCE(\"payment_counts\".\"payment_record_count\", ?) AS \"payment_record_count\", COALESCE(\"shipment_counts\".\"shipment_record_count\", ?) AS \"shipment_record_count\" FROM \"customers\" AS \"customers\" LEFT JOIN \"payment_counts\" AS \"payment_counts\" ON \"payment_counts\".\"customer_id\" = \"customers\".\"id\" LEFT JOIN \"shipment_counts\" AS \"shipment_counts\" ON \"shipment_counts\".\"customer_id\" = \"customers\".\"id\" ORDER BY \"customers\".\"id\" ASC",
+        "parameters": [
+          0,
+          0
+        ],
+        "columns": [
+          "customer_id",
+          "payment_record_count",
+          "shipment_record_count"
+        ],
+        "rows": [
+          {
+            "customer_id": 1,
+            "payment_record_count": 3,
+            "shipment_record_count": 3
+          },
+          {
+            "customer_id": 2,
+            "payment_record_count": 1,
+            "shipment_record_count": 1
+          },
+          {
+            "customer_id": 3,
+            "payment_record_count": 0,
+            "shipment_record_count": 0
+          }
+        ],
+        "plan": {
+          "table": "customers",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "id"
+          ],
+          "dimension_tables": {
+            "id": "customers"
+          },
+          "dimension_transforms": {
+            "id": "raw"
+          },
+          "dimension_labels": {
+            "id": "customer_id"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "customers.id",
+              "table": "customers",
+              "column": "id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "customers.id",
+              "metric_function": null
+            },
+            {
+              "source_text": "payments.customer_id",
+              "table": "payments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.customer_id",
+              "metric_function": null
+            },
+            {
+              "source_text": "shipments.customer_id",
+              "table": "shipments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "shipments.customer_id",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "payments",
+            "shipments"
+          ],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "按customers.id统计payments付款记录数和shipments配送记录数，分别独立聚合，不能扇出；没有对应记录时为0，按customers.id升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按customers.id统计payments付款记录数和shipments配送记录数，分别独立聚合，不能扇出；没有对应记录时为0，按customers.id升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "customers",
+                "column": "id",
+                "grain": "raw",
+                "label": "customer_id"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 908,
+                "output_tokens": 171,
+                "total_tokens": 1079,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 89,
+                "call_index": 2,
+                "latency_ms": 4752.544,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [
+              {
+                "id": "o1",
+                "table": "payments",
+                "column": "id",
+                "function": "COUNT",
+                "label": "payment_record_count",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "zero",
+                "filters": []
+              },
+              {
+                "id": "o2",
+                "table": "shipments",
+                "column": "id",
+                "function": "COUNT",
+                "label": "shipment_record_count",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "zero",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "customer_id",
+                  "lineage": {
+                    "table": "customers",
+                    "column": "id",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "payment_record_count",
+                  "lineage": {
+                    "table": "payments",
+                    "column": "id",
+                    "operators": [
+                      "COUNT"
+                    ],
+                    "count_semantics": "physical_row_count",
+                    "missing": "zero"
+                  },
+                  "representation": "metric"
+                },
+                {
+                  "label": "shipment_record_count",
+                  "lineage": {
+                    "table": "shipments",
+                    "column": "id",
+                    "operators": [
+                      "COUNT"
+                    ],
+                    "count_semantics": "physical_row_count",
+                    "missing": "zero"
+                  },
+                  "representation": "metric"
+                }
+              ],
+              "sql_sha256": "393c7830be23db7575bcb3c150352d008fa191b2bc2fb3de3fc0965743738469"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 908,
+              "output_tokens": 171,
+              "total_tokens": 1079,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 89,
+              "call_index": 2,
+              "latency_ms": 4752.544,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "id": "o1",
+              "table": "payments",
+              "column": "id",
+              "function": "COUNT",
+              "label": "payment_record_count",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "zero",
+              "filters": []
+            },
+            {
+              "id": "o2",
+              "table": "shipments",
+              "column": "id",
+              "function": "COUNT",
+              "label": "shipment_record_count",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "zero",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "customer_id",
+                "lineage": {
+                  "table": "customers",
+                  "column": "id",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "payment_record_count",
+                "lineage": {
+                  "table": "payments",
+                  "column": "id",
+                  "operators": [
+                    "COUNT"
+                  ],
+                  "count_semantics": "physical_row_count",
+                  "missing": "zero"
+                },
+                "representation": "metric"
+              },
+              {
+                "label": "shipment_record_count",
+                "lineage": {
+                  "table": "shipments",
+                  "column": "id",
+                  "operators": [
+                    "COUNT"
+                  ],
+                  "count_semantics": "physical_row_count",
+                  "missing": "zero"
+                },
+                "representation": "metric"
+              }
+            ],
+            "sql_sha256": "393c7830be23db7575bcb3c150352d008fa191b2bc2fb3de3fc0965743738469"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：customers",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "customers",
+          "row_count": 3,
+          "row_limit": 100,
+          "result_completeness": "within_return_limit",
+          "query_hash": "f2567771c165ff3c",
+          "field_links": [
+            {
+              "source_text": "customers.id",
+              "table": "customers",
+              "column": "id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "customers.id",
+              "metric_function": null
+            },
+            {
+              "source_text": "payments.customer_id",
+              "table": "payments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "payments.customer_id",
+              "metric_function": null
+            },
+            {
+              "source_text": "shipments.customer_id",
+              "table": "shipments",
+              "column": "customer_id",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "shipments.customer_id",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "d0a89c65fca849d19c46469f66f0a726002317b14e9ffc9a973cb5a39ec3179f",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "customer_id",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "customer_id"
+              }
+            },
+            {
+              "row": 0,
+              "column": "payment_record_count",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "payment_record_count"
+              }
+            },
+            {
+              "row": 0,
+              "column": "shipment_record_count",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "shipment_record_count"
+              }
+            },
+            {
+              "row": 1,
+              "column": "customer_id",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "customer_id"
+              }
+            },
+            {
+              "row": 1,
+              "column": "payment_record_count",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "payment_record_count"
+              }
+            },
+            {
+              "row": 1,
+              "column": "shipment_record_count",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "shipment_record_count"
+              }
+            },
+            {
+              "row": 2,
+              "column": "customer_id",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "customer_id"
+              }
+            },
+            {
+              "row": 2,
+              "column": "payment_record_count",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "payment_record_count"
+              }
+            },
+            {
+              "row": 2,
+              "column": "shipment_record_count",
+              "query_hash": "f2567771c165ff3c",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "shipment_record_count"
+              }
+            }
+          ]
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          1,
+          3,
+          3
+        ],
+        [
+          2,
+          1,
+          1
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "scoring_only_reference_rows": [
+        [
+          1,
+          3,
+          3
+        ],
+        [
+          2,
+          1,
+          1
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 881,
+          "output_tokens": 192,
+          "total_tokens": 1073,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 55,
+          "call_index": 1,
+          "latency_ms": 5395.152
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 908,
+          "output_tokens": 171,
+          "total_tokens": 1079,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 89,
+          "call_index": 2,
+          "latency_ms": 4752.544
+        }
+      ]
+    },
+    {
+      "id": "table_sum",
+      "question": "What is the total cost in 2031 for Network, Storage and Support?",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "question": "What is the total cost in 2031 for Network, Storage and Support?",
+        "answer": "6 USD thousand",
+        "answer_mode": "native_table_model_reviewed",
+        "answer_scope": {
+          "row_labels": [
+            "Network",
+            "Storage",
+            "Support"
+          ],
+          "column_header_paths": [
+            [
+              "Cost USD '000",
+              "2031"
+            ],
+            [
+              "Cost USD '000",
+              "2031"
+            ],
+            [
+              "Cost USD '000",
+              "2031"
+            ]
+          ],
+          "period": "2031",
+          "period_scope_text": [],
+          "unit": "currency:USD",
+          "currency": "USD",
+          "scale": "1000",
+          "operand_periods": [
+            "2031",
+            "2031",
+            "2031"
+          ],
+          "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+          "calculator_input_eligible": false
+        },
+        "computation": {
+          "answer": "6 USD thousand",
+          "operation": "sum",
+          "operands": [
+            "1",
+            "2",
+            "3"
+          ],
+          "numeric_result": "6",
+          "unit": "currency:USD",
+          "scale": "1000",
+          "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+          "physical_calculator_input_eligible": false,
+          "operand_periods": [
+            "2031",
+            "2031",
+            "2031"
+          ]
+        },
+        "semantic_review": {
+          "all_entity_period_conditions_bound": true,
+          "all_requested_rows_and_columns_selected": true,
+          "approved": true,
+          "no_competing_source_or_scope": true,
+          "unit_scale_and_sign_preserved": true,
+          "whole_question_answered": true
+        },
+        "semantic_verification": "independent_model_review_not_formal_entailment",
+        "model_audits": [
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "native_table_fact_selection",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 1810,
+            "output_tokens": 74,
+            "total_tokens": 1884,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 38,
+            "call_index": 1,
+            "latency_ms": 3373.352
+          },
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "native_table_independent_scope_review",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 1959,
+            "output_tokens": 59,
+            "total_tokens": 2018,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 0,
+            "call_index": 2,
+            "latency_ms": 2624.517
+          }
+        ],
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "cost",
+            "title": "Operating cost report",
+            "snippet": "Network: 1",
+            "source_uri": "/api/v1/knowledge/documents/cost/original",
+            "metadata": {
+              "document_id": "cost",
+              "page_no": 1,
+              "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+              "source_locator": "page:1:native-table:6fff6a0dfe11ae2f9b77fe89:fact:6fff6a0dfe11ae2f9b77fe89:row:0:column:1",
+              "fact": {
+                "fact_id": "6fff6a0dfe11ae2f9b77fe89:row:0:column:1",
+                "table_id": "6fff6a0dfe11ae2f9b77fe89",
+                "row_header": "Network",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "row_header_bbox_display_pt": [
+                  40.0,
+                  104.25,
+                  76.67000579833984,
+                  117.98999786376953
+                ],
+                "column_header_bboxes_display_pt": [
+                  [
+                    230.0,
+                    54.25,
+                    295.82000732421875,
+                    67.98999786376953
+                  ],
+                  [
+                    230.0,
+                    74.25,
+                    252.239990234375,
+                    87.98999786376953
+                  ]
+                ],
+                "bbox_display_pt": [
+                  230.0,
+                  104.25,
+                  235.55999755859375,
+                  117.98999786376953
+                ],
+                "raw_value": "1",
+                "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+                "page_no": 1,
+                "unit": "currency:USD",
+                "scale": "1000",
+                "currency": "USD",
+                "unit_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "period_status": "explicit_column_year",
+                "value_kind": "native_aligned_cell_literal",
+                "calculator_input_eligible": false,
+                "validation_scope": "native_word_alignment_not_visible_ocr_or_semantic_truth"
+              },
+              "retrieval_channel": "native_aligned_numeric_annotation"
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "cost",
+            "title": "Operating cost report",
+            "snippet": "Storage: 2",
+            "source_uri": "/api/v1/knowledge/documents/cost/original",
+            "metadata": {
+              "document_id": "cost",
+              "page_no": 1,
+              "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+              "source_locator": "page:1:native-table:6fff6a0dfe11ae2f9b77fe89:fact:6fff6a0dfe11ae2f9b77fe89:row:1:column:1",
+              "fact": {
+                "fact_id": "6fff6a0dfe11ae2f9b77fe89:row:1:column:1",
+                "table_id": "6fff6a0dfe11ae2f9b77fe89",
+                "row_header": "Storage",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "row_header_bbox_display_pt": [
+                  40.0,
+                  129.25,
+                  75.02000427246094,
+                  142.99000549316406
+                ],
+                "column_header_bboxes_display_pt": [
+                  [
+                    230.0,
+                    54.25,
+                    295.82000732421875,
+                    67.98999786376953
+                  ],
+                  [
+                    230.0,
+                    74.25,
+                    252.239990234375,
+                    87.98999786376953
+                  ]
+                ],
+                "bbox_display_pt": [
+                  230.0,
+                  129.25,
+                  235.55999755859375,
+                  142.99000549316406
+                ],
+                "raw_value": "2",
+                "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+                "page_no": 1,
+                "unit": "currency:USD",
+                "scale": "1000",
+                "currency": "USD",
+                "unit_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "period_status": "explicit_column_year",
+                "value_kind": "native_aligned_cell_literal",
+                "calculator_input_eligible": false,
+                "validation_scope": "native_word_alignment_not_visible_ocr_or_semantic_truth"
+              },
+              "retrieval_channel": "native_aligned_numeric_annotation"
+            }
+          },
+          {
+            "citation_id": 3,
+            "document_id": "cost",
+            "title": "Operating cost report",
+            "snippet": "Support: 3",
+            "source_uri": "/api/v1/knowledge/documents/cost/original",
+            "metadata": {
+              "document_id": "cost",
+              "page_no": 1,
+              "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+              "source_locator": "page:1:native-table:6fff6a0dfe11ae2f9b77fe89:fact:6fff6a0dfe11ae2f9b77fe89:row:2:column:1",
+              "fact": {
+                "fact_id": "6fff6a0dfe11ae2f9b77fe89:row:2:column:1",
+                "table_id": "6fff6a0dfe11ae2f9b77fe89",
+                "row_header": "Support",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "row_header_bbox_display_pt": [
+                  40.0,
+                  154.25,
+                  75.02000427246094,
+                  167.99000549316406
+                ],
+                "column_header_bboxes_display_pt": [
+                  [
+                    230.0,
+                    54.25,
+                    295.82000732421875,
+                    67.98999786376953
+                  ],
+                  [
+                    230.0,
+                    74.25,
+                    252.239990234375,
+                    87.98999786376953
+                  ]
+                ],
+                "bbox_display_pt": [
+                  230.0,
+                  154.25,
+                  235.55999755859375,
+                  167.99000549316406
+                ],
+                "raw_value": "3",
+                "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+                "page_no": 1,
+                "unit": "currency:USD",
+                "scale": "1000",
+                "currency": "USD",
+                "unit_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "period_status": "explicit_column_year",
+                "value_kind": "native_aligned_cell_literal",
+                "calculator_input_eligible": false,
+                "validation_scope": "native_word_alignment_not_visible_ocr_or_semantic_truth"
+              },
+              "retrieval_channel": "native_aligned_numeric_annotation"
+            }
+          }
+        ],
+        "trace": [
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "model_reviewed_native_annotation_computation",
+            "model_requests_attempted": 2,
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "native_table_fact_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1810,
+                "output_tokens": 74,
+                "total_tokens": 1884,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 38,
+                "call_index": 1,
+                "latency_ms": 3373.352
+              },
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "native_table_independent_scope_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1959,
+                "output_tokens": 59,
+                "total_tokens": 2018,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 2624.517
+              }
+            ],
+            "candidate_document_ids": [
+              "cost"
+            ],
+            "scope": "selected_pdf_all_pages_not_global_corpus",
+            "complete_candidate_scan": true
+          }
+        ],
+        "calculator_input_eligible": false,
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "native_table_fact_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1810,
+          "output_tokens": 74,
+          "total_tokens": 1884,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 38,
+          "call_index": 1,
+          "latency_ms": 3373.352
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "native_table_independent_scope_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1959,
+          "output_tokens": 59,
+          "total_tokens": 2018,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 2624.517
+        }
+      ]
+    },
+    {
+      "id": "table_difference",
+      "question": "For Network, subtract its 2031 cost from its 2032 cost.",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "question": "For Network, subtract its 2031 cost from its 2032 cost.",
+        "answer": "2 USD thousand",
+        "answer_mode": "native_table_model_reviewed",
+        "answer_scope": {
+          "row_labels": [
+            "Network",
+            "Network"
+          ],
+          "column_header_paths": [
+            [
+              "Cost USD '000",
+              "2032"
+            ],
+            [
+              "Cost USD '000",
+              "2031"
+            ]
+          ],
+          "period": "2032",
+          "period_scope_text": [],
+          "unit": "currency:USD",
+          "currency": "USD",
+          "scale": "1000",
+          "operand_periods": [
+            "2032",
+            "2031"
+          ],
+          "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+          "calculator_input_eligible": false
+        },
+        "computation": {
+          "answer": "2 USD thousand",
+          "operation": "difference",
+          "operands": [
+            "3",
+            "1"
+          ],
+          "numeric_result": "2",
+          "unit": "currency:USD",
+          "scale": "1000",
+          "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+          "physical_calculator_input_eligible": false,
+          "operand_periods": [
+            "2032",
+            "2031"
+          ]
+        },
+        "semantic_review": {
+          "all_entity_period_conditions_bound": true,
+          "all_requested_rows_and_columns_selected": true,
+          "approved": true,
+          "no_competing_source_or_scope": true,
+          "unit_scale_and_sign_preserved": true,
+          "whole_question_answered": true
+        },
+        "semantic_verification": "independent_model_review_not_formal_entailment",
+        "model_audits": [
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "native_table_fact_selection",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 1810,
+            "output_tokens": 69,
+            "total_tokens": 1879,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 36,
+            "call_index": 1,
+            "latency_ms": 10283.363
+          },
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "native_table_independent_scope_review",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 1948,
+            "output_tokens": 59,
+            "total_tokens": 2007,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 0,
+            "call_index": 2,
+            "latency_ms": 2449.048
+          }
+        ],
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "cost",
+            "title": "Operating cost report",
+            "snippet": "Network: 3",
+            "source_uri": "/api/v1/knowledge/documents/cost/original",
+            "metadata": {
+              "document_id": "cost",
+              "page_no": 1,
+              "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+              "source_locator": "page:1:native-table:6fff6a0dfe11ae2f9b77fe89:fact:6fff6a0dfe11ae2f9b77fe89:row:0:column:2",
+              "fact": {
+                "fact_id": "6fff6a0dfe11ae2f9b77fe89:row:0:column:2",
+                "table_id": "6fff6a0dfe11ae2f9b77fe89",
+                "row_header": "Network",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2032"
+                ],
+                "row_header_bbox_display_pt": [
+                  40.0,
+                  104.25,
+                  76.67000579833984,
+                  117.98999786376953
+                ],
+                "column_header_bboxes_display_pt": [
+                  [
+                    460.0,
+                    54.25,
+                    525.8200073242188,
+                    67.98999786376953
+                  ],
+                  [
+                    460.0,
+                    74.25,
+                    482.239990234375,
+                    87.98999786376953
+                  ]
+                ],
+                "bbox_display_pt": [
+                  460.0,
+                  104.25,
+                  465.55999755859375,
+                  117.98999786376953
+                ],
+                "raw_value": "3",
+                "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+                "page_no": 1,
+                "unit": "currency:USD",
+                "scale": "1000",
+                "currency": "USD",
+                "unit_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2032",
+                "period_status": "explicit_column_year",
+                "value_kind": "native_aligned_cell_literal",
+                "calculator_input_eligible": false,
+                "validation_scope": "native_word_alignment_not_visible_ocr_or_semantic_truth"
+              },
+              "retrieval_channel": "native_aligned_numeric_annotation"
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "cost",
+            "title": "Operating cost report",
+            "snippet": "Network: 1",
+            "source_uri": "/api/v1/knowledge/documents/cost/original",
+            "metadata": {
+              "document_id": "cost",
+              "page_no": 1,
+              "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+              "source_locator": "page:1:native-table:6fff6a0dfe11ae2f9b77fe89:fact:6fff6a0dfe11ae2f9b77fe89:row:0:column:1",
+              "fact": {
+                "fact_id": "6fff6a0dfe11ae2f9b77fe89:row:0:column:1",
+                "table_id": "6fff6a0dfe11ae2f9b77fe89",
+                "row_header": "Network",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "row_header_bbox_display_pt": [
+                  40.0,
+                  104.25,
+                  76.67000579833984,
+                  117.98999786376953
+                ],
+                "column_header_bboxes_display_pt": [
+                  [
+                    230.0,
+                    54.25,
+                    295.82000732421875,
+                    67.98999786376953
+                  ],
+                  [
+                    230.0,
+                    74.25,
+                    252.239990234375,
+                    87.98999786376953
+                  ]
+                ],
+                "bbox_display_pt": [
+                  230.0,
+                  104.25,
+                  235.55999755859375,
+                  117.98999786376953
+                ],
+                "raw_value": "1",
+                "source_sha256": "399d64b9229e217add2a90370abb52f27966fd9b22e8e30b3dff59fa4a19ace4",
+                "page_no": 1,
+                "unit": "currency:USD",
+                "scale": "1000",
+                "currency": "USD",
+                "unit_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "period_status": "explicit_column_year",
+                "value_kind": "native_aligned_cell_literal",
+                "calculator_input_eligible": false,
+                "validation_scope": "native_word_alignment_not_visible_ocr_or_semantic_truth"
+              },
+              "retrieval_channel": "native_aligned_numeric_annotation"
+            }
+          }
+        ],
+        "trace": [
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "model_reviewed_native_annotation_computation",
+            "model_requests_attempted": 2,
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "native_table_fact_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1810,
+                "output_tokens": 69,
+                "total_tokens": 1879,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 36,
+                "call_index": 1,
+                "latency_ms": 10283.363
+              },
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "native_table_independent_scope_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1948,
+                "output_tokens": 59,
+                "total_tokens": 2007,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 2449.048
+              }
+            ],
+            "candidate_document_ids": [
+              "cost"
+            ],
+            "scope": "selected_pdf_all_pages_not_global_corpus",
+            "complete_candidate_scan": true
+          }
+        ],
+        "calculator_input_eligible": false,
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "native_table_fact_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1810,
+          "output_tokens": 69,
+          "total_tokens": 1879,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 36,
+          "call_index": 1,
+          "latency_ms": 10283.363
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "native_table_independent_scope_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1948,
+          "output_tokens": 59,
+          "total_tokens": 2007,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 2449.048
+        }
+      ]
+    },
+    {
+      "id": "whole_question",
+      "question": "What is the purpose of the service and who manages it?",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "question": "What is the purpose of the service and who manages it?",
+        "answer_mode": "model_grounded",
+        "answer": "The service is intended to protect records. [1]\n\nAlice manages the service. [1]",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "8672ba365ede106fb63d7d82",
+            "title": "Service guide",
+            "score": 0.6409,
+            "matched_terms": [
+              "service",
+              "the",
+              "is",
+              "manages"
+            ],
+            "snippet": "The service is intended to protect records. Alice manages the service.",
+            "source_uri": "/api/v1/knowledge/documents/guide/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "ba7a0af24d01a765c2e1ee267f1eaba35a717eb456ec5172aa2da5216b182a33",
+              "original_document_id": "guide",
+              "document_id": "guide",
+              "chunk_id": "8672ba365ede106fb63d7d82",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 1.784656,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 8.92328,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.5,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 2.5
+              },
+              "identifier_anchors": [],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "manages",
+                  "service"
+                ],
+                "body_sha256": "ba7a0af24d01a765c2e1ee267f1eaba35a717eb456ec5172aa2da5216b182a33",
+                "utility": 1.1,
+                "uncovered_lexical_facets": [
+                  "it",
+                  "purpose"
+                ],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "The service is intended to protect records. Alice manages the service.",
+              "source_sha256": "ba7a0af24d01a765c2e1ee267f1eaba35a717eb456ec5172aa2da5216b182a33",
+              "chunk_sha256": "ba7a0af24d01a765c2e1ee267f1eaba35a717eb456ec5172aa2da5216b182a33",
+              "evidence_sha256": "ba7a0af24d01a765c2e1ee267f1eaba35a717eb456ec5172aa2da5216b182a33",
+              "chunk_payload_sha256": "aa54d9e25007aa39f1891a354a2d829049c9bc4814330bb59036832a4fb59e5a",
+              "offset_start": 0,
+              "offset_end": 70,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 70,
+              "evidence_chars": 70,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 1
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 1,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "explicit_document_all_pages",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "explicit_document_all_pages"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 1,
+            "total_chars": 70,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "validated",
+            "model": "gpt-6-luna"
+          },
+          {
+            "stage": "typed_answer_projection",
+            "status": "unsupported",
+            "reason": "no_verified_relation_slot",
+            "original_answer_retained": true
+          },
+          {
+            "stage": "grounded_span_answer",
+            "status": "unsupported",
+            "reason": "literal_selection_invalid",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "grounded_span_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 860,
+                "output_tokens": 209,
+                "total_tokens": 1069,
+                "call_index": 3,
+                "latency_ms": 6204.169
+              }
+            ],
+            "original_answer_retained": true,
+            "literal_error_code": "selection_abstained"
+          }
+        ],
+        "claims": [
+          {
+            "support": [
+              {
+                "citation_id": 1,
+                "quote": "The service is intended to protect records."
+              }
+            ],
+            "text": "The service is intended to protect records."
+          },
+          {
+            "support": [
+              {
+                "citation_id": 1,
+                "quote": "Alice manages the service."
+              }
+            ],
+            "text": "Alice manages the service."
+          }
+        ],
+        "generation_audit": {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 961,
+          "output_tokens": 76,
+          "total_tokens": 1037,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 4247.215
+        },
+        "whole_question_review": {
+          "verification": "independent_model_review_not_formal_entailment",
+          "parts": [
+            {
+              "answered": true,
+              "claim_ids": [
+                1
+              ],
+              "part_id": 1
+            },
+            {
+              "answered": true,
+              "claim_ids": [
+                2
+              ],
+              "part_id": 2
+            }
+          ],
+          "provider_audit": {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "grounded_whole_question_review",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 379,
+            "output_tokens": 73,
+            "total_tokens": 452,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 22,
+            "call_index": 2,
+            "latency_ms": 3360.143
+          }
+        },
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "validated",
+            "error_category": null,
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 961,
+              "output_tokens": 76,
+              "total_tokens": 1037,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 4247.215
+            },
+            "whole_question_review": {
+              "verification": "independent_model_review_not_formal_entailment",
+              "parts": [
+                {
+                  "answered": true,
+                  "claim_ids": [
+                    1
+                  ],
+                  "part_id": 1
+                },
+                {
+                  "answered": true,
+                  "claim_ids": [
+                    2
+                  ],
+                  "part_id": 2
+                }
+              ],
+              "provider_audit": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "grounded_whole_question_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 379,
+                "output_tokens": 73,
+                "total_tokens": 452,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 22,
+                "call_index": 2,
+                "latency_ms": 3360.143
+              }
+            }
+          }
+        ],
+        "generation_repaired": false,
+        "support_validation": "bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof"
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 961,
+          "output_tokens": 76,
+          "total_tokens": 1037,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 4247.215
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_whole_question_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 379,
+          "output_tokens": 73,
+          "total_tokens": 452,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 22,
+          "call_index": 2,
+          "latency_ms": 3360.143
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_span_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 860,
+          "output_tokens": 209,
+          "total_tokens": 1069,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 168,
+          "call_index": 3,
+          "latency_ms": 6204.169
+        }
+      ]
+    },
+    {
+      "id": "cross_page_formula",
+      "pass": true,
+      "model_planning_test": false,
+      "result": {
+        "expression": "useful/(input+losses)",
+        "parameters": [
+          "useful",
+          "input",
+          "losses"
+        ],
+        "label": "Efficiency",
+        "sha256": "8000b1215fae9b379bd9ab21be60a8195d77fc4caba6ddbb8a835cf0567230a5",
+        "locator": "page:1-2:native-formula",
+        "cross_page_literal_proof": {
+          "policy": "explicit_open_math_adjacent_page_v1",
+          "parts": [
+            {
+              "page_no": 1,
+              "text": "Efficiency = useful /",
+              "bbox_fitz_unrotated_pt": [
+                40.0,
+                728.1749877929688,
+                135.07298278808594,
+                743.2890014648438
+              ]
+            },
+            {
+              "page_no": 2,
+              "text": "(input + losses)",
+              "bbox_fitz_unrotated_pt": [
+                40.0,
+                48.17499923706055,
+                114.88800048828125,
+                63.28900146484375
+              ]
+            }
+          ],
+          "calculator_input_eligible": false
+        },
+        "source_uri": "/api/v1/knowledge/documents/formula/original",
+        "chunk_id": null
+      }
+    }
+  ],
+  "passed": 8,
+  "total": 12,
+  "auth_failure_stop": false
+}

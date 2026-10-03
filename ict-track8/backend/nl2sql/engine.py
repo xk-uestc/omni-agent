@@ -716,10 +716,26 @@ class Nl2SqlEngine:
                     current_required.source_scope_question = scope_question
                 except SourceConstraintError as exc:
                     errors = [exc.code]
+            compiled = None
+            from .complex_query import needs_complex_query, propose_complex
             if errors:
                 plan = QueryPlan(rewritten_question=question)
             elif self.model_plan_provider is None:
                 plan = self._rules_plan(question, tables, connection, index, cache_namespace=revision)
+            elif (required_intent is None and needs_complex_query(question)
+                  and getattr(self.model_plan_provider, 'supports_complex_queries', False) is True):
+                # A separate capability, not a bypass of typed fusion contracts.
+                try:
+                    plan, compiled = propose_complex(self.model_plan_provider, question, tables)
+                except Exception as exc:
+                    from ..responses_client import GenerationError
+                    if isinstance(exc, GenerationError) and exc.status in (401, 403):
+                        raise
+                    plan = QueryPlan(rewritten_question=question, planner_source='complex_model_reviewed',
+                        clarification='复杂查询未通过结构或模型核验，请明确查询字段、关联及统计口径。',
+                        clarification_code='complex_query_validation_failed')
+                    plan.planner_audit = {'decision':'rejected', 'error_type':type(exc).__name__,
+                        'reason':str(exc) if isinstance(exc, SqlSafetyError) else 'model_proposal_failed'}
             else:
                 plan = self._model_plan(question, tables, connection, index, cache_namespace=revision,
                                         source_required=current_required)
@@ -785,8 +801,7 @@ class Nl2SqlEngine:
                 if plan.preview_row_limit is not None:
                     row_cap = min(row_cap, plan.preview_row_limit)
                 complete_scope['effective_preview_limit'] = row_cap
-            compiled = None
-            if not plan.clarification and (plan.metrics or plan.fan_out):
+            if compiled is None and not plan.clarification and (plan.metrics or plan.fan_out):
                 try:
                     compiled = self.metric_compiler.compile(plan, tables)
                 except MetricPlanError as exc:

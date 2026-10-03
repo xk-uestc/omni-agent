@@ -1,0 +1,623 @@
+{
+  "created_at": "2026-10-03T19:28:22.964280+00:00",
+  "source_audit": "PASS",
+  "scope": "engineering_development_results_not_contest_completion_or_official_score",
+  "backend_files_verified": 85,
+  "backend_file_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "edcbb64df8899d81b70a083e49c7eb9c6112523f52d6c03db83343e77a1bf383",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "dcf7f28cc7bfe4b9353e4d596a05d30be5d78d60abf8150b037133fe0b16db7e",
+    "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "95f13b7fe424e86105e1ffebb0eb839d60cef92eff4f74d0adbdb21a767e15c5",
+    "ict-track8/backend/native_text_tables.py": "e60c8c72e01c7172b0006d27588f6d6b94b0748576a718c6932a66be62e96145",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "ab76793f9155fce9863f891c2adf152827a26043208c87054461bb14ed1dd4f5",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "d52e35b35d7a13d791af916f427bb8a3f97996399f3bb8c831f0f34482902fed",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "bfd083a3672211eed3e37e690839623396c18a6964ff97e7c5af9b1c54a35e2d",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "c03bdfd53a054671e4192ce5fcba229de460eeadb80222d26db3f5c39fcee523",
+    "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+    "ict-track8/backend/nl2sql/schema_profile.py": "859646217d7c9440ebfd0153bd2f455d13497bbb72b911ac2ff0748b166ce843",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "22f940e200f18bff5c62edb71b56f19641e2712dde4777ff3b9a492fed0c0a1a",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "047c32abb2e5c3eb692a1893e39900740ec5fb30558a2f790a171f6084eb1d13",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "backend_lf_normalized_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "edcbb64df8899d81b70a083e49c7eb9c6112523f52d6c03db83343e77a1bf383",
+    "ict-track8/backend/app.py": "3536097c727757731b50bac53b7a88c581f080027010efeda16dde221b3b0859",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "ea62e76e72f0bcdd0fdb2c2c1d2f3efc57eac9d9d376b7e57d35c8d2b3ce6254",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "dcf7f28cc7bfe4b9353e4d596a05d30be5d78d60abf8150b037133fe0b16db7e",
+    "ict-track8/backend/grounded_span_answer.py": "498c809d99b0b81a6787450b168c9320f774b6ecdb35f1dad12624e17d08e012",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "38fdf5fe2c536defab2037a8423fbdd70dba0eb566dbf9ed2b80e54f39a45a1d",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "95f13b7fe424e86105e1ffebb0eb839d60cef92eff4f74d0adbdb21a767e15c5",
+    "ict-track8/backend/native_text_tables.py": "e60c8c72e01c7172b0006d27588f6d6b94b0748576a718c6932a66be62e96145",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "ab76793f9155fce9863f891c2adf152827a26043208c87054461bb14ed1dd4f5",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "04e6f4e8e911ee31ecc94b0068185b210c2e8e272087efd96fdf1d978383981d",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "35e599d836d22cf941e6321aefcad268a6d979f8757d4fa8d12c1b44d31b7ad3",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "59e2774de7b294d82d09519291927affd4af90fa315e359e358c089422a028a4",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "fd0441d9b80367d6d4d297e67d5283909caf65bc5df52ef558663a0adf279adc",
+    "ict-track8/backend/nl2sql/question_roles.py": "b6ece16a259bb5146298a757f32522d9346b1e0eeeeb22118d6a06e21c3d1bf8",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "bfd083a3672211eed3e37e690839623396c18a6964ff97e7c5af9b1c54a35e2d",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "1edbaa4a1edde4a4986163c81303f04204c60edd0133a8bd1e828d1cfa17d43a",
+    "ict-track8/backend/nl2sql/result_scope.py": "5cb7ea6c428e6fb0827693e5ce53330185abc3626f77abd60bc1f719fdec5d23",
+    "ict-track8/backend/nl2sql/schema.py": "30c1b60b2fb59c6d13def49a76637532a1d9e0bad8ee1cfe0436a8f40bb12b15",
+    "ict-track8/backend/nl2sql/schema_profile.py": "aa6e12a5fad7909b24c49147d8cf218b924fa8edcbc620ac7e92d6936c06bdd5",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "c8a2d5e01e526848b60fb63db6eee6bc4c7d820a1cc1fee4250e25dcba279a74",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "2fe0de72fa3d6cda3dcb6b02f2800a1ddd09af2f7d82d4442fead573c09453d3",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "047c32abb2e5c3eb692a1893e39900740ec5fb30558a2f790a171f6084eb1d13",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "51e808fa3ba119e4b747ea1f2a66fa38e2dd66996b1304cd748615afeccab567",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "normalization_scope": "portable_line_endings_only_original_execution_byte_pins_retained",
+  "reports": {
+    "core": {
+      "path": "REAL_MODEL_CORE_ROUND7_RELEASE_20261004.json",
+      "sha256": "6c83f23dd36a4fc45f17e474da33d15493320584f9312af8de17f5aacaa3f3e1"
+    },
+    "regression": {
+      "path": "LOCAL_REGRESSION_ROUND7_RELEASE_20261004.json",
+      "sha256": "dee7f1ef6847169a47062d8309b39e065a5f4bdd3cb516e4dfaa2e44a3326477"
+    },
+    "sessions": {
+      "path": "ROUND7_NEW_DOMAIN_RELEASE_20261004.json",
+      "sha256": "fbc61a0a1aa9e43d0b025f231bf1fe4b63419c665d5531d073b9ecc74ff63cec"
+    },
+    "probes": {
+      "path": "ROUND7_COMPLEX_PROBES_RELEASE_20261004.json",
+      "sha256": "150c34d3c1d7b0f470653fd8f75e759489b1ba23bfbff284fb942ac18522df15"
+    },
+    "rag": {
+      "path": "OHR_ROUND7_RELEASE_20261004.json",
+      "sha256": "6504ee5e1e84ff24af9545fd88b57808d3ac9676fe3544343074700ae1182f04"
+    },
+    "sakila": {
+      "path": "SAKILA_ROUND7_RELEASE_DEVELOPMENT_20261004.json",
+      "sha256": "a2e3a437ca8a17ff8982b5495247da86d7ef6299a948fbb4cbaf233534876acc"
+    }
+  },
+  "api_summary": {
+    "core": {
+      "retained_calls": 108,
+      "completed_calls": 107,
+      "failed_calls": 1,
+      "dropped_calls": 0,
+      "input_tokens_visible_lower_bound": 445155,
+      "input_tokens_unknown_calls": 1,
+      "output_tokens_visible_lower_bound": 18470,
+      "output_tokens_unknown_calls": 1,
+      "total_tokens_visible_lower_bound": 463625,
+      "total_tokens_unknown_calls": 1
+    },
+    "sessions": {
+      "retained_calls": 27,
+      "completed_calls": 27,
+      "failed_calls": 0,
+      "dropped_calls": 0,
+      "input_tokens_visible_lower_bound": 70921,
+      "input_tokens_unknown_calls": 0,
+      "output_tokens_visible_lower_bound": 5190,
+      "output_tokens_unknown_calls": 0,
+      "total_tokens_visible_lower_bound": 76111,
+      "total_tokens_unknown_calls": 0
+    },
+    "probes": {
+      "retained_calls": 27,
+      "completed_calls": 27,
+      "failed_calls": 0,
+      "dropped_calls": 0,
+      "input_tokens_visible_lower_bound": 27923,
+      "input_tokens_unknown_calls": 0,
+      "output_tokens_visible_lower_bound": 3792,
+      "output_tokens_unknown_calls": 0,
+      "total_tokens_visible_lower_bound": 31715,
+      "total_tokens_unknown_calls": 0
+    },
+    "rag": {
+      "retained_calls": 157,
+      "completed_calls": 157,
+      "failed_calls": 0,
+      "dropped_calls": 0,
+      "input_tokens_visible_lower_bound": 658625,
+      "input_tokens_unknown_calls": 0,
+      "output_tokens_visible_lower_bound": 18777,
+      "output_tokens_unknown_calls": 0,
+      "total_tokens_visible_lower_bound": 677402,
+      "total_tokens_unknown_calls": 0
+    },
+    "sakila": {
+      "retained_calls": 121,
+      "completed_calls": 116,
+      "failed_calls": 5,
+      "dropped_calls": 0,
+      "input_tokens_visible_lower_bound": 524606,
+      "input_tokens_unknown_calls": 5,
+      "output_tokens_visible_lower_bound": 20859,
+      "output_tokens_unknown_calls": 5,
+      "total_tokens_visible_lower_bound": 545465,
+      "total_tokens_unknown_calls": 5
+    }
+  },
+  "core": {
+    "passed": 43,
+    "total": 44
+  },
+  "regression": {
+    "passed": 2965,
+    "failed": 0,
+    "skipped": 2,
+    "warnings": 1,
+    "subtests_passed": 12
+  },
+  "new_sessions": {
+    "passed_turns": 15,
+    "total": 15,
+    "complete_five_turn_sessions": 3,
+    "sessions": 3,
+    "expected_clarification_turns": 3
+  },
+  "complex_sql_and_document_probes": {
+    "passed": 11,
+    "total": 12,
+    "sql_passed": 8,
+    "sql_total": 8,
+    "failed_ids": [
+      "table_difference"
+    ],
+    "cross_page_formula_is_production_tool_test_not_model_planning_test": true
+  },
+  "sakila_paired": {
+    "before_passed": 15,
+    "after_passed": 27,
+    "total": 56,
+    "delta": 12,
+    "changes": [
+      {
+        "case_id": "cs-c01",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-c02",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-c03",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-c04",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-c05",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-c06",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "physical_projection"
+      },
+      {
+        "case_id": "cs-c07",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-c09",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-c10",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-c11",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-c12",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-f01",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-f02",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-f03",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-f04",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-f05",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-f06",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-f07",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-f09",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-f10",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-f11",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-f12",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "physical_projection"
+      },
+      {
+        "case_id": "cs-r01",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-r02",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-r03",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-r04",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-r05",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-r06",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-r07",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "physical_projection"
+      },
+      {
+        "case_id": "cs-r08",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-r09",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "SqlSafetyError"
+      },
+      {
+        "case_id": "cs-r10",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-r12",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-s1-t2",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-s1-t3",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-s2-t2",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-s2-t3",
+        "before_pass": true,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-s2-t5",
+        "before_pass": true,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-s3-t2",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-s3-t3",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-s4-t2",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      },
+      {
+        "case_id": "cs-s4-t3",
+        "before_pass": false,
+        "after_pass": false,
+        "after_failure_reason": "clarification"
+      },
+      {
+        "case_id": "cs-s4-t5",
+        "before_pass": false,
+        "after_pass": true,
+        "after_failure_reason": null
+      }
+    ],
+    "standalone": [
+      3,
+      13,
+      36
+    ],
+    "session_turns": [
+      12,
+      14,
+      20
+    ],
+    "whole_sessions": [
+      0,
+      0,
+      4
+    ],
+    "failure_counts": {
+      "clarification": 18,
+      "physical_projection": 3,
+      "SqlSafetyError": 8
+    }
+  },
+  "sakila_question_exposure": "all_56_questions_inspected_for_development_diagnosis_after_first_candidate",
+  "rag_paired": {
+    "scope": "paired_resource_biased_official_query_subset_not_full_benchmark",
+    "baseline": {
+      "path": "D:\\ICT8-OmniAgent\\docs\\OHR_ROUND7_BASELINE_20261004.json",
+      "sha256": "2bf6e24d7e3bd82dffff6ea8839d648c3ce9a4a35e2725015a52a69a4c7394cc",
+      "attempted": 36,
+      "normalized_exact_matches": 6,
+      "mean_english_token_f1": 0.30915
+    },
+    "optimized": {
+      "path": "D:\\ICT8-OmniAgent\\docs\\OHR_ROUND7_RELEASE_20261004.json",
+      "sha256": "6504ee5e1e84ff24af9545fd88b57808d3ac9676fe3544343074700ae1182f04",
+      "attempted": 36,
+      "normalized_exact_matches": 6,
+      "mean_english_token_f1": 0.319136
+    },
+    "selection_sha256": "816c23b5aa49fc3032fba3756b1f7535e4a3d70037cca4319ff48ca6114e5031",
+    "case_count": 36,
+    "exact_match_delta": 0,
+    "f1_delta": 0.009986,
+    "better_f1_cases": 4,
+    "worse_f1_cases": 3,
+    "same_f1_cases": 29,
+    "limitations": [
+      "One run per version: model variation is not statistical significance.",
+      "Fixed small PDF corpus and resource biased sampling; no contest score conversion.",
+      "Saved outputs and scores are used verbatim; failures and regressions are retained."
+    ]
+  },
+  "limitations": [
+    "Only gpt-6-luna/medium was requested. Failed calls and cases remain in denominators.",
+    "Authored probes and sessions are development fixtures, not official or blind scores.",
+    "Sakila remains an exposed development replay; oracle/reference SQL never goes into model payloads.",
+    "OHR is a fixed 15-document, 36-question resource-biased subset, not a full benchmark or contest score.",
+    "Independent model review is not a formal semantic proof. Single paired runs do not establish causality.",
+    "Native cross-page formulas require adjacent, explicit, geometrically consistent math; arbitrary scans and subscripts are unsupported.",
+    "Read-only relational proposals do not bypass typed required_intent in cross-source tasks.",
+    "Query execution retains bounded rows; complete artifacts remain explicit opt-in."
+  ]
+}

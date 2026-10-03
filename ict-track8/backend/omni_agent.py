@@ -16,7 +16,7 @@ from .plan_requirements import requested_operations, completion_errors
 from .fusion_constraints import SourceConstraintError
 from .fusion_history import (resolve_fusion_followup, verify_inherited_document_tasks,
                              verified_fusion_context)
-from .sql_history_scope import resolve_sql_followup_scope, VERIFIED_SQL_CONTEXT_MODES
+from .sql_history_scope import resolve_sql_followup_scope, VERIFIED_SQL_CONTEXT_MODES, saved_sql_context
 
 
 PLAN_SCHEMA = object_schema({'route': {'type': 'string', 'enum': ['sql', 'document', 'fusion', 'clarify']},
@@ -451,7 +451,8 @@ class OmniAgent:
             effective = question
         if route == 'sql' and fusion_history_audit.get('mode') in VERIFIED_SQL_CONTEXT_MODES:
             effective = scope_question
-            planning_notes.append('server_verified_sql_followup_slots')
+            planning_notes.append('model_reviewed_sql_followup' if fusion_history_audit.get('mode') == 'model_reviewed_sql_followup'
+                                  else 'server_verified_sql_followup_slots')
         trace = [{'stage': 'intent_planning', 'source': source, 'route': route,
                   'latency_ms': round((time.perf_counter()-started)*1000, 3), 'error': error,
                   'rejection_code': rejection_code,
@@ -462,6 +463,9 @@ class OmniAgent:
                      'filters': result['plan'].get('filters', []), 'dimensions': result['plan'].get('dimensions', []),
                      'clarification_code': result['plan'].get('clarification_code'),
                      'pending_question': effective if result['status']=='clarification' else None}
+            executed_context = saved_sql_context(effective, result)
+            if executed_context is not None:
+                state['executed_sql_context'] = executed_context
         elif route == 'document':
             result = self.knowledge.answer(effective)
             state = {'route': route, 'sources': [hit['metadata']['document_id'] for hit in result['citations']]}
