@@ -283,6 +283,7 @@ class AgentQueryRequest(BaseModel):
     top_k_documents: int = Field(default=4, ge=1, le=10)
     session_id: str | None = Field(default=None, max_length=128)
     use_context: bool = True
+    complete_results: bool = False
 
 
 class PageSignalRequest(BaseModel):
@@ -395,6 +396,7 @@ class ClarificationRequest(BaseModel):
     selected_time: str | None = Field(default=None, max_length=32)
     session_id: str | None = Field(default=None, max_length=128)
     top_k_documents: int = Field(default=4, ge=1, le=10)
+    complete_results: bool = False
 
 
 class OmniRequest(BaseModel):
@@ -675,6 +677,7 @@ def agent_query(request: AgentQueryRequest) -> dict[str, object]:
             request.question,
             top_k_documents=request.top_k_documents,
             context_questions=context,
+            **({"complete_results": True} if request.complete_results else {}),
         )
         if session_id:
             conversation_store.remember(
@@ -723,6 +726,7 @@ def agent_query_stream(request: AgentQueryRequest) -> StreamingResponse:
                 top_k_documents=request.top_k_documents,
                 context_questions=context,
                 trace_callback=publish,
+                **({"complete_results": True} if request.complete_results else {}),
             )
         except Exception as exc:  # headers 已发送，错误作为 SSE 事件返回（不透传内部异常文本）
             result_holder["error"] = {"code": type(exc).__name__, "message": "查询执行失败"}
@@ -862,7 +866,8 @@ def clarify(request: ClarificationRequest) -> dict[str, object]:
         )
         # 澄清选择已经是用户对原问题的补全，不再把旧轮次再次拼接进来。
         # 直接走同一条跨源编排链，确保 SQL、文档证据和完整 trace 一次返回。
-        result = agent.answer(enriched_question, top_k_documents=request.top_k_documents)
+        result = agent.answer(enriched_question, top_k_documents=request.top_k_documents,
+                              **({"complete_results": True} if request.complete_results else {}))
         if session_id:
             conversation_store.remember(
                 session_id,

@@ -2,6 +2,16 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const { buildModel } = require("./schema-svg.js");
 
+test("unrelated tables use a compact layout without invented foreign-key links", () => {
+  const model = buildModel({ tables: [
+    { name: "orders", columns: [{ name: "id", data_type: "TEXT" }] },
+    { name: "notes", columns: [{ name: "id", data_type: "TEXT" }] },
+  ] }, { table: "orders" }, []);
+  assert.equal(model.edges.length, 0);
+  const [first, second] = [...model.nodes.values()];
+  assert.equal(first.y, second.y); assert.ok(first.x !== second.x);
+});
+
 const schema = {
   tables: [
     {

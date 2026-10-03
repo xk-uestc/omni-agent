@@ -133,6 +133,7 @@
   }
 
   function highlight(pre) {
+    if (pre.dataset.queryVisual === "true") return;
     const source = pre.textContent || "";
     const previousSource = highlightedSources.get(pre);
     if (previousSource === source) return;

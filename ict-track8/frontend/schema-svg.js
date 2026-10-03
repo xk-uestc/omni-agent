@@ -10,9 +10,9 @@
   const ROLE_LABELS = {
     metric: "指标",
     dimension: "维度",
-    filter: "过滤",
+    filter: "筛选",
     time: "时间",
-    operator: "算子",
+    operator: "运算",
     join: "关联键",
   };
   let diagramSequence = 0;
@@ -198,6 +198,20 @@
       componentTop += componentHeight + gapY * 2;
     }
 
+    // Disconnected tables stay side by side; no relationship is invented.
+    if (!edges.length && nodes.size > 1) {
+      const ordered = [...nodes.values()], across = Math.min(3, ordered.length);
+      let gridTop = 0;
+      for (let i = 0; i < ordered.length; i += across) {
+        const row = ordered.slice(i, i + across);
+        row.forEach((node, index) => {
+          node.x = index * (nodeWidth + 36); node.y = gridTop;
+          node.columns.forEach((column, columnIndex) => { column.y = gridTop + headHeight + columnIndex * rowHeight; });
+        });
+        gridTop += Math.max(...row.map((node) => node.height)) + gapY;
+      }
+      componentTop = gridTop + gapY;
+    }
     const focusCandidates = [];
     nodes.forEach((node) => node.columns.forEach((column) => {
       if (column.roles.length) focusCandidates.push({ table: node.name, column: column.name, id: column.id, role: column.primaryRole });
@@ -345,6 +359,14 @@
     heading.append(title, count);
     const controls = document.createElement("div");
     controls.className = "schema-explorer-controls";
+    const fit = document.createElement("button");
+    fit.type = "button";
+    fit.className = "schema-jump";
+    fit.textContent = "适应宽度";
+    const zoomOut = document.createElement("button"), zoomIn = document.createElement("button");
+    [zoomOut, zoomIn].forEach((button) => { button.type = "button"; button.className = "schema-jump schema-zoom"; });
+    zoomOut.textContent = "−"; zoomIn.textContent = "+";
+    zoomOut.setAttribute("aria-label", "缩小数据库字段图"); zoomIn.setAttribute("aria-label", "放大数据库字段图");
     const status = document.createElement("span");
     status.className = "schema-focus-status";
     status.setAttribute("aria-live", "polite");
@@ -353,7 +375,7 @@
     jump.className = "schema-jump";
     jump.textContent = "定位命中字段";
     jump.hidden = !model.focusTarget;
-    controls.append(status, jump);
+    controls.append(status, fit, zoomOut, zoomIn, jump);
     header.append(heading, controls);
     section.append(header);
 
@@ -381,6 +403,18 @@
     const { svg, fieldNodes } = createSvg(model);
     viewport.append(svg);
     section.append(viewport);
+    const footer = document.createElement("div"); footer.className = "schema-inspector";
+    footer.setAttribute("aria-live", "polite");
+    const inspectorText = document.createElement("div"); inspectorText.className = "schema-inspector-text";
+    const scopeToggle = document.createElement("button"); scopeToggle.type = "button"; scopeToggle.className = "schema-jump";
+    scopeToggle.textContent = "突出查询字段"; scopeToggle.setAttribute("aria-pressed", "false");
+    scopeToggle.hidden = !model.focusFieldCount;
+    scopeToggle.addEventListener("click", () => {
+      const highlighted = section.classList.toggle("is-query-focused");
+      scopeToggle.setAttribute("aria-pressed", String(highlighted)); scopeToggle.textContent = highlighted ? "显示完整结构" : "突出查询字段";
+    });
+    inspectorText.textContent = model.focusFieldCount ? `本次涉及 ${model.focusFieldCount} 个字段 · 点击字段查看类型与用途` : "点击字段查看类型与约束";
+    footer.append(inspectorText, scopeToggle); section.append(footer);
     if (!model.tables.length) {
       const empty = document.createElement("p");
       empty.className = "schema-empty";
@@ -391,29 +425,56 @@
       return section;
     }
 
-    const focusField = (fieldId, scrollPage) => {
+    const reduceMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    let zoom = 1;
+    const setZoom = (value) => { zoom = Math.max(.4, Math.min(1.8, value)); svg.style.width = `${model.width * zoom}px`; svg.style.height = `${model.height * zoom}px`; };
+    fit.addEventListener("click", () => setZoom(Math.min(1, viewport.clientWidth / model.width)));
+    zoomOut.addEventListener("click", () => setZoom(zoom - .15));
+    zoomIn.addEventListener("click", () => setZoom(zoom + .15));
+    const focusField = (fieldId, scrollPage, notify = true) => {
       const row = fieldNodes.get(fieldId);
       if (!row) return;
       svg.querySelectorAll(".schema-column.is-target").forEach((item) => item.classList.remove("is-target"));
       row.classList.add("is-target");
+      const column = [...model.nodes.values()].flatMap((node) => node.columns).find((item) => item.id === fieldId);
+      inspectorText.replaceChildren();
+      const name = document.createElement("code"); name.textContent = `${row.getAttribute("data-table")}.${row.getAttribute("data-column")}`;
+      const type = document.createElement("span"); type.className = "schema-inspector-type"; type.textContent = column?.data_type || "UNKNOWN";
+      const description = document.createElement("span");
+      description.textContent = [column?.primary_key ? "主键" : null, column?.nullable === false ? "非空" : null, ...(column?.roles || []).map((role) => ROLE_LABELS[role])].filter(Boolean).join(" · ") || "本次未使用";
+      inspectorText.append(name, type, description);
       status.textContent = `已定位：${row.getAttribute("data-table")}.${row.getAttribute("data-column")}`;
-      const bounds = row.getBBox();
-      const svgBounds = svg.getBoundingClientRect();
-      const scaleX = svgBounds.width / model.width || 1;
-      const scaleY = svgBounds.height / model.height || 1;
+      const bounds = row.getBoundingClientRect(), viewportBounds = viewport.getBoundingClientRect();
       viewport.scrollTo({
-        left: Math.max(0, (bounds.x + bounds.width / 2) * scaleX - viewport.clientWidth / 2),
-        top: Math.max(0, (bounds.y + bounds.height / 2) * scaleY - viewport.clientHeight / 2),
-        behavior: "smooth",
+        left: Math.max(0, viewport.scrollLeft + bounds.left - viewportBounds.left + bounds.width / 2 - viewport.clientWidth / 2),
+        top: Math.max(0, viewport.scrollTop + bounds.top - viewportBounds.top + bounds.height / 2 - viewport.clientHeight / 2),
+        behavior: reduceMotion() ? "auto" : "smooth",
       });
-      if (scrollPage) viewport.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      if (scrollPage) {
+        const thread = section.closest(".thread");
+        if (thread) thread.scrollTo({ top: thread.scrollTop + viewport.getBoundingClientRect().top - thread.getBoundingClientRect().top - 60, behavior: reduceMotion() ? "auto" : "smooth" });
+        else viewport.scrollIntoView({ block: "nearest", behavior: reduceMotion() ? "auto" : "smooth" });
+      }
+      if (notify) section.dispatchEvent(new CustomEvent("schema-field-focus", { bubbles: true, detail: { key: `${row.getAttribute("data-table")}.${row.getAttribute("data-column")}`, table: row.getAttribute("data-table"), column: row.getAttribute("data-column") } }));
     };
+    section.addEventListener("query-field-focus", (event) => {
+      const keys = event.detail?.keys || (event.detail?.key ? [event.detail.key] : []);
+      fieldNodes.forEach((row) => row.classList.toggle("is-linked", keys.includes(`${row.getAttribute("data-table")}.${row.getAttribute("data-column")}`)));
+      if (!keys.length) {
+        fieldNodes.forEach((row) => row.classList.remove("is-target")); status.textContent = `本次涉及 ${model.focusFieldCount} 个字段`;
+        inspectorText.textContent = "点击字段查看类型与用途"; return;
+      }
+      const found = [...fieldNodes.entries()].find(([, row]) => event.detail?.table && event.detail?.column
+        ? row.getAttribute("data-table") === event.detail.table && row.getAttribute("data-column") === event.detail.column
+        : `${row.getAttribute("data-table")}.${row.getAttribute("data-column")}` === event.detail?.key);
+      if (found) focusField(found[0], event.detail.scroll, false);
+    });
 
     if (model.focusTarget) {
       const target = model.focusTarget;
       status.textContent = `本次命中：${target.table}.${target.column}`;
       jump.addEventListener("click", () => focusField(target.id, true));
-      requestAnimationFrame(() => focusField(target.id, true));
+      requestAnimationFrame(() => focusField(target.id, false, false));
     } else {
       status.textContent = "本次响应未映射到具体字段；未猜测高亮目标";
     }

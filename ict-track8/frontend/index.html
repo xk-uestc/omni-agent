@@ -274,6 +274,9 @@
     }
   </style>
   <link rel="stylesheet" href="./modern-ui.css?v=20261003-answer-lines-2" />
+  <link rel="stylesheet" href="./query-journey.css?v=20261003-polish-6" />
+  <link rel="stylesheet" href="./query-result-viz.css?v=20261003-polish-6" />
+  <link rel="stylesheet" href="./result-browser.css?v=20261003-full-results-1" />
 </head>
 <body>
   <div class="app">
@@ -353,14 +356,18 @@
         </form>
         <div class="meta">
           <label><input id="useContext" type="checkbox" checked> 承接上一轮</label>
+          <label title="读取完整问数结果并分页展示；保留资源预算。图表只展示初始预览。"><input id="completeResults" type="checkbox"> 获取完整结果</label>
           <span>Enter 提交</span>
         </div>
         <div class="hint">结果来自当前后端数据源；执行阶段、SQL 与证据可展开核对。</div>
       </div>
     </main>
   </div>
-<script src="./schema-svg.js?v=20261003-answer-lines-1" defer></script>
-<script src="./app.js?v=20261003-query-terms" defer></script>
-<script src="./syntax-highlight.js?v=20261002b" defer></script>
+<script src="./schema-svg.js?v=20261003-polish-1" defer></script>
+<script src="./syntax-highlight.js?v=20261003-journey-2" defer></script>
+<script src="./query-result-viz.js?v=20261003-full-results-2" defer></script>
+<script src="./query-journey.js?v=20261003-full-results-2" defer></script>
+<script src="./result-browser.js?v=20261003-full-results-1" defer></script>
+<script src="./app.js?v=20261003-full-results-1" defer></script>
 </body>
 </html>

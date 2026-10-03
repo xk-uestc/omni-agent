@@ -216,6 +216,7 @@ class CrossSourceAgent:
         top_k_documents: int = 4,
         context_questions: tuple[str, ...] = (),
         trace_callback: Callable[[dict[str, Any]], None] | None = None,
+        complete_results: bool = False,
     ) -> dict[str, Any]:
         started = time.perf_counter()
         effective_question, context_rewrite = self._with_context(question, context_questions)
@@ -242,7 +243,7 @@ class CrossSourceAgent:
             }
         )
 
-        structured = self.sql_engine.answer(effective_question)
+        structured = self.sql_engine.answer(effective_question, **({"complete_results": True} if complete_results else {}))
         record(
             {
                 "stage": "structured_query",
@@ -254,6 +255,7 @@ class CrossSourceAgent:
                 "plan": structured.plan,
                 "explanation": list(structured.explanation),
                 "query_hash": structured.provenance.get("query_hash"),
+                **({"complete_result": structured.provenance.get("complete_result")} if complete_results else {}),
             }
         )
 
@@ -326,7 +328,7 @@ class CrossSourceAgent:
             }
         )
         return {
-            "status": "partial" if retrieval_error else "ok",
+            "status": "partial" if retrieval_error or structured.status == "partial" else "ok",
             "trace_id": trace_id,
             "question": question,
             "effective_question": effective_question,
@@ -382,8 +384,14 @@ class CrossSourceAgent:
     @staticmethod
     def _summary(structured: Any, hits: list[DocumentHit]) -> str:
         pieces: list[str] = []
+        complete = structured.provenance.get("complete_result", {})
+        if complete and complete.get("status") != "complete":
+            pieces.append(f"完整结果未取得，当前仅有 {len(structured.rows)} 行部分预览；不能作为完整答案。")
         if structured.status == "ok":
-            pieces.append(f"结构化查询返回 {len(structured.rows)} 行，SQL 和字段映射已记录。")
+            if complete.get("status") == "complete":
+                pieces.append(f"完整查询结果 {complete['row_count']} 行，当前预览 {len(structured.rows)} 行，可分页查看；SQL 和字段映射已记录。")
+            elif not complete:
+                pieces.append(f"结构化查询返回 {len(structured.rows)} 行，SQL 和字段映射已记录。")
             if structured.rows:
                 first = structured.rows[0]
                 pieces.append("首行结果：" + "，".join(f"{key}={value}" for key, value in first.items()))

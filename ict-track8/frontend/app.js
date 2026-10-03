@@ -66,8 +66,9 @@ function beginTurn(question){
   toggle.type="button";toggle.append(title);toggle.insertAdjacentHTML("beforeend",chevron);toggle.onclick=()=>thought.classList.toggle("open");
   const body=el("div","thought-body"),wait=el("div","dots");wait.innerHTML="<i></i><i></i><i></i>";body.append(wait);thought.append(toggle,body);
   const answer=el("div");assistant.append(thought,answer);$("feed").append(user,assistant);
+  const live=window.QueryJourney?.createLive();if(live)assistant.prepend(live.root);
   const turn={question,status:"进行中",element:user};turns.push(turn);renderTurns();$("thread").scrollTop=$("thread").scrollHeight;
-  return {body,wait,title,answer,turn};
+  return {body,wait,title,answer,turn,live};
 }
 function appendTrace(body,item){
   const step=el("div","step"),button=el("button","step-title"),panel=el("div","step-panel"),tool=el("div","tool");
@@ -85,6 +86,7 @@ function summaryRow(box,label,value,codeKind){
   box.append(el("span","key",label),rendered);
 }
 function renderAudit(body,data){
+  if(window.QueryJourney){body.append(window.QueryJourney.render(data,liveSchema,schemaLoadPromise.then(()=>liveSchema)));return;}
   const structured=data.structured||{},plan=structured.plan||{},provenance=structured.provenance||{},links=provenance.field_links||plan.links||[];
   const audit=el("div","audit"),intro=el("div","audit-intro");intro.append(el("b","","查询过程"),el("span","","本次查询的处理详情"));audit.append(intro);
   const mapping=el("section","astep"),mappingBody=el("div","bd");mapping.append(el("h4","","① 问题理解与字段选择"));
@@ -121,14 +123,20 @@ function renderAudit(body,data){
   body.append(audit);
 }
 function renderTable(host,structured){
+  const browser=window.ResultBrowser?.render(structured,{api:API,onFocus:detail=>host.closest(".assistant")?.querySelector(".query-journey")?.dispatchEvent(new CustomEvent("query-result-focus",{detail}))});
+  if(browser){host.append(browser);return;}
   const columns=structured.columns||[],rows=structured.rows||[];if(!columns.length)return;
   if(!rows.length){host.append(el("p","empty-state","查询完成，当前条件下没有数据行。"));return;}
   const wrap=el("div","audit-table-wrap"),table=el("table","data"),head=el("thead"),tr=el("tr");
   columns.forEach(c=>tr.append(el("th","",c)));head.append(tr);table.append(head);
-  const tbody=el("tbody");rows.forEach(row=>{const line=el("tr");columns.forEach(c=>line.append(el("td","",row[c]==null?"—":row[c])));tbody.append(line);});
+  const tbody=el("tbody");rows.forEach((row,index)=>{const line=el("tr");columns.forEach(c=>{
+    const cell=el("td"),value=el("button","query-result-cell",row[c]==null?"—":row[c]);value.type="button";value.title=`查看结果列 ${c} 的字段来源`;
+    value.onclick=()=>host.closest(".assistant")?.querySelector(".query-journey")?.dispatchEvent(new CustomEvent("query-result-focus",{detail:{row:index,column:c}}));cell.append(value);line.append(cell);
+  });tbody.append(line);});
   table.append(tbody);wrap.append(table);host.append(wrap);
 }
 function renderResult(view,data,originalQuestion){
+  view.live?.finish(data);
   view.wait.remove();view.title.textContent=`已完成 · ${data.latency_ms??"—"} ms`;view.turn.status=data.status||"完成";renderTurns();
   if(!view.body.querySelector(".step")) (data.trace||[]).forEach(t=>appendTrace(view.body,t));renderAudit(view.body,data);
   const answer=el("div","answer"),structured=data.structured||{};answer.append(el("p","",data.answer||"后端未返回文字说明"));
@@ -145,14 +153,14 @@ function renderResult(view,data,originalQuestion){
   view.answer.replaceChildren(answer);$("thread").scrollTop=$("thread").scrollHeight;
 }
 function parseSse(block){let type="message";const lines=[];block.split("\n").forEach(line=>{if(line.startsWith("event:"))type=line.slice(6).trim();if(line.startsWith("data:"))lines.push(line.slice(5).trimStart());});return lines.length?{type,data:JSON.parse(lines.join("\n"))}:null;}
-async function streamQuery(question,useContext,view,signal){
-  const response=await fetch(API+"/api/v1/agent/query/stream",{method:"POST",headers:{"Content-Type":"application/json",Accept:"text/event-stream"},body:JSON.stringify({question,session_id:sessionId,use_context:useContext}),signal});
+async function streamQuery(question,useContext,completeResults,view,signal){
+  const response=await fetch(API+"/api/v1/agent/query/stream",{method:"POST",headers:{"Content-Type":"application/json",Accept:"text/event-stream"},body:JSON.stringify({question,session_id:sessionId,use_context:useContext,complete_results:completeResults}),signal});
   if(!response.ok){await json(response);throw Error("查询失败");}
-  if(!response.body)return post("/api/v1/agent/query",{question,session_id:sessionId,use_context:useContext},signal);
+  if(!response.body)return post("/api/v1/agent/query",{question,session_id:sessionId,use_context:useContext,complete_results:completeResults},signal);
   const reader=response.body.getReader(),decoder=new TextDecoder();let buffer="",result=null;
   while(true){const {value,done}=await reader.read();buffer+=decoder.decode(value||new Uint8Array(),{stream:!done}).replace(/\r\n/g,"\n");let boundary;
     while((boundary=buffer.indexOf("\n\n"))>=0){const event=parseSse(buffer.slice(0,boundary));buffer=buffer.slice(boundary+2);if(!event)continue;
-      if(event.type==="trace")appendTrace(view.body,event.data);if(event.type==="done")result=event.data;if(event.type==="error")throw Error(detailText(event.data.detail));}
+      if(event.type==="trace"){view.live?.update(event.data);appendTrace(view.body,event.data);}if(event.type==="done")result=event.data;if(event.type==="error")throw Error(detailText(event.data.detail));}
     if(done)break;
   }
   if(!result)throw Error("流式连接未返回完整结果");return result;
@@ -160,13 +168,13 @@ async function streamQuery(question,useContext,view,signal){
 async function run(question,request){
   if(busy)return;busy=true;$("send").disabled=true;const view=beginTurn(question),controller=new AbortController();activeController=controller;
   try{const data=await request(view,controller.signal);if(!controller.signal.aborted)renderResult(view,data,question);}
-  catch(error){if(!controller.signal.aborted){view.wait.remove();view.title.textContent="查询失败";view.turn.status="失败";view.answer.append(el("div","error-line",error.message||"请求失败"));renderTurns();}}
+  catch(error){if(!controller.signal.aborted){view.live?.fail();view.wait.remove();view.title.textContent="查询失败";view.turn.status="失败";view.answer.append(el("div","error-line",error.message||"请求失败"));renderTurns();}}
   finally{if(activeController===controller)activeController=null;busy=false;$("send").disabled=false;}
 }
-function ask(question){const text=question.trim();if(!text)return;const useContext=$("useContext").checked;
-  return run(text,(view,signal)=>STREAM?streamQuery(text,useContext,view,signal):post("/api/v1/agent/query",{question:text,session_id:sessionId,use_context:useContext},signal));}
+function ask(question){const text=question.trim();if(!text)return;const useContext=$("useContext").checked,completeResults=$("completeResults").checked;
+  return run(text,(view,signal)=>STREAM?streamQuery(text,useContext,completeResults,view,signal):post("/api/v1/agent/query",{question:text,session_id:sessionId,use_context:useContext,complete_results:completeResults},signal));}
 function clarify(question,code,option){return run(option.label||option.value,async(_view,signal)=>{
-  const response=await post("/api/v1/nl2sql/clarify",{original_question:question,clarification_code:code,selected_value:option.value,selected_label:option.label,session_id:sessionId},signal);return response.result;
+  const response=await post("/api/v1/nl2sql/clarify",{original_question:question,clarification_code:code,selected_value:option.value,selected_label:option.label,session_id:sessionId,complete_results:$("completeResults").checked},signal);return response.result;
 });}
 function setTab(doc){$("tabAsk").classList.toggle("on",!doc);$("tabDoc").classList.toggle("on",doc);$("thread").style.display=doc?"none":"";$("askComposer").style.display=doc?"none":"";$("view-doc").classList.toggle("on",doc);}
 async function analyzeDocument(){

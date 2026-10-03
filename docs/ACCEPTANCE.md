@@ -4,6 +4,8 @@
 
 ## 当前判断
 
+2026-10-03工程补齐：主聊天普通/SSE/澄清回填已接入显式完整结果，网页支持100行分页、当前页JSON下载与来源变化拒绝；合成SQLite真实HTTP244行三页逐单元格等于SQL重放，完整本地2864 passed、2 skipped、1 warning、12 subtests passed，前端16 passed。范围与剩余差距见 [CHAT_COMPLETE_RESULTS_20261003.md](CHAT_COMPLETE_RESULTS_20261003.md)。这是工程完整性验收，模型调用0；没有新官方准确率结论，不覆盖下方历史效果成绩。
+
 2026-10-02第六轮最终固定源码验收已结束：综合开发题41/44→43/44；Sakila自编跨库56轮14/56→15/56（独立3/36、会话turn12/20、整段0/4）；OHR固定15原件36题EM7/36持平、F1 .317567→.327826；显式完整结果开发验证4/6→6/6，其中两个实际结果各19119行/192页，全部cells独立核对。完整本地2858 passed、0 failed、2 skipped、1 warning、12 subtests。三组真实API348次，340完成、8失败、0丢失，usage1563115 tokens为可见下界。全部82个backend文件与三组真实评测、最终本地回归及完整结果报告一致，封存见 [ROUND6_FINAL_SOURCE_AUDIT_20261002.json](ROUND6_FINAL_SOURCE_AUDIT_20261002.json)，实现与限制见 [OPTIMIZATION_ROUND6_20261002.md](OPTIMIZATION_ROUND6_20261002.md)。
 
 四核心功能都有实现，但没有一项能据当前证据宣布顶级效果和通用泛化达标；目标仍active。开发高分不替代跨库15/56和RAG7/36。完整结果为NL2SQL API显式opt-in，Agent默认与冻结评分器未改。下方历史数字保留为对应版本证据，不是当前全量验收。

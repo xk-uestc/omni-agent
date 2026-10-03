@@ -1,0 +1,29 @@
+{
+  "scope": "synthetic SQLite + rules + live HTTP, not real model accuracy or official benchmark",
+  "api_calls_to_model": 0,
+  "fixture_sha256": "5beebed25151a39b818116d2f2f7e8bad620d5e20d9d6949d25cf04c7f286bd5",
+  "checks": {
+    "legacy_preview_100": true,
+    "complete_total_244": true,
+    "actual_three_pages": true,
+    "every_cell_equals_sql_replay": true,
+    "receipt_eof": true,
+    "summary_distinguishes_preview": true
+  },
+  "page_lengths": [
+    100,
+    100,
+    44
+  ],
+  "columns": [
+    "region",
+    "销售额",
+    "排名"
+  ],
+  "sql": "SELECT \"sales_orders\".\"region\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\", DENSE_RANK() OVER (ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC) AS \"排名\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY \"sales_orders\".\"region\" ORDER BY \"排名\" ASC, \"销售额\" DESC",
+  "parameters": [
+    "2025-01-01",
+    "2026-01-01"
+  ],
+  "status": "pass"
+}
