@@ -59,6 +59,7 @@ _SAFETY_REASON_CODES = frozenset({
     'complex_query_duplicate_or_unbounded_outputs',
     'complex_query_integer_literal_out_of_range', 'complex_query_nonfinite_literal',
     'complex_query_parameter_binding_mismatch', 'complex_query_proposal_contract',
+    'complex_query_explicit_nonnull_count_requires_field_projection',
 })
 _SAFETY_MESSAGE_CODES = {
     'SQL 不能为空': 'sql_empty',

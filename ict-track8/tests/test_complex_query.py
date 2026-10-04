@@ -115,10 +115,12 @@ def test_engine_executes_only_reviewed_proposal(source):
 
 
 def test_semantic_rejection_never_executes(source):
-    client = Client('SELECT COUNT(*) n FROM payments',approved=False)
+    client = Client('SELECT COUNT(*) n,COUNT(rental_id) nonnull FROM payments',approved=False)
     result = Nl2SqlEngine(source,model_plan_provider=provider(client)).answer('查询记录总数和rental_id非空记录数')
     assert result.status == 'clarification' and result.sql is None
+    assert result.clarification_code == 'complex_query_semantic_review_rejected'
     assert result.plan['semantic_audit']['status'] == 'rejected'
+    assert client.calls == ['complex_sql_proposal', 'complex_sql_independent_review']
 
 
 @pytest.mark.parametrize('status',[401,403])

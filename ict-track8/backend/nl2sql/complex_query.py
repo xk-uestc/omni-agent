@@ -35,6 +35,39 @@ _PHYSICAL_GROUP = re.compile(r'按\s*[A-Za-z_][A-Za-z_0-9]*\.[A-Za-z_][A-Za-z_0-
 _PHYSICAL_EACH = re.compile(
     r'(?:各|每个|每一)\s*(?:[A-Za-z_][A-Za-z_0-9]*\.)?[A-Za-z_][A-Za-z_0-9]*'
     r'(?![A-Za-z_0-9]).{0,60}(?:合计|总额|求和|平均|统计|汇总)', re.I)
+_NONNULL_COUNT_INTENT = re.compile(
+    r'(?:非空|不为空|非null|not\s+null).{0,24}(?:记录数|数量|个数)'
+    r'|(?:记录数|数量|个数).{0,24}(?:非空|不为空)', re.I)
+
+
+def explicit_nonnull_count_fields(question, tables):
+    """Resolve only a physically named field in an explicit non-NULL count."""
+    named_tables = {table.name for table in tables if re.search(
+        r'(?<![A-Za-z_0-9])' + re.escape(table.name) + r'(?![A-Za-z_0-9])', question, re.I)}
+    fields = []
+    for table in tables:
+        for column in table.columns:
+            mentioned = bool(re.search(r'(?<![A-Za-z_0-9])' + re.escape(column.name)
+                                       + r'(?![A-Za-z_0-9])', question, re.I))
+            field = re.escape(column.name)
+            nonnull_count = re.compile(
+                r'(?<![A-Za-z_0-9])' + field
+                + r'\s*(?:字段)?\s*(?:非空|不为空|非null|not\s+null)\s*(?:的)?\s*'
+                + r'(?:记录数|数量|个数)(?![A-Za-z_0-9])'
+                + r'|(?:非空|不为空|非null|not\s+null)\s*' + field
+                + r'\s*(?:字段)?\s*(?:记录数|数量|个数)(?![A-Za-z_0-9])', re.I)
+            explicit_count = bool(nonnull_count.search(question))
+            qualified = bool(re.search(r'(?<![A-Za-z_0-9])' + re.escape(table.name)
+                + r'(?:\.|的|表的|中的)\s*' + re.escape(column.name)
+                + r'(?![A-Za-z_0-9])', question, re.I))
+            owners = [t for t in tables if any(c.name.casefold() == column.name.casefold()
+                                               for c in t.columns)]
+            named_owners = {t.name for t in owners if t.name in named_tables}
+            if explicit_count and mentioned and (qualified or (len(owners) == 1 and
+                    (not named_tables or table.name in named_tables))
+                    or (len(named_owners) == 1 and table.name in named_owners)):
+                fields.append((table.name, column.name))
+    return fields
 
 
 def needs_complex_query(question):
@@ -43,7 +76,8 @@ def needs_complex_query(question):
     owners = {m.group(1).casefold() for m in re.finditer(
         r'(?<![A-Za-z_0-9])([A-Za-z_][A-Za-z_0-9]*)\.[A-Za-z_][A-Za-z_0-9]*(?![A-Za-z_0-9])', question)}
     return (bool(_COMPLEX.search(question) or _PHYSICAL_GROUP.search(question))
-            or len(owners) > 1 or bool(owners and _PHYSICAL_EACH.search(question)))
+            or len(owners) > 1 or bool(owners and _PHYSICAL_EACH.search(question))
+            or bool(_NONNULL_COUNT_INTENT.search(question)))
 
 
 PROPOSAL = object_schema({
@@ -63,6 +97,8 @@ INSTRUCTIONS = """你是只读SQLite复杂关系查询规划器。按schema输�
 保留整题所有过滤、NULL语义、分组层次、排序、最新/最早与并列决胜、输出字段和范围。
 COUNT(*)是记录数，COUNT(column)仅非空；条件计数用CASE WHEN。二层AVG须先按原粒度聚合。
 COUNT在零匹配输入上返回0是原生行为，不是擅自填零；SUM在零匹配输入上返回NULL。
+明确询问唯一确定物理字段的非空记录数时使用COUNT(该字段)投影；不要改为COUNT(*)并加IS NOT NULL过滤，
+以保留用户请求字段的输出血缘。
 用户指定物理输出字段时必须逐个投影该字段，不能替换成FK另一侧名称相似的主键。
 GROUP BY只按用户明确的粒度；不能擅加主键改变同名实体的分组。独立日期过滤绑定各自字段。
 反连接优先用键集合或预聚合避免无索引相关全表重复扫描；NOT IN的NULL行为不得替换。
@@ -100,6 +136,7 @@ REVIEW_INSTRUCTIONS = """独立审核原始问题和候选SQLite SQL，不能因
 服务器执行契约规定：用户未另定义NULL业务规则时，使用SQLite原生NULL聚合、分组、排序与
 运算行为，不得擅自填零或排除NULL。只因字段nullable不能要求额外澄清；必须检查SQL是否
 保留COUNT对空输入返回0、SUM对空输入返回NULL的原生区别。日期存储以执行快照探针为据；
+明确询问唯一确定物理字段的非空数量时，投影COUNT(该字段)，不能通过过滤后COUNT(*)替代。
 unknown不是ISO证明；iso_text不证明文本顺序是时间顺序。时间排序须使用探针已核验的
 time_comparison比较器，混合T/空格不能直接文本DESC。不要求不存在的全局非空业务规则。
 先明确某物理关系的分组、再求那些组的总体平均或阈值，必须保留前阶段实际组的总体，
@@ -258,6 +295,23 @@ def validate_proposal(sql, tables):
     return parameterized, tuple(ordered), canonical_sql, sorted(physical), sorted(used_columns)
 
 
+def _verify_nonnull_count_projection(question, sql, tables):
+    requested = explicit_nonnull_count_fields(question, tables)
+    if not requested:
+        return
+    tree = parse_one(sql, read='sqlite')
+    direct_counts = set()
+    for count in tree.find_all(exp.Count):
+        value = count.this
+        if isinstance(value, exp.Column):
+            direct_counts.add((value.table.casefold(), value.name.casefold()))
+    if any(not any(column.casefold() == actual_column and
+                   (not table.casefold() or table.casefold() == actual_table)
+                   for actual_table, actual_column in direct_counts)
+           for table, column in requested):
+        raise SqlSafetyError('complex_query_explicit_nonnull_count_requires_field_projection')
+
+
 def propose_complex(provider, question, tables, *, date_profiles=None, date_profile_loader=None):
     client = provider.client
     context = {'question': question, 'schema': [t.to_dict() for t in tables],
@@ -283,6 +337,7 @@ def propose_complex(provider, question, tables, *, date_profiles=None, date_prof
             return plan, None
         try:
             compiled, parameters, canonical, physical, columns = validate_proposal(sql, tables)
+            _verify_nonnull_count_projection(question, canonical, tables)
             attempts.append({'attempt':attempt+1,'status':'statically_validated'})
             break
         except SqlSafetyError as exc:
