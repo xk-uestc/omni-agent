@@ -17,21 +17,22 @@ def _label_span(clause, label, unit):
 
     “首次响应时间” and “2小时内首次响应” express the same literal
     event with the measurement expressed by the explicit unit. Only a
-    terminal measurement noun may be removed; event qualifiers stay intact.
+    terminal measurement noun, optionally followed by “要求”, may be removed;
+    event qualifiers stay intact. “要求” alone is never a removable suffix.
     Non-duration labels and dates are deliberately not normalized.
     """
     if label in clause:
         return label, clause.index(label), 'literal_label'
     if unit not in _DURATION_UNITS:
         return None
-    match = re.fullmatch(r'(.{2,})(?:时间|时长|耗时|小时数|分钟数|天数|月数)', label)
+    match = re.fullmatch(r'(.{2,})(时间|时长|耗时|小时数|分钟数|天数|月数)(?:要求)?', label)
     if not match:
         return None
     event = match.group(1)
     if (event not in clause or clause.count(event) != 1
             or re.search(r'日期|时刻|年份|月份|日历|截止日', event)):
         return None
-    suffix = label[len(event):]
+    suffix = match.group(2)
     explicit_suffix_units = {'小时数': '小时', '分钟数': '分钟', '天数': '天', '月数': '个月'}
     if suffix in explicit_suffix_units and explicit_suffix_units[suffix] != unit:
         return None

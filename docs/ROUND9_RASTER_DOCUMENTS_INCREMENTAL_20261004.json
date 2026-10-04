@@ -1,0 +1,2209 @@
+{
+  "created_at": "2026-10-04T01:52:02.242968+00:00",
+  "scope": "authored_raster_only_production_QA_probe_not_official_or_blind_accuracy",
+  "reference_used_as_model_input": false,
+  "native_answer_text_present": false,
+  "replay_source": {
+    "path": "docs\\ROUND9_RASTER_DOCUMENTS_FINAL_20261004.json",
+    "sha256": "961c97cacc50f941cf6525ccaff3fb20e2249066543ed2e198201068894a53fb",
+    "contract": "identical_questions_original_raster_pdf_bytes_and_scoring_references"
+  },
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "total": 4,
+  "executed": 4,
+  "passed": 4,
+  "cases": [
+    {
+      "id": "borderless",
+      "question": "In the budget bulletin, what is the East region allocation in 2033?",
+      "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+      "pass": true,
+      "reference_scoring_only": {
+        "required": [
+          "59062",
+          "USD",
+          "thousand"
+        ],
+        "excluded": [
+          "94443",
+          "54698"
+        ]
+      },
+      "result": {
+        "status": "ok",
+        "question": "In the budget bulletin, what is the East region allocation in 2033?",
+        "answer": "East\n59062\n2033 allocation (USD thousand)",
+        "answer_mode": "visual_source_model_reviewed",
+        "calculator_input_eligible": false,
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "borderless",
+            "title": "Budget bulletin",
+            "snippet": "East",
+            "source_uri": "/api/v1/knowledge/documents/borderless/original",
+            "metadata": {
+              "document_id": "borderless",
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "page_no": 1,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 1,
+                "bbox_display_pt": [
+                  19.5,
+                  87.85,
+                  51.0,
+                  100.1
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "borderless",
+            "title": "Budget bulletin",
+            "snippet": "59062",
+            "source_uri": "/api/v1/knowledge/documents/borderless/original",
+            "metadata": {
+              "document_id": "borderless",
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "page_no": 1,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 1,
+                "bbox_display_pt": [
+                  105.0,
+                  87.85,
+                  149.0,
+                  100.1
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          },
+          {
+            "citation_id": 3,
+            "document_id": "borderless",
+            "title": "Budget bulletin",
+            "snippet": "2033 allocation (USD thousand)",
+            "source_uri": "/api/v1/knowledge/documents/borderless/original",
+            "metadata": {
+              "document_id": "borderless",
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "page_no": 1,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 1,
+                "bbox_display_pt": [
+                  96.0,
+                  54.95,
+                  313.0,
+                  67.55
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          }
+        ],
+        "trace": [
+          {
+            "stage": "original_page_visual_fallback",
+            "status": "model_reviewed",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "visual_source_literal_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "image_evidence": [
+                  {
+                    "evidence_id": "415bcb577880fa9c3e7dbf7f1b7dfa6569076fc6c110d5ad2cba743c118be891",
+                    "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+                    "render_sha256": "822f02869699a45b4aebc4bde30683f8399808fd4d59acd4ddccd5b72e33aa6a",
+                    "page_no": 1,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  }
+                ],
+                "image_count": 1,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1603,
+                "output_tokens": 297,
+                "total_tokens": 1900,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 69,
+                "call_index": 3,
+                "latency_ms": 8149.556
+              },
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "visual_source_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "image_evidence": [
+                  {
+                    "evidence_id": "415bcb577880fa9c3e7dbf7f1b7dfa6569076fc6c110d5ad2cba743c118be891",
+                    "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+                    "render_sha256": "822f02869699a45b4aebc4bde30683f8399808fd4d59acd4ddccd5b72e33aa6a",
+                    "page_no": 1,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  }
+                ],
+                "image_count": 1,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1718,
+                "output_tokens": 203,
+                "total_tokens": 1921,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 131,
+                "call_index": 4,
+                "latency_ms": 10041.481
+              }
+            ],
+            "page_selection_scope": "explicit_short_document_all_pages",
+            "selection_shape": {
+              "abstain": false,
+              "part_count": 3,
+              "all_evidence_ids_known": true
+            },
+            "rejected_checks": []
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "visual_source_proof": {
+          "version": "literal-visual-source-v1",
+          "parts": [
+            {
+              "bbox_normalized": [
+                0.039,
+                0.251,
+                0.102,
+                0.286
+              ],
+              "evidence_id": "415bcb577880fa9c3e7dbf7f1b7dfa6569076fc6c110d5ad2cba743c118be891",
+              "quote": "East",
+              "page_no": 1,
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "render_sha256": "822f02869699a45b4aebc4bde30683f8399808fd4d59acd4ddccd5b72e33aa6a",
+              "bbox_display_pt": [
+                19.5,
+                87.85,
+                51.0,
+                100.1
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            },
+            {
+              "bbox_normalized": [
+                0.21,
+                0.251,
+                0.298,
+                0.286
+              ],
+              "evidence_id": "415bcb577880fa9c3e7dbf7f1b7dfa6569076fc6c110d5ad2cba743c118be891",
+              "quote": "59062",
+              "page_no": 1,
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "render_sha256": "822f02869699a45b4aebc4bde30683f8399808fd4d59acd4ddccd5b72e33aa6a",
+              "bbox_display_pt": [
+                105.0,
+                87.85,
+                149.0,
+                100.1
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            },
+            {
+              "bbox_normalized": [
+                0.192,
+                0.157,
+                0.626,
+                0.193
+              ],
+              "evidence_id": "415bcb577880fa9c3e7dbf7f1b7dfa6569076fc6c110d5ad2cba743c118be891",
+              "quote": "2033 allocation (USD thousand)",
+              "page_no": 1,
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "render_sha256": "822f02869699a45b4aebc4bde30683f8399808fd4d59acd4ddccd5b72e33aa6a",
+              "bbox_display_pt": [
+                96.0,
+                54.95,
+                313.0,
+                67.55
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            }
+          ],
+          "review": {
+            "all_requested_items_present": true,
+            "approved": true,
+            "no_inference_or_arithmetic": true,
+            "quotes_visibly_exact": true,
+            "regions_locate_quotes": true,
+            "source_relationship_explicit": true,
+            "units_signs_periods_preserved": true,
+            "whole_question_answered": true
+          },
+          "question_sha256": "03feea3c009954ee8b9a651648b6ed1b7b2ddb40ddfc20c59369f9571c7c91c7",
+          "semantic_verification": "independent_model_review_not_formal_entailment",
+          "page_selection_scope": "explicit_short_document_all_pages"
+        },
+        "prior_text_answer": {
+          "status": "insufficient_evidence",
+          "answer_mode": "model_grounded",
+          "trace": [
+            {
+              "stage": "document_retrieval",
+              "channel": "bm25",
+              "candidate_count": 1
+            },
+            {
+              "stage": "evidence_selection",
+              "selected_count": 1,
+              "generation": "extractive"
+            },
+            {
+              "stage": "visual_page_routing",
+              "scope": "explicit_document_all_pages",
+              "candidate_document_ids": [
+                "borderless"
+              ],
+              "status": "no_complete_grid_key",
+              "model_requests_attempted": 0,
+              "limits": {
+                "documents": 4,
+                "pages": 4000,
+                "source_bytes": 41943040,
+                "pages_per_source": 1000,
+                "source_bytes_per_source": 20971520,
+                "index_build_seconds_per_source": 60,
+                "index_bytes_per_source": 16777216,
+                "cache_bytes": 134217728,
+                "cache_entries": 128
+              },
+              "candidate_pages": 1,
+              "page_indexes": [
+                {
+                  "document_id": "borderless",
+                  "status": "built_complete",
+                  "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+                  "page_count": 1,
+                  "complete": true,
+                  "extractor_version": "PyMuPDF:1.27.2.2:lines_strict:unrotated:algorithm:1ebbeefcb8e9a0ff6b87462cdb9d3a91fd1d204b92fbc2503bd2656ecaab48de",
+                  "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+                }
+              ],
+              "complete_key_matches": 0,
+              "scope_rejections": []
+            },
+            {
+              "stage": "visual_chart_routing",
+              "status": "no_supported_native_chart_key",
+              "model_requests_attempted": 0,
+              "limits": {
+                "documents": 4,
+                "pages": 1000,
+                "total_bytes": 41943040,
+                "source_bytes": 20971520,
+                "seconds": 60
+              },
+              "candidate_document_ids": [
+                "borderless"
+              ],
+              "scope": "explicit_document_all_pages",
+              "candidate_pages": 1,
+              "complete_candidate_scan": true,
+              "complete_key_matches": 0,
+              "scope_rejections": [],
+              "scan_seconds": 0.015
+            },
+            {
+              "stage": "native_aligned_table_routing",
+              "status": "no_native_aligned_tables",
+              "model_requests_attempted": 0,
+              "model_audits": [],
+              "candidate_document_ids": [
+                "borderless"
+              ],
+              "scope": "selected_pdf_all_pages_not_global_corpus"
+            },
+            {
+              "stage": "generation_evidence",
+              "selected_count": 1,
+              "total_chars": 15,
+              "omitted": [],
+              "max_items": 8,
+              "max_chars_per_item": 1800,
+              "max_native_chars_per_item": 3200,
+              "max_total_chars": 12000
+            },
+            {
+              "stage": "grounded_generation",
+              "status": "validated",
+              "model": "gpt-6-luna"
+            },
+            {
+              "stage": "evidence_first_source_span",
+              "status": "unsupported",
+              "reason": "source_literal_selection_invalid",
+              "model_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "source_span_selection",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 612,
+                  "output_tokens": 54,
+                  "total_tokens": 666,
+                  "call_index": 2,
+                  "latency_ms": 2861.613
+                }
+              ],
+              "evidence_contract": "raw_source_only_no_validated_facts",
+              "literal_error_code": "selection_abstained"
+            }
+          ]
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 883,
+          "output_tokens": 19,
+          "total_tokens": 902,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 5452.947
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "source_span_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 612,
+          "output_tokens": 54,
+          "total_tokens": 666,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 20,
+          "call_index": 2,
+          "latency_ms": 2861.613
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_source_literal_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "415bcb577880fa9c3e7dbf7f1b7dfa6569076fc6c110d5ad2cba743c118be891",
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "render_sha256": "822f02869699a45b4aebc4bde30683f8399808fd4d59acd4ddccd5b72e33aa6a",
+              "page_no": 1,
+              "size_px": [
+                1000,
+                700
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1603,
+          "output_tokens": 297,
+          "total_tokens": 1900,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 69,
+          "call_index": 3,
+          "latency_ms": 8149.556
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_source_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "415bcb577880fa9c3e7dbf7f1b7dfa6569076fc6c110d5ad2cba743c118be891",
+              "source_sha256": "a818444564da806a982d32c5eddbbdf46a78f62196f0070fe93ca31801cc4c38",
+              "render_sha256": "822f02869699a45b4aebc4bde30683f8399808fd4d59acd4ddccd5b72e33aa6a",
+              "page_no": 1,
+              "size_px": [
+                1000,
+                700
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1718,
+          "output_tokens": 203,
+          "total_tokens": 1921,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 131,
+          "call_index": 4,
+          "latency_ms": 10041.481
+        }
+      ]
+    },
+    {
+      "id": "multi",
+      "question": "In the assay bulletin, which components are assayed and which two tests are used?",
+      "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+      "pass": true,
+      "reference_scoring_only": {
+        "required": [
+          "Iron",
+          "Manganese",
+          "Spectrum-FEB836",
+          "Redox-FEB836"
+        ],
+        "excluded": []
+      },
+      "result": {
+        "status": "ok",
+        "question": "In the assay bulletin, which components are assayed and which two tests are used?",
+        "answer": "Iron, Manganese\nSpectrum-FEB836, Redox-FEB836",
+        "answer_mode": "visual_source_model_reviewed",
+        "calculator_input_eligible": false,
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "multi",
+            "title": "Assay bulletin",
+            "snippet": "Iron, Manganese",
+            "source_uri": "/api/v1/knowledge/documents/multi/original",
+            "metadata": {
+              "document_id": "multi",
+              "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+              "page_no": 1,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 1,
+                "bbox_display_pt": [
+                  20.0,
+                  54.95,
+                  292.5,
+                  68.95
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "multi",
+            "title": "Assay bulletin",
+            "snippet": "Spectrum-FEB836, Redox-FEB836",
+            "source_uri": "/api/v1/knowledge/documents/multi/original",
+            "metadata": {
+              "document_id": "multi",
+              "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+              "page_no": 1,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 1,
+                "bbox_display_pt": [
+                  20.0,
+                  87.5,
+                  340.5,
+                  101.85
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          }
+        ],
+        "trace": [
+          {
+            "stage": "original_page_visual_fallback",
+            "status": "model_reviewed",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "visual_source_literal_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "image_evidence": [
+                  {
+                    "evidence_id": "af6c416f23e00a44024c34d4da5efa7ebb197b40d89af0daba75e6705a5a534a",
+                    "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+                    "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+                    "page_no": 1,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  }
+                ],
+                "image_count": 1,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1600,
+                "output_tokens": 168,
+                "total_tokens": 1768,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 3,
+                "latency_ms": 9982.652
+              },
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "visual_source_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "image_evidence": [
+                  {
+                    "evidence_id": "af6c416f23e00a44024c34d4da5efa7ebb197b40d89af0daba75e6705a5a534a",
+                    "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+                    "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+                    "page_no": 1,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  }
+                ],
+                "image_count": 1,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1647,
+                "output_tokens": 365,
+                "total_tokens": 2012,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 293,
+                "call_index": 4,
+                "latency_ms": 19750.583
+              }
+            ],
+            "page_selection_scope": "explicit_short_document_all_pages",
+            "selection_shape": {
+              "abstain": false,
+              "part_count": 2,
+              "all_evidence_ids_known": true
+            },
+            "rejected_checks": []
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "visual_source_proof": {
+          "version": "literal-visual-source-v1",
+          "parts": [
+            {
+              "bbox_normalized": [
+                0.04,
+                0.157,
+                0.585,
+                0.197
+              ],
+              "evidence_id": "af6c416f23e00a44024c34d4da5efa7ebb197b40d89af0daba75e6705a5a534a",
+              "quote": "Iron, Manganese",
+              "page_no": 1,
+              "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+              "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+              "bbox_display_pt": [
+                20.0,
+                54.95,
+                292.5,
+                68.95
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            },
+            {
+              "bbox_normalized": [
+                0.04,
+                0.25,
+                0.681,
+                0.291
+              ],
+              "evidence_id": "af6c416f23e00a44024c34d4da5efa7ebb197b40d89af0daba75e6705a5a534a",
+              "quote": "Spectrum-FEB836, Redox-FEB836",
+              "page_no": 1,
+              "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+              "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+              "bbox_display_pt": [
+                20.0,
+                87.5,
+                340.5,
+                101.85
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            }
+          ],
+          "review": {
+            "all_requested_items_present": true,
+            "approved": true,
+            "no_inference_or_arithmetic": true,
+            "quotes_visibly_exact": true,
+            "regions_locate_quotes": true,
+            "source_relationship_explicit": true,
+            "units_signs_periods_preserved": true,
+            "whole_question_answered": true
+          },
+          "question_sha256": "a9eeb3561dfc66c6b35ba1e90ee9ff5d68ef2933be06233f16dd31db7c09e75f",
+          "semantic_verification": "independent_model_review_not_formal_entailment",
+          "page_selection_scope": "explicit_short_document_all_pages"
+        },
+        "prior_text_answer": {
+          "status": "insufficient_evidence",
+          "answer_mode": "model_grounded",
+          "trace": [
+            {
+              "stage": "document_retrieval",
+              "channel": "bm25",
+              "candidate_count": 1
+            },
+            {
+              "stage": "evidence_selection",
+              "selected_count": 1,
+              "generation": "extractive"
+            },
+            {
+              "stage": "visual_page_routing",
+              "scope": "explicit_document_all_pages",
+              "candidate_document_ids": [
+                "multi"
+              ],
+              "status": "no_complete_grid_key",
+              "model_requests_attempted": 0,
+              "limits": {
+                "documents": 4,
+                "pages": 4000,
+                "source_bytes": 41943040,
+                "pages_per_source": 1000,
+                "source_bytes_per_source": 20971520,
+                "index_build_seconds_per_source": 60,
+                "index_bytes_per_source": 16777216,
+                "cache_bytes": 134217728,
+                "cache_entries": 128
+              },
+              "candidate_pages": 1,
+              "page_indexes": [
+                {
+                  "document_id": "multi",
+                  "status": "built_complete",
+                  "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+                  "page_count": 1,
+                  "complete": true,
+                  "extractor_version": "PyMuPDF:1.27.2.2:lines_strict:unrotated:algorithm:1ebbeefcb8e9a0ff6b87462cdb9d3a91fd1d204b92fbc2503bd2656ecaab48de",
+                  "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+                }
+              ],
+              "complete_key_matches": 0,
+              "scope_rejections": []
+            },
+            {
+              "stage": "visual_chart_routing",
+              "status": "no_supported_native_chart_key",
+              "model_requests_attempted": 0,
+              "limits": {
+                "documents": 4,
+                "pages": 1000,
+                "total_bytes": 41943040,
+                "source_bytes": 20971520,
+                "seconds": 60
+              },
+              "candidate_document_ids": [
+                "multi"
+              ],
+              "scope": "explicit_document_all_pages",
+              "candidate_pages": 1,
+              "complete_candidate_scan": true,
+              "complete_key_matches": 0,
+              "scope_rejections": [],
+              "scan_seconds": 0.0
+            },
+            {
+              "stage": "native_aligned_table_routing",
+              "status": "not_applicable",
+              "model_requests_attempted": 0,
+              "model_audits": []
+            },
+            {
+              "stage": "generation_evidence",
+              "selected_count": 1,
+              "total_chars": 14,
+              "omitted": [],
+              "max_items": 8,
+              "max_chars_per_item": 1800,
+              "max_native_chars_per_item": 3200,
+              "max_total_chars": 12000
+            },
+            {
+              "stage": "grounded_generation",
+              "status": "validated",
+              "model": "gpt-6-luna"
+            },
+            {
+              "stage": "evidence_first_source_span",
+              "status": "unsupported",
+              "reason": "source_literal_selection_invalid",
+              "model_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "source_span_selection",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 617,
+                  "output_tokens": 32,
+                  "total_tokens": 649,
+                  "call_index": 2,
+                  "latency_ms": 4758.027
+                }
+              ],
+              "evidence_contract": "raw_source_only_no_validated_facts",
+              "literal_error_code": "selection_abstained"
+            }
+          ]
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 890,
+          "output_tokens": 19,
+          "total_tokens": 909,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 3154.475
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "source_span_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 617,
+          "output_tokens": 32,
+          "total_tokens": 649,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 4758.027
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_source_literal_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "af6c416f23e00a44024c34d4da5efa7ebb197b40d89af0daba75e6705a5a534a",
+              "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+              "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+              "page_no": 1,
+              "size_px": [
+                1000,
+                700
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1600,
+          "output_tokens": 168,
+          "total_tokens": 1768,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 3,
+          "latency_ms": 9982.652
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_source_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "af6c416f23e00a44024c34d4da5efa7ebb197b40d89af0daba75e6705a5a534a",
+              "source_sha256": "983a3174eee04c6184450d518a873715616f89766600cc9c41bc42aade1291cc",
+              "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+              "page_no": 1,
+              "size_px": [
+                1000,
+                700
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1647,
+          "output_tokens": 365,
+          "total_tokens": 2012,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 293,
+          "call_index": 4,
+          "latency_ms": 19750.583
+        }
+      ]
+    },
+    {
+      "id": "formula",
+      "question": "In the mechanism bulletin, give the complete printed Efficiency formula and the units of useful, input and losses.",
+      "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+      "pass": true,
+      "reference_scoring_only": {
+        "required": [
+          "Efficiency",
+          "useful",
+          "/",
+          "input",
+          "+",
+          "losses",
+          "Joule"
+        ],
+        "excluded": []
+      },
+      "result": {
+        "status": "ok",
+        "question": "In the mechanism bulletin, give the complete printed Efficiency formula and the units of useful, input and losses.",
+        "answer": "Efficiency = useful /\n(input + losses)\nuseful: Joule; input: Joule; losses: Joule.",
+        "answer_mode": "visual_source_model_reviewed",
+        "calculator_input_eligible": false,
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "formula",
+            "title": "Mechanism bulletin",
+            "snippet": "Efficiency = useful /",
+            "source_uri": "/api/v1/knowledge/documents/formula/original",
+            "metadata": {
+              "document_id": "formula",
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "page_no": 1,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 1,
+                "bbox_display_pt": [
+                  20.0,
+                  53.9,
+                  152.0,
+                  68.60000000000001
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "formula",
+            "title": "Mechanism bulletin",
+            "snippet": "(input + losses)",
+            "source_uri": "/api/v1/knowledge/documents/formula/original",
+            "metadata": {
+              "document_id": "formula",
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "page_no": 2,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 2,
+                "bbox_display_pt": [
+                  20.0,
+                  54.6,
+                  123.0,
+                  67.9
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          },
+          {
+            "citation_id": 3,
+            "document_id": "formula",
+            "title": "Mechanism bulletin",
+            "snippet": "useful: Joule; input: Joule; losses: Joule.",
+            "source_uri": "/api/v1/knowledge/documents/formula/original",
+            "metadata": {
+              "document_id": "formula",
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "page_no": 2,
+              "locator": {
+                "type": "pdf_visual_region",
+                "page_no": 2,
+                "bbox_display_pt": [
+                  20.0,
+                  87.85,
+                  290.0,
+                  100.1
+                ],
+                "coordinate_system": "pdf_display_points_top_left"
+              }
+            }
+          }
+        ],
+        "trace": [
+          {
+            "stage": "original_page_visual_fallback",
+            "status": "model_reviewed",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "visual_source_literal_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "image_evidence": [
+                  {
+                    "evidence_id": "5f7d9145d1ee30771cc2969f51208a71a9fb655b98a6f3e0b82cd0b8f2910221",
+                    "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+                    "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+                    "page_no": 1,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  },
+                  {
+                    "evidence_id": "79cf2cb76a0ff98cc273ec439ae851f31d282f1d1d17d8d4f3ffd47c002db978",
+                    "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+                    "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+                    "page_no": 2,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  }
+                ],
+                "image_count": 2,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 2771,
+                "output_tokens": 376,
+                "total_tokens": 3147,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 129,
+                "call_index": 1,
+                "latency_ms": 17484.954
+              },
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "visual_source_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "image_evidence": [
+                  {
+                    "evidence_id": "5f7d9145d1ee30771cc2969f51208a71a9fb655b98a6f3e0b82cd0b8f2910221",
+                    "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+                    "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+                    "page_no": 1,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  },
+                  {
+                    "evidence_id": "79cf2cb76a0ff98cc273ec439ae851f31d282f1d1d17d8d4f3ffd47c002db978",
+                    "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+                    "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+                    "page_no": 2,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  }
+                ],
+                "image_count": 2,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 2861,
+                "output_tokens": 233,
+                "total_tokens": 3094,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 161,
+                "call_index": 2,
+                "latency_ms": 9033.146
+              }
+            ],
+            "page_selection_scope": "explicit_short_document_all_pages",
+            "selection_shape": {
+              "abstain": false,
+              "part_count": 3,
+              "all_evidence_ids_known": true
+            },
+            "rejected_checks": []
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "visual_source_proof": {
+          "version": "literal-visual-source-v1",
+          "parts": [
+            {
+              "bbox_normalized": [
+                0.04,
+                0.154,
+                0.304,
+                0.196
+              ],
+              "evidence_id": "5f7d9145d1ee30771cc2969f51208a71a9fb655b98a6f3e0b82cd0b8f2910221",
+              "quote": "Efficiency = useful /",
+              "page_no": 1,
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+              "bbox_display_pt": [
+                20.0,
+                53.9,
+                152.0,
+                68.60000000000001
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            },
+            {
+              "bbox_normalized": [
+                0.04,
+                0.156,
+                0.246,
+                0.194
+              ],
+              "evidence_id": "79cf2cb76a0ff98cc273ec439ae851f31d282f1d1d17d8d4f3ffd47c002db978",
+              "quote": "(input + losses)",
+              "page_no": 2,
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+              "bbox_display_pt": [
+                20.0,
+                54.6,
+                123.0,
+                67.9
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            },
+            {
+              "bbox_normalized": [
+                0.04,
+                0.251,
+                0.58,
+                0.286
+              ],
+              "evidence_id": "79cf2cb76a0ff98cc273ec439ae851f31d282f1d1d17d8d4f3ffd47c002db978",
+              "quote": "useful: Joule; input: Joule; losses: Joule.",
+              "page_no": 2,
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+              "bbox_display_pt": [
+                20.0,
+                87.85,
+                290.0,
+                100.1
+              ],
+              "coordinate_system": "pdf_display_points_top_left",
+              "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+            }
+          ],
+          "review": {
+            "all_requested_items_present": true,
+            "approved": true,
+            "no_inference_or_arithmetic": true,
+            "quotes_visibly_exact": true,
+            "regions_locate_quotes": true,
+            "source_relationship_explicit": true,
+            "units_signs_periods_preserved": true,
+            "whole_question_answered": true
+          },
+          "question_sha256": "e6a0dea2510bcebae8516622cfe98ac385a3e4a4eebf1419b87fe787a297bce3",
+          "semantic_verification": "independent_model_review_not_formal_entailment",
+          "page_selection_scope": "explicit_short_document_all_pages"
+        },
+        "prior_text_answer": {
+          "status": "insufficient_evidence",
+          "answer_mode": "attributed_extracts",
+          "trace": [
+            {
+              "stage": "document_retrieval",
+              "channel": "bm25",
+              "candidate_count": 0
+            },
+            {
+              "stage": "evidence_selection",
+              "selected_count": 0,
+              "generation": "extractive"
+            },
+            {
+              "stage": "visual_page_routing",
+              "scope": "explicit_document_all_pages",
+              "candidate_document_ids": [
+                "formula"
+              ],
+              "status": "no_complete_grid_key",
+              "model_requests_attempted": 0,
+              "limits": {
+                "documents": 4,
+                "pages": 4000,
+                "source_bytes": 41943040,
+                "pages_per_source": 1000,
+                "source_bytes_per_source": 20971520,
+                "index_build_seconds_per_source": 60,
+                "index_bytes_per_source": 16777216,
+                "cache_bytes": 134217728,
+                "cache_entries": 128
+              },
+              "candidate_pages": 2,
+              "page_indexes": [
+                {
+                  "document_id": "formula",
+                  "status": "built_complete",
+                  "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+                  "page_count": 2,
+                  "complete": true,
+                  "extractor_version": "PyMuPDF:1.27.2.2:lines_strict:unrotated:algorithm:1ebbeefcb8e9a0ff6b87462cdb9d3a91fd1d204b92fbc2503bd2656ecaab48de",
+                  "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+                }
+              ],
+              "complete_key_matches": 0,
+              "scope_rejections": []
+            },
+            {
+              "stage": "visual_chart_routing",
+              "status": "no_supported_native_chart_key",
+              "model_requests_attempted": 0,
+              "limits": {
+                "documents": 4,
+                "pages": 1000,
+                "total_bytes": 41943040,
+                "source_bytes": 20971520,
+                "seconds": 60
+              },
+              "candidate_document_ids": [
+                "formula"
+              ],
+              "scope": "explicit_document_all_pages",
+              "candidate_pages": 2,
+              "complete_candidate_scan": true,
+              "complete_key_matches": 0,
+              "scope_rejections": [],
+              "scan_seconds": 0.016
+            },
+            {
+              "stage": "native_aligned_table_routing",
+              "status": "not_applicable",
+              "model_requests_attempted": 0,
+              "model_audits": []
+            }
+          ]
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_source_literal_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "5f7d9145d1ee30771cc2969f51208a71a9fb655b98a6f3e0b82cd0b8f2910221",
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+              "page_no": 1,
+              "size_px": [
+                1000,
+                700
+              ]
+            },
+            {
+              "evidence_id": "79cf2cb76a0ff98cc273ec439ae851f31d282f1d1d17d8d4f3ffd47c002db978",
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+              "page_no": 2,
+              "size_px": [
+                1000,
+                700
+              ]
+            }
+          ],
+          "image_count": 2,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 2771,
+          "output_tokens": 376,
+          "total_tokens": 3147,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 129,
+          "call_index": 1,
+          "latency_ms": 17484.954
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_source_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "5f7d9145d1ee30771cc2969f51208a71a9fb655b98a6f3e0b82cd0b8f2910221",
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+              "page_no": 1,
+              "size_px": [
+                1000,
+                700
+              ]
+            },
+            {
+              "evidence_id": "79cf2cb76a0ff98cc273ec439ae851f31d282f1d1d17d8d4f3ffd47c002db978",
+              "source_sha256": "c7dfd3c998285f16d1403079e838aa9bee8ead0563421c1f65fab4a79d2af8cd",
+              "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+              "page_no": 2,
+              "size_px": [
+                1000,
+                700
+              ]
+            }
+          ],
+          "image_count": 2,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 2861,
+          "output_tokens": 233,
+          "total_tokens": 3094,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 161,
+          "call_index": 2,
+          "latency_ms": 9033.146
+        }
+      ]
+    },
+    {
+      "id": "missing",
+      "question": "In the assay bulletin, what is the Neon concentration in percent?",
+      "source_sha256": "39ee40c9224e35f64524fc2c744eb7eae0200cc1c8fa400cf5152604c94589b7",
+      "pass": true,
+      "reference_scoring_only": {
+        "expected_abstention": true
+      },
+      "result": {
+        "status": "insufficient_evidence",
+        "question": "In the assay bulletin, what is the Neon concentration in percent?",
+        "answer_mode": "model_grounded",
+        "answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "ce1526313a1f8ec3f7b14b75",
+            "title": "Assay bulletin",
+            "score": 0.5875,
+            "matched_terms": [
+              "assay",
+              "bulletin"
+            ],
+            "snippet": "Assay bulletin",
+            "source_uri": "/api/v1/knowledge/documents/missing/original",
+            "metadata": {
+              "raw_text": "Assay bulletin",
+              "raw_page_text": "Assay bulletin",
+              "ocr_status": null,
+              "ocr_attempts": [],
+              "ocr_selected_transforms": [],
+              "ocr_metadata": {},
+              "coordinate_evidence": {
+                "bbox_status": "exact_block",
+                "layout_block_ids": [
+                  0
+                ],
+                "source_bbox_pdf_user_pt": [
+                  20.0,
+                  327.01,
+                  81.69,
+                  340.75
+                ],
+                "source_bbox_fitz_unrotated_pt": [
+                  20.0,
+                  9.25,
+                  81.69,
+                  22.99
+                ],
+                "page_bbox_pdf_user_pt": [
+                  0.0,
+                  0.0,
+                  500.0,
+                  350.0
+                ],
+                "source_bbox_fitz_display_pt": [
+                  20.0,
+                  9.25,
+                  81.69,
+                  22.99
+                ],
+                "source_bbox_render_px": null,
+                "page_geometry": {
+                  "rotation_degrees": 0,
+                  "rotation_source": "pdf_page_rotate",
+                  "media_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    500.0,
+                    350.0
+                  ],
+                  "crop_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    500.0,
+                    350.0
+                  ],
+                  "display_rect_fitz_pt": [
+                    0.0,
+                    0.0,
+                    500.0,
+                    350.0
+                  ],
+                  "display_size_pt": [
+                    500.0,
+                    350.0
+                  ],
+                  "coordinate_systems": {
+                    "pdf_user_space": {
+                      "origin": "bottom_left",
+                      "unit": "pt"
+                    },
+                    "fitz_unrotated_text_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "fitz_display_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "render_pixel_space": {
+                      "origin": "top_left",
+                      "unit": "px"
+                    }
+                  },
+                  "mappings": {
+                    "pdf_user_to_fitz_unrotated": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      -1.0,
+                      0.0,
+                      350.0
+                    ],
+                    "fitz_unrotated_to_display": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0
+                    ],
+                    "fitz_display_to_render_pixel": null
+                  },
+                  "render": null,
+                  "coordinate_mapping_version": "cropbox-unrotated-v2",
+                  "mapping_status": "complete"
+                },
+                "reading_order": {
+                  "version": "native-bbox-columns-v1",
+                  "mode": "native_blocks_yx",
+                  "column_count": 1,
+                  "block_ids": [
+                    0
+                  ]
+                },
+                "render_input_sha256": null,
+                "render_size_px": null,
+                "render_scale": null
+              },
+              "source_sha256": "39ee40c9224e35f64524fc2c744eb7eae0200cc1c8fa400cf5152604c94589b7",
+              "original_document_id": "missing",
+              "document_id": "missing",
+              "chunk_id": "ce1526313a1f8ec3f7b14b75",
+              "source_locator": "page:1:block:1",
+              "page_no": 1,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 0.55,
+              "warnings": [
+                "ocr_not_configured",
+                "ocr_required"
+              ],
+              "bm25_raw": 1.424026,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 2.1360390000000002,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.25,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "assay",
+                  "bulletin"
+                ],
+                "body_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+                "utility": 1.02,
+                "uncovered_lexical_facets": [
+                  "concentration",
+                  "neon",
+                  "percent"
+                ],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "Assay bulletin",
+              "source_sha256": "39ee40c9224e35f64524fc2c744eb7eae0200cc1c8fa400cf5152604c94589b7",
+              "chunk_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+              "evidence_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+              "chunk_payload_sha256": "d5c3d508dbaa3a5ddd88f8f769b2addbae9eb7a51e1cdbcc8126840227f66d61",
+              "offset_start": null,
+              "offset_end": null,
+              "truncated": false,
+              "source_locator": "page:1:block:1",
+              "page_no": 1,
+              "original_chars": 14,
+              "evidence_chars": 14,
+              "mode": "authoritative_pdf_native_block_context",
+              "anchor_original_chars": 14,
+              "native_context": {
+                "text": "Assay bulletin",
+                "source_sha256": "39ee40c9224e35f64524fc2c744eb7eae0200cc1c8fa400cf5152604c94589b7",
+                "page_no": 1,
+                "evidence_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+                "text_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+                "evidence_chars": 14,
+                "max_chars": 3200,
+                "extraction_version": "original-native-complete-block-context-v5",
+                "mode": "original_native_complete_block",
+                "members": [
+                  {
+                    "block_id": 0,
+                    "native_block_id": 0,
+                    "native_column_part": null,
+                    "bbox_fitz_unrotated_pt": [
+                      20.0,
+                      9.25,
+                      81.69,
+                      22.99
+                    ],
+                    "text_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+                    "source_range": null,
+                    "parent_text_sha256": null,
+                    "lines": [
+                      {
+                        "line_index": 0,
+                        "bbox_fitz_unrotated_pt": [
+                          20.0,
+                          9.25,
+                          81.69,
+                          22.99
+                        ],
+                        "text_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+                        "native_style": [
+                          [
+                            "Helvetica",
+                            10.0,
+                            0
+                          ]
+                        ],
+                        "native_direction": [
+                          1.0,
+                          0.0
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "reading_order": {
+                  "version": "native-bbox-columns-v1",
+                  "mode": "native_blocks_yx",
+                  "column_count": 1,
+                  "block_ids": [
+                    0
+                  ]
+                },
+                "unit_insertions": [],
+                "column_transition": null,
+                "rotated_native_row": null,
+                "anchor_match_policy": "native-literal-and-legacy-wrap-alias-union-v2",
+                "anchor_match": {
+                  "policy_version": "native-literal-and-legacy-wrap-alias-union-v2",
+                  "page_reading_order_range": [
+                    0,
+                    14
+                  ],
+                  "members": [
+                    {
+                      "block_id": 0,
+                      "native_block_id": 0,
+                      "native_column_part": null,
+                      "source_range": [
+                        0,
+                        14
+                      ],
+                      "parent_source_range": null
+                    }
+                  ]
+                },
+                "continuation_policy_version": null,
+                "calculator_input_eligible": false
+              },
+              "native_context_max_chars": 3200
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 1
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 1,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "explicit_document_all_pages",
+            "candidate_document_ids": [
+              "missing"
+            ],
+            "status": "no_complete_grid_key",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            },
+            "candidate_pages": 1,
+            "page_indexes": [
+              {
+                "document_id": "missing",
+                "status": "built_complete",
+                "source_sha256": "39ee40c9224e35f64524fc2c744eb7eae0200cc1c8fa400cf5152604c94589b7",
+                "page_count": 1,
+                "complete": true,
+                "extractor_version": "PyMuPDF:1.27.2.2:lines_strict:unrotated:algorithm:1ebbeefcb8e9a0ff6b87462cdb9d3a91fd1d204b92fbc2503bd2656ecaab48de",
+                "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+              }
+            ],
+            "complete_key_matches": 0,
+            "scope_rejections": []
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_supported_native_chart_key",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [
+              "missing"
+            ],
+            "scope": "explicit_document_all_pages",
+            "candidate_pages": 1,
+            "complete_candidate_scan": true,
+            "complete_key_matches": 0,
+            "scope_rejections": [],
+            "scan_seconds": 0.0
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "no_native_aligned_tables",
+            "model_requests_attempted": 0,
+            "model_audits": [],
+            "candidate_document_ids": [
+              "missing"
+            ],
+            "scope": "selected_pdf_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 1,
+            "total_chars": 14,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "validated",
+            "model": "gpt-6-luna"
+          },
+          {
+            "stage": "evidence_first_source_span",
+            "status": "unsupported",
+            "reason": "source_literal_selection_invalid",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "source_span_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 608,
+                "output_tokens": 53,
+                "total_tokens": 661,
+                "call_index": 2,
+                "latency_ms": 2894.117
+              }
+            ],
+            "evidence_contract": "raw_source_only_no_validated_facts",
+            "literal_error_code": "selection_abstained"
+          },
+          {
+            "stage": "original_page_visual_fallback",
+            "status": "visual_source_not_verified",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "visual_source_literal_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "image_evidence": [
+                  {
+                    "evidence_id": "7ad1a9216aef81be2a8fa7b90783225b67182ec1bfc00866902ab3f64cd1482b",
+                    "source_sha256": "39ee40c9224e35f64524fc2c744eb7eae0200cc1c8fa400cf5152604c94589b7",
+                    "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+                    "page_no": 1,
+                    "size_px": [
+                      1000,
+                      700
+                    ]
+                  }
+                ],
+                "image_count": 1,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1603,
+                "output_tokens": 20,
+                "total_tokens": 1623,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 3,
+                "latency_ms": 2343.294
+              }
+            ],
+            "page_selection_scope": "explicit_short_document_all_pages",
+            "failure_stage": "visual_source_literal_validation",
+            "selection_shape": {
+              "abstain": true,
+              "part_count": 0,
+              "all_evidence_ids_known": true
+            },
+            "error_code": "visual_source_selection_abstained"
+          },
+          {
+            "stage": "supplemental_evidence_retrieval",
+            "round_limit": 1,
+            "question_preserved": true,
+            "navigation_only": true,
+            "semantic_sufficiency": "not_established",
+            "navigation_contexts": [
+              {
+                "chunk_id": "ce1526313a1f8ec3f7b14b75",
+                "mode": "authoritative_context",
+                "chars": 14,
+                "sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df",
+                "truncated": false
+              }
+            ],
+            "navigation_total_chars": 14,
+            "navigation_max_total_chars": 12000,
+            "model_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "evidence_recovery_queries",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 467,
+              "output_tokens": 76,
+              "total_tokens": 543,
+              "call_index": 4,
+              "latency_ms": 4048.919
+            },
+            "status": "no_new_source_evidence",
+            "queries": [
+              "\"Assay bulletin\" Neon concentration percent"
+            ],
+            "original_navigation_anchors": [],
+            "navigation_omitted": [],
+            "new_chunk_ids": [],
+            "candidate_count": 1,
+            "selected_count": 1,
+            "selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "top_k": 8,
+              "candidate_count": 1,
+              "unique_body_count": 1,
+              "query_facets": {
+                "concentration": 1.0,
+                "percent": 1.0,
+                "bulletin": 1.0,
+                "assay": 1.0,
+                "neon": 1.0
+              },
+              "covered_lexical_facets": [
+                "assay",
+                "bulletin"
+              ],
+              "uncovered_lexical_facets": [
+                "concentration",
+                "neon",
+                "percent"
+              ],
+              "available_but_unselected_facets": [],
+              "selection_budget_exhausted": false,
+              "source_counts": {
+                "missing": 1
+              },
+              "steps": [
+                {
+                  "chunk_id": "ce1526313a1f8ec3f7b14b75",
+                  "source_id": "missing",
+                  "ranking_score": 2.1360390000000002,
+                  "utility": 1.02,
+                  "new_lexical_facets": [
+                    "assay",
+                    "bulletin"
+                  ],
+                  "body_sha256": "86458c18f640f3e2aa64b8ecb840fc27552a8b57dfd71813a26e42427259c8df"
+                }
+              ],
+              "skipped": []
+            },
+            "explicit_document_id": "missing",
+            "explicit_page_no": null,
+            "selected_source_budget": 4,
+            "unselected_source_ids": []
+          }
+        ],
+        "claims": [],
+        "generation_audit": {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 881,
+          "output_tokens": 19,
+          "total_tokens": 900,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 2331.698
+        },
+        "whole_question_review": null,
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "validated",
+            "error_category": null,
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 881,
+              "output_tokens": 19,
+              "total_tokens": 900,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 2331.698
+            },
+            "whole_question_review": null
+          }
+        ],
+        "generation_repaired": false,
+        "support_validation": "bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof"
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 881,
+          "output_tokens": 19,
+          "total_tokens": 900,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 2331.698
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "source_span_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 608,
+          "output_tokens": 53,
+          "total_tokens": 661,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 19,
+          "call_index": 2,
+          "latency_ms": 2894.117
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_source_literal_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "7ad1a9216aef81be2a8fa7b90783225b67182ec1bfc00866902ab3f64cd1482b",
+              "source_sha256": "39ee40c9224e35f64524fc2c744eb7eae0200cc1c8fa400cf5152604c94589b7",
+              "render_sha256": "c714aa9b62ee43681a434cae8001edef0d109dc552f5cbb68d9ba7bac2c3913f",
+              "page_no": 1,
+              "size_px": [
+                1000,
+                700
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1603,
+          "output_tokens": 20,
+          "total_tokens": 1623,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 3,
+          "latency_ms": 2343.294
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "evidence_recovery_queries",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 467,
+          "output_tokens": 76,
+          "total_tokens": 543,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 43,
+          "call_index": 4,
+          "latency_ms": 4048.919
+        }
+      ]
+    }
+  ],
+  "implementation_file_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b4f254283be38ed2fb00c6774aa6bcf42093660b28b3579270027d409e094d84",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_file_sha256_end": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b4f254283be38ed2fb00c6774aa6bcf42093660b28b3579270027d409e094d84",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_stable": true,
+  "limitations": [
+    "Required-token scoring is not formal semantics or general formula correctness.",
+    "Visual quotes and boxes are independently model reviewed, never deterministic typed facts."
+  ]
+}

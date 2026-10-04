@@ -1,0 +1,3439 @@
+{
+  "created_at": "2026-10-04T01:21:57.390328+00:00",
+  "scope": "authored_fresh_random_schema_first_run_stress_probes_not_independent_blind_benchmark",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "reference_used_as_model_input": false,
+  "database_sha256": "fbf866b03b771d30d613eb63be0c63a2107b2602f1fb08cdf648f225d3dc32b5",
+  "implementation_file_sha256_start": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "8aabae32e06db4003add8db814cd1e701575e7ec7e4cc032a544970a9cd52b59",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "908931c24bb263c3bd4e38c45ba70f42528e58f7081556dc470ac1ccff32a1fe",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_file_sha256_end": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "8aabae32e06db4003add8db814cd1e701575e7ec7e4cc032a544970a9cd52b59",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "908931c24bb263c3bd4e38c45ba70f42528e58f7081556dc470ac1ccff32a1fe",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_stable": true,
+  "total": 6,
+  "passed": 6,
+  "cases": [
+    {
+      "id": "nullable_text_pk",
+      "question": "查询events_fea876的记录总数、key_fea876非空记录数和key_fea876为空的记录数。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [
+          "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+        ],
+        "question": "查询events_fea876的记录总数、key_fea876非空记录数和key_fea876为空的记录数。",
+        "rewritten_question": "查询events_fea876的记录总数、key_fea876非空记录数和key_fea876为空的记录数。",
+        "sql": "SELECT COUNT(*) AS \"total_records\", COUNT(\"events_fea876\".\"key_fea876\") AS \"nonnull_key_records\", COUNT(CASE WHEN \"events_fea876\".\"key_fea876\" IS NULL THEN ? END) AS \"null_key_records\" FROM \"events_fea876\" AS \"events_fea876\"",
+        "parameters": [
+          1
+        ],
+        "columns": [
+          "total_records",
+          "nonnull_key_records",
+          "null_key_records"
+        ],
+        "rows": [
+          {
+            "total_records": 5,
+            "nonnull_key_records": 4,
+            "null_key_records": 1
+          }
+        ],
+        "plan": {
+          "table": "events_fea876",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "events_fea876.key_fea876",
+              "table": "events_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.key_fea876",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": true,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "查询events_fea876的记录总数、key_fea876非空记录数和key_fea876为空的记录数。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "查询events_fea876的记录总数、key_fea876非空记录数和key_fea876为空的记录数。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1208,
+                "output_tokens": 143,
+                "total_tokens": 1351,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 61,
+                "call_index": 2,
+                "latency_ms": 4679.84,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [
+              {
+                "id": "o0",
+                "table": "events_fea876",
+                "column": "key_fea876",
+                "function": "COUNT",
+                "label": "total_records",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "null",
+                "filters": []
+              },
+              {
+                "id": "o1",
+                "table": "events_fea876",
+                "column": "key_fea876",
+                "function": "COUNT",
+                "label": "nonnull_key_records",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "null",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "total_records",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "key_fea876",
+                    "operators": [
+                      "COUNT"
+                    ],
+                    "count_semantics": "physical_row_count"
+                  },
+                  "representation": "metric"
+                },
+                {
+                  "label": "nonnull_key_records",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "key_fea876",
+                    "operators": [
+                      "COUNT"
+                    ]
+                  },
+                  "representation": "metric"
+                },
+                {
+                  "label": "null_key_records",
+                  "lineage": null,
+                  "representation": "opaque_relational_expression"
+                }
+              ],
+              "sql_sha256": "a6135780352dffaa1acf5bafebe2da121de10520b7a5309d1589efa07e4fd654"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1208,
+              "output_tokens": 143,
+              "total_tokens": 1351,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 61,
+              "call_index": 2,
+              "latency_ms": 4679.84,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "id": "o0",
+              "table": "events_fea876",
+              "column": "key_fea876",
+              "function": "COUNT",
+              "label": "total_records",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "null",
+              "filters": []
+            },
+            {
+              "id": "o1",
+              "table": "events_fea876",
+              "column": "key_fea876",
+              "function": "COUNT",
+              "label": "nonnull_key_records",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "total_records",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "key_fea876",
+                  "operators": [
+                    "COUNT"
+                  ],
+                  "count_semantics": "physical_row_count"
+                },
+                "representation": "metric"
+              },
+              {
+                "label": "nonnull_key_records",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "key_fea876",
+                  "operators": [
+                    "COUNT"
+                  ]
+                },
+                "representation": "metric"
+              },
+              {
+                "label": "null_key_records",
+                "lineage": null,
+                "representation": "opaque_relational_expression"
+              }
+            ],
+            "sql_sha256": "a6135780352dffaa1acf5bafebe2da121de10520b7a5309d1589efa07e4fd654"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：events_fea876",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "events_fea876",
+          "row_count": 1,
+          "row_limit": 100,
+          "result_completeness": "complete",
+          "query_hash": "c73df89d2577e652",
+          "field_links": [
+            {
+              "source_text": "events_fea876.key_fea876",
+              "table": "events_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.key_fea876",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "303f15255fae1ca48521f9bdd9b7400836f4338e38c5c5eadd7ac9b25e79a9a4",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "total_records",
+              "query_hash": "c73df89d2577e652",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "total_records"
+              }
+            },
+            {
+              "row": 0,
+              "column": "nonnull_key_records",
+              "query_hash": "c73df89d2577e652",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "nonnull_key_records"
+              }
+            },
+            {
+              "row": 0,
+              "column": "null_key_records",
+              "query_hash": "c73df89d2577e652",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "null_key_records"
+              }
+            }
+          ],
+          "complete_result": {
+            "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+            "status": "complete",
+            "reason": null,
+            "query_sha256": "f5911da392f10f2e53739f9c00bcb0b334b635b055bef839b6a437b03ff6662a",
+            "source_revision": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+            "producer_sha256": "51e0001e6c2acf964bb3059da9da4a101a5d8bbcbac6b8e8853ad1da06b7b86f",
+            "columns": [
+              "total_records",
+              "nonnull_key_records",
+              "null_key_records"
+            ],
+            "row_count": 1,
+            "observed_rows": 1,
+            "preview_row_count": 1,
+            "preview_limit": 100,
+            "preview_truncated": false,
+            "scope": {
+              "mode": "bounded_complete_result_with_preview",
+              "semantic_row_limit": null,
+              "top_n": null,
+              "requested_preview_limit": null,
+              "effective_preview_limit": 100,
+              "default_preview_limit_removed_from_sql": true,
+              "verification": "original_question_row_limit_and_existing_rank_filter"
+            },
+            "budgets": {
+              "max_rows": 25000,
+              "max_bytes": 8388608,
+              "max_seconds": 5.0,
+              "max_steps": 50000000,
+              "max_source_bytes": 268435456
+            },
+            "artifact_id": "9053a5c92e1f467e8734cfaadd1dcf22",
+            "data_sha256": "2b5adf40f3bf1ccbd4dcc3bfc7a9d9e9f175ef820d924fd7aa42cb93f705360e",
+            "byte_count": 8,
+            "cursor_eof_verified": true,
+            "source_pin": {
+              "files": {
+                "database": {
+                  "sha256": "fbf866b03b771d30d613eb63be0c63a2107b2602f1fb08cdf648f225d3dc32b5",
+                  "bytes": 20480,
+                  "generation": [
+                    1053008805926603246,
+                    1407374884961151,
+                    20480,
+                    1791076852993867300,
+                    1791076850309832400
+                  ]
+                }
+              },
+              "sha256": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+              "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+            },
+            "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+            "binding_sha256": "2244867bd6a61935cd553215bee3d76f6e9d21c7f21c30fce8241812ffc3f017",
+            "receipt_signature": "2aa07451853a8bf3e9f97765b10e1f4d6e0786c1ad2eea914f8223ca675999d3",
+            "preview_cells": [
+              [
+                5,
+                4,
+                1
+              ]
+            ],
+            "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          5,
+          4,
+          1
+        ]
+      ],
+      "reference_rows_scoring_only": [
+        [
+          5,
+          4,
+          1
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1648,
+          "output_tokens": 107,
+          "total_tokens": 1755,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 42,
+          "call_index": 1,
+          "latency_ms": 3963.455
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1208,
+          "output_tokens": 143,
+          "total_tokens": 1351,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 61,
+          "call_index": 2,
+          "latency_ms": 4679.84
+        }
+      ]
+    },
+    {
+      "id": "mixed_time_latest",
+      "question": "对events_fea876每个owner_fea876取observed_at最新记录，包括owner_fea876为空的分组。observed_at是日期时间；T和空格都代表同一时区的时间分隔符，按实际时间比较。同一时刻按key_fea876最大决胜，只返回key_fea876、owner_fea876、amount_fea876，按owner_fea876升序。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [
+          "预览 3 行；完整查询结果 3 行，已核验游标结束并保存可分页原始结果。"
+        ],
+        "question": "对events_fea876每个owner_fea876取observed_at最新记录，包括owner_fea876为空的分组。observed_at是日期时间；T和空格都代表同一时区的时间分隔符，按实际时间比较。同一时刻按key_fea876最大决胜，只返回key_fea876、owner_fea876、amount_fea876，按owner_fea876升序。",
+        "rewritten_question": "对events_fea876每个owner_fea876取observed_at最新记录，包括owner_fea876为空的分组。observed_at是日期时间；T和空格都代表同一时区的时间分隔符，按实际时间比较。同一时刻按key_fea876最大决胜，只返回key_fea876、owner_fea876、amount_fea876，按owner_fea876升序。",
+        "sql": "WITH \"ranked_events\" AS (SELECT \"events_fea876\".\"key_fea876\" AS \"key_fea876\", \"events_fea876\".\"owner_fea876\" AS \"owner_fea876\", \"events_fea876\".\"amount_fea876\" AS \"amount_fea876\", ROW_NUMBER() OVER (PARTITION BY \"events_fea876\".\"owner_fea876\" ORDER BY JULIANDAY(\"events_fea876\".\"observed_at\") DESC, \"events_fea876\".\"key_fea876\" DESC) AS \"event_rank\" FROM \"events_fea876\" AS \"events_fea876\") SELECT \"ranked_events\".\"key_fea876\" AS \"key_fea876\", \"ranked_events\".\"owner_fea876\" AS \"owner_fea876\", \"ranked_events\".\"amount_fea876\" AS \"amount_fea876\" FROM \"ranked_events\" AS \"ranked_events\" WHERE \"ranked_events\".\"event_rank\" = ? ORDER BY \"owner_fea876\" ASC",
+        "parameters": [
+          1
+        ],
+        "columns": [
+          "key_fea876",
+          "owner_fea876",
+          "amount_fea876"
+        ],
+        "rows": [
+          {
+            "key_fea876": null,
+            "owner_fea876": null,
+            "amount_fea876": 100.0
+          },
+          {
+            "key_fea876": "p3",
+            "owner_fea876": 1,
+            "amount_fea876": 20.0
+          },
+          {
+            "key_fea876": "p4",
+            "owner_fea876": 2,
+            "amount_fea876": 5.0
+          }
+        ],
+        "plan": {
+          "table": "events_fea876",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "key_fea876",
+            "owner_fea876",
+            "amount_fea876"
+          ],
+          "dimension_tables": {
+            "key_fea876": "events_fea876",
+            "owner_fea876": "events_fea876",
+            "amount_fea876": "events_fea876"
+          },
+          "dimension_transforms": {
+            "key_fea876": "raw",
+            "owner_fea876": "raw",
+            "amount_fea876": "raw"
+          },
+          "dimension_labels": {
+            "key_fea876": "key_fea876",
+            "owner_fea876": "owner_fea876",
+            "amount_fea876": "amount_fea876"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "events_fea876.amount_fea876",
+              "table": "events_fea876",
+              "column": "amount_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.amount_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.key_fea876",
+              "table": "events_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.key_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.observed_at",
+              "table": "events_fea876",
+              "column": "observed_at",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.observed_at",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": true,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "对events_fea876每个owner_fea876取observed_at最新记录，包括owner_fea876为空的分组。observed_at是日期时间；T和空格都代表同一时区的时间分隔符，按实际时间比较。同一时刻按key_fea876最大决胜，只返回key_fea876、owner_fea876、amount_fea876，按owner_fea876升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "对events_fea876每个owner_fea876取observed_at最新记录，包括owner_fea876为空的分组。observed_at是日期时间；T和空格都代表同一时区的时间分隔符，按实际时间比较。同一时刻按key_fea876最大决胜，只返回key_fea876、owner_fea876、amount_fea876，按owner_fea876升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "events_fea876",
+                "column": "key_fea876",
+                "grain": "raw",
+                "label": "key_fea876"
+              },
+              {
+                "table": "events_fea876",
+                "column": "owner_fea876",
+                "grain": "raw",
+                "label": "owner_fea876"
+              },
+              {
+                "table": "events_fea876",
+                "column": "amount_fea876",
+                "grain": "raw",
+                "label": "amount_fea876"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1528,
+                "output_tokens": 324,
+                "total_tokens": 1852,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 242,
+                "call_index": 2,
+                "latency_ms": 9659.152,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "key_fea876",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "key_fea876",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "owner_fea876",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "owner_fea876",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "amount_fea876",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "amount_fea876",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                }
+              ],
+              "sql_sha256": "500aaa0836d53f900e564c6f760c7b38acba81482596492f3adcbead3b553f13"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1528,
+              "output_tokens": 324,
+              "total_tokens": 1852,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 242,
+              "call_index": 2,
+              "latency_ms": 9659.152,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "key_fea876",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "key_fea876",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "owner_fea876",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "owner_fea876",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "amount_fea876",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "amount_fea876",
+                  "operators": []
+                },
+                "representation": "dimension"
+              }
+            ],
+            "sql_sha256": "500aaa0836d53f900e564c6f760c7b38acba81482596492f3adcbead3b553f13"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：events_fea876",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "预览 3 行；完整查询结果 3 行，已核验游标结束并保存可分页原始结果。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "events_fea876",
+          "row_count": 3,
+          "row_limit": 100,
+          "result_completeness": "complete",
+          "query_hash": "10f0d61e5f5e4050",
+          "field_links": [
+            {
+              "source_text": "events_fea876.amount_fea876",
+              "table": "events_fea876",
+              "column": "amount_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.amount_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.key_fea876",
+              "table": "events_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.key_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.observed_at",
+              "table": "events_fea876",
+              "column": "observed_at",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.observed_at",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "303f15255fae1ca48521f9bdd9b7400836f4338e38c5c5eadd7ac9b25e79a9a4",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "key_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "key_fea876"
+              }
+            },
+            {
+              "row": 0,
+              "column": "owner_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 0,
+              "column": "amount_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "amount_fea876"
+              }
+            },
+            {
+              "row": 1,
+              "column": "key_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "key_fea876"
+              }
+            },
+            {
+              "row": 1,
+              "column": "owner_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 1,
+              "column": "amount_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "amount_fea876"
+              }
+            },
+            {
+              "row": 2,
+              "column": "key_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "key_fea876"
+              }
+            },
+            {
+              "row": 2,
+              "column": "owner_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 2,
+              "column": "amount_fea876",
+              "query_hash": "10f0d61e5f5e4050",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "amount_fea876"
+              }
+            }
+          ],
+          "complete_result": {
+            "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+            "status": "complete",
+            "reason": null,
+            "query_sha256": "bb87c6f286b10e64c5e0a8b91bce39402c32e338e05cd2c6f494eb9570eafa01",
+            "source_revision": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+            "producer_sha256": "51e0001e6c2acf964bb3059da9da4a101a5d8bbcbac6b8e8853ad1da06b7b86f",
+            "columns": [
+              "key_fea876",
+              "owner_fea876",
+              "amount_fea876"
+            ],
+            "row_count": 3,
+            "observed_rows": 3,
+            "preview_row_count": 3,
+            "preview_limit": 100,
+            "preview_truncated": false,
+            "scope": {
+              "mode": "bounded_complete_result_with_preview",
+              "semantic_row_limit": null,
+              "top_n": null,
+              "requested_preview_limit": null,
+              "effective_preview_limit": 100,
+              "default_preview_limit_removed_from_sql": true,
+              "verification": "original_question_row_limit_and_existing_rank_filter"
+            },
+            "budgets": {
+              "max_rows": 25000,
+              "max_bytes": 8388608,
+              "max_seconds": 5.0,
+              "max_steps": 50000000,
+              "max_source_bytes": 268435456
+            },
+            "artifact_id": "133e837207af498089eb23ea35b00d09",
+            "data_sha256": "b9784159d51fff0b03c618f4d489c4cf8f82aa7d2c92e8db1d163ab29fc9f8a9",
+            "byte_count": 45,
+            "cursor_eof_verified": true,
+            "source_pin": {
+              "files": {
+                "database": {
+                  "sha256": "fbf866b03b771d30d613eb63be0c63a2107b2602f1fb08cdf648f225d3dc32b5",
+                  "bytes": 20480,
+                  "generation": [
+                    1053008805926603246,
+                    1407374884961151,
+                    20480,
+                    1791076852993867300,
+                    1791076850309832400
+                  ]
+                }
+              },
+              "sha256": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+              "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+            },
+            "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+            "binding_sha256": "55fb5acbda860cc0e9c8dd04676940ca1d585a4c4e6815889d22ae61adcdf05d",
+            "receipt_signature": "0723b2a163c7c09407d577c15012d4fa3870b41772747977ef0e0706c524a0a7",
+            "preview_cells": [
+              [
+                null,
+                null,
+                100.0
+              ],
+              [
+                "p3",
+                1,
+                20.0
+              ],
+              [
+                "p4",
+                2,
+                5.0
+              ]
+            ],
+            "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          null,
+          null,
+          100.0
+        ],
+        [
+          "p3",
+          1,
+          20.0
+        ],
+        [
+          "p4",
+          2,
+          5.0
+        ]
+      ],
+      "reference_rows_scoring_only": [
+        [
+          null,
+          null,
+          100.0
+        ],
+        [
+          "p3",
+          1,
+          20.0
+        ],
+        [
+          "p4",
+          2,
+          5.0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1811,
+          "output_tokens": 278,
+          "total_tokens": 2089,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 142,
+          "call_index": 1,
+          "latency_ms": 6611.152
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1528,
+          "output_tokens": 324,
+          "total_tokens": 1852,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 242,
+          "call_index": 2,
+          "latency_ms": 9659.152
+        }
+      ]
+    },
+    {
+      "id": "group_population",
+      "question": "先按events_fea876.owner_fea876合计amount_fea876（包括空值分组），然后只返回该合计高于前一步所有分组合计平均值的owner_fea876和合计，按owner_fea876升序。不加入entities_fea876的无记录实体。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [
+          "预览 2 行；完整查询结果 2 行，已核验游标结束并保存可分页原始结果。"
+        ],
+        "question": "先按events_fea876.owner_fea876合计amount_fea876（包括空值分组），然后只返回该合计高于前一步所有分组合计平均值的owner_fea876和合计，按owner_fea876升序。不加入entities_fea876的无记录实体。",
+        "rewritten_question": "先按events_fea876.owner_fea876合计amount_fea876（包括空值分组），然后只返回该合计高于前一步所有分组合计平均值的owner_fea876和合计，按owner_fea876升序。不加入entities_fea876的无记录实体。",
+        "sql": "WITH \"owner_totals\" AS (SELECT \"e\".\"owner_fea876\" AS \"owner_fea876\", SUM(\"e\".\"amount_fea876\") AS \"total_amount\" FROM \"events_fea876\" AS \"e\" GROUP BY \"e\".\"owner_fea876\") SELECT \"o\".\"owner_fea876\" AS \"owner_fea876\", \"o\".\"total_amount\" AS \"total_amount\" FROM \"owner_totals\" AS \"o\" WHERE \"o\".\"total_amount\" > (SELECT AVG(\"t\".\"total_amount\") AS \"_col_0\" FROM \"owner_totals\" AS \"t\") ORDER BY \"o\".\"owner_fea876\" ASC",
+        "parameters": [],
+        "columns": [
+          "owner_fea876",
+          "total_amount"
+        ],
+        "rows": [
+          {
+            "owner_fea876": null,
+            "total_amount": 100.0
+          },
+          {
+            "owner_fea876": 1,
+            "total_amount": 60.0
+          }
+        ],
+        "plan": {
+          "table": "events_fea876",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "owner_fea876"
+          ],
+          "dimension_tables": {
+            "owner_fea876": "events_fea876"
+          },
+          "dimension_transforms": {
+            "owner_fea876": "raw"
+          },
+          "dimension_labels": {
+            "owner_fea876": "owner_fea876"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "events_fea876.amount_fea876",
+              "table": "events_fea876",
+              "column": "amount_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.amount_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": true,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "先按events_fea876.owner_fea876合计amount_fea876（包括空值分组），然后只返回该合计高于前一步所有分组合计平均值的owner_fea876和合计，按owner_fea876升序。不加入entities_fea876的无记录实体。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "先按events_fea876.owner_fea876合计amount_fea876（包括空值分组），然后只返回该合计高于前一步所有分组合计平均值的owner_fea876和合计，按owner_fea876升序。不加入entities_fea876的无记录实体。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "events_fea876",
+                "column": "owner_fea876",
+                "grain": "raw",
+                "label": "owner_fea876"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1325,
+                "output_tokens": 80,
+                "total_tokens": 1405,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 2664.427,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [
+              {
+                "id": "o1",
+                "table": "events_fea876",
+                "column": "amount_fea876",
+                "function": "SUM",
+                "label": "total_amount",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "null",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "owner_fea876",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "owner_fea876",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "total_amount",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "amount_fea876",
+                    "operators": [
+                      "SUM"
+                    ]
+                  },
+                  "representation": "metric"
+                }
+              ],
+              "sql_sha256": "e20faed17c8658f1e1f32ca1f832fe5c1519f767b3b098fe43b29dea022a05c4"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1325,
+              "output_tokens": 80,
+              "total_tokens": 1405,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 2664.427,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "id": "o1",
+              "table": "events_fea876",
+              "column": "amount_fea876",
+              "function": "SUM",
+              "label": "total_amount",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "owner_fea876",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "owner_fea876",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "total_amount",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "amount_fea876",
+                  "operators": [
+                    "SUM"
+                  ]
+                },
+                "representation": "metric"
+              }
+            ],
+            "sql_sha256": "e20faed17c8658f1e1f32ca1f832fe5c1519f767b3b098fe43b29dea022a05c4"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：events_fea876",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "预览 2 行；完整查询结果 2 行，已核验游标结束并保存可分页原始结果。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "events_fea876",
+          "row_count": 2,
+          "row_limit": 100,
+          "result_completeness": "complete",
+          "query_hash": "0e64e9dc25eb85d0",
+          "field_links": [
+            {
+              "source_text": "events_fea876.amount_fea876",
+              "table": "events_fea876",
+              "column": "amount_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.amount_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "303f15255fae1ca48521f9bdd9b7400836f4338e38c5c5eadd7ac9b25e79a9a4",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "owner_fea876",
+              "query_hash": "0e64e9dc25eb85d0",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 0,
+              "column": "total_amount",
+              "query_hash": "0e64e9dc25eb85d0",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "total_amount"
+              }
+            },
+            {
+              "row": 1,
+              "column": "owner_fea876",
+              "query_hash": "0e64e9dc25eb85d0",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 1,
+              "column": "total_amount",
+              "query_hash": "0e64e9dc25eb85d0",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "total_amount"
+              }
+            }
+          ],
+          "complete_result": {
+            "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+            "status": "complete",
+            "reason": null,
+            "query_sha256": "410ca8540583ac2179d084c9ebdb3f0a65a619555fcbc18250e65a6a54f2f5b6",
+            "source_revision": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+            "producer_sha256": "51e0001e6c2acf964bb3059da9da4a101a5d8bbcbac6b8e8853ad1da06b7b86f",
+            "columns": [
+              "owner_fea876",
+              "total_amount"
+            ],
+            "row_count": 2,
+            "observed_rows": 2,
+            "preview_row_count": 2,
+            "preview_limit": 100,
+            "preview_truncated": false,
+            "scope": {
+              "mode": "bounded_complete_result_with_preview",
+              "semantic_row_limit": null,
+              "top_n": null,
+              "requested_preview_limit": null,
+              "effective_preview_limit": 100,
+              "default_preview_limit_removed_from_sql": true,
+              "verification": "original_question_row_limit_and_existing_rank_filter"
+            },
+            "budgets": {
+              "max_rows": 25000,
+              "max_bytes": 8388608,
+              "max_seconds": 5.0,
+              "max_steps": 50000000,
+              "max_source_bytes": 268435456
+            },
+            "artifact_id": "67a0abb197054eb4b93df12f5dcf4a3f",
+            "data_sha256": "badc5bf9c236212556c8f49f5c0f8758264a8e53ccb2f3015df25fcd333c6135",
+            "byte_count": 22,
+            "cursor_eof_verified": true,
+            "source_pin": {
+              "files": {
+                "database": {
+                  "sha256": "fbf866b03b771d30d613eb63be0c63a2107b2602f1fb08cdf648f225d3dc32b5",
+                  "bytes": 20480,
+                  "generation": [
+                    1053008805926603246,
+                    1407374884961151,
+                    20480,
+                    1791076852993867300,
+                    1791076850309832400
+                  ]
+                }
+              },
+              "sha256": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+              "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+            },
+            "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+            "binding_sha256": "d5a0f07062f5d7526f66959306ff633e778a34ae1e252ee772c7306a273080a5",
+            "receipt_signature": "fc1f506c0997f245257a56bdbefacc64f00d48974b076c23a39a40842ea2cb9c",
+            "preview_cells": [
+              [
+                null,
+                100.0
+              ],
+              [
+                1,
+                60.0
+              ]
+            ],
+            "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          null,
+          100.0
+        ],
+        [
+          1,
+          60.0
+        ]
+      ],
+      "reference_rows_scoring_only": [
+        [
+          null,
+          100.0
+        ],
+        [
+          1,
+          60.0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1686,
+          "output_tokens": 216,
+          "total_tokens": 1902,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 101,
+          "call_index": 1,
+          "latency_ms": 10931.834
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1325,
+          "output_tokens": 80,
+          "total_tokens": 1405,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 2664.427
+        }
+      ]
+    },
+    {
+      "id": "nested_batch_average",
+      "question": "先按events_fea876.owner_fea876和batch合计amount_fea876，再按owner_fea876求这些批次合计的平均值，包括空值分组，按owner_fea876升序。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [
+          "预览 3 行；完整查询结果 3 行，已核验游标结束并保存可分页原始结果。"
+        ],
+        "question": "先按events_fea876.owner_fea876和batch合计amount_fea876，再按owner_fea876求这些批次合计的平均值，包括空值分组，按owner_fea876升序。",
+        "rewritten_question": "先按events_fea876.owner_fea876和batch合计amount_fea876，再按owner_fea876求这些批次合计的平均值，包括空值分组，按owner_fea876升序。",
+        "sql": "WITH \"batch_totals\" AS (SELECT \"events_fea876\".\"owner_fea876\" AS \"owner_fea876\", \"events_fea876\".\"batch\" AS \"batch\", SUM(\"events_fea876\".\"amount_fea876\") AS \"batch_amount_total\" FROM \"events_fea876\" AS \"events_fea876\" GROUP BY \"events_fea876\".\"owner_fea876\", \"events_fea876\".\"batch\") SELECT \"batch_totals\".\"owner_fea876\" AS \"owner_fea876\", AVG(\"batch_totals\".\"batch_amount_total\") AS \"average_batch_amount_total\" FROM \"batch_totals\" AS \"batch_totals\" GROUP BY \"batch_totals\".\"owner_fea876\" ORDER BY \"owner_fea876\" ASC",
+        "parameters": [],
+        "columns": [
+          "owner_fea876",
+          "average_batch_amount_total"
+        ],
+        "rows": [
+          {
+            "owner_fea876": null,
+            "average_batch_amount_total": 100.0
+          },
+          {
+            "owner_fea876": 1,
+            "average_batch_amount_total": 30.0
+          },
+          {
+            "owner_fea876": 2,
+            "average_batch_amount_total": 5.0
+          }
+        ],
+        "plan": {
+          "table": "events_fea876",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "owner_fea876"
+          ],
+          "dimension_tables": {
+            "owner_fea876": "events_fea876"
+          },
+          "dimension_transforms": {
+            "owner_fea876": "raw"
+          },
+          "dimension_labels": {
+            "owner_fea876": "owner_fea876"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "events_fea876.amount_fea876",
+              "table": "events_fea876",
+              "column": "amount_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.amount_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.batch",
+              "table": "events_fea876",
+              "column": "batch",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.batch",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": true,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "先按events_fea876.owner_fea876和batch合计amount_fea876，再按owner_fea876求这些批次合计的平均值，包括空值分组，按owner_fea876升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "先按events_fea876.owner_fea876和batch合计amount_fea876，再按owner_fea876求这些批次合计的平均值，包括空值分组，按owner_fea876升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "events_fea876",
+                "column": "owner_fea876",
+                "grain": "raw",
+                "label": "owner_fea876"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1325,
+                "output_tokens": 305,
+                "total_tokens": 1630,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 223,
+                "call_index": 2,
+                "latency_ms": 7192.951,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "owner_fea876",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "owner_fea876",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "average_batch_amount_total",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "amount_fea876",
+                    "operators": [
+                      "SUM",
+                      "AVG"
+                    ]
+                  },
+                  "representation": "opaque_relational_expression"
+                }
+              ],
+              "sql_sha256": "e0697799336547626bf05466dbc833622aed16c87e99bd0b00f555b8f6a9034b"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1325,
+              "output_tokens": 305,
+              "total_tokens": 1630,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 223,
+              "call_index": 2,
+              "latency_ms": 7192.951,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "owner_fea876",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "owner_fea876",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "average_batch_amount_total",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "amount_fea876",
+                  "operators": [
+                    "SUM",
+                    "AVG"
+                  ]
+                },
+                "representation": "opaque_relational_expression"
+              }
+            ],
+            "sql_sha256": "e0697799336547626bf05466dbc833622aed16c87e99bd0b00f555b8f6a9034b"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：events_fea876",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "预览 3 行；完整查询结果 3 行，已核验游标结束并保存可分页原始结果。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "events_fea876",
+          "row_count": 3,
+          "row_limit": 100,
+          "result_completeness": "complete",
+          "query_hash": "6da8a00add49d8a0",
+          "field_links": [
+            {
+              "source_text": "events_fea876.amount_fea876",
+              "table": "events_fea876",
+              "column": "amount_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.amount_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.batch",
+              "table": "events_fea876",
+              "column": "batch",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.batch",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "303f15255fae1ca48521f9bdd9b7400836f4338e38c5c5eadd7ac9b25e79a9a4",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "owner_fea876",
+              "query_hash": "6da8a00add49d8a0",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 0,
+              "column": "average_batch_amount_total",
+              "query_hash": "6da8a00add49d8a0",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "average_batch_amount_total"
+              }
+            },
+            {
+              "row": 1,
+              "column": "owner_fea876",
+              "query_hash": "6da8a00add49d8a0",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 1,
+              "column": "average_batch_amount_total",
+              "query_hash": "6da8a00add49d8a0",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "average_batch_amount_total"
+              }
+            },
+            {
+              "row": 2,
+              "column": "owner_fea876",
+              "query_hash": "6da8a00add49d8a0",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "owner_fea876"
+              }
+            },
+            {
+              "row": 2,
+              "column": "average_batch_amount_total",
+              "query_hash": "6da8a00add49d8a0",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "average_batch_amount_total"
+              }
+            }
+          ],
+          "complete_result": {
+            "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+            "status": "complete",
+            "reason": null,
+            "query_sha256": "16aaddacc67defb4b8aa01b317c1184b7785b93bacab1ca274ae7bea060c6faf",
+            "source_revision": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+            "producer_sha256": "51e0001e6c2acf964bb3059da9da4a101a5d8bbcbac6b8e8853ad1da06b7b86f",
+            "columns": [
+              "owner_fea876",
+              "average_batch_amount_total"
+            ],
+            "row_count": 3,
+            "observed_rows": 3,
+            "preview_row_count": 3,
+            "preview_limit": 100,
+            "preview_truncated": false,
+            "scope": {
+              "mode": "bounded_complete_result_with_preview",
+              "semantic_row_limit": null,
+              "top_n": null,
+              "requested_preview_limit": null,
+              "effective_preview_limit": 100,
+              "default_preview_limit_removed_from_sql": true,
+              "verification": "original_question_row_limit_and_existing_rank_filter"
+            },
+            "budgets": {
+              "max_rows": 25000,
+              "max_bytes": 8388608,
+              "max_seconds": 5.0,
+              "max_steps": 50000000,
+              "max_source_bytes": 268435456
+            },
+            "artifact_id": "bf9b616e30f44e298144fba925f8a917",
+            "data_sha256": "bc4e2c4403fda430041d127f791e80d4f293dd14e223071a47b2eda34918e277",
+            "byte_count": 30,
+            "cursor_eof_verified": true,
+            "source_pin": {
+              "files": {
+                "database": {
+                  "sha256": "fbf866b03b771d30d613eb63be0c63a2107b2602f1fb08cdf648f225d3dc32b5",
+                  "bytes": 20480,
+                  "generation": [
+                    1053008805926603246,
+                    1407374884961151,
+                    20480,
+                    1791076852993867300,
+                    1791076850309832400
+                  ]
+                }
+              },
+              "sha256": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+              "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+            },
+            "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+            "binding_sha256": "a8fdacc2721bcd2758f44cbf0f681f2a8fad700fedb347276945f5d37781d924",
+            "receipt_signature": "7c275c2b7d414511decf00fff06a43ac790a5f7bd65618cb64ed50048c52cf2d",
+            "preview_cells": [
+              [
+                null,
+                100.0
+              ],
+              [
+                1,
+                30.0
+              ],
+              [
+                2,
+                5.0
+              ]
+            ],
+            "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          null,
+          100.0
+        ],
+        [
+          1,
+          30.0
+        ],
+        [
+          2,
+          5.0
+        ]
+      ],
+      "reference_rows_scoring_only": [
+        [
+          null,
+          100.0
+        ],
+        [
+          1,
+          30.0
+        ],
+        [
+          2,
+          5.0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1667,
+          "output_tokens": 228,
+          "total_tokens": 1895,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 110,
+          "call_index": 1,
+          "latency_ms": 5749.064
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1325,
+          "output_tokens": 305,
+          "total_tokens": 1630,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 223,
+          "call_index": 2,
+          "latency_ms": 7192.951
+        }
+      ]
+    },
+    {
+      "id": "anti_join",
+      "question": "列出entities_fea876没有任何events_fea876记录的key_fea876和name。关联events_fea876.owner_fea876=entities_fea876.key_fea876，按entities_fea876.key_fea876升序。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [
+          "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+        ],
+        "question": "列出entities_fea876没有任何events_fea876记录的key_fea876和name。关联events_fea876.owner_fea876=entities_fea876.key_fea876，按entities_fea876.key_fea876升序。",
+        "rewritten_question": "列出entities_fea876没有任何events_fea876记录的key_fea876和name。关联events_fea876.owner_fea876=entities_fea876.key_fea876，按entities_fea876.key_fea876升序。",
+        "sql": "WITH \"event_owners\" AS (SELECT DISTINCT \"events_fea876\".\"owner_fea876\" AS \"owner_fea876\" FROM \"events_fea876\" AS \"events_fea876\" WHERE NOT \"events_fea876\".\"owner_fea876\" IS NULL) SELECT \"e\".\"key_fea876\" AS \"key_fea876\", \"e\".\"name\" AS \"name\" FROM \"entities_fea876\" AS \"e\" LEFT JOIN \"event_owners\" AS \"eo\" ON \"eo\".\"owner_fea876\" = \"e\".\"key_fea876\" WHERE \"eo\".\"owner_fea876\" IS NULL ORDER BY \"e\".\"key_fea876\" ASC",
+        "parameters": [],
+        "columns": [
+          "key_fea876",
+          "name"
+        ],
+        "rows": [
+          {
+            "key_fea876": 3,
+            "name": "empty"
+          }
+        ],
+        "plan": {
+          "table": "entities_fea876",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "key_fea876",
+            "name"
+          ],
+          "dimension_tables": {
+            "key_fea876": "entities_fea876",
+            "name": "entities_fea876"
+          },
+          "dimension_transforms": {
+            "key_fea876": "raw",
+            "name": "raw"
+          },
+          "dimension_labels": {
+            "key_fea876": "key_fea876",
+            "name": "name"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "entities_fea876.key_fea876",
+              "table": "entities_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "entities_fea876.key_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "entities_fea876.name",
+              "table": "entities_fea876",
+              "column": "name",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "entities_fea876.name",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "events_fea876"
+          ],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": true,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "列出entities_fea876没有任何events_fea876记录的key_fea876和name。关联events_fea876.owner_fea876=entities_fea876.key_fea876，按entities_fea876.key_fea876升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "列出entities_fea876没有任何events_fea876记录的key_fea876和name。关联events_fea876.owner_fea876=entities_fea876.key_fea876，按entities_fea876.key_fea876升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "entities_fea876",
+                "column": "key_fea876",
+                "grain": "raw",
+                "label": "key_fea876"
+              },
+              {
+                "table": "entities_fea876",
+                "column": "name",
+                "grain": "raw",
+                "label": "name"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1315,
+                "output_tokens": 80,
+                "total_tokens": 1395,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 3070.066,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "key_fea876",
+                  "lineage": {
+                    "table": "entities_fea876",
+                    "column": "key_fea876",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "name",
+                  "lineage": {
+                    "table": "entities_fea876",
+                    "column": "name",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                }
+              ],
+              "sql_sha256": "83ec2c2f1887caf20c420dc44fb8f63ce407189143489eeab0d8c1c49e8d0017"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1315,
+              "output_tokens": 80,
+              "total_tokens": 1395,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 3070.066,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "key_fea876",
+                "lineage": {
+                  "table": "entities_fea876",
+                  "column": "key_fea876",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "name",
+                "lineage": {
+                  "table": "entities_fea876",
+                  "column": "name",
+                  "operators": []
+                },
+                "representation": "dimension"
+              }
+            ],
+            "sql_sha256": "83ec2c2f1887caf20c420dc44fb8f63ce407189143489eeab0d8c1c49e8d0017"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：entities_fea876",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "entities_fea876",
+          "row_count": 1,
+          "row_limit": 100,
+          "result_completeness": "complete",
+          "query_hash": "7e7a01176508765d",
+          "field_links": [
+            {
+              "source_text": "entities_fea876.key_fea876",
+              "table": "entities_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "entities_fea876.key_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "entities_fea876.name",
+              "table": "entities_fea876",
+              "column": "name",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "entities_fea876.name",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "303f15255fae1ca48521f9bdd9b7400836f4338e38c5c5eadd7ac9b25e79a9a4",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "key_fea876",
+              "query_hash": "7e7a01176508765d",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "key_fea876"
+              }
+            },
+            {
+              "row": 0,
+              "column": "name",
+              "query_hash": "7e7a01176508765d",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "name"
+              }
+            }
+          ],
+          "complete_result": {
+            "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+            "status": "complete",
+            "reason": null,
+            "query_sha256": "d91acd7e7b596e5e3c6fcaf036e42e08e5c87d8eb0fa5aba0d6ceaacd833c569",
+            "source_revision": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+            "producer_sha256": "51e0001e6c2acf964bb3059da9da4a101a5d8bbcbac6b8e8853ad1da06b7b86f",
+            "columns": [
+              "key_fea876",
+              "name"
+            ],
+            "row_count": 1,
+            "observed_rows": 1,
+            "preview_row_count": 1,
+            "preview_limit": 100,
+            "preview_truncated": false,
+            "scope": {
+              "mode": "bounded_complete_result_with_preview",
+              "semantic_row_limit": null,
+              "top_n": null,
+              "requested_preview_limit": null,
+              "effective_preview_limit": 100,
+              "default_preview_limit_removed_from_sql": true,
+              "verification": "original_question_row_limit_and_existing_rank_filter"
+            },
+            "budgets": {
+              "max_rows": 25000,
+              "max_bytes": 8388608,
+              "max_seconds": 5.0,
+              "max_steps": 50000000,
+              "max_source_bytes": 268435456
+            },
+            "artifact_id": "bb429340e0eb42d6aad3bf5f90577008",
+            "data_sha256": "e9d8d3cc0ee93e0c0d76346206e694be0a8e96fda7cf31a1dea61fa01813c3d3",
+            "byte_count": 12,
+            "cursor_eof_verified": true,
+            "source_pin": {
+              "files": {
+                "database": {
+                  "sha256": "fbf866b03b771d30d613eb63be0c63a2107b2602f1fb08cdf648f225d3dc32b5",
+                  "bytes": 20480,
+                  "generation": [
+                    1053008805926603246,
+                    1407374884961151,
+                    20480,
+                    1791076852993867300,
+                    1791076850309832400
+                  ]
+                }
+              },
+              "sha256": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+              "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+            },
+            "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+            "binding_sha256": "e261fa471a1861bf9d6842e986c09982b1c7a4eba2cc64071e8606c81599c4ca",
+            "receipt_signature": "8e42994ac7643234228141276c8e4ff9880f469b1d54de2ac8464e1763c832bf",
+            "preview_cells": [
+              [
+                3,
+                "empty"
+              ]
+            ],
+            "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          3,
+          "empty"
+        ]
+      ],
+      "reference_rows_scoring_only": [
+        [
+          3,
+          "empty"
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1672,
+          "output_tokens": 183,
+          "total_tokens": 1855,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 61,
+          "call_index": 1,
+          "latency_ms": 4970.343
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1315,
+          "output_tokens": 80,
+          "total_tokens": 1395,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 3070.066
+        }
+      ]
+    },
+    {
+      "id": "fanout",
+      "question": "按entities_fea876.key_fea876分别统计events_fea876记录数和deliveries_fea876记录数，分别以各自owner_fea876关联entities_fea876.key_fea876并独立聚合，不能扇出，不能用COUNT(events_fea876.key_fea876)漏掉空主键记录；没有记录时为0，按entities_fea876.key_fea876升序。",
+      "pass": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [
+          "预览 3 行；完整查询结果 3 行，已核验游标结束并保存可分页原始结果。"
+        ],
+        "question": "按entities_fea876.key_fea876分别统计events_fea876记录数和deliveries_fea876记录数，分别以各自owner_fea876关联entities_fea876.key_fea876并独立聚合，不能扇出，不能用COUNT(events_fea876.key_fea876)漏掉空主键记录；没有记录时为0，按entities_fea876.key_fea876升序。",
+        "rewritten_question": "按entities_fea876.key_fea876分别统计events_fea876记录数和deliveries_fea876记录数，分别以各自owner_fea876关联entities_fea876.key_fea876并独立聚合，不能扇出，不能用COUNT(events_fea876.key_fea876)漏掉空主键记录；没有记录时为0，按entities_fea876.key_fea876升序。",
+        "sql": "WITH \"event_counts\" AS (SELECT \"events_fea876\".\"owner_fea876\" AS \"owner_fea876\", COUNT(*) AS \"event_record_count\" FROM \"events_fea876\" AS \"events_fea876\" GROUP BY \"events_fea876\".\"owner_fea876\"), \"delivery_counts\" AS (SELECT \"deliveries_fea876\".\"owner_fea876\" AS \"owner_fea876\", COUNT(*) AS \"delivery_record_count\" FROM \"deliveries_fea876\" AS \"deliveries_fea876\" GROUP BY \"deliveries_fea876\".\"owner_fea876\") SELECT \"entities_fea876\".\"key_fea876\" AS \"key_fea876\", COALESCE(\"event_counts\".\"event_record_count\", ?) AS \"event_record_count\", COALESCE(\"delivery_counts\".\"delivery_record_count\", ?) AS \"delivery_record_count\" FROM \"entities_fea876\" AS \"entities_fea876\" LEFT JOIN \"event_counts\" AS \"event_counts\" ON \"event_counts\".\"owner_fea876\" = \"entities_fea876\".\"key_fea876\" LEFT JOIN \"delivery_counts\" AS \"delivery_counts\" ON \"delivery_counts\".\"owner_fea876\" = \"entities_fea876\".\"key_fea876\" ORDER BY \"entities_fea876\".\"key_fea876\" ASC",
+        "parameters": [
+          0,
+          0
+        ],
+        "columns": [
+          "key_fea876",
+          "event_record_count",
+          "delivery_record_count"
+        ],
+        "rows": [
+          {
+            "key_fea876": 1,
+            "event_record_count": 3,
+            "delivery_record_count": 3
+          },
+          {
+            "key_fea876": 2,
+            "event_record_count": 1,
+            "delivery_record_count": 1
+          },
+          {
+            "key_fea876": 3,
+            "event_record_count": 0,
+            "delivery_record_count": 0
+          }
+        ],
+        "plan": {
+          "table": "deliveries_fea876",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [
+            "key_fea876"
+          ],
+          "dimension_tables": {
+            "key_fea876": "entities_fea876"
+          },
+          "dimension_transforms": {
+            "key_fea876": "raw"
+          },
+          "dimension_labels": {
+            "key_fea876": "key_fea876"
+          },
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "deliveries_fea876.owner_fea876",
+              "table": "deliveries_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "deliveries_fea876.owner_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "entities_fea876.key_fea876",
+              "table": "entities_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "entities_fea876.key_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [
+            "entities_fea876",
+            "events_fea876"
+          ],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": true,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "按entities_fea876.key_fea876分别统计events_fea876记录数和deliveries_fea876记录数，分别以各自owner_fea876关联entities_fea876.key_fea876并独立聚合，不能扇出，不能用COUNT(events_fea876.key_fea876)漏掉空主键记录；没有记录时为0，按entities_fea876.key_fea876升序。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "按entities_fea876.key_fea876分别统计events_fea876记录数和deliveries_fea876记录数，分别以各自owner_fea876关联entities_fea876.key_fea876并独立聚合，不能扇出，不能用COUNT(events_fea876.key_fea876)漏掉空主键记录；没有记录时为0，按entities_fea876.key_fea876升序。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [
+              {
+                "table": "entities_fea876",
+                "column": "key_fea876",
+                "grain": "raw",
+                "label": "key_fea876"
+              }
+            ],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1492,
+                "output_tokens": 191,
+                "total_tokens": 1683,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 109,
+                "call_index": 2,
+                "latency_ms": 14596.741,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [
+              {
+                "id": "o1",
+                "table": "events_fea876",
+                "column": "key_fea876",
+                "function": "COUNT",
+                "label": "event_record_count",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "zero",
+                "filters": []
+              },
+              {
+                "id": "o2",
+                "table": "deliveries_fea876",
+                "column": "id",
+                "function": "COUNT",
+                "label": "delivery_record_count",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "zero",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "key_fea876",
+                  "lineage": {
+                    "table": "entities_fea876",
+                    "column": "key_fea876",
+                    "operators": []
+                  },
+                  "representation": "dimension"
+                },
+                {
+                  "label": "event_record_count",
+                  "lineage": {
+                    "table": "events_fea876",
+                    "column": "key_fea876",
+                    "operators": [
+                      "COUNT"
+                    ],
+                    "count_semantics": "physical_row_count",
+                    "missing": "zero"
+                  },
+                  "representation": "metric"
+                },
+                {
+                  "label": "delivery_record_count",
+                  "lineage": {
+                    "table": "deliveries_fea876",
+                    "column": "id",
+                    "operators": [
+                      "COUNT"
+                    ],
+                    "count_semantics": "physical_row_count",
+                    "missing": "zero"
+                  },
+                  "representation": "metric"
+                }
+              ],
+              "sql_sha256": "5d43a705681daed6a9872ad7f11a2fdcb2a4c4f4bf51aec0cde25cdbb9b6ce9d"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1492,
+              "output_tokens": 191,
+              "total_tokens": 1683,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 109,
+              "call_index": 2,
+              "latency_ms": 14596.741,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "id": "o1",
+              "table": "events_fea876",
+              "column": "key_fea876",
+              "function": "COUNT",
+              "label": "event_record_count",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "zero",
+              "filters": []
+            },
+            {
+              "id": "o2",
+              "table": "deliveries_fea876",
+              "column": "id",
+              "function": "COUNT",
+              "label": "delivery_record_count",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "zero",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "key_fea876",
+                "lineage": {
+                  "table": "entities_fea876",
+                  "column": "key_fea876",
+                  "operators": []
+                },
+                "representation": "dimension"
+              },
+              {
+                "label": "event_record_count",
+                "lineage": {
+                  "table": "events_fea876",
+                  "column": "key_fea876",
+                  "operators": [
+                    "COUNT"
+                  ],
+                  "count_semantics": "physical_row_count",
+                  "missing": "zero"
+                },
+                "representation": "metric"
+              },
+              {
+                "label": "delivery_record_count",
+                "lineage": {
+                  "table": "deliveries_fea876",
+                  "column": "id",
+                  "operators": [
+                    "COUNT"
+                  ],
+                  "count_semantics": "physical_row_count",
+                  "missing": "zero"
+                },
+                "representation": "metric"
+              }
+            ],
+            "sql_sha256": "5d43a705681daed6a9872ad7f11a2fdcb2a4c4f4bf51aec0cde25cdbb9b6ce9d"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：deliveries_fea876",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "预览 3 行；完整查询结果 3 行，已核验游标结束并保存可分页原始结果。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "source.sqlite",
+          "table": "deliveries_fea876",
+          "row_count": 3,
+          "row_limit": 100,
+          "result_completeness": "complete",
+          "query_hash": "b3efe5320ec22733",
+          "field_links": [
+            {
+              "source_text": "deliveries_fea876.owner_fea876",
+              "table": "deliveries_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "deliveries_fea876.owner_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "entities_fea876.key_fea876",
+              "table": "entities_fea876",
+              "column": "key_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "entities_fea876.key_fea876",
+              "metric_function": null
+            },
+            {
+              "source_text": "events_fea876.owner_fea876",
+              "table": "events_fea876",
+              "column": "owner_fea876",
+              "role": "source",
+              "score": 1.0,
+              "matched_alias": "events_fea876.owner_fea876",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "303f15255fae1ca48521f9bdd9b7400836f4338e38c5c5eadd7ac9b25e79a9a4",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "key_fea876",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "key_fea876"
+              }
+            },
+            {
+              "row": 0,
+              "column": "event_record_count",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "event_record_count"
+              }
+            },
+            {
+              "row": 0,
+              "column": "delivery_record_count",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "delivery_record_count"
+              }
+            },
+            {
+              "row": 1,
+              "column": "key_fea876",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "key_fea876"
+              }
+            },
+            {
+              "row": 1,
+              "column": "event_record_count",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "event_record_count"
+              }
+            },
+            {
+              "row": 1,
+              "column": "delivery_record_count",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 1,
+                "column": "delivery_record_count"
+              }
+            },
+            {
+              "row": 2,
+              "column": "key_fea876",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "key_fea876"
+              }
+            },
+            {
+              "row": 2,
+              "column": "event_record_count",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "event_record_count"
+              }
+            },
+            {
+              "row": 2,
+              "column": "delivery_record_count",
+              "query_hash": "b3efe5320ec22733",
+              "locator": {
+                "type": "sql_result",
+                "row": 2,
+                "column": "delivery_record_count"
+              }
+            }
+          ],
+          "complete_result": {
+            "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+            "status": "complete",
+            "reason": null,
+            "query_sha256": "bec77d4cfd41e396758cbca1ec735cf1cc3794393ed4044900c2fb7885ec6480",
+            "source_revision": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+            "producer_sha256": "51e0001e6c2acf964bb3059da9da4a101a5d8bbcbac6b8e8853ad1da06b7b86f",
+            "columns": [
+              "key_fea876",
+              "event_record_count",
+              "delivery_record_count"
+            ],
+            "row_count": 3,
+            "observed_rows": 3,
+            "preview_row_count": 3,
+            "preview_limit": 100,
+            "preview_truncated": false,
+            "scope": {
+              "mode": "bounded_complete_result_with_preview",
+              "semantic_row_limit": null,
+              "top_n": null,
+              "requested_preview_limit": null,
+              "effective_preview_limit": 100,
+              "default_preview_limit_removed_from_sql": true,
+              "verification": "original_question_row_limit_and_existing_rank_filter"
+            },
+            "budgets": {
+              "max_rows": 25000,
+              "max_bytes": 8388608,
+              "max_seconds": 5.0,
+              "max_steps": 50000000,
+              "max_source_bytes": 268435456
+            },
+            "artifact_id": "af13515de9a046619e0d77678b891760",
+            "data_sha256": "3d851f2485ec53434b34f9aa7928d49b8fc805e13e2a844c5539930ab1baf356",
+            "byte_count": 24,
+            "cursor_eof_verified": true,
+            "source_pin": {
+              "files": {
+                "database": {
+                  "sha256": "fbf866b03b771d30d613eb63be0c63a2107b2602f1fb08cdf648f225d3dc32b5",
+                  "bytes": 20480,
+                  "generation": [
+                    1053008805926603246,
+                    1407374884961151,
+                    20480,
+                    1791076852993867300,
+                    1791076850309832400
+                  ]
+                }
+              },
+              "sha256": "1b59bcef9ffdba99ad6f67ba2d2c0d2746aa77fc65074bb2df1a74fb8a18dba2",
+              "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+            },
+            "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+            "binding_sha256": "b1cac155cc103b3c5812f1d9f1d61ea747eb36bf753f3297150686fa44a29639",
+            "receipt_signature": "5577c1d490dbebc0a7b4c00deb38181c294a4664a1e66d7d6588b0700f305548",
+            "preview_cells": [
+              [
+                1,
+                3,
+                3
+              ],
+              [
+                2,
+                1,
+                1
+              ],
+              [
+                3,
+                0,
+                0
+              ]
+            ],
+            "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "actual_rows": [
+        [
+          1,
+          3,
+          3
+        ],
+        [
+          2,
+          1,
+          1
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "reference_rows_scoring_only": [
+        [
+          1,
+          3,
+          3
+        ],
+        [
+          2,
+          1,
+          1
+        ],
+        [
+          3,
+          0,
+          0
+        ]
+      ],
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_proposal",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1711,
+          "output_tokens": 483,
+          "total_tokens": 2194,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 237,
+          "call_index": 1,
+          "latency_ms": 20242.932
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "complex_sql_independent_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1492,
+          "output_tokens": 191,
+          "total_tokens": 1683,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 109,
+          "call_index": 2,
+          "latency_ms": 14596.741
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Six tiny SQLite cases with explicit field definitions; not unknown business semantics or other database engines."
+  ]
+}

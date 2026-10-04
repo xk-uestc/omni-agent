@@ -45,8 +45,19 @@ def hashes():
         for p in sorted((ROOT/'ict-track8/backend').rglob('*.py'))}
 
 
+def build_agent(work, database):
+    provider=ResponsesModelPlanProvider(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],model='gpt-6-luna',reasoning_effort='medium',http_headers=local_model_headers())
+    client=StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],model='gpt-6-luna',reasoning='medium',http_headers=local_model_headers())
+    engine=DiagnosticEngine(database,model_plan_provider=provider,metric_catalog_path=work/'none.json')
+    provider.catalog=None;provider.reference_date=engine.reference_date
+    agent=OmniAgent(engine,KnowledgeStore(work/'knowledge'),ConversationStore(storage_path=work/'sessions.sqlite'),client)
+    return agent, engine, provider, client
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--recreate-before-turn',type=int,nargs='+',choices=(2,3,4,5),default=[],
+        help='Rebuild all agent/engine/provider instances from persistent state before these turns; not an OS-process restart')
     args=parser.parse_args()
     if args.output.resolve().parent!=(ROOT/'docs').resolve() or args.output.exists():parser.error('New docs report required')
     enable_local_model();before=hashes()
@@ -74,14 +85,21 @@ def main():
             (topic,"SELECT SUM(x.amount) FROM contracts x JOIN countries c ON x.country_id=c.id WHERE c.name='中国' AND x.contract_date>='2024-01-01' AND x.contract_date<'2025-01-01'"),
             ('那排除未说明的特殊合同呢',None),
             (recovery,"SELECT SUM(x.amount) FROM contracts x JOIN countries c ON x.country_id=c.id WHERE c.name='日本' AND x.contract_date>='2025-01-01' AND x.contract_date<'2026-01-01'")]
-        provider=ResponsesModelPlanProvider(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],model='gpt-6-luna',reasoning_effort='medium',http_headers=local_model_headers())
-        client=StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],model='gpt-6-luna',reasoning='medium',http_headers=local_model_headers())
-        engine=DiagnosticEngine(database,model_plan_provider=provider,metric_catalog_path=work/'none.json')
-        provider.catalog=None;provider.reference_date=engine.reference_date
-        agent=OmniAgent(engine,KnowledgeStore(work/'knowledge'),ConversationStore(storage_path=work/'sessions.sqlite'),client)
-        observations=[]
+        agent,engine,provider,client=build_agent(work,database)
+        observations=[];recreations=[]
         for turn,(question,reference) in enumerate(cases,1):
             if hashes()!=before:raise ValueError('source_changed')
+            if turn in args.recreate_before_turn:
+                saved=agent.conversations.context(domain)
+                old_agent=agent
+                agent,engine,provider,client=build_agent(work,database)
+                restored_context=agent.conversations.context(domain)
+                recreation={'before_turn':turn,'kind':'fresh_objects_from_persistent_storage_not_os_process_restart',
+                    'context_turns':len(restored_context),'context_equal':saved==restored_context,
+                    'new_agent_instance':agent is not old_agent}
+                recreations.append(recreation)
+                if not recreation['context_equal'] or len(restored_context)!=turn-1:
+                    raise ValueError('recreated_session_context_mismatch')
             client.reset_audit();provider.reset_audit();engine.execution_rejections.clear()
             response=agent.query(question,session_id=domain);result=response.get('result',{})
             actual=[[r[col] for col in result.get('columns',[])] for r in result.get('rows',[])]
@@ -99,11 +117,13 @@ def main():
             if any(a.get('http_status') in (401,403) for a in audits):break
         restored=ConversationStore(storage_path=work/'sessions.sqlite')
         sessions.append({'domain':domain,'cases':observations,
+            'recreations':recreations,
             'persisted_turns_after_restart':len(restored.context(domain)),
             'source_stable':source_sha==hashlib.sha256(database.read_bytes()).hexdigest()})
     report={'created_at':datetime.now(timezone.utc).isoformat(),'scope':'authored_topic_switch_and_failure_recovery_not_official_accuracy',
         'model':'gpt-6-luna','reasoning':'medium','reference_used_as_model_input':False,
         'planned_turns':10,'executed_turns':sum(len(s['cases']) for s in sessions),
+        'recreate_before_turn':sorted(set(args.recreate_before_turn)),
         'passed_turns':sum(c['pass'] for s in sessions for c in s['cases']),
         'complete_five_turn_sessions':sum(len(s['cases'])==5 and all(c['pass'] for c in s['cases']) for s in sessions),
         'implementation_file_sha256':before,'implementation_file_sha256_end':hashes(),

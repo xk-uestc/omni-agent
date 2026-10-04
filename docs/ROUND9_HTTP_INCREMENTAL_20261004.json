@@ -1,0 +1,3222 @@
+{
+  "created_at": "2026-10-04T01:54:16.151155+00:00",
+  "scope": "live_HTTP_frontend_API_contract_checks_not_browser_visual_or_accuracy_benchmark",
+  "url": "http://127.0.0.1:8030",
+  "health": {
+    "ok": true,
+    "service": "ict-track8-nl2sql",
+    "database": "demo_sales.sqlite",
+    "document_source": "independent_corpus",
+    "planner_source": "responses_model_with_validated_rules_fallback",
+    "retrieval": {
+      "mode": "bm25_dense_rrf",
+      "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+      "dense_answer_threshold": 0.6
+    },
+    "generation": {
+      "mode": "responses",
+      "model": "gpt-6-luna"
+    },
+    "configuration_warnings": []
+  },
+  "checks": {
+    "health_real_model": true,
+    "frontend_available": true,
+    "frontend_document_endpoint": true,
+    "original_sha256": true,
+    "manifest_pins": true,
+    "png_sha256": true,
+    "stale_source_rejected": true,
+    "document_real_request": true,
+    "document_citations": true,
+    "sql_real_request": true,
+    "sql_readonly_executed": true,
+    "backend_source_stable": true
+  },
+  "ok": true,
+  "responses": [
+    {
+      "status": "ok",
+      "question": "销售额的统计口径是什么",
+      "effective_question": "销售额的统计口径是什么",
+      "route": "document",
+      "planner_source": "model_validated",
+      "session_id": "round8-http-9155660998d348d89c9d01dbcdbdb7f9",
+      "context_turns": 0,
+      "state": {
+        "route": "document",
+        "sources": [
+          "revenue-policy",
+          "revenue-policy",
+          "revenue-policy",
+          "revenue-policy"
+        ]
+      },
+      "result": {
+        "status": "ok",
+        "question": "销售额的统计口径是什么",
+        "answer_mode": "model_grounded",
+        "answer": "销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "72c43848f4c2bbbf411e352b",
+            "title": "销售额统计口径",
+            "score": 0.03278688524590164,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "snippet": "销售额统计口径",
+            "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+            "metadata": {
+              "raw_text": "销售额统计口径",
+              "raw_page_text": "销售额统计口径\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计，单位为人民币元。演示库中的记录代表已入账销售\n\n，不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月，2025年统计区间为2025-01-01至2026-01-01，不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数，销量采用数量合计，不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时，应按订单粒度统计订单金额，防止重复累加。退款需要单独的退款事\n\n实表，没有该表时不得给出净销售额。",
+              "ocr_status": null,
+              "ocr_attempts": [],
+              "ocr_selected_transforms": [],
+              "coordinate_evidence": {
+                "bbox_status": "exact_block",
+                "layout_block_ids": [
+                  0,
+                  2
+                ],
+                "source_bbox_pdf_user_pt": [
+                  78.0,
+                  679.9088,
+                  204.0,
+                  759.4258
+                ],
+                "source_bbox_fitz_unrotated_pt": [
+                  78.0,
+                  82.464,
+                  204.0,
+                  161.981
+                ],
+                "page_bbox_pdf_user_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "source_bbox_fitz_display_pt": [
+                  78.0,
+                  82.464,
+                  204.0,
+                  161.981
+                ],
+                "source_bbox_render_px": null,
+                "page_geometry": {
+                  "rotation_degrees": 0,
+                  "rotation_source": "pdf_page_rotate",
+                  "media_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "crop_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_rect_fitz_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_size_pt": [
+                    595.2756,
+                    841.8898
+                  ],
+                  "coordinate_systems": {
+                    "pdf_user_space": {
+                      "origin": "bottom_left",
+                      "unit": "pt"
+                    },
+                    "fitz_unrotated_text_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "fitz_display_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "render_pixel_space": {
+                      "origin": "top_left",
+                      "unit": "px"
+                    }
+                  },
+                  "mappings": {
+                    "pdf_user_to_fitz_unrotated": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      -1.0,
+                      0.0,
+                      841.889771
+                    ],
+                    "fitz_unrotated_to_display": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0
+                    ],
+                    "fitz_display_to_render_pixel": null
+                  },
+                  "render": null,
+                  "mapping_status": "complete"
+                },
+                "render_input_sha256": null,
+                "render_size_px": null,
+                "render_scale": null
+              },
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "original_document_id": "revenue-policy",
+              "document_id": "revenue-policy",
+              "chunk_id": "72c43848f4c2bbbf411e352b",
+              "source_locator": "page:1:block:1",
+              "page_no": 1,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 45.451396,
+              "retrieval_channel": "hybrid",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "bm25_rank": 1,
+              "retrieval_channels": [
+                "bm25",
+                "dense"
+              ],
+              "dense_cosine": 0.885761,
+              "dense_rank": 1,
+              "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+              "rrf_rank": 1,
+              "rrf_score": 0.03278688524590164,
+              "ranking_score": 0.054826695580214385,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": [
+                  "zh"
+                ],
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.3361071075982693,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "口径",
+                  "售额",
+                  "统计",
+                  "计口",
+                  "销售"
+                ],
+                "body_sha256": "4954c7c100d94e87af15b8a54a04eca15a9954e0b50d740d0975d1a3dfafaac6",
+                "utility": 1.144444,
+                "uncovered_lexical_facets": [
+                  "径是",
+                  "是什",
+                  "的统"
+                ],
+                "selection_budget_exhausted": true
+              }
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "e2285ee589c8c824bd06f751",
+            "title": "销售额统计口径",
+            "score": 0.0315136476426799,
+            "matched_terms": [
+              "销售",
+              "统计口",
+              "计口",
+              "计口径",
+              "售额",
+              "销售额",
+              "额的",
+              "统计",
+              "口径"
+            ],
+            "snippet": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+            "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+            "metadata": {
+              "raw_text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+              "raw_page_text": "销售额统计口径\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计，单位为人民币元。演示库中的记录代表已入账销售\n\n，不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月，2025年统计区间为2025-01-01至2026-01-01，不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数，销量采用数量合计，不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时，应按订单粒度统计订单金额，防止重复累加。退款需要单独的退款事\n\n实表，没有该表时不得给出净销售额。",
+              "ocr_status": null,
+              "ocr_attempts": [],
+              "ocr_selected_transforms": [],
+              "coordinate_evidence": {
+                "bbox_status": "exact_block",
+                "layout_block_ids": [
+                  4
+                ],
+                "source_bbox_pdf_user_pt": [
+                  78.0,
+                  643.9088,
+                  507.0,
+                  655.1618
+                ],
+                "source_bbox_fitz_unrotated_pt": [
+                  78.0,
+                  186.728,
+                  507.0,
+                  197.981
+                ],
+                "page_bbox_pdf_user_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "source_bbox_fitz_display_pt": [
+                  78.0,
+                  186.728,
+                  507.0,
+                  197.981
+                ],
+                "source_bbox_render_px": null,
+                "page_geometry": {
+                  "rotation_degrees": 0,
+                  "rotation_source": "pdf_page_rotate",
+                  "media_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "crop_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_rect_fitz_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_size_pt": [
+                    595.2756,
+                    841.8898
+                  ],
+                  "coordinate_systems": {
+                    "pdf_user_space": {
+                      "origin": "bottom_left",
+                      "unit": "pt"
+                    },
+                    "fitz_unrotated_text_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "fitz_display_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "render_pixel_space": {
+                      "origin": "top_left",
+                      "unit": "px"
+                    }
+                  },
+                  "mappings": {
+                    "pdf_user_to_fitz_unrotated": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      -1.0,
+                      0.0,
+                      841.889771
+                    ],
+                    "fitz_unrotated_to_display": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0
+                    ],
+                    "fitz_display_to_render_pixel": null
+                  },
+                  "render": null,
+                  "mapping_status": "complete"
+                },
+                "render_input_sha256": null,
+                "render_size_px": null,
+                "render_scale": null
+              },
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "original_document_id": "revenue-policy",
+              "document_id": "revenue-policy",
+              "chunk_id": "e2285ee589c8c824bd06f751",
+              "source_locator": "page:1:block:5",
+              "page_no": 1,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [
+                "第一章 销售额统计口径",
+                "1.1 定义"
+              ],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 29.818805,
+              "retrieval_channel": "hybrid",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 0.6561,
+              "bm25_rank": 5,
+              "retrieval_channels": [
+                "bm25",
+                "dense"
+              ],
+              "dense_cosine": 0.77697,
+              "dense_rank": 2,
+              "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+              "rrf_rank": 2,
+              "rrf_score": 0.0315136476426799,
+              "ranking_score": 0.052697569560784224,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": [
+                  "zh"
+                ],
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.3361071075982693,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "额的"
+                ],
+                "body_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+                "utility": 0.736705,
+                "uncovered_lexical_facets": [
+                  "径是",
+                  "是什",
+                  "的统"
+                ],
+                "selection_budget_exhausted": true
+              }
+            },
+            "generation_evidence": {
+              "text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "chunk_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+              "evidence_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+              "chunk_payload_sha256": "18d0c99e2e8627ec04baaad63189d7d6b8b0ae2aa83dac2530cc239c81c26faa",
+              "offset_start": null,
+              "offset_end": null,
+              "truncated": false,
+              "source_locator": "page:1:block:5",
+              "page_no": 1,
+              "original_chars": 39,
+              "evidence_chars": 39,
+              "mode": "authoritative_pdf_native_block_context",
+              "anchor_original_chars": 39,
+              "native_context": {
+                "text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+                "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                "page_no": 1,
+                "evidence_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+                "text_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+                "evidence_chars": 39,
+                "max_chars": 3200,
+                "extraction_version": "original-native-complete-block-context-v5",
+                "mode": "original_native_complete_block",
+                "members": [
+                  {
+                    "block_id": 4,
+                    "native_block_id": 4,
+                    "native_column_part": null,
+                    "bbox_fitz_unrotated_pt": [
+                      78.0,
+                      186.728,
+                      507.0,
+                      197.981
+                    ],
+                    "text_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+                    "source_range": null,
+                    "parent_text_sha256": null,
+                    "lines": [
+                      {
+                        "line_index": 0,
+                        "bbox_fitz_unrotated_pt": [
+                          78.0,
+                          186.728,
+                          507.0,
+                          197.981
+                        ],
+                        "text_sha256": "61e05f51835c2d905f75dfb5a6bf6499fd1a768b790ed4224d205ea88e1bf855",
+                        "native_style": [
+                          [
+                            "STSong-Light",
+                            11.0,
+                            0
+                          ]
+                        ],
+                        "native_direction": [
+                          1.0,
+                          0.0
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "reading_order": {
+                  "version": "native-bbox-columns-v1",
+                  "mode": "native_blocks_yx",
+                  "column_count": 1,
+                  "block_ids": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12
+                  ]
+                },
+                "unit_insertions": [],
+                "column_transition": null,
+                "rotated_native_row": null,
+                "anchor_match_policy": "native-literal-and-legacy-wrap-alias-union-v2",
+                "anchor_match": {
+                  "policy_version": "native-literal-and-legacy-wrap-alias-union-v2",
+                  "page_reading_order_range": [
+                    50,
+                    89
+                  ],
+                  "members": [
+                    {
+                      "block_id": 4,
+                      "native_block_id": 4,
+                      "native_column_part": null,
+                      "source_range": [
+                        0,
+                        39
+                      ],
+                      "parent_source_range": null
+                    }
+                  ]
+                },
+                "continuation_policy_version": null,
+                "calculator_input_eligible": false
+              },
+              "native_context_max_chars": 3200
+            }
+          },
+          {
+            "citation_id": 3,
+            "document_id": "335bea32474365b885771a5f",
+            "title": "销售额统计口径",
+            "score": 0.03149801587301587,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "snippet": "合成演示样本 CC0 非真实企业数据",
+            "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+            "metadata": {
+              "raw_text": "合成演示样本 CC0 非真实企业数据",
+              "raw_page_text": "销售额统计口径\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计，单位为人民币元。演示库中的记录代表已入账销售\n\n，不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月，2025年统计区间为2025-01-01至2026-01-01，不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数，销量采用数量合计，不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时，应按订单粒度统计订单金额，防止重复累加。退款需要单独的退款事\n\n实表，没有该表时不得给出净销售额。",
+              "ocr_status": null,
+              "ocr_attempts": [],
+              "ocr_selected_transforms": [],
+              "coordinate_evidence": {
+                "bbox_status": "exact_block",
+                "layout_block_ids": [
+                  1
+                ],
+                "source_bbox_pdf_user_pt": [
+                  78.0,
+                  709.9088,
+                  250.48,
+                  721.1618
+                ],
+                "source_bbox_fitz_unrotated_pt": [
+                  78.0,
+                  120.728,
+                  250.48,
+                  131.981
+                ],
+                "page_bbox_pdf_user_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "source_bbox_fitz_display_pt": [
+                  78.0,
+                  120.728,
+                  250.48,
+                  131.981
+                ],
+                "source_bbox_render_px": null,
+                "page_geometry": {
+                  "rotation_degrees": 0,
+                  "rotation_source": "pdf_page_rotate",
+                  "media_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "crop_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_rect_fitz_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_size_pt": [
+                    595.2756,
+                    841.8898
+                  ],
+                  "coordinate_systems": {
+                    "pdf_user_space": {
+                      "origin": "bottom_left",
+                      "unit": "pt"
+                    },
+                    "fitz_unrotated_text_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "fitz_display_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "render_pixel_space": {
+                      "origin": "top_left",
+                      "unit": "px"
+                    }
+                  },
+                  "mappings": {
+                    "pdf_user_to_fitz_unrotated": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      -1.0,
+                      0.0,
+                      841.889771
+                    ],
+                    "fitz_unrotated_to_display": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0
+                    ],
+                    "fitz_display_to_render_pixel": null
+                  },
+                  "render": null,
+                  "mapping_status": "complete"
+                },
+                "render_input_sha256": null,
+                "render_size_px": null,
+                "render_scale": null
+              },
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "original_document_id": "revenue-policy",
+              "document_id": "revenue-policy",
+              "chunk_id": "335bea32474365b885771a5f",
+              "source_locator": "page:1:block:2",
+              "page_no": 1,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 32.415513,
+              "retrieval_channel": "hybrid",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 0.7132,
+              "bm25_rank": 4,
+              "retrieval_channels": [
+                "bm25",
+                "dense"
+              ],
+              "dense_cosine": 0.725101,
+              "dense_rank": 3,
+              "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+              "rrf_rank": 3,
+              "rrf_score": 0.03149801587301587,
+              "ranking_score": 0.052671429893343356,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": [
+                  "zh"
+                ],
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.3361071075982693,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [],
+                "body_sha256": "c3e885b75d0f6bca883fd03346d528e539718f063468301a36eb147393e10917",
+                "utility": 0.622483,
+                "uncovered_lexical_facets": [
+                  "径是",
+                  "是什",
+                  "的统"
+                ],
+                "selection_budget_exhausted": true
+              }
+            },
+            "generation_evidence": {
+              "text": "合成演示样本 CC0 非真实企业数据",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "chunk_sha256": "c3e885b75d0f6bca883fd03346d528e539718f063468301a36eb147393e10917",
+              "evidence_sha256": "c3e885b75d0f6bca883fd03346d528e539718f063468301a36eb147393e10917",
+              "chunk_payload_sha256": "90c3d226764edb06e95ce32c6a6268e9d75bcf41049a5a1d07d048bd4c7b4c28",
+              "offset_start": null,
+              "offset_end": null,
+              "truncated": false,
+              "source_locator": "page:1:block:2",
+              "page_no": 1,
+              "original_chars": 18,
+              "evidence_chars": 18,
+              "mode": "authoritative_pdf_native_block_context",
+              "anchor_original_chars": 18,
+              "native_context": {
+                "text": "合成演示样本 CC0 非真实企业数据",
+                "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                "page_no": 1,
+                "evidence_sha256": "c3e885b75d0f6bca883fd03346d528e539718f063468301a36eb147393e10917",
+                "text_sha256": "c3e885b75d0f6bca883fd03346d528e539718f063468301a36eb147393e10917",
+                "evidence_chars": 18,
+                "max_chars": 3200,
+                "extraction_version": "original-native-complete-block-context-v5",
+                "mode": "original_native_complete_block",
+                "members": [
+                  {
+                    "block_id": 1,
+                    "native_block_id": 1,
+                    "native_column_part": null,
+                    "bbox_fitz_unrotated_pt": [
+                      78.0,
+                      120.728,
+                      250.48,
+                      131.981
+                    ],
+                    "text_sha256": "c3e885b75d0f6bca883fd03346d528e539718f063468301a36eb147393e10917",
+                    "source_range": null,
+                    "parent_text_sha256": null,
+                    "lines": [
+                      {
+                        "line_index": 0,
+                        "bbox_fitz_unrotated_pt": [
+                          78.0,
+                          120.728,
+                          250.48,
+                          131.981
+                        ],
+                        "text_sha256": "1e8360f7ce4fc12b57f2cd2dfa02c25f3c2d659c3d9fb158e1f93955bde5dd40",
+                        "native_style": [
+                          [
+                            "STSong-Light",
+                            11.0,
+                            0
+                          ]
+                        ],
+                        "native_direction": [
+                          1.0,
+                          0.0
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "reading_order": {
+                  "version": "native-bbox-columns-v1",
+                  "mode": "native_blocks_yx",
+                  "column_count": 1,
+                  "block_ids": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12
+                  ]
+                },
+                "unit_insertions": [],
+                "column_transition": null,
+                "rotated_native_row": null,
+                "anchor_match_policy": "native-literal-and-legacy-wrap-alias-union-v2",
+                "anchor_match": {
+                  "policy_version": "native-literal-and-legacy-wrap-alias-union-v2",
+                  "page_reading_order_range": [
+                    9,
+                    27
+                  ],
+                  "members": [
+                    {
+                      "block_id": 1,
+                      "native_block_id": 1,
+                      "native_column_part": null,
+                      "source_range": [
+                        0,
+                        18
+                      ],
+                      "parent_source_range": null
+                    }
+                  ]
+                },
+                "continuation_policy_version": null,
+                "calculator_input_eligible": false
+              },
+              "native_context_max_chars": 3200
+            }
+          },
+          {
+            "citation_id": 4,
+            "document_id": "ad073a54def770b153b16488",
+            "title": "销售额统计口径",
+            "score": 0.03149801587301587,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "snippet": ",不推断缺失的订单状态。",
+            "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+            "metadata": {
+              "raw_text": ",不推断缺失的订单状态。",
+              "raw_page_text": "销售额统计口径\n\n\n合成演示样本 CC0 非真实企业数据\n\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计，单位为人民币元。演示库中的记录代表已入账销售\n\n，不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月，2025年统计区间为2025-01-01至2026-01-01，不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数，销量采用数量合计，不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时，应按订单粒度统计订单金额，防止重复累加。退款需要单独的退款事\n\n实表，没有该表时不得给出净销售额。",
+              "ocr_status": null,
+              "ocr_attempts": [],
+              "ocr_selected_transforms": [],
+              "coordinate_evidence": {
+                "bbox_status": "exact_block",
+                "layout_block_ids": [
+                  5
+                ],
+                "source_bbox_pdf_user_pt": [
+                  78.0,
+                  625.9088,
+                  210.0,
+                  637.1618
+                ],
+                "source_bbox_fitz_unrotated_pt": [
+                  78.0,
+                  204.728,
+                  210.0,
+                  215.981
+                ],
+                "page_bbox_pdf_user_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "source_bbox_fitz_display_pt": [
+                  78.0,
+                  204.728,
+                  210.0,
+                  215.981
+                ],
+                "source_bbox_render_px": null,
+                "page_geometry": {
+                  "rotation_degrees": 0,
+                  "rotation_source": "pdf_page_rotate",
+                  "media_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "crop_box_pdf_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_rect_fitz_pt": [
+                    0.0,
+                    0.0,
+                    595.2756,
+                    841.8898
+                  ],
+                  "display_size_pt": [
+                    595.2756,
+                    841.8898
+                  ],
+                  "coordinate_systems": {
+                    "pdf_user_space": {
+                      "origin": "bottom_left",
+                      "unit": "pt"
+                    },
+                    "fitz_unrotated_text_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "fitz_display_space": {
+                      "origin": "top_left",
+                      "unit": "pt"
+                    },
+                    "render_pixel_space": {
+                      "origin": "top_left",
+                      "unit": "px"
+                    }
+                  },
+                  "mappings": {
+                    "pdf_user_to_fitz_unrotated": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      -1.0,
+                      0.0,
+                      841.889771
+                    ],
+                    "fitz_unrotated_to_display": [
+                      1.0,
+                      0.0,
+                      0.0,
+                      1.0,
+                      0.0,
+                      0.0
+                    ],
+                    "fitz_display_to_render_pixel": null
+                  },
+                  "render": null,
+                  "mapping_status": "complete"
+                },
+                "render_input_sha256": null,
+                "render_size_px": null,
+                "render_scale": null
+              },
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "original_document_id": "revenue-policy",
+              "document_id": "revenue-policy",
+              "chunk_id": "ad073a54def770b153b16488",
+              "source_locator": "page:1:block:6",
+              "page_no": 1,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [
+                "第一章 销售额统计口径",
+                "1.1 定义"
+              ],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 33.752734,
+              "retrieval_channel": "hybrid",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 0.7426,
+              "bm25_rank": 3,
+              "retrieval_channels": [
+                "bm25",
+                "dense"
+              ],
+              "dense_cosine": 0.699469,
+              "dense_rank": 4,
+              "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+              "rrf_rank": 4,
+              "rrf_score": 0.03149801587301587,
+              "ranking_score": 0.052671429893343356,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": [
+                  "zh"
+                ],
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.3361071075982693,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [],
+                "body_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+                "utility": 0.597483,
+                "uncovered_lexical_facets": [
+                  "径是",
+                  "是什",
+                  "的统"
+                ],
+                "selection_budget_exhausted": true
+              }
+            },
+            "generation_evidence": {
+              "text": ",不推断缺失的订单状态。",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "chunk_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+              "evidence_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+              "chunk_payload_sha256": "3611bf295dc1708bc07afeca81be43e34263be56062d6f8da40e7443b952f21c",
+              "offset_start": null,
+              "offset_end": null,
+              "truncated": false,
+              "source_locator": "page:1:block:6",
+              "page_no": 1,
+              "original_chars": 12,
+              "evidence_chars": 12,
+              "mode": "authoritative_pdf_native_block_context",
+              "anchor_original_chars": 12,
+              "native_context": {
+                "text": ",不推断缺失的订单状态。",
+                "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                "page_no": 1,
+                "evidence_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+                "text_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+                "evidence_chars": 12,
+                "max_chars": 3200,
+                "extraction_version": "original-native-complete-block-context-v5",
+                "mode": "original_native_complete_block",
+                "members": [
+                  {
+                    "block_id": 5,
+                    "native_block_id": 5,
+                    "native_column_part": null,
+                    "bbox_fitz_unrotated_pt": [
+                      78.0,
+                      204.728,
+                      210.0,
+                      215.981
+                    ],
+                    "text_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+                    "source_range": null,
+                    "parent_text_sha256": null,
+                    "lines": [
+                      {
+                        "line_index": 0,
+                        "bbox_fitz_unrotated_pt": [
+                          78.0,
+                          204.728,
+                          210.0,
+                          215.981
+                        ],
+                        "text_sha256": "da5246d877ce50796f8926666a53715bf4d9e2edc4e1a0eb3ca46926a5797784",
+                        "native_style": [
+                          [
+                            "STSong-Light",
+                            11.0,
+                            0
+                          ]
+                        ],
+                        "native_direction": [
+                          1.0,
+                          0.0
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "reading_order": {
+                  "version": "native-bbox-columns-v1",
+                  "mode": "native_blocks_yx",
+                  "column_count": 1,
+                  "block_ids": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    11,
+                    12
+                  ]
+                },
+                "unit_insertions": [],
+                "column_transition": null,
+                "rotated_native_row": null,
+                "anchor_match_policy": "native-literal-and-legacy-wrap-alias-union-v2",
+                "anchor_match": {
+                  "policy_version": "native-literal-and-legacy-wrap-alias-union-v2",
+                  "page_reading_order_range": [
+                    91,
+                    103
+                  ],
+                  "members": [
+                    {
+                      "block_id": 5,
+                      "native_block_id": 5,
+                      "native_column_part": null,
+                      "source_range": [
+                        0,
+                        12
+                      ],
+                      "parent_source_range": null
+                    }
+                  ]
+                },
+                "continuation_policy_version": null,
+                "calculator_input_eligible": false
+              },
+              "native_context_max_chars": 3200
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25_dense_rrf",
+          "embedding_model": "BAAI/bge-small-zh-v1.5@7999e1d3359715c523056ef9478215996d62a620",
+          "dense_answer_threshold": 0.6
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25_dense_rrf",
+            "candidate_count": 4
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 4,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [
+              "revenue-policy"
+            ],
+            "status": "no_complete_grid_key",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            },
+            "candidate_pages": 1,
+            "page_indexes": [
+              {
+                "document_id": "revenue-policy",
+                "status": "cache_hit",
+                "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                "page_count": 1,
+                "complete": true,
+                "extractor_version": "PyMuPDF:1.27.2.2:lines_strict:unrotated:algorithm:1ebbeefcb8e9a0ff6b87462cdb9d3a91fd1d204b92fbc2503bd2656ecaab48de",
+                "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+              }
+            ],
+            "complete_key_matches": 0,
+            "scope_rejections": []
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_supported_native_chart_key",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [
+              "revenue-policy"
+            ],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_pages": 1,
+            "complete_candidate_scan": true,
+            "complete_key_matches": 0,
+            "scope_rejections": [],
+            "scan_seconds": 0.015
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 3,
+            "total_chars": 69,
+            "omitted": [
+              {
+                "citation_id": 1,
+                "reason": "native_complete_context_unavailable"
+              }
+            ],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "validated",
+            "model": "gpt-6-luna"
+          },
+          {
+            "stage": "typed_answer_projection",
+            "status": "unsupported",
+            "reason": "question_contract_unsupported",
+            "original_answer_retained": true
+          },
+          {
+            "stage": "grounded_span_answer",
+            "status": "model_reviewed",
+            "semantic_verification": "independent_model_review_not_formal_entailment",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "grounded_span_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1123,
+                "output_tokens": 307,
+                "total_tokens": 1430,
+                "call_index": 3,
+                "latency_ms": 7563.787
+              },
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "grounded_span_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 841,
+                "output_tokens": 162,
+                "total_tokens": 1003,
+                "call_index": 4,
+                "latency_ms": 11647.937
+              }
+            ],
+            "complete_facts_retained": true,
+            "full_fact_answer_field": "full_fact_answer"
+          }
+        ],
+        "claims": [
+          {
+            "support": [
+              {
+                "citation_id": 2,
+                "quote": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售"
+              }
+            ],
+            "text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售"
+          }
+        ],
+        "generation_audit": {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1130,
+          "output_tokens": 91,
+          "total_tokens": 1221,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 3006.241
+        },
+        "whole_question_review": null,
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "validated",
+            "error_category": null,
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1130,
+              "output_tokens": 91,
+              "total_tokens": 1221,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 3006.241
+            },
+            "whole_question_review": null
+          }
+        ],
+        "generation_repaired": false,
+        "support_validation": "bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof",
+        "full_fact_answer": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售 [2]",
+        "answer_strategy": "model_reviewed_source_span",
+        "answer_span_result": {
+          "status": "model_reviewed",
+          "answer_value": "销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+          "answer_type": "entity",
+          "answer_scope": [
+            {
+              "citation_id": 2,
+              "quote": "销售额是销售明细中销售金额的合计,单位为人民币元。",
+              "offsets": [
+                0,
+                25
+              ]
+            },
+            {
+              "citation_id": 2,
+              "quote": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+              "offsets": [
+                0,
+                39
+              ]
+            },
+            {
+              "citation_id": 2,
+              "quote": "演示库中的记录代表已入账销售",
+              "offsets": [
+                25,
+                39
+              ]
+            }
+          ],
+          "claims": [
+            {
+              "support": [
+                {
+                  "citation_id": 2,
+                  "quote": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售"
+                }
+              ],
+              "text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售"
+            }
+          ],
+          "model_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_span_selection",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1123,
+              "output_tokens": 307,
+              "total_tokens": 1430,
+              "call_index": 3,
+              "latency_ms": 7563.787
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_span_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 841,
+              "output_tokens": 162,
+              "total_tokens": 1003,
+              "call_index": 4,
+              "latency_ms": 11647.937
+            }
+          ],
+          "answer_proof": {
+            "version": "literal-span-independent-model-review-v1",
+            "question_sha256": "75493d7a8a5cedd5e9a417821aa66ed30bdc640d293030b58a91af43344842aa",
+            "claims_sha256": "b398c3ea988e1205f356fb42c8880a315dc7e32bc054d257e5ec7756241aa96e",
+            "literal": {
+              "citation_id": 2,
+              "answer_span": "销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+              "offsets": [
+                4,
+                39
+              ],
+              "answer_context": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+              "context_offsets": [
+                0,
+                39
+              ],
+              "context_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+              "answer_type": "entity",
+              "scope": [
+                {
+                  "citation_id": 2,
+                  "quote": "销售额是销售明细中销售金额的合计,单位为人民币元。",
+                  "offsets": [
+                    0,
+                    25
+                  ]
+                },
+                {
+                  "citation_id": 2,
+                  "quote": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+                  "offsets": [
+                    0,
+                    39
+                  ]
+                },
+                {
+                  "citation_id": 2,
+                  "quote": "演示库中的记录代表已入账销售",
+                  "offsets": [
+                    25,
+                    39
+                  ]
+                }
+              ]
+            },
+            "source_snapshots": [
+              {
+                "citation_id": 2,
+                "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                "evidence_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+                "source_locator": "page:1:block:5",
+                "page_no": 1,
+                "document_id": "revenue-policy",
+                "generation_payload_sha256": "a551435ed16a2dfdb01149179a001ef852c38c4034cfa002965977c683f74b45"
+              },
+              {
+                "citation_id": 3,
+                "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                "evidence_sha256": "c3e885b75d0f6bca883fd03346d528e539718f063468301a36eb147393e10917",
+                "source_locator": "page:1:block:2",
+                "page_no": 1,
+                "document_id": "revenue-policy",
+                "generation_payload_sha256": "58c2763b77bbea517292c9ff8c1d642fe7960f0afcb4eb9606dc7c40cb551d09"
+              },
+              {
+                "citation_id": 4,
+                "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+                "evidence_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+                "source_locator": "page:1:block:6",
+                "page_no": 1,
+                "document_id": "revenue-policy",
+                "generation_payload_sha256": "b33bcd014727aee00e959597b3792df2124aaccfd65cdc5a9edfd77ccb1a870b"
+              }
+            ],
+            "semantic_review": {
+              "all_question_constraints_bound": true,
+              "approved": true,
+              "literal_units_and_signs_preserved": true,
+              "negation_and_modality_preserved": true,
+              "no_evidence_conflict": true,
+              "reason_code": "supported_unique_complete_scope",
+              "unique_answer": true
+            },
+            "semantic_verification": "independent_model_review_not_formal_entailment",
+            "calculator_input_eligible": false
+          },
+          "saved_proof_sha256": "ccc72519e5a4b2c17afd36121fa3822f34558114ae37343fc4d8549aefedec3c",
+          "calculator_input_eligible": false
+        }
+      },
+      "trace": [
+        {
+          "stage": "intent_planning",
+          "source": "model_validated",
+          "route": "document",
+          "latency_ms": 30163.729,
+          "error": null,
+          "rejection_code": null,
+          "normalizations": [],
+          "attempts": [
+            {
+              "attempt": 1,
+              "validation": "complete",
+              "errors": [],
+              "api_audit": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "omni_plan",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 6693,
+                "output_tokens": 33,
+                "total_tokens": 6726,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 1,
+                "latency_ms": 2712.61
+              }
+            }
+          ]
+        },
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25_dense_rrf",
+          "candidate_count": 4
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 4,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [
+            "revenue-policy"
+          ],
+          "status": "no_complete_grid_key",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          },
+          "candidate_pages": 1,
+          "page_indexes": [
+            {
+              "document_id": "revenue-policy",
+              "status": "cache_hit",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "page_count": 1,
+              "complete": true,
+              "extractor_version": "PyMuPDF:1.27.2.2:lines_strict:unrotated:algorithm:1ebbeefcb8e9a0ff6b87462cdb9d3a91fd1d204b92fbc2503bd2656ecaab48de",
+              "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+            }
+          ],
+          "complete_key_matches": 0,
+          "scope_rejections": []
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_supported_native_chart_key",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [
+            "revenue-policy"
+          ],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_pages": 1,
+          "complete_candidate_scan": true,
+          "complete_key_matches": 0,
+          "scope_rejections": [],
+          "scan_seconds": 0.015
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "generation_evidence",
+          "selected_count": 3,
+          "total_chars": 69,
+          "omitted": [
+            {
+              "citation_id": 1,
+              "reason": "native_complete_context_unavailable"
+            }
+          ],
+          "max_items": 8,
+          "max_chars_per_item": 1800,
+          "max_native_chars_per_item": 3200,
+          "max_total_chars": 12000
+        },
+        {
+          "stage": "grounded_generation",
+          "status": "validated",
+          "model": "gpt-6-luna"
+        },
+        {
+          "stage": "typed_answer_projection",
+          "status": "unsupported",
+          "reason": "question_contract_unsupported",
+          "original_answer_retained": true
+        },
+        {
+          "stage": "grounded_span_answer",
+          "status": "model_reviewed",
+          "semantic_verification": "independent_model_review_not_formal_entailment",
+          "model_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_span_selection",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1123,
+              "output_tokens": 307,
+              "total_tokens": 1430,
+              "call_index": 3,
+              "latency_ms": 7563.787
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_span_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 841,
+              "output_tokens": 162,
+              "total_tokens": 1003,
+              "call_index": 4,
+              "latency_ms": 11647.937
+            }
+          ],
+          "complete_facts_retained": true,
+          "full_fact_answer_field": "full_fact_answer"
+        }
+      ],
+      "audit_id": "876549824659779da855b009",
+      "context_resolution": {
+        "mode": "independent",
+        "actual_question": "销售额的统计口径是什么"
+      }
+    },
+    {
+      "status": "ok",
+      "question": "查询sales_orders记录总数。",
+      "effective_question": "查询sales_orders记录总数。",
+      "route": "sql",
+      "planner_source": "model_validated",
+      "session_id": "round8-http-22e21da2068142bd9f57a478d78bb3de",
+      "context_turns": 0,
+      "state": {
+        "route": "sql",
+        "metrics": [
+          {
+            "id": "o0",
+            "table": "sales_orders",
+            "column": "order_id",
+            "function": "COUNT",
+            "label": "record_count",
+            "unit": "unknown",
+            "currency": null,
+            "missing": "null",
+            "filters": []
+          }
+        ],
+        "filters": [],
+        "dimensions": [],
+        "clarification_code": null,
+        "pending_question": null,
+        "executed_sql_context": {
+          "payload": {
+            "question": "查询sales_orders记录总数。",
+            "sql": "SELECT COUNT(*) AS \"record_count\" FROM \"sales_orders\" AS \"sales_orders\"",
+            "parameters": [],
+            "source_revision": "c09e52c1beec9eee5996fd7a9e5d8c8d21f112deb1e40e9fec12d15e21744d33"
+          },
+          "sha256": "e64b832d66969eaf22357982acc8bd3bbb624564048e10affb11721493a50886"
+        }
+      },
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [
+          "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+        ],
+        "question": "查询sales_orders记录总数。",
+        "rewritten_question": "查询sales_orders记录总数。",
+        "sql": "SELECT COUNT(*) AS \"record_count\" FROM \"sales_orders\" AS \"sales_orders\"",
+        "parameters": [],
+        "columns": [
+          "record_count"
+        ],
+        "rows": [
+          {
+            "record_count": 12
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": null,
+          "metric_column": null,
+          "metric_function": "RELATIONAL",
+          "metric_label": "复杂关系查询",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": true,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.8,
+          "rewritten_question": "查询sales_orders记录总数。",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "查询sales_orders记录总数。",
+            "metric": {
+              "table": null,
+              "column": null,
+              "function": "RELATIONAL",
+              "label": "复杂关系查询"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.8,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "decision": "accepted",
+              "final_source": "model_validated",
+              "validation_channel": "relational_ast_plus_independent_model_review",
+              "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "complex_sql_independent_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1451,
+                "output_tokens": 80,
+                "total_tokens": 1531,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 3949.387,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "typed_v2_intent_verified": false
+            },
+            "metrics": [
+              {
+                "id": "o0",
+                "table": "sales_orders",
+                "column": "order_id",
+                "function": "COUNT",
+                "label": "record_count",
+                "unit": "unknown",
+                "currency": null,
+                "missing": "null",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {},
+            "semantic_audit": {
+              "status": "model_reviewed",
+              "checks": {
+                "aggregation_grain_and_no_fanout": true,
+                "all_question_parts": true,
+                "filters_and_dates": true,
+                "no_invented_business_definition": true,
+                "null_and_zero_semantics": true,
+                "physical_fields_and_values": true,
+                "projection_order_ranking_and_ties": true
+              },
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "relational_output_lineage": [
+                {
+                  "label": "record_count",
+                  "lineage": {
+                    "table": "sales_orders",
+                    "column": "order_id",
+                    "operators": [
+                      "COUNT"
+                    ],
+                    "count_semantics": "physical_row_count"
+                  },
+                  "representation": "metric"
+                }
+              ],
+              "sql_sha256": "3b5ca2740b56fd91424a717b55a2161f6884618794b137d3efd85760cc2aae82"
+            }
+          },
+          "planner_audit": {
+            "decision": "accepted",
+            "final_source": "model_validated",
+            "validation_channel": "relational_ast_plus_independent_model_review",
+            "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1451,
+              "output_tokens": 80,
+              "total_tokens": 1531,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 3949.387,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            },
+            "typed_v2_intent_verified": false
+          },
+          "model_plan_diagnostics": {
+            "channel": "relational_sql",
+            "structural_attempts": [
+              {
+                "attempt": 1,
+                "status": "statically_validated"
+              }
+            ]
+          },
+          "metrics": [
+            {
+              "id": "o0",
+              "table": "sales_orders",
+              "column": "order_id",
+              "function": "COUNT",
+              "label": "record_count",
+              "unit": "unknown",
+              "currency": null,
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {},
+          "semantic_audit": {
+            "status": "model_reviewed",
+            "checks": {
+              "aggregation_grain_and_no_fanout": true,
+              "all_question_parts": true,
+              "filters_and_dates": true,
+              "no_invented_business_definition": true,
+              "null_and_zero_semantics": true,
+              "physical_fields_and_values": true,
+              "projection_order_ranking_and_ties": true
+            },
+            "verification": "independent_model_review_not_formal_semantic_proof",
+            "relational_output_lineage": [
+              {
+                "label": "record_count",
+                "lineage": {
+                  "table": "sales_orders",
+                  "column": "order_id",
+                  "operators": [
+                    "COUNT"
+                  ],
+                  "count_semantics": "physical_row_count"
+                },
+                "representation": "metric"
+              }
+            ],
+            "sql_sha256": "3b5ca2740b56fd91424a717b55a2161f6884618794b137d3efd85760cc2aae82"
+          },
+          "output_metrics": []
+        },
+        "explanation": [
+          "识别指标：复杂关系查询（RELATIONAL）",
+          "查询表：sales_orders",
+          "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+          "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "demo_sales.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "row_limit": 100,
+          "result_completeness": "complete",
+          "query_hash": "a201fc9e8f7acd0a",
+          "field_links": [],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "c09e52c1beec9eee5996fd7a9e5d8c8d21f112deb1e40e9fec12d15e21744d33",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {},
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "record_count",
+              "query_hash": "a201fc9e8f7acd0a",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "record_count"
+              }
+            }
+          ],
+          "complete_result": {
+            "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+            "status": "complete",
+            "reason": null,
+            "query_sha256": "ddab49f18e54caf3aada5d62b4f2956426e046cb8d8e62e18c3a3b5228b2bd6b",
+            "source_revision": "85079aa878469bf0fe60dd3e5104c1cb535087f06cc0e05bb60d5043dd3ad43b",
+            "producer_sha256": "51e0001e6c2acf964bb3059da9da4a101a5d8bbcbac6b8e8853ad1da06b7b86f",
+            "columns": [
+              "record_count"
+            ],
+            "row_count": 1,
+            "observed_rows": 1,
+            "preview_row_count": 1,
+            "preview_limit": 100,
+            "preview_truncated": false,
+            "scope": {
+              "mode": "bounded_complete_result_with_preview",
+              "semantic_row_limit": null,
+              "top_n": null,
+              "requested_preview_limit": null,
+              "effective_preview_limit": 100,
+              "default_preview_limit_removed_from_sql": true,
+              "verification": "original_question_row_limit_and_existing_rank_filter"
+            },
+            "budgets": {
+              "max_rows": 25000,
+              "max_bytes": 8388608,
+              "max_seconds": 5.0,
+              "max_steps": 50000000,
+              "max_source_bytes": 268435456
+            },
+            "artifact_id": "4fd0fdaf2bac43cd91a42455e4fd9ff8",
+            "data_sha256": "87895cccf6ac345a1e61185b907cb96b47ddf138e87f9dbf0756238185388d40",
+            "byte_count": 5,
+            "cursor_eof_verified": true,
+            "source_pin": {
+              "files": {
+                "database": {
+                  "sha256": "f3e34a247bdc35966fb643892bd0c65b055560050a0a11e86ee37c34c339f294",
+                  "bytes": 28672,
+                  "generation": [
+                    1053008805926603246,
+                    281474978000722,
+                    28672,
+                    1790715808000000000,
+                    1790808396620000000
+                  ]
+                }
+              },
+              "sha256": "85079aa878469bf0fe60dd3e5104c1cb535087f06cc0e05bb60d5043dd3ad43b",
+              "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+            },
+            "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+            "binding_sha256": "7683aeffee81654060a3a1f5ddce613788e4b3f7d4c003c913d65c614ce44b76",
+            "receipt_signature": "094584e33ac07e7573ef63a588db1c3c35ebcb5b92ffd9d8685f31ae54fbee03",
+            "preview_cells": [
+              [
+                12
+              ]
+            ],
+            "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "trace": [
+        {
+          "stage": "intent_planning",
+          "source": "model_validated",
+          "route": "sql",
+          "latency_ms": 9934.34,
+          "error": null,
+          "rejection_code": null,
+          "normalizations": [
+            "discarded_redundant_sql_read_not_executed",
+            "original_single_source_question_preserved"
+          ],
+          "attempts": [
+            {
+              "attempt": 1,
+              "validation": "complete",
+              "errors": [],
+              "api_audit": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "omni_plan",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 9947,
+                "output_tokens": 168,
+                "total_tokens": 10115,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 107,
+                "call_index": 5,
+                "latency_ms": 8983.089
+              }
+            }
+          ]
+        }
+      ],
+      "audit_id": "3ec64a84f425e29315c2efb0",
+      "context_resolution": {
+        "mode": "independent",
+        "actual_question": "查询sales_orders记录总数。"
+      }
+    }
+  ],
+  "page_manifest": {
+    "schema_version": "pdf-visual-asset-v1",
+    "evidence_id": "efce4bc5629153d814120da63592491efc5bfd77f6f25f652d258d002ed1f038",
+    "coordinate_mapping_version": "cropbox-unrotated-v2",
+    "status": "rendered_provenance_only",
+    "asset_kind": "page",
+    "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+    "source_byte_count": 3028,
+    "page_no": 1,
+    "page_count": 1,
+    "renderer": "PyMuPDF:1.27.2.2:RGB:alpha0:annots1",
+    "render_scale": 2.0,
+    "render_sha256": "3513f502ae3ddf2d06c85e8e188b038c11d02ad5820aace4594686e420888f11",
+    "png_byte_count": 79390,
+    "size_px": [
+      1191,
+      1684
+    ],
+    "rotation_degrees": 0,
+    "media_box_pdf_pt": [
+      0.0,
+      0.0,
+      595.2755737304688,
+      841.8897705078125
+    ],
+    "crop_box_pdf_pt": [
+      0.0,
+      0.0,
+      595.2755737304688,
+      841.8897705078125
+    ],
+    "page_display_rect_pt": [
+      0.0,
+      0.0,
+      595.2755737304688,
+      841.8897705078125
+    ],
+    "requested_crop_display_pt": [
+      0.0,
+      0.0,
+      595.2755737304688,
+      841.8897705078125
+    ],
+    "raster_display_rect_pt": [
+      0.0,
+      0.0,
+      595.5,
+      842.0
+    ],
+    "coordinate_frame": {
+      "origin": "top_left",
+      "unit": "pt",
+      "rotation_applied": true
+    },
+    "mappings": {
+      "pdf_user_to_fitz_unrotated": [
+        1.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        841.8897705078125
+      ],
+      "fitz_unrotated_to_display": [
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      "display_to_asset_px": [
+        2.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0
+      ],
+      "asset_px_to_display": [
+        0.5,
+        -0.0,
+        -0.0,
+        0.5,
+        0.0,
+        0.0
+      ]
+    },
+    "native_words": [
+      {
+        "word_id": "page:1:word:0",
+        "text": "2026经营预测报告",
+        "block_no": 0,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          82.46400451660156,
+          219.26400756835938,
+          100.87799835205078
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          741.0117797851562,
+          219.26400756835938,
+          759.42578125
+        ],
+        "bbox_display_pt": [
+          78.0,
+          82.46400451660156,
+          219.26400756835938,
+          100.87799835205078
+        ],
+        "bbox_asset_px": [
+          156.0,
+          164.92800903320312,
+          438.52801513671875,
+          201.75599670410156
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:1",
+        "text": "合成演示样本",
+        "block_no": 1,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          120.72799682617188,
+          144.0,
+          131.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          709.9087524414062,
+          144.0,
+          721.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          120.72799682617188,
+          144.0,
+          131.9810028076172
+        ],
+        "bbox_asset_px": [
+          156.0,
+          241.45599365234375,
+          288.0,
+          263.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:2",
+        "text": "CC0",
+        "block_no": 1,
+        "line_no": 0,
+        "word_no": 1,
+        "bbox_fitz_unrotated_pt": [
+          148.5540008544922,
+          120.72799682617188,
+          168.92601013183594,
+          131.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          148.5540008544922,
+          709.9087524414062,
+          168.92601013183594,
+          721.1617431640625
+        ],
+        "bbox_display_pt": [
+          148.5540008544922,
+          120.72799682617188,
+          168.92601013183594,
+          131.9810028076172
+        ],
+        "bbox_asset_px": [
+          297.1080017089844,
+          241.45599365234375,
+          337.8520202636719,
+          263.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:3",
+        "text": "非真实企业数据",
+        "block_no": 1,
+        "line_no": 0,
+        "word_no": 2,
+        "bbox_fitz_unrotated_pt": [
+          173.48001098632812,
+          120.72799682617188,
+          250.48001098632812,
+          131.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          173.48001098632812,
+          709.9087524414062,
+          250.48001098632812,
+          721.1617431640625
+        ],
+        "bbox_display_pt": [
+          173.48001098632812,
+          120.72799682617188,
+          250.48001098632812,
+          131.9810028076172
+        ],
+        "bbox_asset_px": [
+          346.96002197265625,
+          241.45599365234375,
+          500.96002197265625,
+          263.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:4",
+        "text": "第一章",
+        "block_no": 2,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          150.72799682617188,
+          111.0,
+          161.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          679.9087524414062,
+          111.0,
+          691.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          150.72799682617188,
+          111.0,
+          161.9810028076172
+        ],
+        "bbox_asset_px": [
+          156.0,
+          301.45599365234375,
+          222.0,
+          323.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:5",
+        "text": "经营预测",
+        "block_no": 2,
+        "line_no": 0,
+        "word_no": 1,
+        "bbox_fitz_unrotated_pt": [
+          113.2770004272461,
+          150.72799682617188,
+          157.27700805664062,
+          161.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          113.2770004272461,
+          679.9087524414062,
+          157.27700805664062,
+          691.1617431640625
+        ],
+        "bbox_display_pt": [
+          113.2770004272461,
+          150.72799682617188,
+          157.27700805664062,
+          161.9810028076172
+        ],
+        "bbox_asset_px": [
+          226.5540008544922,
+          301.45599365234375,
+          314.55401611328125,
+          323.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:6",
+        "text": "1.1",
+        "block_no": 3,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          168.72799682617188,
+          90.78199768066406,
+          179.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          661.9087524414062,
+          90.78199768066406,
+          673.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          168.72799682617188,
+          90.78199768066406,
+          179.9810028076172
+        ],
+        "bbox_asset_px": [
+          156.0,
+          337.45599365234375,
+          181.56399536132812,
+          359.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:7",
+        "text": "基准",
+        "block_no": 3,
+        "line_no": 0,
+        "word_no": 1,
+        "bbox_fitz_unrotated_pt": [
+          93.05899810791016,
+          168.72799682617188,
+          115.05900573730469,
+          179.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          93.05899810791016,
+          661.9087524414062,
+          115.05900573730469,
+          673.1617431640625
+        ],
+        "bbox_display_pt": [
+          93.05899810791016,
+          168.72799682617188,
+          115.05900573730469,
+          179.9810028076172
+        ],
+        "bbox_asset_px": [
+          186.1179962158203,
+          337.45599365234375,
+          230.11801147460938,
+          359.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:8",
+        "text": "2026年目标增长率为12%，预测基准为2025年销售额。该目标是经营计划，不是已实现增长",
+        "block_no": 4,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          186.72799682617188,
+          511.5870056152344,
+          197.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          643.9087524414062,
+          511.5870056152344,
+          655.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          186.72799682617188,
+          511.5870056152344,
+          197.9810028076172
+        ],
+        "bbox_asset_px": [
+          156.0,
+          373.45599365234375,
+          1023.1740112304688,
+          395.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:9",
+        "text": "。",
+        "block_no": 5,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          204.72799682617188,
+          89.0,
+          215.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          625.9087524414062,
+          89.0,
+          637.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          204.72799682617188,
+          89.0,
+          215.9810028076172
+        ],
+        "bbox_asset_px": [
+          156.0,
+          409.45599365234375,
+          178.0,
+          431.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:10",
+        "text": "1.2",
+        "block_no": 6,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          222.72799682617188,
+          90.78199768066406,
+          233.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          607.9087524414062,
+          90.78199768066406,
+          619.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          222.72799682617188,
+          90.78199768066406,
+          233.9810028076172
+        ],
+        "bbox_asset_px": [
+          156.0,
+          445.45599365234375,
+          181.56399536132812,
+          467.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:11",
+        "text": "公式",
+        "block_no": 6,
+        "line_no": 0,
+        "word_no": 1,
+        "bbox_fitz_unrotated_pt": [
+          93.05899810791016,
+          222.72799682617188,
+          115.05900573730469,
+          233.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          93.05899810791016,
+          607.9087524414062,
+          115.05900573730469,
+          619.1617431640625
+        ],
+        "bbox_display_pt": [
+          93.05899810791016,
+          222.72799682617188,
+          115.05900573730469,
+          233.9810028076172
+        ],
+        "bbox_asset_px": [
+          186.1179962158203,
+          445.45599365234375,
+          230.11801147460938,
+          467.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:12",
+        "text": "目标销售额",
+        "block_no": 7,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          240.72799682617188,
+          133.0,
+          251.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          589.9087524414062,
+          133.0,
+          601.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          240.72799682617188,
+          133.0,
+          251.9810028076172
+        ],
+        "bbox_asset_px": [
+          156.0,
+          481.45599365234375,
+          266.0,
+          503.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:13",
+        "text": "=",
+        "block_no": 7,
+        "line_no": 0,
+        "word_no": 1,
+        "bbox_fitz_unrotated_pt": [
+          135.27700805664062,
+          240.72799682617188,
+          141.9320068359375,
+          251.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          135.27700805664062,
+          589.9087524414062,
+          141.9320068359375,
+          601.1617431640625
+        ],
+        "bbox_display_pt": [
+          135.27700805664062,
+          240.72799682617188,
+          141.9320068359375,
+          251.9810028076172
+        ],
+        "bbox_asset_px": [
+          270.55401611328125,
+          481.45599365234375,
+          283.864013671875,
+          503.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:14",
+        "text": "基准销售额",
+        "block_no": 7,
+        "line_no": 0,
+        "word_no": 2,
+        "bbox_fitz_unrotated_pt": [
+          144.20899963378906,
+          240.72799682617188,
+          199.20899963378906,
+          251.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          144.20899963378906,
+          589.9087524414062,
+          199.20899963378906,
+          601.1617431640625
+        ],
+        "bbox_display_pt": [
+          144.20899963378906,
+          240.72799682617188,
+          199.20899963378906,
+          251.9810028076172
+        ],
+        "bbox_asset_px": [
+          288.4179992675781,
+          481.45599365234375,
+          398.4179992675781,
+          503.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:15",
+        "text": "*",
+        "block_no": 7,
+        "line_no": 0,
+        "word_no": 3,
+        "bbox_fitz_unrotated_pt": [
+          201.48599243164062,
+          240.72799682617188,
+          206.1389923095703,
+          251.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          201.48599243164062,
+          589.9087524414062,
+          206.1389923095703,
+          601.1617431640625
+        ],
+        "bbox_display_pt": [
+          201.48599243164062,
+          240.72799682617188,
+          206.1389923095703,
+          251.9810028076172
+        ],
+        "bbox_asset_px": [
+          402.97198486328125,
+          481.45599365234375,
+          412.2779846191406,
+          503.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:16",
+        "text": "(1",
+        "block_no": 7,
+        "line_no": 0,
+        "word_no": 4,
+        "bbox_fitz_unrotated_pt": [
+          208.41600036621094,
+          240.72799682617188,
+          217.61199951171875,
+          251.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          208.41600036621094,
+          589.9087524414062,
+          217.61199951171875,
+          601.1617431640625
+        ],
+        "bbox_display_pt": [
+          208.41600036621094,
+          240.72799682617188,
+          217.61199951171875,
+          251.9810028076172
+        ],
+        "bbox_asset_px": [
+          416.8320007324219,
+          481.45599365234375,
+          435.2239990234375,
+          503.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:17",
+        "text": "+",
+        "block_no": 7,
+        "line_no": 0,
+        "word_no": 5,
+        "bbox_fitz_unrotated_pt": [
+          219.8889923095703,
+          240.72799682617188,
+          226.5439910888672,
+          251.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          219.8889923095703,
+          589.9087524414062,
+          226.5439910888672,
+          601.1617431640625
+        ],
+        "bbox_display_pt": [
+          219.8889923095703,
+          240.72799682617188,
+          226.5439910888672,
+          251.9810028076172
+        ],
+        "bbox_asset_px": [
+          439.7779846191406,
+          481.45599365234375,
+          453.0879821777344,
+          503.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:18",
+        "text": "目标增长率)",
+        "block_no": 7,
+        "line_no": 0,
+        "word_no": 6,
+        "bbox_fitz_unrotated_pt": [
+          228.82098388671875,
+          240.72799682617188,
+          287.93499755859375,
+          251.9810028076172
+        ],
+        "bbox_pdf_user_pt": [
+          228.82098388671875,
+          589.9087524414062,
+          287.93499755859375,
+          601.1617431640625
+        ],
+        "bbox_display_pt": [
+          228.82098388671875,
+          240.72799682617188,
+          287.93499755859375,
+          251.9810028076172
+        ],
+        "bbox_asset_px": [
+          457.6419677734375,
+          481.45599365234375,
+          575.8699951171875,
+          503.9620056152344
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:19",
+        "text": "1.3",
+        "block_no": 8,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          258.7279968261719,
+          90.78199768066406,
+          269.9809875488281
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          571.9088134765625,
+          90.78199768066406,
+          583.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          258.7279968261719,
+          90.78199768066406,
+          269.9809875488281
+        ],
+        "bbox_asset_px": [
+          156.0,
+          517.4559936523438,
+          181.56399536132812,
+          539.9619750976562
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:20",
+        "text": "敏感性",
+        "block_no": 8,
+        "line_no": 0,
+        "word_no": 1,
+        "bbox_fitz_unrotated_pt": [
+          93.05899810791016,
+          258.7279968261719,
+          126.05900573730469,
+          269.9809875488281
+        ],
+        "bbox_pdf_user_pt": [
+          93.05899810791016,
+          571.9088134765625,
+          126.05900573730469,
+          583.1617431640625
+        ],
+        "bbox_display_pt": [
+          93.05899810791016,
+          258.7279968261719,
+          126.05900573730469,
+          269.9809875488281
+        ],
+        "bbox_asset_px": [
+          186.1179962158203,
+          517.4559936523438,
+          252.11801147460938,
+          539.9619750976562
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:21",
+        "text": "保守目标增长率为8%，积极目标增长率为18%。三种情景均保留相同币种。",
+        "block_no": 9,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          276.7279968261719,
+          440.7799987792969,
+          287.9809875488281
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          553.9088134765625,
+          440.7799987792969,
+          565.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          276.7279968261719,
+          440.7799987792969,
+          287.9809875488281
+        ],
+        "bbox_asset_px": [
+          156.0,
+          553.4559936523438,
+          881.5599975585938,
+          575.9619750976562
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:22",
+        "text": "1.4",
+        "block_no": 10,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          294.7279968261719,
+          90.78199768066406,
+          305.9809875488281
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          535.9088134765625,
+          90.78199768066406,
+          547.1617431640625
+        ],
+        "bbox_display_pt": [
+          78.0,
+          294.7279968261719,
+          90.78199768066406,
+          305.9809875488281
+        ],
+        "bbox_asset_px": [
+          156.0,
+          589.4559936523438,
+          181.56399536132812,
+          611.9619750976562
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:23",
+        "text": "风险",
+        "block_no": 10,
+        "line_no": 0,
+        "word_no": 1,
+        "bbox_fitz_unrotated_pt": [
+          93.05899810791016,
+          294.7279968261719,
+          115.05900573730469,
+          305.9809875488281
+        ],
+        "bbox_pdf_user_pt": [
+          93.05899810791016,
+          535.9088134765625,
+          115.05900573730469,
+          547.1617431640625
+        ],
+        "bbox_display_pt": [
+          93.05899810791016,
+          294.7279968261719,
+          115.05900573730469,
+          305.9809875488281
+        ],
+        "bbox_asset_px": [
+          186.1179962158203,
+          589.4559936523438,
+          230.11801147460938,
+          611.9619750976562
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:24",
+        "text": "目标完成率需要实际销售额和计划目标同时存在。不能将预测数据写入实际业绩，不能把",
+        "block_no": 11,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          312.72796630859375,
+          507.0,
+          323.98095703125
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          517.9088134765625,
+          507.0,
+          529.1618041992188
+        ],
+        "bbox_display_pt": [
+          78.0,
+          312.72796630859375,
+          507.0,
+          323.98095703125
+        ],
+        "bbox_asset_px": [
+          156.0,
+          625.4559326171875,
+          1014.0,
+          647.9619140625
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      },
+      {
+        "word_id": "page:1:word:25",
+        "text": "口径变化误判为业务增长。",
+        "block_no": 12,
+        "line_no": 0,
+        "word_no": 0,
+        "bbox_fitz_unrotated_pt": [
+          78.0,
+          330.72796630859375,
+          210.0,
+          341.98095703125
+        ],
+        "bbox_pdf_user_pt": [
+          78.0,
+          499.9088134765625,
+          210.0,
+          511.16180419921875
+        ],
+        "bbox_display_pt": [
+          78.0,
+          330.72796630859375,
+          210.0,
+          341.98095703125
+        ],
+        "bbox_asset_px": [
+          156.0,
+          661.4559326171875,
+          420.0,
+          683.9619140625
+        ],
+        "fully_contained_in_crop": true,
+        "provenance": "native_pdf_text_layer_not_visual_fact_validation"
+      }
+    ],
+    "warnings": [
+      "native_text_is_not_ocr_or_verified_cell_or_chart_fact"
+    ],
+    "budgets": {
+      "max_source_bytes": 20971520,
+      "max_pages": 1000,
+      "max_pixels": 6000000,
+      "max_png_bytes": 12582912,
+      "max_native_words": 20000
+    },
+    "document_id": "forecast-report",
+    "original_uri": "/api/v1/knowledge/documents/forecast-report/original",
+    "png_uri": "/api/v1/knowledge/documents/forecast-report/pages/1/visual.png?source_sha256=0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29&render_sha256=3513f502ae3ddf2d06c85e8e188b038c11d02ad5820aace4594686e420888f11"
+  },
+  "implementation_file_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b4f254283be38ed2fb00c6774aa6bcf42093660b28b3579270027d409e094d84",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_file_sha256_end": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b4f254283be38ed2fb00c6774aa6bcf42093660b28b3579270027d409e094d84",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  }
+}

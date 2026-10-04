@@ -46,6 +46,8 @@ def raster_document(title,pages):
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--replay-from',type=Path,
+        help='Replay all four exact retained raster PDFs/questions/scoring references')
     args=parser.parse_args()
     if args.output.resolve().parent!=(ROOT/'docs').resolve() or args.output.exists():parser.error('New docs report required')
     enable_local_model();before=hashes();rng=secrets.SystemRandom()
@@ -72,6 +74,28 @@ def main():
             'Tests used: '+', '.join(tests)+'.']],
             'In the assay bulletin, what is the Neon concentration in percent?',
             {'expected_abstention':True})]
+    originals={};replay_pin=None
+    if args.replay_from:
+        if args.replay_from.resolve().parent!=(ROOT/'docs').resolve():parser.error('Replay docs report required')
+        previous_raw=args.replay_from.read_bytes();previous=json.loads(previous_raw)
+        titles={row[0]:row[1] for row in fixtures}
+        if (previous.get('reference_used_as_model_input') is not False or previous.get('model')!='gpt-6-luna'
+                or previous.get('reasoning')!='medium' or len(previous.get('cases',[]))!=4
+                or {c['id'] for c in previous['cases']}!=set(titles)):
+            parser.error('Complete four-case replay protocol required')
+        fixtures=[]
+        for case in previous['cases']:
+            for saved in sorted((ROOT/'runtime').glob('round8-visual-*')):
+                if not (saved/case['id']/'knowledge.sqlite').is_file():continue
+                source=KnowledgeStore(saved/case['id'])
+                doc=source.document(case['id'])
+                if doc['sha256']==case['source_sha256']:
+                    originals[case['id']]=source.verify_source(case['id'],expected_sha256=doc['sha256']).read_bytes()
+                    break
+            if case['id'] not in originals:parser.error('Original raster replay PDF unavailable')
+            fixtures.append((case['id'],titles[case['id']],[],case['question'],case['reference_scoring_only']))
+        replay_pin={'path':str(args.replay_from),'sha256':hashlib.sha256(previous_raw).hexdigest(),
+                    'contract':'identical_questions_original_raster_pdf_bytes_and_scoring_references'}
     directory=ROOT/'runtime'/('round8-visual-'+datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ'))
     directory.mkdir(parents=True);cases=[]
     for identifier,title,pages,question,reference in fixtures:
@@ -79,7 +103,7 @@ def main():
         client=StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],
             model='gpt-6-luna',reasoning='medium',http_headers=local_model_headers())
         store=KnowledgeStore(directory/identifier,generator=GroundedGenerator(client))
-        raw=raster_document(title,pages)
+        raw=originals[identifier] if identifier in originals else raster_document(title,pages)
         store.ingest(raw,document_id=identifier,title=title,modality='pdf',filename=identifier+'.pdf')
         result=store.answer(question,document_id=identifier,top_k=8)
         answer=result.get('answer') or ''
@@ -96,7 +120,7 @@ def main():
         if any(a.get('http_status') in (401,403) for a in client.audit_history):break
     report={'created_at':datetime.now(timezone.utc).isoformat(),
         'scope':'authored_raster_only_production_QA_probe_not_official_or_blind_accuracy',
-        'reference_used_as_model_input':False,'native_answer_text_present':False,
+        'reference_used_as_model_input':False,'native_answer_text_present':False,'replay_source':replay_pin,
         'model':'gpt-6-luna','reasoning':'medium','total':4,'executed':len(cases),
         'passed':sum(c['pass'] for c in cases),'cases':cases,
         'implementation_file_sha256':before,'implementation_file_sha256_end':hashes(),

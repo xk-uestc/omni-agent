@@ -40,6 +40,8 @@ def column_unit_declaration(path):
         raise ValueError('column_unit_declaration_conflict')
     unit = 'percent' if percent else 'currency:'+code if code else 'currency_symbol:'+symbol if symbol else 'unknown'
     scales = {m.casefold().rstrip('s') for m in re.findall(r'\b(?:thousands?|millions?|billions?)\b', text, re.I)}
+    if unit.startswith(('currency:', 'currency_symbol:')) and re.search(r'\bbn\b', text, re.I):
+        scales.add('billion')
     # Common financial header notation is a literal multiplier declaration.
     # It must remain inside this column, never borrowed from another heading.
     if re.search(r"(?:['’]\s*000(?:s)?\b|\b000s\b)", text, re.I):
@@ -48,6 +50,123 @@ def column_unit_declaration(path):
         raise ValueError('column_scale_declaration_unbound')
     scale = _SCALES[next(iter(scales))] if scales else None
     return {'unit':unit, 'currency':code or 'unknown', 'scale':scale, 'symbol':symbol}
+
+
+def _explicit_amount_lanes(words, layout_width):
+    """Propose local rows only from native explicit monetary column headings.
+
+    Headers nominate geometry, never values. Empty vertical gutters bound each
+    local panel using ALL intervening words, including competing chart text.
+    The ordinary table validator still owns headers, units and row uniqueness.
+    """
+    lines=[]
+    for word in sorted(words,key=lambda w:((w[1]+w[3])/2,w[0])):
+        cy=(word[1]+word[3])/2
+        if lines and abs(cy-lines[-1]['cy'])<=2:lines[-1]['words'].append(word)
+        else:lines.append({'cy':cy,'words':[word]})
+    segments=[]
+    for line in lines:
+        groups=[]
+        for word in sorted(line['words'],key=lambda w:w[0]):
+            if groups and word[0]-groups[-1][-1][2]<18:groups[-1].append(word)
+            else:groups.append([word])
+        segments.extend({'cy':line['cy'],'words':group,'box':_bbox(group)} for group in groups)
+    seeds=[]
+    for segment in segments:
+        if any(_MONEY.fullmatch(w[4]) or _NUMBER.fullmatch(w[4]) and
+               not re.fullmatch(r'(?:19|20)\d{2}',w[4]) for w in segment['words']):continue
+        try:declaration=column_unit_declaration([_text(segment['words'])])
+        except ValueError:continue
+        if declaration['unit'].startswith(('currency:', 'currency_symbol:')):seeds.append(segment)
+    if len(seeds)>16:return []
+    candidates=[]
+    for seed in seeds:
+        header=[seed]
+        # A unit-only second line is attached to its own overlapping heading.
+        for _ in range(2):
+            top=header[-1]
+            above=[s for s in segments if 0<top['cy']-s['cy']<=26 and
+                   min(top['box'].x1,s['box'].x1)>max(top['box'].x0,s['box'].x0)]
+            if not above:break
+            nearest=min(top['cy']-s['cy'] for s in above)
+            above=[s for s in above if abs(top['cy']-s['cy']-nearest)<=2]
+            if len(above)!=1:break
+            preceding=above[0]
+            if any(_NUMBER.fullmatch(w[4]) or _MONEY.fullmatch(w[4]) for w in preceding['words']):break
+            header.append(preceding)
+        top=header[-1]
+        left_headers=[s for s in segments if abs(s['cy']-top['cy'])<=2 and s['box'].x1+8<top['box'].x0]
+        if not left_headers:continue
+        label_header=max(left_headers,key=lambda s:s['box'].x1)
+        try:
+            if column_unit_declaration([_text(label_header['words'])])['unit']!='unknown':continue
+        except ValueError:continue
+        if not any(not _NUMBER.fullmatch(w[4]) for w in label_header['words']):continue
+        headbox=_bbox([w for s in header for w in s['words']])
+        # A later competing monetary heading ends the vertical scope, even
+        # when its values happen to share the same right-aligned amount lane.
+        next_heads=[s['box'].y0 for s in seeds if s['cy']>seed['cy']+4 and
+                    min(s['box'].x1,headbox.x1)>max(s['box'].x0,headbox.x0)]
+        stop=min(next_heads,default=float('inf'))
+        anchors=[w for w in words if _NUMBER.fullmatch(w[4]) and
+                 (w[1]+w[3])/2>seed['cy']+2 and w[1]<stop and
+                 headbox.x0-16<=(w[0]+w[2])/2<=headbox.x1+16]
+        clusters=[]
+        for word in sorted(anchors,key=lambda w:w[2]):
+            if clusters and word[2]-clusters[-1][0][2]<=5:clusters[-1].append(word)
+            else:clusters.append([word])
+        clusters=[group for group in clusters if len(group)>=3]
+        if len(clusters)!=1:continue
+        anchors=sorted(clusters[0],key=lambda w:(w[1]+w[3])/2)
+        if (anchors[0][1]+anchors[0][3])/2-seed['cy']>65:continue
+        run=[]
+        for word in anchors:
+            if run and (word[1]+word[3]-run[-1][1]-run[-1][3])/2>36:break
+            run.append(word)
+        if len(run)<3 or len(run)>256:continue
+        y0=min(w[1] for w in run);y1=max(w[3] for w in run)
+        band=[w for w in words if w[1]<y1 and w[3]>y0]
+        spans=[]
+        for w in sorted(band,key=lambda w:w[0]):
+            if spans and w[0]<=spans[-1][1]:spans[-1][1]=max(spans[-1][1],w[2])
+            else:spans.append([w[0],w[2]])
+        gaps=[(a[1],b[0]) for a,b in zip([[0,0],*spans], [*spans,[layout_width,layout_width]]) if b[0]-a[1]>=12]
+        left_gaps=[g for g in gaps if g[0]<label_header['box'].x0-2 and g[1]<=label_header['box'].x1]
+        right_gaps=[g for g in gaps if g[0]>=max(w[2] for w in run)-.01 and g[1]>headbox.x1+2]
+        if not left_gaps or not right_gaps:continue
+        left_gap=max(left_gaps,key=lambda g:g[1]);right_gap=min(right_gaps,key=lambda g:g[0])
+        lower=min(sum(left_gap)/2,label_header['box'].x0-2)
+        upper=max(sum(right_gap)/2,headbox.x1+2)
+        if not left_gap[0]<lower<left_gap[1] or not right_gap[0]<upper<right_gap[1]:continue
+        if any(w[0]<lower<w[2] or w[0]<upper<w[2] for w in band):continue
+        local=[w for w in words if lower<=w[0] and w[2]<=upper and top['box'].y0-1<=w[1] and w[3]<=y1+.01]
+        lane_rows=[]
+        for w in sorted(local,key=lambda w:((w[1]+w[3])/2,w[0])):
+            cy=(w[1]+w[3])/2
+            if lane_rows and abs(cy-lane_rows[-1]['cy'])<=2:lane_rows[-1]['words'].append(w)
+            else:lane_rows.append({'cy':cy,'words':[w]})
+        indices=[];bad=False
+        for i,row in enumerate(lane_rows):
+            row['words'].sort(key=lambda w:w[0])
+            amount=[w for w in run if w in row['words']]
+            row['numbers']=amount
+            row['labels']=[w for w in row['words'] if w not in amount]
+            if not amount:continue
+            labels=row['labels']
+            if len(amount)!=1 or not labels or max(w[2] for w in labels)+8>=amount[0][0]:bad=True;break
+            # A label may literally contain “Top 20” or an identifier number.
+            # A distant, unheaded numeric column is never absorbed as a label.
+            for pos,w in enumerate(labels):
+                if _NUMBER.fullmatch(w[4]) and not any(not _NUMBER.fullmatch(n[4]) and
+                    0<=max(w[0]-n[2],n[0]-w[2])<=6 for n in labels[max(0,pos-1):pos+2] if n is not w):
+                    bad=True
+            if not any(not _NUMBER.fullmatch(w[4]) for w in labels):bad=True
+            indices.append(i)
+        if bad or len(indices)!=len(run):continue
+        # No unassigned prose/chart row can be silently skipped inside a table.
+        if indices!=list(range(indices[0],indices[-1]+1)):continue
+        candidates.append((lane_rows,indices,(lower,upper,headbox.x0)))
+    return candidates
 
 
 def _currency_panels(rows, sha, page_no, matrix, existing):
@@ -182,12 +301,40 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
             'validation_scope':'native_word_alignment_not_visible_ocr_or_semantic_truth'}
     with fitz.open(stream=raw,filetype='pdf') as doc:
         if doc.needs_pass or len(doc)>1000 or page_no>len(doc):raise ValueError('native_table_page_bounds')
-        p=doc[page_no-1];matrix=fitz.Matrix(p.rotation_matrix);p.set_rotation(0)
+        p=doc[page_no-1];matrix=fitz.Matrix(p.rotation_matrix)
+        rotation, display_width = p.rotation, p.rect.width
+        p.set_rotation(0)
         words=p.get_text('words')
         if len(words)>20000:raise ValueError('native_table_word_budget')
         if not words:
             report['rejected_tables'].append({'reason':'no_native_words_ocr_not_supported'})
             return report
+        # Some original PDFs store vertical native glyph directions and use
+        # the declared page rotation to display a horizontal table. Align in
+        # that actual display plane, then emit display boxes only once.
+        # A normal horizontal text layer on a rotated page keeps the existing
+        # native grid; arbitrary tilted/mixed text is never normalized.
+        expected_direction = {90:(0.,-1.),180:(-1.,0.),270:(0.,1.)}.get(rotation)
+        if expected_direction is not None:
+            lines = [line for block in p.get_text('dict')['blocks'] if 'lines' in block
+                     for line in block['lines']]
+            weighted = [(sum(len(span.get('text','')) for span in line.get('spans',[])),
+                         line.get('dir',(1.,0.))) for line in lines]
+            total = sum(weight for weight,_ in weighted)
+            aligned = sum(weight for weight,direction in weighted if
+                          all(abs(a-b)<0.001 for a,b in zip(direction,expected_direction)))
+            if total and aligned/total >= 0.9:
+                words = [(*tuple(fitz.Rect(word[:4])*matrix),*word[4:]) for word in words]
+                matrix = fitz.Matrix(1,1)
+                layout_width = display_width
+                report['native_layout_orientation'] = {
+                    'mode':'declared_rotation_restores_horizontal_native_lines',
+                    'page_rotation_degrees':rotation,
+                    'coordinate_system':'pdf_display_points_top_left'}
+            else:
+                layout_width = p.rect.width
+        else:
+            layout_width = p.rect.width
         # Baselines cluster only geometrically aligned native words, preserving
         # row text; no string whitespace splitting defines column membership.
         rows=[]
@@ -214,9 +361,14 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
             if valid:current.append(index)
             elif current:groups.append(current);current=[]
         if current:groups.append(current)
-        for group_no,indices in enumerate(groups):
+        page_rows=rows
+        candidates=[(page_rows,indices,None) for indices in groups]
+        candidates.extend(_explicit_amount_lanes(words,layout_width))
+        for group_no,(rows,indices,lane_bounds) in enumerate(candidates):
             if len(indices)<3:continue
             data=[rows[i] for i in indices];n=len(data[0]['numbers'])+1
+            if lane_bounds and any(tuple(fitz.Rect(w[:4])*matrix)==tuple(f['bbox_display_pt'])
+                                   for row in data for w in row['numbers'] for f in report['facts']):continue
             allwords=[w for row in data for w in row['words']];rect=_bbox(allwords)
             identity=hashlib.sha256(f'{sha}:{page_no}:{group_no}:{list(rect)}'.encode()).hexdigest()[:24]
             def reject(reason):
@@ -234,9 +386,15 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                 maxima.append(max(row['numbers'][c][2] for row in data))
             if any(b-a<8 for a,b in zip(maxima,minima[1:])):reject('columns_overlap_or_no_unique_gutters');continue
             cuts=[(a+b)/2 for a,b in zip(maxima,minima[1:])]
+            if lane_bounds:
+                # Keep the complete nominated monetary heading inside its
+                # column, without moving a cut into any actual row label.
+                cuts[0]=min(cuts[0],lane_bounds[2]-2)
+                if not maxima[0]<cuts[0]<minima[1]:
+                    reject('local_header_crosses_data_gutter');continue
             # Outer headers can be longer than their right-aligned numeric
             # cells. Interior gutters remain bounded by the actual data rows.
-            bounds=[0,*cuts,p.rect.width]
+            bounds=[lane_bounds[0] if lane_bounds else 0,*cuts,lane_bounds[1] if lane_bounds else layout_width]
             labels=[_text(row['labels']) for row in data]
             if len(set(labels))!=len(labels):reject('row_header_not_unique');continue
             header_rows=[]
@@ -336,8 +494,11 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                 'external_scope_text':scope,'external_scope_years':sorted(years),
                 'scope_status':'multiple_years_not_assigned_to_cells' if len(years)>1 else 'external_scope_only',
                 'complete_scope':'continuous_local_native_rows_not_whole_document','calculator_input_eligible':False}
+            if lane_bounds:
+                table['local_geometry_proposal']='explicit_native_currency_header_and_empty_outer_gutters'
+                table['panel_x_bounds_native_layout_pt']=list(lane_bounds[:2])
             report['tables'].append(table);report['facts'].extend(facts)
-        for table in _currency_panels(rows,sha,page_no,matrix,report['facts']):
+        for table in _currency_panels(page_rows,sha,page_no,matrix,report['facts']):
             report['tables'].append(table);report['facts'].extend(table['facts'])
     report['status']='native_alignment_verified' if report['tables'] else 'incomplete'
     return report

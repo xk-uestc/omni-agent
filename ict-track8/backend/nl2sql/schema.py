@@ -70,6 +70,8 @@ class SchemaIntrospector:
             "SELECT name FROM sqlite_master "
             "WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
         ).fetchall()
+        table_traits = {str(item[1]): (str(item[2]), bool(item[4]))
+                        for item in connection.execute('PRAGMA main.table_list').fetchall()}
         result: list[TableInfo] = []
         for row in tables:
             name = str(row[0])
@@ -78,7 +80,17 @@ class SchemaIntrospector:
                 f'PRAGMA foreign_key_list("{name.replace(chr(34), chr(34) * 2)}")'
             ).fetchall()
             unique_keys = [tuple(str(c[1]) for c in sorted(columns, key=lambda c: c[5]) if c[5])]
-            for index in connection.execute(f'PRAGMA index_list("{name.replace(chr(34), chr(34) * 2)}")').fetchall():
+            indexes = connection.execute(f'PRAGMA index_list("{name.replace(chr(34), chr(34) * 2)}")').fetchall()
+            primary = [item for item in columns if item[5]]
+            # Exact INTEGER and a single PK on an ordinary rowid table are
+            # necessary; no PK-origin index proves this is the rowid alias.
+            # INT/TEXT, composite PK, and INTEGER PRIMARY KEY DESC can remain
+            # nullable in SQLite. Never infer all primary keys are non-null.
+            rowid_alias = (str(primary[0][1]) if len(primary) == 1
+                           and str(primary[0][2]).upper().strip() == 'INTEGER'
+                           and table_traits.get(name) == ('table', False)
+                           and not any(index[3] == 'pk' for index in indexes) else None)
+            for index in indexes:
                 if not index[2] or index[4]:  # partial indexes do not establish unconditional cardinality
                     continue
                 index_name = str(index[1]).replace('"', '""')
@@ -102,7 +114,7 @@ class SchemaIntrospector:
                         ColumnInfo(
                             name=str(item[1]),
                             data_type=str(item[2] or "TEXT"),
-                            nullable=not bool(item[3]),
+                            nullable=not bool(item[3]) and str(item[1]) != rowid_alias,
                             primary_key=bool(item[5]),
                         )
                         for item in columns

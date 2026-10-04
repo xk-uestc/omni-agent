@@ -17,4 +17,4 @@ def is_date_column(column: str, data_type: str = '') -> bool:
     name = to_simplified(re.sub(r'\s+', '', unicodedata.normalize('NFKC', str(column or '')))).lower()
     declared = str(data_type or '').upper().split('(', 1)[0].strip()
     return (declared in {'DATE', 'DATETIME', 'TIMESTAMP', 'TIME'}
-            or name.endswith(('date', 'time', 'timestamp', '日期', '时间')))
+            or name.endswith(('date', 'time', 'timestamp', '_at', '_on', '日期', '时间')))
