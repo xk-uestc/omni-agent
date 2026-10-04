@@ -32,6 +32,9 @@ _COMPLEX = re.compile(
     r'|平均值.{0,40}平均|分母|growth_ratio|\b(?:list|enumerate|distinct|not\s+in)\b'
     r'|\b(?:weighted|latest|earliest|null|conditional|anti.join)\b', re.I)
 _PHYSICAL_GROUP = re.compile(r'按\s*[A-Za-z_][A-Za-z_0-9]*\.[A-Za-z_][A-Za-z_0-9]*\s*分组', re.I)
+_PHYSICAL_EACH = re.compile(
+    r'(?:各|每个|每一)\s*(?:[A-Za-z_][A-Za-z_0-9]*\.)?[A-Za-z_][A-Za-z_0-9]*'
+    r'(?![A-Za-z_0-9]).{0,60}(?:合计|总额|求和|平均|统计|汇总)', re.I)
 
 
 def needs_complex_query(question):
@@ -39,7 +42,8 @@ def needs_complex_query(question):
     # require actual schema/FK validation and independent semantic review.
     owners = {m.group(1).casefold() for m in re.finditer(
         r'(?<![A-Za-z_0-9])([A-Za-z_][A-Za-z_0-9]*)\.[A-Za-z_][A-Za-z_0-9]*(?![A-Za-z_0-9])', question)}
-    return bool(_COMPLEX.search(question) or _PHYSICAL_GROUP.search(question)) or len(owners) > 1
+    return (bool(_COMPLEX.search(question) or _PHYSICAL_GROUP.search(question))
+            or len(owners) > 1 or bool(owners and _PHYSICAL_EACH.search(question)))
 
 
 PROPOSAL = object_schema({
@@ -254,7 +258,7 @@ def validate_proposal(sql, tables):
     return parameterized, tuple(ordered), canonical_sql, sorted(physical), sorted(used_columns)
 
 
-def propose_complex(provider, question, tables, *, date_profiles=None):
+def propose_complex(provider, question, tables, *, date_profiles=None, date_profile_loader=None):
     client = provider.client
     context = {'question': question, 'schema': [t.to_dict() for t in tables],
                'reference_date': provider.reference_date.isoformat(),
@@ -288,6 +292,11 @@ def propose_complex(provider, question, tables, *, date_profiles=None):
             # or ambiguity. Every original constraint is reviewed afterward.
             context={**context,'previous_candidate_sql':sql,'structural_failure':str(exc),
                 'repair_constraint':'One corrected SQLite representation; preserve original semantics. No CROSS JOIN; use scalar subquery for a global aggregate. Do not invent fields or relax the question.'}
+    # Only structurally validated physical dependencies may request additional
+    # snapshot probes. Candidate SQL is never executed by this callback.
+    if date_profile_loader is not None:
+        additional = date_profile_loader(columns, context['date_storage_profiles'])
+        context = {**context, 'date_storage_profiles': additional}
     review = client.generate(REVIEW_INSTRUCTIONS, {**context, 'sql': canonical}, REVIEW,
                              name='complex_sql_independent_review', max_tokens=2000)
     if (review.get('approved') is not True or review.get('clarification')

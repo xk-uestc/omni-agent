@@ -10,13 +10,100 @@ import time
 
 
 _ISO = re.compile(r'\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?\Z')
+_TIME_INTENT = re.compile(
+    r'\b(?:19|20)\d{2}\b|(?:19|20)\d{2}年|日期|时间|月份|年份|年度|月度|'
+    r'最新|最早|天数|用时|间隔|归还|租出|\b(?:date|time|year|month|latest|earliest|duration)\b', re.I)
 
 
-def storage_profiles(connection, tables, question, *, max_columns=8, max_seconds=2.0, max_steps=1_000_000):
+def date_candidate_fields(tables, question, *, candidate_fields=()):
+    """Choose observation targets, never assign a business date/filter role.
+
+    A temporal question mentioning a physical table (including through a
+    non-date qualified field) can depend on other dates of that table. Only
+    that bounded table scope is expanded; natural language alone does not
+    authorize a scan of every date field in an unrelated database.
+    """
     from .date_semantics import is_date_column
-    candidates=[(table.name,column.name) for table in tables for column in table.columns
-        if is_date_column(column.name,column.data_type)
-        and re.search(r'(?<![A-Za-z_0-9])'+re.escape(column.name)+r'(?![A-Za-z_0-9])',question)]
+    catalog = {(t.name, c.name): c for t in tables for c in t.columns}
+    dates = {key for key, c in catalog.items() if is_date_column(c.name, c.data_type)}
+    selected = []
+    def add(key):
+        if key in dates and key not in selected:
+            selected.append(key)
+    for key in candidate_fields:
+        if (isinstance(key, (tuple, list)) and len(key) == 2
+                and all(isinstance(part, str) for part in key)):
+            add(tuple(key))
+    owners = set()
+    for table, column in catalog:
+        if re.search(r'(?<![A-Za-z_0-9])' + re.escape(table) + r'\s*\.\s*'
+                     + re.escape(column) + r'(?![A-Za-z_0-9])', question, re.I):
+            owners.add(table)
+            add((table, column))
+    for table, column in catalog:
+        if (table, column) not in dates:
+            continue
+        matches = re.finditer(r'(?<![A-Za-z_0-9.])' + re.escape(column)
+                              + r'(?![A-Za-z_0-9])', question, re.I)
+        if any(not re.search(r'\.\s*$', question[:m.start()]) for m in matches):
+            add((table, column))
+            # Ambiguous unqualified names remain observations, but do not
+            # establish the owner of other, unmentioned date dependencies.
+            if sum(c == column for _, c in catalog) == 1:
+                owners.add(table)
+    if _TIME_INTENT.search(question):
+        owners.update(t.name for t in tables if re.search(
+            r'(?<![A-Za-z_0-9])' + re.escape(t.name) + r'(?![A-Za-z_0-9])', question, re.I))
+        for key in catalog:
+            if key[0] in owners:
+                add(key)
+    return selected
+
+
+def sql_date_dependencies(sql, tables):
+    """Return physical date references from a bounded, qualified SELECT AST.
+
+    This does not approve or execute candidate SQL. The complex-query safety
+    gate remains mandatory. Invalid/ambiguous SQL cannot authorize probes.
+    Every physical expression in CTE/subquery scopes is visited, so computed
+    output aliases cannot hide their underlying date dependency.
+    """
+    from sqlglot import exp, parse_one
+    from sqlglot.optimizer.qualify import qualify
+    from sqlglot.optimizer.scope import traverse_scope
+    from .date_semantics import is_date_column
+    from .security import validate_read_only_sql
+    if not isinstance(sql, str) or len(sql) > 100_000:
+        return []
+    schema = {t.name: {c.name: c.data_type for c in t.columns} for t in tables}
+    dates = {(t.name, c.name) for t in tables for c in t.columns
+             if is_date_column(c.name, c.data_type)}
+    try:
+        tree = parse_one(validate_read_only_sql(sql).sql, read='sqlite')
+        if len(list(tree.walk())) > 3000:
+            return []
+        tree = qualify(tree, dialect='sqlite', schema=schema, validate_qualify_columns=True)
+        result = set()
+        for scope in traverse_scope(tree):
+            for column in scope.columns:
+                owner = scope
+                while owner is not None and column.table not in owner.sources:
+                    owner = owner.parent
+                source = owner.sources.get(column.table) if owner is not None else None
+                if isinstance(source, exp.Table):
+                    if source.db or source.catalog or source.name not in schema:
+                        return []
+                    key = (source.name, column.name)
+                    if key in dates:
+                        result.add(key)
+        return sorted(result)
+    except Exception:
+        return []
+
+
+def storage_profiles(connection, tables, question, *, candidate_fields=(),
+                     max_columns=8, max_seconds=2.0, max_steps=1_000_000):
+    candidates = date_candidate_fields(tables, question, candidate_fields=candidate_fields)
     result=[];started=time.monotonic();steps=0
     def progress():
         nonlocal steps

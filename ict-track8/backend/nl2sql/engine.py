@@ -8,6 +8,7 @@ import os
 import re
 import sqlite3
 import threading
+import time
 from collections import OrderedDict
 from dataclasses import asdict
 from contextlib import contextmanager
@@ -31,6 +32,79 @@ from .result_artifact import (ResultBudgets, execute_complete_read_only,
                               pin_database, read_result_page)
 
 _FOLLOWUP_CUE = re.compile(r"^(那么|那|如果是|如果|换成|改成|再看|再查|同样|也)|呢$|呢[?？]$")
+
+
+_SAFETY_REASON_CODES = frozenset({
+    'complete_result_operation_time_budget_exceeded',
+    'complete_result_source_byte_budget_exceeded',
+    'complete_result_source_time_budget_exceeded',
+    'complete_result_source_snapshot_changed',
+    'complete_result_source_changed_after_planning',
+    'complete_result_source_or_producer_changed',
+    'unsupported_sqlite_result_cell',
+    'complete_result_negative_scope_ambiguous_or_unsupported',
+    'complete_result_preview_scope_ambiguous_or_unsupported',
+    'complete_result_positive_negative_cap_conflict',
+    'complete_result_scope_ambiguous_or_unsupported',
+    'complete_result_row_cap_conflicts_with_ties',
+    'result_semantic_row_limit_invalid',
+    'relational_unverified_result_offset',
+    'relational_result_limit_not_user_scope',
+    'result_artifact_initial_binding_mismatch',
+    'complex_query_ast_budget', 'complex_query_recursive_with',
+    'complex_query_model_placeholder', 'complex_query_unknown_or_ambiguous_field',
+    'complex_query_source_not_allowed', 'complex_query_no_physical_source',
+    'complex_query_unverified_join', 'complex_query_join_not_actual_fk_or_shared_key',
+    'complex_query_unbound_correlation', 'complex_query_unverified_correlation',
+    'complex_query_duplicate_or_unbounded_outputs',
+    'complex_query_integer_literal_out_of_range', 'complex_query_nonfinite_literal',
+    'complex_query_parameter_binding_mismatch', 'complex_query_proposal_contract',
+})
+_SAFETY_MESSAGE_CODES = {
+    'SQL 不能为空': 'sql_empty',
+    'SQL 不允许注释或 NUL 字符': 'sql_comments_or_nul',
+    'SQL 超过长度上限（100000 字符）': 'sql_length_budget_exceeded',
+    'SQL 无法按 SQLite 方言解析': 'sql_parse_failed',
+    '只允许执行一条 SQL': 'sql_multiple_statements',
+    '只允许 SELECT 或只读 WITH 查询': 'sql_non_read_only_query',
+    'SQL 包含禁止的写入或管理操作': 'sql_write_or_management_operation',
+    'SQL 包含禁止的扩展或文件写入函数': 'sql_forbidden_function',
+    'max_rows 必须在 1 到 1000 之间': 'sql_row_budget_invalid',
+    '查询结果超过安全行数上限': 'sql_row_budget_exceeded',
+}
+
+
+def _safe_failure_diagnostics(exc: SqlSafetyError, stage: str) -> dict[str, str]:
+    """Fixed diagnostic vocabulary; never copy database/model error text.
+
+    SQLite INTERRUPT alone cannot distinguish a step from a wall-clock limit,
+    so its code deliberately preserves that uncertainty.
+    """
+    message = str(exc)
+    code = message if message in _SAFETY_REASON_CODES else _SAFETY_MESSAGE_CODES.get(message)
+    if code is None and message.startswith('complex_query_function_not_allowed:'):
+        code = 'complex_query_function_not_allowed'
+    if code is None and isinstance(exc.__cause__, sqlite3.DatabaseError):
+        sqlite_code = getattr(exc.__cause__, 'sqlite_errorcode', None)
+        code = {
+            sqlite3.SQLITE_INTERRUPT: 'sql_execution_interrupted_budget_or_cancel',
+            sqlite3.SQLITE_AUTH: 'sql_execution_authorization_denied',
+            sqlite3.SQLITE_TOOBIG: 'sql_execution_cell_too_large',
+        }.get(sqlite_code, 'sql_execution_database_error')
+    return {'stage': stage, 'code': code or 'sql_safety_rejected'}
+
+
+@contextmanager
+def _safety_stage(stage: str):
+    """Annotate and re-raise the same refusal, without changing its message."""
+    try:
+        yield
+    except SqlSafetyError as exc:
+        diagnostics = _safe_failure_diagnostics(exc, stage)
+        exc.safety_stage = diagnostics['stage']
+        exc.safety_code = diagnostics['code']
+        exc.safety_diagnostics = diagnostics
+        raise
 
 
 def _reference_from_env() -> date | None:
@@ -676,8 +750,9 @@ class Nl2SqlEngine:
                 raise ValueError('preview 行数必须为正数')
         with self._connect() as connection:
             tables, index, revision = self._snapshot_for(connection)
-            source_pin = (pin_database(self.database_path, self.complete_result_budgets,
-                generation=self._source_revision, expected_generation=revision[0]) if complete_results else None)
+            with _safety_stage('artifact_source_validation'):
+                source_pin = (pin_database(self.database_path, self.complete_result_budgets,
+                    generation=self._source_revision, expected_generation=revision[0]) if complete_results else None)
             source_constraint_audit = None
             current_required, errors = None, []
             if required_intent is not None:
@@ -736,8 +811,20 @@ class Nl2SqlEngine:
                 # A separate capability, not a bypass of typed fusion contracts.
                 try:
                     from .date_profile import storage_profiles
+                    probe_started = time.monotonic()
+                    initial_profiles = storage_profiles(connection, tables, question)
+                    def load_candidate_profiles(fields, existing):
+                        observed = {item['field'] for item in existing}
+                        missing = [(t, c) for t, c in fields if t + '.' + c not in observed]
+                        # Proposal latency does not consume the snapshot probe
+                        # budget: bound actual scan time across both stages.
+                        additional = storage_profiles(connection, tables, '', candidate_fields=missing,
+                            max_columns=max(0, 8 - len(existing)),
+                            max_seconds=max(0.0, 2.0 - initial_probe_seconds))
+                        return [*existing, *additional]
+                    initial_probe_seconds = time.monotonic() - probe_started
                     plan, compiled = propose_complex(self.model_plan_provider, question, tables,
-                        date_profiles=storage_profiles(connection, tables, question))
+                        date_profiles=initial_profiles, date_profile_loader=load_candidate_profiles)
                 except Exception as exc:
                     from ..responses_client import GenerationError
                     if isinstance(exc, GenerationError) and exc.status in (401, 403):
@@ -747,6 +834,9 @@ class Nl2SqlEngine:
                         clarification_code='complex_query_validation_failed')
                     plan.planner_audit = {'decision':'rejected', 'error_type':type(exc).__name__,
                         'reason':str(exc) if isinstance(exc, SqlSafetyError) else 'model_proposal_failed'}
+                    if isinstance(exc, SqlSafetyError):
+                        plan.planner_audit['safety_diagnostics'] = _safe_failure_diagnostics(
+                            exc, 'structural_validation')
             else:
                 plan = self._model_plan(question, tables, connection, index, cache_namespace=revision,
                                         source_required=current_required)
@@ -811,13 +901,15 @@ class Nl2SqlEngine:
                 # through the existing artifact channel, with a capped preview.
                 # This never enlarges execution budgets or treats preview as all.
                 if not complete_results:
-                    source_pin = pin_database(self.database_path, self.complete_result_budgets,
-                        generation=self._source_revision, expected_generation=revision[0])
+                    with _safety_stage('artifact_source_validation'):
+                        source_pin = pin_database(self.database_path, self.complete_result_budgets,
+                            generation=self._source_revision, expected_generation=revision[0])
                 complete_results = True
                 row_cap = min(100, row_cap, self.max_rows)
             if complete_results and not plan.clarification:
-                complete_scope = configure_complete_scope(plan,
-                    scope_question if required_intent is not None else question)
+                with _safety_stage('result_scope_validation'):
+                    complete_scope = configure_complete_scope(plan,
+                        scope_question if required_intent is not None else question)
                 if plan.preview_row_limit is not None:
                     row_cap = min(row_cap, plan.preview_row_limit)
                 complete_scope['effective_preview_limit'] = row_cap
@@ -845,14 +937,19 @@ class Nl2SqlEngine:
             sql, parameters = compiled or self.planner.build_sql(plan)
             if plan.model_plan_diagnostics.get('channel') == 'relational_sql':
                 from .result_scope import enforce_relational_result_scope
-                sql, parameters = enforce_relational_result_scope(plan, sql, parameters)
+                with _safety_stage('result_scope_validation'):
+                    sql, parameters = enforce_relational_result_scope(plan, sql, parameters)
             complete_metadata = None
             if complete_results:
-                execution = execute_complete_read_only(connection, sql, parameters,
-                    database_path=self.database_path, artifact_dir=self.result_artifact_dir,
-                    budgets=self.complete_result_budgets, preview_limit=row_cap,
-                    expected_source=source_pin, generation=self._source_revision,
-                    expected_generation=revision[0], scope=complete_scope)
+                # This producer owns both cursor execution and publication.
+                # Without a specific allowlisted code, do not claim which of
+                # those internal phases failed.
+                with _safety_stage('complete_result_execution_and_delivery'):
+                    execution = execute_complete_read_only(connection, sql, parameters,
+                        database_path=self.database_path, artifact_dir=self.result_artifact_dir,
+                        budgets=self.complete_result_budgets, preview_limit=row_cap,
+                        expected_source=source_pin, generation=self._source_revision,
+                        expected_generation=revision[0], scope=complete_scope)
                 columns, rows = execution.columns, execution.preview_rows
                 complete_metadata = {**execution.metadata, 'preview_cells': [list(row) for row in execution.preview_cells],
                     'preview_format': 'ordered_cell_arrays_preserve_duplicate_labels'}
@@ -862,7 +959,8 @@ class Nl2SqlEngine:
                         while len(self._result_bindings) > 256:
                             self._result_bindings.popitem(last=False)
             else:
-                columns, rows = execute_read_only(connection, sql, parameters, max_rows=row_cap, max_steps=self.max_steps, max_seconds=self.max_seconds)
+                with _safety_stage('execution'):
+                    columns, rows = execute_read_only(connection, sql, parameters, max_rows=row_cap, max_steps=self.max_steps, max_seconds=self.max_seconds)
             result_state, notices = self._result_state(connection, plan, rows)
             effective_limit = min(plan.limit, row_cap)
             limit_reached = len(rows) >= effective_limit if not complete_results else complete_metadata['preview_truncated']

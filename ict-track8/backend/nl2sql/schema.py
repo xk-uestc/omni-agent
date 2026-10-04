@@ -15,7 +15,8 @@ from .models import ColumnInfo, ForeignKeyInfo, LinkCandidate, TableInfo
 from .schema_profile import infer_rules
 from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
 from .question_roles import (association_scope, field_owners, filter_only, group_fields,
-                             record_count_subject, alias_owner_prefix, alias_in_group)
+                             record_count_subject, alias_owner_prefix, alias_in_group,
+                             excluded_filter_scope)
 
 
 _TOKEN_RE = re.compile(r"[a-zA-Z0-9_]+|[\u3400-\u9fff]")
@@ -214,6 +215,7 @@ class SchemaLinker:
     def link(self, question: str, tables: Iterable[TableInfo]) -> list[LinkCandidate]:
         tables = tuple(tables)
         normalized, _, _ = association_scope(question, tables)
+        normalized, _ = excluded_filter_scope(normalized, tables)
         ownership = field_owners(normalized, tables)
         explicit_groups = group_fields(normalized, tables)
         table_names = {table.name for table in tables}
@@ -346,6 +348,8 @@ class SchemaLinker:
         ]
         # Actual physical mentions outrank generic aliases. A filter field is
         # not a requested measure; ownership cannot be inferred from confidence.
+        filtered_links = [link for link in filtered_links if link.column not in ownership
+                          or link.table in ownership[link.column]]
         for column, owners in ownership.items():
             for owner in owners:
                 info = next(c for t in tables if t.name == owner for c in t.columns if c.name == column)

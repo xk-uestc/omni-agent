@@ -164,15 +164,18 @@ def main():
                             response = (engine.answer(case['question']).to_dict() if case['kind'] == 'single'
                                 else agent.query(case['question'], session_id=case['session_id']))
                             error = None
+                            safety_diagnostics = None
                         except Exception as exc:
                             response = None; error = type(exc).__name__
+                            safety_diagnostics = getattr(exc, 'safety_diagnostics', None)
                         audits = [{**a, 'component': name} for name, api in [('sql', provider), ('router', client)] for a in api.audit_history]
                         dropped = provider.audit_dropped_count + client.audit_dropped_count
                         row = {'case_id': case['case_id'], 'kind': case['kind'], 'session_id': case['session_id'],
                             'turn_index': case['turn_index'], 'worker': index + 1, 'history_before_count': len(history),
                             'history_before_sha256': value_digest([{'question': h.question,
                                 'effective_question': h.effective_question, 'state': h.state} for h in history]),
-                            'response': response, 'error_type': error, 'api_audits': audits, 'api_audit_dropped': dropped,
+                            'response': response, 'error_type': error, 'safety_diagnostics': safety_diagnostics,
+                            'api_audits': audits, 'api_audit_dropped': dropped,
                             'payload_audit': ledger.records, 'latency_ms': round((time.perf_counter()-turn_started)*1000,3)}
                         stream.write(json.dumps(row, ensure_ascii=False, allow_nan=False) + '\n'); stream.flush()
                         ledger.completed_ids.add(case['case_id'])

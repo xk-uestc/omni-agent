@@ -11,7 +11,7 @@ import unicodedata
 
 from .t2s import to_simplified
 from .date_semantics import is_date_column
-from .schema_profile import table_aliases
+from .schema_profile import table_aliases, infer_rules
 
 
 def normalized(text):
@@ -57,11 +57,68 @@ def alias_owner_prefix(text, start, tables, alias_tables=None):
     return first, chosen
 
 
+def _group_spans(text):
+    """Local grouping syntax; 'each latest record' is not an aggregate grain."""
+    spans = [(m.start(1), m.end(1)) for m in re.finditer(
+        r'(?<!不)按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', text)
+        if not re.search(r'筛选|过滤|限定', m.group(1))]
+    # A bare physical identifier is admitted only at an aggregate clause,
+    # not from '每个X最新记录' or an arbitrary occurrence of '各'.
+    spans.extend((m.start(1), m.end(1)) for m in re.finditer(
+        r'(?:各|每个|每一)([a-z_][a-z0-9_]*(?:\.[a-z_][a-z0-9_]*)?)'
+        r'(?![a-z0-9_])(?:的)?(?=[^,;。?!？；]{0,80}?(?:合计|总额|平均|均值|数量|计数|记录数|分组|汇总))', text)
+        if not re.search(r'最新|最早|最近|第一|最后', text[m.end():
+            next((p for p in range(m.end(), len(text)) if text[p] in ',;。?!？；'), len(text))]))
+    return spans
+
+
+def excluded_filter_scope(text, tables):
+    """Mask only a local instruction NOT to use a date as a filter for linking.
+
+    The original question stays untouched for planning and independent review.
+    This is not value negation: '不按amount>10过滤' remains fully visible.
+    """
+    types = {normalized(c.name): c.data_type for t in tables for c in t.columns}
+    known_tables = {normalized(t.name) for t in tables}
+    date_pairs = {(t.name, c.name) for t in tables for c in t.columns
+                  if is_date_column(c.name, c.data_type)}
+    date_aliases = {normalized(alias) for rule in infer_rules(tables)
+                    if (rule.table, rule.column) in date_pairs for alias in rule.aliases}
+    spans = []
+    for match in re.finditer(r'(?:不按照|不要按|不按)([^,;。?!？；]{1,120}?)(?:进行)?(?:筛选|过滤)', text):
+        parts = re.split(r'或者|以及|或|和|与|、|及', match.group(1))
+        valid = True
+        for part in parts:
+            if part in date_aliases and re.fullmatch(r'[\u3400-\u9fff]{1,12}(?:日期|时间)', part):
+                continue
+            # Chinese shared suffix: 租赁或归还日期.
+            if (re.fullmatch(r'[\u3400-\u9fff]{1,10}', part)
+                    and re.fullmatch(r'[\u3400-\u9fff]{1,12}(?:日期|时间)', parts[-1])
+                    and any(part + suffix in date_aliases for suffix in ('日期', '时间'))):
+                continue
+            tokens = part.split('.')
+            if len(tokens) not in (1, 2) or (len(tokens) == 2 and tokens[0] not in known_tables):
+                valid = False
+                break
+            column = tokens[-1]
+            if column not in types or not is_date_column(column, types[column]):
+                valid = False
+                break
+            if len(tokens) == 2 and not any(normalized(t.name) == tokens[0]
+                    and any(normalized(c.name) == column for c in t.columns) for t in tables):
+                valid = False
+                break
+        if valid:
+            spans.append(match.span())
+    masked = text
+    for start, end in reversed(spans):
+        masked = masked[:start] + ' ' * (end-start) + masked[end:]
+    return masked, spans
+
+
 def alias_in_group(text, start, end):
     """Only this occurrence's local grouping clause gives a numeric alias a role."""
-    return any(group.start(1) <= start and end <= group.end(1)
-               and not re.search(r'筛选|过滤|限定', group.group(1))
-               for group in re.finditer(r'按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', text))
+    return any(a <= start and end <= b for a, b in _group_spans(text))
 
 
 def _qualified_fields(text, tables):
@@ -176,7 +233,7 @@ def association_scope(question, tables):
 def field_owners(text, tables):
     """Owner sets; an ambiguous bare occurrence keeps ALL possible owners."""
     named = named_tables(text, tables)
-    groups = list(re.finditer(r'按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', text))
+    groups = _group_spans(text)
     result = {}
     for column in {c.name for t in tables for c in t.columns}:
         possible = {t.name for t in tables if any(c.name == column for c in t.columns)}
@@ -190,8 +247,16 @@ def field_owners(text, tables):
         for occurrence in mentions(text, column):
             if any(start <= occurrence.start() and occurrence.end() <= end for start, end, _ in qualified):
                 continue
-            group = next((g for g in groups if g.start(1) <= occurrence.start() < g.end(1)), None)
-            scoped = possible & (named_tables(group.group(1), tables) if group else named)
+            group = next(((a, b) for a, b in groups if a <= occurrence.start() < b), None)
+            local = named_tables(text[group[0]:group[1]], tables) if group else set()
+            # A separately requested '按X' grain can belong to a related
+            # entity and must NOT inherit an unrelated metric's source.
+            per_entity = group and re.search(r'(?:各|每个|每一)$', text[:group[0]])
+            # An unknown qualified owner must not borrow some other table
+            # mentioned elsewhere (OtherVendors.Name != Vendors.Name).
+            unknown_qualified = bool(re.search(r'[a-z0-9_]+\.$', text[:occurrence.start()]))
+            scoped = (set() if unknown_qualified else
+                      possible & (local or (named if not group or per_entity else set())))
             chosen.update(scoped if len(scoped) == 1 else possible)
         if chosen:
             result[column] = chosen
@@ -206,12 +271,15 @@ def filter_only(text, column):
 
 
 def group_fields(text, tables):
-    groups = re.findall(r'按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', text)
+    groups = _group_spans(text)
+    ownership = field_owners(text, tables)
     fields = set()
-    for group in groups:
-        if re.search(r'筛选|过滤|限定', group):
-            continue
-        for column, owners in field_owners(group, tables).items():
+    for start, end in groups:
+        for column, owners in field_owners(text[start:end], tables).items():
+            # A local explicit owner wins; a bare group name uses the whole
+            # question's uniquely named source, otherwise retains ambiguity.
+            if len(owners) > 1:
+                owners = ownership.get(column, owners)
             fields.update((owner, column) for owner in owners)
     return fields
 
