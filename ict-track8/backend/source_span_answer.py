@@ -7,7 +7,8 @@ from copy import deepcopy
 import re
 from .responses_client import GenerationError, object_schema
 from .typed_span_execution import boolean_question, entity_question
-from .answer_contract import literal_answer_shape_error, native_source_only_contract_valid, native_context_mode_valid
+from .answer_contract import (literal_answer_shape_error, native_source_only_contract_valid,
+    native_context_mode_valid, question_contract)
 from .grounded_span_answer import (_sha, _audit, _completed, _quote_catalog,
     _select_literal_answer, SELECTION, REVIEW, REASONS)
 
@@ -99,6 +100,9 @@ def bind_source_span_answer(question,citations,client):
         or getattr(client,'model',None)!='gpt-6-luna' or getattr(client,'reasoning',None)!='medium'):
         return unsupported('source_question_or_model_invalid')
     if boolean_question(question):return unsupported('source_literal_cannot_execute_boolean')
+    contract = question_contract(question)
+    if contract['multiple_requested_fields'] or contract['exhaustive_selection_required']:
+        return unsupported('source_literal_requires_multi_fragment_contract')
     try:
         evidence,snapshots=_source_snapshot(citations)
         catalog=_quote_catalog([],evidence)
@@ -164,6 +168,9 @@ def bind_source_span_answer(question,citations,client):
 
 def replay_source_span_proof(question,result,citations):
     try:
+        contract = question_contract(question)
+        if contract['multiple_requested_fields'] or contract['exhaustive_selection_required']:
+            return False
         proof=result['answer_proof'];literal=proof['literal']
         if literal_answer_shape_error(question,literal):return False
         if (result.get('status')!='model_reviewed' or proof.get('version')!=VERSION

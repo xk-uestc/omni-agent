@@ -1,0 +1,2208 @@
+{
+  "created_at": "2026-10-04T03:44:56.154228+00:00",
+  "scope": "authored_small_prose_compound_cases_with_random_labels_not_blind_or_official_accuracy",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "reference_used_as_model_input": false,
+  "implementation_file_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "c0d8b64d008fb0fadc4a9f7bfc23da6eabd5f3d7942e7c80032b64e5c7972747",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "e304d6cb9346f3254f97b323a1df522c53698a8cfb07024dec9bd4a09f483aa7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "cff5b4852194ff3c9f333fc5376d44aad420156cff68493968dfc0903a4cc4d2",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b4f254283be38ed2fb00c6774aa6bcf42093660b28b3579270027d409e094d84",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_multi_span_answer.py": "4f1469947ef044d086d48396b0e55d8fb4bd8273583dc7b62310e6812fc8856e",
+    "ict-track8/backend/source_span_answer.py": "e61292f250f9970b247211d00f1245d17aa595ff63bc5b50d032ef08fa80ea5e",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171",
+    "tools/evaluate_ohr_bench.py": "14bcab618b13c9280ffc2bf0455e3e25a49462d241a595c19092e5fccf6efd4e",
+    "tools/model_runtime.py": "a73d96109f5bacfd25a6ecec338e9857d67110f1f7d086ca2dfb76ea90e959c1"
+  },
+  "implementation_file_sha256_end": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "c0d8b64d008fb0fadc4a9f7bfc23da6eabd5f3d7942e7c80032b64e5c7972747",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "e304d6cb9346f3254f97b323a1df522c53698a8cfb07024dec9bd4a09f483aa7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "cff5b4852194ff3c9f333fc5376d44aad420156cff68493968dfc0903a4cc4d2",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b4f254283be38ed2fb00c6774aa6bcf42093660b28b3579270027d409e094d84",
+    "ict-track8/backend/native_text_tables.py": "b7704867ea72855e0c729dd47e9238f2b206e0f9bb0e1ef635196b220c379fe5",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "285940e9aec5225574a75173ed15204ebaf1c7e148fca26dc93fa07e49536c9e",
+    "ict-track8/backend/nl2sql/date_profile.py": "96f5c3034eebc005c761f64ea6bc455aa4ad4fff6e292ccebaca0f89588dec9a",
+    "ict-track8/backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "f46d919eb03741a8720a961070a3aa8a1cd56c516086b42c161eaa98886e2126",
+    "ict-track8/backend/nl2sql/schema.py": "d577679e23fa63eaf68a7b235e3a28ffec116e2ad814678e139713aea7d1969a",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_multi_span_answer.py": "4f1469947ef044d086d48396b0e55d8fb4bd8273583dc7b62310e6812fc8856e",
+    "ict-track8/backend/source_span_answer.py": "e61292f250f9970b247211d00f1245d17aa595ff63bc5b50d032ef08fa80ea5e",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171",
+    "tools/evaluate_ohr_bench.py": "14bcab618b13c9280ffc2bf0455e3e25a49462d241a595c19092e5fccf6efd4e",
+    "tools/model_runtime.py": "a73d96109f5bacfd25a6ecec338e9857d67110f1f7d086ca2dfb76ea90e959c1"
+  },
+  "implementation_stable": true,
+  "cases": [
+    {
+      "id": "cross_sources",
+      "question": "Who is the research lead and who is the finance lead for Campaign-555296?",
+      "sources": [
+        {
+          "id": "record-0",
+          "sha256": "d7f467fbd19823e7812b88aa881025c31437758fa278e59436bcd0feb2fe8729",
+          "text": "For Campaign-555296, the research lead is Mira Chen."
+        },
+        {
+          "id": "record-1",
+          "sha256": "b75b4bc0bb81b82dbdf1e7c25b28a3f42596522aa1796e58656b0b86f31807cc",
+          "text": "For Campaign-555296, the finance lead is Noah Lee."
+        }
+      ],
+      "result": {
+        "status": "ok",
+        "question": "Who is the research lead and who is the finance lead for Campaign-555296?",
+        "answer_mode": "extractive_fallback",
+        "answer": "[1] For Campaign-555296, the research lead is Mira Chen.\n\n[2] For Campaign-555296, the finance lead is Noah Lee.",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "289eba58a1e549539322a874",
+            "title": "Campaign-555296 record",
+            "score": 0.6992,
+            "matched_terms": [
+              "research",
+              "555296",
+              "campaign",
+              "for",
+              "is",
+              "lead",
+              "the"
+            ],
+            "snippet": "For Campaign-555296, the research lead is Mira Chen.",
+            "source_uri": "/api/v1/knowledge/documents/record-0/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "d7f467fbd19823e7812b88aa881025c31437758fa278e59436bcd0feb2fe8729",
+              "original_document_id": "record-0",
+              "document_id": "record-0",
+              "chunk_id": "289eba58a1e549539322a874",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 2.324925,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 5.846193958135273,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.7572865701335039,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "campaign-555296",
+                  "lead",
+                  "research"
+                ],
+                "body_sha256": "d7f467fbd19823e7812b88aa881025c31437758fa278e59436bcd0feb2fe8729",
+                "utility": 1.366667,
+                "uncovered_lexical_facets": [],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For Campaign-555296, the research lead is Mira Chen.",
+              "source_sha256": "d7f467fbd19823e7812b88aa881025c31437758fa278e59436bcd0feb2fe8729",
+              "chunk_sha256": "d7f467fbd19823e7812b88aa881025c31437758fa278e59436bcd0feb2fe8729",
+              "evidence_sha256": "d7f467fbd19823e7812b88aa881025c31437758fa278e59436bcd0feb2fe8729",
+              "chunk_payload_sha256": "efc38f259a89eaa2d62ed7c0654046ec59bdd9faab46870fa142617a18c8bfa1",
+              "offset_start": 0,
+              "offset_end": 52,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 52,
+              "evidence_chars": 52,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "40bbfb5d33dcf8f97804b2f4",
+            "title": "Campaign-555296 record",
+            "score": 0.6992,
+            "matched_terms": [
+              "finance",
+              "555296",
+              "campaign",
+              "for",
+              "is",
+              "lead",
+              "the"
+            ],
+            "snippet": "For Campaign-555296, the finance lead is Noah Lee.",
+            "source_uri": "/api/v1/knowledge/documents/record-1/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "b75b4bc0bb81b82dbdf1e7c25b28a3f42596522aa1796e58656b0b86f31807cc",
+              "original_document_id": "record-1",
+              "document_id": "record-1",
+              "chunk_id": "40bbfb5d33dcf8f97804b2f4",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 2.324925,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 5.846193958135273,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.7572865701335039,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "finance"
+                ],
+                "body_sha256": "b75b4bc0bb81b82dbdf1e7c25b28a3f42596522aa1796e58656b0b86f31807cc",
+                "utility": 0.833333,
+                "uncovered_lexical_facets": [],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For Campaign-555296, the finance lead is Noah Lee.",
+              "source_sha256": "b75b4bc0bb81b82dbdf1e7c25b28a3f42596522aa1796e58656b0b86f31807cc",
+              "chunk_sha256": "b75b4bc0bb81b82dbdf1e7c25b28a3f42596522aa1796e58656b0b86f31807cc",
+              "evidence_sha256": "b75b4bc0bb81b82dbdf1e7c25b28a3f42596522aa1796e58656b0b86f31807cc",
+              "chunk_payload_sha256": "f14a3cef73396ae3873570bd8dc8dee230a6588de6288ae2b953d73e6c722794",
+              "offset_start": 0,
+              "offset_end": 50,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 50,
+              "evidence_chars": 50,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 2
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 2,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 2,
+            "total_chars": 102,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "unavailable_or_invalid",
+            "fallback": "attributed_extracts"
+          }
+        ],
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "not_validated",
+            "error_category": "provider_unavailable",
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": null,
+              "status": "failed",
+              "model_verified": false,
+              "call_index": 1,
+              "latency_ms": 60281.634
+            }
+          }
+        ],
+        "generation_repaired": false
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": null,
+          "status": "failed",
+          "model_verified": false,
+          "call_index": 1,
+          "latency_ms": 60281.634
+        }
+      ],
+      "pass": false,
+      "scoring_only": {
+        "required": [
+          "Mira Chen",
+          "Noah Lee"
+        ],
+        "expected_abstention": false
+      }
+    },
+    {
+      "id": "three_tests",
+      "question": "Which three tests are used in Campaign-555296?",
+      "sources": [
+        {
+          "id": "record-0",
+          "sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+          "text": "The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296."
+        }
+      ],
+      "result": {
+        "status": "ok",
+        "question": "Which three tests are used in Campaign-555296?",
+        "answer_mode": "extractive_fallback",
+        "answer": "[1] The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296.",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "d08688200a7ac66477075f1e",
+            "title": "Campaign-555296 record",
+            "score": 0.6573,
+            "matched_terms": [
+              "555296",
+              "campaign",
+              "tests"
+            ],
+            "snippet": "The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296.",
+            "source_uri": "/api/v1/knowledge/documents/record-0/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "original_document_id": "record-0",
+              "document_id": "record-0",
+              "chunk_id": "d08688200a7ac66477075f1e",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 1.918422,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 3.5627837142857146,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.42857142857142855,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "campaign-555296",
+                  "tests"
+                ],
+                "body_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+                "utility": 1.233333,
+                "uncovered_lexical_facets": [
+                  "three",
+                  "used"
+                ],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296.",
+              "source_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "chunk_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "evidence_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "chunk_payload_sha256": "c369cfea0d3ec420294ab5b39b6634e616938a7b549c5f3617dcd9c0f934fde1",
+              "offset_start": 0,
+              "offset_end": 109,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 109,
+              "evidence_chars": 109,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 1
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 1,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 1,
+            "total_chars": 109,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "unavailable_or_invalid",
+            "fallback": "attributed_extracts"
+          }
+        ],
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "rejected",
+            "error_category": "unverified_fact_relation",
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1051,
+              "output_tokens": 90,
+              "total_tokens": 1141,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 6366.772
+            }
+          },
+          {
+            "attempt": 2,
+            "operation": "grounded_answer_correction",
+            "validation_status": "not_validated",
+            "error_category": "provider_unavailable",
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer_correction",
+              "http_status": null,
+              "status": "failed",
+              "model_verified": false,
+              "call_index": 2,
+              "latency_ms": 19233.584
+            }
+          }
+        ],
+        "generation_repaired": false
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1051,
+          "output_tokens": 90,
+          "total_tokens": 1141,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 6366.772
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer_correction",
+          "http_status": null,
+          "status": "failed",
+          "model_verified": false,
+          "call_index": 2,
+          "latency_ms": 19233.584
+        }
+      ],
+      "pass": false,
+      "scoring_only": {
+        "required": [
+          "Test-Spectrum-555296",
+          "Test-Redox-555296",
+          "Test-Flame-555296"
+        ],
+        "expected_abstention": false
+      }
+    },
+    {
+      "id": "enumeration_and_role",
+      "question": "Which tests are used in Campaign-555296 and who is the analyst?",
+      "sources": [
+        {
+          "id": "record-0",
+          "sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+          "text": "The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296."
+        },
+        {
+          "id": "record-1",
+          "sha256": "93724487661b1b25c48b88348d7d7dd52c9899cac8530244d9d93aa3336151ab",
+          "text": "For Campaign-555296, the analyst is Priya Shah."
+        }
+      ],
+      "result": {
+        "status": "ok",
+        "question": "Which tests are used in Campaign-555296 and who is the analyst?",
+        "answer_mode": "extractive_fallback",
+        "answer": "[1] For Campaign-555296, the analyst is Priya Shah.\n\n[2] The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296.",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "0558ab301bad8077b2042adf",
+            "title": "Campaign-555296 record",
+            "score": 0.6877,
+            "matched_terms": [
+              "analyst",
+              "555296",
+              "campaign",
+              "is",
+              "the"
+            ],
+            "snippet": "For Campaign-555296, the analyst is Priya Shah.",
+            "source_uri": "/api/v1/knowledge/documents/record-1/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "93724487661b1b25c48b88348d7d7dd52c9899cac8530244d9d93aa3336151ab",
+              "original_document_id": "record-1",
+              "document_id": "record-1",
+              "chunk_id": "0558ab301bad8077b2042adf",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 2.202297,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 4.230857702567117,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.4605556613315815,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "analyst",
+                  "campaign-555296"
+                ],
+                "body_sha256": "93724487661b1b25c48b88348d7d7dd52c9899cac8530244d9d93aa3336151ab",
+                "utility": 1.233333,
+                "uncovered_lexical_facets": [
+                  "used"
+                ],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For Campaign-555296, the analyst is Priya Shah.",
+              "source_sha256": "93724487661b1b25c48b88348d7d7dd52c9899cac8530244d9d93aa3336151ab",
+              "chunk_sha256": "93724487661b1b25c48b88348d7d7dd52c9899cac8530244d9d93aa3336151ab",
+              "evidence_sha256": "93724487661b1b25c48b88348d7d7dd52c9899cac8530244d9d93aa3336151ab",
+              "chunk_payload_sha256": "779702e7c49ae95d74c65992e795c160a9a2296dbb59dba9de813ea8a0d6dda5",
+              "offset_start": 0,
+              "offset_end": 47,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 47,
+              "evidence_chars": 47,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "d08688200a7ac66477075f1e",
+            "title": "Campaign-555296 record",
+            "score": 0.6563,
+            "matched_terms": [
+              "tests",
+              "555296",
+              "campaign",
+              "is",
+              "the"
+            ],
+            "snippet": "The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296.",
+            "source_uri": "/api/v1/knowledge/documents/record-0/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "original_document_id": "record-0",
+              "document_id": "record-0",
+              "chunk_id": "d08688200a7ac66477075f1e",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 1.909666,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 0.8671,
+              "ranking_score": 3.668680975104872,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.4605556613315815,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "tests"
+                ],
+                "body_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+                "utility": 0.740321,
+                "uncovered_lexical_facets": [
+                  "used"
+                ],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "The complete list of tests for Campaign-555296 is Test-Spectrum-555296, Test-Redox-555296, Test-Flame-555296.",
+              "source_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "chunk_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "evidence_sha256": "eed8f164b00860291c8a083796b03be047138a64b2af6547e5422c30fb76f6db",
+              "chunk_payload_sha256": "c369cfea0d3ec420294ab5b39b6634e616938a7b549c5f3617dcd9c0f934fde1",
+              "offset_start": 0,
+              "offset_end": 109,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 109,
+              "evidence_chars": 109,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 2
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 2,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 2,
+            "total_chars": 156,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "unavailable_or_invalid",
+            "fallback": "attributed_extracts"
+          }
+        ],
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "not_validated",
+            "error_category": "provider_unavailable",
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": null,
+              "status": "failed",
+              "model_verified": false,
+              "call_index": 1,
+              "latency_ms": 5014.714
+            }
+          }
+        ],
+        "generation_repaired": false
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": null,
+          "status": "failed",
+          "model_verified": false,
+          "call_index": 1,
+          "latency_ms": 5014.714
+        }
+      ],
+      "pass": false,
+      "scoring_only": {
+        "required": [
+          "Test-Spectrum-555296",
+          "Test-Redox-555296",
+          "Test-Flame-555296",
+          "Priya Shah"
+        ],
+        "expected_abstention": false
+      }
+    },
+    {
+      "id": "missing_part",
+      "question": "Who is the research lead and who is the finance lead for Campaign-555296?",
+      "sources": [
+        {
+          "id": "record-0",
+          "sha256": "b4e1ff45420bc8879510fb7c45ebd61e0fcf4b5fd4291cbdcb7693c5c1d6f48b",
+          "text": "For Campaign-555296, the research lead is Mira Chen. No finance lead is stated in this record."
+        }
+      ],
+      "result": {
+        "status": "ok",
+        "question": "Who is the research lead and who is the finance lead for Campaign-555296?",
+        "answer_mode": "extractive_fallback",
+        "answer": "[1] For Campaign-555296, the research lead is Mira Chen. No finance lead is stated in this record.",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "4eeb6bf026e1635be034a32b",
+            "title": "Campaign-555296 record",
+            "score": 0.771,
+            "matched_terms": [
+              "555296",
+              "campaign",
+              "is",
+              "lead",
+              "finance",
+              "for",
+              "research",
+              "the"
+            ],
+            "snippet": "For Campaign-555296, the research lead is Mira Chen. No finance lead is stated in this record.",
+            "source_uri": "/api/v1/knowledge/documents/record-0/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "b4e1ff45420bc8879510fb7c45ebd61e0fcf4b5fd4291cbdcb7693c5c1d6f48b",
+              "original_document_id": "record-0",
+              "document_id": "record-0",
+              "chunk_id": "4eeb6bf026e1635be034a32b",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 3.36588,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 10.09764,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 1.0,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "campaign-555296",
+                  "finance",
+                  "lead",
+                  "research"
+                ],
+                "body_sha256": "b4e1ff45420bc8879510fb7c45ebd61e0fcf4b5fd4291cbdcb7693c5c1d6f48b",
+                "utility": 1.5,
+                "uncovered_lexical_facets": [],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For Campaign-555296, the research lead is Mira Chen. No finance lead is stated in this record.",
+              "source_sha256": "b4e1ff45420bc8879510fb7c45ebd61e0fcf4b5fd4291cbdcb7693c5c1d6f48b",
+              "chunk_sha256": "b4e1ff45420bc8879510fb7c45ebd61e0fcf4b5fd4291cbdcb7693c5c1d6f48b",
+              "evidence_sha256": "b4e1ff45420bc8879510fb7c45ebd61e0fcf4b5fd4291cbdcb7693c5c1d6f48b",
+              "chunk_payload_sha256": "d2d7437705a7e37711264b63ded97b6b5e5b12687b59ec38002eb73fc6d56609",
+              "offset_start": 0,
+              "offset_end": 94,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 94,
+              "evidence_chars": 94,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 1
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 1,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 1,
+            "total_chars": 94,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "unavailable_or_invalid",
+            "fallback": "attributed_extracts"
+          }
+        ],
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "not_validated",
+            "error_category": "provider_unavailable",
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": null,
+              "status": "failed",
+              "model_verified": false,
+              "call_index": 1,
+              "latency_ms": 5026.712
+            }
+          }
+        ],
+        "generation_repaired": false
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": null,
+          "status": "failed",
+          "model_verified": false,
+          "call_index": 1,
+          "latency_ms": 5026.712
+        }
+      ],
+      "pass": false,
+      "scoring_only": {
+        "required": [],
+        "expected_abstention": true
+      }
+    },
+    {
+      "id": "conflicting_roles",
+      "question": "Who is the research lead and who is the finance lead for Campaign-555296?",
+      "sources": [
+        {
+          "id": "record-0",
+          "sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25",
+          "text": "For Campaign-555296, the research lead is Mira Chen and the finance lead is Noah Lee."
+        },
+        {
+          "id": "record-1",
+          "sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9",
+          "text": "For the same Campaign-555296, the research lead is Priya Shah. Neither record overrides the other."
+        }
+      ],
+      "result": {
+        "status": "insufficient_evidence",
+        "question": "Who is the research lead and who is the finance lead for Campaign-555296?",
+        "answer_mode": "model_grounded",
+        "answer": "现有证据无法支持完整回答，请补充资料或明确口径。",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "69a8d260dec85796bc55c466",
+            "title": "Campaign-555296 record",
+            "score": 0.773,
+            "matched_terms": [
+              "and",
+              "finance",
+              "555296",
+              "campaign",
+              "is",
+              "lead",
+              "the",
+              "for",
+              "research"
+            ],
+            "snippet": "For Campaign-555296, the research lead is Mira Chen and the finance lead is Noah Lee.",
+            "source_uri": "/api/v1/knowledge/documents/record-0/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25",
+              "original_document_id": "record-0",
+              "document_id": "record-0",
+              "chunk_id": "69a8d260dec85796bc55c466",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 3.405506,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 10.216518,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 1.0,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "campaign-555296",
+                  "finance",
+                  "lead",
+                  "research"
+                ],
+                "body_sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25",
+                "utility": 1.5,
+                "uncovered_lexical_facets": [],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For Campaign-555296, the research lead is Mira Chen and the finance lead is Noah Lee.",
+              "source_sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25",
+              "chunk_sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25",
+              "evidence_sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25",
+              "chunk_payload_sha256": "36186dbb984cb72fe32df23f8118b3ad33eb014b52fbb54ca4e97955b3940459",
+              "offset_start": 0,
+              "offset_end": 85,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 85,
+              "evidence_chars": 85,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "ce1fb4ad7684283a98b6df1f",
+            "title": "Campaign-555296 record",
+            "score": 0.6573,
+            "matched_terms": [
+              "555296",
+              "campaign",
+              "the",
+              "for",
+              "is",
+              "lead",
+              "research"
+            ],
+            "snippet": "For the same Campaign-555296, the research lead is Priya Shah. Neither record overrides the other.",
+            "source_uri": "/api/v1/knowledge/documents/record-1/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9",
+              "original_document_id": "record-1",
+              "document_id": "record-1",
+              "chunk_id": "ce1fb4ad7684283a98b6df1f",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 1.918283,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 0.5633,
+              "ranking_score": 4.75229181379746,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.7386837118916917,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [],
+                "body_sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9",
+                "utility": 0.32561,
+                "uncovered_lexical_facets": [],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For the same Campaign-555296, the research lead is Priya Shah. Neither record overrides the other.",
+              "source_sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9",
+              "chunk_sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9",
+              "evidence_sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9",
+              "chunk_payload_sha256": "d99cc1a2a89f8dd39b4f379909cf452f1aba90d47e7e2eca95a8cce4efdeac08",
+              "offset_start": 0,
+              "offset_end": 98,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 98,
+              "evidence_chars": 98,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 2
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 2,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 2,
+            "total_chars": 183,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "validated",
+            "model": "gpt-6-luna"
+          },
+          {
+            "stage": "evidence_first_multi_source_span",
+            "status": "unsupported",
+            "reason": "multi_selection_contract_invalid",
+            "model_audits": [
+              {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "source_multi_span_selection",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 1061,
+                "output_tokens": 53,
+                "total_tokens": 1114,
+                "call_index": 2,
+                "latency_ms": 4288.463
+              }
+            ],
+            "evidence_contract": "raw_source_only_no_validated_facts"
+          },
+          {
+            "stage": "supplemental_evidence_retrieval",
+            "round_limit": 1,
+            "question_preserved": true,
+            "navigation_only": true,
+            "semantic_sufficiency": "not_established",
+            "navigation_contexts": [
+              {
+                "chunk_id": "69a8d260dec85796bc55c466",
+                "mode": "authoritative_context",
+                "chars": 85,
+                "sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25",
+                "truncated": false
+              },
+              {
+                "chunk_id": "ce1fb4ad7684283a98b6df1f",
+                "mode": "authoritative_context",
+                "chars": 98,
+                "sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9",
+                "truncated": false
+              }
+            ],
+            "navigation_total_chars": 183,
+            "navigation_max_total_chars": 12000,
+            "model_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "evidence_recovery_queries",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 599,
+              "output_tokens": 229,
+              "total_tokens": 828,
+              "call_index": 3,
+              "latency_ms": 21685.863
+            },
+            "status": "no_new_source_evidence",
+            "queries": [
+              "Campaign-555296 research lead finance lead complete record and surrounding source context",
+              "Campaign-555296 research lead Mira Chen finance lead Noah Lee source record",
+              "Campaign-555296 research lead Priya Shah source record and surrounding context"
+            ],
+            "original_navigation_anchors": [
+              "Campaign-555296"
+            ],
+            "navigation_omitted": [],
+            "new_chunk_ids": [],
+            "candidate_count": 2,
+            "selected_count": 2,
+            "selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "top_k": 8,
+              "candidate_count": 2,
+              "unique_body_count": 2,
+              "query_facets": {
+                "campaign-555296": 3.0,
+                "finance": 1.0,
+                "research": 1.0,
+                "lead": 1.0
+              },
+              "covered_lexical_facets": [
+                "campaign-555296",
+                "finance",
+                "lead",
+                "research"
+              ],
+              "uncovered_lexical_facets": [],
+              "available_but_unselected_facets": [],
+              "selection_budget_exhausted": false,
+              "source_counts": {
+                "record-0": 1,
+                "record-1": 1
+              },
+              "steps": [
+                {
+                  "chunk_id": "69a8d260dec85796bc55c466",
+                  "source_id": "record-0",
+                  "ranking_score": 10.216518,
+                  "utility": 1.5,
+                  "new_lexical_facets": [
+                    "campaign-555296",
+                    "finance",
+                    "lead",
+                    "research"
+                  ],
+                  "body_sha256": "180514beebb64e9707a5c147d1ff0e29b91db684ae4e7828e1f3fc376e3cea25"
+                },
+                {
+                  "chunk_id": "ce1fb4ad7684283a98b6df1f",
+                  "source_id": "record-1",
+                  "ranking_score": 4.75229181379746,
+                  "utility": 0.32561,
+                  "new_lexical_facets": [],
+                  "body_sha256": "86e25c4645067d8658b1c711aeeedaab88743fa51fc06dfaf4a1d50be1f590b9"
+                }
+              ],
+              "skipped": []
+            },
+            "explicit_document_id": null,
+            "explicit_page_no": null,
+            "selected_source_budget": 4,
+            "unselected_source_ids": []
+          }
+        ],
+        "claims": [],
+        "generation_audit": {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1198,
+          "output_tokens": 109,
+          "total_tokens": 1307,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 88,
+          "call_index": 1,
+          "latency_ms": 3598.271
+        },
+        "whole_question_review": null,
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "validated",
+            "error_category": null,
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1198,
+              "output_tokens": 109,
+              "total_tokens": 1307,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 88,
+              "call_index": 1,
+              "latency_ms": 3598.271
+            },
+            "whole_question_review": null
+          }
+        ],
+        "generation_repaired": false,
+        "support_validation": "bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof"
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1198,
+          "output_tokens": 109,
+          "total_tokens": 1307,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 88,
+          "call_index": 1,
+          "latency_ms": 3598.271
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "source_multi_span_selection",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1061,
+          "output_tokens": 53,
+          "total_tokens": 1114,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 30,
+          "call_index": 2,
+          "latency_ms": 4288.463
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "evidence_recovery_queries",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 599,
+          "output_tokens": 229,
+          "total_tokens": 828,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 160,
+          "call_index": 3,
+          "latency_ms": 21685.863
+        }
+      ],
+      "pass": true,
+      "scoring_only": {
+        "required": [],
+        "expected_abstention": true
+      }
+    },
+    {
+      "id": "period_qualified",
+      "question": "Who is the research lead in 2031 and who is the research lead in 2032 for Campaign-555296?",
+      "sources": [
+        {
+          "id": "record-0",
+          "sha256": "17299308ad09ce4732bce54c9c02769d23b518880e591489845912d7cf6c7ec7",
+          "text": "For Campaign-555296, the research lead in 2031 is Mira Chen."
+        },
+        {
+          "id": "record-1",
+          "sha256": "8c8cf67af30ab89b3fedd8339a61020d2050f4ef87bdea29cbdf9fc1cbacf55d",
+          "text": "For Campaign-555296, the research lead in 2032 is Noah Lee."
+        }
+      ],
+      "result": {
+        "status": "ok",
+        "question": "Who is the research lead in 2031 and who is the research lead in 2032 for Campaign-555296?",
+        "answer_mode": "model_grounded",
+        "answer": "For Campaign-555296, the research lead in 2031 is Mira Chen. [1]\n\nFor Campaign-555296, the research lead in 2032 is Noah Lee. [2]",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "634fd8944660bf2147fb03ac",
+            "title": "Campaign-555296 record",
+            "score": 0.729,
+            "matched_terms": [
+              "2031",
+              "555296",
+              "campaign",
+              "for",
+              "in",
+              "is",
+              "lead",
+              "research",
+              "the"
+            ],
+            "snippet": "For Campaign-555296, the research lead in 2031 is Mira Chen.",
+            "source_uri": "/api/v1/knowledge/documents/record-0/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "17299308ad09ce4732bce54c9c02769d23b518880e591489845912d7cf6c7ec7",
+              "original_document_id": "record-0",
+              "document_id": "record-0",
+              "chunk_id": "634fd8944660bf2147fb03ac",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 2.689568,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 9.388262256064095,
+              "anchor_match_count": 1,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.7928225532548824,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "2031",
+                  "campaign-555296",
+                  "lead",
+                  "research"
+                ],
+                "body_sha256": "17299308ad09ce4732bce54c9c02769d23b518880e591489845912d7cf6c7ec7",
+                "utility": 1.322222,
+                "uncovered_lexical_facets": [],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For Campaign-555296, the research lead in 2031 is Mira Chen.",
+              "source_sha256": "17299308ad09ce4732bce54c9c02769d23b518880e591489845912d7cf6c7ec7",
+              "chunk_sha256": "17299308ad09ce4732bce54c9c02769d23b518880e591489845912d7cf6c7ec7",
+              "evidence_sha256": "17299308ad09ce4732bce54c9c02769d23b518880e591489845912d7cf6c7ec7",
+              "chunk_payload_sha256": "602b09550dc6482c678543d9693153f562293619cf5788b5781fbb7d94f48bca",
+              "offset_start": 0,
+              "offset_end": 60,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 60,
+              "evidence_chars": 60,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "90ac5dafb2d0b58e5ece2167",
+            "title": "Campaign-555296 record",
+            "score": 0.729,
+            "matched_terms": [
+              "2032",
+              "555296",
+              "campaign",
+              "for",
+              "in",
+              "is",
+              "lead",
+              "research",
+              "the"
+            ],
+            "snippet": "For Campaign-555296, the research lead in 2032 is Noah Lee.",
+            "source_uri": "/api/v1/knowledge/documents/record-1/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 1,
+              "source_sha256": "8c8cf67af30ab89b3fedd8339a61020d2050f4ef87bdea29cbdf9fc1cbacf55d",
+              "original_document_id": "record-1",
+              "document_id": "record-1",
+              "chunk_id": "90ac5dafb2d0b58e5ece2167",
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "bm25_raw": 2.689568,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "ranking_score": 9.388262256064095,
+              "anchor_match_count": 1,
+              "retrieval_language_policy": {
+                "query_language": "en",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0.7928225532548824,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [
+                "Campaign-555296"
+              ],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "2032"
+                ],
+                "body_sha256": "8c8cf67af30ab89b3fedd8339a61020d2050f4ef87bdea29cbdf9fc1cbacf55d",
+                "utility": 0.877778,
+                "uncovered_lexical_facets": [],
+                "selection_budget_exhausted": false
+              }
+            },
+            "generation_evidence": {
+              "text": "For Campaign-555296, the research lead in 2032 is Noah Lee.",
+              "source_sha256": "8c8cf67af30ab89b3fedd8339a61020d2050f4ef87bdea29cbdf9fc1cbacf55d",
+              "chunk_sha256": "8c8cf67af30ab89b3fedd8339a61020d2050f4ef87bdea29cbdf9fc1cbacf55d",
+              "evidence_sha256": "8c8cf67af30ab89b3fedd8339a61020d2050f4ef87bdea29cbdf9fc1cbacf55d",
+              "chunk_payload_sha256": "e9f0cf0436a83535217a72b393471ffaa7fe1c9521584bd97debbac2a69db65b",
+              "offset_start": 0,
+              "offset_end": 59,
+              "truncated": false,
+              "source_locator": "lines:1-1",
+              "page_no": null,
+              "original_chars": 59,
+              "evidence_chars": 59,
+              "mode": "authoritative_hit_chunk_complete_prefix"
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 2
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 2,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "generation_evidence",
+            "selected_count": 2,
+            "total_chars": 119,
+            "omitted": [],
+            "max_items": 8,
+            "max_chars_per_item": 1800,
+            "max_native_chars_per_item": 3200,
+            "max_total_chars": 12000
+          },
+          {
+            "stage": "grounded_generation",
+            "status": "validated",
+            "model": "gpt-6-luna"
+          },
+          {
+            "stage": "answer_display_completeness",
+            "status": "full_claims_retained",
+            "reason": "compound_or_exhaustive_answer_cannot_be_compressed_by_single_span",
+            "question_contract": {
+              "kind": "literal_fact",
+              "purpose": false,
+              "person_or_role": true,
+              "multiple_requested_fields": true,
+              "exhaustive_selection_required": false,
+              "requested_parts": [
+                "Who is the research lead in 2031",
+                "who is the research lead in 2032 for Campaign-555296?"
+              ],
+              "instruction": "Answer every requested field with substantive source facts. A document title only identifies the subject; it does not explain purpose, impact, reasons or roles. Keep all requested people and their separate roles together. For a literal short answer, select the smallest complete source phrase: a name, value with units/signs, date or event. Put supporting years, role labels and conditions in context/scope, not extra answer prose. Never remove a qualifier needed by the answer itself or replace missing evidence with inference."
+            }
+          }
+        ],
+        "claims": [
+          {
+            "support": [
+              {
+                "citation_id": 1,
+                "quote": "For Campaign-555296, the research lead in 2031 is Mira Chen."
+              }
+            ],
+            "text": "For Campaign-555296, the research lead in 2031 is Mira Chen."
+          },
+          {
+            "support": [
+              {
+                "citation_id": 2,
+                "quote": "For Campaign-555296, the research lead in 2032 is Noah Lee."
+              }
+            ],
+            "text": "For Campaign-555296, the research lead in 2032 is Noah Lee."
+          }
+        ],
+        "generation_audit": {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1155,
+          "output_tokens": 118,
+          "total_tokens": 1273,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 5732.593
+        },
+        "whole_question_review": {
+          "verification": "independent_model_review_not_formal_entailment",
+          "parts": [
+            {
+              "answered": true,
+              "claim_ids": [
+                1
+              ],
+              "part_id": 1
+            },
+            {
+              "answered": true,
+              "claim_ids": [
+                2
+              ],
+              "part_id": 2
+            }
+          ],
+          "provider_audit": {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "grounded_whole_question_review",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 567,
+            "output_tokens": 49,
+            "total_tokens": 616,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 0,
+            "call_index": 2,
+            "latency_ms": 2465.129
+          }
+        },
+        "generation_attempts": [
+          {
+            "attempt": 1,
+            "operation": "grounded_answer",
+            "validation_status": "validated",
+            "error_category": null,
+            "provider_audit": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "grounded_answer",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1155,
+              "output_tokens": 118,
+              "total_tokens": 1273,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 5732.593
+            },
+            "whole_question_review": {
+              "verification": "independent_model_review_not_formal_entailment",
+              "parts": [
+                {
+                  "answered": true,
+                  "claim_ids": [
+                    1
+                  ],
+                  "part_id": 1
+                },
+                {
+                  "answered": true,
+                  "claim_ids": [
+                    2
+                  ],
+                  "part_id": 2
+                }
+              ],
+              "provider_audit": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "grounded_whole_question_review",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "response_model": "gpt-6-luna",
+                "input_tokens": 567,
+                "output_tokens": 49,
+                "total_tokens": 616,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 2,
+                "latency_ms": 2465.129
+              }
+            }
+          }
+        ],
+        "generation_repaired": false,
+        "support_validation": "bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof",
+        "answer_strategy": "complete_reviewed_claims_without_single_span_projection"
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_answer",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 1155,
+          "output_tokens": 118,
+          "total_tokens": 1273,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 5732.593
+        },
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "grounded_whole_question_review",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 567,
+          "output_tokens": 49,
+          "total_tokens": 616,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 2,
+          "latency_ms": 2465.129
+        }
+      ],
+      "pass": true,
+      "scoring_only": {
+        "required": [
+          "Mira Chen",
+          "Noah Lee"
+        ],
+        "expected_abstention": false
+      }
+    }
+  ],
+  "passed": 2,
+  "total": 6,
+  "limitations": [
+    "Required-token scoring does not prove general semantic correctness.",
+    "Two planned cases require abstention; six passes would not mean six substantive answers."
+  ]
+}

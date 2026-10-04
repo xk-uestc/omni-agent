@@ -151,7 +151,8 @@ function normalizeOmniResponse(data){
   const result=data.result;
   return {...data,omni_response:true,answer:result.answer||result.clarification||result.explanation?.join("；")||"本次未返回文字说明。",
     structured:data.route==="sql"?result:{},document_evidence:result.citations||[],
-    visual_source_proof:result.visual_source_proof,answer_mode:result.answer_mode};
+    visual_source_proof:result.visual_source_proof,answer_mode:result.answer_mode,
+    answer_span_result:result.answer_span_result};
 }
 function sourcePageViewer(host,item,part){
   const metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
@@ -200,6 +201,7 @@ function renderDocumentEvidence(host,data){
   const items=data.document_evidence||[];if(!items.length)return;
   const docs=el("div","docs");
   if(data.answer_mode==="visual_source_model_reviewed")docs.append(el("p","schema-caption","原页读取 · 独立视觉模型复核；下面展示返回的原文片段，可展开原页核对数值与单位。"));
+  if(data.answer_mode==="source_multi_span_model_reviewed")docs.append(el("p","schema-caption","回答由多段原文组成，各子问与所选资料中的相关项目已分别复核。可展开来源核对；本次范围不包含未检索的页面。"));
   items.forEach(item=>{
     const row=el("article","doc"),metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
     row.append(el("div","ttl",item.title||"资料片段"),el("div","meta",Number.isInteger(page)?`第 ${page} 页`:"原文引用"),el("div","snip source-quote",item.snippet||""));

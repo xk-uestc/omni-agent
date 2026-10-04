@@ -61,7 +61,7 @@ def recovery_eligible(result, client, *, answer_audit_start=(0, 0)):
         return False
     # A successful substantive answer is not regenerated for a better score.
     if (result.get('status') == 'ok' and result.get('answer_mode') in {
-            'model_grounded', 'source_span_model_reviewed',
+            'model_grounded', 'source_span_model_reviewed', 'source_multi_span_model_reviewed',
             'native_table_model_reviewed', 'visual_chart_native_annotated',
             'visual_source_model_reviewed'}):
         return False

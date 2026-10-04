@@ -533,6 +533,10 @@ class GroundedSpanAnswer:
         return bind_grounded_span_answer(question, claims, citations, self.client)
 
     def source_answer(self, question, citations):
+        contract = question_contract(question)
+        if contract['multiple_requested_fields'] or contract['exhaustive_selection_required']:
+            from .source_multi_span_answer import bind_multi_source_answer
+            return bind_multi_source_answer(question, citations, self.client)
         from .source_span_answer import bind_source_span_answer
         return bind_source_span_answer(question, citations, self.client)
 

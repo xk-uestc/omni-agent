@@ -554,6 +554,41 @@ class KnowledgeStore:
                                         'fallback': 'attributed_extracts'})
                 self._verify_citation_sources(result['citations'])
                 return result
+            from .answer_contract import question_contract
+            early_contract = question_contract(question)
+            multi_source_attempted = False
+            early_client = self.generator.client
+            if ((early_contract['multiple_requested_fields'] or early_contract['exhaustive_selection_required'])
+                    and getattr(early_client, 'model', None) == 'gpt-6-luna'
+                    and getattr(early_client, 'reasoning', None) == 'medium'):
+                from .source_multi_span_answer import bind_multi_source_answer, replay_multi_source_proof
+                multi_source_attempted = True
+                try:
+                    literal = bind_multi_source_answer(question, generation_citations, early_client)
+                    verified = False
+                    if literal['status'] == 'model_reviewed':
+                        fresh, fresh_omitted = self._generation_citations(result['citations'])
+                        verified = (fresh == generation_citations and fresh_omitted == omitted
+                                    and replay_multi_source_proof(question, literal, fresh))
+                        self._verify_generation_chunks(fresh)
+                    result['trace'].append({'stage': 'evidence_first_multi_source_span',
+                        'status': 'model_reviewed' if verified else 'source_replay_failed'
+                            if literal['status'] == 'model_reviewed' else literal['status'],
+                        'reason': literal.get('reason'), 'model_audits': literal['model_audits'],
+                        'evidence_contract': 'raw_source_only_no_validated_facts'})
+                    if verified:
+                        result.update(status='ok', answer=literal['answer_value'], claims=[],
+                            answer_mode='source_multi_span_model_reviewed',
+                            answer_strategy='evidence_first_literal_multi_span', answer_span_result=literal)
+                        return result
+                    if literal.get('reason') in {
+                            'multi_provider_failed', 'multi_selection_provider_invalid', 'multi_review_provider_invalid'}:
+                        result.update(status='insufficient_evidence', answer_mode='extractive_fallback',
+                            answer_completeness='multi_part_provider_unavailable')
+                        return result
+                finally:
+                    self._verify_citation_sources(result['citations'])
+                    self._verify_generation_chunks(generation_citations)
             try:
                 generated = self.generator.answer(question, generation_citations)
                 result.update(generated)
@@ -585,12 +620,19 @@ class KnowledgeStore:
                     or result['answer_mode'] == 'model_grounded' and result.get('status') == 'insufficient_evidence'):
                 from .grounded_span_answer import GroundedSpanAnswer, _completed
                 from .source_span_answer import replay_source_span_proof
+                from .answer_contract import question_contract
+                contract = question_contract(question)
+                multi_source = contract['multiple_requested_fields'] or contract['exhaustive_selection_required']
+                if multi_source:
+                    from .source_multi_span_answer import replay_multi_source_proof
+                replay_source = replay_multi_source_proof if multi_source else replay_source_span_proof
                 client = self.generator.client
                 attempts = result.get('generation_attempts', [])
                 audits = [attempt.get('provider_audit', {}) for attempt in attempts]
                 last_audit = getattr(client, 'audit', {})
                 if (getattr(client, 'model', None) == 'gpt-6-luna'
                         and getattr(client, 'reasoning', None) == 'medium'
+                        and not multi_source_attempted
                         and attempts and all(attempt.get('validation_status') in {'validated', 'rejected'}
                             and attempt.get('error_category') != 'provider_unavailable' for attempt in attempts)
                         and _completed(last_audit) and all(_completed(audit) for audit in audits)):
@@ -600,25 +642,43 @@ class KnowledgeStore:
                         if source_span['status'] == 'model_reviewed':
                             fresh, fresh_omitted = self._generation_citations(result['citations'])
                             verified = (fresh == generation_citations and fresh_omitted == omitted
-                                        and replay_source_span_proof(question, source_span, fresh))
+                                        and replay_source(question, source_span, fresh))
                             self._verify_generation_chunks(fresh)
                         if verified:
                             result['prior_generation_output'] = result['answer']
                             result.update(status='ok', answer=source_span['answer_value'], claims=[],
-                                answer_mode='source_span_model_reviewed',
-                                answer_strategy='evidence_first_literal_source_span', answer_span_result=source_span)
+                                answer_mode='source_multi_span_model_reviewed' if multi_source else 'source_span_model_reviewed',
+                                answer_strategy='evidence_first_literal_multi_span' if multi_source else 'evidence_first_literal_source_span',
+                                answer_span_result=source_span)
                             result.pop('answer_completeness', None)
-                        result['trace'].append({'stage': 'evidence_first_source_span',
+                        result['trace'].append({'stage': 'evidence_first_multi_source_span' if multi_source else 'evidence_first_source_span',
                             'status': 'model_reviewed' if verified else 'source_replay_failed'
                                 if source_span['status'] == 'model_reviewed' else source_span['status'],
                             'reason': source_span.get('reason'), 'model_audits': source_span['model_audits'],
                             'evidence_contract': 'raw_source_only_no_validated_facts'})
                         if source_span.get('literal_error_code') is not None:
                             result['trace'][-1]['literal_error_code'] = source_span['literal_error_code']
+                        if multi_source and not verified and result['answer_mode'] == 'extractive_fallback':
+                            # Attributed excerpts remain available as evidence,
+                            # but are not a complete answer to a multi-part query.
+                            result['status'] = 'insufficient_evidence'
+                            result['answer_completeness'] = 'multi_part_literal_answer_not_verified'
                     finally:
                         self._verify_citation_sources(result['citations'])
                         self._verify_generation_chunks(generation_citations)
-            if result['answer_mode'] == 'model_grounded' and result.get('claims'):
+            if multi_source_attempted and result['answer_mode'] == 'extractive_fallback':
+                result['status'] = 'insufficient_evidence'
+                result['answer_completeness'] = 'multi_part_literal_answer_not_verified'
+            from .answer_contract import question_contract
+            display_contract = question_contract(question)
+            preserve_complete_answer = (display_contract['multiple_requested_fields']
+                                        or display_contract['exhaustive_selection_required'])
+            if result['answer_mode'] == 'model_grounded' and result.get('claims') and preserve_complete_answer:
+                result['answer_strategy'] = 'complete_reviewed_claims_without_single_span_projection'
+                result['trace'].append({'stage': 'answer_display_completeness', 'status': 'full_claims_retained',
+                    'reason': 'compound_or_exhaustive_answer_cannot_be_compressed_by_single_span',
+                    'question_contract': display_contract})
+            if result['answer_mode'] == 'model_grounded' and result.get('claims') and not preserve_complete_answer:
                 def unchanged_generation_snapshot(fresh, fresh_omitted):
                     # Omissions known before generation are legitimate scope
                     # limits. Only an exactly unchanged selected snapshot and
