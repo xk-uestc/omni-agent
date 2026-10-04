@@ -190,6 +190,14 @@ body:has(.site-sidebar) > header #status { margin-left: auto; }
 .answer .docs .doc + .doc { border-top: 1px solid var(--ui-line); }
 .answer .docs .doc .ttl { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
 .answer .docs .doc .snip { color: #45454a; }
+.answer .source-quote { white-space: pre-wrap; overflow-wrap: anywhere; }
+.source-original { display: inline-block; margin-top: 8px; color: var(--ui-accent, #257b64); font-size: 13px; }
+.source-page-viewer { margin-top: 10px; padding: 10px 0; border-top: 1px solid var(--ui-line); }
+.source-page-viewer > summary { cursor: pointer; font-size: 13px; color: var(--ui-muted); }
+.source-page-stage { position: relative; width: fit-content; max-width: 100%; margin-top: 10px; }
+.source-page-stage img { display: block; max-width: 100%; height: auto; }
+.source-page-stage img[hidden] { display: none; }
+.source-page-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .composer-wrap { padding-bottom: 12px; background: linear-gradient(to top,#fff 82%,rgba(255,255,255,0)); }
 .composer { width: min(780px,100%); border-color: #e4e4e7; border-radius: 26px; box-shadow: 0 8px 28px rgba(0,0,0,.055); }
 .composer textarea { font-size: 15px; }
@@ -444,7 +452,9 @@ body:has(.site-sidebar) .visual-dialog { border: 1px solid var(--ui-line); borde
   body:has(.site-sidebar) main > aside { border-right: 0; border-bottom: 1px solid var(--ui-line); padding: 12px 0 18px; }
 }
 @media (max-width: 640px) {
-  .topbar { padding: 0 10px; gap: 3px; }
+  .topbar { height: auto; min-height: 56px; flex: 0 0 auto; flex-wrap: wrap; padding: 8px 10px; gap: 6px; }
+  .topbar .tabs { order: 10; flex: 1 0 100%; margin-left: 0; }
+  .topbar .tab { flex: 1; min-height: 38px; padding: 5px 8px; white-space: nowrap; }
   .top-route { display: inline-flex; }
   .empty { padding-top: 10vh; }
   .empty h1 { font-size: 25px; }

@@ -268,7 +268,10 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'rows from ONE table, ratio exactly two annotations ordered [numerator, denominator], '
                 'or signed difference exactly two annotations ordered [minuend, subtrahend] as explicitly requested. '
                 'Difference means first minus second, never absolute difference. If the subtraction direction '
-                'is unstated or either operand cannot be bound to the same column, period and literal unit, abstain. '
+                'is unstated, abstain. Operands must have identical measure and literal unit. '
+                'They may be distinct requested rows in one column/period, OR the SAME entity row '
+                'in explicitly requested distinct year columns with identical measure/unit headers. '
+                'A cross-year difference does not require identical years. '
                 'Do not select a TOTAL row and its components together. '
                 'Bind every entity, period, column, inclusion and exclusion. If the question also requests '
                 'a qualitative comparison, explanation or unseen narrative calculations, abstain; do not answer only one part. '
@@ -310,7 +313,10 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'This is an explicit printed header declaration, not a guessed scale. When both operands '
                 'use that declaration, arithmetic on 3 and 1 returns 2 in thousands, not 2000 in thousands. '
                 'Check the actual supplied header_path and multiplier rather than requiring the word thousand '
-                'to appear verbatim in the original header. Reject conflicting or absent evidence.',
+                'to appear verbatim in the original header. Reject conflicting or absent evidence. '
+                'Set approved=true only when every other requested check is true and the original whole '
+                'question is supported. A rejection for an extra concern must also set its relevant '
+                'scope/completeness/unit check false; do not emit approved=false with all checks true.',
                 {'question': question, 'all_native_table_candidates': deepcopy(registries),
                  'complete_table_page_contexts': deepcopy(page_contexts),
                  'selected_fact_ids': plan['fact_ids'], 'server_annotation_computation': computation}, REVIEW,

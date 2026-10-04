@@ -37,6 +37,22 @@ def output_profile(sql, tables):
                 primary=[c.name for c in definitions[table].columns if c.primary_key]
                 return {'table':table,'column':primary[0] if len(primary)==1 else '*',
                         'operators':['COUNT'],'count_semantics':'physical_row_count'}
+            # COUNT(*) on a joined rowset counts fanout, not distinct entities.
+            # An explicit non-null key on the preserved FROM side is a valid
+            # lineage anchor only for INNER/LEFT joins. Nullable SQLite text
+            # primary keys and RIGHT/FULL null extension cannot prove this.
+            joins=scope.expression.args.get('joins',[])
+            from_clause=scope.expression.args.get('from_')
+            if (sources and joins and from_clause and isinstance(from_clause.this,exp.Table)
+                    and all(j.args.get('side','') in ('','LEFT') and
+                            j.args.get('kind','') in ('','INNER','OUTER') for j in joins)):
+                source=scope.sources.get(from_clause.this.alias_or_name)
+                if isinstance(source,exp.Table):
+                    primary=[c for c in definitions[source.name].columns if c.primary_key]
+                    if len(primary)==1 and not primary[0].nullable:
+                        return {'table':source.name,'column':primary[0].name,'operators':['COUNT'],
+                            'count_semantics':'joined_row_count_including_fanout',
+                            'non_null_anchor_verification':'declared_not_null_preserved_from_side'}
             return None
         if isinstance(expression,exp.Count) and isinstance(expression.this,exp.Distinct):
             expressions=expression.this.expressions

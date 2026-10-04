@@ -81,3 +81,23 @@ def test_auth_failure_stops_followup(context,status):
 def test_only_successful_executed_results_are_saved():
     assert saved_sql_context('q',{'status':'clarification','sql':None}) is None
     assert saved_sql_context('q',{'status':'ok','sql':'SELECT 1','result_state':'partial_rows'}) is None
+
+
+def test_complete_new_scope_does_not_call_followup_model(context):
+    engine,turn=context;client=Client('wrong');attach(engine,client)
+    question='仍是2024年华南销售额，按地区分组查看合计'
+    scope,audit=resolve_sql_followup_scope(question,[turn],engine)
+    assert scope == question and audit['reason'] == 'self_contained_sql'
+    assert not client.calls
+
+
+def test_changed_database_cannot_authorize_saved_followup(context):
+    import sqlite3
+    engine,turn=context;client=Client('2024年华东销售额');attach(engine,client)
+    with sqlite3.connect(engine.database_path) as connection:
+        connection.execute('CREATE TABLE new_source(id INTEGER)')
+    question='那2024年呢，仍按sales_amount合计？'
+    scope,audit=resolve_sql_followup_scope(question,[turn],engine)
+    assert scope == question and audit['requires_clarification']
+    assert audit['reason'] == 'sql_history_source_revision_changed'
+    assert not client.calls

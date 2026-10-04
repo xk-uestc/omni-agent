@@ -17,6 +17,8 @@ from .fusion_constraints import SourceConstraintError
 from .fusion_history import (resolve_fusion_followup, verify_inherited_document_tasks,
                              verified_fusion_context)
 from .sql_history_scope import resolve_sql_followup_scope, VERIFIED_SQL_CONTEXT_MODES, saved_sql_context
+from .nl2sql.security import SqlSafetyError
+from .nl2sql.models import QueryResult, QueryPlan
 
 
 PLAN_SCHEMA = object_schema({'route': {'type': 'string', 'enum': ['sql', 'document', 'fusion', 'clarify']},
@@ -337,7 +339,8 @@ class OmniAgent:
             elif sql_audit.get('requires_clarification') is True:
                 fusion_history_audit = sql_audit
             elif sql_audit.get('reason') == 'self_contained_sql':
-                fusion_history_audit = sql_audit
+                if fusion_history_audit.get('reason') != 'server_verified_self_contained_sql':
+                    fusion_history_audit = sql_audit
         fresh_scope = (fusion_history_audit.get('reason') in {'server_verified_self_contained_sql', 'self_contained_sql'}
                        or bool(re.search(r'^(?:换个主题|换一个主题|换个问题|新问题|重新查询)', question)))
         planning_history = () if fresh_scope else history
@@ -458,7 +461,18 @@ class OmniAgent:
                   'rejection_code': rejection_code,
                   'normalizations': planning_notes, 'attempts': planning_attempts}]
         if route == 'sql':
-            result = self.engine.answer(effective).to_dict()
+            try:
+                result = self.engine.answer(effective).to_dict()
+            except SqlSafetyError:
+                # Persist the failed turn without granting it execution authority.
+                # Do not serialize exception text, candidate SQL or model payloads.
+                result = QueryResult(status='incomplete', question=effective,
+                    rewritten_question=effective, sql=None, parameters=(), columns=(), rows=(),
+                    plan=QueryPlan(rewritten_question=effective,
+                        clarification_code='sql_execution_rejected').to_dict(),
+                    explanation=('查询未通过执行检查，请缩小范围或明确查询条件后重新查询。',),
+                    provenance={'source_type':'structured_database', 'execution_error_code':'sql_execution_rejected'},
+                    result_state='unexecuted').to_dict()
             state = {'route': route, 'metrics': result['plan'].get('metrics', []),
                      'filters': result['plan'].get('filters', []), 'dimensions': result['plan'].get('dimensions', []),
                      'clarification_code': result['plan'].get('clarification_code'),

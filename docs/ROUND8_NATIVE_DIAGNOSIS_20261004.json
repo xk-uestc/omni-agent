@@ -1,0 +1,1015 @@
+{
+  "created_at": "2026-10-03T22:25:42.104859+00:00",
+  "scope": "source_only_development_diagnosis_not_accuracy_score",
+  "reference_opened": false,
+  "calls": [
+    {
+      "operation": "native_table_fact_selection",
+      "context": {
+        "question": "For Network, subtract its 2031 cost from its 2032 cost.",
+        "native_table_registry": [
+          {
+            "document_id": "cost",
+            "page_no": 1,
+            "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+            "table_key": "T001",
+            "scope": {
+              "external_scope_text": [
+                "Service operating costs. Cost comparison for 2031 and 2032.",
+                "2031 2032"
+              ],
+              "complete_scope": "continuous_local_native_rows_not_whole_document",
+              "scope_status": "multiple_years_not_assigned_to_cells"
+            },
+            "facts": [
+              {
+                "selection_id": "F001",
+                "row_label": "Network",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "raw_value": "1",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F002",
+                "row_label": "Network",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2032"
+                ],
+                "raw_value": "3",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2032",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F003",
+                "row_label": "Storage",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "raw_value": "2",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F004",
+                "row_label": "Storage",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2032"
+                ],
+                "raw_value": "6",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2032",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F005",
+                "row_label": "Support",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "raw_value": "3",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F006",
+                "row_label": "Support",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2032"
+                ],
+                "raw_value": "9",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2032",
+                "value_kind": "native_aligned_cell_literal"
+              }
+            ]
+          }
+        ],
+        "complete_table_page_contexts": [
+          {
+            "document_id": "cost",
+            "title": "Operating cost report",
+            "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+            "page_no": 1,
+            "complete_native_page_text": "Service operating costs. Cost comparison for 2031 and 2032.\nCost USD '000\nCost USD '000\n2031\n2032\nNetwork\n1\n3\nStorage\n2\n6\nSupport\n3\n9\n",
+            "scope": "whole_native_text_layer_of_table_page_not_ocr_or_whole_document"
+          }
+        ]
+      },
+      "output": {
+        "abstain": false,
+        "fact_ids": [
+          "F002",
+          "F001"
+        ],
+        "operation": "difference"
+      },
+      "audit": {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "native_table_fact_selection",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 1836,
+        "output_tokens": 100,
+        "total_tokens": 1936,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 67,
+        "call_index": 1,
+        "latency_ms": 4422.81
+      }
+    },
+    {
+      "operation": "native_table_independent_scope_review",
+      "context": {
+        "question": "For Network, subtract its 2031 cost from its 2032 cost.",
+        "all_native_table_candidates": [
+          {
+            "document_id": "cost",
+            "page_no": 1,
+            "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+            "table_key": "T001",
+            "scope": {
+              "external_scope_text": [
+                "Service operating costs. Cost comparison for 2031 and 2032.",
+                "2031 2032"
+              ],
+              "complete_scope": "continuous_local_native_rows_not_whole_document",
+              "scope_status": "multiple_years_not_assigned_to_cells"
+            },
+            "facts": [
+              {
+                "selection_id": "F001",
+                "row_label": "Network",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "raw_value": "1",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F002",
+                "row_label": "Network",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2032"
+                ],
+                "raw_value": "3",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2032",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F003",
+                "row_label": "Storage",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "raw_value": "2",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F004",
+                "row_label": "Storage",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2032"
+                ],
+                "raw_value": "6",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2032",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F005",
+                "row_label": "Support",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2031"
+                ],
+                "raw_value": "3",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2031"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      230.0,
+                      54.25,
+                      295.82000732421875,
+                      67.98999786376953
+                    ],
+                    [
+                      230.0,
+                      74.25,
+                      252.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2031",
+                "value_kind": "native_aligned_cell_literal"
+              },
+              {
+                "selection_id": "F006",
+                "row_label": "Support",
+                "column_header_path": [
+                  "Cost USD '000",
+                  "2032"
+                ],
+                "raw_value": "9",
+                "unit": "currency:USD",
+                "currency": "USD",
+                "scale": "1000",
+                "scale_evidence": {
+                  "binding": "own_explicit_column_header_only",
+                  "header_path": [
+                    "Cost USD '000",
+                    "2032"
+                  ],
+                  "header_bboxes_display_pt": [
+                    [
+                      460.0,
+                      54.25,
+                      525.8200073242188,
+                      67.98999786376953
+                    ],
+                    [
+                      460.0,
+                      74.25,
+                      482.239990234375,
+                      87.98999786376953
+                    ]
+                  ],
+                  "unit": "currency:USD",
+                  "currency": "USD",
+                  "multiplier": "1000"
+                },
+                "period": "2032",
+                "value_kind": "native_aligned_cell_literal"
+              }
+            ]
+          }
+        ],
+        "complete_table_page_contexts": [
+          {
+            "document_id": "cost",
+            "title": "Operating cost report",
+            "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+            "page_no": 1,
+            "complete_native_page_text": "Service operating costs. Cost comparison for 2031 and 2032.\nCost USD '000\nCost USD '000\n2031\n2032\nNetwork\n1\n3\nStorage\n2\n6\nSupport\n3\n9\n",
+            "scope": "whole_native_text_layer_of_table_page_not_ocr_or_whole_document"
+          }
+        ],
+        "selected_fact_ids": [
+          "F002",
+          "F001"
+        ],
+        "server_annotation_computation": {
+          "answer": "2 USD thousand",
+          "operation": "difference",
+          "operands": [
+            "3",
+            "1"
+          ],
+          "numeric_result": "2",
+          "unit": "currency:USD",
+          "scale": "1000",
+          "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+          "physical_calculator_input_eligible": false,
+          "operand_periods": [
+            "2032",
+            "2031"
+          ]
+        }
+      },
+      "output": {
+        "all_entity_period_conditions_bound": true,
+        "all_requested_rows_and_columns_selected": true,
+        "approved": true,
+        "no_competing_source_or_scope": true,
+        "unit_scale_and_sign_preserved": true,
+        "whole_question_answered": true
+      },
+      "audit": {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "native_table_independent_scope_review",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 1940,
+        "output_tokens": 59,
+        "total_tokens": 1999,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 0,
+        "call_index": 2,
+        "latency_ms": 3023.004
+      }
+    }
+  ],
+  "result": {
+    "status": "ok",
+    "question": "For Network, subtract its 2031 cost from its 2032 cost.",
+    "answer": "2 USD thousand",
+    "answer_mode": "native_table_model_reviewed",
+    "answer_scope": {
+      "row_labels": [
+        "Network",
+        "Network"
+      ],
+      "column_header_paths": [
+        [
+          "Cost USD '000",
+          "2032"
+        ],
+        [
+          "Cost USD '000",
+          "2031"
+        ]
+      ],
+      "period": "2032",
+      "period_scope_text": [],
+      "unit": "currency:USD",
+      "currency": "USD",
+      "scale": "1000",
+      "operand_periods": [
+        "2032",
+        "2031"
+      ],
+      "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+      "calculator_input_eligible": false
+    },
+    "computation": {
+      "answer": "2 USD thousand",
+      "operation": "difference",
+      "operands": [
+        "3",
+        "1"
+      ],
+      "numeric_result": "2",
+      "unit": "currency:USD",
+      "scale": "1000",
+      "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+      "physical_calculator_input_eligible": false,
+      "operand_periods": [
+        "2032",
+        "2031"
+      ]
+    },
+    "semantic_review": {
+      "all_entity_period_conditions_bound": true,
+      "all_requested_rows_and_columns_selected": true,
+      "approved": true,
+      "no_competing_source_or_scope": true,
+      "unit_scale_and_sign_preserved": true,
+      "whole_question_answered": true
+    },
+    "semantic_verification": "independent_model_review_not_formal_entailment",
+    "model_audits": [
+      {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "native_table_fact_selection",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 1836,
+        "output_tokens": 100,
+        "total_tokens": 1936,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 67,
+        "call_index": 1,
+        "latency_ms": 4422.81
+      },
+      {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "native_table_independent_scope_review",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 1940,
+        "output_tokens": 59,
+        "total_tokens": 1999,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 0,
+        "call_index": 2,
+        "latency_ms": 3023.004
+      }
+    ],
+    "citations": [
+      {
+        "citation_id": 1,
+        "document_id": "cost",
+        "title": "Operating cost report",
+        "snippet": "Network: 3",
+        "source_uri": "/api/v1/knowledge/documents/cost/original",
+        "metadata": {
+          "document_id": "cost",
+          "page_no": 1,
+          "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+          "source_locator": "page:1:native-table:e5663aee82a1b1539f1ef9f9:fact:e5663aee82a1b1539f1ef9f9:row:0:column:2",
+          "fact": {
+            "fact_id": "e5663aee82a1b1539f1ef9f9:row:0:column:2",
+            "table_id": "e5663aee82a1b1539f1ef9f9",
+            "row_header": "Network",
+            "column_header_path": [
+              "Cost USD '000",
+              "2032"
+            ],
+            "row_header_bbox_display_pt": [
+              40.0,
+              104.25,
+              76.67000579833984,
+              117.98999786376953
+            ],
+            "column_header_bboxes_display_pt": [
+              [
+                460.0,
+                54.25,
+                525.8200073242188,
+                67.98999786376953
+              ],
+              [
+                460.0,
+                74.25,
+                482.239990234375,
+                87.98999786376953
+              ]
+            ],
+            "bbox_display_pt": [
+              460.0,
+              104.25,
+              465.55999755859375,
+              117.98999786376953
+            ],
+            "raw_value": "3",
+            "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+            "page_no": 1,
+            "unit": "currency:USD",
+            "scale": "1000",
+            "currency": "USD",
+            "unit_evidence": {
+              "binding": "own_explicit_column_header_only",
+              "header_path": [
+                "Cost USD '000",
+                "2032"
+              ],
+              "header_bboxes_display_pt": [
+                [
+                  460.0,
+                  54.25,
+                  525.8200073242188,
+                  67.98999786376953
+                ],
+                [
+                  460.0,
+                  74.25,
+                  482.239990234375,
+                  87.98999786376953
+                ]
+              ],
+              "unit": "currency:USD",
+              "currency": "USD",
+              "multiplier": "1000"
+            },
+            "scale_evidence": {
+              "binding": "own_explicit_column_header_only",
+              "header_path": [
+                "Cost USD '000",
+                "2032"
+              ],
+              "header_bboxes_display_pt": [
+                [
+                  460.0,
+                  54.25,
+                  525.8200073242188,
+                  67.98999786376953
+                ],
+                [
+                  460.0,
+                  74.25,
+                  482.239990234375,
+                  87.98999786376953
+                ]
+              ],
+              "unit": "currency:USD",
+              "currency": "USD",
+              "multiplier": "1000"
+            },
+            "period": "2032",
+            "period_status": "explicit_column_year",
+            "value_kind": "native_aligned_cell_literal",
+            "calculator_input_eligible": false,
+            "validation_scope": "native_word_alignment_not_visible_ocr_or_semantic_truth"
+          },
+          "retrieval_channel": "native_aligned_numeric_annotation"
+        }
+      },
+      {
+        "citation_id": 2,
+        "document_id": "cost",
+        "title": "Operating cost report",
+        "snippet": "Network: 1",
+        "source_uri": "/api/v1/knowledge/documents/cost/original",
+        "metadata": {
+          "document_id": "cost",
+          "page_no": 1,
+          "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+          "source_locator": "page:1:native-table:e5663aee82a1b1539f1ef9f9:fact:e5663aee82a1b1539f1ef9f9:row:0:column:1",
+          "fact": {
+            "fact_id": "e5663aee82a1b1539f1ef9f9:row:0:column:1",
+            "table_id": "e5663aee82a1b1539f1ef9f9",
+            "row_header": "Network",
+            "column_header_path": [
+              "Cost USD '000",
+              "2031"
+            ],
+            "row_header_bbox_display_pt": [
+              40.0,
+              104.25,
+              76.67000579833984,
+              117.98999786376953
+            ],
+            "column_header_bboxes_display_pt": [
+              [
+                230.0,
+                54.25,
+                295.82000732421875,
+                67.98999786376953
+              ],
+              [
+                230.0,
+                74.25,
+                252.239990234375,
+                87.98999786376953
+              ]
+            ],
+            "bbox_display_pt": [
+              230.0,
+              104.25,
+              235.55999755859375,
+              117.98999786376953
+            ],
+            "raw_value": "1",
+            "source_sha256": "b48ed012664b71691267754d8801850d47aed77ce4a015ed87e8760dcfe4a3ed",
+            "page_no": 1,
+            "unit": "currency:USD",
+            "scale": "1000",
+            "currency": "USD",
+            "unit_evidence": {
+              "binding": "own_explicit_column_header_only",
+              "header_path": [
+                "Cost USD '000",
+                "2031"
+              ],
+              "header_bboxes_display_pt": [
+                [
+                  230.0,
+                  54.25,
+                  295.82000732421875,
+                  67.98999786376953
+                ],
+                [
+                  230.0,
+                  74.25,
+                  252.239990234375,
+                  87.98999786376953
+                ]
+              ],
+              "unit": "currency:USD",
+              "currency": "USD",
+              "multiplier": "1000"
+            },
+            "scale_evidence": {
+              "binding": "own_explicit_column_header_only",
+              "header_path": [
+                "Cost USD '000",
+                "2031"
+              ],
+              "header_bboxes_display_pt": [
+                [
+                  230.0,
+                  54.25,
+                  295.82000732421875,
+                  67.98999786376953
+                ],
+                [
+                  230.0,
+                  74.25,
+                  252.239990234375,
+                  87.98999786376953
+                ]
+              ],
+              "unit": "currency:USD",
+              "currency": "USD",
+              "multiplier": "1000"
+            },
+            "period": "2031",
+            "period_status": "explicit_column_year",
+            "value_kind": "native_aligned_cell_literal",
+            "calculator_input_eligible": false,
+            "validation_scope": "native_word_alignment_not_visible_ocr_or_semantic_truth"
+          },
+          "retrieval_channel": "native_aligned_numeric_annotation"
+        }
+      }
+    ],
+    "trace": [
+      {
+        "stage": "native_aligned_table_routing",
+        "status": "model_reviewed_native_annotation_computation",
+        "model_requests_attempted": 2,
+        "model_audits": [
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "native_table_fact_selection",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 1836,
+            "output_tokens": 100,
+            "total_tokens": 1936,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 67,
+            "call_index": 1,
+            "latency_ms": 4422.81
+          },
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "native_table_independent_scope_review",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 1940,
+            "output_tokens": 59,
+            "total_tokens": 1999,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 0,
+            "call_index": 2,
+            "latency_ms": 3023.004
+          }
+        ],
+        "candidate_document_ids": [
+          "cost"
+        ],
+        "scope": "selected_pdf_all_pages_not_global_corpus",
+        "complete_candidate_scan": true
+      }
+    ],
+    "calculator_input_eligible": false,
+    "retrieval": {
+      "mode": "bm25",
+      "embedding_model": null,
+      "dense_answer_threshold": null
+    }
+  },
+  "trace": {
+    "stage": "native_aligned_table_routing",
+    "status": "model_reviewed_native_annotation_computation",
+    "model_requests_attempted": 2,
+    "model_audits": [
+      {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "native_table_fact_selection",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 1836,
+        "output_tokens": 100,
+        "total_tokens": 1936,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 67,
+        "call_index": 1,
+        "latency_ms": 4422.81
+      },
+      {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "native_table_independent_scope_review",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 1940,
+        "output_tokens": 59,
+        "total_tokens": 1999,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 0,
+        "call_index": 2,
+        "latency_ms": 3023.004
+      }
+    ],
+    "candidate_document_ids": [
+      "cost"
+    ],
+    "scope": "selected_pdf_all_pages_not_global_corpus",
+    "complete_candidate_scan": true
+  }
+}

@@ -273,7 +273,7 @@
       .meta { flex-wrap: wrap; gap: 5px 12px; }
     }
   </style>
-  <link rel="stylesheet" href="./modern-ui.css?v=20261003-answer-lines-2" />
+  <link rel="stylesheet" href="./modern-ui.css?v=20261004-docs-entry-1" />
   <link rel="stylesheet" href="./query-journey.css?v=20261003-polish-6" />
   <link rel="stylesheet" href="./query-result-viz.css?v=20261003-polish-6" />
   <link rel="stylesheet" href="./result-browser.css?v=20261003-full-results-1" />
@@ -305,9 +305,10 @@
         <a class="top-route" href="./knowledge.html" title="文档资料库与跨源计算" aria-label="文档资料库与跨源计算"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料库</a>
         <a class="top-route" href="./capabilities.html" title="赛题全量验收台" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>验收</a>
         <button class="top-new" id="newChatTop" type="button" title="新对话">＋ 新对话</button>
-        <nav class="tabs">
-          <button class="tab on" id="tabAsk" type="button">问数推理</button>
-          <button class="tab" id="tabDoc" type="button">文档体检</button>
+        <nav class="tabs" aria-label="工作模式">
+          <button class="tab on" id="tabAsk" type="button" aria-pressed="true">问数推理</button>
+          <button class="tab" id="tabDocs" type="button" aria-pressed="false">文档问答</button>
+          <button class="tab" id="tabDoc" type="button" aria-pressed="false">文档体检</button>
         </nav>
         <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--dim)">
           <span class="health" id="apiHealth" data-state="loading"><span class="dot"></span> <span id="healthText">正在连接 API</span></span>
@@ -368,6 +369,6 @@
 <script src="./query-result-viz.js?v=20261003-full-results-2" defer></script>
 <script src="./query-journey.js?v=20261003-full-results-2" defer></script>
 <script src="./result-browser.js?v=20261003-full-results-1" defer></script>
-<script src="./app.js?v=20261003-full-results-1" defer></script>
+<script src="./app.js?v=20261004-docs-entry-1" defer></script>
 </body>
 </html>

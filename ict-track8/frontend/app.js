@@ -3,6 +3,7 @@ const STREAM = new URLSearchParams(location.search).get("stream") !== "false";
 const $ = (id) => document.getElementById(id);
 const stageNames = {intent:"理解问题与上下文",structured_query:"规划并执行只读 SQL",document_retrieval:"检索文档依据",evidence_fusion:"融合结果与证据",clarification:"等待澄清"};
 const capabilities = [
+  {name:"文档问答",group:"资料",endpoint:"omni",hint:"原文片段、页码与位置",questions:["销售额的统计口径是什么","资料中列出了哪些考核要求"]},
   {name:"基础问数",group:"问数",hint:"指标、筛选与聚合",questions:["2025年华东地区的销售额是多少","2025年各地区销售额排名","2025年华南地区的订单数"]},
   {name:"多轮追问",group:"问数",hint:"沿用或覆盖上一轮口径",questions:["2025年华东地区的销售额","那华南呢","换成2024年"]},
   {name:"比较分析",group:"分析",hint:"同比、环比与占比",questions:["2025年各地区销售额占比","2025年华东地区销售额同比","2025年3月销售额环比"]},
@@ -11,9 +12,15 @@ const capabilities = [
 ];
 const chevron = '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>';
 let sessionId = sessionStorage.getItem("ict8_lattice_session") || crypto.randomUUID();
-let activeController = null, busy = false, activeCapability = capabilities[0], turns = [];
+let activeController = null, busy = false, activeCapability = capabilities[1], turns = [];
+let lastAskCapability = activeCapability;
 let liveSchema = { tables: [], source: null };
 let schemaLoadPromise = Promise.resolve();
+const sourceViewerCleanups = new Map();
+function clearSourceViewers(within){
+  for(const [viewer,dispose] of sourceViewerCleanups){if(!within||within.contains(viewer))dispose();}
+}
+window.addEventListener("pagehide",()=>clearSourceViewers());
 sessionStorage.setItem("ict8_lattice_session", sessionId);
 
 function el(tag, cls, value) { const n=document.createElement(tag); if(cls)n.className=cls; if(value!==undefined)n.textContent=String(value); return n; }
@@ -23,12 +30,15 @@ function post(path, body, signal) { return fetch(API+path,{method:"POST",headers
 
 function selectCapability(capability) {
   activeCapability=capability; $("capTitle").textContent=capability.name;
+  if(capability.endpoint!=="omni")lastAskCapability=capability;
+  setTab(false);
   const caps=$("caps"),plates=$("plates"),suggests=$("suggests"); caps.replaceChildren(); plates.replaceChildren(); suggests.replaceChildren();
   let group="";
   for(const c of capabilities) {
     if(c.group!==group){ group=c.group; caps.append(el("div","nav-label",group)); }
     const b=el("button","cap"+(c===capability?" on":"")); b.type="button";
-    b.append(el("i","",c.group==="问数"?"SQL":"分析"),el("span","",c.name)); b.onclick=()=>selectCapability(c); caps.append(b);
+    b.dataset.endpoint=c.endpoint||"agent";
+    b.append(el("i","",c.group==="问数"?"SQL":c.group==="资料"?"文档":"分析"),el("span","",c.name)); b.onclick=()=>selectCapability(c); caps.append(b);
   }
   for(const question of capability.questions){
     const b=el("button","plate",question);b.type="button";b.onclick=()=>ask(question);plates.append(b);
@@ -86,6 +96,7 @@ function summaryRow(box,label,value,codeKind){
   box.append(el("span","key",label),rendered);
 }
 function renderAudit(body,data){
+  if(data.route==="document")return;
   if(window.QueryJourney){body.append(window.QueryJourney.render(data,liveSchema,schemaLoadPromise.then(()=>liveSchema)));return;}
   const structured=data.structured||{},plan=structured.plan||{},provenance=structured.provenance||{},links=provenance.field_links||plan.links||[];
   const audit=el("div","audit"),intro=el("div","audit-intro");intro.append(el("b","","查询过程"),el("span","","本次查询的处理详情"));audit.append(intro);
@@ -135,8 +146,74 @@ function renderTable(host,structured){
   });tbody.append(line);});
   table.append(tbody);wrap.append(table);host.append(wrap);
 }
+function normalizeOmniResponse(data){
+  if(!data.route||!data.result)return data;
+  const result=data.result;
+  return {...data,omni_response:true,answer:result.answer||result.clarification||result.explanation?.join("；")||"本次未返回文字说明。",
+    structured:data.route==="sql"?result:{},document_evidence:result.citations||[],
+    visual_source_proof:result.visual_source_proof,answer_mode:result.answer_mode};
+}
+function sourcePageViewer(host,item,part){
+  const metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
+  const sourceSha=metadata.source_sha256;
+  if(typeof did!=="string"||!Number.isInteger(page)||page<1||!/^[a-f0-9]{64}$/.test(sourceSha||""))return;
+  const details=el("details","source-page-viewer"),summary=el("summary","",`查看第 ${page} 页与引用位置`);
+  const info=el("p","schema-caption"),stage=el("div","source-page-stage"),image=el("img");
+  image.alt=`${item.title||"资料"} · 第 ${page} 页`;image.hidden=true;stage.append(image);details.append(summary,info,stage);host.append(details);
+  let controller=null,blobUrl=null,revision=0;
+  function release(){controller?.abort();controller=null;revision++;image.hidden=true;image.removeAttribute("src");stage.querySelector("svg")?.remove();if(blobUrl){URL.revokeObjectURL(blobUrl);blobUrl=null;}}
+  const onToggle=async()=>{
+    if(!details.open){release();return;}
+    release();controller=new AbortController();const signal=controller.signal,current=revision;
+    info.textContent="正在读取并核对原页…";
+    try{
+      const base=new URL(API,location.href),path=`/api/v1/knowledge/documents/${encodeURIComponent(did)}`;
+      const response=await fetch(new URL(path+"/visual-evidence",base),{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({page_no:page,expected_source_sha256:sourceSha}),signal});
+      const manifest=await json(response);
+      if(manifest.document_id!==did||manifest.page_no!==page||manifest.source_sha256!==sourceSha||!/^[a-f0-9]{64}$/.test(manifest.render_sha256||""))throw Error("页图来源与回答引用不一致，请重新查询。");
+      const uri=new URL(manifest.png_uri,base);
+      if(uri.origin!==base.origin||uri.pathname!==path+`/pages/${page}/visual.png`||uri.searchParams.get("source_sha256")!==sourceSha||uri.searchParams.get("render_sha256")!==manifest.render_sha256)throw Error("页图地址未绑定本次引用。");
+      const png=await fetch(uri,{signal});if(!png.ok){await json(png);throw Error("原页读取失败。");}
+      if(!png.headers.get("Content-Type")?.startsWith("image/png"))throw Error("原页格式不正确。");
+      const blob=await png.blob();if(blob.size>12*1024*1024)throw Error("页图超过显示预算。");
+      const hash=await crypto.subtle.digest("SHA-256",await blob.arrayBuffer());
+      const sha=Array.from(new Uint8Array(hash),v=>v.toString(16).padStart(2,"0")).join("");
+      if(sha!==manifest.render_sha256)throw Error("页图内容核对失败。");
+      if(signal.aborted||current!==revision||!details.open)return;
+      blobUrl=URL.createObjectURL(blob);image.src=blobUrl;image.hidden=false;
+      const box=part?.bbox_normalized,matched=part?.page_no===page&&part.source_sha256===sourceSha&&part.render_sha256===sha;
+      const valid=Array.isArray(box)&&box.length===4&&box.every(v=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3];
+      if(matched&&valid){
+        const svg=document.createElementNS("http://www.w3.org/2000/svg","svg"),rect=document.createElementNS(svg.namespaceURI,"rect");
+        svg.setAttribute("viewBox","0 0 1 1");svg.setAttribute("preserveAspectRatio","none");svg.setAttribute("aria-label","本次引用的原页位置");svg.setAttribute("role","img");
+        Object.entries({x:box[0],y:box[1],width:box[2]-box[0],height:box[3]-box[1],fill:"rgba(255,199,0,.18)",stroke:"#d49a00","stroke-width":.003}).forEach(([key,value])=>rect.setAttribute(key,String(value)));
+        svg.append(rect);stage.append(svg);
+      }
+      info.textContent=`第 ${page} 页 · 原文件 ${sourceSha.slice(0,16)}… · ${matched&&valid?"引用位置已高亮；位置由独立视觉模型复核。":"原页内容已核对，本引用未提供匹配的位置标注。"}`;
+    }catch(error){if(!signal.aborted&&current===revision)info.textContent=error.message||"原页读取失败。";}
+  };
+  details.addEventListener("toggle",onToggle);
+  sourceViewerCleanups.set(details,()=>{release();details.removeEventListener("toggle",onToggle);sourceViewerCleanups.delete(details);});
+}
+function renderDocumentEvidence(host,data){
+  const items=data.document_evidence||[];if(!items.length)return;
+  const docs=el("div","docs");
+  if(data.answer_mode==="visual_source_model_reviewed")docs.append(el("p","schema-caption","原页读取 · 独立视觉模型复核；下面展示返回的原文片段，可展开原页核对数值与单位。"));
+  items.forEach(item=>{
+    const row=el("article","doc"),metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
+    row.append(el("div","ttl",item.title||"资料片段"),el("div","meta",Number.isInteger(page)?`第 ${page} 页`:"原文引用"),el("div","snip source-quote",item.snippet||""));
+    if(typeof did==="string"&&item.source_uri===`/api/v1/knowledge/documents/${encodeURIComponent(did)}/original`){
+      const link=el("a","source-original","查看原文件");link.href=new URL(`/api/v1/knowledge/documents/${encodeURIComponent(did)}/original`,new URL(API,location.href)).href;link.target="_blank";link.rel="noopener noreferrer";row.append(link);
+    }
+    const candidate=data.visual_source_proof?.parts?.[item.citation_id-1];
+    const part=candidate?.quote===item.snippet?candidate:null;
+    sourcePageViewer(row,item,part);docs.append(row);
+  });host.append(docs);
+}
 function renderResult(view,data,originalQuestion){
-  view.live?.finish(data);
+  data=normalizeOmniResponse(data);
+  if(data.route==="document")view.live?.root?.remove();else view.live?.finish(data);
   view.wait.remove();view.title.textContent=`已完成 · ${data.latency_ms??"—"} ms`;view.turn.status=data.status||"完成";renderTurns();
   if(!view.body.querySelector(".step")) (data.trace||[]).forEach(t=>appendTrace(view.body,t));renderAudit(view.body,data);
   const answer=el("div","answer"),structured=data.structured||{};answer.append(el("p","",data.answer||"后端未返回文字说明"));
@@ -144,13 +221,11 @@ function renderResult(view,data,originalQuestion){
   [...(structured.notices||[]),...(data.warnings||[])].forEach(w=>answer.append(el("p","warn",w)));
   if(structured.status==="clarification"){
     const options=el("div","clarify");(structured.clarification_options||[]).forEach(option=>{
-      const b=el("button","opt",option.label||option.value);b.type="button";b.onclick=()=>clarify(originalQuestion,structured.clarification_code,option);options.append(b);
+      const b=el("button","opt",option.label||option.value);b.type="button";b.onclick=()=>clarify(originalQuestion,structured.clarification_code,option,data.omni_response);options.append(b);
     });answer.append(options);
   }
-  if(data.document_evidence?.length){const docs=el("div","docs");data.document_evidence.forEach(item=>{
-    const card=el("article","doc");card.append(el("div","meta",`${item.source_uri||"文档"} · score ${item.score??"—"}`),el("div","ttl",item.title||"文档片段"),el("div","snip",item.snippet||""));docs.append(card);
-  });answer.append(docs);}
-  view.answer.replaceChildren(answer);$("thread").scrollTop=$("thread").scrollHeight;
+  renderDocumentEvidence(answer,data);
+  clearSourceViewers(view.answer);view.answer.replaceChildren(answer);$("thread").scrollTop=$("thread").scrollHeight;
 }
 function parseSse(block){let type="message";const lines=[];block.split("\n").forEach(line=>{if(line.startsWith("event:"))type=line.slice(6).trim();if(line.startsWith("data:"))lines.push(line.slice(5).trimStart());});return lines.length?{type,data:JSON.parse(lines.join("\n"))}:null;}
 async function streamQuery(question,useContext,completeResults,view,signal){
@@ -172,11 +247,18 @@ async function run(question,request){
   finally{if(activeController===controller)activeController=null;busy=false;$("send").disabled=false;}
 }
 function ask(question){const text=question.trim();if(!text)return;const useContext=$("useContext").checked,completeResults=$("completeResults").checked;
+  if(activeCapability.endpoint==="omni")return run(text,(_view,signal)=>post("/api/v1/omni/query",{question:text,session_id:"docs-"+sessionId,reset_context:!useContext},signal));
   return run(text,(view,signal)=>STREAM?streamQuery(text,useContext,completeResults,view,signal):post("/api/v1/agent/query",{question:text,session_id:sessionId,use_context:useContext,complete_results:completeResults},signal));}
-function clarify(question,code,option){return run(option.label||option.value,async(_view,signal)=>{
-  const response=await post("/api/v1/nl2sql/clarify",{original_question:question,clarification_code:code,selected_value:option.value,selected_label:option.label,session_id:sessionId,complete_results:$("completeResults").checked},signal);return response.result;
+function clarify(question,code,option,omni=false){return run(option.label||option.value,async(_view,signal)=>{
+  const response=await post(omni?"/api/v1/omni/clarify":"/api/v1/nl2sql/clarify",{original_question:question,clarification_code:code,selected_value:option.value,selected_label:option.label,session_id:(omni?"docs-":"")+sessionId,complete_results:$("completeResults").checked},signal);return omni?response:response.result;
 });}
-function setTab(doc){$("tabAsk").classList.toggle("on",!doc);$("tabDoc").classList.toggle("on",doc);$("thread").style.display=doc?"none":"";$("askComposer").style.display=doc?"none":"";$("view-doc").classList.toggle("on",doc);}
+function setTab(doc){
+  const docs=activeCapability.endpoint==="omni";
+  [["tabAsk",!doc&&!docs],["tabDocs",!doc&&docs],["tabDoc",doc]].forEach(([id,selected])=>{
+    $(id).classList.toggle("on",selected);$(id).setAttribute("aria-pressed",String(selected));
+  });
+  $("thread").style.display=doc?"none":"";$("askComposer").style.display=doc?"none":"";$("view-doc").classList.toggle("on",doc);
+}
 async function analyzeDocument(){
   const output=$("docRes");output.textContent="正在分析文档…";
   try{const text=$("docText").value,data=await post("/api/v1/documents/analyze",{document_id:"lattice-input",text,pages:[{page_no:1,text,ocr_confidence:Number($("sigConf").value),rotation_degrees:Number($("sigRot").value),skew_degrees:Number($("sigSkew").value),blur_score:Number($("sigBlur").value)}]});
@@ -192,9 +274,11 @@ async function analyzeDocument(){
 $("form").addEventListener("submit",e=>{e.preventDefault();const question=$("q").value.trim();if(!question||busy)return;$("q").value="";$("q").style.height="auto";ask(question);});
 $("q").addEventListener("input",()=>{$("q").style.height="auto";$("q").style.height=`${Math.min(160,$("q").scrollHeight)}px`;});
 $("q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("form").requestSubmit();}});
-function newChat(){activeController?.abort();sessionId=crypto.randomUUID();sessionStorage.setItem("ict8_lattice_session",sessionId);turns=[];$("feed").replaceChildren($("empty"));$("empty").style.display="";renderTurns();setTab(false);}
+function newChat(){activeController?.abort();clearSourceViewers();sessionId=crypto.randomUUID();sessionStorage.setItem("ict8_lattice_session",sessionId);turns=[];$("feed").replaceChildren($("empty"));$("empty").style.display="";renderTurns();setTab(false);}
 $("newChat").onclick=newChat;$("newChatTop").onclick=newChat;
 $("sixDemo").onclick=async()=>{setTab(false);for(const q of ["2025年华东地区的销售额","那华南呢","看看订单数","换成华北","换成2024年","看看销量"])await ask(q);};
 $("theme").onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";};
-$("tabAsk").onclick=()=>setTab(false);$("tabDoc").onclick=()=>setTab(true);$("docRun").onclick=analyzeDocument;
+$("tabAsk").onclick=()=>selectCapability(lastAskCapability);
+$("tabDocs").onclick=()=>selectCapability(capabilities.find(capability=>capability.endpoint==="omni"));
+$("tabDoc").onclick=()=>setTab(true);$("docRun").onclick=analyzeDocument;
 selectCapability(activeCapability);schemaLoadPromise=loadMeta();

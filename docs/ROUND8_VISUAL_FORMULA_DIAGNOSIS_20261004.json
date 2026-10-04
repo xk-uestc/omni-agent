@@ -1,0 +1,478 @@
+{
+  "created_at": "2026-10-03T21:38:29.914078+00:00",
+  "scope": "development_diagnosis_not_accuracy_score",
+  "reference_opened": false,
+  "calls": [
+    {
+      "operation": "visual_source_literal_selection",
+      "output": {
+        "abstain": false,
+        "parts": [
+          {
+            "bbox_normalized": [
+              0.04,
+              0.156,
+              0.303,
+              0.193
+            ],
+            "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+            "quote": "Efficiency = useful /"
+          },
+          {
+            "bbox_normalized": [
+              0.04,
+              0.157,
+              0.225,
+              0.193
+            ],
+            "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+            "quote": "(input + losses)"
+          },
+          {
+            "bbox_normalized": [
+              0.04,
+              0.251,
+              0.64,
+              0.286
+            ],
+            "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+            "quote": "useful: Joule; input: Joule; losses: Joule."
+          }
+        ]
+      },
+      "audit": {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "visual_source_literal_selection",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "image_evidence": [
+          {
+            "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+            "page_no": 1,
+            "size_px": [
+              1000,
+              700
+            ]
+          },
+          {
+            "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+            "page_no": 2,
+            "size_px": [
+              1000,
+              700
+            ]
+          }
+        ],
+        "image_count": 2,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 2518,
+        "output_tokens": 583,
+        "total_tokens": 3101,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 349,
+        "call_index": 1,
+        "latency_ms": 21362.581
+      }
+    },
+    {
+      "operation": "visual_source_independent_review",
+      "output": {
+        "all_requested_items_present": true,
+        "approved": true,
+        "no_inference_or_arithmetic": true,
+        "quotes_visibly_exact": true,
+        "regions_locate_quotes": true,
+        "source_relationship_explicit": true,
+        "units_signs_periods_preserved": true,
+        "whole_question_answered": true
+      },
+      "audit": {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "visual_source_independent_review",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "image_evidence": [
+          {
+            "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+            "page_no": 1,
+            "size_px": [
+              1000,
+              700
+            ]
+          },
+          {
+            "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+            "page_no": 2,
+            "size_px": [
+              1000,
+              700
+            ]
+          }
+        ],
+        "image_count": 2,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 2726,
+        "output_tokens": 211,
+        "total_tokens": 2937,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 139,
+        "call_index": 2,
+        "latency_ms": 7351.665
+      }
+    }
+  ],
+  "result": {
+    "status": "ok",
+    "question": "In the mechanism bulletin, give the complete printed Efficiency formula and the units of useful, input and losses.",
+    "answer": "Efficiency = useful /\n(input + losses)\nuseful: Joule; input: Joule; losses: Joule.",
+    "answer_mode": "visual_source_model_reviewed",
+    "calculator_input_eligible": false,
+    "citations": [
+      {
+        "citation_id": 1,
+        "document_id": "formula",
+        "title": "Mechanism bulletin",
+        "snippet": "Efficiency = useful /",
+        "source_uri": "/api/v1/knowledge/documents/formula/original",
+        "metadata": {
+          "document_id": "formula",
+          "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+          "page_no": 1,
+          "locator": {
+            "type": "pdf_visual_region",
+            "page_no": 1,
+            "bbox_display_pt": [
+              20.0,
+              54.6,
+              151.5,
+              67.55
+            ],
+            "coordinate_system": "pdf_display_points_top_left"
+          }
+        }
+      },
+      {
+        "citation_id": 2,
+        "document_id": "formula",
+        "title": "Mechanism bulletin",
+        "snippet": "(input + losses)",
+        "source_uri": "/api/v1/knowledge/documents/formula/original",
+        "metadata": {
+          "document_id": "formula",
+          "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+          "page_no": 2,
+          "locator": {
+            "type": "pdf_visual_region",
+            "page_no": 2,
+            "bbox_display_pt": [
+              20.0,
+              54.95,
+              112.5,
+              67.55
+            ],
+            "coordinate_system": "pdf_display_points_top_left"
+          }
+        }
+      },
+      {
+        "citation_id": 3,
+        "document_id": "formula",
+        "title": "Mechanism bulletin",
+        "snippet": "useful: Joule; input: Joule; losses: Joule.",
+        "source_uri": "/api/v1/knowledge/documents/formula/original",
+        "metadata": {
+          "document_id": "formula",
+          "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+          "page_no": 2,
+          "locator": {
+            "type": "pdf_visual_region",
+            "page_no": 2,
+            "bbox_display_pt": [
+              20.0,
+              87.85,
+              320.0,
+              100.1
+            ],
+            "coordinate_system": "pdf_display_points_top_left"
+          }
+        }
+      }
+    ],
+    "trace": [
+      {
+        "stage": "original_page_visual_fallback",
+        "status": "model_reviewed",
+        "model_audits": [
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "visual_source_literal_selection",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "image_evidence": [
+              {
+                "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+                "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+                "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+                "page_no": 1,
+                "size_px": [
+                  1000,
+                  700
+                ]
+              },
+              {
+                "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+                "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+                "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+                "page_no": 2,
+                "size_px": [
+                  1000,
+                  700
+                ]
+              }
+            ],
+            "image_count": 2,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2518,
+            "output_tokens": 583,
+            "total_tokens": 3101,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 349,
+            "call_index": 1,
+            "latency_ms": 21362.581
+          },
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "visual_source_independent_review",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "image_evidence": [
+              {
+                "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+                "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+                "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+                "page_no": 1,
+                "size_px": [
+                  1000,
+                  700
+                ]
+              },
+              {
+                "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+                "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+                "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+                "page_no": 2,
+                "size_px": [
+                  1000,
+                  700
+                ]
+              }
+            ],
+            "image_count": 2,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2726,
+            "output_tokens": 211,
+            "total_tokens": 2937,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 139,
+            "call_index": 2,
+            "latency_ms": 7351.665
+          }
+        ],
+        "page_selection_scope": "explicit_short_document_all_pages"
+      }
+    ],
+    "retrieval": {
+      "mode": "bm25",
+      "embedding_model": null,
+      "dense_answer_threshold": null
+    },
+    "visual_source_proof": {
+      "version": "literal-visual-source-v1",
+      "parts": [
+        {
+          "bbox_normalized": [
+            0.04,
+            0.156,
+            0.303,
+            0.193
+          ],
+          "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+          "quote": "Efficiency = useful /",
+          "page_no": 1,
+          "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+          "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+          "bbox_display_pt": [
+            20.0,
+            54.6,
+            151.5,
+            67.55
+          ],
+          "coordinate_system": "pdf_display_points_top_left",
+          "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+        },
+        {
+          "bbox_normalized": [
+            0.04,
+            0.157,
+            0.225,
+            0.193
+          ],
+          "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+          "quote": "(input + losses)",
+          "page_no": 2,
+          "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+          "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+          "bbox_display_pt": [
+            20.0,
+            54.95,
+            112.5,
+            67.55
+          ],
+          "coordinate_system": "pdf_display_points_top_left",
+          "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+        },
+        {
+          "bbox_normalized": [
+            0.04,
+            0.251,
+            0.64,
+            0.286
+          ],
+          "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+          "quote": "useful: Joule; input: Joule; losses: Joule.",
+          "page_no": 2,
+          "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+          "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+          "bbox_display_pt": [
+            20.0,
+            87.85,
+            320.0,
+            100.1
+          ],
+          "coordinate_system": "pdf_display_points_top_left",
+          "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+        }
+      ],
+      "review": {
+        "all_requested_items_present": true,
+        "approved": true,
+        "no_inference_or_arithmetic": true,
+        "quotes_visibly_exact": true,
+        "regions_locate_quotes": true,
+        "source_relationship_explicit": true,
+        "units_signs_periods_preserved": true,
+        "whole_question_answered": true
+      },
+      "question_sha256": "e6a0dea2510bcebae8516622cfe98ac385a3e4a4eebf1419b87fe787a297bce3",
+      "semantic_verification": "independent_model_review_not_formal_entailment",
+      "page_selection_scope": "explicit_short_document_all_pages"
+    }
+  },
+  "trace": {
+    "stage": "original_page_visual_fallback",
+    "status": "model_reviewed",
+    "model_audits": [
+      {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "visual_source_literal_selection",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "image_evidence": [
+          {
+            "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+            "page_no": 1,
+            "size_px": [
+              1000,
+              700
+            ]
+          },
+          {
+            "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+            "page_no": 2,
+            "size_px": [
+              1000,
+              700
+            ]
+          }
+        ],
+        "image_count": 2,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 2518,
+        "output_tokens": 583,
+        "total_tokens": 3101,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 349,
+        "call_index": 1,
+        "latency_ms": 21362.581
+      },
+      {
+        "provider": "responses",
+        "model": "gpt-6-luna",
+        "reasoning": "medium",
+        "operation": "visual_source_independent_review",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "image_evidence": [
+          {
+            "evidence_id": "2c0e2af77abbe79b6ddbbf7cb08c0084e95ab263987988451838b33c87959a07",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "9b14672295947c9c89fa2a5a280ded6b05b467a614603af2696b8cfe5a583bf6",
+            "page_no": 1,
+            "size_px": [
+              1000,
+              700
+            ]
+          },
+          {
+            "evidence_id": "1d9358f363dec6cdfdfd60beab713db5ccb7b519ecb46dda1301b90aba70beb4",
+            "source_sha256": "a83b29a4d772498723e1984ccec7c5e5a45390c06de4a4ba93be5e7b261f1b31",
+            "render_sha256": "2783476eea4708be4704eac815cd64434795b31d4faab3fb7e2b5145abf0e22e",
+            "page_no": 2,
+            "size_px": [
+              1000,
+              700
+            ]
+          }
+        ],
+        "image_count": 2,
+        "response_model": "gpt-6-luna",
+        "input_tokens": 2726,
+        "output_tokens": 211,
+        "total_tokens": 2937,
+        "cached_input_tokens": 0,
+        "reasoning_tokens": 139,
+        "call_index": 2,
+        "latency_ms": 7351.665
+      }
+    ],
+    "page_selection_scope": "explicit_short_document_all_pages"
+  }
+}

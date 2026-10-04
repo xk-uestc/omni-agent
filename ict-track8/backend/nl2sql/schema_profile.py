@@ -89,7 +89,7 @@ _TOKEN_ALIASES: dict[str, tuple[str, ...]] = {
     "phone": ("电话",),
     "priority": ("优先级",),
     "quantity": ("数量", "件数", "销量"),
-    "rating": ("评分",),
+    "rating": ("评分", "评级"),
     "status": ("状态",),
     "stock": ("库存",),
     "title": ("标题",),

@@ -77,6 +77,7 @@ def test_review_auth_failure_stops_without_answer_repair_or_more_api_calls():
     ('What is the amount for Formula and Diapers?',1),
     ('What changed and when did it change?',2),
     ('What is the total and how is it calculated and why is it lower?',3),
+    ('Which elements were tested, and particularly by whom were they analyzed?',2),
     ('费用是多少以及为什么变化？',2),
     ('甲和乙的费用是多少？',1),
 ])

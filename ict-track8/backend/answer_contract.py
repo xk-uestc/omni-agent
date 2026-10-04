@@ -34,7 +34,8 @@ def requested_question_parts(question):
     """Literal question spans; never inferred subjects, values or answers."""
     # Split only explicit interrogative continuations, not coordinated entities
     # such as 'Formula and Diapers' or conditions such as 'A and B are active'.
-    boundaries = list(re.finditer(r'\band\s+(?=(?:what|which|how|when|where|why|who|on\s+what)\b)|'
+    boundaries = list(re.finditer(r'\band\s+(?:(?:particularly|specifically|also|especially)\s+)?'
+                                 r'(?=(?:what|which|how|when|where|why|who|whom|by\s+whom|on\s+what)\b)|'
                                  r'(?:以及|并且|同时)[，,\s]*(?=(?:什么|哪些|多少|为何|为什么|何时|如何|谁|是否))', question, re.I))
     starts = [0] + [match.end() for match in boundaries]
     ends = [match.start() for match in boundaries] + [len(question)]
@@ -47,8 +48,12 @@ def question_contract(question):
     person = bool(re.match(r'\s*(?:who\b|which\s+(?:person|people|member)\b)', question, re.I))
     parts = requested_question_parts(question)
     compound = len(parts) > 1 or bool(re.search(r'以及|并且', question))
+    exhaustive = bool(re.search(r'\b(?:which|what)\s+(?:(?:\d+|two|three|four|five|six|seven|eight|nine|ten)\s+)?(?:elements|tests|methods|people|countries|items|'
+        r'components|substrates|types|factors|reasons)\b|\b(?:all|every)\s+(?:applicable|matching|relevant)\b'
+        r'|哪些|所有(?:项目|对象|成分|因素|原因|记录)', question, re.I))
     return {'kind': 'explanation' if explanation else 'literal_fact',
         'purpose': purpose, 'person_or_role': person, 'multiple_requested_fields': compound,
+        'exhaustive_selection_required': exhaustive,
         'requested_parts': parts,
         'instruction': ('Answer every requested field with substantive source facts. A document title '
             'only identifies the subject; it does not explain purpose, impact, reasons or roles. '

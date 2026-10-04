@@ -1,5 +1,6 @@
 """SQL-derived lineage for presentation, not an oracle-driven label adapter."""
 import sqlite3
+import pytest
 
 from backend.nl2sql.schema import SchemaIntrospector
 
@@ -45,3 +46,31 @@ def test_distinct_and_nullable_count_are_different_physical_metrics():
     assert result[0]['lineage']['operators']==['COUNT_DISTINCT']
     assert result[1]['lineage']['operators']==['COUNT']
     assert result[1]['lineage']['column']=='amount'
+
+
+@pytest.mark.parametrize('side',['INNER','LEFT'])
+def test_joined_count_keeps_fanout_grain_and_nonnull_anchor(side):
+    from backend.nl2sql.relational_output_profile import output_profile
+    with sqlite3.connect(':memory:') as db:
+        db.executescript('CREATE TABLE parent(id INTEGER PRIMARY KEY NOT NULL);'
+            'CREATE TABLE child(parent_id INT);INSERT INTO parent VALUES(1);'
+            'INSERT INTO child VALUES(1),(1);')
+        schema=SchemaIntrospector().introspect(db,include_row_count=False)
+        sql=f'SELECT COUNT(*) AS n FROM parent p {side} JOIN child c ON p.id=c.parent_id'
+        result=output_profile(sql,schema)[0]
+        assert result['lineage']['count_semantics']=='joined_row_count_including_fanout'
+        assert result['lineage']['column']=='id' and db.execute(sql).fetchone()[0]==2
+
+
+@pytest.mark.parametrize('side,key',[
+    ('RIGHT','id INTEGER PRIMARY KEY NOT NULL'),
+    ('FULL','id INTEGER PRIMARY KEY NOT NULL'),
+    ('LEFT','id TEXT PRIMARY KEY'),
+])
+def test_unpreserved_or_nullable_key_cannot_anchor_count_star(side,key):
+    from backend.nl2sql.relational_output_profile import output_profile
+    with sqlite3.connect(':memory:') as db:
+        db.executescript(f'CREATE TABLE parent({key});CREATE TABLE child(parent_id INT);')
+        schema=SchemaIntrospector().introspect(db,include_row_count=False)
+        sql=f'SELECT COUNT(*) AS n FROM parent p {side} JOIN child c ON p.id=c.parent_id'
+        assert output_profile(sql,schema)[0]['representation']=='opaque_relational_expression'

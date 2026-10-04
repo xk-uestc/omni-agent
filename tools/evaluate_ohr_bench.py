@@ -210,6 +210,7 @@ def summarise_cases(cases):
                            'extractive_fallbacks': sum(row.get('answer_mode') == 'extractive_fallback' for row in models),
                            'source_span_answers': sum(row.get('answer_mode') == 'source_span_model_reviewed' and row.get('status') == 'ok' for row in models),
                            'native_chart_answers': sum(row.get('answer_mode') == 'visual_chart_native_annotated' and row.get('status') == 'ok' for row in models),
+                           'visual_source_answers': sum(row.get('answer_mode') == 'visual_source_model_reviewed' and row.get('status') == 'ok' for row in models),
                            'normalized_exact_matches': sum(row.get('scores', {}).get('normalized_exact_match', 0) for row in models),
                            'mean_english_token_f1': round(sum(row.get('scores', {}).get('english_token_f1', 0) for row in models) / len(models), 6),
                            'metric_scope': 'program_end_to_end_outputs_including_extractive_fallback_not_bare_model_accuracy'}
@@ -344,6 +345,7 @@ def main():
                                        **answer_output_fields(result, row['answers']),
                                        'citations': result['citations'], 'generation_attempts': result.get('generation_attempts', []),
                                        'trace': result.get('trace', []),
+                                       'visual_source_proof': result.get('visual_source_proof'),
                                        'scoring_only_model_evidence': {
                                            'evidence_text_lcs_recall': reference_lcs_recall(model_evidence, row['evidence_context']),
                                            'gold_answer_lexically_present': answer_scores(model_evidence, row['answers'])['normalized_gold_substring'],

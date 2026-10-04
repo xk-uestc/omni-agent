@@ -21,6 +21,7 @@ from backend.responses_client import StructuredResponses, GenerationError
 from backend.grounded_generation import GroundedGenerator
 from backend.knowledge_store import KnowledgeStore
 from backend.dependency_agent import DependencyAgent
+from backend.nl2sql.security import SqlSafetyError
 
 
 def hashes():
@@ -100,8 +101,8 @@ def main():
             matched=result['status']=='ok' and actual==expected and actual==replay
             return {'id':identifier,'question':question,'pass':matched,'result':result,
                     'actual_rows':actual,'scoring_only_reference_rows':expected,'api_audits':p.audit_history}
-        except GenerationError as exc:
-            if exc.status in (401,403):stop.set()
+        except (GenerationError, SqlSafetyError) as exc:
+            if isinstance(exc,GenerationError) and exc.status in (401,403):stop.set()
             return {'id':identifier,'pass':False,'status':'failed','error_type':type(exc).__name__,'api_audits':p.audit_history}
     with ThreadPoolExecutor(max_workers=3) as pool:cases=list(pool.map(sql_case,SQL_CASES))
     with (root/'sql-cases.json').open('x',encoding='utf-8') as stream:

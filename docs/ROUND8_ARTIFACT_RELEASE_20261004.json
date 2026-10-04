@@ -1,0 +1,559 @@
+{
+  "created_at": "2026-10-03T20:49:51.594469+00:00",
+  "scope": "complete_artifact_integrity_and_actual_sql_replay_not_question_accuracy_or_legacy_score",
+  "reference_opened": false,
+  "model_called": false,
+  "fixed_scorer_unchanged": true,
+  "run_manifest_sha256": "3c694589dd86a72e0004801b222faac1cbd484bb893f149259fe0b4baf584b12",
+  "observed_sha256": "cd02063e24be737cbb0ecf88cd3e2f437eca23a926a3785fb29bbc9906f0eb80",
+  "artifact_cases": 39,
+  "passed": 37,
+  "cases": [
+    {
+      "case_id": "cs-c01",
+      "pass": false,
+      "checks": {
+        "receipt_and_current_source": false,
+        "all_pages_replayed": false,
+        "sql_and_parameters_unchanged": false,
+        "columns_match": false,
+        "preview_matches_full_prefix": false,
+        "full_rows_equal_sql_replay": false
+      },
+      "row_count": null,
+      "error_type": "SqlSafetyError"
+    },
+    {
+      "case_id": "cs-c02",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 5,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c04",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 42,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c05",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 2607,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c06",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 32,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c07",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c09",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1000,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c10",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 200,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c11",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 5,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c12",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f01",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 2,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f02",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 599,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f03",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 285,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f04",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 599,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f05",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 108,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f06",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 599,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f07",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f09",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 599,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f10",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 600,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f12",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r01",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 2,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r04",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 440,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r05",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 61,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r07",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 2,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r08",
+      "pass": false,
+      "checks": {
+        "receipt_and_current_source": false,
+        "all_pages_replayed": false,
+        "sql_and_parameters_unchanged": false,
+        "columns_match": false,
+        "preview_matches_full_prefix": false,
+        "full_rows_equal_sql_replay": false
+      },
+      "row_count": null,
+      "error_type": "KeyError"
+    },
+    {
+      "case_id": "cs-r09",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1521,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r10",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 375,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r11",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r12",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 2,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s1-t3",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 280,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s2-t1",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s2-t2",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s3-t4",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s3-t5",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s4-t1",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s4-t2",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s4-t3",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 265,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s4-t4",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-s4-t5",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1,
+      "error_type": null
+    }
+  ]
+}

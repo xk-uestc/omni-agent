@@ -512,6 +512,15 @@ class KnowledgeStore:
         from .native_table_question import route_native_table_question
         table_result, table_trace = route_native_table_question(self, question, hits, document_id=document_id, page_no=page_no)
         if table_result is not None:
+            if table_result['status'] != 'ok':
+                from .visual_source_answer import route_visual_source_fallback
+                recovered, recovery_trace = route_visual_source_fallback(self, question, hits,
+                    document_id=document_id, page_no=page_no)
+                if recovered is not None:
+                    recovered['trace'].insert(0, table_trace)
+                    return recovered
+                if recovery_trace['status'] != 'not_applicable':
+                    table_result['trace'].append(recovery_trace)
             return table_result
         query_terms = set(_tokenize(question))
         # This local baseline returns attributed quotations, not inferred factual claims.
@@ -680,6 +689,17 @@ class KnowledgeStore:
                     result['answer_strategy'] = 'incomplete_boolean_abstention'
                     result['trace'].append({'stage': 'whole_boolean_answer', 'status': 'incomplete',
                         'reason': 'threshold_quote_is_not_boolean_answer', 'complete_facts_retained': True})
+        if self.generator and (result['status'] != 'ok' or result['answer_mode'] == 'extractive_fallback'):
+            from .visual_source_answer import route_visual_source_fallback
+            recovered, recovery_trace = route_visual_source_fallback(self, question, hits,
+                document_id=document_id, page_no=page_no)
+            if recovered is not None:
+                recovered['prior_text_answer'] = {'status':result['status'],
+                    'answer_mode':result['answer_mode'], 'trace':result['trace']}
+                self._verify_citation_sources(recovered['citations'])
+                return recovered
+            if recovery_trace['status'] != 'not_applicable':
+                result['trace'].append(recovery_trace)
         return result
 
     def _verify_citation_sources(self, citations):

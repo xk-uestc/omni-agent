@@ -16,7 +16,12 @@ def main():
     parser.add_argument('--port', type=int, default=8030)
     parser.add_argument('--with-model', action='store_true', help='读取 runtime/model_config.json，仅启用用户指定的 gpt-6-luna')
     parser.add_argument('--model', default='gpt-6-luna')
+    parser.add_argument('--diagnostic-stack-after', type=int, choices=range(10, 601),
+                        help='仅排障：在指定秒数后向服务日志写线程调用栈，不包含局部变量')
     args = parser.parse_args()
+    if args.diagnostic_stack_after:
+        import faulthandler
+        faulthandler.dump_traceback_later(args.diagnostic_stack_after, repeat=False)
     if args.with_model:
         from model_runtime import enable_local_model
         enable_local_model(args.model)

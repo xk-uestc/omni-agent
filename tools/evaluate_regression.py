@@ -24,6 +24,8 @@ def source_hashes():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, help='New report directly in docs; never overwrite history')
+    parser.add_argument('--workers', type=int, choices=(1, 2, 3, 4), default=1,
+                        help='Independent pytest-xdist processes; default remains serial')
     args = parser.parse_args()
     output = args.output or ROOT / ('docs/LOCAL_REGRESSION_' +
         datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S.%fZ') + '.json')
@@ -31,8 +33,14 @@ def main():
         parser.error('Output must be a new JSON directly in docs')
     before = source_hashes()
     started = time.monotonic()
-    environment = {**os.environ, 'PYTHONPATH': str(ROOT / 'ict-track8')}
-    result = subprocess.run([sys.executable, '-m', 'pytest', 'ict-track8/tests', '-q'],
+    temporary = ROOT / 'runtime/test-temp'
+    temporary.mkdir(parents=True, exist_ok=True)
+    environment = {**os.environ, 'PYTHONPATH': str(ROOT / 'ict-track8'),
+                   'TEMP': str(temporary), 'TMP': str(temporary), 'TMPDIR': str(temporary)}
+    command = [sys.executable, '-m', 'pytest', 'ict-track8/tests', '-q']
+    if args.workers > 1:
+        command.extend(['-n', str(args.workers), '--dist', 'loadfile'])
+    result = subprocess.run(command,
                             cwd=ROOT, env=environment, capture_output=True, text=True,
                             encoding='utf-8', errors='replace')
     print(result.stdout, end='')
@@ -45,7 +53,8 @@ def main():
     after = source_hashes()
     report = {'created_at': datetime.now(timezone.utc).isoformat(),
               'scope': 'complete_local_contract_regression_not_model_accuracy', 'model_called': False,
-              'command': 'python -m pytest ict-track8/tests -q', 'exit_code': result.returncode,
+              'command': ' '.join(command[1:]), 'workers': args.workers,
+              'temporary_directory': str(temporary), 'exit_code': result.returncode,
               'duration_seconds': round(time.monotonic() - started, 3),
               'environment': {'python': platform.python_version(), 'platform': platform.platform()},
               **counts, 'subtests_passed': sum(int(x) for x in re.findall(r'(\d+) subtests? passed', result.stdout)),

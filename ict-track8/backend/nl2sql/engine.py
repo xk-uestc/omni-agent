@@ -26,7 +26,7 @@ from .semantics import MetricCatalog
 from .value_index import ValueIndex
 from .plan_structure import canonicalize, diagnose
 from .question_roles import association_scope, binding_present, group_fields, group_grains
-from .result_scope import configure_complete_scope
+from .result_scope import configure_complete_scope, requests_complete_result
 from .result_artifact import (ResultBudgets, execute_complete_read_only,
                               pin_database, read_result_page)
 
@@ -162,6 +162,12 @@ class Nl2SqlEngine:
             aliases = hashlib.sha256(path.read_bytes()).hexdigest()
         actual = self.database_path.resolve()
         return (state(actual), state(Path(str(actual)+'-wal'),optional=True), aliases)
+
+    def current_source_revision(self):
+        """Current read-snapshot generation, using the response provenance format."""
+        with self._connect() as connection:
+            _, _, revision = self._snapshot_for(connection)
+            return hashlib.sha256(repr(revision).encode()).hexdigest()
 
     def _snapshot_for(self, connection: sqlite3.Connection):
         """Pin one read snapshot for Schema, values, date inference and SQL.
@@ -661,6 +667,9 @@ class Nl2SqlEngine:
         row_cap = int(max_rows or self.max_rows)
         if type(complete_results) is not bool:
             raise ValueError('complete_results 必须为布尔值')
+        # The original user's explicit all-rows request is itself opt-in. Keep
+        # the preview cap and every existing complete-artifact resource budget.
+        complete_results = complete_results or requests_complete_result(question)
         if complete_results:
             row_cap = min(100, row_cap, self.max_rows)
             if row_cap < 1:
@@ -726,7 +735,9 @@ class Nl2SqlEngine:
                   and getattr(self.model_plan_provider, 'supports_complex_queries', False) is True):
                 # A separate capability, not a bypass of typed fusion contracts.
                 try:
-                    plan, compiled = propose_complex(self.model_plan_provider, question, tables)
+                    from .date_profile import storage_profiles
+                    plan, compiled = propose_complex(self.model_plan_provider, question, tables,
+                        date_profiles=storage_profiles(connection, tables, question))
                 except Exception as exc:
                     from ..responses_client import GenerationError
                     if isinstance(exc, GenerationError) and exc.status in (401, 403):
@@ -795,6 +806,15 @@ class Nl2SqlEngine:
                         'verification': 'independent_original_scope_in_execution_snapshot'}
                     plan.planner_audit['rank_return_cap_normalization'] = rank_return_audit
             complete_scope = None
+            if compiled is not None and required_intent is None and not plan.clarification:
+                # Relational SQL has no implicit LIMIT. Deliver all bounded rows
+                # through the existing artifact channel, with a capped preview.
+                # This never enlarges execution budgets or treats preview as all.
+                if not complete_results:
+                    source_pin = pin_database(self.database_path, self.complete_result_budgets,
+                        generation=self._source_revision, expected_generation=revision[0])
+                complete_results = True
+                row_cap = min(100, row_cap, self.max_rows)
             if complete_results and not plan.clarification:
                 complete_scope = configure_complete_scope(plan,
                     scope_question if required_intent is not None else question)
@@ -823,6 +843,9 @@ class Nl2SqlEngine:
                     clarification_options=tuple(plan.clarification_options),
                 )
             sql, parameters = compiled or self.planner.build_sql(plan)
+            if plan.model_plan_diagnostics.get('channel') == 'relational_sql':
+                from .result_scope import enforce_relational_result_scope
+                sql, parameters = enforce_relational_result_scope(plan, sql, parameters)
             complete_metadata = None
             if complete_results:
                 execution = execute_complete_read_only(connection, sql, parameters,

@@ -1,0 +1,3893 @@
+{
+  "created_at": "2026-10-03T23:42:37.181055+00:00",
+  "scope": "authored_topic_switch_and_failure_recovery_not_official_accuracy",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "reference_used_as_model_input": false,
+  "planned_turns": 10,
+  "executed_turns": 10,
+  "passed_turns": 7,
+  "complete_five_turn_sessions": 1,
+  "implementation_file_sha256": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b0e425adbffcc323d798a63fadcd1a1f8195c6a45f8c4720ada851c13040c5c9",
+    "ict-track8/backend/native_text_tables.py": "e60c8c72e01c7172b0006d27588f6d6b94b0748576a718c6932a66be62e96145",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "72c5a7453e9b842b5bcd2ac509c3129c1348a4a1e01cca62240f416d3a34573f",
+    "ict-track8/backend/nl2sql/date_profile.py": "b9d61494ee698d9aed88522cb6a66f261b931a84e54f359d19af6a6598744ab8",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "3797e0bce93a3dee2ece8a4878bb3dbc40837b2479a692c0846561e3238e76dd",
+    "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "908931c24bb263c3bd4e38c45ba70f42528e58f7081556dc470ac1ccff32a1fe",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_file_sha256_end": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/answer_contract.py": "98e881e9c3776d3a975871093aa04fd099784bf763cd0824ade710fef8b5bc67",
+    "ict-track8/backend/app.py": "48bc61ef5768ed2da9edea47bd081776ed5a209993717f61e7b2bba2d5daf47c",
+    "ict-track8/backend/chunk_cleaning.py": "d60cadfdb22db5180d2a76fc22c95c59389ea64d705da9295829bd501b748511",
+    "ict-track8/backend/clarification.py": "c2ae6a94735999b4731abdbaca46ab6d97b2a312fd28fade739aa716f8b44be1",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/cross_source.py": "434d5da97df628c091993520c3d8338d1a53e0e0ddd0a4b5ce330cd4017a9854",
+    "ict-track8/backend/dense_retrieval.py": "57dba53f8649e6ce5b2b3f018dd8ea34dc513bd6b37b416e83a6aecc52a247fb",
+    "ict-track8/backend/dependency_agent.py": "f104d6c5ad13ee482c5aada74e55bbeb3c769317b72c180662ef9e23ee930575",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "15e57453b7c0d44cad6834b4202d4e7aaef4aa237565ef9515a8aae0ca9eda88",
+    "ict-track8/backend/evidence_recovery.py": "d30f2053b7f6851247cbfb08d4addc16c7e72441f234067621535ff8123d3dcd",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "0936b29e4956c5ab9e3f2fcdd2701c4aba65f57253182702c3ba46f25bbaf102",
+    "ict-track8/backend/fusion_constraints.py": "91d2bea1567c57926f035d726d57caa5525b3f961b712d60494fe84a6222e57a",
+    "ict-track8/backend/fusion_history.py": "ce596bea4ab7dba9b5cc11bde1151279eefd7a42831ad3f7f3dd51ec909d5e2e",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/grounded_generation.py": "c5f6d01e81bc0c507a4ce720a857cf2b8e15a1f51265ac47657a0d1b2a2247dc",
+    "ict-track8/backend/grounded_span_answer.py": "03ab693960b5297c65db27b1549f79d4ff3f8e7da653ecb815df544937102ec7",
+    "ict-track8/backend/image_quality.py": "a8c68fc2f4f68d5898ad7e536309863e19f6cad92b3c4aa2eabdf81bcf69a505",
+    "ict-track8/backend/knowledge_store.py": "9919110992c525a8bb44fe0b32f76951d9a1fd6678a229883ec5ec4b4dda0775",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_table_question.py": "b0e425adbffcc323d798a63fadcd1a1f8195c6a45f8c4720ada851c13040c5c9",
+    "ict-track8/backend/native_text_tables.py": "e60c8c72e01c7172b0006d27588f6d6b94b0748576a718c6932a66be62e96145",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "72c5a7453e9b842b5bcd2ac509c3129c1348a4a1e01cca62240f416d3a34573f",
+    "ict-track8/backend/nl2sql/date_profile.py": "b9d61494ee698d9aed88522cb6a66f261b931a84e54f359d19af6a6598744ab8",
+    "ict-track8/backend/nl2sql/date_semantics.py": "5b5d10bc572d4d85672d32938cb1ea0c01c437f71a8e573d1233d2fb2c08fb07",
+    "ict-track8/backend/nl2sql/engine.py": "aff507859f20893d282da8ccbeb16957115adabdaaae25a4bc10b9f47bb1ed1f",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "f8707b86166845cbae62d4d1a27d20423ca1d092976522da3c9dc50e67e6a3c1",
+    "ict-track8/backend/nl2sql/question_roles.py": "56d66c9902b22b1978718e6a307806b2155f56aa5af7eac2fa322270f395feca",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "33c6952c21db2d350fb0648adce413e525ef08f96f803040ef368217bb58293b",
+    "ict-track8/backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "ict-track8/backend/nl2sql/result_scope.py": "3797e0bce93a3dee2ece8a4878bb3dbc40837b2479a692c0846561e3238e76dd",
+    "ict-track8/backend/nl2sql/schema.py": "49d1cd9ff58f26b867dd3f8326c4912e35eb0bbaaa92ba33dced7e3a503b43d9",
+    "ict-track8/backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "f97cda9ce47d7d9834a4616b1943c70acfc27690caf53a2d71780d0337421ce4",
+    "ict-track8/backend/nl2sql/semantics.py": "bf785b374b688a7cf5e5b4d596600d3c059b82ca2be319d63e08e2a323d0c4bc",
+    "ict-track8/backend/nl2sql/t2s.py": "27d1d451cdd33bc9dc62edd00ae4080e0986c16c918fe628768222f404d9e1ab",
+    "ict-track8/backend/nl2sql/value_index.py": "5c11db7d46b0a2e620b62220bbaaaa151f5e371127a5d4d70452f59d99f555ef",
+    "ict-track8/backend/ocr.py": "881c18355bcab16b9e331762c4612d3c00517d3c52cdac0c69e93c9becdd8616",
+    "ict-track8/backend/omni_agent.py": "59c44d3535689d6d71acd6e34e76408e5992c1b3a65571c7559fe051c6910897",
+    "ict-track8/backend/orientation_quality.py": "500776e6720b35d27c893e67c1c1956a7d1483caf5b195d714fa63f4312d5686",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "4e5b6fb49a14725c3443832ea9ae991386aa1910367b88ebf0233bc917500222",
+    "ict-track8/backend/pdf_page_index.py": "376f17ba114e979045169d9a0b8d35b7c3f6019e0391021ea256b54dd97a4750",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/session.py": "0cc5f4d63ca652e54bf6aa3048b5e5284f1d02d2e8211e1d33a75fe0a0c27951",
+    "ict-track8/backend/source_span_answer.py": "1df3ed801b4d09b459bc49e63a9fb43ed58e05a22ceb9fc7f7af1e89a96adc28",
+    "ict-track8/backend/sql_document_binding.py": "7f1caec7f0a4fede57e9ffe30ec0f403fc6dcb27a1fd0c38f8f69f3fbafac7a6",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "8d9234f9e76332bf17db3a66efa6fb3921be247fae51a6736841495fe771f5f2",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "ict-track8/backend/text_structure.py": "eaef0dbeb3c5091512f2e77718c2c0cae3db19bd5f56b466a30000aedb9c3663",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "6aea310016714efa2c4ef0cb57b2f7998f7e1c0ddd0a090655359bda8f98c231",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "908931c24bb263c3bd4e38c45ba70f42528e58f7081556dc470ac1ccff32a1fe",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "implementation_stable": true,
+  "sessions": [
+    {
+      "domain": "advertising",
+      "cases": [
+        {
+          "turn": 1,
+          "question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+          "pass": true,
+          "response": {
+            "status": "ok",
+            "question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+            "effective_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "advertising",
+            "context_turns": 0,
+            "state": {
+              "route": "sql",
+              "metrics": [
+                {
+                  "id": "o0",
+                  "table": "campaigns",
+                  "column": "spend",
+                  "function": "SUM",
+                  "label": "total_spend",
+                  "unit": "unknown",
+                  "currency": null,
+                  "missing": "null",
+                  "filters": []
+                }
+              ],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": null,
+              "pending_question": null,
+              "executed_sql_context": {
+                "payload": {
+                  "question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+                  "sql": "SELECT SUM(\"campaigns\".\"spend\") AS \"total_spend\" FROM \"campaigns\" AS \"campaigns\" JOIN \"countries\" AS \"countries\" ON \"campaigns\".\"country_id\" = \"countries\".\"id\" WHERE \"countries\".\"name\" = ? AND \"campaigns\".\"event_date\" >= ? AND \"campaigns\".\"event_date\" < ?",
+                  "parameters": [
+                    "中国",
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_revision": "ddc6e0c748a753bebd13589506ea564450bfdb6431226c597bf72f7196a61197"
+                },
+                "sha256": "2fe01d4a8b1fe5a86a757e7b7e87c3581c4ad2c8e9ba25a4ddbbf80140a7e2e7"
+              }
+            },
+            "result": {
+              "status": "ok",
+              "result_state": "rows",
+              "notices": [
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+              ],
+              "question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+              "rewritten_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+              "sql": "SELECT SUM(\"campaigns\".\"spend\") AS \"total_spend\" FROM \"campaigns\" AS \"campaigns\" JOIN \"countries\" AS \"countries\" ON \"campaigns\".\"country_id\" = \"countries\".\"id\" WHERE \"countries\".\"name\" = ? AND \"campaigns\".\"event_date\" >= ? AND \"campaigns\".\"event_date\" < ?",
+              "parameters": [
+                "中国",
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "columns": [
+                "total_spend"
+              ],
+              "rows": [
+                {
+                  "total_spend": 19.0
+                }
+              ],
+              "plan": {
+                "table": "campaigns",
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": "RELATIONAL",
+                "metric_label": "复杂关系查询",
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [
+                  {
+                    "source_text": "campaigns.country_id",
+                    "table": "campaigns",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "campaigns.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "campaigns.event_date",
+                    "table": "campaigns",
+                    "column": "event_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "campaigns.event_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "campaigns.spend",
+                    "table": "campaigns",
+                    "column": "spend",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "campaigns.spend",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  }
+                ],
+                "join_tables": [
+                  "countries"
+                ],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": true,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.8,
+                "rewritten_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": null,
+                "clarification_options": [],
+                "assumptions": [
+                  "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+                ],
+                "planner_source": "model_validated",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {
+                  "question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+                  "metric": {
+                    "table": null,
+                    "column": null,
+                    "function": "RELATIONAL",
+                    "label": "复杂关系查询"
+                  },
+                  "filters": [],
+                  "time_range": null,
+                  "group_by": [],
+                  "comparison": "none",
+                  "comparison_window": null,
+                  "top_n": null,
+                  "confidence": 0.8,
+                  "unresolved": [],
+                  "execution_allowed": true,
+                  "planner_source": "model_validated",
+                  "planner_audit": {
+                    "decision": "accepted",
+                    "final_source": "model_validated",
+                    "validation_channel": "relational_ast_plus_independent_model_review",
+                    "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                    "provider": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "complex_sql_independent_review",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 1118,
+                      "output_tokens": 163,
+                      "total_tokens": 1281,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 81,
+                      "call_index": 2,
+                      "latency_ms": 6310.707,
+                      "reasoning_effort": "medium",
+                      "response_status": "completed"
+                    },
+                    "typed_v2_intent_verified": false
+                  },
+                  "metrics": [
+                    {
+                      "id": "o0",
+                      "table": "campaigns",
+                      "column": "spend",
+                      "function": "SUM",
+                      "label": "total_spend",
+                      "unit": "unknown",
+                      "currency": null,
+                      "missing": "null",
+                      "filters": []
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "grain_audit": {},
+                  "semantic_audit": {
+                    "status": "model_reviewed",
+                    "checks": {
+                      "aggregation_grain_and_no_fanout": true,
+                      "all_question_parts": true,
+                      "filters_and_dates": true,
+                      "no_invented_business_definition": true,
+                      "null_and_zero_semantics": true,
+                      "physical_fields_and_values": true,
+                      "projection_order_ranking_and_ties": true
+                    },
+                    "verification": "independent_model_review_not_formal_semantic_proof",
+                    "relational_output_lineage": [
+                      {
+                        "label": "total_spend",
+                        "lineage": {
+                          "table": "campaigns",
+                          "column": "spend",
+                          "operators": [
+                            "SUM"
+                          ]
+                        },
+                        "representation": "metric"
+                      }
+                    ],
+                    "sql_sha256": "dacd31eba92b95eae606aa7e70c61492237e87ee8f1ba84e8016d6897b88bf83"
+                  }
+                },
+                "planner_audit": {
+                  "decision": "accepted",
+                  "final_source": "model_validated",
+                  "validation_channel": "relational_ast_plus_independent_model_review",
+                  "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                  "provider": {
+                    "provider": "responses",
+                    "model": "gpt-6-luna",
+                    "reasoning": "medium",
+                    "operation": "complex_sql_independent_review",
+                    "http_status": 200,
+                    "status": "completed",
+                    "model_verified": true,
+                    "response_model": "gpt-6-luna",
+                    "input_tokens": 1118,
+                    "output_tokens": 163,
+                    "total_tokens": 1281,
+                    "cached_input_tokens": 0,
+                    "reasoning_tokens": 81,
+                    "call_index": 2,
+                    "latency_ms": 6310.707,
+                    "reasoning_effort": "medium",
+                    "response_status": "completed"
+                  },
+                  "typed_v2_intent_verified": false
+                },
+                "model_plan_diagnostics": {
+                  "channel": "relational_sql",
+                  "structural_attempts": [
+                    {
+                      "attempt": 1,
+                      "status": "statically_validated"
+                    }
+                  ]
+                },
+                "metrics": [
+                  {
+                    "id": "o0",
+                    "table": "campaigns",
+                    "column": "spend",
+                    "function": "SUM",
+                    "label": "total_spend",
+                    "unit": "unknown",
+                    "currency": null,
+                    "missing": "null",
+                    "filters": []
+                  }
+                ],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {
+                  "status": "model_reviewed",
+                  "checks": {
+                    "aggregation_grain_and_no_fanout": true,
+                    "all_question_parts": true,
+                    "filters_and_dates": true,
+                    "no_invented_business_definition": true,
+                    "null_and_zero_semantics": true,
+                    "physical_fields_and_values": true,
+                    "projection_order_ranking_and_ties": true
+                  },
+                  "verification": "independent_model_review_not_formal_semantic_proof",
+                  "relational_output_lineage": [
+                    {
+                      "label": "total_spend",
+                      "lineage": {
+                        "table": "campaigns",
+                        "column": "spend",
+                        "operators": [
+                          "SUM"
+                        ]
+                      },
+                      "representation": "metric"
+                    }
+                  ],
+                  "sql_sha256": "dacd31eba92b95eae606aa7e70c61492237e87ee8f1ba84e8016d6897b88bf83"
+                },
+                "output_metrics": []
+              },
+              "explanation": [
+                "识别指标：复杂关系查询（RELATIONAL）",
+                "查询表：campaigns",
+                "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+                "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "database": "source.sqlite",
+                "table": "campaigns",
+                "row_count": 1,
+                "row_limit": 100,
+                "result_completeness": "complete",
+                "query_hash": "b7a59cda5ef7156f",
+                "field_links": [
+                  {
+                    "source_text": "campaigns.country_id",
+                    "table": "campaigns",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "campaigns.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "campaigns.event_date",
+                    "table": "campaigns",
+                    "column": "event_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "campaigns.event_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "campaigns.spend",
+                    "table": "campaigns",
+                    "column": "spend",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "campaigns.spend",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  }
+                ],
+                "coverage": {},
+                "consistency": "sqlite_read_transaction",
+                "source_revision": "ddc6e0c748a753bebd13589506ea564450bfdb6431226c597bf72f7196a61197",
+                "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+                "grain_audit": {},
+                "result_cells": [
+                  {
+                    "row": 0,
+                    "column": "total_spend",
+                    "query_hash": "b7a59cda5ef7156f",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "total_spend"
+                    }
+                  }
+                ],
+                "complete_result": {
+                  "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+                  "status": "complete",
+                  "reason": null,
+                  "query_sha256": "c1db9127d059c45df56cce6805c512d3bf778acf4950853afd3f1d07e4a7f094",
+                  "source_revision": "19745fdc172e0a56d8ed44926ef7b6c9db7149eb96dec4686bfd45b943c6ba1e",
+                  "producer_sha256": "05c1347a0d506224157bb4c6ec3e836422686dd95b95396059a264c65cebe0a0",
+                  "columns": [
+                    "total_spend"
+                  ],
+                  "row_count": 1,
+                  "observed_rows": 1,
+                  "preview_row_count": 1,
+                  "preview_limit": 100,
+                  "preview_truncated": false,
+                  "scope": {
+                    "mode": "bounded_complete_result_with_preview",
+                    "semantic_row_limit": null,
+                    "top_n": null,
+                    "requested_preview_limit": null,
+                    "effective_preview_limit": 100,
+                    "default_preview_limit_removed_from_sql": true,
+                    "verification": "original_question_row_limit_and_existing_rank_filter"
+                  },
+                  "budgets": {
+                    "max_rows": 25000,
+                    "max_bytes": 8388608,
+                    "max_seconds": 5.0,
+                    "max_steps": 50000000,
+                    "max_source_bytes": 268435456
+                  },
+                  "artifact_id": "928f5aa3bde14fa783e8030ba9569684",
+                  "data_sha256": "18ac20da1a182f7f085aeeb6ecc169883e61606da97d2fa2be3a438ee472ea78",
+                  "byte_count": 7,
+                  "cursor_eof_verified": true,
+                  "source_pin": {
+                    "files": {
+                      "database": {
+                        "sha256": "6392949bde8040637f5cde97983d9a309c6340de8b63bc4f21fdc8245c7257ea",
+                        "bytes": 16384,
+                        "generation": [
+                          1053008805926603246,
+                          281474978115050,
+                          16384,
+                          1791070144909754200,
+                          1791070139243909500
+                        ]
+                      }
+                    },
+                    "sha256": "19745fdc172e0a56d8ed44926ef7b6c9db7149eb96dec4686bfd45b943c6ba1e",
+                    "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+                  },
+                  "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+                  "binding_sha256": "1484cb2417d93f5d7082f4109c7bc0ed257d4c36ee3e4b1588c13caadd0b2061",
+                  "receipt_signature": "1e8fd4e35258b31e7f2d4f1fc1992bc875ba660494e8acb8e2ceebd427bf644f",
+                  "preview_cells": [
+                    [
+                      19.0
+                    ]
+                  ],
+                  "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+                }
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 3295.016,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2447,
+                      "output_tokens": 61,
+                      "total_tokens": 2508,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 0,
+                      "call_index": 1,
+                      "latency_ms": 3259.642
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "a16be337573e42f63e175d81",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              19.0
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2447,
+              "output_tokens": 61,
+              "total_tokens": 2508,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 3259.642,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1432,
+              "output_tokens": 162,
+              "total_tokens": 1594,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 76,
+              "call_index": 1,
+              "latency_ms": 5212.221,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1118,
+              "output_tokens": 163,
+              "total_tokens": 1281,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 81,
+              "call_index": 2,
+              "latency_ms": 6310.707,
+              "component": "sql"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "question": "那日本呢",
+          "pass": false,
+          "response": {
+            "status": "incomplete",
+            "question": "那日本呢",
+            "effective_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为日本，关联campaigns.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "advertising",
+            "context_turns": 1,
+            "state": {
+              "route": "sql",
+              "metrics": [],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": "sql_execution_rejected",
+              "pending_question": null
+            },
+            "result": {
+              "status": "incomplete",
+              "result_state": "unexecuted",
+              "notices": [],
+              "question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为日本，关联campaigns.country_id=countries.id。",
+              "rewritten_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为日本，关联campaigns.country_id=countries.id。",
+              "sql": null,
+              "parameters": [],
+              "columns": [],
+              "rows": [],
+              "plan": {
+                "table": null,
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": null,
+                "metric_label": null,
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [],
+                "join_tables": [],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": false,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.0,
+                "rewritten_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为日本，关联campaigns.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": "sql_execution_rejected",
+                "clarification_options": [],
+                "assumptions": [],
+                "planner_source": "rules",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {},
+                "planner_audit": {},
+                "model_plan_diagnostics": {},
+                "metrics": [],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {},
+                "output_metrics": []
+              },
+              "explanation": [
+                "查询未通过执行检查，请缩小范围或明确查询条件后重新查询。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "execution_error_code": "sql_execution_rejected"
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 4713.345,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [
+                  "original_single_source_question_preserved",
+                  "model_reviewed_sql_followup"
+                ],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2957,
+                      "output_tokens": 142,
+                      "total_tokens": 3099,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 79,
+                      "call_index": 1,
+                      "latency_ms": 4707.552
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "c63d9408b0bd5537b11e71ef",
+            "context_resolution": {
+              "mode": "model_reviewed_sql_followup",
+              "actual_question": "那日本呢",
+              "base_scope_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为中国，关联campaigns.country_id=countries.id。",
+              "scope_question": "以campaigns.event_date为准，统计2025年campaigns.spend合计，只筛选countries.name为日本，关联campaigns.country_id=countries.id。",
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "review": {
+                "approved": true,
+                "no_ambiguous_or_invented_scope": true,
+                "single_explicit_replacement": true,
+                "unmentioned_constraints_preserved": true
+              },
+              "execution_context_sha256": "2fe01d4a8b1fe5a86a757e7b7e87c3581c4ad2c8e9ba25a4ddbbf80140a7e2e7"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              31.0
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2957,
+              "output_tokens": 142,
+              "total_tokens": 3099,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 79,
+              "call_index": 1,
+              "latency_ms": 4707.552,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "sql_followup_rewrite",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 823,
+              "output_tokens": 89,
+              "total_tokens": 912,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 32,
+              "call_index": 1,
+              "latency_ms": 3178.945,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "sql_followup_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 803,
+              "output_tokens": 76,
+              "total_tokens": 879,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 29,
+              "call_index": 2,
+              "latency_ms": 2611.232,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1432,
+              "output_tokens": 182,
+              "total_tokens": 1614,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 98,
+              "call_index": 3,
+              "latency_ms": 5349.857,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1118,
+              "output_tokens": 171,
+              "total_tokens": 1289,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 89,
+              "call_index": 4,
+              "latency_ms": 4957.772,
+              "component": "sql"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+          "pass": false,
+          "response": {
+            "status": "incomplete",
+            "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+            "effective_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "advertising",
+            "context_turns": 2,
+            "state": {
+              "route": "sql",
+              "metrics": [],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": "sql_execution_rejected",
+              "pending_question": null
+            },
+            "result": {
+              "status": "incomplete",
+              "result_state": "unexecuted",
+              "notices": [],
+              "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+              "rewritten_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+              "sql": null,
+              "parameters": [],
+              "columns": [],
+              "rows": [],
+              "plan": {
+                "table": null,
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": null,
+                "metric_label": null,
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [],
+                "join_tables": [],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": false,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.0,
+                "rewritten_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": "sql_execution_rejected",
+                "clarification_options": [],
+                "assumptions": [],
+                "planner_source": "rules",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {},
+                "planner_audit": {},
+                "model_plan_diagnostics": {},
+                "metrics": [],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {},
+                "output_metrics": []
+              },
+              "explanation": [
+                "查询未通过执行检查，请缩小范围或明确查询条件后重新查询。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "execution_error_code": "sql_execution_rejected"
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 16440.029,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [
+                  "original_single_source_question_preserved"
+                ],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2453,
+                      "output_tokens": 57,
+                      "total_tokens": 2510,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 0,
+                      "call_index": 1,
+                      "latency_ms": 4672.712
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "d09472ea2b335d4e50f82a0a",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+              "reason": "self_contained_sql"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              80.0
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2453,
+              "output_tokens": 57,
+              "total_tokens": 2510,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 4672.712,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1430,
+              "output_tokens": 119,
+              "total_tokens": 1549,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 38,
+              "call_index": 1,
+              "latency_ms": 6915.295,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1108,
+              "output_tokens": 80,
+              "total_tokens": 1188,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 3214.863,
+              "component": "sql"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "question": "那排除未说明的特殊合同呢",
+          "pass": true,
+          "response": {
+            "status": "clarification",
+            "question": "那排除未说明的特殊合同呢",
+            "effective_question": "在2024年中国合同金额统计中，排除未说明的特殊合同",
+            "route": "clarify",
+            "planner_source": "model_validated",
+            "session_id": "advertising",
+            "context_turns": 3,
+            "state": {
+              "route": "clarify",
+              "pending": "“特殊合同”在当前数据库中没有对应字段或判定条件。请说明用于识别特殊合同的字段及取值（以及“未说明”具体指什么），或确认应改查其他来源。"
+            },
+            "result": {
+              "status": "clarification",
+              "clarification": "“特殊合同”在当前数据库中没有对应字段或判定条件。请说明用于识别特殊合同的字段及取值（以及“未说明”具体指什么），或确认应改查其他来源。"
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "clarify",
+                "latency_ms": 12820.971,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2902,
+                      "output_tokens": 214,
+                      "total_tokens": 3116,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 121,
+                      "call_index": 1,
+                      "latency_ms": 11370.944
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "6aa931059ac5c77341a7d7db",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "那排除未说明的特殊合同呢"
+            }
+          },
+          "reference_rows_scoring_only": [],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2902,
+              "output_tokens": 214,
+              "total_tokens": 3116,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 121,
+              "call_index": 1,
+              "latency_ms": 11370.944,
+              "component": "router"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+          "pass": false,
+          "response": {
+            "status": "incomplete",
+            "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+            "effective_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "advertising",
+            "context_turns": 4,
+            "state": {
+              "route": "sql",
+              "metrics": [],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": "sql_execution_rejected",
+              "pending_question": null
+            },
+            "result": {
+              "status": "incomplete",
+              "result_state": "unexecuted",
+              "notices": [],
+              "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+              "rewritten_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+              "sql": null,
+              "parameters": [],
+              "columns": [],
+              "rows": [],
+              "plan": {
+                "table": null,
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": null,
+                "metric_label": null,
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [],
+                "join_tables": [],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": false,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.0,
+                "rewritten_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": "sql_execution_rejected",
+                "clarification_options": [],
+                "assumptions": [],
+                "planner_source": "rules",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {},
+                "planner_audit": {},
+                "model_plan_diagnostics": {},
+                "metrics": [],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {},
+                "output_metrics": []
+              },
+              "explanation": [
+                "查询未通过执行检查，请缩小范围或明确查询条件后重新查询。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "execution_error_code": "sql_execution_rejected"
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 7231.098,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [
+                  "discarded_redundant_sql_read_not_executed"
+                ],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2444,
+                      "output_tokens": 104,
+                      "total_tokens": 2548,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 0,
+                      "call_index": 1,
+                      "latency_ms": 5285.132
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "66eabde62f3a930a821a0e39",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+              "reason": "self_contained_sql"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              null
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2444,
+              "output_tokens": 104,
+              "total_tokens": 2548,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 5285.132,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1427,
+              "output_tokens": 127,
+              "total_tokens": 1554,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 46,
+              "call_index": 1,
+              "latency_ms": 5067.276,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1105,
+              "output_tokens": 207,
+              "total_tokens": 1312,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 125,
+              "call_index": 2,
+              "latency_ms": 7423.782,
+              "component": "sql"
+            }
+          ]
+        }
+      ],
+      "persisted_turns_after_restart": 5,
+      "source_stable": true
+    },
+    {
+      "domain": "observatory",
+      "cases": [
+        {
+          "turn": 1,
+          "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+          "pass": true,
+          "response": {
+            "status": "ok",
+            "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+            "effective_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "observatory",
+            "context_turns": 0,
+            "state": {
+              "route": "sql",
+              "metrics": [
+                {
+                  "id": "o0",
+                  "table": "observations",
+                  "column": "exposure",
+                  "function": "SUM",
+                  "label": "total_exposure",
+                  "unit": "unknown",
+                  "currency": null,
+                  "missing": "null",
+                  "filters": []
+                }
+              ],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": null,
+              "pending_question": null,
+              "executed_sql_context": {
+                "payload": {
+                  "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+                  "sql": "SELECT SUM(\"o\".\"exposure\") AS \"total_exposure\" FROM \"observations\" AS \"o\" JOIN \"countries\" AS \"c\" ON \"o\".\"country_id\" = \"c\".\"id\" WHERE \"c\".\"name\" = ? AND \"o\".\"event_date\" >= ? AND \"o\".\"event_date\" < ?",
+                  "parameters": [
+                    "中国",
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648"
+                },
+                "sha256": "da5af259dd961978f47e6c0ceb3b962f6d7c0ec324739bfa56950f3f8996bc81"
+              }
+            },
+            "result": {
+              "status": "ok",
+              "result_state": "rows",
+              "notices": [
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+              ],
+              "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+              "rewritten_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+              "sql": "SELECT SUM(\"o\".\"exposure\") AS \"total_exposure\" FROM \"observations\" AS \"o\" JOIN \"countries\" AS \"c\" ON \"o\".\"country_id\" = \"c\".\"id\" WHERE \"c\".\"name\" = ? AND \"o\".\"event_date\" >= ? AND \"o\".\"event_date\" < ?",
+              "parameters": [
+                "中国",
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "columns": [
+                "total_exposure"
+              ],
+              "rows": [
+                {
+                  "total_exposure": 19.0
+                }
+              ],
+              "plan": {
+                "table": "countries",
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": "RELATIONAL",
+                "metric_label": "复杂关系查询",
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.country_id",
+                    "table": "observations",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.event_date",
+                    "table": "observations",
+                    "column": "event_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.event_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.exposure",
+                    "table": "observations",
+                    "column": "exposure",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.exposure",
+                    "metric_function": null
+                  }
+                ],
+                "join_tables": [
+                  "observations"
+                ],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": true,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.8,
+                "rewritten_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": null,
+                "clarification_options": [],
+                "assumptions": [
+                  "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+                ],
+                "planner_source": "model_validated",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {
+                  "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+                  "metric": {
+                    "table": null,
+                    "column": null,
+                    "function": "RELATIONAL",
+                    "label": "复杂关系查询"
+                  },
+                  "filters": [],
+                  "time_range": null,
+                  "group_by": [],
+                  "comparison": "none",
+                  "comparison_window": null,
+                  "top_n": null,
+                  "confidence": 0.8,
+                  "unresolved": [],
+                  "execution_allowed": true,
+                  "planner_source": "model_validated",
+                  "planner_audit": {
+                    "decision": "accepted",
+                    "final_source": "model_validated",
+                    "validation_channel": "relational_ast_plus_independent_model_review",
+                    "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                    "provider": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "complex_sql_independent_review",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 1113,
+                      "output_tokens": 80,
+                      "total_tokens": 1193,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 0,
+                      "call_index": 2,
+                      "latency_ms": 3475.838,
+                      "reasoning_effort": "medium",
+                      "response_status": "completed"
+                    },
+                    "typed_v2_intent_verified": false
+                  },
+                  "metrics": [
+                    {
+                      "id": "o0",
+                      "table": "observations",
+                      "column": "exposure",
+                      "function": "SUM",
+                      "label": "total_exposure",
+                      "unit": "unknown",
+                      "currency": null,
+                      "missing": "null",
+                      "filters": []
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "grain_audit": {},
+                  "semantic_audit": {
+                    "status": "model_reviewed",
+                    "checks": {
+                      "aggregation_grain_and_no_fanout": true,
+                      "all_question_parts": true,
+                      "filters_and_dates": true,
+                      "no_invented_business_definition": true,
+                      "null_and_zero_semantics": true,
+                      "physical_fields_and_values": true,
+                      "projection_order_ranking_and_ties": true
+                    },
+                    "verification": "independent_model_review_not_formal_semantic_proof",
+                    "relational_output_lineage": [
+                      {
+                        "label": "total_exposure",
+                        "lineage": {
+                          "table": "observations",
+                          "column": "exposure",
+                          "operators": [
+                            "SUM"
+                          ]
+                        },
+                        "representation": "metric"
+                      }
+                    ],
+                    "sql_sha256": "02ae8e1a3a19334a482d912a5847f721003c17010f52c107ddade19d361348cb"
+                  }
+                },
+                "planner_audit": {
+                  "decision": "accepted",
+                  "final_source": "model_validated",
+                  "validation_channel": "relational_ast_plus_independent_model_review",
+                  "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                  "provider": {
+                    "provider": "responses",
+                    "model": "gpt-6-luna",
+                    "reasoning": "medium",
+                    "operation": "complex_sql_independent_review",
+                    "http_status": 200,
+                    "status": "completed",
+                    "model_verified": true,
+                    "response_model": "gpt-6-luna",
+                    "input_tokens": 1113,
+                    "output_tokens": 80,
+                    "total_tokens": 1193,
+                    "cached_input_tokens": 0,
+                    "reasoning_tokens": 0,
+                    "call_index": 2,
+                    "latency_ms": 3475.838,
+                    "reasoning_effort": "medium",
+                    "response_status": "completed"
+                  },
+                  "typed_v2_intent_verified": false
+                },
+                "model_plan_diagnostics": {
+                  "channel": "relational_sql",
+                  "structural_attempts": [
+                    {
+                      "attempt": 1,
+                      "status": "statically_validated"
+                    }
+                  ]
+                },
+                "metrics": [
+                  {
+                    "id": "o0",
+                    "table": "observations",
+                    "column": "exposure",
+                    "function": "SUM",
+                    "label": "total_exposure",
+                    "unit": "unknown",
+                    "currency": null,
+                    "missing": "null",
+                    "filters": []
+                  }
+                ],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {
+                  "status": "model_reviewed",
+                  "checks": {
+                    "aggregation_grain_and_no_fanout": true,
+                    "all_question_parts": true,
+                    "filters_and_dates": true,
+                    "no_invented_business_definition": true,
+                    "null_and_zero_semantics": true,
+                    "physical_fields_and_values": true,
+                    "projection_order_ranking_and_ties": true
+                  },
+                  "verification": "independent_model_review_not_formal_semantic_proof",
+                  "relational_output_lineage": [
+                    {
+                      "label": "total_exposure",
+                      "lineage": {
+                        "table": "observations",
+                        "column": "exposure",
+                        "operators": [
+                          "SUM"
+                        ]
+                      },
+                      "representation": "metric"
+                    }
+                  ],
+                  "sql_sha256": "02ae8e1a3a19334a482d912a5847f721003c17010f52c107ddade19d361348cb"
+                },
+                "output_metrics": []
+              },
+              "explanation": [
+                "识别指标：复杂关系查询（RELATIONAL）",
+                "查询表：countries",
+                "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+                "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "database": "source.sqlite",
+                "table": "countries",
+                "row_count": 1,
+                "row_limit": 100,
+                "result_completeness": "complete",
+                "query_hash": "44b1abb1e2f8c7cd",
+                "field_links": [
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.country_id",
+                    "table": "observations",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.event_date",
+                    "table": "observations",
+                    "column": "event_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.event_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.exposure",
+                    "table": "observations",
+                    "column": "exposure",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.exposure",
+                    "metric_function": null
+                  }
+                ],
+                "coverage": {},
+                "consistency": "sqlite_read_transaction",
+                "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648",
+                "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+                "grain_audit": {},
+                "result_cells": [
+                  {
+                    "row": 0,
+                    "column": "total_exposure",
+                    "query_hash": "44b1abb1e2f8c7cd",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "total_exposure"
+                    }
+                  }
+                ],
+                "complete_result": {
+                  "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+                  "status": "complete",
+                  "reason": null,
+                  "query_sha256": "a7431e708085e6895cb251a828fd9e2ab373c277df99e85f557af6b3052e695f",
+                  "source_revision": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                  "producer_sha256": "05c1347a0d506224157bb4c6ec3e836422686dd95b95396059a264c65cebe0a0",
+                  "columns": [
+                    "total_exposure"
+                  ],
+                  "row_count": 1,
+                  "observed_rows": 1,
+                  "preview_row_count": 1,
+                  "preview_limit": 100,
+                  "preview_truncated": false,
+                  "scope": {
+                    "mode": "bounded_complete_result_with_preview",
+                    "semantic_row_limit": null,
+                    "top_n": null,
+                    "requested_preview_limit": null,
+                    "effective_preview_limit": 100,
+                    "default_preview_limit_removed_from_sql": true,
+                    "verification": "original_question_row_limit_and_existing_rank_filter"
+                  },
+                  "budgets": {
+                    "max_rows": 25000,
+                    "max_bytes": 8388608,
+                    "max_seconds": 5.0,
+                    "max_steps": 50000000,
+                    "max_source_bytes": 268435456
+                  },
+                  "artifact_id": "de3d5dfe92b7475194cf20aa11b96b60",
+                  "data_sha256": "18ac20da1a182f7f085aeeb6ecc169883e61606da97d2fa2be3a438ee472ea78",
+                  "byte_count": 7,
+                  "cursor_eof_verified": true,
+                  "source_pin": {
+                    "files": {
+                      "database": {
+                        "sha256": "fa882e2e8fd54f0d91339fd3dc421c2205e6b180fd2ed674585a12e244ce4a56",
+                        "bytes": 16384,
+                        "generation": [
+                          1053008805926603246,
+                          281474978115181,
+                          16384,
+                          1791070836175383900,
+                          1791070825841576200
+                        ]
+                      }
+                    },
+                    "sha256": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                    "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+                  },
+                  "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+                  "binding_sha256": "ee03bdc9802060f71d7b9641ad2dfa4f43c3330b69459cd8c546862e67369f56",
+                  "receipt_signature": "7c5b0a5fbf76e115acd1cbbcef043753326739801d9645e2c2c4777690b41b48",
+                  "preview_cells": [
+                    [
+                      19.0
+                    ]
+                  ],
+                  "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+                }
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 6801.95,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2447,
+                      "output_tokens": 122,
+                      "total_tokens": 2569,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 59,
+                      "call_index": 1,
+                      "latency_ms": 6796.088
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "595ec9c5e5dceb74e9fcce66",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              19.0
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2447,
+              "output_tokens": 122,
+              "total_tokens": 2569,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 59,
+              "call_index": 1,
+              "latency_ms": 6796.088,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1432,
+              "output_tokens": 131,
+              "total_tokens": 1563,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 45,
+              "call_index": 1,
+              "latency_ms": 4577.422,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1113,
+              "output_tokens": 80,
+              "total_tokens": 1193,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 3475.838,
+              "component": "sql"
+            }
+          ]
+        },
+        {
+          "turn": 2,
+          "question": "那日本呢",
+          "pass": true,
+          "response": {
+            "status": "ok",
+            "question": "那日本呢",
+            "effective_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为日本，关联observations.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "observatory",
+            "context_turns": 1,
+            "state": {
+              "route": "sql",
+              "metrics": [
+                {
+                  "id": "o0",
+                  "table": "observations",
+                  "column": "exposure",
+                  "function": "SUM",
+                  "label": "exposure_total",
+                  "unit": "unknown",
+                  "currency": null,
+                  "missing": "null",
+                  "filters": []
+                }
+              ],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": null,
+              "pending_question": null,
+              "executed_sql_context": {
+                "payload": {
+                  "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为日本，关联observations.country_id=countries.id。",
+                  "sql": "SELECT SUM(\"o\".\"exposure\") AS \"exposure_total\" FROM \"observations\" AS \"o\" JOIN \"countries\" AS \"c\" ON \"o\".\"country_id\" = \"c\".\"id\" WHERE \"c\".\"name\" = ? AND \"o\".\"event_date\" >= ? AND \"o\".\"event_date\" < ?",
+                  "parameters": [
+                    "日本",
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648"
+                },
+                "sha256": "58ce8902d32450d0329c57f4b038d5fd06ceeecd3e1d9211861c06ff0c189221"
+              }
+            },
+            "result": {
+              "status": "ok",
+              "result_state": "rows",
+              "notices": [
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+              ],
+              "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为日本，关联observations.country_id=countries.id。",
+              "rewritten_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为日本，关联observations.country_id=countries.id。",
+              "sql": "SELECT SUM(\"o\".\"exposure\") AS \"exposure_total\" FROM \"observations\" AS \"o\" JOIN \"countries\" AS \"c\" ON \"o\".\"country_id\" = \"c\".\"id\" WHERE \"c\".\"name\" = ? AND \"o\".\"event_date\" >= ? AND \"o\".\"event_date\" < ?",
+              "parameters": [
+                "日本",
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "columns": [
+                "exposure_total"
+              ],
+              "rows": [
+                {
+                  "exposure_total": 31.0
+                }
+              ],
+              "plan": {
+                "table": "countries",
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": "RELATIONAL",
+                "metric_label": "复杂关系查询",
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.country_id",
+                    "table": "observations",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.event_date",
+                    "table": "observations",
+                    "column": "event_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.event_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.exposure",
+                    "table": "observations",
+                    "column": "exposure",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.exposure",
+                    "metric_function": null
+                  }
+                ],
+                "join_tables": [
+                  "observations"
+                ],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": true,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.8,
+                "rewritten_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为日本，关联observations.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": null,
+                "clarification_options": [],
+                "assumptions": [
+                  "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+                ],
+                "planner_source": "model_validated",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {
+                  "question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为日本，关联observations.country_id=countries.id。",
+                  "metric": {
+                    "table": null,
+                    "column": null,
+                    "function": "RELATIONAL",
+                    "label": "复杂关系查询"
+                  },
+                  "filters": [],
+                  "time_range": null,
+                  "group_by": [],
+                  "comparison": "none",
+                  "comparison_window": null,
+                  "top_n": null,
+                  "confidence": 0.8,
+                  "unresolved": [],
+                  "execution_allowed": true,
+                  "planner_source": "model_validated",
+                  "planner_audit": {
+                    "decision": "accepted",
+                    "final_source": "model_validated",
+                    "validation_channel": "relational_ast_plus_independent_model_review",
+                    "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                    "provider": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "complex_sql_independent_review",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 1113,
+                      "output_tokens": 147,
+                      "total_tokens": 1260,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 65,
+                      "call_index": 4,
+                      "latency_ms": 6923.785,
+                      "reasoning_effort": "medium",
+                      "response_status": "completed"
+                    },
+                    "typed_v2_intent_verified": false
+                  },
+                  "metrics": [
+                    {
+                      "id": "o0",
+                      "table": "observations",
+                      "column": "exposure",
+                      "function": "SUM",
+                      "label": "exposure_total",
+                      "unit": "unknown",
+                      "currency": null,
+                      "missing": "null",
+                      "filters": []
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "grain_audit": {},
+                  "semantic_audit": {
+                    "status": "model_reviewed",
+                    "checks": {
+                      "aggregation_grain_and_no_fanout": true,
+                      "all_question_parts": true,
+                      "filters_and_dates": true,
+                      "no_invented_business_definition": true,
+                      "null_and_zero_semantics": true,
+                      "physical_fields_and_values": true,
+                      "projection_order_ranking_and_ties": true
+                    },
+                    "verification": "independent_model_review_not_formal_semantic_proof",
+                    "relational_output_lineage": [
+                      {
+                        "label": "exposure_total",
+                        "lineage": {
+                          "table": "observations",
+                          "column": "exposure",
+                          "operators": [
+                            "SUM"
+                          ]
+                        },
+                        "representation": "metric"
+                      }
+                    ],
+                    "sql_sha256": "fa38be63331960d821d1eced56be8d6d68159e069a695d904e2debc9688fe8c6"
+                  }
+                },
+                "planner_audit": {
+                  "decision": "accepted",
+                  "final_source": "model_validated",
+                  "validation_channel": "relational_ast_plus_independent_model_review",
+                  "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                  "provider": {
+                    "provider": "responses",
+                    "model": "gpt-6-luna",
+                    "reasoning": "medium",
+                    "operation": "complex_sql_independent_review",
+                    "http_status": 200,
+                    "status": "completed",
+                    "model_verified": true,
+                    "response_model": "gpt-6-luna",
+                    "input_tokens": 1113,
+                    "output_tokens": 147,
+                    "total_tokens": 1260,
+                    "cached_input_tokens": 0,
+                    "reasoning_tokens": 65,
+                    "call_index": 4,
+                    "latency_ms": 6923.785,
+                    "reasoning_effort": "medium",
+                    "response_status": "completed"
+                  },
+                  "typed_v2_intent_verified": false
+                },
+                "model_plan_diagnostics": {
+                  "channel": "relational_sql",
+                  "structural_attempts": [
+                    {
+                      "attempt": 1,
+                      "status": "statically_validated"
+                    }
+                  ]
+                },
+                "metrics": [
+                  {
+                    "id": "o0",
+                    "table": "observations",
+                    "column": "exposure",
+                    "function": "SUM",
+                    "label": "exposure_total",
+                    "unit": "unknown",
+                    "currency": null,
+                    "missing": "null",
+                    "filters": []
+                  }
+                ],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {
+                  "status": "model_reviewed",
+                  "checks": {
+                    "aggregation_grain_and_no_fanout": true,
+                    "all_question_parts": true,
+                    "filters_and_dates": true,
+                    "no_invented_business_definition": true,
+                    "null_and_zero_semantics": true,
+                    "physical_fields_and_values": true,
+                    "projection_order_ranking_and_ties": true
+                  },
+                  "verification": "independent_model_review_not_formal_semantic_proof",
+                  "relational_output_lineage": [
+                    {
+                      "label": "exposure_total",
+                      "lineage": {
+                        "table": "observations",
+                        "column": "exposure",
+                        "operators": [
+                          "SUM"
+                        ]
+                      },
+                      "representation": "metric"
+                    }
+                  ],
+                  "sql_sha256": "fa38be63331960d821d1eced56be8d6d68159e069a695d904e2debc9688fe8c6"
+                },
+                "output_metrics": []
+              },
+              "explanation": [
+                "识别指标：复杂关系查询（RELATIONAL）",
+                "查询表：countries",
+                "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+                "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "database": "source.sqlite",
+                "table": "countries",
+                "row_count": 1,
+                "row_limit": 100,
+                "result_completeness": "complete",
+                "query_hash": "7c69f812dbf7ecf6",
+                "field_links": [
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.country_id",
+                    "table": "observations",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.event_date",
+                    "table": "observations",
+                    "column": "event_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.event_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "observations.exposure",
+                    "table": "observations",
+                    "column": "exposure",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "observations.exposure",
+                    "metric_function": null
+                  }
+                ],
+                "coverage": {},
+                "consistency": "sqlite_read_transaction",
+                "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648",
+                "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+                "grain_audit": {},
+                "result_cells": [
+                  {
+                    "row": 0,
+                    "column": "exposure_total",
+                    "query_hash": "7c69f812dbf7ecf6",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "exposure_total"
+                    }
+                  }
+                ],
+                "complete_result": {
+                  "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+                  "status": "complete",
+                  "reason": null,
+                  "query_sha256": "e11d1c82bee14bf4557ab9fb3269243ce6c115b07ba856005e7d6f0e96ab505b",
+                  "source_revision": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                  "producer_sha256": "05c1347a0d506224157bb4c6ec3e836422686dd95b95396059a264c65cebe0a0",
+                  "columns": [
+                    "exposure_total"
+                  ],
+                  "row_count": 1,
+                  "observed_rows": 1,
+                  "preview_row_count": 1,
+                  "preview_limit": 100,
+                  "preview_truncated": false,
+                  "scope": {
+                    "mode": "bounded_complete_result_with_preview",
+                    "semantic_row_limit": null,
+                    "top_n": null,
+                    "requested_preview_limit": null,
+                    "effective_preview_limit": 100,
+                    "default_preview_limit_removed_from_sql": true,
+                    "verification": "original_question_row_limit_and_existing_rank_filter"
+                  },
+                  "budgets": {
+                    "max_rows": 25000,
+                    "max_bytes": 8388608,
+                    "max_seconds": 5.0,
+                    "max_steps": 50000000,
+                    "max_source_bytes": 268435456
+                  },
+                  "artifact_id": "c2cb0b5e2e7e44638362026a7a3d9d93",
+                  "data_sha256": "3a96e7349d6f47f30a8840228841417d42b3e497e3cfe4fe4c844b3d9c7b6e97",
+                  "byte_count": 7,
+                  "cursor_eof_verified": true,
+                  "source_pin": {
+                    "files": {
+                      "database": {
+                        "sha256": "fa882e2e8fd54f0d91339fd3dc421c2205e6b180fd2ed674585a12e244ce4a56",
+                        "bytes": 16384,
+                        "generation": [
+                          1053008805926603246,
+                          281474978115181,
+                          16384,
+                          1791070836175383900,
+                          1791070825841576200
+                        ]
+                      }
+                    },
+                    "sha256": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                    "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+                  },
+                  "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+                  "binding_sha256": "5b7bad11c953b3c5f2d83d47d421b4d827485497388d1c523c0b7a36253af45e",
+                  "receipt_signature": "79a202a006b8fba552092921332c3d0899f90243067e049acc984f6b73958f4a",
+                  "preview_cells": [
+                    [
+                      31.0
+                    ]
+                  ],
+                  "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+                }
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 6408.696,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [
+                  "original_single_source_question_preserved",
+                  "model_reviewed_sql_followup"
+                ],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2934,
+                      "output_tokens": 143,
+                      "total_tokens": 3077,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 80,
+                      "call_index": 1,
+                      "latency_ms": 6406.192
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "9dc545818896927e60a031a4",
+            "context_resolution": {
+              "mode": "model_reviewed_sql_followup",
+              "actual_question": "那日本呢",
+              "base_scope_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为中国，关联observations.country_id=countries.id。",
+              "scope_question": "以observations.event_date为准，统计2025年observations.exposure合计，只筛选countries.name为日本，关联observations.country_id=countries.id。",
+              "verification": "independent_model_review_not_formal_semantic_proof",
+              "review": {
+                "approved": true,
+                "no_ambiguous_or_invented_scope": true,
+                "single_explicit_replacement": true,
+                "unmentioned_constraints_preserved": true
+              },
+              "execution_context_sha256": "da5af259dd961978f47e6c0ceb3b962f6d7c0ec324739bfa56950f3f8996bc81"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              31.0
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2934,
+              "output_tokens": 143,
+              "total_tokens": 3077,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 80,
+              "call_index": 1,
+              "latency_ms": 6406.192,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "sql_followup_rewrite",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 820,
+              "output_tokens": 55,
+              "total_tokens": 875,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 3738.039,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "sql_followup_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 800,
+              "output_tokens": 111,
+              "total_tokens": 911,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 64,
+              "call_index": 2,
+              "latency_ms": 3786.221,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1432,
+              "output_tokens": 120,
+              "total_tokens": 1552,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 35,
+              "call_index": 3,
+              "latency_ms": 5028.102,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1113,
+              "output_tokens": 147,
+              "total_tokens": 1260,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 65,
+              "call_index": 4,
+              "latency_ms": 6923.785,
+              "component": "sql"
+            }
+          ]
+        },
+        {
+          "turn": 3,
+          "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+          "pass": true,
+          "response": {
+            "status": "ok",
+            "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+            "effective_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "observatory",
+            "context_turns": 2,
+            "state": {
+              "route": "sql",
+              "metrics": [
+                {
+                  "id": "o0",
+                  "table": "contracts",
+                  "column": "amount",
+                  "function": "SUM",
+                  "label": "total_amount",
+                  "unit": "unknown",
+                  "currency": null,
+                  "missing": "null",
+                  "filters": []
+                }
+              ],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": null,
+              "pending_question": null,
+              "executed_sql_context": {
+                "payload": {
+                  "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+                  "sql": "SELECT SUM(\"c\".\"amount\") AS \"total_amount\" FROM \"contracts\" AS \"c\" JOIN \"countries\" AS \"co\" ON \"c\".\"country_id\" = \"co\".\"id\" WHERE \"c\".\"contract_date\" >= ? AND \"c\".\"contract_date\" < ? AND \"co\".\"name\" = ?",
+                  "parameters": [
+                    "2024-01-01",
+                    "2025-01-01",
+                    "中国"
+                  ],
+                  "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648"
+                },
+                "sha256": "0d8e071249aa798515c2299965852c5c534280b5aa2dd9db0596d3152d600ca8"
+              }
+            },
+            "result": {
+              "status": "ok",
+              "result_state": "rows",
+              "notices": [
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+              ],
+              "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+              "rewritten_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+              "sql": "SELECT SUM(\"c\".\"amount\") AS \"total_amount\" FROM \"contracts\" AS \"c\" JOIN \"countries\" AS \"co\" ON \"c\".\"country_id\" = \"co\".\"id\" WHERE \"c\".\"contract_date\" >= ? AND \"c\".\"contract_date\" < ? AND \"co\".\"name\" = ?",
+              "parameters": [
+                "2024-01-01",
+                "2025-01-01",
+                "中国"
+              ],
+              "columns": [
+                "total_amount"
+              ],
+              "rows": [
+                {
+                  "total_amount": 80.0
+                }
+              ],
+              "plan": {
+                "table": "contracts",
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": "RELATIONAL",
+                "metric_label": "复杂关系查询",
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [
+                  {
+                    "source_text": "contracts.amount",
+                    "table": "contracts",
+                    "column": "amount",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.amount",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.contract_date",
+                    "table": "contracts",
+                    "column": "contract_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.contract_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.country_id",
+                    "table": "contracts",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  }
+                ],
+                "join_tables": [
+                  "countries"
+                ],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": true,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.8,
+                "rewritten_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": null,
+                "clarification_options": [],
+                "assumptions": [
+                  "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+                ],
+                "planner_source": "model_validated",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {
+                  "question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+                  "metric": {
+                    "table": null,
+                    "column": null,
+                    "function": "RELATIONAL",
+                    "label": "复杂关系查询"
+                  },
+                  "filters": [],
+                  "time_range": null,
+                  "group_by": [],
+                  "comparison": "none",
+                  "comparison_window": null,
+                  "top_n": null,
+                  "confidence": 0.8,
+                  "unresolved": [],
+                  "execution_allowed": true,
+                  "planner_source": "model_validated",
+                  "planner_audit": {
+                    "decision": "accepted",
+                    "final_source": "model_validated",
+                    "validation_channel": "relational_ast_plus_independent_model_review",
+                    "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                    "provider": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "complex_sql_independent_review",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 1108,
+                      "output_tokens": 153,
+                      "total_tokens": 1261,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 71,
+                      "call_index": 2,
+                      "latency_ms": 5483.161,
+                      "reasoning_effort": "medium",
+                      "response_status": "completed"
+                    },
+                    "typed_v2_intent_verified": false
+                  },
+                  "metrics": [
+                    {
+                      "id": "o0",
+                      "table": "contracts",
+                      "column": "amount",
+                      "function": "SUM",
+                      "label": "total_amount",
+                      "unit": "unknown",
+                      "currency": null,
+                      "missing": "null",
+                      "filters": []
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "grain_audit": {},
+                  "semantic_audit": {
+                    "status": "model_reviewed",
+                    "checks": {
+                      "aggregation_grain_and_no_fanout": true,
+                      "all_question_parts": true,
+                      "filters_and_dates": true,
+                      "no_invented_business_definition": true,
+                      "null_and_zero_semantics": true,
+                      "physical_fields_and_values": true,
+                      "projection_order_ranking_and_ties": true
+                    },
+                    "verification": "independent_model_review_not_formal_semantic_proof",
+                    "relational_output_lineage": [
+                      {
+                        "label": "total_amount",
+                        "lineage": {
+                          "table": "contracts",
+                          "column": "amount",
+                          "operators": [
+                            "SUM"
+                          ]
+                        },
+                        "representation": "metric"
+                      }
+                    ],
+                    "sql_sha256": "77cd061e3524ab2a6cf11379c7342addbf7c75a10c547009362d547c2b0e8a46"
+                  }
+                },
+                "planner_audit": {
+                  "decision": "accepted",
+                  "final_source": "model_validated",
+                  "validation_channel": "relational_ast_plus_independent_model_review",
+                  "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                  "provider": {
+                    "provider": "responses",
+                    "model": "gpt-6-luna",
+                    "reasoning": "medium",
+                    "operation": "complex_sql_independent_review",
+                    "http_status": 200,
+                    "status": "completed",
+                    "model_verified": true,
+                    "response_model": "gpt-6-luna",
+                    "input_tokens": 1108,
+                    "output_tokens": 153,
+                    "total_tokens": 1261,
+                    "cached_input_tokens": 0,
+                    "reasoning_tokens": 71,
+                    "call_index": 2,
+                    "latency_ms": 5483.161,
+                    "reasoning_effort": "medium",
+                    "response_status": "completed"
+                  },
+                  "typed_v2_intent_verified": false
+                },
+                "model_plan_diagnostics": {
+                  "channel": "relational_sql",
+                  "structural_attempts": [
+                    {
+                      "attempt": 1,
+                      "status": "statically_validated"
+                    }
+                  ]
+                },
+                "metrics": [
+                  {
+                    "id": "o0",
+                    "table": "contracts",
+                    "column": "amount",
+                    "function": "SUM",
+                    "label": "total_amount",
+                    "unit": "unknown",
+                    "currency": null,
+                    "missing": "null",
+                    "filters": []
+                  }
+                ],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {
+                  "status": "model_reviewed",
+                  "checks": {
+                    "aggregation_grain_and_no_fanout": true,
+                    "all_question_parts": true,
+                    "filters_and_dates": true,
+                    "no_invented_business_definition": true,
+                    "null_and_zero_semantics": true,
+                    "physical_fields_and_values": true,
+                    "projection_order_ranking_and_ties": true
+                  },
+                  "verification": "independent_model_review_not_formal_semantic_proof",
+                  "relational_output_lineage": [
+                    {
+                      "label": "total_amount",
+                      "lineage": {
+                        "table": "contracts",
+                        "column": "amount",
+                        "operators": [
+                          "SUM"
+                        ]
+                      },
+                      "representation": "metric"
+                    }
+                  ],
+                  "sql_sha256": "77cd061e3524ab2a6cf11379c7342addbf7c75a10c547009362d547c2b0e8a46"
+                },
+                "output_metrics": []
+              },
+              "explanation": [
+                "识别指标：复杂关系查询（RELATIONAL）",
+                "查询表：contracts",
+                "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+                "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "database": "source.sqlite",
+                "table": "contracts",
+                "row_count": 1,
+                "row_limit": 100,
+                "result_completeness": "complete",
+                "query_hash": "162c4f9e8742d49a",
+                "field_links": [
+                  {
+                    "source_text": "contracts.amount",
+                    "table": "contracts",
+                    "column": "amount",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.amount",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.contract_date",
+                    "table": "contracts",
+                    "column": "contract_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.contract_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.country_id",
+                    "table": "contracts",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  }
+                ],
+                "coverage": {},
+                "consistency": "sqlite_read_transaction",
+                "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648",
+                "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+                "grain_audit": {},
+                "result_cells": [
+                  {
+                    "row": 0,
+                    "column": "total_amount",
+                    "query_hash": "162c4f9e8742d49a",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "total_amount"
+                    }
+                  }
+                ],
+                "complete_result": {
+                  "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+                  "status": "complete",
+                  "reason": null,
+                  "query_sha256": "fbbf19932a9c2ac23736686326f0c9db04f82904bfeb214453fa538e3e362bb2",
+                  "source_revision": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                  "producer_sha256": "05c1347a0d506224157bb4c6ec3e836422686dd95b95396059a264c65cebe0a0",
+                  "columns": [
+                    "total_amount"
+                  ],
+                  "row_count": 1,
+                  "observed_rows": 1,
+                  "preview_row_count": 1,
+                  "preview_limit": 100,
+                  "preview_truncated": false,
+                  "scope": {
+                    "mode": "bounded_complete_result_with_preview",
+                    "semantic_row_limit": null,
+                    "top_n": null,
+                    "requested_preview_limit": null,
+                    "effective_preview_limit": 100,
+                    "default_preview_limit_removed_from_sql": true,
+                    "verification": "original_question_row_limit_and_existing_rank_filter"
+                  },
+                  "budgets": {
+                    "max_rows": 25000,
+                    "max_bytes": 8388608,
+                    "max_seconds": 5.0,
+                    "max_steps": 50000000,
+                    "max_source_bytes": 268435456
+                  },
+                  "artifact_id": "9166d4c824a14ab3b272f9c2c1e3a0b4",
+                  "data_sha256": "90b0dfe4128b890df9e8fdbaabb04108ee3c890ee005437620518100af01ffc2",
+                  "byte_count": 7,
+                  "cursor_eof_verified": true,
+                  "source_pin": {
+                    "files": {
+                      "database": {
+                        "sha256": "fa882e2e8fd54f0d91339fd3dc421c2205e6b180fd2ed674585a12e244ce4a56",
+                        "bytes": 16384,
+                        "generation": [
+                          1053008805926603246,
+                          281474978115181,
+                          16384,
+                          1791070836175383900,
+                          1791070825841576200
+                        ]
+                      }
+                    },
+                    "sha256": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                    "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+                  },
+                  "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+                  "binding_sha256": "0733f32e468136be794c215f20423cce134eae662aca218cc3ff78760d7d22d1",
+                  "receipt_signature": "f7e1785c33cf6cf7491517d988731e549df6f9b11ad79a3f0c5c439fd85ac26a",
+                  "preview_cells": [
+                    [
+                      80.0
+                    ]
+                  ],
+                  "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+                }
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 7581.621,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [
+                  "discarded_redundant_sql_read_not_executed",
+                  "original_single_source_question_preserved"
+                ],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2453,
+                      "output_tokens": 204,
+                      "total_tokens": 2657,
+                      "cached_input_tokens": 1792,
+                      "reasoning_tokens": 98,
+                      "call_index": 1,
+                      "latency_ms": 7578.648
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "cd276bda69d5998bc591efa7",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "换个主题，以contracts.contract_date为准，统计2024年contracts.amount合计，只筛选countries.name为中国，关联contracts.country_id=countries.id。",
+              "reason": "self_contained_sql"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              80.0
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2453,
+              "output_tokens": 204,
+              "total_tokens": 2657,
+              "cached_input_tokens": 1792,
+              "reasoning_tokens": 98,
+              "call_index": 1,
+              "latency_ms": 7578.648,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1430,
+              "output_tokens": 153,
+              "total_tokens": 1583,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 69,
+              "call_index": 1,
+              "latency_ms": 5869.05,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1108,
+              "output_tokens": 153,
+              "total_tokens": 1261,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 71,
+              "call_index": 2,
+              "latency_ms": 5483.161,
+              "component": "sql"
+            }
+          ]
+        },
+        {
+          "turn": 4,
+          "question": "那排除未说明的特殊合同呢",
+          "pass": true,
+          "response": {
+            "status": "clarification",
+            "question": "那排除未说明的特殊合同呢",
+            "effective_question": "统计2024年中国合同金额合计，并排除“未说明的特殊合同”；请明确该类合同的筛选定义或字段。",
+            "route": "clarify",
+            "planner_source": "model_validated",
+            "session_id": "observatory",
+            "context_turns": 3,
+            "state": {
+              "route": "clarify",
+              "pending": "你说的“未说明的特殊合同”具体指哪些合同？当前可用的合同字段只有合同日期和金额，没有特殊合同标记，无法据此排除。"
+            },
+            "result": {
+              "status": "clarification",
+              "clarification": "你说的“未说明的特殊合同”具体指哪些合同？当前可用的合同字段只有合同日期和金额，没有特殊合同标记，无法据此排除。"
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "clarify",
+                "latency_ms": 5560.665,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 3452,
+                      "output_tokens": 222,
+                      "total_tokens": 3674,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 123,
+                      "call_index": 1,
+                      "latency_ms": 5558.318
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "b082533eb83f8c8afa679136",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "那排除未说明的特殊合同呢"
+            }
+          },
+          "reference_rows_scoring_only": [],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 3452,
+              "output_tokens": 222,
+              "total_tokens": 3674,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 123,
+              "call_index": 1,
+              "latency_ms": 5558.318,
+              "component": "router"
+            }
+          ]
+        },
+        {
+          "turn": 5,
+          "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+          "pass": true,
+          "response": {
+            "status": "ok",
+            "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+            "effective_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+            "route": "sql",
+            "planner_source": "model_validated",
+            "session_id": "observatory",
+            "context_turns": 4,
+            "state": {
+              "route": "sql",
+              "metrics": [
+                {
+                  "id": "o0",
+                  "table": "contracts",
+                  "column": "amount",
+                  "function": "SUM",
+                  "label": "total_amount",
+                  "unit": "unknown",
+                  "currency": null,
+                  "missing": "null",
+                  "filters": []
+                }
+              ],
+              "filters": [],
+              "dimensions": [],
+              "clarification_code": null,
+              "pending_question": null,
+              "executed_sql_context": {
+                "payload": {
+                  "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+                  "sql": "SELECT SUM(\"contracts\".\"amount\") AS \"total_amount\" FROM \"contracts\" AS \"contracts\" JOIN \"countries\" AS \"countries\" ON \"contracts\".\"country_id\" = \"countries\".\"id\" WHERE \"countries\".\"name\" = ? AND \"contracts\".\"contract_date\" >= ? AND \"contracts\".\"contract_date\" < ?",
+                  "parameters": [
+                    "日本",
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648"
+                },
+                "sha256": "ef4ae209fc629be80f26c8a1ce4548ddc64c4ae808fe6c6915d05cee9fa339f5"
+              }
+            },
+            "result": {
+              "status": "ok",
+              "result_state": "empty",
+              "notices": [
+                "查询条件下没有匹配数据",
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。"
+              ],
+              "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+              "rewritten_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+              "sql": "SELECT SUM(\"contracts\".\"amount\") AS \"total_amount\" FROM \"contracts\" AS \"contracts\" JOIN \"countries\" AS \"countries\" ON \"contracts\".\"country_id\" = \"countries\".\"id\" WHERE \"countries\".\"name\" = ? AND \"contracts\".\"contract_date\" >= ? AND \"contracts\".\"contract_date\" < ?",
+              "parameters": [
+                "日本",
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "columns": [
+                "total_amount"
+              ],
+              "rows": [
+                {
+                  "total_amount": null
+                }
+              ],
+              "plan": {
+                "table": "contracts",
+                "metric_table": null,
+                "metric_column": null,
+                "metric_function": "RELATIONAL",
+                "metric_label": "复杂关系查询",
+                "analysis_mode": "aggregate",
+                "dimensions": [],
+                "dimension_tables": {},
+                "dimension_transforms": {},
+                "dimension_labels": {},
+                "filters": [],
+                "having": null,
+                "links": [
+                  {
+                    "source_text": "contracts.amount",
+                    "table": "contracts",
+                    "column": "amount",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.amount",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.contract_date",
+                    "table": "contracts",
+                    "column": "contract_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.contract_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.country_id",
+                    "table": "contracts",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  }
+                ],
+                "join_tables": [
+                  "countries"
+                ],
+                "join_conditions": [],
+                "join_path": [],
+                "join_alternatives": [],
+                "order_desc": true,
+                "limit": 100,
+                "complete_results": true,
+                "semantic_row_limit": null,
+                "preview_row_limit": null,
+                "confidence": 0.8,
+                "rewritten_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+                "comparison_mode": "none",
+                "comparison_period": {},
+                "clarification": null,
+                "clarification_code": null,
+                "clarification_options": [],
+                "assumptions": [
+                  "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。"
+                ],
+                "planner_source": "model_validated",
+                "top_n": null,
+                "fan_out": false,
+                "coverage": {},
+                "intent_audit": {
+                  "question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+                  "metric": {
+                    "table": null,
+                    "column": null,
+                    "function": "RELATIONAL",
+                    "label": "复杂关系查询"
+                  },
+                  "filters": [],
+                  "time_range": null,
+                  "group_by": [],
+                  "comparison": "none",
+                  "comparison_window": null,
+                  "top_n": null,
+                  "confidence": 0.8,
+                  "unresolved": [],
+                  "execution_allowed": true,
+                  "planner_source": "model_validated",
+                  "planner_audit": {
+                    "decision": "accepted",
+                    "final_source": "model_validated",
+                    "validation_channel": "relational_ast_plus_independent_model_review",
+                    "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                    "provider": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "complex_sql_independent_review",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 1105,
+                      "output_tokens": 80,
+                      "total_tokens": 1185,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 0,
+                      "call_index": 2,
+                      "latency_ms": 3069.783,
+                      "reasoning_effort": "medium",
+                      "response_status": "completed"
+                    },
+                    "typed_v2_intent_verified": false
+                  },
+                  "metrics": [
+                    {
+                      "id": "o0",
+                      "table": "contracts",
+                      "column": "amount",
+                      "function": "SUM",
+                      "label": "total_amount",
+                      "unit": "unknown",
+                      "currency": null,
+                      "missing": "null",
+                      "filters": []
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "grain_audit": {},
+                  "semantic_audit": {
+                    "status": "model_reviewed",
+                    "checks": {
+                      "aggregation_grain_and_no_fanout": true,
+                      "all_question_parts": true,
+                      "filters_and_dates": true,
+                      "no_invented_business_definition": true,
+                      "null_and_zero_semantics": true,
+                      "physical_fields_and_values": true,
+                      "projection_order_ranking_and_ties": true
+                    },
+                    "verification": "independent_model_review_not_formal_semantic_proof",
+                    "relational_output_lineage": [
+                      {
+                        "label": "total_amount",
+                        "lineage": {
+                          "table": "contracts",
+                          "column": "amount",
+                          "operators": [
+                            "SUM"
+                          ]
+                        },
+                        "representation": "metric"
+                      }
+                    ],
+                    "sql_sha256": "457da8ab911d4863d1166d0e1ff4ff60ae320a71585ec5273121f048f5afd10d"
+                  }
+                },
+                "planner_audit": {
+                  "decision": "accepted",
+                  "final_source": "model_validated",
+                  "validation_channel": "relational_ast_plus_independent_model_review",
+                  "static_validation": "read_only_ast_qualified_schema_fk_and_shared_keys",
+                  "provider": {
+                    "provider": "responses",
+                    "model": "gpt-6-luna",
+                    "reasoning": "medium",
+                    "operation": "complex_sql_independent_review",
+                    "http_status": 200,
+                    "status": "completed",
+                    "model_verified": true,
+                    "response_model": "gpt-6-luna",
+                    "input_tokens": 1105,
+                    "output_tokens": 80,
+                    "total_tokens": 1185,
+                    "cached_input_tokens": 0,
+                    "reasoning_tokens": 0,
+                    "call_index": 2,
+                    "latency_ms": 3069.783,
+                    "reasoning_effort": "medium",
+                    "response_status": "completed"
+                  },
+                  "typed_v2_intent_verified": false
+                },
+                "model_plan_diagnostics": {
+                  "channel": "relational_sql",
+                  "structural_attempts": [
+                    {
+                      "attempt": 1,
+                      "status": "statically_validated"
+                    }
+                  ]
+                },
+                "metrics": [
+                  {
+                    "id": "o0",
+                    "table": "contracts",
+                    "column": "amount",
+                    "function": "SUM",
+                    "label": "total_amount",
+                    "unit": "unknown",
+                    "currency": null,
+                    "missing": "null",
+                    "filters": []
+                  }
+                ],
+                "derived_metrics": [],
+                "order_metric": null,
+                "grain_audit": {},
+                "semantic_audit": {
+                  "status": "model_reviewed",
+                  "checks": {
+                    "aggregation_grain_and_no_fanout": true,
+                    "all_question_parts": true,
+                    "filters_and_dates": true,
+                    "no_invented_business_definition": true,
+                    "null_and_zero_semantics": true,
+                    "physical_fields_and_values": true,
+                    "projection_order_ranking_and_ties": true
+                  },
+                  "verification": "independent_model_review_not_formal_semantic_proof",
+                  "relational_output_lineage": [
+                    {
+                      "label": "total_amount",
+                      "lineage": {
+                        "table": "contracts",
+                        "column": "amount",
+                        "operators": [
+                          "SUM"
+                        ]
+                      },
+                      "representation": "metric"
+                    }
+                  ],
+                  "sql_sha256": "457da8ab911d4863d1166d0e1ff4ff60ae320a71585ec5273121f048f5afd10d"
+                },
+                "output_metrics": []
+              },
+              "explanation": [
+                "识别指标：复杂关系查询（RELATIONAL）",
+                "查询表：contracts",
+                "未额外定义的空值行为遵循 SQLite 原生聚合和排序；完整输出来源见 relational_output_lineage。",
+                "查询条件下没有匹配数据",
+                "预览 1 行；完整查询结果 1 行，已核验游标结束并保存可分页原始结果。",
+                "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "database": "source.sqlite",
+                "table": "contracts",
+                "row_count": 1,
+                "row_limit": 100,
+                "result_completeness": "complete",
+                "query_hash": "274a964672a4aefd",
+                "field_links": [
+                  {
+                    "source_text": "contracts.amount",
+                    "table": "contracts",
+                    "column": "amount",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.amount",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.contract_date",
+                    "table": "contracts",
+                    "column": "contract_date",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.contract_date",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "contracts.country_id",
+                    "table": "contracts",
+                    "column": "country_id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "contracts.country_id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.id",
+                    "table": "countries",
+                    "column": "id",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.id",
+                    "metric_function": null
+                  },
+                  {
+                    "source_text": "countries.name",
+                    "table": "countries",
+                    "column": "name",
+                    "role": "source",
+                    "score": 1.0,
+                    "matched_alias": "countries.name",
+                    "metric_function": null
+                  }
+                ],
+                "coverage": {},
+                "consistency": "sqlite_read_transaction",
+                "source_revision": "705ec025e6f0c39c59e1856447adfe60d37b3875b4825645f652caeedf907648",
+                "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+                "grain_audit": {},
+                "result_cells": [
+                  {
+                    "row": 0,
+                    "column": "total_amount",
+                    "query_hash": "274a964672a4aefd",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "total_amount"
+                    }
+                  }
+                ],
+                "complete_result": {
+                  "format": "sqlite-ordered-cell-arrays-jsonl-v1",
+                  "status": "complete",
+                  "reason": null,
+                  "query_sha256": "7d20db54e2e7c5ccdb434c09f3ac320582f2a702a2230512d2ab5d92c205cad9",
+                  "source_revision": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                  "producer_sha256": "05c1347a0d506224157bb4c6ec3e836422686dd95b95396059a264c65cebe0a0",
+                  "columns": [
+                    "total_amount"
+                  ],
+                  "row_count": 1,
+                  "observed_rows": 1,
+                  "preview_row_count": 1,
+                  "preview_limit": 100,
+                  "preview_truncated": false,
+                  "scope": {
+                    "mode": "bounded_complete_result_with_preview",
+                    "semantic_row_limit": null,
+                    "top_n": null,
+                    "requested_preview_limit": null,
+                    "effective_preview_limit": 100,
+                    "default_preview_limit_removed_from_sql": true,
+                    "verification": "original_question_row_limit_and_existing_rank_filter"
+                  },
+                  "budgets": {
+                    "max_rows": 25000,
+                    "max_bytes": 8388608,
+                    "max_seconds": 5.0,
+                    "max_steps": 50000000,
+                    "max_source_bytes": 268435456
+                  },
+                  "artifact_id": "7fbced21c4dc430a81d23580864e8ac3",
+                  "data_sha256": "161a1bfffa621be8ff92c3a770b613a877f77c8a2d865342c10988ae7f72aa6b",
+                  "byte_count": 7,
+                  "cursor_eof_verified": true,
+                  "source_pin": {
+                    "files": {
+                      "database": {
+                        "sha256": "fa882e2e8fd54f0d91339fd3dc421c2205e6b180fd2ed674585a12e244ce4a56",
+                        "bytes": 16384,
+                        "generation": [
+                          1053008805926603246,
+                          281474978115181,
+                          16384,
+                          1791070836175383900,
+                          1791070825841576200
+                        ]
+                      }
+                    },
+                    "sha256": "f2b42fd23cb26bb1865b2cf7778064378ac90916bc8ecc3a1e3d123d7a710f93",
+                    "kind": "database_and_uncheckpointed_wal_content_hash_and_generation"
+                  },
+                  "receipt_key_id": "1ba7ed5c82390b0aac1b8327c77bf1cf0fe88e7e649733857341286c3d7f0c29",
+                  "binding_sha256": "d7fd10e05cc0113612f17d5c2329bbbf2d37cc17a596afcb155ae1bb9f3bb7db",
+                  "receipt_signature": "70ba724e8180c2c7ac2236ab7a8f5fe66579aacd856fb24aaf26576e533f3793",
+                  "preview_cells": [
+                    [
+                      null
+                    ]
+                  ],
+                  "preview_format": "ordered_cell_arrays_preserve_duplicate_labels"
+                }
+              },
+              "clarification": null,
+              "clarification_code": null,
+              "clarification_options": []
+            },
+            "trace": [
+              {
+                "stage": "intent_planning",
+                "source": "model_validated",
+                "route": "sql",
+                "latency_ms": 5018.404,
+                "error": null,
+                "rejection_code": null,
+                "normalizations": [
+                  "discarded_redundant_sql_read_not_executed",
+                  "original_single_source_question_preserved"
+                ],
+                "attempts": [
+                  {
+                    "attempt": 1,
+                    "validation": "complete",
+                    "errors": [],
+                    "api_audit": {
+                      "provider": "responses",
+                      "model": "gpt-6-luna",
+                      "reasoning": "medium",
+                      "operation": "omni_plan",
+                      "http_status": 200,
+                      "status": "completed",
+                      "model_verified": true,
+                      "response_model": "gpt-6-luna",
+                      "input_tokens": 2444,
+                      "output_tokens": 135,
+                      "total_tokens": 2579,
+                      "cached_input_tokens": 0,
+                      "reasoning_tokens": 27,
+                      "call_index": 1,
+                      "latency_ms": 5017.162
+                    }
+                  }
+                ]
+              }
+            ],
+            "audit_id": "34383fbaed6681f4bf5c2159",
+            "context_resolution": {
+              "mode": "independent",
+              "actual_question": "以contracts.contract_date为准，统计2025年contracts.amount合计，只筛选countries.name为日本，关联contracts.country_id=countries.id。",
+              "reason": "self_contained_sql"
+            }
+          },
+          "reference_rows_scoring_only": [
+            [
+              null
+            ]
+          ],
+          "api_audits": [
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "omni_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2444,
+              "output_tokens": 135,
+              "total_tokens": 2579,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 27,
+              "call_index": 1,
+              "latency_ms": 5017.162,
+              "component": "router"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_proposal",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1427,
+              "output_tokens": 127,
+              "total_tokens": 1554,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 46,
+              "call_index": 1,
+              "latency_ms": 3715.738,
+              "component": "sql"
+            },
+            {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "complex_sql_independent_review",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "response_model": "gpt-6-luna",
+              "input_tokens": 1105,
+              "output_tokens": 80,
+              "total_tokens": 1185,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 2,
+              "latency_ms": 3069.783,
+              "component": "sql"
+            }
+          ]
+        }
+      ],
+      "persisted_turns_after_restart": 5,
+      "source_stable": true
+    }
+  ]
+}

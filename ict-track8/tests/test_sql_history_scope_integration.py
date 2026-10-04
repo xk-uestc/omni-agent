@@ -113,10 +113,28 @@ def test_pending_refill_keeps_unknown_original_conditions_and_clarifies(agent):
     again = agent.query("订单数", session_id="unknown")
     assert again["status"] == "clarification"
     assert not again["result"].get("rows")
-    # The user can replace that scope with a complete, unambiguous new query.
     fresh = agent.query("2024年华南订单数", session_id="unknown")
     assert fresh["status"] == "ok"
     assert fresh["effective_question"] == "2024年华南订单数"
+
+
+def test_execution_failure_is_persisted_and_independent_next_turn_recovers(agent, monkeypatch):
+    from backend.nl2sql.security import SqlSafetyError
+    original = agent.engine.answer
+    def reject(question, **kwargs):
+        raise SqlSafetyError('secret_candidate_must_not_leak')
+    monkeypatch.setattr(agent.engine, 'answer', reject)
+    first = agent.query('2025年华东销售额', session_id='execution-failure')
+    assert first['status'] == 'incomplete'
+    assert first['result']['result_state'] == 'unexecuted'
+    assert 'secret_candidate' not in str(first)
+    assert 'executed_sql_context' not in first['state']
+    monkeypatch.setattr(agent.engine, 'answer', original)
+    followup = agent.query('那华南呢', session_id='execution-failure')
+    assert followup['status'] == 'clarification'
+    assert followup['context_turns'] == 1
+    recovered = agent.query('2024年华南销售额', session_id='execution-failure')
+    assert recovered['status'] == 'ok' and recovered['context_turns'] == 2
 
 
 def test_invalid_saved_scope_plus_metric_followup_cannot_query_all_rows(agent):

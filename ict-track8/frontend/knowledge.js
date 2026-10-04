@@ -107,6 +107,10 @@ function appendAnswer(host,result){
     facts.append(element('pre',JSON.stringify(span.answer_proof,null,2)));card.append(facts);host.append(card);
   }else if(result.answer){
     host.append(element('p',result.answer));
+    if(result.answer_mode==='visual_source_model_reviewed'){
+      host.append(element('small','原页图像读取 · 独立模型复核','muted'));
+      const details=element('details');details.append(element('summary','原页位置与复核记录'),element('pre',JSON.stringify(result.visual_source_proof,null,2)));host.append(details);
+    }
     if(result.answer_mode==='native_table_model_reviewed'){
       host.append(element('p','原生表格行列经独立模型复核；金额由服务器按原文数字精确计算。未声明的币种、倍率保持未知。','muted'));
       const details=element('details');details.append(element('summary','表格行列、期间和计算步骤'),element('pre',JSON.stringify({scope:result.answer_scope,computation:result.computation,review:result.semantic_review},null,2)));host.append(details);
@@ -132,12 +136,12 @@ async function request(path,payload){const r=await authFetch(path,{method:payloa
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
 async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();documentCatalog.clear();const previousSource=$('query-document').value;$('query-document').replaceChildren(element('option','由检索定位资料'));$('query-document').firstChild.value='';data.documents.forEach(doc=>{const option=element('option',doc.title);option.value=doc.document_id;$('query-document').append(option);documentCatalog.set(doc.document_id,doc);const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));addVisualAction(item,doc.document_id,1,doc.sha256,doc.modality);if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});if(documentCatalog.has(previousSource))$('query-document').value=previousSource;$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
 
-function addVisualAction(host,documentId,pageNo,sourceSha,modality){
+function addVisualAction(host,documentId,pageNo,sourceSha,modality,visualPart){
   const record=documentCatalog.get(documentId);
   if((modality||record?.modality)!=='pdf'||!Number.isInteger(pageNo)||pageNo<1||!/^[a-f0-9]{64}$/.test(sourceSha||''))return;
   const button=element('button','查看页图证据','visual-action');button.type='button';
   button.addEventListener('click',()=>{
-    visualDocument={documentId,sourceSha,title:record?.title||documentId,pageCount:record?.stats?.page_count};
+    visualDocument={documentId,sourceSha,title:record?.title||documentId,pageCount:record?.stats?.page_count,visualPart};
     $('visual-title').textContent=visualDocument.title;$('visual-page').value=pageNo;
     $('visual-page').max=visualDocument.pageCount||1000;
     if(!$('visual-dialog').open)$('visual-dialog').showModal();
@@ -145,6 +149,7 @@ function addVisualAction(host,documentId,pageNo,sourceSha,modality){
   });host.append(button);
 }
 function releaseVisualImage(){
+  document.getElementById('visual-source-highlight')?.replaceChildren();
   $('visual-image').removeAttribute('src');$('visual-image').hidden=true;
   if(visualBlobUrl){URL.revokeObjectURL(visualBlobUrl);visualBlobUrl=null;}
 }
@@ -178,6 +183,16 @@ async function loadVisualPage(pageNo){
     visualBlobUrl=URL.createObjectURL(blob);$('visual-image').src=visualBlobUrl;
     visualDisplayedPage=pageNo;visualRenderSha=manifest.render_sha256;$('visual-table-submit').disabled=false;
     $('visual-image').alt=`${snapshot.title} · 原PDF第${pageNo}页`;$('visual-image').hidden=false;
+    const part=snapshot.visualPart;
+    if(part&&part.page_no===pageNo&&part.source_sha256===snapshot.sourceSha&&part.render_sha256===manifest.render_sha256){
+      const box=part.bbox_normalized;
+      if(Array.isArray(box)&&box.length===4&&box.every(v=>Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3]){
+        const image=$('visual-image');let overlay=document.getElementById('visual-source-highlight');
+        if(!overlay){const stage=element('div');stage.style.cssText='position:relative;display:inline-block;max-width:100%';image.parentNode.insertBefore(stage,image);stage.append(image);overlay=document.createElementNS('http://www.w3.org/2000/svg','svg');overlay.id='visual-source-highlight';overlay.setAttribute('viewBox','0 0 1 1');overlay.setAttribute('preserveAspectRatio','none');overlay.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';stage.append(overlay);}
+        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+        Object.entries({x:box[0],y:box[1],width:box[2]-box[0],height:box[3]-box[1],fill:'rgba(255,199,0,.18)',stroke:'#d49a00','stroke-width':.003}).forEach(([key,value])=>rect.setAttribute(key,String(value)));overlay.replaceChildren(rect);
+      }
+    }
     $('visual-summary').textContent=`第 ${pageNo} / ${manifest.page_count} 页 · ${manifest.size_px.join(' × ')} 像素 · 原文件 SHA-256 ${snapshot.sourceSha.slice(0,16)}…`;
     $('visual-detail').textContent=JSON.stringify({document_id:manifest.document_id,page_no:manifest.page_no,source_sha256:manifest.source_sha256,render_sha256:manifest.render_sha256,renderer:manifest.renderer,rotation_degrees:manifest.rotation_degrees,coordinate_frame:manifest.coordinate_frame,warnings:manifest.warnings},null,2);
   }catch(error){if(revision===visualRevision&&!signal.aborted)$('visual-summary').textContent=error.message;}
@@ -243,7 +258,7 @@ $('ask').addEventListener('submit',async event=>{
     data.citations.forEach(hit=>{
       const box=element('article',null,'citation');
       box.append(element('b',`[${hit.citation_id}] ${hit.title}`),element('pre',hit.snippet),element('small',`${hit.metadata.source_locator} · ${hit.metadata.retrieval_channel} · BM25 ${hit.metadata.bm25_raw??'—'} · Dense ${hit.metadata.dense_cosine??'—'} · `),originalLink(hit.metadata.document_id,'查看原文件'));
-      addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256);
+      addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256,undefined,data.visual_source_proof?.parts?.[hit.citation_id-1]);
       $('answer').append(box);
     });
     const trace=element('details');trace.append(element('summary','查看路由、范围与实际核验记录'),element('pre',JSON.stringify(data,null,2)));$('answer').append(trace);

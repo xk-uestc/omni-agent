@@ -430,6 +430,8 @@ def bind_grounded_span_answer(question, claims, citations, client):
             'procedure paragraph, threshold, title alone or one actor from a joint role. '
             'Purpose, impact, reasons and roles require the actual requested action/effect/relation; '
             'a title merely naming the subject cannot answer them. Check every requested field. '
+            'For plural or explicitly numbered requests, inspect all matching evidence; reject '
+            'one matching item when more are requested. Scope cannot repair omitted answer items. '
             'Reject table-row/framing leakage: the answer must be the smallest complete phrase, '
             'preserving units, signs and all answer-defining qualifiers. '
             'The candidate is not proof. Return explicit booleans and a schema reason_code.',

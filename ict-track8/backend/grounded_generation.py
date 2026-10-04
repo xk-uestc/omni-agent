@@ -409,8 +409,10 @@ class GroundedGenerator:
         cannot invent an answer or modify the source. This is model-reviewed
         completeness, not a formal entailment guarantee.
         """
-        parts = question_contract(question)['requested_parts']
-        if (not claims or len(parts) < 2 or getattr(self.client, 'model', None) != 'gpt-6-luna'
+        contract = question_contract(question)
+        parts = contract['requested_parts']
+        if (not claims or len(parts) < 2 and not contract['exhaustive_selection_required']
+                or getattr(self.client, 'model', None) != 'gpt-6-luna'
                 or getattr(self.client, 'reasoning', None) != 'medium'):
             return None
         if len(parts) > 6:
@@ -426,6 +428,10 @@ class GroundedGenerator:
             'For every part return its part_id and only existing claim_ids that substantively answer it. '
             'Keep the subjects inherited from the whole question, all entities, periods, conditions, units and '
             'relationships. Repeating a heading or answering a different subject does not count. '
+            'For plural enumeration questions, compare ALL matching source records in the supplied evidence '
+            'with the answer. One matching item does not answer a request for all matching elements or tests. '
+            'If the evidence is incomplete or cannot establish the full requested set, reject rather than '
+            'claiming completeness. A comparison request needs the requested relationship, not just two rows. '
             'Approve only when EVERY part is fully answered without extra inference. Do not generate new facts.',
             {'question':question, 'parts':[{'part_id':i+1,'question_span':part} for i,part in enumerate(parts)],
              'claims':[{'claim_id':i+1, **deepcopy(claim)} for i,claim in enumerate(claims)],

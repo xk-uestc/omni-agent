@@ -1,0 +1,97 @@
+{
+  "created_at": "2026-10-03T20:00:47.477909+00:00",
+  "scope": "complete_artifact_integrity_and_actual_sql_replay_not_question_accuracy_or_legacy_score",
+  "reference_opened": false,
+  "model_called": false,
+  "fixed_scorer_unchanged": true,
+  "run_manifest_sha256": "24ade40585f79f68cedc87912dce98fdd3a768779e50158729fa340bc239da44",
+  "observed_sha256": "c9a32de6394bb0e34dac549f877b2bf2ec1c20e48bc1074ce41a2cc93b752d97",
+  "artifact_cases": 6,
+  "passed": 6,
+  "cases": [
+    {
+      "case_id": "cs-c03",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 8,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c09",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1000,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-c10",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 200,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f09",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 599,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-f10",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 600,
+      "error_type": null
+    },
+    {
+      "case_id": "cs-r09",
+      "pass": true,
+      "checks": {
+        "receipt_and_current_source": true,
+        "all_pages_replayed": true,
+        "sql_and_parameters_unchanged": true,
+        "columns_match": true,
+        "preview_matches_full_prefix": true,
+        "full_rows_equal_sql_replay": true
+      },
+      "row_count": 1521,
+      "error_type": null
+    }
+  ]
+}

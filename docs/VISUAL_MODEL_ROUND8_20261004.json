@@ -1,0 +1,361 @@
+{
+  "created_at": "2026-10-03T20:18:24.742764+00:00",
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "scope": "two_randomized_image_only_transport_probes_not_complete_visual_qa_or_benchmark",
+  "gold_or_native_words_sent_as_text": false,
+  "requests_planned": 2,
+  "image_directory": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261003T201824502231Z-2a7c8ef5",
+  "status": "passed",
+  "cases": [
+    {
+      "id": "random-table-cell",
+      "question": "Read the image table. What integer is in the West row, Units column? Return only the requested JSON.",
+      "gold": {
+        "units": 9924
+      },
+      "prediction": {
+        "units": 9924
+      },
+      "pass": true,
+      "error_type": null,
+      "assets": {
+        "pdf": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261003T201824502231Z-2a7c8ef5\\random-table-cell.pdf",
+        "png": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261003T201824502231Z-2a7c8ef5\\random-table-cell.png"
+      },
+      "manifest": {
+        "schema_version": "pdf-visual-asset-v1",
+        "evidence_id": "339040e9198c0812729099f16bf5fb8f0a5c2a05c271343f83f20c729a647950",
+        "coordinate_mapping_version": "cropbox-unrotated-v2",
+        "status": "rendered_provenance_only",
+        "asset_kind": "page",
+        "source_sha256": "7d462ae84a6a7f2dc74f0c5a1a31b354b1e41a0b30ff311ee6affbafc223a754",
+        "source_byte_count": 737964,
+        "page_no": 1,
+        "page_count": 1,
+        "renderer": "PyMuPDF:1.27.2.2:RGB:alpha0:annots1",
+        "render_scale": 1.0,
+        "render_sha256": "925274c04e1f5c9bd40ce950681069aac259fe9fcc63cc3f995a21be3e781aab",
+        "png_byte_count": 17965,
+        "size_px": [
+          680,
+          360
+        ],
+        "rotation_degrees": 0,
+        "media_box_pdf_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "crop_box_pdf_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "page_display_rect_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "requested_crop_display_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "raster_display_rect_pt": [
+          0.0,
+          0.0,
+          680.0,
+          360.0
+        ],
+        "coordinate_frame": {
+          "origin": "top_left",
+          "unit": "pt",
+          "rotation_applied": true
+        },
+        "mappings": {
+          "pdf_user_to_fitz_unrotated": [
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            360.0
+          ],
+          "fitz_unrotated_to_display": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "display_to_asset_px": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "asset_px_to_display": [
+            1.0,
+            -0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "native_words": [],
+        "warnings": [
+          "native_text_is_not_ocr_or_verified_cell_or_chart_fact"
+        ],
+        "budgets": {
+          "max_source_bytes": 20971520,
+          "max_pages": 1000,
+          "max_pixels": 6000000,
+          "max_png_bytes": 12582912,
+          "max_native_words": 20000
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_transport_probe",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "339040e9198c0812729099f16bf5fb8f0a5c2a05c271343f83f20c729a647950",
+              "source_sha256": "7d462ae84a6a7f2dc74f0c5a1a31b354b1e41a0b30ff311ee6affbafc223a754",
+              "render_sha256": "925274c04e1f5c9bd40ce950681069aac259fe9fcc63cc3f995a21be3e781aab",
+              "page_no": 1,
+              "size_px": [
+                680,
+                360
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 553,
+          "output_tokens": 15,
+          "total_tokens": 568,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 3538.342
+        }
+      ],
+      "audit_dropped_calls": 0
+    },
+    {
+      "id": "random-color-position",
+      "question": "In the image, read the integer in the lower-left card and identify that card background color. Return only the requested JSON.",
+      "gold": {
+        "value": 30068,
+        "color": "orange"
+      },
+      "prediction": {
+        "value": 30068,
+        "color": "orange"
+      },
+      "pass": true,
+      "error_type": null,
+      "assets": {
+        "pdf": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261003T201824502231Z-2a7c8ef5\\random-color-position.pdf",
+        "png": "D:\\ICT8-OfficialDatasets\\diag\\visual-model-probe\\20261003T201824502231Z-2a7c8ef5\\random-color-position.png"
+      },
+      "manifest": {
+        "schema_version": "pdf-visual-asset-v1",
+        "evidence_id": "c3f6fa6a0ba696f4276052c62ccd987be3fa393ab60cab086bb7fe0fe57af620",
+        "coordinate_mapping_version": "cropbox-unrotated-v2",
+        "status": "rendered_provenance_only",
+        "asset_kind": "page",
+        "source_sha256": "8511eea61a45df1cab07272b146a8196f1b2d29c1f4f810f1c4ebca14af957a5",
+        "source_byte_count": 759564,
+        "page_no": 1,
+        "page_count": 1,
+        "renderer": "PyMuPDF:1.27.2.2:RGB:alpha0:annots1",
+        "render_scale": 1.0,
+        "render_sha256": "86eed9fc762b1f6e2a2e576a9e9406e550b7af3e76e964610479609a142e7623",
+        "png_byte_count": 13133,
+        "size_px": [
+          600,
+          420
+        ],
+        "rotation_degrees": 0,
+        "media_box_pdf_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "crop_box_pdf_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "page_display_rect_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "requested_crop_display_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "raster_display_rect_pt": [
+          0.0,
+          0.0,
+          600.0,
+          420.0
+        ],
+        "coordinate_frame": {
+          "origin": "top_left",
+          "unit": "pt",
+          "rotation_applied": true
+        },
+        "mappings": {
+          "pdf_user_to_fitz_unrotated": [
+            1.0,
+            0.0,
+            0.0,
+            -1.0,
+            0.0,
+            420.0
+          ],
+          "fitz_unrotated_to_display": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "display_to_asset_px": [
+            1.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "asset_px_to_display": [
+            1.0,
+            -0.0,
+            -0.0,
+            1.0,
+            0.0,
+            0.0
+          ]
+        },
+        "native_words": [],
+        "warnings": [
+          "native_text_is_not_ocr_or_verified_cell_or_chart_fact"
+        ],
+        "budgets": {
+          "max_source_bytes": 20971520,
+          "max_pages": 1000,
+          "max_pixels": 6000000,
+          "max_png_bytes": 12582912,
+          "max_native_words": 20000
+        }
+      },
+      "api_audits": [
+        {
+          "provider": "responses",
+          "model": "gpt-6-luna",
+          "reasoning": "medium",
+          "operation": "visual_transport_probe",
+          "http_status": 200,
+          "status": "completed",
+          "model_verified": true,
+          "image_evidence": [
+            {
+              "evidence_id": "c3f6fa6a0ba696f4276052c62ccd987be3fa393ab60cab086bb7fe0fe57af620",
+              "source_sha256": "8511eea61a45df1cab07272b146a8196f1b2d29c1f4f810f1c4ebca14af957a5",
+              "render_sha256": "86eed9fc762b1f6e2a2e576a9e9406e550b7af3e76e964610479609a142e7623",
+              "page_no": 1,
+              "size_px": [
+                600,
+                420
+              ]
+            }
+          ],
+          "image_count": 1,
+          "response_model": "gpt-6-luna",
+          "input_tokens": 577,
+          "output_tokens": 19,
+          "total_tokens": 596,
+          "cached_input_tokens": 0,
+          "reasoning_tokens": 0,
+          "call_index": 1,
+          "latency_ms": 2057.865
+        }
+      ],
+      "audit_dropped_calls": 0
+    }
+  ],
+  "implementation_sha256": {
+    "tools/probe_visual_model.py": "14b2473bcdde734abcbb7a0dbfdb50d84977077cfbd4c76cf317556f90e35a8d",
+    "ict-track8/backend/responses_client.py": "3c4cd7288ecb28f3d281c260ee0ccbf534f0ea16d1da2c3f7fff9e4707eabc94",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0"
+  },
+  "limits": [
+    "Two easy synthetic images do not establish real PDF/table/chart QA accuracy.",
+    "Observed model identity relies on the provider response audit."
+  ],
+  "passed": 2,
+  "attempted": 2,
+  "api_summary": {
+    "calls": 2,
+    "retained_calls": 2,
+    "dropped_calls": 0,
+    "completed_calls": 2,
+    "failed_calls": 0,
+    "tokens": {
+      "input_tokens": {
+        "reported_sum": 1130,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "output_tokens": {
+        "reported_sum": 34,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "total_tokens": {
+        "reported_sum": 1164,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "cached_input_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 0,
+        "complete": true
+      },
+      "reasoning_tokens": {
+        "reported_sum": 0,
+        "unknown_calls": 0,
+        "complete": true
+      }
+    },
+    "api_latency_ms": 5596.207,
+    "usd_cost": null,
+    "pricing_status": "third_party_price_not_supplied_no_estimate"
+  },
+  "wall_ms": 5600.054
+}

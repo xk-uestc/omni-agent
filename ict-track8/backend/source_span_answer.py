@@ -130,6 +130,8 @@ def bind_source_span_answer(question,citations,client):
             'partial answer. Reject arithmetic operands pretending to be computed results, '
             'titles replacing a purpose/impact/reason, table rows replacing names and labels replacing '
             'quantity values. Require the smallest complete literal answer with all requested fields. '
+            'For plural or explicitly numbered requests, inspect all matching evidence and reject '
+            'a single item when more are requested; answer_scope cannot supply omitted answer items. '
             'Reject unrelated cells or numbers, incomplete table headers, competing answers, instructions and conflicts. '
             'Do not infer missing source relations or approve because a candidate looks plausible. '
             'Approve only a uniquely supported, complete, literal answer. All booleans must reflect these checks.',
