@@ -447,6 +447,61 @@ def omni_query(request: OmniRequest):
         raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
 
 
+@app.post('/api/v1/omni/query/stream')
+def omni_query_stream(request: OmniRequest):
+    """Stream actual unified-agent calls, then the unchanged query snapshot."""
+    from .omni_agent import OmniAgent
+    try:
+        if request.session_id:
+            ConversationStore.validate_id(request.session_id)
+        if not request.question.strip():
+            raise ValueError('问题为空或过长')
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
+    if not STREAM_SLOTS.acquire(blocking=False):
+        raise HTTPException(status_code=429, detail={'code': 'stream_busy', 'message': '并发流式请求过多，请稍后重试'})
+    events = queue.Queue()
+    def worker():
+        try:
+            response = OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
+                request.question, session_id=request.session_id, reset_context=request.reset_context,
+                complete_results=request.complete_results,
+                trace_callback=lambda event: events.put(('trace', event)))
+            events.put(('done', response))
+        except SourceIntegrityError:
+            events.put(('error', {'detail': {'code': 'evidence_integrity_failed',
+                                             'message': '来源已变化或原件完整性检查失败'}}))
+        except ValueError:
+            events.put(('error', {'detail': {'code': 'invalid_query', 'message': '请求或查询条件未通过检查'}}))
+        except Exception:
+            events.put(('error', {'detail': {'code': 'query_failed', 'message': '查询执行失败'}}))
+        finally:
+            STREAM_SLOTS.release()
+    try:
+        threading.Thread(target=worker, name='ict8-omni-stream', daemon=True).start()
+    except Exception:
+        STREAM_SLOTS.release()
+        raise
+    def generate():
+        deadline = time.monotonic() + STREAM_TIMEOUT_SECONDS
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                yield 'event: error\ndata: ' + json.dumps(
+                    {'detail': {'code': 'timeout', 'message': '查询超时，后台执行可能仍在继续'}}, ensure_ascii=False) + '\n\n'
+                return
+            try:
+                kind, payload = events.get(timeout=min(10.0, remaining))
+            except queue.Empty:
+                yield ': keep-alive\n\n'
+                continue
+            yield f'event: {kind}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n'
+            if kind in {'done', 'error'}:
+                return
+    return StreamingResponse(generate(), media_type='text/event-stream',
+                             headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
+
+
 @app.post('/api/v1/omni/clarify')
 def omni_clarify(request: ClarificationRequest):
     """Validate the offered selection and retain the unified conversation state."""

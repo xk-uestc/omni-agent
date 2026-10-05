@@ -49,6 +49,7 @@
     };
   }
   function mount(controller,host,onSelect){
+    host.classList.add('conversation-session-picker');
     const label=document.createElement('label'),select=document.createElement('select'),note=document.createElement('small');
     label.textContent='当前会话';select.setAttribute('aria-label','问数与文档共用的当前会话');
     select.style.maxWidth='100%';select.style.width='100%';label.append(select);host.append(label,note);

@@ -29,11 +29,23 @@ test('an aborted previous chat cannot unlock a new in-flight request',async()=>{
 });
 test('independent question sends reset_context while preserving the current session',async()=>{
   let body;
-  const h={sessionId:'current-session',independentNext:true,$:()=>({checked:true}),
+  const h={STREAM:false,sessionId:'current-session',independentNext:true,$:()=>({checked:true}),
     run:async(q,request)=>request({},undefined),post:async(path,payload)=>{body=payload;}};
   vm.createContext(h);
   vm.runInContext(source.slice(source.indexOf('function ask('),source.indexOf('function clarify(')),h);
   await h.ask('2024年订单数');
   assert.equal(body.reset_context,true);assert.equal(body.session_id,'current-session');
   h.independentNext=false;await h.ask('那华南呢');assert.equal(body.reset_context,false);
+});
+
+test('streaming keeps the selected session and context flags without a duplicate POST',async()=>{
+  let args,posts=0;
+  const h={STREAM:true,sessionId:'stream-session',independentNext:true,$:()=>({checked:true}),
+    run:async(q,request)=>request({live:true},undefined),post:async()=>posts++,
+    streamQuery:async(...values)=>{args=values;}};
+  vm.createContext(h);
+  vm.runInContext(source.slice(source.indexOf('function ask('),source.indexOf('function clarify(')),h);
+  await h.ask('2025年销售额');
+  assert.equal(args[0],'2025年销售额');assert.equal(args[1],false);assert.equal(args[2],true);
+  assert.equal(posts,0);
 });

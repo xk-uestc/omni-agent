@@ -6,10 +6,6 @@
   "use strict";
   const NS = "http://www.w3.org/2000/svg";
   const ROLES = { metric: "指标", dimension: "维度", filter: "筛选", time: "时间", join: "关联", operator: "运算" };
-  const STAGES = [
-    ["intent", "理解问题", "01"], ["structured_query", "查询数据", "02"],
-    ["document_retrieval", "查找依据", "03"], ["evidence_fusion", "整理结果", "04"],
-  ];
   const arr = (value) => Array.isArray(value) ? value : [];
   const text = (value) => value == null ? "未返回" : typeof value === "object" ? JSON.stringify(value) : String(value);
   const key = (table, column) => `${table}.${column}`;
@@ -133,32 +129,6 @@
     return parts;
   }
 
-  function createLive() {
-    const root = el("div", "query-live"), head = el("div", "query-live-head"), label = el("span", "", "正在处理你的问题"), elapsed = el("span", "query-live-time");
-    const rail = el("ol", "query-live-rail"), nodes = new Map();
-    head.append(label, elapsed); root.append(head, rail);
-    STAGES.forEach(([stage, title, number], i) => {
-      const item = el("li", "query-live-stage"); item.dataset.state = i === 0 ? "running" : "pending";
-      item.append(el("span", "query-stage-number", number), el("span", "", title), el("span", "query-stage-state", i === 0 ? "处理中" : "等待"));
-      rail.append(item); nodes.set(stage, item);
-    });
-    function set(stage, state, message) { const item = nodes.get(stage); if (!item) return; item.dataset.state = state; item.lastChild.textContent = message; }
-    function update(trace) {
-      const index = STAGES.findIndex(([s]) => s === trace.stage); if (index < 0) return;
-      const failed = /error|failed|blocked|clarification/i.test(trace.status || "");
-      const skipped = /skip|not_executed|unavailable/i.test(trace.status || ""), running = /running|in_progress/i.test(trace.status || "");
-      set(trace.stage, failed ? "attention" : skipped ? "skipped" : running ? "running" : "done", failed ? "需确认" : skipped ? "未执行" : running ? "处理中" : "已完成");
-      if (!failed && !running && STAGES[index + 1] && nodes.get(STAGES[index + 1][0]).dataset.state === "pending") set(STAGES[index + 1][0], "running", "处理中");
-    }
-    function finish(data) {
-      arr(data.trace).forEach(update);
-      nodes.forEach((node) => { if (["running", "pending"].includes(node.dataset.state)) { node.dataset.state = "skipped"; node.lastChild.textContent = "未执行"; } });
-      label.textContent = data.structured?.status === "clarification" ? "需要补充查询条件" : data.status === "ok" ? "本次查询已完成" : "本次处理已结束";
-      elapsed.textContent = Number.isFinite(data.latency_ms) ? `${(data.latency_ms / 1000).toFixed(2)} s · 后端总耗时` : "";
-    }
-    function fail() { label.textContent = "查询未完成"; nodes.forEach((node) => { if (node.dataset.state === "running") { node.dataset.state = "attention"; node.lastChild.textContent = "已停止"; } }); }
-    return { root, update, finish, fail };
-  }
 
   function render(data, schema, schemaPromise) {
     const model = buildModel(data), { structured, plan, fields } = model;
@@ -344,5 +314,5 @@
     closeReplay.addEventListener("click", () => { replayIndex = -1; replay.textContent = "逐步查看"; closeReplay.hidden = true; sections.forEach((node) => node.hidden = false); navButtons.forEach((b) => { b.classList.remove("is-current"); b.removeAttribute("aria-current"); }); });
     return root;
   }
-  return { buildModel, questionSegments, annotateSql, createLive, render };
+  return { buildModel, questionSegments, annotateSql, render };
 });

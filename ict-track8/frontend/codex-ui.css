@@ -1,0 +1,74 @@
+/* Conversation-first tools: commentary, actual invocation, feedback, then answer. */
+.agent-timeline { margin:4px 0 22px; font-size:14px; line-height:1.75; color:var(--ui-text); }
+.agent-icon { width:17px; height:17px; flex:0 0 17px; }
+.agent-commentary,.agent-action-note { display:flex; align-items:flex-start; gap:10px; margin:16px 0 10px; color:var(--ui-text); }
+.agent-commentary>.agent-icon,.agent-action-note>.agent-icon { margin-top:4px; color:var(--ui-muted); }
+.agent-commentary>span,.agent-action-note>span { min-width:0; overflow-wrap:anywhere; }
+.agent-tool-row { margin:10px 0 18px; }
+.agent-tool-summary { display:flex; align-items:center; gap:8px; width:100%; min-height:32px; cursor:pointer; list-style:none; color:var(--ui-muted); }
+.agent-tool-summary::-webkit-details-marker { display:none; }
+.agent-tool-summary:hover { color:var(--ui-text); }
+.agent-tool-summary>.agent-icon { color:var(--ui-muted); }
+.agent-tool-verb { white-space:nowrap; }
+.agent-tool-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ui-text); }
+.agent-tool-state { margin-left:auto; display:flex; align-items:center; gap:4px; font-size:12px; white-space:nowrap; color:var(--ui-muted); }
+.agent-tool-state>.agent-icon { width:13px; height:13px; flex-basis:13px; }
+.agent-tool-summary .agent-disclosure { width:13px; height:13px; flex-basis:13px; transition:transform .16s; }
+.agent-tool-details[open] .agent-disclosure { transform:rotate(90deg); }
+.agent-tool-panel { margin:8px 0 8px 25px; border:1px solid var(--ui-line); background:var(--ui-soft); border-radius:10px; overflow:hidden; }
+.agent-tool-toolbar { display:flex; gap:12px; align-items:center; padding:9px 12px; border-bottom:1px solid var(--ui-line); color:var(--ui-muted); font-size:12px; }
+.agent-tool-language { margin-right:auto; }
+.agent-tool-tabs { display:flex; gap:2px; }
+.agent-tool-tabs button,.agent-tool-copy { padding:3px 7px; color:var(--ui-muted); background:transparent; border:0; font:inherit; cursor:pointer; border-radius:5px; }
+.agent-tool-tabs button[aria-selected="true"] { color:var(--ui-text); background:var(--ui-hover); }
+.agent-tool-code { margin:0!important; padding:14px 16px!important; max-height:340px; overflow:auto; background:transparent!important; border:0!important; border-radius:0!important; color:var(--ui-text); font:13px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace; white-space:pre-wrap; overflow-wrap:anywhere; }
+.agent-tool-code::before { display:none!important; }
+.agent-tool-wait { padding:14px 16px; color:var(--ui-muted); }
+.agent-output-limit { color:var(--ui-muted); }
+.agent-tool-footer { display:flex; justify-content:space-between; gap:16px; padding:7px 13px; color:var(--ui-muted); font-size:11px; }
+.state-error,.agent-commentary[data-status="error"] { color:#bf453a; }
+.state-attention { color:#9e741d; }
+.agent-request-wait { display:flex; align-items:center; gap:9px; margin:14px 0; color:var(--ui-muted); font-size:13px; }
+.agent-spinner { display:inline-block; width:13px; height:13px; border:1.5px solid var(--ui-line); border-top-color:var(--ui-muted); border-radius:50%; animation:agent-spin .9s linear infinite; }
+@keyframes agent-spin { to {transform:rotate(360deg);} }
+.agent-inspector { margin:12px 0 18px; }
+.agent-inspector>summary { display:flex; align-items:center; gap:8px; padding:7px 0; cursor:pointer; list-style:none; color:var(--ui-muted); font-size:13px; }
+.agent-inspector>summary::-webkit-details-marker {display:none;}
+.agent-inspector>summary::after {content:'›';font-size:18px;margin-left:4px;}
+.agent-inspector[open]>summary::after {transform:rotate(90deg);}
+.agent-inspector>.query-journey { padding-top:8px; border-top:1px solid var(--ui-line); }
+.agent-inspector .query-journey-head {margin-top:6px;}
+.agent-inspector .query-eyebrow {display:none;}
+.agent-inspector .query-journey-head h3 {font-size:16px;}
+.assistant .answer { border:0; border-radius:0; background:transparent; padding:0; }
+.assistant .answer>p { white-space:pre-wrap; }
+.assistant .conversation-scope {margin:18px 0 14px;padding:12px 0;border-radius:0;border-inline:0;background:transparent;}
+.assistant .conversation-scope>summary { color:var(--ui-muted); font-size:12px; cursor:pointer; }
+.assistant .conversation-scope b {color:var(--ui-text);font-weight:500;}
+.assistant .query-reference { font-size:12px; }
+.assistant .query-result-viz {margin-top:16px;}
+.topbar {border-bottom:0;}
+.sidebar {border-right:0;}
+.thread {padding-top:28px;padding-bottom:50px;}
+.col {width:min(880px,calc(100% - 64px));}
+.composer-wrap {position:relative;left:auto;right:auto;bottom:auto;flex:0 0 auto;width:min(880px,calc(100% - 64px));margin-inline:auto;pointer-events:auto;background:var(--ui-bg);}
+.hint {font-size:11px;color:var(--ui-muted);}
+.conversation-session-picker { padding:10px 8px; font-size:12px; color:var(--ui-muted); }
+.conversation-session-picker label { display:grid; gap:7px; }
+.conversation-session-picker select { padding:8px 10px; border:1px solid var(--ui-line); border-radius:8px; background:var(--ui-bg); color:var(--ui-text); font:inherit; }
+.conversation-session-picker small { padding-top:7px; line-height:1.6; font-size:11px; }
+#dialogue>.citation {border:0;border-radius:0;padding:20px 0;background:transparent;border-bottom:1px solid var(--ui-line);}
+#dialogue>.citation>b:first-child {display:block;text-align:right;margin:0 0 22px;font-size:15px;}
+#dialogue .citation .citation {border-radius:0;border-inline:0;background:transparent;}
+:root[data-theme="dark"] .agent-tool-panel {background:#272727;border-color:#383838;}
+:root[data-theme="dark"] .state-error {color:#ee9187;}
+@media(max-width:640px){
+  .col,.composer-wrap {width:calc(100% - 28px);}
+  .agent-timeline {font-size:13px;}
+  .agent-tool-panel {margin-left:0;}
+  .agent-tool-summary {gap:6px;}
+  .agent-tool-verb {display:none;}
+  .agent-tool-state {font-size:11px;}
+  .agent-tool-code {font-size:11px;padding:12px!important;}
+}
+@media(prefers-reduced-motion:reduce){.agent-spinner {animation:none;}.agent-disclosure {transition:none;}}

@@ -65,34 +65,62 @@ $('api-authorize').addEventListener('submit',event=>{
 const conversationSessions=window.ConversationSessions.create({scope:window.ConversationSessions.scopeFor(base,location.href),
   legacyKeys:[{key:'ict8.omni-session',label:'原文档会话'},{key:'ict8_lattice_session',label:'原问数会话'}]});
 let sessionId=conversationSessions.current(),conversationController=null,conversationSessionPicker=null;
+const conversationTimelineCleanups=new Set();
+function createConversationTimeline(){const timeline=window.ToolTimeline.create();conversationTimelineCleanups.add(timeline.dispose);return timeline;}
+function clearConversationTimelines(){for(const dispose of conversationTimelineCleanups)dispose();conversationTimelineCleanups.clear();}
+window.addEventListener('pagehide',clearConversationTimelines);
 function switchConversation(next){conversationController?.abort();conversationController=null;sessionId=next;
+  clearConversationTimelines();
   $('omni').querySelector('button').disabled=false;
   $('dialogue').replaceChildren(element('p','已切换会话；可以继续提问或输入“查看待补问题”。旧会话记录保留。','muted'));conversationSessionPicker?.refresh();}
 $('reset-dialogue').addEventListener('click',()=>{try{switchConversation(conversationSessions.start());}catch(error){$('dialogue').append(element('p',error.message,'error'));}});
 const conversationSessionHost=element('div');$('omni').insertAdjacentElement('beforebegin',conversationSessionHost);
 conversationSessionPicker=window.ConversationSessions.mount(conversationSessions,conversationSessionHost,switchConversation);
 window.addEventListener('pageshow',()=>{const current=conversationSessions.current();if(current!==sessionId)switchConversation(current);else conversationSessionPicker.refresh();});
-async function runConversation(path,payload,onResult,onError){
+async function runConversation(path,payload,onResult,onError,timeline=null){
   if(conversationController)return;
   const controller=new AbortController(),activeSession=sessionId,send=$('omni').querySelector('button');
   conversationController=controller;send.disabled=true;
   document.querySelectorAll('#dialogue button, #dialogue input').forEach(control=>control.disabled=true);
   try{
-    const data=await request(path,payload,controller.signal);
+    const data=timeline&&path==='/api/v1/omni/query'?
+      await streamConversation(payload,controller.signal,timeline):await request(path,payload,controller.signal);
     if(conversationController===controller&&sessionId===activeSession&&!controller.signal.aborted)onResult(data);
   }catch(error){if(conversationController===controller&&sessionId===activeSession&&!controller.signal.aborted)onError(error);}
   finally{if(conversationController===controller){conversationController=null;send.disabled=false;}}
 }
+async function streamConversation(payload,signal,timeline){
+  const response=await authFetch('/api/v1/omni/query/stream',{method:'POST',headers:{'Content-Type':'application/json',Accept:'text/event-stream'},body:JSON.stringify(payload),signal});
+  if(!response.ok)throw await responseError(response);
+  if(!response.body)throw Error('连接没有返回工具执行事件。');
+  const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',result=null;
+  while(true){
+    const {value,done}=await reader.read();buffer+=decoder.decode(value||new Uint8Array(),{stream:!done}).replace(/\r\n/g,'\n');
+    let boundary;
+    while((boundary=buffer.indexOf('\n\n'))>=0){
+      const block=buffer.slice(0,boundary);buffer=buffer.slice(boundary+2);
+      let type='message';const data=[];
+      for(const line of block.split('\n')){if(line.startsWith('event:'))type=line.slice(6).trim();if(line.startsWith('data:'))data.push(line.slice(5).trimStart());}
+      if(!data.length)continue;const event=JSON.parse(data.join('\n'));
+      if(type==='trace')timeline.update(event);if(type==='done')result=event;
+      if(type==='error')throw Error(event.detail?.message||'工具执行失败');
+    }
+    if(done)break;
+  }
+  if(!result)throw Error('连接结束，但没有返回完整结果。');return result;
+}
 $('omni').addEventListener('submit',async event=>{
   event.preventDefault();if(conversationController)return;
   const question=$('omni-question').value, activeSession=sessionId;
-  const box=element('article',null,'citation');box.append(element('b',question),element('p','正在处理…'));$('dialogue').append(box);
+  const box=element('article',null,'citation'),timeline=createConversationTimeline();
+  box.append(element('b',question),timeline.root);$('dialogue').append(box);
   await runConversation('/api/v1/omni/query',{question,session_id:activeSession},data=>{
-    renderOmni(box,question,data,activeSession);$('omni-question').value='';
-  },error=>showError(box,error));
+    renderOmni(box,question,data,activeSession,timeline);$('omni-question').value='';
+  },error=>{timeline.fail(error.message);box.append(element('p',error.message,'error'));},timeline);
 });
-function renderOmni(box,question,data,activeSession){
-  box.replaceChildren(element('b',question),element('small',`${data.route} · ${data.planner_source} · 已保留${data.context_turns}轮历史`));
+function renderOmni(box,question,data,activeSession,timeline=null){
+  timeline=timeline||createConversationTimeline();timeline.finish(data);
+  box.replaceChildren(element('b',question),timeline.root);
   const r=data.result;box.append(element('p',`独立问题：${data.effective_question}`,'muted'));
   appendAnswer(box,r);
   if(data.route==='tasks'){

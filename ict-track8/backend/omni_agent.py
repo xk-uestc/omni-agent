@@ -237,11 +237,12 @@ class OmniAgent:
     def __init__(self, engine, knowledge, conversations, client=None):
         self.engine, self.knowledge, self.conversations, self.client = engine, knowledge, conversations, client
 
-    def catalogue(self, question):
+    def catalogue(self, question, *, trace_callback=None):
         """Build bounded, question-selected context, never a first-N corpus dump."""
         records = self.knowledge.list_documents()
         by_id = {record['document_id']: record for record in records}
-        hits = self.knowledge.search(question, top_k=20)
+        hits = self._tool_call(trace_callback, 'knowledge.search',
+            lambda: self.knowledge.search(question, top_k=20), input={'query': question, 'top_k': 20})
         normalized = normalize_text(question)
         explicit = [record['document_id'] for record in records if
                     re.search(r'(?<![A-Za-z0-9_.-])' + re.escape(record['document_id']) + r'(?![A-Za-z0-9_.-])', question)]
@@ -327,29 +328,79 @@ class OmniAgent:
         self.conversations.remember(session_id, question=question, effective_question=effective_question,
             state=state, pending_parent_id=pending_parent_id)
 
+    @staticmethod
+    def _tool_call(callback, tool, operation, *, input=None):
+        """Emit observations around an actual call; completion is not success."""
+        if callback is None:
+            return operation()
+        callback({'stage': 'tool_call', 'tool': tool, 'status': 'running', 'input': input,
+                  'executed': False})
+        try:
+            result = operation()
+        except Exception:
+            callback({'stage': 'tool_call', 'tool': tool, 'status': 'error',
+                      'summary': '工具执行失败', 'executed': False})
+            raise
+        value = result.to_dict() if hasattr(result, 'to_dict') else result
+        outcome = value.get('status') if isinstance(value, dict) else None
+        output = {'status': outcome}
+        if isinstance(value, dict):
+            output.update({key: value[key] for key in ('sql', 'parameters', 'columns', 'result_state') if key in value})
+            if isinstance(value.get('rows'), (list, tuple)):
+                output['row_count'] = len(value['rows'])
+            if isinstance(value.get('citations'), list):
+                output['citation_count'] = len(value['citations'])
+        success = outcome in (None, 'ok', 'completed', 'complete')
+        callback({'stage': 'tool_call', 'tool': tool,
+                  'status': 'success' if success else 'attention', 'output': output,
+                  'executed': success, 'summary': '调用完成' if success else '需要补充条件或证据'})
+        return result
+
     def query(self, question, *, session_id=None, reset_context=False, complete_results=False, _confirmed_comparison_scope=None,
-              _confirmed_pending_turn_id=None):
+              _confirmed_pending_turn_id=None, trace_callback=None):
+        call_index = 0
+        pending = {}
+        def publish(event):
+            nonlocal call_index
+            item = dict(event)
+            tool = item.get('tool', item.get('stage', 'query'))
+            if item.get('status') == 'running' or tool not in pending:
+                call_index += 1
+                pending[tool] = f'omni-call-{call_index}'
+            item['call_id'] = pending[tool]
+            if item.get('status') != 'running':
+                pending.pop(tool, None)
+            if trace_callback is not None:
+                trace_callback(item)
         with self.conversations.turn(session_id):
             before=self.conversations.context(session_id) if session_id else ()
             response=self._query_turn(question, session_id=session_id, reset_context=reset_context,
                                     complete_results=complete_results,_confirmed_comparison_scope=_confirmed_comparison_scope,
-                                    _confirmed_pending_turn_id=_confirmed_pending_turn_id)
+                                    _confirmed_pending_turn_id=_confirmed_pending_turn_id,
+                                    _trace_callback=publish if trace_callback else None)
             after=self.conversations.context(session_id) if session_id else ()
             if after and (not before or after[-1].turn_id!=before[-1].turn_id) and (after[-1].state or {}).get('route') in {'sql','comparison'}:
                 response['query_reference_id']=after[-1].turn_id
             if after and (not before or after[-1].turn_id!=before[-1].turn_id) and (after[-1].state or {}).get('document_context'):
                 response['document_reference_id']=after[-1].turn_id
+            if trace_callback:
+                publish({'stage': 'query_complete', 'tool': 'query.complete',
+                         'status': 'success' if response.get('status') == 'ok' else 'attention',
+                         'executed': False, 'output': {'status': response.get('status'),
+                                                      'route': response.get('route')},
+                         'summary': '回答已返回' if response.get('status') == 'ok' else '需要补充条件或证据'})
             return response
 
     def _query_turn(self, question, *, session_id=None, reset_context=False, complete_results=False,_confirmed_comparison_scope=None,
-                    _history_override=None,_remember_question=None,_confirmed_pending_turn_id=None):
+                    _history_override=None,_remember_question=None,_confirmed_pending_turn_id=None,_trace_callback=None):
         if not question.strip() or len(question) > 1000:
             raise ValueError('问题为空或过长')
         if session_id and reset_context:
             self.conversations.clear(session_id)
         history = _history_override if _history_override is not None else self.conversations.context(session_id) if session_id else ()
         from .document_dialogue import DocumentDialogueAgent,document_context,seal
-        reference=DocumentDialogueAgent(self.knowledge,self.conversations.sources,self.engine).run(question,history,session_id)
+        reference=self._tool_call(_trace_callback, 'context.resolve',
+            lambda: DocumentDialogueAgent(self.knowledge,self.conversations.sources,self.engine).run(question,history,session_id))
         if reference is not None:
             audit={'mode':'server_verified_dialogue_source' if not reference.reason else 'dialogue_reference_clarification',
                 'actual_question':question,'executed':False}
@@ -376,7 +427,7 @@ class OmniAgent:
             if reference.document_id is None:
                 followup=reference.turn.effective_question if reference.followup=='再查同样的结果' else reference.followup
                 response=self._query_turn(followup,session_id=session_id,complete_results=complete_results,
-                    _history_override=(reference.turn,),_remember_question=question)
+                    _history_override=(reference.turn,),_remember_question=question,_trace_callback=_trace_callback)
                 response['question']=question
                 response['context_turns']=len(history)
                 response['context_resolution']={**response.get('context_resolution',{}),'source_reference':audit['source_reference'],'actual_question':question}
@@ -384,7 +435,9 @@ class OmniAgent:
             from .knowledge_store import SourceIntegrityError
             try:
                 self.knowledge.verify_source(reference.document_id,expected_sha256=reference.digest)
-                result=self.knowledge.answer(reference.followup,document_id=reference.document_id)
+                result=self._tool_call(_trace_callback, 'knowledge.answer',
+                    lambda: self.knowledge.answer(reference.followup,document_id=reference.document_id),
+                    input={'question': reference.followup, 'document_id': reference.document_id})
                 self.knowledge.verify_source(reference.document_id,expected_sha256=reference.digest)
                 if any(hit.get('metadata',{}).get('document_id') != reference.document_id
                         or hit.get('metadata',{}).get('source_sha256') != reference.digest for hit in result.get('citations',[])):
@@ -442,7 +495,7 @@ class OmniAgent:
                 selected=PendingComparisonResumeAgent(self.engine).inspect(archived,(match[2] or '').strip())
                 if selected.turn and selected.followup and selected.supported_followup:
                     response=self._query_turn(selected.followup,session_id=session_id,complete_results=complete_results,
-                        _history_override=(archived,),_remember_question=question)
+                        _history_override=(archived,),_remember_question=question,_trace_callback=_trace_callback)
                     response['question']=question
                     response['context_turns']=len(history)
                     response['context_resolution']={**response.get('context_resolution',{}),
@@ -472,7 +525,7 @@ class OmniAgent:
         if resume is not None:
             if resume.turn is not None and resume.followup and resume.supported_followup:
                 response=self._query_turn(resume.followup,session_id=session_id,complete_results=complete_results,
-                    _history_override=(resume.turn,),_remember_question=question)
+                    _history_override=(resume.turn,),_remember_question=question,_trace_callback=_trace_callback)
                 response['question']=question
                 response['context_turns']=len(history)
                 response['context_resolution']={**response.get('context_resolution',{}),
@@ -514,7 +567,7 @@ class OmniAgent:
         from .comparison_batch_edit import ConversationComparisonBatchEditAgent
         comparison_edit=None
         if explicit_sql_reference is None and (comparison_request is None or comparison_request.reuse and history and (history[-1].state or {}).get('comparison_pending_batch')):
-            execute=lambda scope:self.query(scope,complete_results=complete_results)
+            execute=lambda scope:self.query(scope,complete_results=complete_results,trace_callback=_trace_callback)
             comparison_edit=ConversationComparisonBatchEditAgent(self.engine).run(question,history,execute,confirmed_scope=_confirmed_comparison_scope)
             if comparison_edit is None and comparison_request is None:comparison_edit=ConversationComparisonEditAgent(self.engine).run(
                 question,history,execute,confirmed_scope=_confirmed_comparison_scope)
@@ -663,7 +716,8 @@ class OmniAgent:
                         if key not in {'comparison_snapshot','comparison_context','comparison_pending_query','comparison_pending_batch','pending_comparison_result'}}} for turn in planning_history[-5:]],
                     'reference_date': self.engine.reference_date.isoformat(),
                     'required_operations': requirements,
-                    'database_schema': self.engine.schema(include_row_count=False), 'documents': self.catalogue(context_question)}
+                    'database_schema': self.engine.schema(include_row_count=False),
+                    'documents': self.catalogue(context_question, trace_callback=_trace_callback)}
                 catalogue = getattr(self.engine, 'metric_catalog', None)
                 if catalogue:
                     available = {(table['name'], col['name']) for table in context['database_schema']['tables'] for col in table['columns']}
@@ -671,8 +725,9 @@ class OmniAgent:
                         for metric in catalogue.sources.values() if (metric.table, metric.column) in available]
                 for attempt in range(2):
                     try:
-                        plan = self.client.generate(INSTRUCTIONS, context, PLAN_SCHEMA,
-                            name='omni_plan' if attempt == 0 else 'omni_plan_completion_repair', max_tokens=5000)
+                        plan = self._tool_call(_trace_callback, 'intent.plan',
+                            lambda: self.client.generate(INSTRUCTIONS, context, PLAN_SCHEMA,
+                                name='omni_plan' if attempt == 0 else 'omni_plan_completion_repair', max_tokens=5000))
                     except GenerationError:
                         planning_attempts.append({'attempt': attempt+1, 'validation': 'provider_failed',
                                                   'api_audit': dict(getattr(self.client, 'audit', {}))})
@@ -781,7 +836,9 @@ class OmniAgent:
                         clarification_options=tuple(required.clarification_options),
                         provenance={'source_type':'structured_database'}).to_dict()
                 else:
-                    result = self.engine.answer(effective, **({'complete_results': True} if complete_results else {})).to_dict()
+                    result = self._tool_call(_trace_callback, 'nl2sql',
+                        lambda: self.engine.answer(effective, **({'complete_results': True} if complete_results else {})),
+                        input={'question': effective}).to_dict()
             except SqlSafetyError:
                 # Persist the failed turn without granting it execution authority.
                 # Do not serialize exception text, candidate SQL or model payloads.
@@ -805,7 +862,8 @@ class OmniAgent:
                 snapshot=build_snapshot(result,executed_context,self.engine)
                 if snapshot is not None:state['comparison_snapshot']=snapshot
         elif route == 'document':
-            result = self.knowledge.answer(effective)
+            result = self._tool_call(_trace_callback, 'knowledge.answer',
+                lambda: self.knowledge.answer(effective), input={'question': effective})
             state = {'route': route, 'sources': [hit['metadata']['document_id'] for hit in result['citations']]}
             saved=document_context(effective,result,self.knowledge)
             if saved is not None:state['document_context']=saved
@@ -814,7 +872,16 @@ class OmniAgent:
             effective = scope_question
             try:
                 verify_inherited_document_tasks(tasks, inherited)
-                result = DependencyAgent(self.engine, self.knowledge).run(tasks, original_question=scope_question)
+                def task_event(event):
+                    if _trace_callback:
+                        _trace_callback({'stage': 'fusion_task', 'tool': event['tool'],
+                            'task_id': event['task_id'], 'status': 'success' if event['status'] == 'complete' else 'error',
+                            'executed': event['status'] == 'complete',
+                            'output': {'status': event['status'], 'latency_ms': event.get('latency_ms')}})
+                result = self._tool_call(_trace_callback, 'fusion.execute',
+                    lambda: DependencyAgent(self.engine, self.knowledge).run(tasks,
+                        original_question=scope_question, on_event=task_event),
+                    input={'task_count': len(tasks)})
             except SourceConstraintError as exc:
                 result = {'status': 'clarification', 'clarification': str(exc), 'clarification_code': exc.code,
                           'results': {}, 'trace': [], 'trace_id': 'source_scope_unverified'}
