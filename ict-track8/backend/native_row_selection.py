@@ -12,11 +12,12 @@ from .knowledge_store import SourceIntegrityError
 from .responses_client import GenerationError, object_schema
 from .grounded_span_answer import _completed
 
-VERSION = 'native-row-selection-independent-review-v2'
+VERSION = 'native-row-selection-independent-review-v3'
 REQUEST = re.compile(r'\b(?:which|what)\s+(?:(?:\d+|two|three|four|five)\s+)?(?:elements|tests|items|records|rows|devices|people)\b|哪些|所有(?:记录|项目|对象)', re.I)
 CHECKS = ('approved', 'filters_and_projection_match_original_question',
     'all_matching_rows_in_supplied_sources_covered', 'no_competing_source_or_scope',
-    'literal_spans_preserve_requested_qualifiers', 'answer_or_clarification_is_supported')
+    'literal_spans_preserve_requested_qualifiers', 'answer_or_clarification_is_supported',
+    'requested_cardinality_handled_without_subset')
 REVIEW = object_schema({**{key: {'type': 'boolean'} for key in CHECKS},
     'matching_row_ids': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 48}})
 
@@ -36,6 +37,20 @@ def _matches(text, predicate):
     # Token boundaries distinguish method A from method AB. No regex supplied
     # by the model is ever executed, and case/spacing are not silently changed.
     return bool(re.search(r'(?<![\w/-])' + re.escape(value) + r'(?![\w/-])', text))
+
+
+def cardinality_context(question, rows):
+    """Separate requested answer count from the literal row-selection predicates.
+
+    This is server observation, not a semantic approval or a reason to override
+    any independent review flag. The reviewer still checks the original question.
+    """
+    requested = requested_count(question)
+    matched = len(rows)
+    conflict = requested is not None and requested != matched
+    return {'requested_count': requested, 'complete_matching_count': matched,
+        'count_conflict': conflict, 'required_status': 'clarification' if conflict else 'ok',
+        'subset_permitted': False}
 
 
 def bind_selection(question, plan, registries):
@@ -64,8 +79,9 @@ def bind_selection(question, plan, registries):
     matches = [r for r in domain if all(_matches(r['fields'][p['column_index']]['text'], p) for p in predicates)]
     if not 1 <= len(matches) <= 48:
         raise ValueError('native_select_inventory_budget_or_empty')
-    expected = requested_count(question)
-    status = 'clarification' if expected is not None and expected != len(matches) else 'ok'
+    cardinality = cardinality_context(question, matches)
+    expected = cardinality['requested_count']
+    status = cardinality['required_status']
     fragments = plan['fragments']
     if not isinstance(fragments, list) or len(fragments) > 288:
         raise ValueError('native_select_projection_incomplete')
@@ -209,9 +225,20 @@ def route_native_row_selection(store, question, hits, *, document_id=None, page_
             'fixed-count conflict genuinely warrants the proposed clarification. '
             'For a fixed-count conflict, projection is the server full-field inventory, not model fragments. A shared field may be '
             'factored only when identical in every row; otherwise row associations must remain intact. '
+            'Assess literal predicates and projected answer fields separately from output cardinality: '
+            'a requested number is NOT a row filter. The server cardinality observations are untrusted '
+            'proposals for you to check against the ORIGINAL question and complete original rows. '
+            'If otherwise-correct filters return a different count, verify that the answer explicitly '
+            'states both counts and asks for scope instead of choosing a subset. This may support '
+            'clarification, never a successful fixed-count answer. Set requested_cardinality_handled_without_subset '
+            'true only when ALL matches are retained and either no count conflict exists or the '
+            'conflict is accurately disclosed in the proposed clarification. Do not mark correct '
+            'literal predicates false solely because output count conflicts; reject genuinely wrong '
+            'predicates, missing answer fields, omitted matches or unsupported scope regardless of counts. '
             'Do not approve an arbitrary date/analyst group or a competing scope. This is not global corpus closure.',
             {'question': question, 'original_registries': registries, 'selection': plan,
-             'matched_rows': rows, 'projection': projection, 'proposed_status': status, 'proposed_answer': answer}, REVIEW,
+             'matched_rows': rows, 'projection': projection, 'cardinality': cardinality_context(question, rows),
+             'proposed_status': status, 'proposed_answer': answer}, REVIEW,
             name='native_row_selection_independent_review', max_tokens=1800)
         if (not _completed(client.audit) or not isinstance(review, dict) or set(review) != {*CHECKS, 'matching_row_ids'}
                 or any(review[k] is not True for k in CHECKS) or review['matching_row_ids'] != [r['row_id'] for r in rows]):

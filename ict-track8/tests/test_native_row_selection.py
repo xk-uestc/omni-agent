@@ -5,7 +5,7 @@ import fitz
 import pytest
 from backend.knowledge_store import KnowledgeStore, SourceIntegrityError
 from backend.native_row_selection import (CHECKS, bind_selection, replay_selection,
-    route_native_row_selection, requested_count)
+    route_native_row_selection, requested_count, cardinality_context)
 from backend.native_row_comparison import _sha
 from backend.document_parts_answer import _review_component
 from backend.evidence_recovery import recovery_eligible
@@ -36,6 +36,7 @@ class Client:
     model = 'gpt-6-luna'; reasoning = 'medium'
     def __init__(self):
         self.calls = []; self.edit_plan = None; self.edit_review = None; self.on_review = None
+        self.review_context = None
     def generate(self, instructions, context, schema, **kwargs):
         self.calls.append(kwargs['name'])
         self.audit = {'status': 'completed', 'model_verified': True, 'http_status': 200,
@@ -56,6 +57,7 @@ class Client:
                 self.edit_plan(plan)
             return plan
         assert kwargs['name'] == 'native_row_selection_independent_review'
+        self.review_context = deepcopy(context)
         assert len(context['original_registries'][0]['pages']) == 2
         assert 'Item E' in context['original_registries'][0]['pages'][1]['text']
         assert 'ISO_AB' in context['original_registries'][0]['pages'][0]['text']
@@ -101,6 +103,48 @@ def test_requested_two_is_a_clarification_not_arbitrary_subset(tmp_path):
     assert len(result['citations']) == 4 and replay_selection(store, result)
     client.audit_history = [deepcopy(client.audit)]
     assert not recovery_eligible(result, client)
+
+
+def test_cardinality_conflict_is_separate_and_preserves_full_review_input(tmp_path):
+    store, client, hits = setup(tmp_path)
+    result = answer(store, hits, 'Which two items were handled by PERSON_A using ISO_A?')
+    context = client.review_context
+    assert context['cardinality'] == {'requested_count':2,'complete_matching_count':4,
+        'count_conflict':True,'required_status':'clarification','subset_permitted':False}
+    assert len(context['matched_rows']) == 4
+    assert len(context['original_registries'][0]['records']) == 6
+    assert context['selection']['fragments'] == []
+    assert result['native_row_proof']['review']['requested_cardinality_handled_without_subset'] is True
+    assert replay_selection(store, result)
+
+
+@pytest.mark.parametrize('flag', ['requested_cardinality_handled_without_subset',
+    'filters_and_projection_match_original_question', 'all_matching_rows_in_supplied_sources_covered'])
+def test_count_conflict_never_overrides_any_independent_rejection(tmp_path, flag):
+    store, client, hits = setup(tmp_path)
+    client.edit_review = lambda review:review.update({flag:False})
+    result = answer(store, hits, 'Which two items were handled by PERSON_A using ISO_A?')
+    assert result['answer_mode'] == 'native_row_selection_requires_scope'
+    assert result['citations'] == [] and 'native_row_proof' not in result
+
+
+def test_missing_cardinality_check_or_old_receipt_cannot_replay(tmp_path):
+    store, client, hits = setup(tmp_path)
+    result = answer(store, hits)
+    result['native_row_proof']['review'].pop('requested_cardinality_handled_without_subset')
+    result['native_row_proof_sha256'] = _sha(result['native_row_proof'])
+    assert not replay_selection(store, result)
+    result = answer(store, hits)
+    result['native_row_proof']['version'] = 'native-row-selection-independent-review-v2'
+    result['native_row_proof_sha256'] = _sha(result['native_row_proof'])
+    assert not replay_selection(store, result)
+
+
+def test_unrequested_and_matching_counts_never_create_a_conflict():
+    rows = [object(),object()]
+    assert cardinality_context('Which items match?', rows)['required_status'] == 'ok'
+    assert cardinality_context('Which two items match?', rows)['required_status'] == 'ok'
+    assert cardinality_context('Which three items match?', rows)['required_status'] == 'clarification'
 
 
 def test_cardinality_conflict_uses_full_original_fields_not_partial_model_fragments(tmp_path):

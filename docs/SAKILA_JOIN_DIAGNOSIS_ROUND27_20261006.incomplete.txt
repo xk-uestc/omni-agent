@@ -1,0 +1,42 @@
+{
+  "created_at": "2026-10-05T21:16:46.685201+00:00",
+  "scope": "single_production_SQL_protocol_diagnosis_not_accuracy",
+  "case_id": "cs-r06",
+  "question": "按 category.name 返回该类别电影的不同租赁rental_id数量和不同actor_id人数；演员关系会扇出租赁记录，两种去重计数都必须正确。",
+  "reference_opened": false,
+  "model": "gpt-6-luna",
+  "reasoning": "medium",
+  "system_input_sha256": "85c8eb2cccb4e256d4eb9e4a13fa4ef7fcb3e6a08400674ba4ee93b498fc8015",
+  "observed": [
+    {
+      "operation": "complex_sql_proposal",
+      "returned_proposal_or_review": {
+        "clarification": null,
+        "sql": "WITH category_film AS (\n    SELECT fc.category_id, fc.film_id\n    FROM film_category AS fc\n), category_rentals AS (\n    SELECT cf.category_id, r.rental_id\n    FROM category_film AS cf\n    JOIN inventory AS i ON i.film_id = cf.film_id\n    JOIN rental AS r ON r.inventory_id = i.inventory_id\n), rental_counts AS (\n    SELECT cr.category_id, COUNT(DISTINCT cr.rental_id) AS distinct_rental_count\n    FROM category_rentals AS cr\n    GROUP BY cr.category_id\n), category_actors AS (\n    SELECT cf.category_id, fa.actor_id\n    FROM category_film AS cf\n    JOIN film_actor AS fa ON fa.film_id = cf.film_id\n), actor_counts AS (\n    SELECT ca.category_id, COUNT(DISTINCT ca.actor_id) AS distinct_actor_count\n    FROM category_actors AS ca\n    GROUP BY ca.category_id\n)\nSELECT c.name AS category_name,\n       COALESCE(rc.distinct_rental_count, 0) AS distinct_rental_count,\n       COALESCE(ac.distinct_actor_count, 0) AS distinct_actor_count\nFROM category AS c\nLEFT JOIN rental_counts AS rc ON rc.category_id = c.category_id\nLEFT JOIN actor_counts AS ac ON ac.category_id = c.category_id"
+      }
+    },
+    {
+      "operation": "complex_sql_structural_repair",
+      "returned_proposal_or_review": {
+        "clarification": null,
+        "sql": "SELECT c.name AS category_name,\n       COUNT(DISTINCT r.rental_id) AS distinct_rental_count,\n       COUNT(DISTINCT fa.actor_id) AS distinct_actor_count\nFROM category AS c\nLEFT JOIN film_category AS fc ON fc.category_id = c.category_id\nLEFT JOIN film AS f ON f.film_id = fc.film_id\nLEFT JOIN inventory AS i ON i.film_id = f.film_id\nLEFT JOIN rental AS r ON r.inventory_id = i.inventory_id\nLEFT JOIN film_actor AS fa ON fa.film_id = f.film_id\nGROUP BY c.name"
+      }
+    },
+    {
+      "operation": "complex_sql_independent_review",
+      "returned_proposal_or_review": {
+        "approved": false,
+        "checks": {
+          "aggregation_grain_and_no_fanout": true,
+          "all_question_parts": true,
+          "filters_and_dates": true,
+          "no_invented_business_definition": false,
+          "null_and_zero_semantics": false,
+          "physical_fields_and_values": true,
+          "projection_order_ranking_and_ties": true
+        },
+        "clarification": "SQL按类别名称分组，并用DISTINCT分别计数租赁ID和演员ID，能抵消演员与租赁连接造成的扇出。但它把没有匹配记录的类别计为0；题目未规定这种填零规则，且SQLite原生COUNT在LEFT JOIN形成的空匹配组上本来就返回0。更关键的是，按name分组会合并具有相同名称的不同category记录；题目要求按category.name返回，但未说明同名类别应合并还是分别列出。请确认同名类别的处理方式，并保留SQLite原生NULL/零语义，不要另行改变计数结果。"
+      }
+    }
+  ],
+  "result":
