@@ -33,3 +33,11 @@
 36题本次暴露的真实问题包括：邀请活动、机构职责等六个来源片段选择弃答（trace中的 selection_abstained）；USAID金额题出现 source_literal_missing_or_ambiguous 并回退长引用；AIG复合问题的 multi_selection_contract_invalid；跨年度利润判断的 source_literal_cannot_execute_boolean。ICP固定两项问题仍不能从全匹配清单任挑两个，不能为了原参考答案删掉真实Sr。
 
 OSHA两题本次输出3.13 mg/m³、1.0 ppm，参考仅3.13、1.0，EM为0；单位是有效来源内容，不能删除单位以提高EM。问题诊断必须区分真实未完成、表格/计算缺失、模型协议弃答及表述差异，不把这些混为检索召回失败，也不因此给语义正确率补分。
+
+## 同步与部署核实
+
+后端/测试/完整失败报告检查点 `40136139f6adb630876141a4647cf059d36119ff` 已推送至 `xk-uestc/omni-agent` 的 main，并通过 ls-remote 核对。本次提交前暂存内容审查通过，26文件约8.44MB，不含runtime、PDF原文件或凭据。先前前端工具反馈提交 `34488d9` 也已推送。
+
+提交后将4704项回归报告中的全部后端/测试/回归工具起止SHA与现场源码重新核对，0差异。仅停止核实过启动命令的旧8030服务PID35648，再启动同项目 `tools/run_server.py --port 8030 --with-model`，新PID37260。健康、首页、资料页和工具组件资源均HTTP200。日志在ignored的 `runtime/server-native-protocol-round30.stdout.log/.stderr.log`。这证明服务重启及资源可达，不替代正式服务新题端到端正确率。
+
+下一轮效率修复的依据：真实RAG三规模各8次问答均有 grounded_answer → grounded_span_selection → grounded_span_independent_review 三次模型调用。对原件直接字面事实，可研究先走现有原始来源选择+独立审核，并验证是否省掉重复的完整事实生成；必须保留同一来源重放、完整问题及语义审核，并做同题成对实测，不因较少调用就认定提速或不退步。
