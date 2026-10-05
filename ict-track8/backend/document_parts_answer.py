@@ -50,8 +50,8 @@ def _parts(question, contract, proposal):
     return [indexed[index] for index in range(1, expected + 1)]
 
 
-def _review_component(index, query, result):
-    evidence = []
+def _review_component(index, query, result, *, store=None):
+    evidence, pages = [], {}
     for citation in result.get('citations', []):
         metadata = citation.get('metadata', {})
         source = citation.get('generation_evidence', {})
@@ -59,12 +59,50 @@ def _review_component(index, query, result):
         fact = metadata.get('fact')
         if not text and not isinstance(fact, dict):
             raise ValueError('component_authoritative_evidence_missing')
+        page_key = None
+        if isinstance(fact, dict):
+            # A fact pins a cell, not the external year/subject scope of its
+            # table. The final reviewer must see the original context that
+            # the first native-table reviewer saw, freshly reconstructed.
+            if store is None or result.get('answer_mode') != 'native_table_model_reviewed':
+                raise ValueError('component_native_context_unavailable')
+            from .native_text_tables import extract_native_text_tables
+            from .evidence_context import text_sha256
+            import fitz
+            doc, sha, page = metadata['document_id'], metadata['source_sha256'], metadata['page_no']
+            if type(page) is not int or page < 1:
+                raise ValueError('component_native_page_invalid')
+            page_key = f'{doc}:{sha}:{page}'
+            raw = store.verify_source(doc, expected_sha256=sha).read_bytes()
+            if len(raw) > 20 * 1024 * 1024:
+                raise ValueError('component_native_context_budget')
+            manifest = extract_native_text_tables(raw, page_no=page, expected_source_sha256=sha)
+            tables = [t for t in manifest['tables'] if t['table_id'] == fact.get('table_id')
+                      and any(f == fact for f in t['facts'])]
+            if len(tables) != 1:
+                raise ValueError('component_native_fact_context_mismatch')
+            if page_key not in pages:
+                with fitz.open(stream=raw, filetype='pdf') as pdf:
+                    full_text = pdf[page - 1].get_text('text', sort=False)
+                if not full_text.strip() or len(full_text) > 5000:
+                    raise ValueError('component_native_context_budget')
+                pages[page_key] = {'document_id': doc, 'source_sha256': sha, 'page_no': page,
+                    'complete_native_page_text': full_text, 'text_sha256': text_sha256(full_text),
+                    'scope': 'whole_native_text_layer_of_table_page_not_ocr_or_whole_document',
+                    'tables': {}}
+            table = tables[0]
+            pages[page_key]['tables'][table['table_id']] = {
+                key: deepcopy(table[key]) for key in ('table_id', 'bbox_display_pt',
+                    'external_scope_text', 'external_scope_years', 'scope_status',
+                    'title_context', 'period_scope_text', 'complete_scope') if key in table}
+            store.verify_source(doc, expected_sha256=sha)
         evidence.append({'document_id': metadata.get('document_id'),
             'source_sha256': metadata.get('source_sha256'), 'page_no': metadata.get('page_no'),
             'text': text or '',
-            'native_fact': deepcopy(fact)})
+            'native_fact': deepcopy(fact), 'native_page_context_id': page_key})
     return {'part_id': index, 'standalone_question': query, 'answer': result['answer'],
         'answer_mode': result['answer_mode'], 'evidence': evidence,
+        'native_page_contexts': pages,
         'server_computation': deepcopy(result.get('computation')),
         'answer_scope': deepcopy(result.get('answer_scope')),
         'source_verification': 'component_pipeline_and_fresh_original_sha_recheck'}
@@ -181,8 +219,11 @@ def compose_document_parts(store, question, prior, *, top_k, document_id=None, p
             trace['status'] = 'no_verified_server_computation'
             return None, trace
         packet = {'original_question': question, 'original_contract': contract,
-                  'components': [_review_component(i + 1, query, child)
+                  'components': [_review_component(i + 1, query, child, store=store)
                                  for i, (query, child) in enumerate(zip(queries, children))]}
+        if sum(len(page['complete_native_page_text']) for component in packet['components']
+               for page in component['native_page_contexts'].values()) > 12000:
+            raise ValueError('document_parts_native_context_total_budget')
         if len(json.dumps(packet, ensure_ascii=False)) > 60000:
             raise ValueError('document_parts_review_budget_exceeded')
         review = client.generate(
@@ -194,8 +235,12 @@ def compose_document_parts(store, question, prior, *, top_k, document_id=None, p
             'dependencies, or a comparison answered by unrelated lookups. A computed percentage '
             'must come from the supplied server computation with pinned numerator/denominator '
             'and precision; the model may not calculate or invent a derived value. A separate role '
-            'must be visibly attributed to the same subject in the cited source. Sources from '
-            'different documents are permitted only when their subject/period relationships are '
+            'must be visibly attributed to the same subject in the cited source. '
+            'Fresh native_page_contexts preserve the complete original page text and external table '
+            'scope. A cell period=null means no own-column year; it does not erase an explicit year '
+            'in that supplied original page. Independently bind the cell to its table and original '
+            'subject/period there; never assume a year from another table or the candidate answer. '
+            'Sources from different documents are permitted only when their subject/period relationships are '
             'explicit and compatible. Neutral concatenation does not itself prove completeness. '
             'No new facts or rewritten answer may be returned. All checks must be true to approve.',
             packet, REVIEW, name='document_parts_original_question_review', max_tokens=1200)
