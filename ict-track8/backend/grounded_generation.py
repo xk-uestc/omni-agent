@@ -411,7 +411,7 @@ class GroundedGenerator:
         """
         contract = question_contract(question)
         parts = contract['requested_parts']
-        if (not claims or len(parts) < 2 and not contract['exhaustive_selection_required']
+        if (not claims or not (contract['multiple_requested_fields'] or contract['exhaustive_selection_required'])
                 or getattr(self.client, 'model', None) != 'gpt-6-luna'
                 or getattr(self.client, 'reasoning', None) != 'medium'):
             return None

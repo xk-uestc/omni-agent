@@ -164,7 +164,8 @@ def query_generated(store, question):
 def safe_audits(client):
     fields = ('provider', 'model', 'reasoning', 'operation', 'http_status', 'status',
               'model_verified', 'response_model', 'input_tokens', 'output_tokens', 'total_tokens',
-              'cached_input_tokens', 'reasoning_tokens', 'call_index', 'latency_ms')
+              'cached_input_tokens', 'reasoning_tokens', 'call_index', 'latency_ms',
+              'transport_attempts', 'transport_failures', 'transport_usage_unknown')
     return [{key: row[key] for key in fields if key in row} for row in client.audit_history]
 
 

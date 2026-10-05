@@ -91,7 +91,8 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
         self.model, self.reasoning_effort = model, reasoning_effort
         self.catalog, self.reference_date = metric_catalog, reference_date or date.today()
         self.client = StructuredResponses(base_url, token, model=model, reasoning=reasoning_effort,
-                                          timeout=timeout, session=self.session, http_headers=http_headers)
+                                          timeout=timeout, session=self.session, http_headers=http_headers,
+                                          transport_attempts=1)  # This adapter already owns its retry/audit loop.
 
     @property
     def audit(self):

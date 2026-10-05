@@ -415,7 +415,75 @@ class KnowledgeStore:
             self.verify_source(source)
         return selected
 
+    def _question_part_hits(self, question, hits, *, top_k, document_id=None, page_no=None):
+        """Bounded explicit-clause navigation before answering; no model facts.
+
+        A user's top_k is a starting retrieval budget, not permission to omit
+        later subquestions. All new candidates face the original whole query
+        and ordinary source reconstruction and independent answer review.
+        """
+        from .answer_contract import question_contract
+        from .evidence_coverage import select_coverage_hits
+        parts = question_contract(question)['requested_parts']
+        if not 2 <= len(parts) <= 6:
+            return hits, None
+        scope = {**({'document_id': document_id} if document_id is not None else {}),
+                 **({'page_no': page_no} if page_no is not None else {})}
+        identifiers = list(dict.fromkeys(re.findall(
+            r'(?<![A-Za-z0-9_])(?=[A-Za-z0-9_-]*[A-Za-z])(?=[A-Za-z0-9_-]*\d)'
+            r'[A-Za-z][A-Za-z0-9_-]{2,63}(?![A-Za-z0-9_])', question)))
+        candidates = {hit.document_id: hit for hit in hits}
+        queries = []
+        for part in parts:
+            # A pronoun-only clause ("by whom", "its budget") must not
+            # navigate unrelated documents. Retain the entire original topic
+            # and filters as context; repeating the part supplies focus only.
+            contextual = part + ' ' + question
+            query = contextual if len(contextual) <= 1000 else part
+            for identifier in identifiers:
+                if not re.search(r'(?<![A-Za-z0-9_])' + re.escape(identifier) + r'(?![A-Za-z0-9_])', query, re.I):
+                    query += ' ' + identifier
+            if len(query) > 1000:
+                continue
+            queries.append(query)
+            for hit in self.search(query, top_k=3, **scope):
+                candidates.setdefault(hit.document_id, hit)
+        records = {record.document_id: record for record in self.records()
+                   if record.document_id in candidates}
+        terms = set(_tokenize(question))
+        rebound = [DocumentHit(hit.document_id, hit.title, hit.score,
+                    tuple(sorted(terms.intersection(_tokenize(records[hit.document_id].content)))),
+                    hit.snippet, hit.source_uri, hit.metadata)
+                   for hit in candidates.values() if hit.document_id in records]
+        rank = lambda hit: float(hit.metadata.get('ranking_score', hit.score))
+        bodies = {key: record.content for key, record in records.items()}
+        budget = min(MAX_EVIDENCE_ITEMS, max(top_k, 8))
+        selection = select_coverage_hits(question, rebound, bodies, rank, budget)
+        sources = list(dict.fromkeys(hit.metadata['document_id'] for hit in selection.hits))
+        if len(sources) > 4:
+            selection = select_coverage_hits(question,
+                [hit for hit in rebound if hit.metadata['document_id'] in set(sources[:4])], bodies, rank, budget)
+        return selection.hits, {'stage': 'explicit_question_part_retrieval',
+            'question_preserved': True, 'navigation_only': True, 'model_called': False,
+            'semantic_sufficiency': 'not_established', 'queries': queries,
+            'candidate_count': len(candidates), 'selected_count': len(selection.hits),
+            'selected_source_budget': 4, 'unselected_source_ids': sources[4:],
+            'selection': selection.audit}
+
     def answer(self, question: str, *, top_k=4, document_id=None, page_no=None) -> dict[str, Any]:
+        from .evidence_recovery import audit_boundary
+        start = audit_boundary(getattr(self.generator, 'client', None))
+        result = self._answer_with_recovery(question, top_k=top_k, document_id=document_id, page_no=page_no)
+        from .document_parts_answer import compose_document_parts
+        composed, trace = compose_document_parts(self, question, result, top_k=top_k,
+            document_id=document_id, page_no=page_no, answer_audit_start=start)
+        if composed is not None:
+            return composed
+        if trace['status'] != 'not_applicable':
+            result['trace'].append(trace)
+        return result
+
+    def _answer_with_recovery(self, question: str, *, top_k=4, document_id=None, page_no=None) -> dict[str, Any]:
         if not question.strip() or len(question) > 1000:
             raise ValueError('问题为空或超出长度上限')
         from .evidence_recovery import audit_boundary, recovery_eligible, plan_evidence_recovery
@@ -423,7 +491,11 @@ class KnowledgeStore:
         answer_audit_start = audit_boundary(client)
         hits = self.search(question, top_k=top_k, **({'document_id': document_id} if document_id is not None else {}),
                            **({'page_no': page_no} if page_no is not None else {}))
+        hits, part_audit = self._question_part_hits(question, hits, top_k=top_k,
+                                                   document_id=document_id, page_no=page_no)
         result = self._answer_hits(question, hits, document_id=document_id, page_no=page_no)
+        if part_audit is not None:
+            result['trace'].insert(0, part_audit)
         if not recovery_eligible(result, client, answer_audit_start=answer_audit_start):
             return result
         navigation_sources = [{'metadata': hit.metadata} for hit in hits]

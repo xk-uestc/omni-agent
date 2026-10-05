@@ -158,6 +158,9 @@ function renderOmni(box,question,data,activeSession){
 }
 function element(tag,text,className){const e=document.createElement(tag);if(text!=null)e.textContent=String(text);if(className)e.className=className;return e;}
 function appendAnswer(host,result){
+  if(result.status==='insufficient_evidence'){
+    host.append(element('p','资料不足或存在冲突，暂不能给出完整答案。下方内容是相关原文，供核对和补充资料。','error'));
+  }
   const projection=result.answer_projection;
   if(projection?.status==='verified'&&typeof projection.answer_value==='string'){
     const card=element('section',null,'citation');
@@ -174,7 +177,8 @@ function appendAnswer(host,result){
   }else if(result.answer_span_result?.status==='model_reviewed'&&result.answer){
     const span=result.answer_span_result,card=element('section',null,'citation');
     const execution=span.answer_proof?.execution;
-    card.append(element('small',execution?'原文阈值比较 · 程序计算与独立模型复核':'原文短答案 · 独立模型复核','muted'),element('p',result.answer));
+    card.append(element('small',execution?'原文阈值比较 · 程序计算与独立模型复核':
+      span.answer_type==='multi_source_literal'?'逐项回答 · 来源与完整性复核':'原文短答案 · 独立模型复核','muted'),element('p',result.answer));
     if(execution?.answer_type==='boolean'){
       const operators={le:'≤',ge:'≥',lt:'<',gt:'>'};
       card.append(element('p',`问题给定值 ${execution.question_observation.quote}；原文要求 ${execution.threshold_operator_quote} ${execution.threshold_value}%。`));

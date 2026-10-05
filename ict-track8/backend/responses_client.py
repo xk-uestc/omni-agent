@@ -26,12 +26,16 @@ def object_schema(properties):
 
 
 class StructuredResponses:
-    def __init__(self, base_url, token, *, model, reasoning='medium', timeout=60, session=None, http_headers=None):
+    def __init__(self, base_url, token, *, model, reasoning='medium', timeout=60, session=None, http_headers=None,
+                 transport_attempts=2):
         if not base_url.startswith(('https://', 'http://127.0.0.1')) or not token or not model:
             raise ValueError('模型服务必须明确配置 URL、密钥与模型')
         self.url, self.token, self.model = base_url.rstrip('/') + '/responses', token, model
         self.reasoning, self.timeout = reasoning, timeout
         self.session = session or requests.Session()
+        if type(transport_attempts) is not int or transport_attempts not in (1, 2):
+            raise ValueError('传输尝试次数必须为1或2')
+        self.transport_attempt_limit = transport_attempts
         headers = http_headers or {}
         if (not isinstance(headers, dict) or any(
                 name != 'x-openai-actor-authorization' or not isinstance(value, str)
@@ -141,9 +145,27 @@ class StructuredResponses:
             audit['image_evidence'] = descriptors
             audit['image_count'] = len(descriptors)
         try:
-            response = self.session.post(self.url, json=body,
-                headers={**self.http_headers, 'Authorization': 'Bearer ' + self.token, 'Content-Type': 'application/json'},
-                timeout=(10, self.timeout), allow_redirects=False)
+            # One transport-only retry for a dropped connection or timeout.
+            # No HTTP rejection, TLS error, invalid output or semantic failure
+            # can trigger it. Both attempts carry the identical request.
+            audit['transport_attempts'] = 0
+            audit['transport_failures'] = []
+            for attempt in range(self.transport_attempt_limit):
+                audit['transport_attempts'] += 1
+                try:
+                    response = self.session.post(self.url, json=body,
+                        headers={**self.http_headers, 'Authorization': 'Bearer ' + self.token, 'Content-Type': 'application/json'},
+                        timeout=(10, self.timeout), allow_redirects=False)
+                    break
+                except (requests.ConnectionError, requests.Timeout) as exc:
+                    if isinstance(exc, requests.exceptions.SSLError):
+                        raise
+                    audit['transport_failures'].append('timeout' if isinstance(exc, requests.Timeout) else 'connection_lost')
+                    # A dropped response may already have consumed provider
+                    # tokens. Its usage is unknown, never silently zero.
+                    audit['transport_usage_unknown'] = True
+                    if attempt + 1 == self.transport_attempt_limit:
+                        raise
             audit['http_status'] = response.status_code
             if not 200 <= response.status_code < 300:
                 raise GenerationError('模型服务拒绝请求', status=response.status_code)

@@ -11,10 +11,19 @@ from statistics import median
 
 import fitz
 
+from .native_fraction import parse_native_fraction_cell
+
 _NUMBER=re.compile(r'[$€¥]?[+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?%?')
+_FRACTION_CELL=re.compile(r'[0-9]{1,12}/[0-9]{1,12}')
 _MONEY=re.compile(r'([$€¥])([+−-]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?)(m|k|bn|million|billion|thousand)?')
 _SCALES={'m':'1000000','million':'1000000','k':'1000','thousand':'1000',
          'bn':'1000000000','billion':'1000000000'}
+
+
+def _native_cell_token(text):
+    # A fraction proposes geometry only. It becomes a distinct typed fact
+    # only after the own-column count header and literal proof both validate.
+    return bool(_NUMBER.fullmatch(text) or _FRACTION_CELL.fullmatch(text))
 
 
 def _bbox(words):
@@ -345,8 +354,8 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
             else:rows.append({'cy':cy,'words':[word]})
         for row in rows:
             row['words'].sort(key=lambda w:w[0])
-            row['numbers']=[w for w in row['words'] if _NUMBER.fullmatch(w[4])]
-            row['labels']=[w for w in row['words'] if not _NUMBER.fullmatch(w[4])]
+            row['numbers']=[w for w in row['words'] if _native_cell_token(w[4])]
+            row['labels']=[w for w in row['words'] if not _native_cell_token(w[4])]
         groups=[];current=[]
         for index,row in enumerate(rows):
             valid=bool(row['labels'] and row['numbers'] and max(w[2] for w in row['labels'])+8<min(w[0] for w in row['numbers']))
@@ -408,7 +417,7 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                 # A second header line often prints only years or units above
                 # numeric columns, leaving the row-label lane empty.
                 if invalid or any(not cell for cell in cells[1:]):break
-                if any(all(_NUMBER.fullmatch(w[4]) for w in cell) and not all(re.fullmatch(r'(?:19|20)\d{2}',w[4]) for w in cell) for cell in cells):break
+                if any(all(_native_cell_token(w[4]) for w in cell) and not all(re.fullmatch(r'(?:19|20)\d{2}',w[4]) for w in cell) for cell in cells):break
                 header_rows.append(cells)
             header_rows.reverse()
             if not header_rows:
@@ -461,6 +470,28 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                 for c,w in enumerate(row['numbers'],1):
                     header=' '.join(paths[c]);header_years=re.findall(r'(?<!\d)(?:19|20)\d{2}(?!\d)',header)
                     if len(set(header_years))>1:reject('column_period_scope_ambiguous');facts=[];break
+                    header_boxes=[list(_bbox(h[c])*matrix) for h in header_rows if h[c]]
+                    if _FRACTION_CELL.fullmatch(w[4]):
+                        try:
+                            proof=parse_native_fraction_cell(w[4], column_header_path=paths[c],
+                                column_header_bboxes_display_pt=header_boxes,
+                                bbox_display_pt=list(fitz.Rect(w[:4])*matrix),
+                                source_sha256=sha, page_no=page_no)
+                        except ValueError as exc:
+                            reject(str(exc));facts=[];break
+                        facts.append({'fact_id':f'{identity}:row:{r}:column:{c}','table_id':identity,
+                            'row_header':labels[r],'column_header_path':paths[c],
+                            'row_header_bbox_display_pt':list(_bbox(row['labels'])*matrix),
+                            'column_header_bboxes_display_pt':header_boxes,
+                            'bbox_display_pt':proof['bbox_display_pt'],'raw_value':w[4],
+                            'source_sha256':sha,'page_no':page_no,'unit':'count_fraction','scale':None,
+                            'currency':'unknown','unit_evidence':None,'scale_evidence':None,
+                            'period':header_years[0] if header_years else None,
+                            'period_status':'explicit_column_year' if header_years else 'unknown_or_external_scope',
+                            'value_kind':'native_count_fraction_literal','fraction_proof':proof,
+                            'calculator_input_eligible':False,'physical_calculator_input_eligible':False,
+                            'validation_scope':report['validation_scope']})
+                        continue
                     literal_unit='percent' if w[4].endswith('%') else 'currency_symbol:'+w[4][0] if w[4][0] in '$€¥' else 'unknown'
                     declared = declarations[c]
                     if literal_unit != 'unknown' and declared['unit'] != 'unknown':
@@ -470,7 +501,6 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
                                 or symbol and (expected or declared['symbol']) != symbol):
                             reject('cell_and_column_unit_conflict');facts=[];break
                     unit = declared['unit'] if declared['unit'] != 'unknown' else literal_unit
-                    header_boxes=[list(_bbox(h[c])*matrix) for h in header_rows if h[c]]
                     unit_proof = ({'binding':'own_explicit_column_header_only', 'header_path':paths[c],
                                    'header_bboxes_display_pt':header_boxes, 'unit':unit,
                                    'currency':declared['currency'], 'multiplier':declared['scale']}

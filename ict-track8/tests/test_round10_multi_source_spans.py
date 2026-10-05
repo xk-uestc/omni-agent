@@ -16,6 +16,15 @@ FRAGMENTS = [(1, 'Quartz, Zinc', [1], 'entity'), (2, 'Mira Chen', [2], 'entity')
 MATCHES = [(1, 1, 'Quartz'), (1, 1, 'Zinc'), (2, 2, 'Mira Chen')]
 
 
+def test_literal_missing_record_cannot_masquerade_as_complete_person_answer():
+    texts = ['The research lead is Mira Chen.', 'No finance lead is stated in this record.']
+    client = Client([(1, 'Mira Chen', [1], 'entity'),
+                     (2, texts[1], [2], 'event')])
+    result, _, client = run(client, texts, 'Who is the research lead and who is the finance lead?')
+    assert result['reason'] == 'multi_explicit_missing_fact'
+    assert 'answer_value' not in result and len(client.calls) == 1
+
+
 class Client:
     model, reasoning = 'gpt-6-luna', 'medium'
 

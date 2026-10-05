@@ -14,10 +14,11 @@ import re
 import time
 
 from .native_text_tables import extract_native_text_tables, column_unit_declaration
+from .native_fraction import fraction_percentage, validate_native_fraction_proof, replay_native_fraction_cell
 from .responses_client import GenerationError, object_schema
 from .visual_work_budget import visual_work_slot
 
-OPERATIONS = ('lookup', 'sum', 'ratio', 'difference', 'absolute_difference', 'percentage')
+OPERATIONS = ('lookup', 'sum', 'ratio', 'difference', 'absolute_difference', 'percentage', 'fraction_percentage')
 PLAN = object_schema({'abstain': {'type': 'boolean'}, 'operation': {'type': 'string', 'enum': list(OPERATIONS)},
                       'fact_ids': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 12}})
 REVIEW = object_schema({key: {'type': 'boolean'} for key in
@@ -68,7 +69,7 @@ def _operation_request_supported(operation, question):
         directional = r'\b(?:minus|subtract|signed|increase|decrease|growth|change)\b|减去|减掉|增[长加]|下降|减少|变[化动]'
         magnitude = r'\b(?:absolute\s+difference|gap|difference\s+between)\b|绝对差|相差|差距'
         return not re.search(directional, question, re.I) and bool(re.search(magnitude, question, re.I))
-    if operation == 'percentage':
+    if operation in {'percentage', 'fraction_percentage'}:
         return (bool(re.search(r'\b(?:percentage|percent)\b|百分比|占比', question, re.I))
                 and not re.search(r'\b(?:growth|change|increase|decrease|percentage\s+points?|(?:percentage|percent)\s+difference)\b|增长率|变化率|增幅|降幅|百分点|百分比差(?:异|值)?', question, re.I))
     return True
@@ -77,13 +78,30 @@ def _operation_request_supported(operation, question):
 def annotation_arithmetic(facts, operation, *, allow_column_comparison=False, percentage_decimal_places=2):
     if operation not in OPERATIONS or not facts or len(facts) > 12:
         raise ValueError('native_annotation_operation_invalid')
-    if operation == 'percentage' and (type(percentage_decimal_places) is not int
+    if operation in {'percentage', 'fraction_percentage'} and (type(percentage_decimal_places) is not int
                                      or not 0 <= percentage_decimal_places <= 6):
         raise ValueError('native_annotation_percentage_precision_unsupported')
-    if (operation == 'lookup' and len(facts) != 1 or operation == 'sum' and len(facts) < 2
+    if (operation in {'lookup', 'fraction_percentage'} and len(facts) != 1 or operation == 'sum' and len(facts) < 2
             or operation in {'ratio', 'difference', 'absolute_difference', 'percentage'} and len(facts) != 2
             or len({f['fact_id'] for f in facts}) != len(facts)):
         raise ValueError('native_annotation_operands_invalid')
+    if operation == 'fraction_percentage':
+        fact=facts[0]
+        proof=validate_native_fraction_proof(fact.get('fraction_proof'))
+        if (fact.get('value_kind')!='native_count_fraction_literal'
+                or any(fact.get(key)!=proof[key] for key in (
+                    'raw_value','unit','scale','column_header_path','column_header_bboxes_display_pt',
+                    'bbox_display_pt','source_sha256','page_no'))
+                or fact.get('unit_evidence') is not None or fact.get('scale_evidence') is not None
+                or fact.get('calculator_input_eligible') is not False
+                or fact.get('physical_calculator_input_eligible') is not False):
+            raise ValueError('native_annotation_fraction_proof_mismatch')
+        result=fraction_percentage(proof,decimal_places=percentage_decimal_places)
+        result['operand_periods']=[fact.get('period')]
+        return result
+    if any(f.get('fraction_proof') is not None or f.get('unit')=='count_fraction'
+           or f.get('value_kind')=='native_count_fraction_literal' for f in facts):
+        raise ValueError('native_annotation_fraction_operation_required')
     if len({(f['source_sha256'], f['page_no'], f['table_id'], f['unit'], f.get('scale')) for f in facts}) != 1:
         raise ValueError('native_annotation_unit_or_table_scope_mismatch')
     if len({(tuple(f.get('column_header_path', [])), f.get('period')) for f in facts}) != 1:
@@ -302,7 +320,9 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                             'period': fact.get('period'), 'period_status':fact.get('period_status'),
                             'period_scope_text':deepcopy(fact.get('period_scope_text', [])),
                             'title_context':deepcopy(fact.get('title_context', [])),
-                            'value_kind': fact.get('value_kind')})
+                            'value_kind': fact.get('value_kind'),
+                            **({'fraction_proof':deepcopy(fact['fraction_proof'])}
+                               if 'fraction_proof' in fact else {})})
                     registries.append({'document_id': d['document_id'], 'page_no': page,
                         'source_sha256': d['sha256'], 'table_key': f'T{len(registries)+1:03d}',
                         'bbox_display_pt':deepcopy(table.get('bbox_display_pt')),
@@ -352,7 +372,13 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'percentage is exactly 100*numerator/denominator for a requested share or percentage '
                 'of a named total, NOT growth rate, percent change, or a percentage-point difference. '
                 'It uses TWO explicit same-table facts, ordered [numerator, denominator], with identical '
-                'measure/unit/scale/period. The server binds explicitly requested decimal places '
+                'measure/unit/scale/period. '
+                'fraction_percentage is a DISTINCT operation: select exactly ONE fact with '
+                'value_kind=native_count_fraction_literal and a fraction_proof from an explicit '
+                'attendance/completion count column. Its entire n/d token supplies both ordered '
+                'count operands; never split it into invented numeric facts or mix it with decimal '
+                'annotations. Ordinary lookup/sum/ratio/difference/percentage cannot use fraction facts. '
+                'For both percentage operations the server binds explicitly requested decimal places '
                 'from 0 through 6 (default two), keeps the exact fraction and displays an approximation '
                 'marker when rounding is necessary. Unsupported/conflicting precision or significant '
                 'figures require abstention, never silently change the requested format. '
@@ -386,13 +412,13 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 return fallback('native_table_competing_document_operands')
             selected = [facts[k][1] for k in plan['fact_ids']]
             percentage_places = (_percentage_decimal_places(question)
-                                 if plan['operation'] == 'percentage' else 2)
+                                 if plan['operation'] in {'percentage','fraction_percentage'} else 2)
             computation = annotation_arithmetic(selected, plan['operation'], allow_column_comparison=True,
                                                percentage_decimal_places=percentage_places)
             precision_contract = ({'decimal_places':percentage_places,
                                    'verification':'server_original_question_precision',
                                    'default_decimal_places':2}
-                                  if plan['operation'] == 'percentage' else None)
+                                  if plan['operation'] in {'percentage','fraction_percentage'} else None)
             if precision_contract is not None:
                 trace['percentage_precision_contract'] = deepcopy(precision_contract)
             display_contract = {
@@ -429,7 +455,16 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'For percentage apply the same ordered operands and verify that the WHOLE question '
                 'asks for their share, not percent change or growth. The exact_fraction is a server '
                 'rational; the server-bound requested decimal places and an explicit approximation marker do not invent '
-                'a source value. For absolute_difference verify an explicitly requested nonnegative '
+                'a source value. '
+                'For fraction_percentage require exactly ONE selected native_count_fraction_literal '
+                'fact with its complete n/d token and typed fraction_proof from its own explicit '
+                'attendance/completion count column. Independently confirm that n is the requested '
+                'attended/completed count and d is its eligible total, never a date/version/odds or '
+                'a reversed ratio. Its derived percent is a server computation, not a source quote. '
+                'Check the original entity, period, table boundaries, competing scopes, complete '
+                'question and same percentage_precision_contract. Additional narrative or role '
+                'requests still require rejection here; this route must not approve a partial answer. '
+                'For absolute_difference verify an explicitly requested nonnegative '
                 'gap/difference between exactly two facts; do not approve it for an increase/decrease '
                 'or any signed subtraction. '
                 'For percentage verify the displayed precision matches the ORIGINAL question and '
@@ -482,6 +517,12 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
             return fallback('native_table_literal_proof_replay_parser_failed')
         if fresh != manifests[(doc['document_id'], page)]:
             return incomplete('native_table_literal_proof_replay_failed')
+        if plan['operation']=='fraction_percentage':
+            try:
+                replay_native_fraction_cell(pinned,selected[0]['fraction_proof'])
+            except (ValueError,TypeError,KeyError):
+                recheck()
+                return fallback('native_table_fraction_literal_proof_replay_failed')
         citations = [{'citation_id': i+1, 'document_id': doc['document_id'], 'title': doc['title'],
                       'snippet': fact['row_header'] + ': ' + fact['raw_value'],
                       'source_uri': f'/api/v1/knowledge/documents/{doc["document_id"]}/original',

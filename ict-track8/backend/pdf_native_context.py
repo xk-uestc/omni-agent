@@ -459,6 +459,130 @@ def _captioned_table_regions(ordered):
     return regions
 
 
+def _aligned_native_cells(block):
+    """A physical row of disjoint native runs, without interpreting its cells."""
+    groups = _native_groups(block)
+    if len(groups) != 1:
+        return None
+    cells = sorted(groups[0], key=lambda line: line['bbox'][0])
+    if not 3 <= len(cells) <= 8:
+        return None
+    if any(right['bbox'][0] - left['bbox'][2] < 8
+           for left, right in zip(cells, cells[1:])):
+        return None
+    return cells
+
+
+def _uncaptioned_table_region(ordered, touched):
+    """Return a closed, header-led row-block region, or False on ambiguity.
+
+    None means this new shape does not apply. False must never fall back to
+    a smaller row/header excerpt. Alignment is only a geometry witness, not
+    certification of any semantic relation or of uninspected other pages.
+    """
+    physical = sorted((block for block in ordered if block['normalized_text'].strip()),
+                      key=lambda block: (block['bbox_fitz_unrotated_pt'][1],
+                                         block['bbox_fitz_unrotated_pt'][0]))
+    signatures = {block['block_id']: _aligned_native_cells(block) for block in physical}
+    touched_ids = {part['block_id'] for part in touched}
+    # Multiple row blocks are necessary: existing single-block table and
+    # paragraph closure policies remain authoritative for their own shapes.
+    def aligned(cells, other):
+        return (other is not None and len(cells) == len(other)
+                and all(abs(a['bbox'][0] - b['bbox'][0]) <= 5
+                        for a, b in zip(cells, other)))
+    active = [block for block in physical if block['block_id'] in touched_ids
+              and signatures[block['block_id']] is not None]
+    if not active:
+        # A wrapped/interleaved row block beside aligned row peers is not a
+        # safe paragraph fallback. Its full table geometry remains unknown.
+        for part in touched:
+            pb = part['bbox_fitz_unrotated_pt']
+            aligned_peers = [block for block in physical
+                if signatures[block['block_id']] is not None
+                and abs(block['bbox_fitz_unrotated_pt'][0] - pb[0]) <= 5
+                and block['bbox_fitz_unrotated_pt'][2] >= pb[2] - 5]
+            if len(aligned_peers) >= 2 and any(len(group) >= 3 for group in _native_groups(part)):
+                return False
+        return None
+    reference = signatures[active[0]['block_id']]
+    peers = [block for block in physical if aligned(reference, signatures[block['block_id']])]
+    if len(peers) < 2:
+        return None
+    headers = [block for block in peers
+               if not any(re.search(r'\d', line['text']) for line in signatures[block['block_id']])]
+    if len(headers) != 1:
+        return False
+    header = headers[0]
+    if any(block['bbox_fitz_unrotated_pt'][1] < header['bbox_fitz_unrotated_pt'][1]
+           for block in peers):
+        return False
+    hb = header['bbox_fitz_unrotated_pt']
+    height = max(line['bbox'][3] - line['bbox'][1] for line in reference)
+    x0, x1 = hb[0] - 5, max(block['bbox_fitz_unrotated_pt'][2] for block in peers) + 5
+    members, rows, annotations, boundary = [header], [], [], None
+    bottom = hb[3]
+    for block in physical[physical.index(header) + 1:]:
+        bb = block['bbox_fitz_unrotated_pt']
+        if bb[1] < bottom - .5 or bb[1] - bottom > 2 * height + 4:
+            return False
+        # Any neighbouring column/side note is a competing scope, not a
+        # record that may be silently excluded from a complete table claim.
+        if bb[0] < x0 or bb[2] > x1:
+            # A full-width closed prose paragraph is an explicit boundary.
+            if (bb[0] >= x0 and len(_native_groups(block)) >= 2
+                    and re.search(r'[.。!?！？]$', block['normalized_text'].strip())):
+                boundary = block
+                break
+            return False
+        cells = signatures[block['block_id']]
+        if aligned(reference, cells):
+            if not any(re.search(r'\d', line['text']) for line in cells):
+                return False
+            rows.append(block)
+            members.append(block)
+        elif (cells is None and len(_native_groups(block)) == 1
+              and abs(bb[0] - hb[0]) <= 5 and bb[2] < reference[1]['bbox'][0] - 8):
+            # Whole first-column annotations remain with the surrounding
+            # records (including qualifications), never used as a cut point.
+            annotations.append(block)
+            members.append(block)
+        elif (cells is None and bb[0] >= x0
+              and bb[2] > reference[1]['bbox'][0]
+              and re.search(r'[.。!?！？]$', block['normalized_text'].strip())):
+            boundary = block
+            break
+        else:
+            return False
+        bottom = bb[3]
+    if boundary is None or len(rows) < 2 or not touched_ids.issubset(
+            {block['block_id'] for block in members}):
+        return False
+    # Retain the whole preceding page section as literal scope. This avoids
+    # borrowing a bare header while deleting sample/entity/date declarations.
+    # Large or competing preceding sections fail the existing member/char cap.
+    scope = physical[:physical.index(header)]
+    if any(block['bbox_fitz_unrotated_pt'][0] < x0
+           or block['bbox_fitz_unrotated_pt'][2] > x1
+           or block['bbox_fitz_unrotated_pt'][3] > hb[1]
+           for block in scope):
+        return False
+    if any(block not in members and block is not boundary
+           and block['bbox_fitz_unrotated_pt'][1] < boundary['bbox_fitz_unrotated_pt'][1]
+           and block['bbox_fitz_unrotated_pt'][3] > hb[1] for block in physical):
+        return False
+    return {'members': scope + members + [boundary], 'witness': {
+        'version': 'native-uncaptioned-aligned-region-v1',
+        'horizontal_bounds_unrotated_pt': [x0, x1],
+        'header_block_id': header['block_id'],
+        'row_block_ids': [block['block_id'] for block in rows],
+        'scope_block_ids': [block['block_id'] for block in scope] + [boundary['block_id']],
+        'annotation_block_ids': [block['block_id'] for block in annotations],
+        'bottom_boundary': {'kind': 'native_prose_block', 'block_id': boundary['block_id'],
+                            'bbox_fitz_unrotated_pt': boundary['bbox_fitz_unrotated_pt']},
+        'page_local_only': True, 'semantic_row_column_binding_verified': False}}
+
+
 def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
     """Bounded literal paragraph/table region on one freshly read original page.
 
@@ -498,6 +622,9 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
                         for part in touched)]
     if len(captioned) > 1 or captioned and not captioned[0]['supported_horizontal_scope']:
         return None
+    uncapped = None if captioned else _uncaptioned_table_region(ordered, touched)
+    if uncapped is False:
+        return None
     # A small title/header hit can recover one adjacent table block. Competing
     # tables, distant tables and unrelated column blocks do not expand it.
     tables = [block for block in ordered if _tabular_runs(block)]
@@ -513,7 +640,9 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
                 candidates.append(table)
     table_mode = len(candidates) == 1
     captioned_mode = len(captioned) == 1
-    if captioned_mode:
+    if uncapped:
+        members = uncapped['members']
+    elif captioned_mode:
         members = captioned[0]['members']
     elif table_mode:
         table = candidates[0]
@@ -589,7 +718,7 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
     members = prefixes + members
     source_member_text = '\n\n'.join(part['normalized_text'] for part in members)
     row_layout = []
-    if captioned_mode:
+    if captioned_mode or uncapped:
         # Render all native runs in physical row order, retaining geometry
         # rather than inventing header:value, pipes or calculator bindings.
         # A source block's anchor can be interleaved with the neighbouring
@@ -605,14 +734,16 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
                       for group in groups]
     else:
         text = source_member_text
-    if (len(members) > (16 if captioned_mode else 8) or len(text) > max_chars
+    if (len(members) > (16 if captioned_mode or uncapped else 8) or len(text) > max_chars
             or len(anchor_ranges(source_member_text, DocumentChunker.clean_text(anchor_text))) != 1):
         return None
     return {'text': text, 'source_sha256': hashlib.sha256(raw).hexdigest(), 'page_no': page_no,
         'evidence_sha256': text_sha256(text), 'text_sha256': text_sha256(text),
         'evidence_chars': len(text), 'max_chars': max_chars,
-        'extraction_version': 'original-native-bounded-page-region-v3',
-        'mode': ('original_native_complete_captioned_table_region' if captioned_mode else
+        'extraction_version': ('original-native-bounded-page-region-v4' if uncapped else
+                               'original-native-bounded-page-region-v3'),
+        'mode': ('original_native_complete_uncaptioned_table_region' if uncapped else
+                 'original_native_complete_captioned_table_region' if captioned_mode else
                  'original_native_complete_table_region' if table_mode else
                  'original_native_complete_paragraph_region'),
         'members': [_member(part) for part in members], 'reading_order': order,
@@ -621,5 +752,6 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
                                      captioned[0]['horizontal_bounds_unrotated_pt'],
                                      'semantic_row_column_binding_verified': False}
                                     if captioned_mode else None),
+        **({'uncaptioned_native_region': uncapped['witness']} if uncapped else {}),
         'anchor_match_policy': ANCHOR_POLICY_VERSION, 'anchor_match': anchor_match,
         'unit_insertions': [], 'column_transition': None, 'calculator_input_eligible': False}
