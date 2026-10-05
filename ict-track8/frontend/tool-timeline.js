@@ -104,6 +104,9 @@
     check:'M5 12l4 4L19 6',close:'M6 6l12 12 M6 18L18 6',chevron:'M9 5l7 7-7 7'
   };
   const STATUS={running:'运行中',success:'完成',error:'失败',attention:'需要确认',stopped:'已停止',reported:'处理记录'};
+  function invocationVerb(status){
+    return {running:'正在调用',success:'已调用',error:'调用失败',attention:'调用待确认',stopped:'调用已停止',reported:'调用记录'}[status]||'调用记录';
+  }
   function create(options={}){
     const React=window.React,ReactDOM=window.ReactDOM;
     if(!React||!ReactDOM)throw Error('工具时间线组件未加载');
@@ -136,13 +139,13 @@
         item.summary?h('p',{className:'agent-action-note'},h(Icon,{name:'thought'}),h('span',null,item.summary)):null,
         h('details',{className:'agent-tool-details'},
           h('summary',{className:'agent-tool-summary'},h(Icon,{name:item.icon}),
-            h('span',{className:'agent-tool-verb'},item.status==='running'?'正在调用':'调用'),
+            h('span',{className:'agent-tool-verb'},invocationVerb(item.status)),
             h('span',{className:'agent-tool-name'},item.title),
             h('span',{className:`agent-tool-state state-${item.status}`},item.status==='running'?h('i',{className:'agent-spinner'}):
               h(Icon,{name:item.status==='success'?'check':item.status==='error'?'close':'chevron'}),STATUS[item.status]),
             h(Icon,{name:'chevron',className:'agent-disclosure'})),
           h('div',{className:'agent-tool-panel'},
-            h('div',{className:'agent-tool-toolbar'},h('span',{className:'agent-tool-language'},sql?'SQL':'工具调用'),
+            h('div',{className:'agent-tool-toolbar'},h('span',{className:'agent-tool-language',title:item.tool},sql?'SQL':item.tool),
               h('div',{className:'agent-tool-tabs',role:'tablist','aria-label':'调用详情'},
                 ['input','output'].map(value=>h('button',{key:value,type:'button',role:'tab','aria-selected':tab===value,
                   onClick:()=>setTab(value)},value==='input'?'输入':'反馈'))),
@@ -154,7 +157,8 @@
             attachments.has(item.id)?h(Attachment,{node:attachments.get(item.id)}):null,
             h('footer',{className:`agent-tool-footer state-${item.status}`},
               Number.isFinite(item.latency_ms)?h('span',null,`${(item.latency_ms/1000).toFixed(2)} s`):h('span'),
-              h('span',null,STATUS[item.status])))));
+              h('span',{className:'agent-tool-receipt'},item.status==='running'?h('i',{className:'agent-spinner'}):
+                h(Icon,{name:item.status==='success'?'check':item.status==='error'?'close':'chevron'}),STATUS[item.status])))));
     }
     function Timeline(){return h(React.Fragment,null,
       rows.map(item=>item.kind==='tool'?h(Tool,{key:item.id,item}):h('p',{key:item.id,className:'agent-commentary',
@@ -182,5 +186,5 @@
       rows.push({id:'request:failed',kind:'commentary',status:'error',summary:message});draw();}
     draw();return {root,update,finish,record,attach,fail,dispose:()=>{mount.unmount();attachments.clear();}};
   }
-  return {normalizeEvent,reduceEvents,fromResult,create};
+  return {normalizeEvent,reduceEvents,fromResult,invocationVerb,create};
 });

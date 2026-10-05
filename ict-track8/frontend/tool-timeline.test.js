@@ -1,9 +1,17 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { normalizeEvent, fromResult, reduceEvents, create } = require('./tool-timeline.js');
+const { normalizeEvent, fromResult, reduceEvents, invocationVerb, create } = require('./tool-timeline.js');
 
 test('exports the normalization and live timeline contract', () => {
   [normalizeEvent, fromResult, reduceEvents, create].forEach(fn => assert.equal(typeof fn, 'function'));
+});
+
+test('invocation wording distinguishes execution, failure and unverified records', () => {
+  assert.equal(invocationVerb('running'),'正在调用');
+  assert.equal(invocationVerb('success'),'已调用');
+  assert.equal(invocationVerb('error'),'调用失败');
+  assert.equal(invocationVerb('reported'),'调用记录');
+  assert.equal(invocationVerb('stopped'),'调用已停止');
 });
 
 test('explicit running and completed invocation states remain distinct', () => {
