@@ -645,7 +645,44 @@ class KnowledgeStore:
             from .answer_contract import question_contract
             early_contract = question_contract(question)
             multi_source_attempted = False
+            single_source_attempted = False
             early_client = self.generator.client
+            from .source_span_answer import source_first_eligible, bind_source_span_answer, replay_source_span_proof
+            if source_first_eligible(question, early_client):
+                single_source_attempted = True
+                try:
+                    literal = bind_source_span_answer(question, generation_citations, early_client)
+                    verified = False
+                    if literal['status'] == 'model_reviewed':
+                        fresh, fresh_omitted = self._generation_citations(result['citations'])
+                        verified = (fresh == generation_citations and fresh_omitted == omitted
+                                    and replay_source_span_proof(question, literal, fresh))
+                        self._verify_generation_chunks(fresh)
+                    result['trace'].append({'stage': 'evidence_first_source_span',
+                        'status': 'model_reviewed' if verified else 'source_replay_failed'
+                            if literal['status'] == 'model_reviewed' else literal['status'],
+                        'dispatch': 'direct_identifier_fact_before_claim_generation',
+                        'reason': literal.get('reason'), 'model_audits': literal['model_audits'],
+                        'evidence_contract': 'raw_source_only_no_validated_facts'})
+                    if literal.get('literal_error_code') is not None:
+                        result['trace'][-1]['literal_error_code'] = literal['literal_error_code']
+                    if verified:
+                        result.update(status='ok', answer=literal['answer_value'], claims=[],
+                            answer_mode='source_span_model_reviewed',
+                            answer_strategy='evidence_first_literal_source_span', answer_span_result=literal)
+                        return result
+                    if (literal['status'] == 'model_reviewed' or literal.get('reason') in {
+                            'source_provider_failed', 'source_semantic_review_rejected', 'source_snapshot_changed'}):
+                        # Do not turn a failed provider/review/source check into
+                        # successful claim generation against the same evidence.
+                        result.update(status='insufficient_evidence',
+                            answer='原件事实未通过完整核对，暂不能确认答案。',
+                            answer_mode='source_span_unverified',
+                            answer_completeness='source_first_projection_not_verified')
+                        return result
+                finally:
+                    self._verify_citation_sources(result['citations'])
+                    self._verify_generation_chunks(generation_citations)
             if ((early_contract['multiple_requested_fields'] or early_contract['exhaustive_selection_required'])
                     and getattr(early_client, 'model', None) == 'gpt-6-luna'
                     and getattr(early_client, 'reasoning', None) == 'medium'):
@@ -721,6 +758,7 @@ class KnowledgeStore:
                 if (getattr(client, 'model', None) == 'gpt-6-luna'
                         and getattr(client, 'reasoning', None) == 'medium'
                         and not multi_source_attempted
+                        and not single_source_attempted
                         and attempts and all(attempt.get('validation_status') in {'validated', 'rejected'}
                             and attempt.get('error_category') != 'provider_unavailable' for attempt in attempts)
                         and _completed(last_audit) and all(_completed(audit) for audit in audits)):

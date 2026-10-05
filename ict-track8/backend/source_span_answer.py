@@ -18,6 +18,36 @@ SOURCE_REVIEW=object_schema({**deepcopy(REVIEW['properties']),
     'answer_itself_answers_whole_question':{'type':'boolean'}})
 
 
+def source_first_eligible(question, client):
+    """Direct, identifier-scoped facts only; not a semantic sufficiency proof.
+
+    Reuse the existing literal binder/reviewer. Computation, comparisons,
+    explanation, boolean and multi-field requests retain their original routes.
+    Explicit adapter capability avoids changing unrelated generator contracts.
+    """
+    import unicodedata
+    if (getattr(client, 'supports_source_first_projection', False) is not True
+            or getattr(client, 'model', None) != 'gpt-6-luna'
+            or getattr(client, 'reasoning', None) != 'medium'
+            or not isinstance(question, str) or not 1 <= len(question) <= 1000):
+        return False
+    contract = question_contract(question)
+    if (contract['kind'] != 'literal_fact' or contract['multiple_requested_fields']
+            or contract['exhaustive_selection_required'] or boolean_question(question)):
+        return False
+    if re.search(r'\b(?:compare|compared|comparison|difference|ratio|percentage|percent|'
+                 r'highest|lowest|greater|less|sum|combined|total|average|count|calculate|'
+                 r'convert|increase|decrease|if|assuming)\b|比较|相差|比例|百分|最高|最低|'
+                 r'合计|总额|平均|计数|计算|换算|增长|下降|假设|如果', question, re.I):
+        return False
+    if not re.search(r'\b(?:who|what|which|when|where|how\s+(?:much|many|long))\b|'
+                     r'多少|什么|谁|哪个|何时|哪里', question, re.I):
+        return False
+    normalized = unicodedata.normalize('NFKC', question)
+    return bool(re.search(r'(?<![A-Za-z0-9_])(?=[A-Za-z0-9_-]*[A-Za-z])'
+        r'(?=[A-Za-z0-9_-]*\d)[A-Za-z][A-Za-z0-9_-]{2,63}(?![A-Za-z0-9_])', normalized))
+
+
 def _source_snapshot(citations):
     if not isinstance(citations,list) or not 1<=len(citations)<=8:
         raise ValueError('source_evidence_budget')
