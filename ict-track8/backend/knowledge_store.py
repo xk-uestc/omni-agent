@@ -897,6 +897,7 @@ class KnowledgeStore:
         self._verify_citation_sources(citations)
         from .answer_contract import substantive_numbered_heading
         selected, omitted, total, originals = [], [], 0, {}
+        native_contexts = {}
         with self.connect() as connection:
             for hit in citations:
                 metadata = hit['metadata']
@@ -925,8 +926,11 @@ class KnowledgeStore:
                 elif len(selected) >= MAX_EVIDENCE_ITEMS:
                     reason = 'evidence_item_limit'
                 else:
-                    limit = min(MAX_NATIVE_EVIDENCE_CHARS if native_eligible else MAX_EVIDENCE_CHARS,
-                                MAX_TOTAL_EVIDENCE_CHARS - total)
+                    # Reconstruct a complete native region before accounting
+                    # for duplicates. Repeated anchors must not consume the
+                    # budget or force a later distinct page into a short prefix.
+                    limit = (MAX_NATIVE_EVIDENCE_CHARS if native_eligible else
+                             min(MAX_EVIDENCE_CHARS, MAX_TOTAL_EVIDENCE_CHARS - total))
                     text, end, truncated = bounded_prefix(chunk['text'], max(0, limit))
                     if not text.strip() and not native_eligible:
                         reason = 'no_complete_fact_within_budget'
@@ -949,6 +953,22 @@ class KnowledgeStore:
                                         'reason': 'native_complete_context_unavailable'})
                         continue
                     text, end, truncated = native_context['text'], None, False
+                    # Only the anchor selecting the SAME reconstructed region
+                    # may differ. Keep document identity, all geometry, scope,
+                    # extraction version and permissions in the key. Identical
+                    # text in another source/page is never merged.
+                    context_key = (document_id, json.dumps(
+                        {key: value for key, value in native_context.items() if key != 'anchor_match'},
+                        ensure_ascii=False, sort_keys=True))
+                    if context_key in native_contexts:
+                        omitted.append({'citation_id': hit['citation_id'],
+                                        'reason': 'duplicate_verified_native_context',
+                                        'retained_citation_id': native_contexts[context_key]})
+                        continue
+                    if total + len(text) > MAX_TOTAL_EVIDENCE_CHARS:
+                        omitted.append({'citation_id': hit['citation_id'],
+                                        'reason': 'native_complete_context_unavailable'})
+                        continue
                 evidence = {
                     'text': text, 'source_sha256': row[1],
                     'chunk_sha256': text_sha256(chunk['text']), 'evidence_sha256': text_sha256(text),
@@ -963,6 +983,8 @@ class KnowledgeStore:
                     evidence['native_context'] = native_context
                     evidence['native_context_max_chars'] = limit
                 selected.append({**hit, 'generation_evidence': evidence})
+                if native_context:
+                    native_contexts[context_key] = hit['citation_id']
                 total += len(text)
         self._verify_citation_sources(selected)
         return selected, omitted

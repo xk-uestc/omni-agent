@@ -1,0 +1,2042 @@
+{
+  "created_at": "2026-10-05T18:10:21.322609+00:00",
+  "plan": {
+    "row_scales": [
+      1000,
+      10000,
+      100000
+    ],
+    "warm_concurrency": [
+      1,
+      2,
+      4
+    ],
+    "groups_per_level": 1,
+    "requests_per_scale": 8,
+    "total_requests": 24,
+    "model": "gpt-6-luna",
+    "reasoning": "medium",
+    "endpoint": "/api/v1/omni/query",
+    "question": "2025年华东地区销售额",
+    "scope": "synthetic_structured_rows_actual_http_with_real_intent_and_sql_planning",
+    "document_page_scale_measured": false,
+    "sql_answer_generation": "local_result_and_explanation_serialization_no_separate_llm_generation"
+  },
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu_logical": 20,
+    "sqlite": "3.49.1"
+  },
+  "official_speed_threshold": null,
+  "limits": [
+    "No fixed latency/QPS threshold in official specification; this is measured evidence, not an invented pass SLO.",
+    "Synthetic single-table indexed aggregate, not independent complex-query accuracy.",
+    "Cold means first query after new process health; startup separately measured; OS/provider caches not cleared.",
+    "Warm means later requests in same process; each has no conversation session.",
+    "No document page/OCR scale or document answer generation measured.",
+    "HTTP-visible audits may omit transport retry history; token totals are visible lower bounds.",
+    "Server queue and SQL execution timings may be unavailable; do not infer them by subtracting overlapping stages."
+  ],
+  "scales": [
+    {
+      "rows": 1000,
+      "expected_value": 99370,
+      "oracle_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region='华东' AND order_date>='2025-01-01' AND order_date<'2026-01-01'",
+      "database_sha256": "f4b457f7f001909b01729a756bef10a15e34a34008475ec5688e6994d810a54b",
+      "levels": [
+        {
+          "concurrency": 1,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 319,
+                  "total_tokens": 2616,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 123,
+                  "call_index": 2,
+                  "latency_ms": 11768.823
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 129,
+                  "total_tokens": 2323,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 68,
+                  "call_index": 2,
+                  "latency_ms": 5690.819
+                }
+              ],
+              "client_dispatch_delay_ms": 0.305,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 99370
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 5693.152
+                }
+              ],
+              "wall_ms": 17490.927
+            }
+          ],
+          "metrics": {
+            "wall_ms": 17491.144,
+            "requests": 1,
+            "passed": 1,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.057172,
+            "correct_qps": 0.057172,
+            "p50_ms": 17490.927,
+            "p95_ms": 17490.927,
+            "visible_api_calls": 2,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 4491,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 448,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 4939,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 0,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 191,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        },
+        {
+          "concurrency": 2,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 415,
+                  "total_tokens": 2712,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 218,
+                  "call_index": 1,
+                  "latency_ms": 13532.805
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 76,
+                  "total_tokens": 2270,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 40,
+                  "call_index": 1,
+                  "latency_ms": 10046.764
+                }
+              ],
+              "client_dispatch_delay_ms": 0.479,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 99370
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 10048.754
+                }
+              ],
+              "wall_ms": 23599.889
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 479,
+                  "total_tokens": 2776,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 283,
+                  "call_index": 3,
+                  "latency_ms": 11345.677
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 145,
+                  "total_tokens": 2339,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 83,
+                  "call_index": 3,
+                  "latency_ms": 5197.91
+                }
+              ],
+              "client_dispatch_delay_ms": 0.921,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 99370
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 5199.894
+                }
+              ],
+              "wall_ms": 16558.796
+            }
+          ],
+          "metrics": {
+            "wall_ms": 23600.137,
+            "requests": 2,
+            "passed": 2,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.084745,
+            "correct_qps": 0.084745,
+            "p50_ms": 20079.342,
+            "p95_ms": 23247.834,
+            "visible_api_calls": 4,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 8982,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 1115,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 10097,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 3584,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 624,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        },
+        {
+          "concurrency": 4,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 359,
+                  "total_tokens": 2656,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 163,
+                  "call_index": 2,
+                  "latency_ms": 14476.562
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 128,
+                  "total_tokens": 2322,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 66,
+                  "call_index": 2,
+                  "latency_ms": 4136.889
+                }
+              ],
+              "client_dispatch_delay_ms": 0.819,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 99370
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4139.864
+                }
+              ],
+              "wall_ms": 18635.175
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 441,
+                  "total_tokens": 2738,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 243,
+                  "call_index": 4,
+                  "latency_ms": 16002.537
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 59,
+                  "total_tokens": 2253,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 0,
+                  "call_index": 4,
+                  "latency_ms": 8437.527
+                }
+              ],
+              "client_dispatch_delay_ms": 1.818,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 99370
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 8455.34
+                }
+              ],
+              "wall_ms": 24478.547
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 494,
+                  "total_tokens": 2791,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 298,
+                  "call_index": 1,
+                  "latency_ms": 17526.658
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 95,
+                  "total_tokens": 2289,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 59,
+                  "call_index": 1,
+                  "latency_ms": 3947.525
+                }
+              ],
+              "client_dispatch_delay_ms": 1.31,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 99370
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 3950.662
+                }
+              ],
+              "wall_ms": 21493.586
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 379,
+                  "total_tokens": 2676,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 183,
+                  "call_index": 1,
+                  "latency_ms": 10663.787
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 94,
+                  "total_tokens": 2288,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 58,
+                  "call_index": 1,
+                  "latency_ms": 9697.846
+                }
+              ],
+              "client_dispatch_delay_ms": 2.316,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 99370
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 9701.845
+                }
+              ],
+              "wall_ms": 20382.008
+            }
+          ],
+          "metrics": {
+            "wall_ms": 24479.772,
+            "requests": 4,
+            "passed": 4,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.1634,
+            "correct_qps": 0.1634,
+            "p50_ms": 20937.797,
+            "p95_ms": 24030.803,
+            "visible_api_calls": 8,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 17964,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 2049,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 20013,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 7168,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 1070,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        }
+      ],
+      "server_startup_ms": 2226.69,
+      "cold": {
+        "http_status": 200,
+        "checks": {
+          "status": true,
+          "route": true,
+          "real_intent": true,
+          "real_sql": false,
+          "oracle_value": true,
+          "visible_api_audits": false,
+          "allowed_completed_model": true
+        },
+        "pass": false,
+        "api_audits": [
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "omni_plan",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2194,
+            "output_tokens": 82,
+            "total_tokens": 2276,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 46,
+            "call_index": 1,
+            "latency_ms": 4940.307
+          }
+        ],
+        "client_dispatch_delay_ms": null,
+        "status": "ok",
+        "route": "sql",
+        "actual_rows": [
+          {
+            "销售额": 99370
+          }
+        ],
+        "stage_observations": [
+          {
+            "stage": "intent_planning",
+            "latency_ms": 4946.439
+          }
+        ],
+        "wall_ms": 50978.61
+      },
+      "server_memory": {
+        "method": "psutil_process_rss",
+        "peak_sampled_bytes": 106901504,
+        "samples": 1067,
+        "interval_ms": 100,
+        "scope": "server_process_only_sampled_peak_not_exact_peak_or_children"
+      }
+    },
+    {
+      "rows": 10000,
+      "expected_value": 993963,
+      "oracle_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region='华东' AND order_date>='2025-01-01' AND order_date<'2026-01-01'",
+      "database_sha256": "5f38a74317bc4fd7923d6811bd6518ddae7fdb6354021995c1f960f43019469c",
+      "levels": [
+        {
+          "concurrency": 1,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 510,
+                  "total_tokens": 2807,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 313,
+                  "call_index": 2,
+                  "latency_ms": 20543.061
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 119,
+                  "total_tokens": 2313,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 58,
+                  "call_index": 2,
+                  "latency_ms": 4616.546
+                }
+              ],
+              "client_dispatch_delay_ms": 0.27,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 993963
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4618.402
+                }
+              ],
+              "wall_ms": 25196.795
+            }
+          ],
+          "metrics": {
+            "wall_ms": 25196.936,
+            "requests": 1,
+            "passed": 1,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.039687,
+            "correct_qps": 0.039687,
+            "p50_ms": 25196.795,
+            "p95_ms": 25196.795,
+            "visible_api_calls": 2,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 4491,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 629,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 5120,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 3584,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 371,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        },
+        {
+          "concurrency": 2,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 352,
+                  "total_tokens": 2649,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 157,
+                  "call_index": 3,
+                  "latency_ms": 11283.153
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 133,
+                  "total_tokens": 2327,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 72,
+                  "call_index": 3,
+                  "latency_ms": 4408.041
+                }
+              ],
+              "client_dispatch_delay_ms": 0.734,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 993963
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4409.51
+                }
+              ],
+              "wall_ms": 15703.389
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 332,
+                  "total_tokens": 2629,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 136,
+                  "call_index": 1,
+                  "latency_ms": 8914.464
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 131,
+                  "total_tokens": 2325,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 70,
+                  "call_index": 1,
+                  "latency_ms": 5584.857
+                }
+              ],
+              "client_dispatch_delay_ms": 0.318,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 993963
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 5586.753
+                }
+              ],
+              "wall_ms": 14532.967
+            }
+          ],
+          "metrics": {
+            "wall_ms": 15703.956,
+            "requests": 2,
+            "passed": 2,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.127356,
+            "correct_qps": 0.127356,
+            "p50_ms": 15118.178,
+            "p95_ms": 15644.868,
+            "visible_api_calls": 4,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 8982,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 948,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 9930,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 7168,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 435,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        },
+        {
+          "concurrency": 4,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 324,
+                  "total_tokens": 2621,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 127,
+                  "call_index": 4,
+                  "latency_ms": 7693.396
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 82,
+                  "total_tokens": 2276,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 46,
+                  "call_index": 4,
+                  "latency_ms": 4731.337
+                }
+              ],
+              "client_dispatch_delay_ms": 0.573,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 993963
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4733.73
+                }
+              ],
+              "wall_ms": 12445.231
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 356,
+                  "total_tokens": 2653,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 160,
+                  "call_index": 2,
+                  "latency_ms": 13694.036
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 120,
+                  "total_tokens": 2314,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 59,
+                  "call_index": 2,
+                  "latency_ms": 6549.514
+                }
+              ],
+              "client_dispatch_delay_ms": 0.963,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 993963
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 6561.332
+                }
+              ],
+              "wall_ms": 20270.714
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 400,
+                  "total_tokens": 2697,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 204,
+                  "call_index": 1,
+                  "latency_ms": 12946.608
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 124,
+                  "total_tokens": 2318,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 62,
+                  "call_index": 1,
+                  "latency_ms": 4887.244
+                }
+              ],
+              "client_dispatch_delay_ms": 1.8,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 993963
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4889.166
+                }
+              ],
+              "wall_ms": 17856.193
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 353,
+                  "total_tokens": 2650,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 156,
+                  "call_index": 1,
+                  "latency_ms": 6054.219
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 59,
+                  "total_tokens": 2253,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 0,
+                  "call_index": 1,
+                  "latency_ms": 3099.351
+                }
+              ],
+              "client_dispatch_delay_ms": 1.28,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 993963
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 3102.213
+                }
+              ],
+              "wall_ms": 9177.588
+            }
+          ],
+          "metrics": {
+            "wall_ms": 20271.374,
+            "requests": 4,
+            "passed": 4,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.197323,
+            "correct_qps": 0.197323,
+            "p50_ms": 15150.712,
+            "p95_ms": 19908.536,
+            "visible_api_calls": 8,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 17964,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 1818,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 19782,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 12544,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 814,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        }
+      ],
+      "server_startup_ms": 2232.353,
+      "cold": {
+        "http_status": 200,
+        "checks": {
+          "status": true,
+          "route": true,
+          "real_intent": true,
+          "real_sql": true,
+          "oracle_value": true,
+          "visible_api_audits": true,
+          "allowed_completed_model": true
+        },
+        "pass": true,
+        "api_audits": [
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "reasoning_effort": "medium",
+            "operation": "nl2sql_plan",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2297,
+            "output_tokens": 431,
+            "total_tokens": 2728,
+            "cached_input_tokens": 1792,
+            "reasoning_tokens": 236,
+            "call_index": 1,
+            "latency_ms": 15598.393
+          },
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "omni_plan",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2194,
+            "output_tokens": 116,
+            "total_tokens": 2310,
+            "cached_input_tokens": 1792,
+            "reasoning_tokens": 54,
+            "call_index": 1,
+            "latency_ms": 5710.924
+          }
+        ],
+        "client_dispatch_delay_ms": null,
+        "status": "ok",
+        "route": "sql",
+        "actual_rows": [
+          {
+            "销售额": 993963
+          }
+        ],
+        "stage_observations": [
+          {
+            "stage": "intent_planning",
+            "latency_ms": 5717.925
+          }
+        ],
+        "wall_ms": 21407.791
+      },
+      "server_memory": {
+        "method": "psutil_process_rss",
+        "peak_sampled_bytes": 107134976,
+        "samples": 757,
+        "interval_ms": 100,
+        "scope": "server_process_only_sampled_peak_not_exact_peak_or_children"
+      }
+    },
+    {
+      "rows": 100000,
+      "expected_value": 9949068,
+      "oracle_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region='华东' AND order_date>='2025-01-01' AND order_date<'2026-01-01'",
+      "database_sha256": "73acfdf11ac771de71a0838d4c66a89d4dd7cab06ba4cdf9244c2c9eaf967649",
+      "levels": [
+        {
+          "concurrency": 1,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 327,
+                  "total_tokens": 2624,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 129,
+                  "call_index": 2,
+                  "latency_ms": 7734.592
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 83,
+                  "total_tokens": 2277,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 46,
+                  "call_index": 2,
+                  "latency_ms": 3192.586
+                }
+              ],
+              "client_dispatch_delay_ms": 0.266,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 9949068
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 3194.032
+                }
+              ],
+              "wall_ms": 10965.587
+            }
+          ],
+          "metrics": {
+            "wall_ms": 10965.76,
+            "requests": 1,
+            "passed": 1,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.091193,
+            "correct_qps": 0.091193,
+            "p50_ms": 10965.587,
+            "p95_ms": 10965.587,
+            "visible_api_calls": 2,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 4491,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 410,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 4901,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 3584,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 175,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        },
+        {
+          "concurrency": 2,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 398,
+                  "total_tokens": 2695,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 202,
+                  "call_index": 1,
+                  "latency_ms": 11280.468
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 128,
+                  "total_tokens": 2322,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 66,
+                  "call_index": 1,
+                  "latency_ms": 6763.354
+                }
+              ],
+              "client_dispatch_delay_ms": 0.434,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 9949068
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 6765.341
+                }
+              ],
+              "wall_ms": 18081.179
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 375,
+                  "total_tokens": 2672,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 180,
+                  "call_index": 3,
+                  "latency_ms": 13302.968
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 126,
+                  "total_tokens": 2320,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 64,
+                  "call_index": 3,
+                  "latency_ms": 4811.865
+                }
+              ],
+              "client_dispatch_delay_ms": 0.79,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 9949068
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4814.072
+                }
+              ],
+              "wall_ms": 18153.845
+            }
+          ],
+          "metrics": {
+            "wall_ms": 18154.345,
+            "requests": 2,
+            "passed": 2,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.110166,
+            "correct_qps": 0.110166,
+            "p50_ms": 18117.512,
+            "p95_ms": 18150.212,
+            "visible_api_calls": 4,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 8982,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 1027,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 10009,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 3584,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 512,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        },
+        {
+          "concurrency": 4,
+          "records": [
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 338,
+                  "total_tokens": 2635,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 144,
+                  "call_index": 4,
+                  "latency_ms": 20571.336
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 97,
+                  "total_tokens": 2291,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 61,
+                  "call_index": 4,
+                  "latency_ms": 4383.795
+                }
+              ],
+              "client_dispatch_delay_ms": 0.765,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 9949068
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4385.459
+                }
+              ],
+              "wall_ms": 24992.224
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 290,
+                  "total_tokens": 2587,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 94,
+                  "call_index": 1,
+                  "latency_ms": 8672.652
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 95,
+                  "total_tokens": 2289,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 59,
+                  "call_index": 1,
+                  "latency_ms": 5151.036
+                }
+              ],
+              "client_dispatch_delay_ms": 1.104,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 9949068
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 5152.68
+                }
+              ],
+              "wall_ms": 13894.009
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 342,
+                  "total_tokens": 2639,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 147,
+                  "call_index": 1,
+                  "latency_ms": 26125.636
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 191,
+                  "total_tokens": 2385,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 155,
+                  "call_index": 1,
+                  "latency_ms": 9736.547
+                }
+              ],
+              "client_dispatch_delay_ms": 1.445,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 9949068
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 9743.834
+                }
+              ],
+              "wall_ms": 35907.442
+            },
+            {
+              "http_status": 200,
+              "checks": {
+                "status": true,
+                "route": true,
+                "real_intent": true,
+                "real_sql": true,
+                "oracle_value": true,
+                "visible_api_audits": true,
+                "allowed_completed_model": true
+              },
+              "pass": true,
+              "api_audits": [
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "reasoning_effort": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2297,
+                  "output_tokens": 294,
+                  "total_tokens": 2591,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 99,
+                  "call_index": 2,
+                  "latency_ms": 8654.975
+                },
+                {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "omni_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2194,
+                  "output_tokens": 117,
+                  "total_tokens": 2311,
+                  "cached_input_tokens": 1792,
+                  "reasoning_tokens": 56,
+                  "call_index": 2,
+                  "latency_ms": 4754.575
+                }
+              ],
+              "client_dispatch_delay_ms": 0.427,
+              "status": "ok",
+              "route": "sql",
+              "actual_rows": [
+                {
+                  "销售额": 9949068
+                }
+              ],
+              "stage_observations": [
+                {
+                  "stage": "intent_planning",
+                  "latency_ms": 4756.942
+                }
+              ],
+              "wall_ms": 13453.004
+            }
+          ],
+          "metrics": {
+            "wall_ms": 35908.615,
+            "requests": 4,
+            "passed": 4,
+            "correct_rate": 1.0,
+            "http_errors": 0,
+            "actual_qps": 0.111394,
+            "correct_qps": 0.111394,
+            "p50_ms": 19443.117,
+            "p95_ms": 34270.159,
+            "visible_api_calls": 8,
+            "visible_usage_lower_bound": {
+              "input_tokens": {
+                "reported_sum": 17964,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "output_tokens": {
+                "reported_sum": 1764,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "total_tokens": {
+                "reported_sum": 19728,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "cached_input_tokens": {
+                "reported_sum": 12544,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              },
+              "reasoning_tokens": {
+                "reported_sum": 815,
+                "unknown_visible_calls": 0,
+                "complete_transport_history": false
+              }
+            },
+            "percentile_method": "linear_interpolation_small_sample_not_production_tail_estimate"
+          }
+        }
+      ],
+      "server_startup_ms": 2221.153,
+      "cold": {
+        "http_status": 200,
+        "checks": {
+          "status": true,
+          "route": true,
+          "real_intent": true,
+          "real_sql": true,
+          "oracle_value": true,
+          "visible_api_audits": true,
+          "allowed_completed_model": true
+        },
+        "pass": true,
+        "api_audits": [
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "reasoning_effort": "medium",
+            "operation": "nl2sql_plan",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2297,
+            "output_tokens": 358,
+            "total_tokens": 2655,
+            "cached_input_tokens": 1792,
+            "reasoning_tokens": 162,
+            "call_index": 1,
+            "latency_ms": 13970.1
+          },
+          {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "omni_plan",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2194,
+            "output_tokens": 80,
+            "total_tokens": 2274,
+            "cached_input_tokens": 1792,
+            "reasoning_tokens": 44,
+            "call_index": 1,
+            "latency_ms": 5543.866
+          }
+        ],
+        "client_dispatch_delay_ms": null,
+        "status": "ok",
+        "route": "sql",
+        "actual_rows": [
+          {
+            "销售额": 9949068
+          }
+        ],
+        "stage_observations": [
+          {
+            "stage": "intent_planning",
+            "latency_ms": 5549.849
+          }
+        ],
+        "wall_ms": 19657.389
+      },
+      "server_memory": {
+        "method": "psutil_process_rss",
+        "peak_sampled_bytes": 108601344,
+        "samples": 776,
+        "interval_ms": 100,
+        "scope": "server_process_only_sampled_peak_not_exact_peak_or_children"
+      }
+    }
+  ],
+  "status": "measurement_completed",
+  "attempted": 24,
+  "passed": 23,
+  "all_requested_measurements_completed": true
+}
