@@ -6,6 +6,7 @@ The ordinary answer pipeline sees only the question and its original PDF.
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -30,6 +31,8 @@ def build_case(index, rng):
     method = 'METHOD_'+tag
     date = '2025-02-14'
     names = ['ASSET_'+uuid.uuid4().hex[:8].upper() for _ in range(8)]
+    if index % 2 == 0:
+        names[0] += ' *'  # Visible original name annotation, never silently cropped.
     source_rows = [[name, '* 17.50 UG/L' if i == 0 else '<20 UG/L' if i == 1 else f'{i+1}.25 UG/L',
         date if i < 6 else '2025-02-15', operator if i < 5 else other, method if i != 4 else method+'X']
         for i, name in enumerate(names)]
@@ -82,6 +85,17 @@ def main():
         (work/'original.pdf').write_bytes(case['pdf'])
         client = StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],
             model='gpt-6-luna',reasoning='medium',http_headers=local_model_headers())
+        # Preserve actual first-attempt plan/review values for failure diagnosis.
+        # Observe only: do not replace a model result, inject reference fields,
+        # retry a rejection, or change the ordinary production answer pipeline.
+        observations = []
+        generate = client.generate
+        def capture(*positional, **keywords):
+            value = generate(*positional, **keywords)
+            if keywords.get('name') in {'native_row_selection_plan', 'native_row_selection_independent_review'}:
+                observations.append({'operation': keywords['name'], 'model_result': value})
+            return value
+        client.generate = capture
         store = KnowledgeStore(work/'knowledge',generator=GroundedGenerator(client))
         document = store.ingest(case['pdf'],document_id='anonymous',title='Anonymous source records',modality='pdf',filename='records.pdf')
         result = store.answer(case['question'],top_k=4)
@@ -106,6 +120,7 @@ def main():
         report = {k:v for k,v in case.items() if k!='pdf'}
         report.update(passed=not errors,errors=errors,result=result,source_replay_passed=replayed,
             source_sha256=document['sha256'],api_audits=safe_audits(client),actual_fields=actual,
+            first_attempt_selection_observations=observations,
             question_only_no_reference_sent_to_model=True)
         (work/'result.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
         print(json.dumps({'case':case['case_id'],'status':result['status'],'passed':not errors,'errors':errors}),flush=True)
@@ -115,6 +130,8 @@ def main():
     after = implementation_snapshot()
     report = {'created_at':datetime.now(timezone.utc).isoformat(),
         'scope':'new_randomized_anonymous_development_PDF_rows_not_official_accuracy',
+        'scenario_revision':'anonymous-rows-with-original-name-footnotes-v2',
+        'scenario_generator_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         'model':'gpt-6-luna','reasoning':'medium','gold_sent_to_model':False,
         'planned':len(cases),'passed':sum(r['passed'] for r in reports),
         'substantive_answers':sum(r['passed'] and r['reference_status']=='ok' for r in reports),

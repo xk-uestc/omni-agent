@@ -13,7 +13,7 @@ from .knowledge_store import SourceIntegrityError
 from .responses_client import GenerationError, object_schema
 from .grounded_span_answer import _completed
 
-VERSION = 'native-row-selection-independent-review-v3'
+VERSION = 'native-row-selection-independent-review-v5'
 REQUEST = re.compile(r'\b(?:which|what)\s+(?:(?:\d+|two|three|four|five)\s+)?(?:elements|tests|items|records|rows|devices|people)\b|哪些|所有(?:记录|项目|对象)', re.I)
 CHECKS = ('approved', 'filters_and_projection_match_original_question',
     'all_matching_rows_in_supplied_sources_covered', 'no_competing_source_or_scope',
@@ -54,9 +54,26 @@ def cardinality_context(question, rows):
         'subset_permitted': False}
 
 
+def display_field_quote(field, quote):
+    """Keep annotated/numeric source fields whole; never interpret their marks.
+
+    The caller first binds the model's exact unique quote to this original field.
+    This only widens that verified literal inside the SAME field, before review;
+    no new lookup, inferred footnote meaning, conversion or approval is supplied.
+    """
+    text = field['text']
+    annotated = (field['numeric_annotation'] is not None
+        or re.search(r'[*†‡¹²³⁴⁵⁶⁷⁸⁹⁰]', text)
+        or re.match(r'^\s*[<>≤≥≈~]', text)
+        or re.search(r'\[[0-9A-Za-z]{1,3}\]\s*$', text))
+    return text if annotated else quote
+
+
 def bind_selection(question, plan, registries):
-    if not isinstance(plan, dict) or set(plan) != {'abstain', 'document_id', 'chain_index', 'predicates', 'column_indices', 'fragments'} or plan['abstain'] is not False:
+    if not isinstance(plan, dict) or set(plan) != {'abstain', 'document_id', 'chain_index', 'predicates', 'column_indices', 'fragments', 'projection_mode'} or plan['abstain'] is not False:
         raise ValueError('native_select_plan_invalid')
+    if plan['projection_mode'] not in ('whole_fields', 'exact_spans'):
+        raise ValueError('native_select_projection_mode_invalid')
     registry = next((r for r in registries if r['document_id'] == plan['document_id']), None)
     if registry is None or type(plan['chain_index']) is not int:
         raise ValueError('native_select_source_invalid')
@@ -86,7 +103,9 @@ def bind_selection(question, plan, registries):
     fragments = plan['fragments']
     if not isinstance(fragments, list) or len(fragments) > 288:
         raise ValueError('native_select_projection_incomplete')
-    if status == 'clarification':
+    if plan['projection_mode'] == 'whole_fields' and fragments:
+        raise ValueError('native_select_whole_fields_fragments_not_empty')
+    if status == 'clarification' or plan['projection_mode'] == 'whole_fields':
         # A count conflict is established by the complete compiler inventory,
         # not by model-cropped answer fragments. Keep EVERY original field for
         # independent review; no unbound model substring is published.
@@ -104,8 +123,9 @@ def bind_selection(question, plan, registries):
         text = rows[f['row_id']]['fields'][f['column_index']]['text']; key = (f['row_id'], f['column_index'])
         if key in selected or text.count(f['quote']) != 1:
             raise ValueError('native_select_literal_not_bound')
-        start = text.index(f['quote'])
-        selected[key] = {**deepcopy(f), 'start': start, 'end': start + len(f['quote'])}
+        quote = display_field_quote(rows[f['row_id']]['fields'][f['column_index']], f['quote'])
+        start = text.index(quote)
+        selected[key] = {**deepcopy(f), 'quote': quote, 'start': start, 'end': start + len(quote)}
     if set(selected) != {(r['row_id'], c) for r in matches for c in columns}:
         raise ValueError('native_select_inventory_incomplete')
     projected = [{'row_id': r['row_id'], 'fields': [selected[(r['row_id'], c)] for c in columns]} for r in matches]
@@ -191,6 +211,7 @@ def route_native_row_selection(store, question, hits, *, document_id=None, page_
         predicate = object_schema({'column_index': {'type': 'integer'}, 'operator': {'type': 'string', 'enum': ['equals', 'contains_token']}, 'literal': {'type': 'string'}})
         fragment = object_schema({'row_id': {'type': 'string'}, 'column_index': {'type': 'integer'}, 'quote': {'type': 'string'}})
         schema = object_schema({'abstain': {'type': 'boolean'}, 'document_id': {'type': 'string'}, 'chain_index': {'type': 'integer'},
+            'projection_mode': {'type': 'string', 'enum': ['whole_fields', 'exact_spans']},
             'predicates': {'type': 'array', 'items': predicate, 'maxItems': 6}, 'column_indices': {'type': 'array', 'items': {'type': 'integer'}, 'maxItems': 6},
             'fragments': {'type': 'array', 'items': fragment, 'maxItems': 288}})
         def generate(*args, **kwargs):
@@ -205,8 +226,14 @@ def route_native_row_selection(store, question, hits, *, document_id=None, page_
             'no limit, regex, computed date, group, numeric comparison or inferred blank inheritance. '
             'Do not add unrequested dates, identifiers or names to manufacture a requested count. '
             'Project ALL matching rows, including qualified records unless explicitly excluded by the question. '
-            'Each projected field needs its shortest COMPLETE exact answer quote inside that original field. '
+            'Choose projection_mode explicitly. Prefer whole_fields for requested names, records, people '
+            'or reported values: fragments MUST be [], and the server enumerates ALL matching row/column '
+            'pairs as complete original fields, without inferred values. Use exact_spans only when a '
+            'shorter literal part inside a field is actually requested; supply every matching '
+            'row/column pair exactly once with a COMPLETE exact answer quote. '
             'Do not count character offsets; the server binds unique exact quotes. Preserve requested units, roles, conditions and qualifiers. '
+            'Annotated and numeric source fields are displayed WHOLE by the server: keep their units, '
+            'inequality signs and footnote markers, without interpreting their meaning. '
             'Return every matching row/column pair exactly once. If a fixed requested number conflicts with '
             'all matching records, keep ALL records for clarification; never select an arbitrary subset. '
             'Abstain if the question needs unsupported operations, multiple competing chains, or unseen evidence.',
@@ -214,10 +241,13 @@ def route_native_row_selection(store, question, hits, *, document_id=None, page_
             name='native_row_selection_plan', max_tokens=4000)
         if not _completed(client.audit):
             raise ValueError('native_select_provider_incomplete')
+        trace['plan_shape'] = {'projection_mode': plan.get('projection_mode') if isinstance(plan, dict) else None,
+            'fragment_count': len(plan['fragments']) if isinstance(plan, dict) and isinstance(plan.get('fragments'), list) else None}
         registry, rows, projection, status, answer = bind_selection(question, plan, registries)
         plan = deepcopy(plan)
         if status == 'clarification':
             # The published conflict uses server-generated full fields only.
+            plan['projection_mode'] = 'whole_fields'
             plan['fragments'] = []
         review = generate('Independently verify the ORIGINAL whole question against ALL supplied original '
             'pages, candidate sources and competing rows. Offsets/geometry prove provenance only. '
@@ -226,6 +256,9 @@ def route_native_row_selection(store, question, hits, *, document_id=None, page_
             'roles and literal answer spans. approve only if the plan/projection covers all requested '
             'fields and filters in the supplied evidence and the answer is fully supported, OR the '
             'fixed-count conflict genuinely warrants the proposed clarification. '
+            'The server may widen a bound quote to the full SAME original numeric/annotated field '
+            'to retain units or footnote markers; review that full projection and final answer, '
+            'not just the model short fragment. No symbol meaning or additional fact is inferred. '
             'For a fixed-count conflict, projection is the server full-field inventory, not model fragments. A shared field may be '
             'factored only when identical in every row; otherwise row associations must remain intact. '
             'Assess literal predicates and projected answer fields separately from output cardinality: '

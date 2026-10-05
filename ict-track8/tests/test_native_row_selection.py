@@ -13,7 +13,7 @@ from backend.evidence_recovery import recovery_eligible
 QUESTION = 'Which items were handled by PERSON_A using ISO_A, and by whom?'
 
 
-def source(*, changed=False):
+def source(*, changed=False, annotated=False):
     with fitz.open() as document:
         for pno in range(2):
             page = document.new_page(width=700, height=400)
@@ -27,6 +27,11 @@ def source(*, changed=False):
                     'PERSON_B' if index == 4 else 'PERSON_A', 'ISO_AB' if index == 2 else 'ISO_A']
                 if changed and index == 0:
                     cells[0] = 'Changed item'
+                if annotated and index == 0:
+                    cells[0] = 'Item A *'
+                    cells[1] = '* 35 UG/L'
+                if annotated and index == 1:
+                    cells[1] = '<200 UG/L'
                 for x, cell in zip(coordinates, cells):
                     page.insert_text((x, 86 + i * 16), cell, fontsize=9)
         return document.tobytes()
@@ -49,7 +54,7 @@ class Client:
             # Independent expected inventory: A, B, D and F; C has ISO_AB,
             # E has PERSON_B. Do not compute this via the production filter.
             chosen = [rows[i] for i in (0, 1, 3, 5)]
-            plan = {'abstain': False, 'document_id': 'sample', 'chain_index': 0,
+            plan = {'abstain': False, 'document_id': 'sample', 'chain_index': 0, 'projection_mode': 'exact_spans',
                 'predicates': [{'column_index': 4, 'operator': 'contains_token', 'literal': 'ISO_A'},
                     {'column_index': 3, 'operator': 'equals', 'literal': 'PERSON_A'}],
                 'column_indices': [0, 3], 'fragments': [{'row_id': row['row_id'], 'column_index': i,
@@ -71,9 +76,9 @@ class Client:
         return review
 
 
-def setup(tmp_path):
+def setup(tmp_path, **source_options):
     client = Client(); store = KnowledgeStore(tmp_path/'knowledge', generator=SimpleNamespace(client=client))
-    store.ingest(source(), document_id='sample', title='Anonymous laboratory', modality='pdf', filename='records.pdf')
+    store.ingest(source(**source_options), document_id='sample', title='Anonymous laboratory', modality='pdf', filename='records.pdf')
     return store, client, store.search(QUESTION, document_id='sample')
 
 
@@ -138,10 +143,11 @@ def test_missing_cardinality_check_or_old_receipt_cannot_replay(tmp_path):
     result['native_row_proof']['review'].pop('requested_cardinality_handled_without_subset')
     result['native_row_proof_sha256'] = _sha(result['native_row_proof'])
     assert not replay_selection(store, result)
-    result = answer(store, hits)
-    result['native_row_proof']['version'] = 'native-row-selection-independent-review-v2'
-    result['native_row_proof_sha256'] = _sha(result['native_row_proof'])
-    assert not replay_selection(store, result)
+    for version in ('native-row-selection-independent-review-v2', 'native-row-selection-independent-review-v3', 'native-row-selection-independent-review-v4'):
+        result = answer(store, hits)
+        result['native_row_proof']['version'] = version
+        result['native_row_proof_sha256'] = _sha(result['native_row_proof'])
+        assert not replay_selection(store, result)
 
 
 def test_unrequested_and_matching_counts_never_create_a_conflict():
@@ -149,6 +155,114 @@ def test_unrequested_and_matching_counts_never_create_a_conflict():
     assert cardinality_context('Which items match?', rows)['required_status'] == 'ok'
     assert cardinality_context('Which two items match?', rows)['required_status'] == 'ok'
     assert cardinality_context('Which three items match?', rows)['required_status'] == 'clarification'
+
+
+def test_explicit_whole_fields_enumerates_full_inventory_and_replays(tmp_path):
+    store, client, hits = setup(tmp_path, annotated=True)
+    client.edit_plan = lambda p:p.update(projection_mode='whole_fields',fragments=[])
+    result = answer(store, hits)
+    assert result['answer'] == 'Item A *\nItem B\nItem D\nItem F\nOperator: PERSON_A'
+    assert len(result['native_row_proof']['projection']) == 4
+    assert result['native_row_proof']['selection']['fragments'] == []
+    assert client.review_context['selection']['projection_mode'] == 'whole_fields'
+    assert replay_selection(store, result)
+
+
+@pytest.mark.parametrize('edit', [
+    lambda p:p.update(projection_mode='whole_fields'),
+    lambda p:p.update(projection_mode='exact_spans',fragments=[]),
+    lambda p:p.update(projection_mode='implicit'),
+    lambda p:p.pop('projection_mode'),
+    lambda p:p.update(projection_mode='whole_fields',fragments=[],column_indices=[99]),
+])
+def test_projection_modes_never_rescue_invalid_or_incomplete_plans(tmp_path, edit):
+    store, client, hits = setup(tmp_path)
+    client.edit_plan = edit
+    assert answer(store, hits) is None
+    assert len(client.calls) == 1
+
+
+@pytest.mark.parametrize('flag', CHECKS)
+def test_whole_fields_does_not_override_independent_rejection(tmp_path, flag):
+    store, client, hits = setup(tmp_path)
+    client.edit_plan = lambda p:p.update(projection_mode='whole_fields',fragments=[])
+    client.edit_review = lambda r:r.update({flag:False})
+    assert answer(store, hits) is None
+
+
+def test_whole_fields_matches_complete_exact_spans_and_rejects_tampering(tmp_path):
+    store, client, hits = setup(tmp_path, annotated=True)
+    exact = answer(store, hits)
+    client.edit_plan = lambda p:p.update(projection_mode='whole_fields',fragments=[])
+    whole = answer(store, hits)
+    assert whole['answer'] == exact['answer']
+    assert whole['native_row_proof']['projection'] == exact['native_row_proof']['projection']
+    whole['native_row_proof']['selection']['projection_mode'] = 'exact_spans'
+    whole['native_row_proof_sha256'] = _sha(whole['native_row_proof'])
+    assert not replay_selection(store, whole)
+
+
+def test_whole_fields_count_conflict_preserves_all_fields_and_replays(tmp_path):
+    store, client, hits = setup(tmp_path)
+    client.edit_plan = lambda p:p.update(projection_mode='whole_fields',fragments=[])
+    result = answer(store, hits, 'Which two items were handled by PERSON_A using ISO_A?')
+    assert result['status'] == 'clarification'
+    assert len(result['native_row_proof']['projection']) == 4
+    assert result['native_row_proof']['selection']['projection_mode'] == 'whole_fields'
+    assert replay_selection(store, result)
+
+
+def test_short_named_answer_preserves_visible_original_footnote_marker(tmp_path):
+    store, client, hits = setup(tmp_path, annotated=True)
+    def shorten(plan):
+        plan['fragments'][0]['quote'] = 'Item A'
+    client.edit_plan = shorten
+    result = answer(store, hits)
+    assert result['status'] == 'ok'
+    assert result['answer'].startswith('Item A *\n')
+    field = result['native_row_proof']['projection'][0]['fields'][0]
+    assert field['quote'] == 'Item A *' and field['start'] == 0 and field['end'] == 8
+    assert result['native_row_proof']['selection']['fragments'][0]['quote'] == 'Item A'
+    assert client.review_context['projection'][0]['fields'][0]['quote'] == 'Item A *'
+    assert client.review_context['proposed_answer'].startswith('Item A *\n')
+    assert replay_selection(store, result)
+
+
+def test_short_numeric_quotes_preserve_units_inequalities_and_markers(tmp_path):
+    store, client, hits = setup(tmp_path, annotated=True)
+    def values(plan):
+        names = [f for f in plan['fragments'] if f['column_index'] == 0]
+        plan['column_indices'] = [0, 1]
+        plan['fragments'] = [part for index, name in enumerate(names)
+            for part in (name, {'row_id':name['row_id'],'column_index':1,'quote':'200' if index==1 else '35'})]
+    client.edit_plan = values
+    result = answer(store, hits)
+    assert 'Item A * · * 35 UG/L' in result['answer']
+    assert 'Item B · <200 UG/L' in result['answer']
+    assert 'Item D · 35 UG/L' in result['answer']
+    assert replay_selection(store, result)
+
+
+def test_widened_display_cannot_override_independent_rejection(tmp_path):
+    store, client, hits = setup(tmp_path, annotated=True)
+    client.edit_plan = lambda p:p['fragments'][0].update(quote='Item A')
+    client.edit_review = lambda r:r.update(literal_spans_preserve_requested_qualifiers=False)
+    assert answer(store, hits) is None
+
+
+def test_display_expansion_cannot_rescue_an_unbound_quote(tmp_path):
+    store, client, hits = setup(tmp_path, annotated=True)
+    client.edit_plan = lambda p:p['fragments'][0].update(quote='Item Z')
+    assert answer(store, hits) is None and len(client.calls) == 1
+
+
+def test_tampering_with_full_annotated_projection_fails_source_replay(tmp_path):
+    store, client, hits = setup(tmp_path, annotated=True)
+    client.edit_plan = lambda p:p['fragments'][0].update(quote='Item A')
+    result = answer(store, hits)
+    result['native_row_proof']['projection'][0]['fields'][0].update(quote='Item A',end=6)
+    result['native_row_proof_sha256'] = _sha(result['native_row_proof'])
+    assert not replay_selection(store, result)
 
 
 def test_cardinality_conflict_uses_full_original_fields_not_partial_model_fragments(tmp_path):

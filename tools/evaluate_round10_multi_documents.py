@@ -1,4 +1,4 @@
-"""Replay exposed OHR compound/enumeration questions through the production entry."""
+"""Replay exposed OHR questions through the production entry, retaining failures."""
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -24,6 +24,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--baseline', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--all-cases', action='store_true',
+                        help='Replay EVERY retained baseline case, not only compound/enumeration questions')
     args = parser.parse_args()
     if (args.output.resolve().parent != (ROOT / 'docs').resolve() or args.output.exists()
             or args.baseline.resolve().parent != (ROOT / 'docs').resolve()):
@@ -32,7 +34,7 @@ def main():
     baseline = json.loads(raw)
     if baseline.get('gold_used_as_corpus_or_model_input') is not False or not baseline.get('implementation_stable'):
         parser.error('Baseline protocol mismatch')
-    selected = [c for c in baseline['cases'] if (
+    selected = baseline['cases'] if args.all_cases else [c for c in baseline['cases'] if (
         question_contract(c['question'])['multiple_requested_fields']
         or question_contract(c['question'])['exhaustive_selection_required'])]
     if not selected:
@@ -83,9 +85,11 @@ def main():
         'before_f1': sum(c['generation']['scores']['english_token_f1'] for c in selected) / len(selected),
         'after_f1_including_failures': sum(c['generation']['scores']['english_token_f1'] for c in scored) / len(selected)}
     report = {'created_at': datetime.now(timezone.utc).isoformat(),
-        'scope': 'question_shape_selected_exposed_OHR_development_subset_not_full_benchmark',
+        'scope': ('all_retained_exposed_OHR_development_cases_not_full_benchmark' if args.all_cases else
+                  'question_shape_selected_exposed_OHR_development_subset_not_full_benchmark'),
         'baseline': {'path': str(args.baseline), 'sha256': hashlib.sha256(raw).hexdigest()},
-        'selection_rule': 'production_question_contract_compound_or_exhaustive_no_gold_filter',
+        'selection_rule': ('every_baseline_case_no_filter_no_gold_input' if args.all_cases else
+                           'production_question_contract_compound_or_exhaustive_no_gold_filter'),
         'gold_used_as_corpus_or_model_input': False, 'model': 'gpt-6-luna', 'reasoning': 'medium',
         'store_path': str(store_path), 'implementation_file_sha256': before,
         'implementation_file_sha256_end': after, 'implementation_stable': before == after,
