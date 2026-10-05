@@ -195,10 +195,10 @@ function normalizeOmniResponse(data){
     result.rows?.length?`查询返回 ${result.rows.length} 行结果，具体数据如下。`:"查询完成，当前条件下没有找到数据。":null;
   return {...data,omni_response:true,answer:result.answer||result.clarification||sqlSummary||result.explanation?.join("；")||"本次未返回文字说明。",
     structured:["sql","comparison"].includes(data.route)?result:{},document_evidence:result.citations||[],
-    visual_source_proof:result.visual_source_proof,answer_mode:result.answer_mode,
+    visual_source_proof:result.visual_source_proof,native_row_proof:result.native_row_proof,answer_mode:result.answer_mode,
     answer_span_result:result.answer_span_result};
 }
-function sourcePageViewer(host,item,part){
+function sourcePageViewer(host,item,part,nativeSelection){
   const metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
   const sourceSha=metadata.source_sha256;
   if(typeof did!=="string"||!Number.isInteger(page)||page<1||!/^[a-f0-9]{64}$/.test(sourceSha||""))return;
@@ -227,15 +227,20 @@ function sourcePageViewer(host,item,part){
       if(sha!==manifest.render_sha256)throw Error("页图内容核对失败。");
       if(signal.aborted||current!==revision||!details.open)return;
       blobUrl=URL.createObjectURL(blob);image.src=blobUrl;image.hidden=false;
-      const box=part?.bbox_normalized,matched=part?.page_no===page&&part.source_sha256===sourceSha&&part.render_sha256===sha;
+      const nativeBoxes=metadata.native_row&&nativeSelection?window.NativeRowOverlay?.model(metadata,manifest,nativeSelection):null;
+      const box=part?.bbox_normalized,matched=Boolean(nativeBoxes?.length)||(part?.page_no===page&&part.source_sha256===sourceSha&&part.render_sha256===sha);
       const valid=Array.isArray(box)&&box.length===4&&box.every(v=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3];
-      if(matched&&valid){
-        const svg=document.createElementNS("http://www.w3.org/2000/svg","svg"),rect=document.createElementNS(svg.namespaceURI,"rect");
+      if(matched&&(valid||nativeBoxes?.length)){
+        const svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
         svg.setAttribute("viewBox","0 0 1 1");svg.setAttribute("preserveAspectRatio","none");svg.setAttribute("aria-label","本次引用的原页位置");svg.setAttribute("role","img");
-        Object.entries({x:box[0],y:box[1],width:box[2]-box[0],height:box[3]-box[1],fill:"rgba(255,199,0,.18)",stroke:"#d49a00","stroke-width":.003}).forEach(([key,value])=>rect.setAttribute(key,String(value)));
-        svg.append(rect);stage.append(svg);
+        for(const item of nativeBoxes||[{bbox_normalized:box,role:'value'}]){
+          const bounds=item.bbox_normalized,shape=document.createElementNS(svg.namespaceURI,"rect");
+          Object.entries({x:bounds[0],y:bounds[1],width:bounds[2]-bounds[0],height:bounds[3]-bounds[1],fill:item.role==='subject'?"rgba(70,130,220,.12)":"rgba(255,199,0,.18)",stroke:item.role==='subject'?"#4c83cd":"#d49a00","stroke-width":.003}).forEach(([key,value])=>shape.setAttribute(key,String(value)));
+          if(item.label){const title=document.createElementNS(svg.namespaceURI,'title');title.textContent=`${item.label}: ${item.text}`;shape.append(title);}
+          svg.append(shape);
+        }stage.append(svg);
       }
-      info.textContent=`第 ${page} 页 · 原文件 ${sourceSha.slice(0,16)}… · ${matched&&valid?"引用位置已高亮；位置由独立视觉模型复核。":"原页内容已核对，本引用未提供匹配的位置标注。"}`;
+      info.textContent=`第 ${page} 页 · 原文件 ${sourceSha.slice(0,16)}… · ${nativeBoxes?.length?"实体与数值字段已定位；原件坐标及页面映射已核对。":matched&&valid?"引用位置已高亮；位置由独立视觉模型复核。":"原页内容已核对，本引用未提供匹配的位置标注。"}`;
     }catch(error){if(!signal.aborted&&current===revision)info.textContent=error.message||"原页读取失败。";}
   };
   details.addEventListener("toggle",onToggle);
@@ -245,6 +250,7 @@ function renderDocumentEvidence(host,data){
   const items=data.document_evidence||[];if(!items.length)return;
   const docs=el("div","docs");
   if(data.answer_mode==="visual_source_model_reviewed")docs.append(el("p","schema-caption","原页读取 · 独立视觉模型复核；下面展示返回的原文片段，可展开原页核对数值与单位。"));
+  if(data.answer_mode==="native_row_comparison_model_reviewed")docs.append(el("p","schema-caption","原页表格比较 · 样本编号与单位已核对，数值关系由服务器计算；下方保留两页原始记录。"));
   if(data.answer_mode==="source_multi_span_model_reviewed")docs.append(el("p","schema-caption","回答由多段原文组成，各子问与所选资料中的相关项目已分别复核。可展开来源核对；本次范围不包含未检索的页面。"));
   items.forEach(item=>{
     const row=el("article","doc"),metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
@@ -254,7 +260,7 @@ function renderDocumentEvidence(host,data){
     }
     const candidate=data.visual_source_proof?.parts?.[item.citation_id-1];
     const part=candidate?.quote===item.snippet?candidate:null;
-    sourcePageViewer(row,item,part);docs.append(row);
+    sourcePageViewer(row,item,part,data.native_row_proof?.selection);docs.append(row);
   });host.append(docs);
 }
 function renderResult(view,data,originalQuestion){
@@ -263,6 +269,18 @@ function renderResult(view,data,originalQuestion){
   document.querySelectorAll(".clarify button, .clarify input, .comparison-controls button").forEach(control=>control.disabled=true);
   view.live?.finish(data);
   view.wait.remove();view.title.textContent=data.status==="clarification"?"需要补充条件":`已完成 · ${data.latency_ms??"—"} ms`;view.turn.status=data.status||"完成";renderTurns();
+  if(data.structured?.sql&&liveSchema.tables.length){
+    view.live.record({id:'client:database.schema',tool:'database.schema',status:'success',executed:true,
+      summary:'查看当前页面已加载的数据库结构，核对本次 SQL 使用的表与字段。',
+      input:{source:liveSchema.source},
+      output:{source:liveSchema.source,origin:'当前页面已加载的结构信息；本步未重新请求数据库',tables:liveSchema.tables}});
+    if(window.SchemaSvg){
+      const schemaDetail=el('details','agent-inspector'),schemaLabel=el('summary','','查看完整数据库字段 SVG');
+      const plan=data.structured.plan||{};
+      schemaDetail.append(schemaLabel,window.SchemaSvg.render(liveSchema,plan,data.structured.provenance?.field_links||plan.links||[]));
+      view.live.attach('database.schema',schemaDetail);
+    }
+  }
   const inspector=el("details","agent-inspector"),inspectorBody=el("div"),inspectorSummary=el("summary");
   inspectorSummary.innerHTML='<svg class="agent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 6c0-4 16-4 16 0s-16 4-16 0v12c0 4 16 4 16 0V6M4 12c0 4 16 4 16 0"/></svg>';
   inspectorSummary.append(document.createTextNode(data.route==='comparison'?"查看比较依据与 SQL":"查看字段 SVG、SQL 与数据关系"));

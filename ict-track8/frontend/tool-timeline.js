@@ -13,6 +13,7 @@
     document_formula:['读取原文公式','file'], calculate:['计算结果','calculator'], calculator:['计算结果','calculator'],
     compare:['比较结果','chart'], policy_select:['核对适用条款','file'],
     'visualization.build':['构建可视化','chart'], 'fusion.execute':['执行跨源任务','layers'],
+    'document.table.read':['读取原页表格','database'], 'document.compare':['比较原页数据','calculator'],
     structured_query:['查询数据库','database']
   };
   const NARRATION={intent_planning:'已识别本次问题，接下来按所选数据来源处理。',

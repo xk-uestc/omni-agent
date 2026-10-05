@@ -51,6 +51,14 @@ def _parts(question, contract, proposal):
 
 
 def _review_component(index, query, result, *, store=None):
+    if result.get('answer_mode') == 'native_row_comparison_model_reviewed':
+        from .native_row_comparison import review_context
+        context = review_context(store, result)
+        return {'part_id': index, 'standalone_question': query, 'answer': result['answer'],
+            'answer_mode': result['answer_mode'], 'evidence': deepcopy(result['citations']),
+            'native_row_context': context, 'server_computation': deepcopy(result['computation']),
+            'answer_scope': deepcopy(result['answer_scope']),
+            'source_verification': 'fresh_original_rows_scope_and_comparator_replay'}
     evidence, pages = [], {}
     for citation in result.get('citations', []):
         metadata = citation.get('metadata', {})
@@ -112,6 +120,11 @@ def _replay_computation(store, child):
     """Only accept the native tool output, replayed from pinned original cells."""
     computation = child.get('computation')
     if not computation:
+        return
+    if child.get('answer_mode') == 'native_row_comparison_model_reviewed':
+        from .native_row_comparison import replay_comparison
+        if not replay_comparison(store, child):
+            raise ValueError('component_native_row_replay_failed')
         return
     from .native_table_question import annotation_arithmetic, _percentage_decimal_places, _operation_request_supported
     from .native_text_tables import extract_native_text_tables

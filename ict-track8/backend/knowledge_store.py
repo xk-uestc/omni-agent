@@ -575,6 +575,10 @@ class KnowledgeStore:
         return recovered
 
     def _answer_hits(self, question, hits, *, document_id=None, page_no=None):
+        from .native_row_comparison import route_native_row_comparison
+        row_result, row_trace = route_native_row_comparison(self, question, hits, document_id=document_id, page_no=page_no)
+        if row_result is not None:
+            return row_result
         from .visual_routing import route_visual_table_question
         visual_result, visual_trace = route_visual_table_question(self, question, hits, document_id=document_id, page_no=page_no)
         if visual_result is not None:
@@ -610,6 +614,7 @@ class KnowledgeStore:
         result['trace'].append(visual_trace)
         result['trace'].append(chart_trace)
         result['trace'].append(table_trace)
+        result['trace'].append(row_trace)
         if self.generator and selected:
             from .responses_client import GenerationError
             from .answer_contract import question_contract

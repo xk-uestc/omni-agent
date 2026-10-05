@@ -181,7 +181,7 @@ function renderOmni(box,question,data,activeSession,timeline=null){
     else box.append(element('p','计算尚未完成，中间结果仅保留于审计详情。','muted'));
   }
   if(r.error)box.append(element('p',r.error,'error'));
-  if(r.citations?.length){const sources=element('div',null,'toolbar');r.citations.forEach(hit=>addVisualAction(sources,hit.metadata?.document_id,hit.metadata?.page_no,hit.metadata?.source_sha256));if(sources.childElementCount)box.append(sources);}
+  if(r.citations?.length){const sources=element('div',null,'toolbar');r.citations.forEach(hit=>addVisualAction(sources,hit.metadata?.document_id,hit.metadata?.page_no,hit.metadata?.source_sha256,undefined,r.visual_source_proof?.parts?.[hit.citation_id-1],{metadata:hit.metadata,selection:r.native_row_proof?.selection}));if(sources.childElementCount)box.append(sources);}
   const details=element('details');details.append(element('summary','查看真实工具步骤、SQL、引用和状态'),element('pre',JSON.stringify(data,null,2)));box.append(details);
 }
 function element(tag,text,className){const e=document.createElement(tag);if(text!=null)e.textContent=String(text);if(className)e.className=className;return e;}
@@ -250,12 +250,12 @@ async function request(path,payload,signal){const r=await authFetch(path,{method
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
 async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();documentCatalog.clear();const previousSource=$('query-document').value;$('query-document').replaceChildren(element('option','由检索定位资料'));$('query-document').firstChild.value='';data.documents.forEach(doc=>{const option=element('option',doc.title);option.value=doc.document_id;$('query-document').append(option);documentCatalog.set(doc.document_id,doc);const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));addVisualAction(item,doc.document_id,1,doc.sha256,doc.modality);if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});if(documentCatalog.has(previousSource))$('query-document').value=previousSource;$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
 
-function addVisualAction(host,documentId,pageNo,sourceSha,modality,visualPart){
+function addVisualAction(host,documentId,pageNo,sourceSha,modality,visualPart,nativeContext){
   const record=documentCatalog.get(documentId);
   if((modality||record?.modality)!=='pdf'||!Number.isInteger(pageNo)||pageNo<1||!/^[a-f0-9]{64}$/.test(sourceSha||''))return;
   const button=element('button','查看页图证据','visual-action');button.type='button';
   button.addEventListener('click',()=>{
-    visualDocument={documentId,sourceSha,title:record?.title||documentId,pageCount:record?.stats?.page_count,visualPart};
+    visualDocument={documentId,sourceSha,title:record?.title||documentId,pageCount:record?.stats?.page_count,visualPart,nativeContext};
     $('visual-title').textContent=visualDocument.title;$('visual-page').value=pageNo;
     $('visual-page').max=visualDocument.pageCount||1000;
     if(!$('visual-dialog').open)$('visual-dialog').showModal();
@@ -298,16 +298,24 @@ async function loadVisualPage(pageNo){
     visualDisplayedPage=pageNo;visualRenderSha=manifest.render_sha256;$('visual-table-submit').disabled=false;
     $('visual-image').alt=`${snapshot.title} · 原PDF第${pageNo}页`;$('visual-image').hidden=false;
     const part=snapshot.visualPart;
-    if(part&&part.page_no===pageNo&&part.source_sha256===snapshot.sourceSha&&part.render_sha256===manifest.render_sha256){
-      const box=part.bbox_normalized;
-      if(Array.isArray(box)&&box.length===4&&box.every(v=>Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3]){
+    const native=snapshot.nativeContext;
+    const nativeBoxes=native?.metadata?.native_row&&native.selection&&native.metadata.page_no===pageNo?
+      window.NativeRowOverlay.model(native.metadata,manifest,native.selection):null;
+    if(nativeBoxes?.length||(part&&part.page_no===pageNo&&part.source_sha256===snapshot.sourceSha&&part.render_sha256===manifest.render_sha256)){
+      const box=part?.bbox_normalized;
+      if(nativeBoxes?.length||(Array.isArray(box)&&box.length===4&&box.every(v=>Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3])){
         const image=$('visual-image');let overlay=document.getElementById('visual-source-highlight');
         if(!overlay){const stage=element('div');stage.style.cssText='position:relative;display:inline-block;max-width:100%';image.parentNode.insertBefore(stage,image);stage.append(image);overlay=document.createElementNS('http://www.w3.org/2000/svg','svg');overlay.id='visual-source-highlight';overlay.setAttribute('viewBox','0 0 1 1');overlay.setAttribute('preserveAspectRatio','none');overlay.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none';stage.append(overlay);}
-        const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-        Object.entries({x:box[0],y:box[1],width:box[2]-box[0],height:box[3]-box[1],fill:'rgba(255,199,0,.18)',stroke:'#d49a00','stroke-width':.003}).forEach(([key,value])=>rect.setAttribute(key,String(value)));overlay.replaceChildren(rect);
+        overlay.replaceChildren();overlay.setAttribute('role','img');overlay.setAttribute('aria-label','本次引用的原页字段位置');
+        for(const item of nativeBoxes||[{bbox_normalized:box,role:'value'}]){
+          const bounds=item.bbox_normalized,rect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+          Object.entries({x:bounds[0],y:bounds[1],width:bounds[2]-bounds[0],height:bounds[3]-bounds[1],fill:item.role==='subject'?'rgba(70,130,220,.12)':'rgba(255,199,0,.18)',stroke:item.role==='subject'?'#4c83cd':'#d49a00','stroke-width':.003}).forEach(([key,value])=>rect.setAttribute(key,String(value)));
+          if(item.label){const title=document.createElementNS(rect.namespaceURI,'title');title.textContent=`${item.label}: ${item.text}`;rect.append(title);}
+          overlay.append(rect);
+        }
       }
     }
-    $('visual-summary').textContent=`第 ${pageNo} / ${manifest.page_count} 页 · ${manifest.size_px.join(' × ')} 像素 · 原文件 SHA-256 ${snapshot.sourceSha.slice(0,16)}…`;
+    $('visual-summary').textContent=`第 ${pageNo} / ${manifest.page_count} 页 · ${manifest.size_px.join(' × ')} 像素 · 原文件 SHA-256 ${snapshot.sourceSha.slice(0,16)}…${nativeBoxes?.length?' · 主体与数值字段已定位；原件坐标与显示映射已核对。':''}`;
     $('visual-detail').textContent=JSON.stringify({document_id:manifest.document_id,page_no:manifest.page_no,source_sha256:manifest.source_sha256,render_sha256:manifest.render_sha256,renderer:manifest.renderer,rotation_degrees:manifest.rotation_degrees,coordinate_frame:manifest.coordinate_frame,warnings:manifest.warnings},null,2);
   }catch(error){if(revision===visualRevision&&!signal.aborted)$('visual-summary').textContent=error.message;}
 }
@@ -355,16 +363,26 @@ $('visual-table-form').addEventListener('submit',async event=>{
 const qualityLabels={page_orientation_detected:'检测到颠倒或侧转，请核对原图',page_skew_detected:'检测到页面倾斜',page_orientation_undetermined:'文字不足或方向混杂，无法判定页面方向',page_exif_orientation_corrected:'已按EXIF方向信息校正OCR输入'};
 function qualityMessage(code){return qualityLabels[code]||code;}
 function showError(host,error){host.replaceChildren(element('p',error.message,'error'));}
+let documentQueryTimeline=null;
+window.addEventListener('pagehide',()=>documentQueryTimeline?.dispose());
 $('upload').addEventListener('submit',async event=>{event.preventDefault();const file=$('file').files[0];if(!file)return;const button=event.target.querySelector('button');button.disabled=true;try{if(file.size>20*1024*1024)throw Error('单个文件不能超过20 MiB');const ext=file.name.split('.').pop().toLowerCase();const modality=['png','jpg','jpeg','webp'].includes(ext)?'image':ext;const bytes=new Uint8Array(await file.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));await request('/api/v1/knowledge/ingest',{document_id:'upload-'+crypto.randomUUID(),title:$('title').value||file.name,filename:file.name,modality,file_base64:btoa(binary),language:'chi_sim+eng'});await refresh();event.target.reset();}catch(e){$('status').textContent=e.message;}finally{button.disabled=false;}});
 $('ask').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
-  $('answer').replaceChildren(element('p','检索中…'));
+  documentQueryTimeline?.dispose();documentQueryTimeline=window.ToolTimeline.create();
+  const timeline=documentQueryTimeline;
+  $('answer').replaceChildren(timeline.root);
+  timeline.update({call_id:'document-query',tool:'knowledge.answer',status:'running',
+    input:{question:$('question').value,document_id:$('query-document').value||null,page_no:$('query-page').value||null}});
   try{
     const selectedDocument=$('query-document').value;
     const selectedPage=$('query-page').value;
     if(selectedPage&&(!selectedDocument||documentCatalog.get(selectedDocument)?.modality!=='pdf'))throw Error('指定页码时请先选择PDF资料。');
     const data=await request('/api/v1/knowledge/query',{question:$('question').value,top_k:4,...(selectedDocument?{document_id:selectedDocument}:{}),...(selectedPage?{page_no:Number(selectedPage)}:{})});
-    $('answer').replaceChildren(element('small',`检索：${data.retrieval.mode} · 回答：${data.answer_mode}`,'muted'));
+    timeline.update({call_id:'document-query',tool:'knowledge.answer',status:data.status,executed:true,
+      summary:data.status==='ok'?'文档处理已返回，下面保留回答及原文来源。':'文档处理已返回，当前仍需补充条件或证据。',
+      output:{status:data.status,answer_mode:data.answer_mode,citation_count:data.citations?.length||0}});
+    timeline.finish({trace:data.trace||[]});
+    $('answer').append(element('small',`检索：${data.retrieval.mode} · 回答：${data.answer_mode}`,'muted'));
     appendAnswer($('answer'),data);
     if(data.clarification)$('answer').append(element('p',data.clarification,'error'));
     if(data.answer_mode==='visual_grid_routed')$('answer').append(element('p','已走原页表格核验链路；唯一性限于本轮候选资料，未声明全库唯一。','muted'));
@@ -372,11 +390,11 @@ $('ask').addEventListener('submit',async event=>{
     data.citations.forEach(hit=>{
       const box=element('article',null,'citation');
       box.append(element('b',`[${hit.citation_id}] ${hit.title}`),element('pre',hit.snippet),element('small',`${hit.metadata.source_locator} · ${hit.metadata.retrieval_channel} · BM25 ${hit.metadata.bm25_raw??'—'} · Dense ${hit.metadata.dense_cosine??'—'} · `),originalLink(hit.metadata.document_id,'查看原文件'));
-      addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256,undefined,data.visual_source_proof?.parts?.[hit.citation_id-1]);
+      addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256,undefined,data.visual_source_proof?.parts?.[hit.citation_id-1],{metadata:hit.metadata,selection:data.native_row_proof?.selection});
       $('answer').append(box);
     });
     const trace=element('details');trace.append(element('summary','查看路由、范围与实际核验记录'),element('pre',JSON.stringify(data,null,2)));$('answer').append(trace);
-  }catch(e){showError($('answer'),e);}finally{button.disabled=false;}
+  }catch(e){timeline.fail(e.message);$('answer').append(element('p',e.message,'error'));}finally{button.disabled=false;}
 });
 const ref=(node,path=[])=>({ref:node,path});const task=(id,tool,args)=>({id,tool,args});
 function buildPlan(){const region=$('region').value,year=Number($('year').value),mode=$('workflow').value;

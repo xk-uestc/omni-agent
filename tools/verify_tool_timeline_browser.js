@@ -49,6 +49,14 @@ async function main(){
     assert(await inspect.locator('.schema-explorer svg').count()>0,'schema SVG lost');
     assert(await page.locator('.agent-tool-row[data-tool="visualization.build"][data-status="success"]').count()===1,'visualization receipt absent');
     await inspect.locator(':scope>summary').click();});
+  await check('database structure has its own tool feedback and complete field SVG',async()=>{
+    const schema=page.locator('.agent-tool-row[data-tool="database.schema"][data-status="success"]');
+    assert(await schema.count()===1,'database structure tool absent or duplicated');
+    await schema.locator('.agent-tool-summary').click();
+    assert((await schema.locator('.agent-tool-code').innerText()).includes('本步未重新请求数据库'),'cached metadata misrepresented as new execution');
+    await schema.locator('.agent-tool-attachment summary').click();
+    assert(await schema.locator('.schema-explorer svg').isVisible(),'complete schema SVG is not visible');
+    await schema.locator('.agent-tool-summary').click();});
   await check('chart belongs to the visualization tool rather than the answer',async()=>{
     const chart=page.locator('.agent-tool-row[data-tool="visualization.build"]');
     await chart.locator('.agent-tool-summary').click();
