@@ -136,10 +136,12 @@ class KnowledgeStore:
         if not isinstance(document_id, str) or not SAFE_ID.fullmatch(document_id) or document_id in {'.', '..'}:
             raise ValueError('document_id 必须为安全的字母数字标识符')
 
-    def ingest(self, raw: bytes, *, document_id: str, title: str, modality: str, filename: str, language='eng'):
+    def ingest(self, raw: bytes, *, document_id: str, title: str, modality: str, filename: str, language='eng', excel_tables=None):
         self.validate_id(document_id)
         if modality not in SUPPORTED or not raw or len(raw) > 20 * 1024 * 1024:
             raise ValueError('不支持的文档格式、空文件或超过 20 MiB 限制')
+        if excel_tables and modality != 'xlsx':
+            raise ValueError('Excel表区域仅可用于xlsx文件')
         if not title.strip() or len(title) > 200:
             raise ValueError('文档标题为空或超出上限')
         filename = Path(filename.replace('\\', '/')).name
@@ -154,7 +156,7 @@ class KnowledgeStore:
         elif modality == 'docx':
             parsed = self.chunker.parse_docx(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
         elif modality == 'xlsx':
-            parsed = self.chunker.parse_xlsx(raw, document_id=document_id).to_dict()
+            parsed = self.chunker.parse_xlsx(raw, document_id=document_id, excel_tables=excel_tables).to_dict()
         else:
             parsed = self.chunker.parse_image(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
         digest = hashlib.sha256(raw).hexdigest()
@@ -184,7 +186,7 @@ class KnowledgeStore:
             splitter = DocumentChunker(max_chars=900, overlap_chars=80)
             resplit = []
             for chunk in parsed['chunks']:
-                if len(chunk['text']) > 900 and chunk['content_type'] not in {'image','table_row','heading'}:
+                if len(chunk['text']) > 900 and chunk['content_type'] not in {'image','table_row','heading'} and modality != 'xlsx':
                     resplit.extend(c.to_dict() for c in splitter._make_chunks(document_id, modality, chunk['content_type'], chunk['text'],
                         locator=chunk['source_locator'], title_path=tuple(chunk['title_path']), page_no=chunk['page_no'],
                         quality=chunk['quality'], warnings=tuple(chunk['warnings']), metadata=chunk['metadata'], overlap=True))

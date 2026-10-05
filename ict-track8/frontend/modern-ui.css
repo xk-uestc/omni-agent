@@ -474,3 +474,28 @@ body:has(.site-sidebar) .visual-dialog { border: 1px solid var(--ui-line); borde
   body:has(.site-sidebar) .trace li { grid-template-columns: 24px 1fr; }
   body:has(.site-sidebar) .trace-detail { grid-column: 2; }
 }
+.conversation-scope { border-block:1px solid var(--line); padding:12px 0; margin:0 0 16px; font-size:13px; }
+.conversation-scope b { color:var(--purple); font-weight:600; }
+.conversation-scope p { margin:6px 0; line-height:1.65; overflow-wrap:anywhere; }
+.conversation-scope small,.clarify-help { color:var(--muted); font-size:12px; }
+.conversation-scope summary { cursor:pointer; margin-top:8px; color:var(--muted); }
+.clarify-time { display:flex; gap:8px; flex-wrap:wrap; width:100%; margin-top:10px; }
+.clarify-time input { min-width:160px; padding:8px 10px; border:1px solid var(--line); background:var(--bg); color:var(--text); font:inherit; }
+.clarify button:disabled { opacity:.45; cursor:default; }
+.clarify-help { margin-top:10px; }
+.conversation-scope .context-request { color:var(--muted); font-size:12px; }
+.context-changes { list-style:none; padding:0; margin:10px 0 0; border-top:1px solid var(--line); }
+.context-changes li { padding:7px 0; line-height:1.65; overflow-wrap:anywhere; }
+.context-changes del { color:var(--muted); text-decoration-thickness:1px; }
+.context-changes strong { color:var(--text); font-weight:600; }
+.context-arrow { color:var(--muted); }
+.clarify-description { margin:12px 0; border-top:1px solid var(--line); padding-top:12px; font-size:13px; }
+.clarify-description p { margin:6px 0; line-height:1.65; }
+.context-composer { display:flex; align-items:center; flex-wrap:wrap; gap:6px 12px; padding:10px 0; border-top:1px solid var(--line); font-size:12px; }
+.context-composer[hidden] { display:none; }
+.context-composer b { color:var(--purple); font-weight:600; }
+.context-composer-detail { flex:1; min-width:120px; overflow-wrap:anywhere; color:var(--muted); }
+.context-mode-action { border:0; background:none; color:var(--purple); font:inherit; cursor:pointer; padding:6px 0; }
+.context-mode-action:disabled { opacity:.45; cursor:default; }
+.query-reference { display:flex; align-items:center; gap:8px 12px; flex-wrap:wrap; margin-top:8px; }
+.query-reference small { overflow-wrap:anywhere; }

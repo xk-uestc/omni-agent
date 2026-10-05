@@ -114,6 +114,71 @@ def test_engine_executes_only_reviewed_proposal(source):
     assert client.calls == ['complex_sql_proposal','complex_sql_independent_review']
 
 
+@pytest.mark.parametrize('status,http_status', [(None, None), (429, 429), (503, 503)])
+def test_complex_channel_retries_only_transient_provider_failures(source, status, http_status):
+    class RetryClient(Client):
+        def __init__(self):
+            super().__init__('SELECT COUNT(*) n FROM payments')
+            self._audit = {}
+
+        @property
+        def audit(self):
+            return self._audit
+
+        def generate(self, instructions, context, schema, **kwargs):
+            self.calls.append(kwargs['name'])
+            if len(self.calls) == 1:
+                self._audit = {'http_status': http_status}
+                raise GenerationError('temporary provider failure', status=status)
+            if kwargs['name'] == 'complex_sql_proposal':
+                self._audit = {'http_status': 200}
+                return {'sql': self.sql, 'clarification': None}
+            self._audit = {'http_status': 200}
+            return {'approved': True, 'checks': {key: True for key in CHECKS}, 'clarification': None}
+
+    client = RetryClient()
+    model_provider = SimpleNamespace(client=client, reference_date=provider(client).reference_date,
+        catalog=None, audit={}, supports_complex_queries=True, max_retries=1)
+    result = Nl2SqlEngine(source, model_plan_provider=model_provider).answer('查询记录总数')
+    assert result.status == 'ok' and result.rows == ({'n': 4},)
+    assert client.calls == ['complex_sql_proposal', 'complex_sql_proposal', 'complex_sql_independent_review']
+
+
+def test_completed_invalid_model_output_is_not_retried(source):
+    class InvalidOutputClient(Client):
+        def __init__(self):
+            super().__init__('')
+            self._audit = {'http_status': 200}
+
+        @property
+        def audit(self):
+            return self._audit
+
+        def generate(self, instructions, context, schema, **kwargs):
+            self.calls.append(kwargs['name'])
+            raise GenerationError('invalid structured output')
+
+    client = InvalidOutputClient()
+    base = provider(client)
+    model_provider = SimpleNamespace(**vars(base), max_retries=1)
+    result = Nl2SqlEngine(source, model_plan_provider=model_provider).answer('查询记录总数')
+    assert result.status == 'clarification'
+    assert client.calls == ['complex_sql_proposal']
+
+
+@pytest.mark.parametrize('status', [400, 401, 403])
+def test_nonretryable_http_errors_are_not_retried_even_without_audit_status(source, status):
+    client = Client('', error=GenerationError('non-retryable provider response', status=status))
+    model_provider = SimpleNamespace(**vars(provider(client)), max_retries=1)
+    engine = Nl2SqlEngine(source, model_plan_provider=model_provider)
+    if status in (401, 403):
+        with pytest.raises(GenerationError):
+            engine.answer('查询记录总数')
+    else:
+        assert engine.answer('查询记录总数').status == 'clarification'
+    assert client.calls == ['complex_sql_proposal']
+
+
 def test_semantic_rejection_never_executes(source):
     client = Client('SELECT COUNT(*) n,COUNT(rental_id) nonnull FROM payments',approved=False)
     result = Nl2SqlEngine(source,model_plan_provider=provider(client)).answer('查询记录总数和rental_id非空记录数')

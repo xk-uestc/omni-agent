@@ -454,18 +454,33 @@ class DependencyAgent:
                         selected['temporal_constraints'] = {'base_year': int(base), 'target_year': int(target)}
                 return selected
             if tool == 'document_cell':
+                from .excel_layout import literal_matches,query_literal
                 if set(args) != {'document_id', 'where', 'column'} or not isinstance(args['where'], dict) or not args['where']:
                     raise DependencyPlanError('表格取值必须明确匹配条件和列')
                 candidates = []
+                seen_cells = set()
                 for chunk in document['chunks']:
                     metadata = chunk['metadata']
                     cells = dict(zip(metadata.get('headers', []), metadata.get('values', [])))
-                    if all(key in cells and cells[key].get('raw_value') == value for key, value in args['where'].items()) and args['column'] in cells:
+                    if all(isinstance(cells.get(key), dict) and literal_matches(cells[key],value) for key, value in args['where'].items()) and args['column'] in cells:
                         cell = cells[args['column']]
+                        if not isinstance(cell, dict) or query_literal(cell) is None:
+                            raise DependencyPlanError('Excel目标单元格为空或被合并覆盖，不能作为数值输入')
                         if cell.get('formula'):
                             raise DependencyPlanError('未经重算验证的 Excel 公式不能作为数值输入')
+                        if cell.get('error'):
+                            raise DependencyPlanError('Excel目标单元格为错误值，不能作为数值输入')
+                        for key in args['where']:
+                            if cells[key].get('formula') or cells[key].get('error'):
+                                raise SourceConstraintError('excel_selector_unverified')
+                        physical=(chunk.get('sheet_name'),cell.get('coordinate'))
+                        if physical[1] and physical in seen_cells:continue
+                        seen_cells.add(physical)
                         unit = 'ratio' if '%' in str(cell.get('number_format', '')) else 'CNY' if '人民币元' in args['column'] else '小时' if '小时' in args['column'] else 'unknown'
-                        candidates.append({'value': cell.get('raw_value'), 'unit': unit, 'source_uri': f'/api/v1/knowledge/documents/{document["document_id"]}/original', 'locator': chunk['source_locator'] + '/column:' + args['column'], 'sha256': document['sha256'], 'matched_conditions': dict(args['where'])})
+                        if cell.get('declared_unit'):unit=cell['declared_unit']
+                        candidates.append({'value': query_literal(cell), 'unit': unit, 'source_uri': f'/api/v1/knowledge/documents/{document["document_id"]}/original', 'locator': chunk['source_locator'] + '/column:' + args['column'], 'sha256': document['sha256'], 'matched_conditions': dict(args['where']),
+                            'cell_coordinate':cell.get('coordinate'), 'merged_anchor':cell.get('merged_anchor'),
+                            'condition_coordinates':{key:cells[key].get('merged_anchor') or cells[key].get('coordinate') for key in args['where']}})
                 if len(candidates) != 1:
                     raise DependencyPlanError('表格取值缺失或歧义；必须明确唯一记录')
                 return candidates[0]

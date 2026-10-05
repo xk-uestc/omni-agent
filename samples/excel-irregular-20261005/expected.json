@@ -1,0 +1,912 @@
+{
+  "synthetic_developer_fixtures": true,
+  "cases": [
+    {
+      "name": "01_standard",
+      "description": "标准数据与首末行",
+      "file": "01_standard.xlsx",
+      "sha256": "f7e81e1a2af1237e8c0aa16fd99fe6a5ce4af12e42bedf36c079cb86b7ac256b",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华南",
+            80
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "02_title_footer",
+      "description": "合并标题与脚注不混入记录",
+      "file": "02_title_footer.xlsx",
+      "sha256": "4d90f61ea6f8c2c79743c3c6f8935043f6155c6bc953a5a33c8d11d771e0449a",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华南",
+            80
+          ]
+        }
+      ],
+      "required_text": [
+        "2025年度经营报表",
+        "备注：金额单位为万元"
+      ],
+      "forbidden_text": []
+    },
+    {
+      "name": "03_merged_header",
+      "description": "两层横纵合并表头",
+      "file": "03_merged_header.xlsx",
+      "sha256": "380c126996447ed5a284aad6c63156821f44c3701c9049e2ccdd785361ab71c1",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "2025年 / 销售额",
+            "2025年 / 订单数"
+          ],
+          "values": [
+            "华东",
+            120,
+            3
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "地区",
+            "2025年 / 销售额",
+            "2025年 / 订单数"
+          ],
+          "values": [
+            "华南",
+            80,
+            2
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "04_merged_dimension",
+      "description": "合并数据维度保留锚点，不伪造原值",
+      "file": "04_merged_dimension.xlsx",
+      "sha256": "45267fc5ca7aa8193cea5d1572b495ddcf58df35262f2aa98c58f28f8e42df50",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "产品",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            "设备甲",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "产品",
+            "销售额"
+          ],
+          "values": [
+            null,
+            "设备乙",
+            80
+          ]
+        }
+      ],
+      "required_text": [
+        "华东"
+      ],
+      "forbidden_text": []
+    },
+    {
+      "name": "05_stacked_tables",
+      "description": "纵向两个不同业务表",
+      "file": "05_stacked_tables.xlsx",
+      "sha256": "80a0d7719659a289e576ebfbc4c3db16e8bac28272424a66cf54af996d37fb96",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 5,
+          "headers": [
+            "产品",
+            "数量"
+          ],
+          "values": [
+            "设备乙",
+            7
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "06_side_by_side",
+      "description": "并排表格不串列",
+      "file": "06_side_by_side.xlsx",
+      "sha256": "0ad8a63e93a7e5ad9048cc96e7613537f8e95c339fec3762da4a578d5b5b8b77",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华南",
+            80
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "产品",
+            "数量"
+          ],
+          "values": [
+            "设备乙",
+            7
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "产品",
+            "数量"
+          ],
+          "values": [
+            "设备丙",
+            9
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "07_offsets_gaps",
+      "description": "偏移表格、内部空列与空行",
+      "file": "07_offsets_gaps.xlsx",
+      "sha256": "078cc7d2981d08c0a8ed6f8f1a30729c4d380f00eb0cdf6df4da6601f029d62a",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 7,
+          "headers": [
+            "地区",
+            "column_E",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            null,
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 9,
+          "headers": [
+            "地区",
+            "column_E",
+            "销售额"
+          ],
+          "values": [
+            "华南",
+            null,
+            80
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "08_repeated_header",
+      "description": "分页重复表头仅移除有证据的重复",
+      "file": "08_repeated_header.xlsx",
+      "sha256": "88e44181688e9eebbe3898749a26ac25b403e0905a5af48e9966fe127b7a09b5",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华南",
+            80
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "09_headerless_numeric",
+      "description": "无表头纯数值，重复数据不丢",
+      "file": "09_headerless_numeric.xlsx",
+      "sha256": "207dc706ea90dbbd28676c16476c57c6727f4f8d9da996bbff47ff7b06248d8b",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 1,
+          "headers": [
+            "column_A",
+            "column_B"
+          ],
+          "values": [
+            101,
+            202
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "column_A",
+            "column_B"
+          ],
+          "values": [
+            303,
+            404
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "column_A",
+            "column_B"
+          ],
+          "values": [
+            101,
+            202
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "10_headerless_text",
+      "description": "全字符串无表头，首行不可丢失",
+      "file": "10_headerless_text.xlsx",
+      "sha256": "cd741a6032fac6407f278e914d9a0294c6a40fc9bafe09330c72659342eaa305",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 1,
+          "headers": [
+            "column_A",
+            "column_B"
+          ],
+          "values": [
+            "华东旗舰",
+            "设备甲"
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "column_A",
+            "column_B"
+          ],
+          "values": [
+            "华南直营",
+            "设备乙"
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "11_duplicate_headers",
+      "description": "重复字段和空表头使用唯一名称",
+      "file": "11_duplicate_headers.xlsx",
+      "sha256": "a9852ea7c5277134084a2f6744f32161c4f725ed628c8a4facaaa21d2506b9e2",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "金额",
+            "金额_2",
+            "column_D"
+          ],
+          "values": [
+            "华东",
+            12,
+            13,
+            "已核对"
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "12_typed_formats",
+      "description": "前导零编号、日期、百分数、货币与布尔",
+      "file": "12_typed_formats.xlsx",
+      "sha256": "f709685065dbae0f9ded7135cb30df2815f96a58f95e37abc4a3142d3a4babb9",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "编号",
+            "日期",
+            "增长率",
+            "金额",
+            "启用"
+          ],
+          "values": [
+            "000123",
+            "2025-10-05T00:00:00",
+            0.125,
+            1234.5,
+            true
+          ]
+        }
+      ],
+      "required_text": [
+        "12.5%",
+        "000123"
+      ],
+      "forbidden_text": []
+    },
+    {
+      "name": "13_formula_no_cache",
+      "description": "未计算公式不捏造结果",
+      "file": "13_formula_no_cache.xlsx",
+      "sha256": "d4e00b6a6e9bc91f143ab475dddb42d6b8cb1e48f49cd5184a0b2878ef9644df",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "产品",
+            "数量",
+            "单价",
+            "金额"
+          ],
+          "values": [
+            "设备甲",
+            3,
+            20,
+            "=B2*C2"
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "14_formula_stale_cache",
+      "description": "故意错误缓存999仍不可作为验证值",
+      "file": "14_formula_stale_cache.xlsx",
+      "sha256": "823df6444f9752c8b9c7c7ed2b53a0aa239a899c87affd87ddeffdce5787c3a0",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "产品",
+            "数量",
+            "金额"
+          ],
+          "values": [
+            "设备甲",
+            3,
+            "=B2*20"
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "15_hidden",
+      "description": "隐藏行、列、工作表不进入可检索内容",
+      "file": "15_hidden.xlsx",
+      "sha256": "eaa90a225ff716899bd744814645dc24355b3333f056be2b9edb2d91da523526",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "金额"
+          ],
+          "values": [
+            "华东",
+            12
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": [
+        "隐藏行",
+        "秘密",
+        "内部内容",
+        "隐藏表机密"
+      ]
+    },
+    {
+      "name": "16_subtotals",
+      "description": "小计和总计保留但与明细区分",
+      "file": "16_subtotals.xlsx",
+      "sha256": "e81eeea9d569be49825eb6835baaebe26f77870a8e5ff8757e208c3465251a1f",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "小计",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华南",
+            80
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 5,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "合计",
+            200
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "17_null_errors",
+      "description": "空值不变零，Excel错误不冒充数值",
+      "file": "17_null_errors.xlsx",
+      "sha256": "7a11401a86df73a81155c6c5910f0983fd6cd20853ad51b5a107acfd9e44ec07",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "金额",
+            "数量"
+          ],
+          "values": [
+            "华东",
+            null,
+            0
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "金额",
+            "数量"
+          ],
+          "values": [
+            "华南",
+            "#DIV/0!",
+            false
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "18_sparse_far_cell",
+      "description": "最远单元格与格式膨胀不扫描万亿空格",
+      "file": "18_sparse_far_cell.xlsx",
+      "sha256": "27ace3f2e5ce69612595dc1b4a3f5302101b868271fe419d17cda1b074210235",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        }
+      ],
+      "required_text": [
+        "远端注释"
+      ],
+      "forbidden_text": []
+    },
+    {
+      "name": "19_explicit_table",
+      "description": "Excel正式Table范围确认未知文本字段",
+      "file": "19_explicit_table.xlsx",
+      "sha256": "a97276f631340be8a68e1d06e5a91dc265fcdea36b36c926ac253c1d7d9e5777",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "甲",
+            "乙"
+          ],
+          "values": [
+            "a",
+            "b"
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "20_three_header_levels",
+      "description": "三层嵌套合并表头展开完整路径",
+      "file": "20_three_header_levels.xlsx",
+      "sha256": "9f7fa0a1ca5c8f8039ef0bf94695a8654d8492aa5508c12386c813df1a81a54c",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "地区",
+            "经营情况 / 2024年 / 销售额",
+            "经营情况 / 2024年 / 订单数",
+            "经营情况 / 2025年 / 销售额",
+            "经营情况 / 2025年 / 订单数"
+          ],
+          "values": [
+            "华东",
+            90,
+            2,
+            120,
+            3
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "21_key_value",
+      "description": "纵向键值表不错误转置",
+      "file": "21_key_value.xlsx",
+      "sha256": "46c3b1576e44c1885870da783fa928127cb8af463de13f82336fcb12d5b194a3",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "字段",
+            "值"
+          ],
+          "values": [
+            "地区",
+            "华东"
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "字段",
+            "值"
+          ],
+          "values": [
+            "销售额",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "字段",
+            "值"
+          ],
+          "values": [
+            "订单数",
+            3
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "22_multiple_sheets",
+      "description": "多工作表与空工作表",
+      "file": "22_multiple_sheets.xlsx",
+      "sha256": "01d99b138080f85177331ec9c28e620a76ffcd055d3b4c91cadcadcd4d818a56",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "第二表",
+          "row": 2,
+          "headers": [
+            "产品",
+            "数量"
+          ],
+          "values": [
+            "设备乙",
+            7
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "23_adjacent_sections",
+      "description": "没有空行的不同表头分段",
+      "file": "23_adjacent_sections.xlsx",
+      "sha256": "32faed3121804e585c36a9d39bed767cbe71fa5cd58cdf1d157c2f63338d446d",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            120
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "产品",
+            "数量"
+          ],
+          "values": [
+            "设备乙",
+            7
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    },
+    {
+      "name": "24_separate_unit_row",
+      "description": "独立单位行不混进业务记录",
+      "file": "24_separate_unit_row.xlsx",
+      "sha256": "fcfd8f79f8c30a71b52febf4f12c85ba542b194e6dcf195722a2ffe9e71b2d7a",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "数量",
+            "销售额"
+          ],
+          "values": [
+            "华东",
+            3,
+            120
+          ]
+        }
+      ],
+      "required_text": [
+        "万元"
+      ],
+      "forbidden_text": []
+    },
+    {
+      "name": "25_identifiers_annotations",
+      "description": "特殊表名、数字编号格式、批注和链接",
+      "file": "25_identifiers_annotations.xlsx",
+      "sha256": "d1e36546b8cc6aac6c4f748dfd4f1f600c18c39c8ad5c3df8a9c163cc593e2ce",
+      "records": [
+        {
+          "sheet": "预算! 空格",
+          "row": 2,
+          "headers": [
+            "编号",
+            "金额"
+          ],
+          "values": [
+            123,
+            120
+          ]
+        }
+      ],
+      "required_text": [
+        "000123"
+      ],
+      "forbidden_text": []
+    },
+    {
+      "name": "26_numeric_precision",
+      "description": "零、负数和大数精度不改变",
+      "file": "26_numeric_precision.xlsx",
+      "sha256": "8e18970d517d9fa1db8caf76be4df082e33a34dba6592bf68d339a86e5c4a9ce",
+      "records": [
+        {
+          "sheet": "数据",
+          "row": 2,
+          "headers": [
+            "地区",
+            "金额"
+          ],
+          "values": [
+            "华东",
+            0
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 3,
+          "headers": [
+            "地区",
+            "金额"
+          ],
+          "values": [
+            "华南",
+            -12.5
+          ]
+        },
+        {
+          "sheet": "数据",
+          "row": 4,
+          "headers": [
+            "地区",
+            "金额"
+          ],
+          "values": [
+            "华北",
+            1234567890.125
+          ]
+        }
+      ],
+      "required_text": [],
+      "forbidden_text": []
+    }
+  ]
+}

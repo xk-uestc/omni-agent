@@ -52,3 +52,67 @@ def test_upright_reading_order_preserves_source_boxes_and_unknown_order():
     assert [row['text'] for row in result]==['top','bottom']
     assert result[0] is regions[1] and regions[0]['bbox'][0]==[10,10]
     assert upright_reading_order(regions,[120,100],{'status':'undetermined'}) is regions
+
+
+def test_two_column_prose_is_read_by_column_after_spanning_heading():
+    heading = {'text': 'Full width heading', 'bbox': [[10,0],[990,0],[990,20],[10,20]]}
+    regions = [heading]
+    for line in range(9):
+        for label, left in [('left', 10), ('right', 530)]:
+            top = 30 + line * 25
+            regions.append({'text': f'{label} prose line {line} contains enough printed characters',
+                'bbox': [[left,top],[left+430,top],[left+430,top+18],[left,top+18]]})
+    result = upright_reading_order(regions, [1000,300],
+        {'status': 'estimated', 'correction_ccw_degrees': 0})
+    assert result[0] is heading
+    assert all(row['text'].startswith('left') for row in result[1:10])
+    assert all(row['text'].startswith('right') for row in result[10:])
+
+
+def test_short_grid_numbers_do_not_trigger_prose_column_reordering():
+    regions = []
+    for line in range(10):
+        for left in (10, 530):
+            top = line * 25
+            regions.append({'text': '123',
+                'bbox': [[left,top],[left+80,top],[left+80,top+18],[left,top+18]]})
+    assert upright_reading_order(regions, [1000,300],
+        {'status': 'estimated', 'correction_ccw_degrees': 0}) == regions
+
+
+def test_curved_page_short_previous_line_precedes_next_tilted_long_line():
+    # Coordinates of actual author-released camera observations; neither
+    # recognized text nor dictionary corrections determine their order.
+    long={'text':'next paragraph','bbox':[[406,1275],[1085,1238],[1086,1265],[408,1301]]}
+    short={'text':'previous paragraph tail','bbox':[[378,1254],[563,1246],[564,1269],[379,1278]]}
+    output=upright_reading_order([long,short],[1425,1711],
+        {'status':'estimated','correction_ccw_degrees':0})
+    assert output==[short,long]
+    assert output[0] is short and short['bbox'][0]==[378,1254]
+
+
+def test_same_row_section_number_precedes_tilted_heading_without_reordering_adjacent_rows():
+    title={'text':'heading','bbox':[[443,900],[934,884],[934,912],[444,927]]}
+    number={'text':'4.1','bbox':[[395,902],[436,902],[436,924],[395,924]]}
+    following={'text':'body','bbox':[[395,944],[935,925],[936,947],[396,966]]}
+    output=upright_reading_order([title,following,number],[1425,1711],
+        {'status':'estimated','correction_ccw_degrees':0})
+    assert output==[number,title,following]
+
+
+def test_overlapping_boxes_are_not_treated_as_same_row_fragments():
+    upper={'text':'upper','bbox':[[0,0],[100,0],[100,20],[0,20]]}
+    lower={'text':'lower','bbox':[[10,8],[110,8],[110,28],[10,28]]}
+    assert upright_reading_order([lower,upper],[120,50],
+        {'status':'estimated','correction_ccw_degrees':0})==[upper,lower]
+
+
+def test_short_distant_number_does_not_extrapolate_noisy_slope_across_page():
+    regions=[]
+    for index in range(2):
+        y=index*50
+        regions.extend([
+            {'text':f'label {index}','bbox':[[10,y],[260,y],[260,y+20],[10,y+20]]},
+            {'text':f'number {index}','bbox':[[800,y],[830,y+3],[830,y+23],[800,y+20]]}])
+    output=upright_reading_order(regions,[1000,120],{'status':'estimated','correction_ccw_degrees':0})
+    assert output==regions

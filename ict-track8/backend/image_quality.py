@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from io import BytesIO
 from typing import Any
+import math
+import hashlib
+from copy import deepcopy
 
 from PIL import Image, ImageFilter, ImageOps
 
@@ -37,6 +40,7 @@ class EnhancedImage:
     height: int
     format: str
     applied_transforms: tuple[str, ...]
+    geometry: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -45,6 +49,7 @@ class EnhancedImage:
             "format": self.format,
             "applied_transforms": list(self.applied_transforms),
             "byte_count": len(self.image_bytes),
+            "geometry": deepcopy(self.geometry),
         }
 
 
@@ -78,6 +83,7 @@ class ImageEnhancer:
         {
             "exif_transpose",
             "rotate_to_upright",
+            "perspective_rectify",
             "crop",
             "grayscale_normalize",
             "adaptive_threshold",
@@ -97,6 +103,8 @@ class ImageEnhancer:
         transforms: tuple[str, ...] = (),
         rotation_degrees: float = 0.0,
         crop_box: tuple[int, int, int, int] | None = None,
+        perspective_quad: list[list[float]] | None = None,
+        perspective_selection: str = 'explicit_page_corners',
         max_dimension: int = 2400,
     ) -> EnhancedImage:
         if not image_bytes:
@@ -106,28 +114,62 @@ class ImageEnhancer:
             raise ValueError(f"不支持的图片变换: {', '.join(unknown)}")
         if not 1 <= max_dimension <= 6000:
             raise ValueError("max_dimension 必须在 1 到 6000 之间")
+        if type(rotation_degrees) not in (int, float) or not math.isfinite(rotation_degrees) or abs(rotation_degrees) > 360:
+            raise ValueError('rotation_degrees 必须是 -360 到 360 的有限角度')
         try:
             with Image.open(BytesIO(image_bytes)) as source:
                 if source.width * source.height > MAX_PIXELS:
                     raise ValueError("图片像素数超过安全上限")
+                original_size = [source.width,source.height]
+                orientation = ImageQualityAnalyzer._orientation(source)
                 image = ImageOps.exif_transpose(source).convert("RGB")
         except Exception as exc:
             raise ValueError("图片格式无法解析") from exc
 
         requested = tuple(dict.fromkeys(transforms))
         applied: list[str] = []
-        if "exif_transpose" in requested:
+        from .image_geometry import compose, exif_affine, inverse, rotation_affine
+        matrix = exif_affine(orientation,*original_size)
+        steps = [{'operation':'exif_transpose','orientation':orientation,
+                  'input_size_px':original_size,'output_size_px':list(image.size),
+                  'forward_affine':matrix.copy()}]
+        if "exif_transpose" in requested or orientation in range(2,9):
             applied.append("exif_transpose")
+        if 'perspective_rectify' in requested:
+            if perspective_quad is None:raise ValueError('perspective_rectify requires normalized page corners')
+            from .perspective import PerspectiveRectificationAgent
+            before_size=list(image.size)
+            image,transform,evidence=PerspectiveRectificationAgent().rectify(image,perspective_quad,selection=perspective_selection)
+            matrix=compose(transform,matrix)
+            steps.append({'operation':'perspective_rectify','input_size_px':before_size,
+                'output_size_px':list(image.size),'forward_projective':transform,'evidence':evidence})
+            applied.append('perspective_rectify')
         if "rotate_to_upright" in requested and abs(rotation_degrees) > 0.01:
-            image = image.rotate(-rotation_degrees, expand=True, resample=Image.Resampling.BICUBIC)
+            before_size = list(image.size)
+            image = image.rotate(-rotation_degrees, expand=True, resample=Image.Resampling.BICUBIC, fillcolor='white')
+            if image.width * image.height > MAX_PIXELS:
+                raise ValueError('校正后图片像素数超过安全上限')
             applied.append("rotate_to_upright")
+            transform = rotation_affine(-rotation_degrees,before_size,list(image.size))
+            matrix = compose(transform,matrix)
+            steps.append({'operation':'rotate_to_upright','ccw_degrees':-rotation_degrees,
+                          'input_size_px':before_size,'output_size_px':list(image.size),
+                          'forward_affine':transform,'fill':'white'})
         if "crop" in requested:
             if crop_box is None:
                 raise ValueError("crop 变换需要 crop_box")
             left, top, right, bottom = crop_box
+            if any(type(value) is not int for value in crop_box):
+                raise ValueError('crop_box 必须为整数像素边界')
             if not (0 <= left < right <= image.width and 0 <= top < bottom <= image.height):
                 raise ValueError("crop_box 超出图片边界")
+            before_size = list(image.size)
             image = image.crop(crop_box)
+            transform = [1.,0.,-left,0.,1.,-top]
+            matrix = compose(transform,matrix)
+            steps.append({'operation':'crop','box_px':list(crop_box),
+                          'input_size_px':before_size,'output_size_px':list(image.size),
+                          'forward_affine':transform})
             applied.append("crop")
         if "brighten" in requested:
             # gamma < 1 提亮暗部，不放大已饱和的高光
@@ -152,20 +194,37 @@ class ImageEnhancer:
         if "upscale" in requested:
             longest = max(image.width, image.height)
             if longest < max_dimension:
+                before_size = list(image.size)
                 scale = max_dimension / max(1, longest)
                 image = image.resize(
                     (max(1, round(image.width * scale)), max(1, round(image.height * scale))),
                     Image.Resampling.LANCZOS,
                 )
+                transform = [image.width/before_size[0],0.,0.,0.,image.height/before_size[1],0.]
+                matrix = compose(transform,matrix)
+                steps.append({'operation':'upscale','input_size_px':before_size,
+                              'output_size_px':list(image.size),'forward_affine':transform})
             applied.append("upscale")
         output = BytesIO()
         image.save(output, format="PNG", optimize=True)
+        geometry = {'version':'image-projective-chain-v1' if len(matrix)==9 else 'image-affine-chain-v1',
+                    'coordinate_convention':'pixel_edges_top_left_x_right_y_down',
+                    'affine_order':'x=a*x+b*y+c;y=d*x+e*y+f',
+                    'source':{'size_px':original_size,'sha256':hashlib.sha256(image_bytes).hexdigest(),
+                              'exif_orientation':orientation,'scope':'source_image_stored_pixel_edges'},
+                    'output':{'size_px':list(image.size),'sha256':hashlib.sha256(output.getvalue()).hexdigest(),
+                              'scope':'ocr_executor_input'},
+                    'source_to_output':matrix,'output_to_source':inverse(matrix),'steps':steps}
+        if len(matrix)==9:
+            geometry.pop('affine_order')
+            geometry['projective_order']='row_major_3x3;x=(a*x+b*y+c)/(g*x+h*y+i);y=(d*x+e*y+f)/(g*x+h*y+i)'
         return EnhancedImage(
             image_bytes=output.getvalue(),
             width=image.width,
             height=image.height,
             format="PNG",
             applied_transforms=tuple(applied),
+            geometry=geometry,
         )
 
 

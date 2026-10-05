@@ -182,6 +182,10 @@ class DocumentChunker:
                         payload["render_input_sha256"] = render_sha256
                         payload["render_size_px"] = render_size_px
                         payload["render_scale"] = round(render_scale, 6)
+                        from .image_geometry import bind_pdf_coordinates
+                        payload['metadata'] = bind_pdf_coordinates(payload.get('metadata',{}),
+                            page_layouts[page_no-1].get('geometry',{}) if page_no<=len(page_layouts) else {},render_sha256,render_size_px,
+                            hashlib.sha256(pdf_bytes).hexdigest(),page_no)
                         page_ocr[page_no] = payload
                         extracted[page_no - 1] = str(payload.get("text") or "")
                         page_warnings[page_no] = list(payload.get("warnings") or [])
@@ -730,135 +734,11 @@ class DocumentChunker:
             },
         )
 
-    def parse_xlsx(self, xlsx_bytes: bytes, *, document_id: str = "document.xlsx") -> ChunkingResult:
+    def parse_xlsx(self, xlsx_bytes: bytes, *, document_id: str = "document.xlsx", excel_tables: list[dict[str, Any]] | None = None) -> ChunkingResult:
         self._validate_bytes(xlsx_bytes, "XLSX")
         self._validate_zip(xlsx_bytes, "XLSX")
-        try:
-            import openpyxl
-
-            workbook = openpyxl.load_workbook(BytesIO(xlsx_bytes), data_only=False, read_only=False, keep_links=False)
-            values_workbook = openpyxl.load_workbook(BytesIO(xlsx_bytes), data_only=True, read_only=True, keep_links=False)
-        except Exception as exc:
-            raise ValueError("XLSX 无法解析") from exc
-
-        chunks: list[DocumentChunk] = []
-        warnings: list[str] = []
-        total_cells = 0
-        table_count = 0
-        for worksheet in workbook.worksheets:
-            values_sheet = values_workbook[worksheet.title]
-            if worksheet.sheet_state != "visible":
-                warnings.append(f"hidden_sheet_skipped:{worksheet.title}")
-                continue
-            bounds = self._worksheet_bounds(worksheet)
-            if bounds is None:
-                continue
-            max_row, max_column = bounds
-            cell_count = max_row * max_column
-            total_cells += cell_count
-            if total_cells > self.max_excel_cells:
-                raise ValueError(f"XLSX 有效单元格超过上限 {self.max_excel_cells}")
-            cached_rows: dict[int, tuple[Any, ...]] = {}
-            for cached_row_number, cached_row in enumerate(
-                values_sheet.iter_rows(
-                    min_row=1,
-                    max_row=max_row,
-                    min_col=1,
-                    max_col=max_column,
-                    values_only=True,
-                ),
-                start=1,
-            ):
-                if any(value is not None for value in cached_row):
-                    cached_rows[cached_row_number] = tuple(cached_row)
-            hidden_row_numbers = {
-                index for index, dimension in worksheet.row_dimensions.items() if dimension.hidden
-            }
-            hidden_column_indexes = self._hidden_column_indexes(worksheet, max_column)
-            hidden_rows = sorted(hidden_row_numbers)
-            hidden_columns = [self._column_name(index) for index in sorted(hidden_column_indexes)]
-            if hidden_rows:
-                warnings.append(f"hidden_rows_skipped:{worksheet.title}:{len(hidden_rows)}")
-            if hidden_columns:
-                warnings.append(f"hidden_columns_skipped:{worksheet.title}:{len(hidden_columns)}")
-            visible_columns = [index for index in range(1, max_column + 1) if index not in hidden_column_indexes]
-            raw_rows: list[list[Any]] = []
-            for row_index in range(1, max_row + 1):
-                if row_index in hidden_row_numbers:
-                    continue
-                row = [worksheet.cell(row_index, column_index) for column_index in visible_columns]
-                values = [cell.value for cell in row]
-                if any(value is not None for value in values):
-                    cached_row = cached_rows.get(row_index, ())
-                    cached_values = [
-                        cached_row[column_index - 1] if column_index <= len(cached_row) else None
-                        for column_index in visible_columns
-                    ]
-                    raw_rows.append([row_index, row, values, cached_values])
-            if not raw_rows:
-                continue
-            headers, header_position, header_warning = self._detect_headers(raw_rows)
-            if header_warning:
-                warnings.append(f"{header_warning}:{worksheet.title}")
-            merged_ranges = [str(item) for item in worksheet.merged_cells.ranges]
-            hidden_rows = [index for index, dimension in worksheet.row_dimensions.items() if dimension.hidden]
-            hidden_columns = [name for name, dimension in worksheet.column_dimensions.items() if dimension.hidden]
-            if merged_ranges:
-                warnings.append(f"merged_cells:{worksheet.title}:{len(merged_ranges)}")
-            table_count += 1
-            preserve_header_row = header_position is None or header_warning == "header_ambiguous"
-            data_rows = [
-                item for index, item in enumerate(raw_rows)
-                if preserve_header_row or index != header_position
-            ]
-            filtered_rows = []
-            for row_number, cells, values, cached in data_rows:
-                display_values = [self._cell_display(cell, cached[index]) for index, cell in enumerate(cells)]
-                if not any(item[0] for item in display_values):
-                    continue
-                if self._is_repeated_header(values, headers):
-                    warnings.append(f"repeated_header_removed:{worksheet.title}:{row_number}")
-                    continue
-                filtered_rows.append((row_number, cells, display_values))
-            if len(chunks) + len(filtered_rows) > self.max_chunks:
-                raise ValueError(f"生成 chunk 数超过上限 {self.max_chunks}")
-            chunks.extend(
-                self._table_chunks(
-                    document_id=document_id,
-                    modality="xlsx",
-                    rows=[headers] + [[self._xlsx_value(display_values[index]) for index in range(len(cells))] for _, cells, display_values in filtered_rows],
-                    locator_prefix=f"sheet:{worksheet.title}",
-                    title_path=(worksheet.title,),
-                    table_name=worksheet.title,
-                    sheet_name=worksheet.title,
-                    row_numbers=[raw_rows[header_position][0] if header_position is not None else None] + [row_number for row_number, _, _ in filtered_rows],
-                    table_metadata={
-                        "hidden_sheet": worksheet.sheet_state != "visible",
-                        "header_row": raw_rows[header_position][0] if header_position is not None else None,
-                        "header_confidence": 0.0 if preserve_header_row else 1.0,
-                        "header_decision": "preserved_ambiguous" if preserve_header_row else "selected",
-                        "hidden_rows": hidden_rows,
-                        "hidden_columns": hidden_columns,
-                        "merged_ranges": merged_ranges,
-                    },
-                )
-            )
-            self._check_chunk_limit(chunks)
-            for row_number, cells, display_values in filtered_rows:
-                for column_index, cell in enumerate(cells):
-                    if cell.data_type == "f":
-                        cache_status = display_values[column_index][1].get("cache_status")
-                        warnings.append(
-                            f"formula_cache_{cache_status}:{worksheet.title}:{cell.coordinate}"
-                        )
-                    if cell.data_type == "e":
-                        warnings.append(f"cell_error:{worksheet.title}:{cell.coordinate}")
-        sheet_count = len(workbook.sheetnames)
-        workbook.close()
-        values_workbook.close()
-        if not chunks:
-            warnings.append("no_extractable_content")
-        return self._result(document_id, "xlsx", chunks, warnings, extra_stats={"sheet_count": sheet_count, "table_count": table_count, "effective_cells": total_cells})
+        from .excel_layout import parse_excel
+        return parse_excel(self, xlsx_bytes, document_id, excel_tables)
 
     def parse_image(
         self,
@@ -1555,7 +1435,15 @@ class DocumentChunker:
             "render_scale": payload.get("render_scale"),
             "source_text_sha256": hashlib.sha256(source_text.encode("utf-8")).hexdigest(),
             "orientation": payload.get("metadata", {}).get("orientation"),
+            "table_layout": payload.get("metadata", {}).get("table_layout"),
+            "scanned_grids": payload.get("metadata", {}).get("scanned_grids"),
+            "scanned_table_evidence": payload.get("metadata", {}).get("scanned_table_evidence"),
+            "borderless_table_evidence": payload.get("metadata", {}).get("borderless_table_evidence"),
             "coordinate_frame": payload.get("metadata", {}).get("coordinate_frame"),
+            "regions": payload.get("metadata", {}).get("regions"),
+            "image_geometry": payload.get("metadata", {}).get("image_geometry"),
+            "original_pixel_mapping": payload.get("metadata", {}).get("original_pixel_mapping"),
+            "pdf_coordinate_mapping": payload.get("metadata", {}).get("pdf_coordinate_mapping"),
         }
 
     @staticmethod
@@ -1806,6 +1694,10 @@ class DocumentChunker:
                     rendered += f" (cached={value['cached_value']})"
                 return rendered
             if "raw_value" in value:
+                if "display_value" in value:
+                    return str(value["display_value"])
+                if value.get("value_status") == "merged_covered":
+                    return f"合并单元格→{value['merged_anchor']}（锚点值：{value.get('merged_anchor_value')}；不重复计数）"
                 raw_value = value["raw_value"]
                 number_format = str(value.get("number_format") or "")
                 if isinstance(raw_value, (int, float)) and "%" in number_format:

@@ -4,14 +4,20 @@ from __future__ import annotations
 import json
 import re
 import hashlib
+from .history_reference import ConversationReferenceAgent
 
 
-_FOLLOWUP = re.compile(r'^(?:那么|那|改成|换成|再看|仍查|仍是|还是)|呢[？?]?$')
+_FOLLOWUP = re.compile(r'^(?:那么|那|改成|换成|再看|再查|同样|也|仍查|仍是|还是)|^按.+(?:分组|统计|汇总)[？?]?$|呢[？?]?$')
 _UNSAFE = re.compile(r'排除|不含|不包括|除了|大于|小于|超过|不足|至少|至多|不要|但|或者|如果|同一|之前|刚才|上次')
 _NEW_QUERY = re.compile(r'^(?:换个主题|换一个主题|换个问题|新问题|重新查询)')
+_CONFIRMED_FILTER_REMAINDER = re.compile(r'^(?:(?:仍然?|还是|继续)(?:看|按|统计|查询)?|看|按|统计|查询)?$')
 VERIFIED_SQL_CONTEXT_MODES = frozenset({'server_verified_sql_followup',
+                                      'server_verified_executed_sql_edit',
                                       'server_verified_sql_clarification_fill',
                                       'server_verified_sql_clarification_field_select',
+                                      'server_verified_sql_clarification_time_fill',
+                                      'server_verified_sql_clarification_option_fill',
+                                      'server_verified_pending_sql_edit',
                                       'model_reviewed_sql_followup'})
 
 
@@ -210,6 +216,84 @@ def _resolve_group_change(question, base, base_plan, engine):
                    'to': plan['dimensions']}
 
 
+def _resolve_confirmed_filter_replacement(question, base, previous_slots, current_slots,
+                                          base_plan, engine):
+    """Resolve one explicit filter-value swap that confirms the same metric."""
+    if (not re.match(r'^\s*(?:那么|那)', question)
+            or not re.search(r'(?:仍然|仍|还是|继续)\s*(?:看|按|统计|查询)', question)
+            or _UNSAFE.search(question)
+            or re.search(r'按|分组|每个|每一|分别|列出|排行|排名|不含|排除', question)
+            or current_slots['time_spans'] or len(current_slots['values']) != 1
+            or len(current_slots['metrics']) != 1 or len(previous_slots['metrics']) != 1):
+        return None
+    _, rewrite_audit = engine.contextualize(base, question)
+    remainder = re.sub(r'\s+', '', str(rewrite_audit.get('appended', '')))
+    if (rewrite_audit.get('mode') != 'merged'
+            or not _CONFIRMED_FILTER_REMAINDER.fullmatch(remainder)):
+        return None
+
+    current_value = current_slots['values'][0]
+    if current_value.via != 'exact':
+        return None
+    previous_values = [item for item in previous_slots['values']
+        if (item.table, item.column) == (current_value.table, current_value.column)]
+    if len(previous_values) != 1:
+        return None
+    old_value = previous_values[0]
+    old_metric, current_metric = previous_slots['metrics'][0], current_slots['metrics'][0]
+    if (old_metric.table, old_metric.column, old_metric.metric_function) != (
+            current_metric.table, current_metric.column, current_metric.metric_function):
+        return None
+
+    target = (current_value.table, current_value.column)
+    old_filters = [item for item in base_plan['filters']
+                   if (item.get('table') or base_plan.get('table'), item.get('column')) == target]
+    if len(old_filters) != 1 or old_filters[0].get('operator') != '=':
+        return None
+    occurrences = list(re.finditer(re.escape(old_value.span), base, re.I))
+    if len(occurrences) != 1:
+        return None
+    match = occurrences[0]
+    scope = base[:match.start()] + current_value.span + base[match.end():]
+    try:
+        required = engine.extract_required_intent(scope)
+        if not _complete(required):
+            return None
+        plan = required.to_dict()
+    except (ValueError, KeyError, TypeError, AttributeError):
+        return None
+
+    changed_filters = [item for item in plan['filters']
+        if (item.get('table') or plan.get('table'), item.get('column')) == target]
+    expected_values = {str(current_value.value).casefold()}
+    if (len(changed_filters) != 1 or changed_filters[0].get('operator') != '='
+            or str(changed_filters[0].get('value')).casefold() not in expected_values):
+        return None
+    unchanged_before = [item for item in base_plan['filters']
+        if (item.get('table') or base_plan.get('table'), item.get('column')) != target]
+    unchanged_after = [item for item in plan['filters']
+        if (item.get('table') or plan.get('table'), item.get('column')) != target]
+    if (_filters(unchanged_before) != _filters(unchanged_after)
+            or _physical_metrics(base_plan) != _physical_metrics(plan)
+            or base_plan['dimensions'] != plan['dimensions']
+            or not _unchanged_query_controls(base_plan, plan)):
+        return None
+    return scope, {'slot': f'{target[0]}.{target[1]}', 'from': old_value.span,
+        'to': current_value.span, 'metric_confirmation': True}
+
+
+def _confirmed_replacement_context_valid(question, base, state, engine):
+    record = state.get('executed_sql_context')
+    payload = record.get('payload') if isinstance(record, dict) else None
+    if (not isinstance(payload, dict) or payload.get('question') != base
+            or not isinstance(payload.get('sql'), str) or not payload['sql'].strip()
+            or not isinstance(payload.get('parameters'), list)
+            or payload.get('source_revision') != engine.current_source_revision()):
+        return False
+    expected = hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    return record.get('sha256') == expected
+
+
 def _resolve_pending_metric(question, previous, engine):
     """Fill one requested missing metric without borrowing an executed result.
 
@@ -251,7 +335,8 @@ def _resolve_pending_metric(question, previous, engine):
 def _resolve_pending_field(question, previous, engine):
     """Accept only an exact physical field offered by this pending question."""
     state, base = previous.state or {}, previous.effective_question
-    if (state.get('route') != 'sql' or state.get('clarification_code') != 'ambiguous_metric'
+    code = state.get('clarification_code')
+    if (state.get('route') != 'sql' or code not in {'missing_metric', 'ambiguous_metric', 'ambiguous_dimension'}
             or not isinstance(base,str) or state.get('pending_question') != base):
         return None
     match = re.fullmatch(r'(?:(?:那|那么)?(?:用|选择|选|统计|改成|换成))?'
@@ -260,23 +345,120 @@ def _resolve_pending_field(question, previous, engine):
         return None
     field = match[1]+'.'+match[2]
     required_base = engine.extract_required_intent(base)
-    offered = {item['value'] for item in required_base.clarification_options}
-    if required_base.clarification_code != 'ambiguous_metric' or field not in offered:
+    offered = {item['value']: item for item in required_base.clarification_options}
+    if required_base.clarification_code != code or field not in offered:
         return None
-    scope = base + ' [field:metric:'+field+']'
+    role = 'dimension' if code == 'ambiguous_dimension' else 'metric'
+    from .clarification import ClarificationResolver, ClarificationSelection
+    scope = ClarificationResolver().apply(base, ClarificationSelection(
+        code=code, value=field, label=offered[field].get('label')))
     if len(scope) > 1000:
         return None
     required = engine.extract_required_intent(scope)
-    if not _complete(required) or len(_physical_metrics(required.to_dict())) != 1:
-        return None
-    if _physical_metrics(required.to_dict())[0][:2] != (match[1],match[2]):
+    plan = required.to_dict()
+    if role == 'metric':
+        if len(_physical_metrics(plan)) != 1 or _physical_metrics(plan)[0][:2] != (match[1], match[2]):
+            return None
+    elif not any((plan.get('dimension_tables', {}).get(column, plan['table']), column)
+                 == (match[1], match[2]) for column in plan['dimensions']):
         return None
     # Only an explicit field-selection directive is added. Original value,
     # time and dimension words remain verbatim and undergo the full planner.
     return scope, {'mode':'server_verified_sql_clarification_field_select',
                    'actual_question':question, 'previous_actual_question':previous.question,
                    'base_scope_question':base, 'scope_question':scope,
-                   'selected_field':field, 'verification':'offered_physical_field_full_original_scope_reparse'}
+                   'selected_field':field, 'selected_role':role,
+                   'remaining_clarification_code': required.clarification_code,
+                   'verification':'offered_physical_field_full_original_scope_reparse'}
+
+
+def _resolve_pending_time(question, previous, engine):
+    """Treat an exact date/grain reply like a validated offered UI choice."""
+    state, base = previous.state or {}, previous.effective_question
+    code = state.get('clarification_code')
+    if (state.get('route') != 'sql' or state.get('pending_question') != base
+            or code not in {'missing_time_range', 'missing_comparison_period',
+                            'missing_comparison_scope', 'missing_time_grain'}):
+        return None
+    value, time_value = None, None
+    from .clarification import normalize_clarification_reply
+    text = normalize_clarification_reply(question)
+    if code == 'missing_time_grain':
+        grain = re.fullmatch(r'按(月|年)(?:统计|汇总|趋势)?', text)
+        value = {'月':'monthly_trend', '年':'yearly_trend'}.get(grain[1]) if grain else None
+    else:
+        if re.fullmatch(r'[0-9]{4}年?', text):
+            value, time_value = 'year', text
+        elif re.fullmatch(r'[0-9]{4}(?:年|-)[0-9]{1,2}月?', text):
+            value, time_value = 'month', text
+    if value is None:
+        return None
+    required = engine.extract_required_intent(base)
+    offered = {item['value']:item for item in required.clarification_options}
+    if required.clarification_code != code or value not in offered:
+        return None
+    from .clarification import ClarificationResolver, ClarificationSelection
+    try:
+        scope = ClarificationResolver().apply(base, ClarificationSelection(
+            code=code, value=value, label=offered[value].get('label'), time_value=time_value))
+    except ValueError:
+        return None
+    return scope, {'mode':'server_verified_sql_clarification_time_fill',
+                   'actual_question':question, 'base_scope_question':base,
+                   'scope_question':scope, 'verification':'exact_offered_time_option_append'}
+
+
+def _resolve_pending_option(question, previous, engine):
+    """Typed labels have the same authority as one uniquely offered UI choice.
+
+    Recompute options from the pending scope; never treat arbitrary reply text
+    as an option, and never choose the first of duplicate labels.
+    """
+    state, base = previous.state or {}, previous.effective_question
+    code = state.get('clarification_code')
+    if (state.get('route') != 'sql' or state.get('pending_question') != base
+            or code not in {'ambiguous_metric', 'ambiguous_dimension',
+                            'ambiguous_value', 'missing_analysis_dimension', 'missing_time_grain',
+                            'missing_metric', 'ambiguous_join_path', 'missing_time_range',
+                            'missing_comparison_period','missing_comparison_scope'}):
+        return None
+    from .clarification import normalize_clarification_reply,clarification_ordinal
+    text = normalize_clarification_reply(question)
+    required = engine.extract_required_intent(base)
+    if required.clarification_code != code:
+        return None
+    matches = [option for option in required.clarification_options
+               if text and text == option.get('label')]
+    ordinal=clarification_ordinal(question)
+    if ordinal is None and code in {'missing_metric','ambiguous_join_path','missing_time_range',
+                                   'missing_comparison_period','missing_comparison_scope'}:
+        return None
+    if ordinal is not None:
+        options=required.clarification_options
+        if (state.get('clarification_options')!=options or not options
+                or ordinal!=-1 and not 1<=ordinal<=len(options)):
+            return None
+        matches=[options[-1 if ordinal==-1 else ordinal-1]]
+    if len(matches) != 1:
+        return None
+    from .clarification import ClarificationResolver, ClarificationSelection
+    option = matches[0]
+    try:
+        scope = ClarificationResolver().apply(base, ClarificationSelection(
+            code=code, value=option['value'], label=option.get('label')))
+        if len(scope) > 1000:
+            return None
+        # Full planning (including any further clarification) still follows.
+        candidate=engine.extract_required_intent(scope)
+        if candidate.coverage.get('unresolved'):
+            return None
+    except (ValueError, KeyError, TypeError):
+        return None
+    return scope, {'mode':'server_verified_sql_clarification_option_fill',
+        'actual_question':question, 'base_scope_question':base, 'scope_question':scope,
+        'selected_value':option['value'], 'selected_label':option['label'],
+        'verification':'bound_current_option_order_full_scope_reparse' if ordinal is not None else 'unique_current_offered_label_full_scope_reparse',
+        **({'selected_option_index':len(required.clarification_options) if ordinal==-1 else ordinal} if ordinal is not None else {})}
 
 
 def _resolve_sql_followup_scope(question, history, engine):
@@ -286,9 +468,27 @@ def _resolve_sql_followup_scope(question, history, engine):
     Unknown/new constraints remain the model/planner's clarification problem.
     """
     unchanged = {'mode': 'independent', 'actual_question': question}
+    from .executed_scope_edit import ExecutedScopeEditAgent
+    edited = ExecutedScopeEditAgent(engine).run(question,history)
+    if edited is not None:
+        base = history[-1].effective_question
+        return edited.scope, {**unchanged,
+            'mode':'server_verified_executed_sql_edit' if edited.verified else 'executed_sql_edit_rejected',
+            'requires_clarification':not edited.verified,
+            'base_scope_question':base,'scope_question':edited.scope,
+            'reason':edited.reason,'message':edited.message,
+            'replacements':list(edited.replacements),
+            'verification':'successful_execution_source_and_atomic_explicit_scope_reparse',
+            'execution_context_sha256':(history[-1].state or {}).get('executed_sql_context',{}).get('sha256')}
     if not isinstance(question, str) or len(question) > 80 or not history:
         return question, unchanged
     previous = history[-1]
+    time_fill = _resolve_pending_time(question, previous, engine)
+    if time_fill is not None:
+        return time_fill
+    option_fill = _resolve_pending_option(question, previous, engine)
+    if option_fill is not None:
+        return option_fill
     selection = _resolve_pending_field(question, previous, engine)
     if selection is not None:
         return selection
@@ -326,6 +526,21 @@ def _resolve_sql_followup_scope(question, history, engine):
                 or not _saved_metrics_match(state, base_plan, engine)
                 or state.get('dimensions', []) != base_plan['dimensions']):
             return question, unchanged
+        confirmed_request = (re.match(r'^\s*(?:那么|那)', question)
+            and re.search(r'(?:仍然|仍|还是|继续)\s*(?:看|按|统计|查询)', question)
+            and len(current_slots['values']) == 1 and len(current_slots['metrics']) == 1)
+        if confirmed_request and not _confirmed_replacement_context_valid(
+                question, base, state, engine):
+            return question, {**unchanged, 'requires_clarification': True,
+                'base_scope_question': base, 'reason': 'confirmed_replacement_saved_sql_unverified'}
+        confirmed = _resolve_confirmed_filter_replacement(question, base, previous_slots,
+            current_slots, base_plan, engine)
+        if confirmed is not None:
+            scope, replacement = confirmed
+            return scope, {'mode': 'server_verified_sql_followup', 'actual_question': question,
+                'previous_actual_question': previous.question, 'base_scope_question': base,
+                'scope_question': scope, 'replacements': [replacement],
+                'verification': 'explicit_single_filter_value_replacement_same_metric_confirmation_and_full_scope_reparse'}
         grouping = _resolve_group_change(question, base, base_plan, engine)
         if grouping is not None:
             scope, replacement = grouping
@@ -333,7 +548,10 @@ def _resolve_sql_followup_scope(question, history, engine):
                            'previous_actual_question': previous.question, 'base_scope_question': base,
                            'scope_question': scope, 'replacements': [replacement],
                            'verification': 'explicit_group_change_full_scope_reparse_and_saved_sql_slots'}
-        scope, resolution = engine.contextualize(base, question)
+        # Normalize only explicit conversational prefixes, never the slots or
+        # residual conditions checked below. Keep the user's original in audit.
+        contextual_question = re.sub(r'^(?:再查|同样)', '那', question)
+        scope, resolution = engine.contextualize(base, contextual_question)
         if (resolution.get('mode') != 'merged' or resolution.get('appended')
                 or not resolution.get('replaced') or scope == base):
             return question, unchanged
@@ -374,9 +592,39 @@ def _resolve_sql_followup_scope(question, history, engine):
 
 
 def resolve_sql_followup_scope(question, history, engine):
+    selection = ConversationReferenceAgent().select(question, history)
+    if selection is not None:
+        # Explicit user-selected topic return is separate from implicit
+        # immediate-turn inheritance. Never skip a failed attempt unless the
+        # user explicitly says the successful query is the desired reference.
+        reference=selection.request
+        require_success=reference.successful_only
+        if selection.reason:
+            return question, {'mode': 'independent', 'actual_question': question,
+                'requires_clarification': True, 'base_scope_question': question,
+                'reason': selection.reason}
+        index=selection.history_index
+        turn=history[index]
+        if not _confirmed_replacement_context_valid(reference.followup, turn.effective_question, turn.state or {}, engine):
+            return question, {'mode': 'independent', 'actual_question': question,
+                'requires_clarification': True, 'base_scope_question': turn.effective_question,
+                'reason': 'requested_sql_reference_not_verified'}
+        scope, audit = resolve_sql_followup_scope(reference.followup, [turn], engine)
+        if audit.get('mode') not in VERIFIED_SQL_CONTEXT_MODES:
+            return question, {'mode': 'independent', 'actual_question': question,
+                'requires_clarification': True, 'base_scope_question': turn.effective_question,
+                'reason': 'requested_sql_reference_rewrite_unverified'}
+        return scope, {**audit, 'actual_question': question,
+            'context_reference': {'kind': reference.kind, 'history_index': index,
+                                  'turn_id':turn.turn_id,
+                                  'question': turn.question, 'effective_question':turn.effective_question,
+                                  'successful_only': require_success,
+                                  'backward_position':reference.offset if reference.kind in {'explicit_previous_sql','explicit_backward_sql'} else None}}
     scope, audit = _resolve_sql_followup_scope(question, history, engine)
     if not history or not isinstance(question, str):
         return scope, audit
+    if audit.get('mode') in {'server_verified_executed_sql_edit','executed_sql_edit_rejected'}:
+        return scope,audit
     if _NEW_QUERY.search(question):
         return question, {**audit, 'reason': 'self_contained_sql'}
     previous, state = history[-1], history[-1].state or {}
@@ -396,6 +644,10 @@ def resolve_sql_followup_scope(question, history, engine):
             return question, {'mode':'independent','actual_question':question,
                 'requires_clarification':True,'base_scope_question':previous.effective_question,
                 'reason':'sql_history_source_revision_changed'}
+        if not _confirmed_replacement_context_valid(question, previous.effective_question, state, engine):
+            return question, {'mode':'independent','actual_question':question,
+                'requires_clarification':True,'base_scope_question':previous.effective_question,
+                'reason':'sql_history_execution_context_invalid'}
     if audit.get('mode') in VERIFIED_SQL_CONTEXT_MODES:
         return scope, audit
     reviewed = _model_followup(question, previous, engine)

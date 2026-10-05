@@ -1,18 +1,35 @@
 const API = new URLSearchParams(location.search).get("api") || window.ICT8_API_BASE || (location.protocol === "file:" ? "http://127.0.0.1:8030" : location.origin);
 const STREAM = new URLSearchParams(location.search).get("stream") !== "false";
 const $ = (id) => document.getElementById(id);
-const stageNames = {intent:"理解问题与上下文",structured_query:"规划并执行只读 SQL",document_retrieval:"检索文档依据",evidence_fusion:"融合结果与证据",clarification:"等待澄清"};
+const stageNames = {intent:"理解问题与上下文",structured_query:"规划并执行只读 SQL",document_retrieval:"检索文档依据",evidence_fusion:"融合结果与证据",clarification:"等待澄清",pending_task_resume:"恢复待补问题",pending_scope_edit:"修改查询条件",pending_source_validation:"核对待补问题的数据来源",conversation_comparison:"核对并比较历史查询结果",comparison_operand_edit:"确认修改对象并重新查询",comparison_batch_edit:"核对并同时更新两项查询"};
 const capabilities = [
   {name:"文档问答",group:"资料",endpoint:"omni",hint:"原文片段、页码与位置",questions:["销售额的统计口径是什么","资料中列出了哪些考核要求"]},
   {name:"基础问数",group:"问数",hint:"指标、筛选与聚合",questions:["2025年华东地区的销售额是多少","2025年各地区销售额排名","2025年华南地区的订单数"]},
-  {name:"多轮追问",group:"问数",hint:"沿用或覆盖上一轮口径",questions:["2025年华东地区的销售额","那华南呢","换成2024年"]},
+  {name:"多轮追问",group:"问数",hint:"沿用条件、补充条件与比较结果",questions:["2025年华东地区的销售额","那华南呢","比较刚才两次查询","换成2024年"]},
   {name:"比较分析",group:"分析",hint:"同比、环比与占比",questions:["2025年各地区销售额占比","2025年华东地区销售额同比","2025年3月销售额环比"]},
   {name:"跨源依据",group:"分析",hint:"结构化结果与文档证据",questions:["2025年华东地区的销售额政策","销售额的统计口径是什么"]},
-  {name:"澄清补全",group:"分析",hint:"口径不足时由后端提示",questions:["增长率是多少","各地区排名","2025年销售额同比"]},
+  {name:"澄清补全",group:"分析",hint:"口径不足时由后端提示",questions:["增长率是多少","各地区排名","2025年销售额同比","查看待补问题"]},
 ];
+stageNames.pending_task_catalog="查看待补问题";
+stageNames.relational_scope_edit="修改跨表查询条件";
 const chevron = '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>';
-let sessionId = sessionStorage.getItem("ict8_lattice_session") || crypto.randomUUID();
+const conversationScope=window.ConversationSessions.scopeFor(API,location.href);
+const conversationSessions=window.ConversationSessions.create({scope:conversationScope,
+  legacyKeys:conversationScope===location.origin?[{key:"ict8_lattice_session",label:"原问数会话"},{key:"ict8.omni-session",label:"原文档会话"}]:[]});
+let sessionId = conversationSessions.current(),conversationSessionPicker=null;
 let activeController = null, busy = false, activeCapability = capabilities[1], turns = [];
+let latestContext = null, independentNext = false;
+function updateContextComposer(){
+  const host=$("contextComposer"),independent=independentNext||!$("useContext").checked;
+  const state=window.ConversationContext.composerState(latestContext,independent);
+  host.hidden=!latestContext&&!independent;host.replaceChildren();
+  host.append(el("b","",state.title),el("span","context-composer-detail",state.detail));
+  const action=el("button","context-mode-action",independent?"恢复追问":"独立提问");action.type="button";action.disabled=busy;
+  action.onclick=()=>{if(busy)return;independentNext=!independent;$("useContext").checked=true;updateContextComposer();$("q").focus();};
+  host.append(action);$("q").placeholder=state.placeholder;
+  const catalog=el("button","context-mode-action","查看待补问题");catalog.type="button";catalog.disabled=busy;
+  catalog.onclick=()=>{if(busy)return;independentNext=false;$("useContext").checked=true;ask("查看待补问题");};host.append(catalog);
+}
 let lastAskCapability = activeCapability;
 let liveSchema = { tables: [], source: null };
 let schemaLoadPromise = Promise.resolve();
@@ -21,7 +38,6 @@ function clearSourceViewers(within){
   for(const [viewer,dispose] of sourceViewerCleanups){if(!within||within.contains(viewer))dispose();}
 }
 window.addEventListener("pagehide",()=>clearSourceViewers());
-sessionStorage.setItem("ict8_lattice_session", sessionId);
 
 function el(tag, cls, value) { const n=document.createElement(tag); if(cls)n.className=cls; if(value!==undefined)n.textContent=String(value); return n; }
 function detailText(value) { return typeof value==="string"?value:value?.message||value?.code||"请求失败"; }
@@ -97,6 +113,35 @@ function summaryRow(box,label,value,codeKind){
 }
 function renderAudit(body,data){
   if(data.route==="document")return;
+  if(data.route==="comparison"){
+    const evidence=data.structured?.comparison_evidence;
+    if(!evidence)return;
+    const section=el("section","conversation-scope"),comparisonSession=sessionId;section.append(el("b","","两次查询的比较依据"));
+    const edit=data.structured?.edit_evidence;
+    const batch=data.structured?.batch_edit_evidence;
+    section.append(el("p","",`基准：${evidence.baseline}；分组：${evidence.alignment==="month_of_year"?"按月份对齐":"按相同分组键对应"}。${batch?"两项查询已完成并同时更新。":edit?"本轮已重新执行所选查询，另一侧保留原结果。":"使用已显示的结果，没有重新执行 SQL。"}`));
+    if(edit)section.append(el("p","",`本轮修改：${edit.previous_question} → ${edit.replacement_question}`));
+    for(const change of batch||[])section.append(el("p","",`来源 ${change.source_index+1}：${change.previous_question} → ${change.replacement_question}`));
+    for(const source of evidence.sources||[]){
+      const details=el("details");details.append(el("summary","",`${source.role} · ${source.question}`),el("pre","sqlbox",source.sql));
+      const referenceLabel=window.ConversationContext?.comparisonReferenceLabel(source);
+      if(referenceLabel)details.append(el("p","context-request",referenceLabel));
+      details.append(el("p","",`原查询参数：${JSON.stringify(source.parameters||[])}`));section.append(details);
+      const prefix=window.ConversationContext?.comparisonEditPrompt(source.role);
+      if(prefix){
+        const tools=el("div","comparison-controls"),button=el("button","opt",`修改${source.role==="基准值"?"基准":"比较"}查询`);button.type="button";
+        button.onclick=()=>{if(busy||comparisonSession!==sessionId)return;$("q").value=prefix;$("q").focus();};
+        tools.append(button);details.append(tools);
+      }
+    }
+    const actions=el("div","clarification-options comparison-controls");
+    for(const action of window.ConversationContext?.comparisonActions(data)||[]){
+      const button=el("button","plate",action.label);button.type="button";
+      button.onclick=()=>{if(!busy&&comparisonSession===sessionId)ask(action.question);};actions.append(button);
+    }
+    section.append(actions);
+    body.append(section);return;
+  }
   if(window.QueryJourney){body.append(window.QueryJourney.render(data,liveSchema,schemaLoadPromise.then(()=>liveSchema)));return;}
   const structured=data.structured||{},plan=structured.plan||{},provenance=structured.provenance||{},links=provenance.field_links||plan.links||[];
   const audit=el("div","audit"),intro=el("div","audit-intro");intro.append(el("b","","查询过程"),el("span","","本次查询的处理详情"));audit.append(intro);
@@ -150,7 +195,7 @@ function normalizeOmniResponse(data){
   if(!data.route||!data.result)return data;
   const result=data.result;
   return {...data,omni_response:true,answer:result.answer||result.clarification||result.explanation?.join("；")||"本次未返回文字说明。",
-    structured:data.route==="sql"?result:{},document_evidence:result.citations||[],
+    structured:["sql","comparison"].includes(data.route)?result:{},document_evidence:result.citations||[],
     visual_source_proof:result.visual_source_proof,answer_mode:result.answer_mode,
     answer_span_result:result.answer_span_result};
 }
@@ -215,16 +260,102 @@ function renderDocumentEvidence(host,data){
 }
 function renderResult(view,data,originalQuestion){
   data=normalizeOmniResponse(data);
-  if(data.route==="document")view.live?.root?.remove();else view.live?.finish(data);
-  view.wait.remove();view.title.textContent=`已完成 · ${data.latency_ms??"—"} ms`;view.turn.status=data.status||"完成";renderTurns();
+  latestContext=window.ConversationContext.nextContext(latestContext,data);independentNext=false;updateContextComposer();
+  document.querySelectorAll(".clarify button, .clarify input, .comparison-controls button").forEach(control=>control.disabled=true);
+  if(["document","comparison","tasks"].includes(data.route))view.live?.root?.remove();else view.live?.finish(data);
+  view.wait.remove();view.title.textContent=data.status==="clarification"?"需要补充条件":`已完成 · ${data.latency_ms??"—"} ms`;view.turn.status=data.status||"完成";renderTurns();
   if(!view.body.querySelector(".step")) (data.trace||[]).forEach(t=>appendTrace(view.body,t));renderAudit(view.body,data);
   const answer=el("div","answer"),structured=data.structured||{};answer.append(el("p","",data.answer||"后端未返回文字说明"));
+  if(data.route==='tasks'){
+    view.title.textContent="待补问题";view.turn.status="已查看";
+    renderTurns();
+    const tasks=el("ul","context-changes pending-task-list"),catalogSession=sessionId;
+    for(const item of window.ConversationContext.catalogItems(data)){
+      const row=el("li"),controls=el("div","query-reference");row.style.borderBottom="1px solid var(--line)";
+      row.append(el("b","",item.question),el("p","clarify-help",item.clarification));
+      if(item.expiresAt)controls.append(el("small","",`保留至 ${new Date(item.expiresAt*1000).toLocaleString()}`));
+      if(item.resumeQuestion){
+        const button=el("button","context-mode-action","恢复这个问题");button.type="button";
+        button.onclick=()=>{if(busy||catalogSession!==sessionId)return;independentNext=false;$("useContext").checked=true;ask(item.resumeQuestion);};controls.append(button);
+      }else controls.append(el("small","","当前无法恢复，请重新确认完整问题。"));
+      row.append(controls);tasks.append(row);
+    }
+    answer.append(tasks);clearSourceViewers(view.answer);view.answer.replaceChildren(answer);$("thread").scrollTop=$("thread").scrollHeight;return;
+  }
+  const context=window.ConversationContext.describe(data),scope=el("section","conversation-scope");
+  scope.setAttribute("aria-label","本轮上下文与查询条件");
+  scope.append(el("b","",context.label),el("p","",context.effective),el("small","",context.note));
+  if(context.actual&&context.actual!==context.effective)scope.append(el("p","context-request",`本次输入：${context.actual}`));
+  if(context.changes.length){
+    const changes=el("ul","context-changes");changes.setAttribute("aria-label","本次修改的条件");
+    for(const change of context.changes){
+      const row=el("li");row.append(el("span","",change.label+'：'),el("del","",change.before),el("span","context-arrow"," → "),el("strong","",change.after));
+      if(change.field)row.title=change.field;changes.append(row);
+    }scope.append(changes);
+  }
+  if(context.base&&context.base!==context.effective){const source=el("details");source.append(el("summary","","查看引用的问题"),el("p","",context.base));scope.append(source);}
+  answer.prepend(scope);
+  const referencePrompt=window.ConversationContext.queryReferencePrompt(data)||window.ConversationContext.documentReferencePrompt(data);
+  if(referencePrompt){
+    const referenceSession=sessionId,reference=el("div","query-reference");
+    const isDocument=data.route==='document';
+    reference.append(el("small","",`${isDocument?'文档问题':'查询'}编号：${isDocument?data.document_reference_id:data.query_reference_id}`));
+    const button=el("button","context-mode-action",isDocument?"继续问这份文档":"引用这次查询");button.type="button";
+    button.onclick=()=>{if(busy||referenceSession!==sessionId)return;independentNext=false;$("useContext").checked=true;
+      $("q").value=referencePrompt;updateContextComposer();$("q").focus();};
+    reference.append(button,el("small","",isDocument?"填写后续问题；会重新核对原文版本并限定这份文档。":"填写编号后的修改条件；仅在本会话保留的历史内有效。"));scope.append(reference);
+  }
+  const pendingReference=window.ConversationContext.pendingReferencePrompt(data);
+  if(pendingReference){
+    const referenceSession=sessionId,reference=el("div","query-reference");
+    reference.append(el("small","",`待补编号：${data.query_reference_id}`));
+    const button=el("button","context-mode-action","恢复这轮待补条件");button.type="button";
+    button.onclick=()=>{if(busy||referenceSession!==sessionId)return;independentNext=false;$("useContext").checked=true;ask(pendingReference);};
+    reference.append(button,el("small","","编号对应这一轮的条件；默认保留24小时，每会话最多64条。完成后关联编号关闭，清空会话后不可恢复。"));scope.append(reference);
+  }
   if(structured.status==="ok")renderTable(answer,structured);
   [...(structured.notices||[]),...(data.warnings||[])].forEach(w=>answer.append(el("p","warn",w)));
   if(structured.status==="clarification"){
-    const options=el("div","clarify");(structured.clarification_options||[]).forEach(option=>{
-      const b=el("button","opt",option.label||option.value);b.type="button";b.onclick=()=>clarify(originalQuestion,structured.clarification_code,option,data.omni_response);options.append(b);
-    });answer.append(options);
+    const options=el("div","clarify"),pendingQuestion=window.ConversationContext.clarificationQuestion(data,originalQuestion),pendingSession=sessionId;
+    options.setAttribute("aria-label","补充查询条件");
+    const guide=window.ConversationContext.clarificationGuide(data);
+    if(guide){
+      const description=el("div","clarify-description");
+      description.append(el("b","",`请补充${guide.missing}`),el("p","",guide.message));answer.append(description);
+    }
+    for(const action of window.ConversationContext.comparisonActions(data)){
+      const button=el("button","opt",action.label);button.type="button";
+      button.onclick=()=>{if(!busy&&pendingSession===sessionId)ask(action.question);};options.append(button);
+    }
+    const confirm=(option,time)=>{if(busy||pendingSession!==sessionId)return;return clarify(pendingQuestion,structured.clarification_code,option,true,time);};
+    (structured.clarification_options||[]).forEach((option,index)=>{
+      const b=el("button","opt",window.ConversationContext.optionLabel(option,index));b.type="button";b.onclick=()=>{
+        if(/^选择对话来源编号q_[a-f0-9]{32}$/.test(option.question||'')){
+          if(!busy&&pendingSession===sessionId)ask(option.question);return;
+        }
+        if(!window.ConversationContext.timeOption(option)){confirm(option);return;}
+        options.querySelector("form")?.remove();
+        const editor=el("form","clarify-time"),input=el("input"),submit=el("button","opt","确认时间");
+        input.type="text";input.required=true;input.maxLength=32;input.setAttribute("aria-label","查询年份或月份");
+        input.placeholder=option.value==="month"?"例如 2025-03":"例如 2025";submit.type="submit";
+        editor.append(input,submit);options.append(editor);input.focus();
+        editor.onsubmit=event=>{event.preventDefault();confirm(option,input.value.trim());};
+      };options.append(b);
+    });
+    if(data.route==='sql'&&(structured.clarification_options||[]).length)
+      answer.append(el('p','clarify-help','也可以输入“选第一个”或“选第二个”；选择年份或月份后仍需填写具体时间。'));
+    if(guide?.canExplain){
+      const explain=el("button","opt","解释一下这些选项");explain.type="button";
+      explain.onclick=()=>{if(!busy&&pendingSession===sessionId)ask("选项有什么区别");};options.append(explain);
+      answer.append(el("p","clarify-help",data.route==='comparison'
+        ?'先确认要修改的查询及所需条件；可以随时取消本次修改，返回原比较结果。'
+        :'补充前也可以修改条件：输入“时间改成2024年”“增加字段筛选为取值”或“删除字段筛选”。字段和取值以当前数据库为准；多项修改不能确认时，原条件会保留。'));
+    }
+    if(guide?.canCancel&&!window.ConversationContext.comparisonActions(data).some(action=>action.question==='取消修改')){
+      const cancel=el("button","opt","取消本次修改");cancel.type="button";
+      cancel.onclick=()=>{if(!busy&&pendingSession===sessionId)ask("取消修改");};options.append(cancel);
+    }
+    answer.append(options,el("p","clarify-help",guide?.next||"请选择上面的选项，或在输入框补充具体条件。补充后将继续当前问题。"));
   }
   renderDocumentEvidence(answer,data);
   clearSourceViewers(view.answer);view.answer.replaceChildren(answer);$("thread").scrollTop=$("thread").scrollHeight;
@@ -243,16 +374,17 @@ async function streamQuery(question,useContext,completeResults,view,signal){
   if(!result)throw Error("流式连接未返回完整结果");return result;
 }
 async function run(question,request){
-  if(busy)return;busy=true;$("send").disabled=true;const view=beginTurn(question),controller=new AbortController();activeController=controller;
+  if(busy)return;busy=true;$("send").disabled=true;
+  document.querySelectorAll(".clarify button, .clarify input, .comparison-controls button, .pending-task-list button").forEach(control=>control.disabled=true);
+  updateContextComposer();const view=beginTurn(question),controller=new AbortController();activeController=controller;
   try{const data=await request(view,controller.signal);if(!controller.signal.aborted)renderResult(view,data,question);}
   catch(error){if(!controller.signal.aborted){view.live?.fail();view.wait.remove();view.title.textContent="查询失败";view.turn.status="失败";view.answer.append(el("div","error-line",error.message||"请求失败"));renderTurns();}}
-  finally{if(activeController===controller)activeController=null;busy=false;$("send").disabled=false;}
+  finally{if(activeController===controller){activeController=null;busy=false;$("send").disabled=false;updateContextComposer();}}
 }
-function ask(question){const text=question.trim();if(!text)return;const useContext=$("useContext").checked,completeResults=$("completeResults").checked;
-  if(activeCapability.endpoint==="omni")return run(text,(_view,signal)=>post("/api/v1/omni/query",{question:text,session_id:"docs-"+sessionId,reset_context:!useContext},signal));
-  return run(text,(view,signal)=>STREAM?streamQuery(text,useContext,completeResults,view,signal):post("/api/v1/agent/query",{question:text,session_id:sessionId,use_context:useContext,complete_results:completeResults},signal));}
-function clarify(question,code,option,omni=false){return run(option.label||option.value,async(_view,signal)=>{
-  const response=await post(omni?"/api/v1/omni/clarify":"/api/v1/nl2sql/clarify",{original_question:question,clarification_code:code,selected_value:option.value,selected_label:option.label,session_id:(omni?"docs-":"")+sessionId,complete_results:$("completeResults").checked},signal);return omni?response:response.result;
+function ask(question){const text=question.trim();if(!text)return;const useContext=$("useContext").checked&&!independentNext,completeResults=$("completeResults").checked;
+  return run(text,(_view,signal)=>post("/api/v1/omni/query",{question:text,session_id:sessionId,reset_context:!useContext,complete_results:completeResults},signal));}
+function clarify(question,code,option,omni=true,time){return run(time?`${option.label||option.value}：${time}`:option.label||option.value,async(_view,signal)=>{
+  return post("/api/v1/omni/clarify",{original_question:question,clarification_code:code,selected_value:option.value,selected_label:option.label,selected_time:time,session_id:sessionId,complete_results:$("completeResults").checked},signal);
 });}
 function setTab(doc){
   const docs=activeCapability.endpoint==="omni";
@@ -276,8 +408,13 @@ async function analyzeDocument(){
 $("form").addEventListener("submit",e=>{e.preventDefault();const question=$("q").value.trim();if(!question||busy)return;$("q").value="";$("q").style.height="auto";ask(question);});
 $("q").addEventListener("input",()=>{$("q").style.height="auto";$("q").style.height=`${Math.min(160,$("q").scrollHeight)}px`;});
 $("q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("form").requestSubmit();}});
-function newChat(){activeController?.abort();clearSourceViewers();sessionId=crypto.randomUUID();sessionStorage.setItem("ict8_lattice_session",sessionId);turns=[];$("feed").replaceChildren($("empty"));$("empty").style.display="";renderTurns();setTab(false);}
+function switchConversation(next){activeController?.abort();activeController=null;busy=false;$("send").disabled=false;latestContext=null;independentNext=false;$("useContext").checked=true;updateContextComposer();clearSourceViewers();sessionId=next;turns=[];$("feed").replaceChildren($("empty"));$("empty").style.display="";renderTurns();setTab(false);conversationSessionPicker?.refresh();}
+function newChat(){try{switchConversation(conversationSessions.start());}catch(error){$("q").setCustomValidity(error.message);$("q").reportValidity();$("q").setCustomValidity("");}}
+$("useContext").addEventListener("change",()=>{independentNext=false;updateContextComposer();});
 $("newChat").onclick=newChat;$("newChatTop").onclick=newChat;
+const conversationSessionHost=el("div","session-picker");$("newChat").insertAdjacentElement("afterend",conversationSessionHost);
+conversationSessionPicker=window.ConversationSessions.mount(conversationSessions,conversationSessionHost,switchConversation);
+window.addEventListener("pageshow",()=>{const current=conversationSessions.current();if(current!==sessionId)switchConversation(current);else conversationSessionPicker.refresh();});
 $("sixDemo").onclick=async()=>{setTab(false);for(const q of ["2025年华东地区的销售额","那华南呢","看看订单数","换成华北","换成2024年","看看销量"])await ask(q);};
 $("theme").onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";};
 $("tabAsk").onclick=()=>selectCapability(lastAskCapability);

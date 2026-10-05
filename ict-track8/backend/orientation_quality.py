@@ -92,8 +92,79 @@ def upright_reading_order(regions, size, orientation):
     angle = math.radians(orientation['correction_ccw_degrees'])
     cosine,sine = math.cos(angle),math.sin(angle)
     center_x,center_y = size[0]/2,size[1]/2
-    def position(region):
+    projections = {}
+    def bounds(region):
         projected = [(center_x+cosine*(x-center_x)+sine*(y-center_y),
                       center_y-sine*(x-center_x)+cosine*(y-center_y)) for x,y in region['bbox']]
-        return min(y for x,y in projected),min(x for x,y in projected)
-    return sorted(regions,key=position)
+        projections[id(region)] = projected
+        return min(x for x,y in projected),min(y for x,y in projected),max(x for x,y in projected),max(y for x,y in projected)
+    def line_order(items):
+        if not items:
+            return []
+        anchor = min(box[0] for _,box in items)
+        aligned = []
+        for region,box in items:
+            points = sorted(projections[id(region)])
+            left,right = points[:2],points[2:]
+            lx,rx = sum(p[0] for p in left)/2,sum(p[0] for p in right)/2
+            ly,ry = sum(p[1] for p in left)/2,sum(p[1] for p in right)/2
+            slope = (ry-ly)/(rx-lx) if rx-lx>1e-6 else 0.
+            height = (abs(left[1][1]-left[0][1])+abs(right[1][1]-right[0][1]))/2
+            if (height<=0 or abs(slope)>math.tan(math.radians(15))
+                    or abs(anchor-lx)>max(rx-lx,3*height)):
+                center,height = (box[1]+box[3])/2,max(1.,box[3]-box[1])
+            else:
+                # Compare local line heights at the same column x. Min-y
+                # favours long tilted lines over preceding short lines.
+                center = ly+slope*(anchor-lx)
+            aligned.append((region,box,center,height))
+        aligned.sort(key=lambda item:(item[2],item[1][0]))
+        rows=[]
+        for item in aligned:
+            _,box,center,height=item
+            row=rows[-1] if rows else []
+            compatible = row and all(
+                abs(center-other[2])<=.4*min(height,other[3])
+                and min(box[2],other[1][2])-max(box[0],other[1][0])<=0
+                for other in row)
+            if compatible:row.append(item)
+            else:rows.append([item])
+        return [item[0] for row in rows for item in sorted(row,key=lambda item:item[1][0])]
+    boxes = [(region, bounds(region)) for region in regions]
+    ordered = sorted(boxes, key=lambda item: (item[1][1], item[1][0]))
+    if len(boxes) < 16:
+        return line_order(boxes)
+    # Detect a clear central gutter between substantial prose lines. Short
+    # numeric/table cells cannot nominate a prose-column split. This remains
+    # a geometry heuristic, never a semantic document-layout guarantee.
+    page_width = max(box[2] for _, box in boxes) - min(box[0] for _, box in boxes)
+    origin = min(box[0] for _, box in boxes)
+    prose = [(region, box) for region, box in boxes
+             if .24 * page_width <= box[2]-box[0] <= .58 * page_width
+             and len(region.get('text', '').strip()) >= 20]
+    candidates = []
+    for fraction in (.4, .45, .5, .55, .6):
+        split = origin + page_width * fraction
+        left = [item for item in prose if item[1][2] < split]
+        right = [item for item in prose if item[1][0] > split]
+        if len(left) < 4 or len(right) < 4 or len(left)+len(right) < .8 * len(prose):
+            continue
+        gutter = min(box[0] for _, box in right) - max(box[2] for _, box in left)
+        if gutter > page_width * .012:
+            candidates.append((len(left)+len(right), gutter, split))
+    if not candidates:
+        return line_order(boxes)
+    split = max(candidates)[2]
+    result, band = [], []
+    def emit():
+        result.extend(line_order([item for item in band if item[1][0]<split]))
+        result.extend(line_order([item for item in band if item[1][0]>=split]))
+        band.clear()
+    for region, box in ordered:
+        if box[0] < split < box[2]:
+            emit()
+            result.append(region)
+        else:
+            band.append((region, box))
+    emit()
+    return result

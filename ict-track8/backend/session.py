@@ -10,6 +10,8 @@ from collections import deque
 from dataclasses import dataclass
 from contextlib import contextmanager
 import json
+import uuid
+from copy import deepcopy
 from pathlib import Path
 
 
@@ -22,6 +24,7 @@ class ConversationTurn:
     effective_question: str
     created_at: float
     state: dict | None = None
+    turn_id: str | None = None
 
 
 class ConversationStore:
@@ -35,6 +38,8 @@ class ConversationStore:
         ttl_seconds: float = 1800.0,
         clock=time.monotonic,
         storage_path: str | Path | None = None,
+        pending_ttl_seconds: float = 86400.0,
+        max_pending_records: int = 64,
     ):
         if max_sessions < 1 or max_turns < 1 or ttl_seconds <= 0:
             raise ValueError("会话限制必须为正数")
@@ -48,9 +53,15 @@ class ConversationStore:
         self._clock = time.time if self.storage_path and clock is time.monotonic else clock
         self._sessions: dict[str, tuple[float, deque[ConversationTurn]]] = {}
         self._lock = threading.Lock()
+        self._turn_registry_lock = threading.Lock()
+        self._turn_locks = {}
         if self.storage_path:
             self.storage_path.parent.mkdir(parents=True, exist_ok=True)
             self._initialize_database()
+        from .pending_task_store import PendingTaskStore
+        self.pending_tasks = PendingTaskStore(self, ttl_seconds=pending_ttl_seconds, max_records=max_pending_records)
+        from .conversation_sources import ConversationSourceStore
+        self.sources = ConversationSourceStore(self, ttl_seconds=pending_ttl_seconds, max_records=max_pending_records)
 
     @staticmethod
     def validate_id(session_id: str) -> str:
@@ -66,7 +77,7 @@ class ConversationStore:
             with self._connect() as connection:
                 self._persistent_purge(connection, now)
                 record = connection.execute(
-                    "SELECT question, effective_question, created_at, state "
+                    "SELECT question, effective_question, created_at, state, turn_id "
                     "FROM conversation_turns WHERE session_id=? ORDER BY sequence DESC LIMIT ?",
                     (key, self.max_turns),
                 ).fetchall()
@@ -75,7 +86,7 @@ class ConversationStore:
                     (now, key),
                 )
                 return tuple(
-                    ConversationTurn(str(row[0]), str(row[1]), float(row[2]), json.loads(row[3]))
+                    ConversationTurn(str(row[0]), str(row[1]), float(row[2]), json.loads(row[3]), str(row[4]))
                     for row in reversed(record)
                 )
         with self._lock:
@@ -85,25 +96,58 @@ class ConversationStore:
                 return ()
             touched, turns = record
             self._sessions[key] = (now, turns)
-            return tuple(turns)
+            return deepcopy(tuple(turns))
+
+    @contextmanager
+    def turn(self, session_id: str | None):
+        """Serialize read-plan-execute-remember within this server process.
+
+        Different sessions remain concurrent. References include waiting calls,
+        so a lock cannot disappear while another turn is waiting. Reentrancy
+        allows clarification validation to enclose the normal agent query.
+        Multi-worker deployments need a shared lease/CAS implementation; this
+        process-local boundary does not claim distributed serialization.
+        """
+        if session_id is None:
+            yield
+            return
+        key = self.validate_id(session_id)
+        with self._turn_registry_lock:
+            entry = self._turn_locks.setdefault(key, [threading.RLock(), 0])
+            entry[1] += 1
+        try:
+            with entry[0]:
+                yield
+        finally:
+            with self._turn_registry_lock:
+                entry[1] -= 1
+                if entry[1] == 0:
+                    self._turn_locks.pop(key, None)
 
     def clear(self, session_id):
         key = self.validate_id(session_id)
         if self.storage_path:
             with self._connect() as connection:
                 connection.execute('DELETE FROM conversation_sessions WHERE session_id=?', (key,))
+                self.pending_tasks.clear(key, connection)
+                self.sources.clear(key, connection)
         else:
             with self._lock:
                 self._sessions.pop(key, None)
+                self.pending_tasks.clear(key)
+                self.sources.clear(key)
 
-    def remember(self, session_id: str, *, question: str, effective_question: str, state: dict | None = None) -> None:
+    def remember(self, session_id: str, *, question: str, effective_question: str, state: dict | None = None,
+                 pending_parent_id: str | None = None) -> None:
         key = self.validate_id(session_id)
         if not str(question).strip() or not str(effective_question).strip():
             return
         now = self._clock()
         encoded_state = json.dumps(state or {}, ensure_ascii=False)
+        turn_id='q_'+uuid.uuid4().hex
         if len(encoded_state) > 32000:
             raise ValueError('会话状态超过大小限制')
+        turn = ConversationTurn(str(question).strip(), str(effective_question).strip(), now, json.loads(encoded_state), turn_id)
         if self.storage_path:
             with self._connect() as connection:
                 self._persistent_purge(connection, now)
@@ -128,15 +172,17 @@ class ConversationStore:
                     (key, now),
                 )
                 connection.execute(
-                    "INSERT INTO conversation_turns(session_id, sequence, question, effective_question, created_at, state) "
-                    "VALUES(?, ?, ?, ?, ?, ?)",
-                    (key, int(sequence), str(question).strip(), str(effective_question).strip(), now, encoded_state),
+                    "INSERT INTO conversation_turns(session_id, sequence, question, effective_question, created_at, state, turn_id) "
+                    "VALUES(?, ?, ?, ?, ?, ?, ?)",
+                    (key, int(sequence), str(question).strip(), str(effective_question).strip(), now, encoded_state,turn_id),
                 )
                 connection.execute(
                     "DELETE FROM conversation_turns WHERE session_id=? AND sequence < "
                     "(SELECT COALESCE(MAX(sequence), 0) - ? + 1 FROM conversation_turns WHERE session_id=?)",
                     (key, self.max_turns, key),
                 )
+                self.pending_tasks.remember(key, turn, pending_parent_id, connection)
+                self.sources.remember(key, turn, connection=connection)
             return
         with self._lock:
             self._purge(now)
@@ -144,8 +190,10 @@ class ConversationStore:
                 oldest = min(self._sessions, key=lambda item: self._sessions[item][0])
                 self._sessions.pop(oldest, None)
             turns = self._sessions.get(key, (now, deque(maxlen=self.max_turns)))[1]
-            turns.append(ConversationTurn(str(question).strip(), str(effective_question).strip(), now, state or {}))
+            turns.append(ConversationTurn(str(question).strip(), str(effective_question).strip(), now, json.loads(encoded_state),turn_id))
             self._sessions[key] = (now, turns)
+            self.pending_tasks.remember(key, turn, pending_parent_id)
+            self.sources.remember(key, turn)
 
     def _purge(self, now: float) -> None:
         expired = [key for key, (touched, _) in self._sessions.items() if now - touched >= self.ttl_seconds]
@@ -187,6 +235,10 @@ class ConversationStore:
             columns = {row[1] for row in connection.execute('PRAGMA table_info(conversation_turns)')}
             if 'state' not in columns:
                 connection.execute("ALTER TABLE conversation_turns ADD COLUMN state TEXT NOT NULL DEFAULT '{}'")
+            if 'turn_id' not in columns:
+                connection.execute('ALTER TABLE conversation_turns ADD COLUMN turn_id TEXT')
+            connection.execute("UPDATE conversation_turns SET turn_id='q_'||lower(hex(randomblob(16))) WHERE turn_id IS NULL")
+            connection.execute('CREATE UNIQUE INDEX IF NOT EXISTS idx_conversation_turn_id ON conversation_turns(turn_id)')
 
     def _persistent_purge(self, connection: sqlite3.Connection, now: float) -> None:
         connection.execute(

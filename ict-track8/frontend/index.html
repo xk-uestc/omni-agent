@@ -273,7 +273,7 @@
       .meta { flex-wrap: wrap; gap: 5px 12px; }
     }
   </style>
-  <link rel="stylesheet" href="./modern-ui.css?v=20261004-docs-entry-1" />
+  <link rel="stylesheet" href="./modern-ui.css?v=20261005-stable-reference-1" />
   <link rel="stylesheet" href="./query-journey.css?v=20261003-polish-6" />
   <link rel="stylesheet" href="./query-result-viz.css?v=20261003-polish-6" />
   <link rel="stylesheet" href="./result-browser.css?v=20261003-full-results-1" />
@@ -349,6 +349,7 @@
         </div>
       </div>
       <div class="composer-wrap" id="askComposer">
+        <div id="contextComposer" class="context-composer" role="status" aria-live="polite" hidden></div>
         <form class="composer" id="form">
           <textarea id="q" rows="1" placeholder="问销售额、同比，或接着说「那华南呢」"></textarea>
           <button class="send" id="send" type="submit" aria-label="发送">
@@ -369,6 +370,8 @@
 <script src="./query-result-viz.js?v=20261003-full-results-2" defer></script>
 <script src="./query-journey.js?v=20261003-full-results-2" defer></script>
 <script src="./result-browser.js?v=20261003-full-results-1" defer></script>
-<script src="./app.js?v=20261004-docs-entry-1" defer></script>
+<script src="./conversation-context.js?v=20261005-dialogue-sources-2" defer></script>
+<script src="./conversation-session.js?v=20261005-shared-session-1" defer></script>
+<script src="./app.js?v=20261005-dialogue-sources-2" defer></script>
 </body>
 </html>

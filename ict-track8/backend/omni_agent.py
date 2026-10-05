@@ -17,6 +17,7 @@ from .fusion_constraints import SourceConstraintError
 from .fusion_history import (resolve_fusion_followup, verify_inherited_document_tasks,
                              verified_fusion_context)
 from .sql_history_scope import resolve_sql_followup_scope, VERIFIED_SQL_CONTEXT_MODES, saved_sql_context
+from .history_reference import reference_clarification,ConversationReferenceAgent
 from .nl2sql.security import SqlSafetyError
 from .nl2sql.models import QueryResult, QueryPlan
 
@@ -318,15 +319,277 @@ class OmniAgent:
             return {'route': 'sql', 'effective_question': effective, 'clarification': '', 'tasks_json': '[]'}
         return {'route': 'document', 'effective_question': question, 'clarification': '', 'tasks_json': '[]'}
 
-    def query(self, question, *, session_id=None, reset_context=False):
+    def _remember(self, session_id, *, question, effective_question, state, pending_parent_id=None):
+        state = dict(state)
+        if state.get('route') == 'sql' and state.get('pending_question'):
+            parent, _ = self.conversations.pending_tasks.resolve(session_id, pending_parent_id) if pending_parent_id else (None, None)
+            state['pending_source_revision'] = ((parent.state or {}).get('pending_source_revision') if parent else None) or self.engine.current_source_revision()
+        self.conversations.remember(session_id, question=question, effective_question=effective_question,
+            state=state, pending_parent_id=pending_parent_id)
+
+    def query(self, question, *, session_id=None, reset_context=False, complete_results=False, _confirmed_comparison_scope=None,
+              _confirmed_pending_turn_id=None):
+        with self.conversations.turn(session_id):
+            before=self.conversations.context(session_id) if session_id else ()
+            response=self._query_turn(question, session_id=session_id, reset_context=reset_context,
+                                    complete_results=complete_results,_confirmed_comparison_scope=_confirmed_comparison_scope,
+                                    _confirmed_pending_turn_id=_confirmed_pending_turn_id)
+            after=self.conversations.context(session_id) if session_id else ()
+            if after and (not before or after[-1].turn_id!=before[-1].turn_id) and (after[-1].state or {}).get('route') in {'sql','comparison'}:
+                response['query_reference_id']=after[-1].turn_id
+            if after and (not before or after[-1].turn_id!=before[-1].turn_id) and (after[-1].state or {}).get('document_context'):
+                response['document_reference_id']=after[-1].turn_id
+            return response
+
+    def _query_turn(self, question, *, session_id=None, reset_context=False, complete_results=False,_confirmed_comparison_scope=None,
+                    _history_override=None,_remember_question=None,_confirmed_pending_turn_id=None):
         if not question.strip() or len(question) > 1000:
             raise ValueError('问题为空或过长')
         if session_id and reset_context:
             self.conversations.clear(session_id)
-        history = self.conversations.context(session_id) if session_id else ()
+        history = _history_override if _history_override is not None else self.conversations.context(session_id) if session_id else ()
+        from .document_dialogue import DocumentDialogueAgent,document_context,seal
+        reference=DocumentDialogueAgent(self.knowledge,self.conversations.sources,self.engine).run(question,history,session_id)
+        if reference is not None:
+            audit={'mode':'server_verified_dialogue_source' if not reference.reason else 'dialogue_reference_clarification',
+                'actual_question':question,'executed':False}
+            if reference.reason or explicit_cross_source_request(reference.followup):
+                reason=reference.reason or 'dialogue_reference_cross_source_requires_full_question'
+                messages={'dialogue_reference_ambiguous':'请确认这句话指向哪个查询或文档。请选择具体来源，选择后继续本次问题。',
+                    'dialogue_document_changed':'这份文档已更新或原件不可用，不能沿用旧版本；请按文档名称重新查询。',
+                    'dialogue_reference_out_of_range':'序号超出范围，请从下方来源中重新选择，本次问题仍保留。',
+                    'dialogue_document_title_not_unique':'文档名称缺失或对应多份资料，请提供唯一的文档名称。',
+                    'dialogue_reference_cross_source_requires_full_question':'这次问题涉及多个来源，请明确全部文档和数据库条件，不能只依靠代词合并。'}
+                message=messages.get(reason,'指定来源已过期、不在本会话或无法核验，请重新说明文档或完整查询。')
+                state={'route':'clarify'}
+                if reference.options:
+                    state['dialogue_reference_pending']=seal({'candidates':list(reference.options),'followup':reference.followup})
+                if session_id:
+                    self._remember(session_id,question=question,effective_question=question,state=state)
+                return {'status':'clarification','question':question,'effective_question':question,'route':'clarify',
+                    'planner_source':'DocumentDialogueAgent','session_id':session_id,'context_turns':len(history),
+                    'state':{'route':'clarify'},'result':{'status':'clarification','clarification':message,
+                        'clarification_code':reason,'clarification_options':list(reference.options),'rows':[],'citations':[]},
+                    'context_resolution':{**audit,'reason':reason},'trace':[]}
+            if reference.turn is not None:
+                audit['source_reference']={'turn_id':reference.turn.turn_id,'question':reference.turn.effective_question}
+            if reference.document_id is None:
+                followup=reference.turn.effective_question if reference.followup=='再查同样的结果' else reference.followup
+                response=self._query_turn(followup,session_id=session_id,complete_results=complete_results,
+                    _history_override=(reference.turn,),_remember_question=question)
+                response['question']=question
+                response['context_turns']=len(history)
+                response['context_resolution']={**response.get('context_resolution',{}),'source_reference':audit['source_reference'],'actual_question':question}
+                return response
+            from .knowledge_store import SourceIntegrityError
+            try:
+                self.knowledge.verify_source(reference.document_id,expected_sha256=reference.digest)
+                result=self.knowledge.answer(reference.followup,document_id=reference.document_id)
+                self.knowledge.verify_source(reference.document_id,expected_sha256=reference.digest)
+                if any(hit.get('metadata',{}).get('document_id') != reference.document_id
+                        or hit.get('metadata',{}).get('source_sha256') != reference.digest for hit in result.get('citations',[])):
+                    raise SourceIntegrityError('dialogue citation source mismatch')
+            except (KeyError,OSError,SourceIntegrityError):
+                message='文档版本已变化或原件不可用，本次没有发布旧版本答案，请重新选择文档。'
+                if session_id:self._remember(session_id,question=question,effective_question=question,state={'route':'clarify'})
+                return {'status':'clarification','question':question,'effective_question':reference.followup,'route':'document',
+                    'planner_source':'DocumentDialogueAgent','session_id':session_id,'context_turns':len(history),'state':{'route':'document'},
+                    'result':{'status':'clarification','clarification':message,'clarification_code':'dialogue_document_changed','citations':[]},
+                    'context_resolution':{**audit,'reason':'dialogue_document_changed'},'trace':[]}
+            state={'route':'document','sources':[reference.document_id]}
+            saved=document_context(reference.followup,result,self.knowledge)
+            if saved is not None:state['document_context']=saved
+            if session_id:self._remember(session_id,question=_remember_question or question,effective_question=reference.followup,state=state)
+            return {'status':result['status'],'question':question,'effective_question':reference.followup,'route':'document',
+                'planner_source':'DocumentDialogueAgent','session_id':session_id,'context_turns':len(history),'state':state,
+                'result':result,'trace':result.get('trace',[]),
+                'context_resolution':{**audit,'executed':True,'document_versions':{reference.document_id:reference.digest}}}
+        from .relational_scope_edit import RelationalScopeEditAgent
+        relational_edit=RelationalScopeEditAgent(self.engine).run(question,history,complete_results=complete_results)
+        if relational_edit is not None:
+            verified=relational_edit['verified']
+            audit={'mode':'server_verified_relational_parameter_edit' if verified else 'executed_sql_edit_rejected',
+                'actual_question':question,'base_scope_question':history[-1].effective_question,
+                'scope_question':relational_edit['scope'],'replacements':relational_edit['replacements'],
+                'reason':relational_edit['reason'],'executed':verified,'context_preserved':not verified,
+                'verification':'same_sql_bytes_where_parameter_binding_in_read_snapshot'}
+            if verified:
+                result=relational_edit['result']
+                state={'route':'sql','pending_question':None,'clarification_code':None,
+                    'metrics':result['plan'].get('metrics',[]),'filters':result['plan'].get('filters',[]),
+                    'dimensions':result['plan'].get('dimensions',[]),'executed_sql_context':saved_sql_context(relational_edit['scope'],result)}
+                if session_id:self._remember(session_id,question=_remember_question or question,effective_question=relational_edit['scope'],state=state)
+            else:
+                result={'status':'clarification','clarification':relational_edit['message'],
+                    'clarification_code':relational_edit['reason'],'sql':None,'rows':[],'columns':[]}
+                state={'route':'sql','context_preserved':True}
+            return {'status':result['status'],'question':question,'effective_question':relational_edit['scope'],
+                'route':'sql','planner_source':'RelationalScopeEditAgent','session_id':session_id,
+                'context_turns':len(history),'state':state,'result':result,'context_resolution':audit,
+                'trace':[{'stage':'relational_scope_edit','source':'RelationalScopeEditAgent','status':'executed' if verified else 'rejected'}]}
+        from .pending_task_catalog import PendingTaskCatalogAgent
+        catalog=PendingTaskCatalogAgent(self.engine,self.conversations.pending_tasks).run(question,session_id)
+        if catalog is not None:
+            catalog['context_turns']=len(history)
+            catalog['context_reset']=reset_context
+            return catalog
+        from .pending_task_resume import PendingTaskResumeAgent
+        match=PendingTaskResumeAgent._REQUEST.fullmatch(question.strip())
+        if match and session_id:
+            archived,_=self.conversations.pending_tasks.resolve(session_id,match[1].lower())
+            if archived and (archived.state or {}).get('route')=='comparison':
+                from .pending_comparison_resume import PendingComparisonResumeAgent
+                selected=PendingComparisonResumeAgent(self.engine).inspect(archived,(match[2] or '').strip())
+                if selected.turn and selected.followup and selected.supported_followup:
+                    response=self._query_turn(selected.followup,session_id=session_id,complete_results=complete_results,
+                        _history_override=(archived,),_remember_question=question)
+                    response['question']=question
+                    response['context_turns']=len(history)
+                    response['context_resolution']={**response.get('context_resolution',{}),
+                        'pending_task_reference':{'turn_id':archived.turn_id,'question':archived.effective_question}}
+                    return response
+                result=selected.preview or {'status':'clarification','rows':[],'columns':[],
+                    'clarification_code':selected.reason,'answer':selected.message,'clarification':selected.message}
+                state=dict(archived.state) if selected.turn else {'route':'clarify','pending':selected.message}
+                if selected.turn:
+                    result={**result,'answer':selected.message+' '+result.get('answer','')}
+                    if selected.followup:result['answer']+=' 本次补充未合并，请使用明确选项。'
+                    self._remember(session_id,question=_remember_question or question,
+                        effective_question=archived.effective_question,state=state,pending_parent_id=archived.turn_id)
+                return {'status':'clarification','question':question,'effective_question':archived.effective_question,
+                    'route':'comparison' if selected.turn else 'clarify','planner_source':'PendingComparisonResumeAgent',
+                    'session_id':session_id,'context_turns':len(history),'result':result,
+                    'state':{key:value for key,value in state.items() if key not in
+                        {'comparison_context','comparison_pending_query','comparison_pending_batch','pending_comparison_result'}},
+                    'context_resolution':{'mode':'pending_comparison_resume','reason':selected.reason,'executed':False},
+                    'trace':[{'stage':'pending_task_resume','source':'PendingComparisonResumeAgent',
+                        'status':'restored' if selected.turn else 'rejected','executed':False}]}
+        resume=PendingTaskResumeAgent(self.engine).run(question,history,
+            resolver=(lambda identifier:self.conversations.pending_tasks.resolve(session_id,identifier)) if session_id else None)
+        from .pending_source_validation import PendingSourceValidationAgent
+        source_rejection = PendingSourceValidationAgent(self.engine).run(question,history) if resume is None else None
+        resume = resume or source_rejection
+        if resume is not None:
+            if resume.turn is not None and resume.followup and resume.supported_followup:
+                response=self._query_turn(resume.followup,session_id=session_id,complete_results=complete_results,
+                    _history_override=(resume.turn,),_remember_question=question)
+                response['question']=question
+                response['context_turns']=len(history)
+                response['context_resolution']={**response.get('context_resolution',{}),
+                    'actual_question':question,'followup_question':resume.followup,
+                    'pending_task_reference':{'turn_id':resume.turn.turn_id,'question':resume.turn.effective_question}}
+                response['trace']=[{'stage':'pending_task_resume','source':'PendingTaskResumeAgent',
+                    'status':'restored','turn_id':resume.turn.turn_id},*response.get('trace',[])]
+                return response
+            required=resume.plan
+            effective=resume.turn.effective_question if resume.turn is not None else question
+            message=resume.message+(' '+required.clarification if required else '')
+            result=QueryResult(status='clarification',question=question,rewritten_question=effective,
+                sql=None,parameters=(),columns=(),rows=(),plan=required.to_dict() if required else {},
+                explanation=(message,),clarification=message,
+                clarification_code=required.clarification_code if required else resume.reason,
+                clarification_options=tuple(required.clarification_options) if required else (),
+                provenance={'source_type':'structured_database','execution_status':'not_executed'},result_state='unexecuted').to_dict()
+            state=({'route':'sql','pending_question':effective,'clarification_code':required.clarification_code,
+                'metrics':required.to_dict()['metrics'],'filters':required.to_dict()['filters'],
+                'dimensions':required.dimensions} if required else {'route':'clarify','pending':message})
+            audit={'mode':'pending_sql_source_rejected' if source_rejection else
+                'server_verified_pending_task_resume' if required else 'pending_task_resume_rejected',
+                'actual_question':question,'reason':resume.reason,'executed':False}
+            if resume.turn is not None:
+                audit['pending_task_reference']={'turn_id':resume.turn.turn_id,'question':effective}
+            response={'status':'clarification','question':question,'effective_question':effective,
+                'route':state['route'],'planner_source':'PendingSourceValidationAgent' if source_rejection else 'PendingTaskResumeAgent','session_id':session_id,
+                'context_turns':len(history),'state':state,'result':result,
+                'trace':[{'stage':'pending_source_validation','source':'PendingSourceValidationAgent',
+                    'status':'source_changed','executed':False}] if source_rejection else [],
+                'context_resolution':audit,
+                'audit_id':hashlib.sha256(json.dumps(audit,ensure_ascii=False,sort_keys=True).encode()).hexdigest()[:24]}
+            if session_id:self._remember(session_id,question=_remember_question or question,effective_question=effective,state=state,
+                pending_parent_id=resume.turn.turn_id if resume.turn else None)
+            return response
+        from .conversation_comparison import parse_request, ConversationComparisonAgent, ConversationComparisonEditAgent
+        comparison_request=parse_request(question)
+        explicit_sql_reference=ConversationReferenceAgent().parse(question)
+        from .comparison_batch_edit import ConversationComparisonBatchEditAgent
+        comparison_edit=None
+        if explicit_sql_reference is None and (comparison_request is None or comparison_request.reuse and history and (history[-1].state or {}).get('comparison_pending_batch')):
+            execute=lambda scope:self.query(scope,complete_results=complete_results)
+            comparison_edit=ConversationComparisonBatchEditAgent(self.engine).run(question,history,execute,confirmed_scope=_confirmed_comparison_scope)
+            if comparison_edit is None and comparison_request is None:comparison_edit=ConversationComparisonEditAgent(self.engine).run(
+                question,history,execute,confirmed_scope=_confirmed_comparison_scope)
+        if comparison_request is not None or comparison_edit is not None:
+            result=comparison_edit if comparison_edit is not None else ConversationComparisonAgent(self.engine).run(comparison_request,history)
+            context=result.pop('comparison_context',None)
+            pending_edit=result.pop('comparison_pending_edit',None)
+            pending_query=result.pop('comparison_pending_query',None)
+            pending_batch=result.pop('comparison_pending_batch',None)
+            effective=result.pop('_effective_question',question)
+            state={'route':'comparison','pending_question':effective if result['status']=='clarification' else None}
+            if context is not None:state['comparison_context']=context
+            if pending_edit is not None:state['comparison_pending_edit']=pending_edit
+            if pending_query is not None:state['comparison_pending_query']=pending_query
+            if pending_batch is not None:state['comparison_pending_batch']=pending_batch
+            state['comparison_completed']=result['status']=='ok'
+            if result['status']=='clarification' and context is not None:
+                from .conversation_comparison import seal
+                state['pending_comparison_result']=seal({key:result[key] for key in
+                    ('status','answer','clarification','clarification_code','clarification_options','columns','rows',
+                     'comparison_actions','comparison_pending_target','comparison_batch_progress','trace') if key in result})
+            audit_id=hashlib.sha256(json.dumps({'question':question,'result':result},ensure_ascii=False,sort_keys=True).encode()).hexdigest()[:24]
+            response={'status':result['status'],'question':question,'effective_question':effective,'route':'comparison',
+                'planner_source':'server_verified_conversation_comparison','session_id':session_id,
+                'context_turns':len(history),'state':{key:value for key,value in state.items() if key not in {'comparison_context','comparison_pending_query','comparison_pending_batch','pending_comparison_result'}},
+                'result':result,'trace':result['trace'],'audit_id':audit_id,
+                'context_resolution':{'mode':'server_verified_conversation_comparison' if result['status']=='ok' else 'comparison_requires_clarification',
+                                      'actual_question':question}}
+            if session_id:self._remember(session_id,question=_remember_question or question,effective_question=effective,state=state,
+                pending_parent_id=history[-1].turn_id if history and (history[-1].state or {}).get('route')=='comparison' else None)
+            return response
+        from .pending_scope_edit import PendingScopeEditAgent
+        from .clarification_continuation import ClarificationContinuationAgent,ClarificationContinuation
+        pending_edit=PendingScopeEditAgent(self.engine).run(question,history)
+        continuation = (ClarificationContinuation(pending_edit.scope,pending_edit.plan,
+            pending_edit.reason,pending_edit.message,0)
+            if pending_edit and (not pending_edit.verified or pending_edit.plan.clarification)
+            else ClarificationContinuationAgent(self.engine).run(question, history))
+        if continuation is not None:
+            required = continuation.plan
+            message = continuation.message + ' ' + required.clarification
+            result = QueryResult(status='clarification',question=question,
+                rewritten_question=continuation.scope,sql=None,parameters=(),columns=(),rows=(),
+                plan=required.to_dict(),explanation=(message,),clarification=message,
+                provenance={'source_type':'structured_database','execution_status':'not_executed'},
+                clarification_code=required.clarification_code,
+                clarification_options=tuple(required.clarification_options),result_state='unexecuted').to_dict()
+            state = {'route':'sql','pending_question':continuation.scope,
+                'clarification_code':required.clarification_code,
+                'clarification_options':list(required.clarification_options),
+                'clarification_retry_count':continuation.retry_count,
+                'metrics':required.to_dict()['metrics'],'filters':required.to_dict()['filters'],
+                'dimensions':required.dimensions}
+            audit = {'mode':'pending_sql_clarification_retained','actual_question':question,
+                'base_scope_question':continuation.scope,'reason':continuation.reason,
+                'retry_count':continuation.retry_count,'executed':False}
+            if pending_edit:
+                audit['base_scope_question']=history[-1].effective_question
+                audit['scope_question']=continuation.scope
+                if pending_edit.verified:
+                    audit['mode']='server_verified_pending_sql_edit'
+                    audit['replacements']=list(pending_edit.replacements)
+            response = {'status':'clarification','question':question,'effective_question':continuation.scope,
+                'route':'sql','planner_source':'PendingScopeEditAgent' if pending_edit else 'ClarificationContinuationAgent','session_id':session_id,
+                'context_turns':len(history),'state':state,'result':result,
+                'trace':[{'stage':'pending_scope_edit','source':'PendingScopeEditAgent',
+                          'status':'verified' if pending_edit.verified else 'rejected','executed':False}] if pending_edit else [],
+                'context_resolution':audit,
+                'audit_id':hashlib.sha256(json.dumps(audit,ensure_ascii=False,sort_keys=True).encode()).hexdigest()[:24]}
+            if session_id:self._remember(session_id,question=_remember_question or question,effective_question=continuation.scope,state=state,
+                pending_parent_id=_confirmed_pending_turn_id or (history[-1].turn_id if history else None))
+            return response
         scope_question, fusion_history_audit, inherited = question, {'mode': 'independent'}, None
         history_error = None
-        if not explicit_cross_source_request(question):
+        if explicit_sql_reference is None and not explicit_cross_source_request(question):
             try:
                 scope_question, fusion_history_audit, inherited = resolve_fusion_followup(
                     question, history, self.engine, self.knowledge)
@@ -338,9 +601,34 @@ class OmniAgent:
                 scope_question, fusion_history_audit = sql_scope, sql_audit
             elif sql_audit.get('requires_clarification') is True:
                 fusion_history_audit = sql_audit
+                if str(sql_audit.get('reason','')).startswith('requested_sql_reference_'):
+                    history_error = 'sql_followup_scope_unverified'
             elif sql_audit.get('reason') == 'self_contained_sql':
                 if fusion_history_audit.get('reason') != 'server_verified_self_contained_sql':
                     fusion_history_audit = sql_audit
+        if pending_edit and pending_edit.verified:
+            scope_question=pending_edit.scope
+            fusion_history_audit={'mode':'server_verified_pending_sql_edit','actual_question':question,
+                'base_scope_question':history[-1].effective_question,'scope_question':scope_question,
+                'replacements':list(pending_edit.replacements),'verification':'explicit_atomic_slots_full_scope_reparse'}
+        if fusion_history_audit.get('mode') == 'executed_sql_edit_rejected':
+            # A rejected edit is not a new successful query or a pending task.
+            # Keep the previous source identity so a corrected edit can retry.
+            message = fusion_history_audit['message']
+            audit = {**fusion_history_audit,'executed':False,'context_preserved':True}
+            result = QueryResult(status='clarification',question=question,
+                rewritten_question=audit['base_scope_question'],sql=None,parameters=(),columns=(),rows=(),
+                plan=QueryPlan(rewritten_question=audit['base_scope_question']).to_dict(),
+                explanation=(message,),clarification=message,clarification_code=audit['reason'],
+                provenance={'source_type':'structured_database','execution_status':'not_executed'},
+                result_state='unexecuted').to_dict()
+            return {'status':'clarification','question':question,
+                'effective_question':audit['base_scope_question'],'route':'sql',
+                'planner_source':'ExecutedScopeEditAgent','session_id':session_id,
+                'context_turns':len(history),'state':{'route':'sql','context_preserved':True},
+                'result':result,'context_resolution':audit,
+                'trace':[{'stage':'scope_edit','source':'ExecutedScopeEditAgent','status':'rejected','executed':False}],
+                'audit_id':hashlib.sha256(json.dumps(audit,ensure_ascii=False,sort_keys=True).encode()).hexdigest()[:24]}
         fresh_scope = (fusion_history_audit.get('reason') in {'server_verified_self_contained_sql', 'self_contained_sql'}
                        or bool(re.search(r'^(?:换个主题|换一个主题|换个问题|新问题|重新查询)', question)))
         planning_history = () if fresh_scope else history
@@ -355,6 +643,13 @@ class OmniAgent:
                                       if history_error == 'sql_followup_scope_unverified' else
                                       '追问来源或时间范围尚未核验，请完整说明文档来源、数据库基准年份和目标年份。')}
             rejection_code = history_error
+        elif (fusion_history_audit.get('context_reference')
+              and fusion_history_audit.get('mode') in VERIFIED_SQL_CONTEXT_MODES):
+            # The user explicitly selected SQL and the server verified the
+            # exact source plus the edit. Intent planning cannot reroute it to
+            # documents/fusion or silently replace the selected history turn.
+            plan = {'route':'sql','effective_question':scope_question,'tasks_json':'[]','clarification':''}
+            planning_notes.append('server_verified_explicit_sql_reference')
         elif self.client:
             try:
                 context_question = scope_question
@@ -364,7 +659,8 @@ class OmniAgent:
                 requirements = requested_operations(scope_question)
                 context = {'question': scope_question, 'actual_question': question,
                     'server_context_resolution': fusion_history_audit,
-                    'history': [{'question': turn.effective_question, 'state': turn.state} for turn in planning_history[-5:]],
+                    'history': [{'question': turn.effective_question, 'state': {key:value for key,value in (turn.state or {}).items()
+                        if key not in {'comparison_snapshot','comparison_context','comparison_pending_query','comparison_pending_batch','pending_comparison_result'}}} for turn in planning_history[-5:]],
                     'reference_date': self.engine.reference_date.isoformat(),
                     'required_operations': requirements,
                     'database_schema': self.engine.schema(include_row_count=False), 'documents': self.catalogue(context_question)}
@@ -433,9 +729,19 @@ class OmniAgent:
         else:
             plan = self.basic_plan(scope_question, history)
         route, effective = plan['route'], plan['effective_question']
-        if route == 'sql' and fusion_history_audit.get('requires_clarification') is True:
+        # A model's free-text clarification must not hide actionable choices
+        # already known to the SQL planner. Never promote a blocked history or
+        # a cross-source task, and only promote a plan that still needs input.
+        if (route == 'clarify' and not rejection_code and not history_error
+                and inherited is None and not fusion_history_audit.get('requires_clarification')
+                and self.basic_plan(scope_question, ())['route'] == 'sql'):
+            required = self.engine.extract_required_intent(scope_question)
+            if required.clarification and required.clarification_options:
+                route, effective = 'sql', scope_question
+                planning_notes.append('structured_sql_clarification_options_preserved')
+        if (route == 'sql' or str(fusion_history_audit.get('reason','')).startswith('requested_sql_reference_')) and fusion_history_audit.get('requires_clarification') is True:
             route, effective = 'clarify', question
-            plan['clarification'] = '追问中的原有约束尚未核验，请完整说明查询指标、筛选条件和时间范围。'
+            plan['clarification'] = reference_clarification(fusion_history_audit.get('reason'))
             rejection_code = 'sql_followup_scope_unverified'
         if inherited is not None and route not in {'fusion', 'clarify'}:
             route, effective = 'clarify', question
@@ -462,7 +768,20 @@ class OmniAgent:
                   'normalizations': planning_notes, 'attempts': planning_attempts}]
         if route == 'sql':
             try:
-                result = self.engine.answer(effective).to_dict()
+                required = self.engine.extract_required_intent(effective)
+                if (required.clarification and required.clarification_options
+                        and required.clarification_code in {'missing_time_range', 'missing_time_grain',
+                            'missing_comparison_period', 'missing_comparison_scope'}):
+                    # A trend cannot be silently replaced by an all-time total
+                    # by the downstream model. These missing choices are user-owned.
+                    result = QueryResult(status='clarification', question=effective,
+                        rewritten_question=effective, sql=None, parameters=(), columns=(), rows=(),
+                        plan=required.to_dict(), explanation=(required.clarification,),
+                        clarification=required.clarification, clarification_code=required.clarification_code,
+                        clarification_options=tuple(required.clarification_options),
+                        provenance={'source_type':'structured_database'}).to_dict()
+                else:
+                    result = self.engine.answer(effective, **({'complete_results': True} if complete_results else {})).to_dict()
             except SqlSafetyError:
                 # Persist the failed turn without granting it execution authority.
                 # Do not serialize exception text, candidate SQL or model payloads.
@@ -477,12 +796,19 @@ class OmniAgent:
                      'filters': result['plan'].get('filters', []), 'dimensions': result['plan'].get('dimensions', []),
                      'clarification_code': result['plan'].get('clarification_code'),
                      'pending_question': effective if result['status']=='clarification' else None}
+            if result['status']=='clarification':
+                state['clarification_options']=list(result.get('clarification_options',[]))
             executed_context = saved_sql_context(effective, result)
             if executed_context is not None:
                 state['executed_sql_context'] = executed_context
+                from .conversation_comparison import build_snapshot
+                snapshot=build_snapshot(result,executed_context,self.engine)
+                if snapshot is not None:state['comparison_snapshot']=snapshot
         elif route == 'document':
             result = self.knowledge.answer(effective)
             state = {'route': route, 'sources': [hit['metadata']['document_id'] for hit in result['citations']]}
+            saved=document_context(effective,result,self.knowledge)
+            if saved is not None:state['document_context']=saved
         elif route == 'fusion':
             tasks = json.loads(plan['tasks_json'])
             effective = scope_question
@@ -513,8 +839,12 @@ class OmniAgent:
         audit_id = hashlib.sha256(json.dumps({'question': effective, 'result': result}, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:24]
         response = {'status': result['status'], 'question': question, 'effective_question': effective, 'route': route,
                     'planner_source': source, 'session_id': session_id, 'context_turns': len(history),
-                    'state': state, 'result': result, 'trace': trace, 'audit_id': audit_id}
+                    'state': {key:value for key,value in state.items() if key!='comparison_snapshot'}, 'result': result, 'trace': trace, 'audit_id': audit_id}
         response['context_resolution'] = fusion_history_audit
         if session_id:
-            self.conversations.remember(session_id, question=question, effective_question=effective, state=state)
+            pending_parent = (history[-1].turn_id if history and
+                (history[-1].state or {}).get('pending_question') and
+                fusion_history_audit.get('mode') in VERIFIED_SQL_CONTEXT_MODES else None)
+            self._remember(session_id, question=_remember_question or question, effective_question=effective,
+                state=state, pending_parent_id=_confirmed_pending_turn_id or pending_parent)
         return response

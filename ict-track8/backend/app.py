@@ -326,6 +326,12 @@ class FormulaCalculationRequest(BaseModel):
     formula_locator: str = Field(min_length=1, max_length=500)
 
 
+class ExcelTableSelection(BaseModel):
+    sheet_name: str = Field(min_length=1, max_length=31)
+    range: str = Field(pattern=r'^[A-Z]{1,3}[1-9]\d{0,6}:[A-Z]{1,3}[1-9]\d{0,6}$')
+    header_rows: int = Field(ge=0, le=8, strict=True)
+
+
 class KnowledgeIngestRequest(BaseModel):
     document_id: str = Field(min_length=1, max_length=128)
     title: str = Field(min_length=1, max_length=200)
@@ -333,6 +339,7 @@ class KnowledgeIngestRequest(BaseModel):
     filename: str = Field(min_length=1, max_length=200)
     file_base64: str = Field(min_length=1, max_length=28_000_000)
     language: str = Field(default="eng", min_length=2, max_length=32)
+    excel_tables: list[ExcelTableSelection] = Field(default_factory=list, max_length=64)
 
 
 class KnowledgeQueryRequest(BaseModel):
@@ -368,6 +375,7 @@ class ImageEnhancementRequest(ImageQualityRequest):
     transforms: list[str] = Field(default_factory=list, max_length=8)
     rotation_degrees: float = Field(default=0.0, ge=-360.0, le=360.0)
     crop_box: list[int] | None = Field(default=None, min_length=4, max_length=4)
+    perspective_quad: list[list[float]] | None = Field(default=None, min_length=4, max_length=4)
     max_dimension: int = Field(default=2400, ge=1, le=6000)
 
 
@@ -376,16 +384,36 @@ class PdfAnalysisRequest(BaseModel):
     pdf_base64: str = Field(min_length=1, max_length=28_000_000)
 
 
+class PdfTableHeaderSelection(BaseModel):
+    page_no: int = Field(ge=1, le=1000)
+    table_index: int = Field(default=0, ge=0, le=31)
+    header_rows: int = Field(ge=0, le=5)
+
+
+class PdfTableLink(BaseModel):
+    from_page: int = Field(ge=1,le=1000,strict=True)
+    from_table: int = Field(ge=0,le=31,strict=True)
+    to_page: int = Field(ge=1,le=1000,strict=True)
+    to_table: int = Field(ge=0,le=31,strict=True)
+
+
 class ChunkPreviewRequest(BaseModel):
     document_id: str = Field(default="document", min_length=1, max_length=200)
     modality: str = Field(pattern=r"^(pdf|docx|xlsx|image)$")
     file_base64: str = Field(min_length=1, max_length=28_000_000)
     language: str = Field(default="eng", min_length=2, max_length=32)
+    pdf_table_headers: list[PdfTableHeaderSelection] = Field(default_factory=list, max_length=8)
+    pdf_table_links: list[PdfTableLink] = Field(default_factory=list, max_length=7)
+    excel_tables: list[ExcelTableSelection] = Field(default_factory=list, max_length=64)
 
 
 class OcrRequest(ImageQualityRequest):
     language: str = Field(default="eng", min_length=2, max_length=32)
     max_attempts: int = Field(default=3, ge=1, le=3)
+    perspective_quad: list[list[float]] | None = Field(default=None, min_length=4, max_length=4)
+    auto_perspective: bool = True
+    table_header_rows: int | None = Field(default=None, ge=0, le=5)
+    table_index: int = Field(default=0, ge=0, le=31)
 
 
 class ClarificationRequest(BaseModel):
@@ -403,6 +431,7 @@ class OmniRequest(BaseModel):
     question: str = Field(min_length=1, max_length=1000)
     session_id: str | None = Field(default=None, max_length=128)
     reset_context: bool = False
+    complete_results: bool = False
 
 
 @app.post('/api/v1/omni/query')
@@ -410,7 +439,8 @@ def omni_query(request: OmniRequest):
     from .omni_agent import OmniAgent
     try:
         return OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
-            request.question, session_id=request.session_id, reset_context=request.reset_context)
+            request.question, session_id=request.session_id, reset_context=request.reset_context,
+            complete_results=request.complete_results)
     except SourceIntegrityError as exc:
         raise HTTPException(status_code=409,detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
     except ValueError as exc:
@@ -420,17 +450,30 @@ def omni_query(request: OmniRequest):
 @app.post('/api/v1/omni/clarify')
 def omni_clarify(request: ClarificationRequest):
     """Validate the offered selection and retain the unified conversation state."""
+    try:
+        with conversation_store.turn(request.session_id):
+            return _omni_clarify_turn(request)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
+
+
+def _omni_clarify_turn(request: ClarificationRequest):
     from .omni_agent import OmniAgent
     try:
+        pending={}
         if request.session_id:
             history = conversation_store.context(request.session_id)
             pending = (history[-1].state or {}) if history else {}
             if pending.get('pending_question') != request.original_question:
                 raise HTTPException(status_code=409,detail='该澄清已过期，请重新提交问题。')
-        offered = engine.answer(request.original_question).to_dict()
-        if offered['status'] != 'clarification' or offered['clarification_code'] != request.clarification_code:
+            if pending.get('route') == 'sql':
+                from .pending_source_validation import PendingSourceValidationAgent
+                if not PendingSourceValidationAgent(engine).matches(pending):
+                    raise HTTPException(status_code=409,detail='数据源或业务映射已经更新，请重新提交完整问题。')
+        offered = engine.extract_required_intent(request.original_question)
+        if not offered.clarification or offered.clarification_code != request.clarification_code:
             raise HTTPException(status_code=400,detail='澄清类型与当前问题不匹配。')
-        selected = next((option for option in offered['clarification_options']
+        selected = next((option for option in offered.clarification_options
                          if option['value']==request.selected_value),None)
         if selected is None:
             raise HTTPException(status_code=400,detail='请选择服务端提供的有效选项。')
@@ -438,7 +481,10 @@ def omni_clarify(request: ClarificationRequest):
             code=request.clarification_code,value=selected['value'],label=selected.get('label'),time_value=request.selected_time))
         # A user-confirmed choice already fixes a slot. Do not send it back to
         # the top-level model for another rewrite that could discard the hint.
-        return OmniAgent(engine,knowledge_store,conversation_store).query(question,session_id=request.session_id)
+        return OmniAgent(engine,knowledge_store,conversation_store).query(question,session_id=request.session_id,
+            complete_results=request.complete_results,
+            _confirmed_comparison_scope=question if pending.get('comparison_pending_query') else None,
+            _confirmed_pending_turn_id=history[-1].turn_id if request.session_id and pending.get('route')=='sql' else None)
     except ValueError as exc:
         raise HTTPException(status_code=400,detail=str(exc)[:200]) from exc
 
@@ -498,8 +544,11 @@ def knowledge_ingest(request: KnowledgeIngestRequest):
         raise HTTPException(status_code=429, detail="文档解析繁忙，请稍后重试")
     try:
         raw = base64.b64decode(request.file_base64, validate=True)
+        if request.excel_tables and request.modality != 'xlsx':
+            raise ValueError('Excel表区域仅可用于xlsx文件')
         return knowledge_store.ingest(raw, document_id=request.document_id, title=request.title,
-            modality=request.modality, filename=request.filename, language=request.language)
+            modality=request.modality, filename=request.filename, language=request.language,
+            excel_tables=[item.model_dump() for item in request.excel_tables] or None)
     except (ValueError, UnicodeError, binascii.Error) as exc:
         raise HTTPException(status_code=400, detail=str(exc)[:200]) from exc
     finally:
@@ -838,6 +887,7 @@ def image_enhance(request: ImageEnhancementRequest) -> dict[str, object]:
             transforms=tuple(request.transforms),
             rotation_degrees=request.rotation_degrees,
             crop_box=crop_box,
+            perspective_quad=request.perspective_quad,
             max_dimension=request.max_dimension,
         )
         if len(result.image_bytes) > 12 * 1024 * 1024:
@@ -905,13 +955,36 @@ def ocr(request: OcrRequest) -> dict[str, object]:
     if len(raw) > 8 * 1024 * 1024:
         raise HTTPException(status_code=413, detail="图片超过 8MB 限制")
     try:
-        return ocr_pipeline.run(raw, language=request.language, max_attempts=request.max_attempts).to_dict()
+        result = ocr_pipeline.run(raw, language=request.language, max_attempts=request.max_attempts,
+            perspective_quad=request.perspective_quad,auto_perspective=request.auto_perspective).to_dict()
+        if request.table_header_rows is not None:
+            from .scanned_table_structure import ScannedTableStructureAgent
+            result['metadata']['table_structure'] = ScannedTableStructureAgent().run(
+                result['metadata'], table_index=request.table_index, header_rows=request.table_header_rows)
+            from .amount_cell_review import AmountCellReviewAgent
+            result['metadata']['table_structure']['amount_cell_review']=AmountCellReviewAgent().run(raw,
+                result['metadata']['table_structure'],getattr(getattr(ocr_pipeline,'executor',None),'recognize_line',None))
+            from .blank_cell_review import BlankCellReviewAgent
+            result['metadata']['table_structure']['blank_cell_review']=BlankCellReviewAgent().run(raw,
+                result['metadata']['table_structure'],getattr(getattr(ocr_pipeline,'executor',None),'recognize_line',None))
+        return result
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.post("/api/v1/documents/chunks-preview")
 def chunks_preview(request: ChunkPreviewRequest) -> dict[str, Any]:
+    if request.excel_tables and request.modality != 'xlsx':
+        raise HTTPException(status_code=400,detail='Excel表区域仅可用于xlsx文件')
+    if (request.pdf_table_headers or request.pdf_table_links) and request.modality != 'pdf':
+        raise HTTPException(status_code=400, detail='逐页表头选择仅适用于PDF')
+    if request.pdf_table_links:
+        try:
+            from .pdf_table_continuity import PdfTableContinuityAgent
+            PdfTableContinuityAgent.validate_links([item.model_dump() for item in request.pdf_table_links],
+                [(item.page_no,item.table_index) for item in request.pdf_table_headers])
+        except ValueError as exc:
+            raise HTTPException(status_code=400,detail=str(exc)) from exc
     try:
         raw = base64.b64decode(request.file_base64, validate=True)
     except (binascii.Error, ValueError) as exc:
@@ -931,16 +1004,26 @@ def chunks_preview(request: ChunkPreviewRequest) -> dict[str, Any]:
                 language=request.language,
             )
         elif request.modality == "xlsx":
-            result = document_chunker.parse_xlsx(raw, document_id=request.document_id)
+            result = document_chunker.parse_xlsx(raw, document_id=request.document_id,
+                excel_tables=[item.model_dump() for item in request.excel_tables] or None)
         else:
             result = document_chunker.parse_image(raw, document_id=request.document_id, ocr_pipeline=ocr_pipeline, language=request.language)
+        response=result.to_dict()
+        if request.pdf_table_headers:
+            from .pdf_table_preview import PdfTablePreviewAgent
+            response['table_structures']=PdfTablePreviewAgent().run(raw,
+                [item.model_dump() for item in request.pdf_table_headers],
+                ocr_pipeline=ocr_pipeline,chunks=result.chunks,language=request.language)
+            from .pdf_table_continuity import PdfTableContinuityAgent
+            response['table_continuity']=PdfTableContinuityAgent().run(response['table_structures'],
+                [item.model_dump() for item in request.pdf_table_links])
     except ValueError as exc:
         message = str(exc)
         status = 413 if "超过上限" in message else 400
         raise HTTPException(status_code=status, detail=message) from exc
     finally:
         DOCUMENT_PARSE_SLOTS.release()
-    return result.to_dict()
+    return response
 
 
 @app.get("/api/v1/documents/ocr/health")

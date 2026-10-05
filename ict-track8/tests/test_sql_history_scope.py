@@ -5,7 +5,7 @@ import pytest
 from backend.nl2sql.engine import Nl2SqlEngine
 from backend.nl2sql.seed import initialize_database
 from backend.session import ConversationTurn
-from backend.sql_history_scope import resolve_sql_followup_scope
+from backend.sql_history_scope import resolve_sql_followup_scope, saved_sql_context
 
 
 @pytest.fixture
@@ -79,6 +79,58 @@ def test_no_history_no_provider_call(context):
     engine.model_plan_provider = NeverCall()
     assert resolve_sql_followup_scope('那华南呢', [], engine)[0] == '那华南呢'
     assert resolve_sql_followup_scope('那华南呢', [previous], engine)[1]['mode'] == 'server_verified_sql_followup'
+
+
+def test_confirmed_same_metric_filter_replacement_is_verified_without_model(context):
+    engine, previous = context
+    result = engine.answer(previous.effective_question).to_dict()
+    state = {**previous.state, 'route': 'sql', 'pending_question': None,
+        'clarification_code': None, **{key: result['plan'][key]
+        for key in ('metrics', 'filters', 'dimensions')},
+        'executed_sql_context': saved_sql_context(previous.effective_question, result)}
+    turn = ConversationTurn(previous.question, previous.effective_question, 0, state)
+
+    scope, audit = resolve_sql_followup_scope('那华南呢，仍看销售额？', [turn], engine)
+
+    assert audit['mode'] == 'server_verified_sql_followup'
+    assert audit['verification'] == (
+        'explicit_single_filter_value_replacement_same_metric_confirmation_and_full_scope_reparse')
+    assert '华南' in scope and '2025年' in scope and '销售额' in scope
+    assert audit['replacements'][0]['slot'] == 'sales_orders.region'
+
+
+@pytest.mark.parametrize('question', [
+    '那华南订单数呢，仍看销售额？',
+    '那华南呢，仍看销售额，但排除线上？',
+    '那华南呢，仍看销售额，只看有效订单？',
+])
+def test_confirmed_filter_replacement_rejects_extra_metric_or_condition(context, question):
+    engine, previous = context
+    result = engine.answer(previous.effective_question).to_dict()
+    state = {**previous.state, 'route': 'sql', 'pending_question': None,
+        'clarification_code': None, **{key: result['plan'][key]
+        for key in ('metrics', 'filters', 'dimensions')},
+        'executed_sql_context': saved_sql_context(previous.effective_question, result)}
+    turn = ConversationTurn(previous.question, previous.effective_question, 0, state)
+
+    scope, audit = resolve_sql_followup_scope(question, [turn], engine)
+
+    assert scope == question
+    assert audit['mode'] == 'independent'
+
+
+def test_confirmed_filter_replacement_requires_matching_saved_sql(context):
+    engine, previous = context
+    state = deepcopy(previous.state)
+    state['executed_sql_context'] = {'payload': {'question': previous.effective_question,
+        'sql': 'SELECT 1', 'parameters': [], 'source_revision': engine.current_source_revision()},
+        'sha256': 'not-the-saved-query-hash'}
+    turn = ConversationTurn(previous.question, previous.effective_question, 0, state)
+
+    scope, audit = resolve_sql_followup_scope('那华南呢，仍看销售额？', [turn], engine)
+
+    assert scope == '那华南呢，仍看销售额？'
+    assert audit['mode'] == 'independent'
 
 
 @pytest.mark.parametrize('incorrect_scope', ['2024年华南销售额', '2025年华南订单数', '华南销售额'])

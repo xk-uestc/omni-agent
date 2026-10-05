@@ -7,6 +7,34 @@ import re
 from datetime import date
 
 
+def normalize_clarification_reply(question: str) -> str:
+    """Normalize bounded conversational wrappers, never extract from a sentence."""
+    text = question.strip().rstrip('？?。！!')
+    text = re.sub(r'^(?:请选择|选择|就选|选(?!项)|就用|用|就看|看)', '', text).strip()
+    return re.sub(r'(?:吧|即可)$', '', text).strip()
+
+
+def clarification_ordinal(question: str) -> int | None:
+    """One-based explicit menu reference; -1 means last. Bare numbers aren't choices."""
+    text=normalize_clarification_reply(question)
+    if text in {'最后一个','最后一项','最后一条'}:
+        return -1
+    match=re.fullmatch(r'第([0-9]{1,2}|[一二三四五六七八九十两]{1,3})(?:个|项|条|个选项|项选项|选项)?',text)
+    if match is None:
+        # "选2" is explicit; "2" may be a question about a numeric value.
+        if re.match(r'^(?:请选择|选择|就选|选(?!项))',question.strip()) and re.fullmatch(r'[0-9]{1,2}',text):
+            return int(text)
+        return None
+    token=match[1]
+    if token.isdigit():return int(token)
+    digits={c:i for i,c in enumerate('零一二三四五六七八九')};digits['两']=2
+    if token in digits:return digits[token]
+    parts=token.split('十')
+    if len(parts)==2 and (not parts[0] or parts[0] in digits) and (not parts[1] or parts[1] in digits):
+        return (digits[parts[0]] if parts[0] else 1)*10+(digits[parts[1]] if parts[1] else 0)
+    return 0
+
+
 @dataclass(frozen=True)
 class ClarificationSelection:
     code: str

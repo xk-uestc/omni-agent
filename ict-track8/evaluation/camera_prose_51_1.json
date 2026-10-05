@@ -1,0 +1,47 @@
+{
+  "filename": "51_1 copy.png",
+  "sha256": "5c5ea25296afc07073f0733b3a939108606d7bbfc2179c9b2a8f06a7e6666874",
+  "size_px": [1425, 1711],
+  "reference_kind": "manual_transcription_from_original_author_released_camera_image",
+  "scope": "visible_prose_blocks_and_heading_excluding_two_display_equations_and_page_number",
+  "not_official_contest_benchmark": true,
+  "blocks": [
+    {
+      "id": "intro_fragment",
+      "bounds_normalized": [0.235, 0.130, 0.735, 0.197],
+      "text": "tion over Z does not significantly impact the approach described so far, but the use of latent variables is so ubiquitous that it deserves special treatment. In particular, some insight can be gained by viewing the inference process in the presence of latent variables as a simultaneous minimization over Y and Z:"
+    },
+    {
+      "id": "intermediate_results",
+      "bounds_normalized": [0.244, 0.216, 0.753, 0.286],
+      "text": "Latent variables can be viewed as intermediate results on the way to finding the best output Y. At this point, one could argue that there is no conceptual difference between the Z and Y variables: Z could simply be folded into Y. The distinction arises during training: we are given the correct value of Y for a number of training samples, but we are never given the correct value of Z."
+    },
+    {
+      "id": "recognition_examples",
+      "bounds_normalized": [0.254, 0.286, 0.795, 0.508],
+      "text": "Latent variables are very useful in situations where a hidden characteristic of the process being modeled can be inferred from observations, but cannot be predicted directly. One such example is in recognition problems. For example, in face recognition the gender of a person or the orientation of the face could be a latent variable. Knowing these values would make the recognition task much easier. Likewise in invariant object recognition the pose parameters of the object (location, orientation, scale) or the illumination could be latent variables. They play a crucial role in problems where segmentation of the sequential data must be performed simultaneously with the recognition task. A good example is speech recognition, in which the segmentation of sentences into words and words into phonemes must take place simultaneously with recognition, yet the correct segmentation into phonemes is rarely available during training. Similarly, in handwriting recognition, the segmentation of words into characters should take place simultaneously with the recognition. The use of latent variables in face recognition is discussed in this section, and Section 7.3 describes a latent variable architecture for handwriting recognition."
+    },
+    {
+      "id": "section_heading",
+      "bounds_normalized": [0.267, 0.517, 0.697, 0.545],
+      "text": "4.1 An Example of Latent Variable Architecture"
+    },
+    {
+      "id": "face_detector",
+      "bounds_normalized": [0.266, 0.545, 0.800, 0.684],
+      "text": "To illustrate the concept of latent variables, we consider the task of face detection, beginning with the simple problem of determining whether a face is present or not in a small image. Imagine that we are provided with a face detecting function Gface(X) which takes a small image window as input and produces a scalar output. It outputs a small value when a human face fills the input image, and a large value if no face is present (or if only a piece of a face or a tiny face is present). An energy-based face detector built around this function is shown in Figure 8(a). The variable Y controls the position of a binary switch (1 = face, 0 = non-face). The output energy is equal to Gface(X) when Y = 1, and to a fixed threshold value T when Y = 0:"
+    },
+    {
+      "id": "threshold_interpretation",
+      "polygon_px": [[370,1220],[1110,1185],[1110,1238],[370,1280]],
+      "bounds_normalized": [0.258, 0.704, 0.790, 0.745],
+      "text": "The value of Y that minimizes this energy function is 1 (face) if Gface(X) < T and 0 (non-face) otherwise."
+    },
+    {
+      "id": "last_fragment",
+      "polygon_px": [[370,1280],[1110,1238],[1110,1320],[370,1365]],
+      "bounds_normalized": [0.258, 0.745, 0.790, 0.790],
+      "text": "Let us now consider the more complex task of detecting and locating a single face in a large image. We can apply our Gface(X) function to multiple windows in the large image, compute which window produces the lowest value of Gface(X), and detect a"
+    }
+  ]
+}

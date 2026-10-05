@@ -28,6 +28,42 @@ def pending(client):
             'clarification_code':'missing_metric','selected_value':'sales_amount'}
 
 
+def test_unified_query_and_clarification_forward_complete_results(client,monkeypatch):
+    original=app_module.engine.answer
+    observed=[]
+    def recording(question,**kwargs):
+        observed.append((question,kwargs.get('complete_results',False)))
+        return original(question,**kwargs)
+    monkeypatch.setattr(app_module.engine,'answer',recording)
+    response=client.post('/api/v1/omni/query',json={
+        'question':'2025年华东销售额','session_id':'complete','complete_results':True})
+    assert response.status_code==200 and response.json()['status']=='ok'
+    assert any(enabled for _,enabled in observed)
+    selection=pending(client)
+    observed.clear()
+    selection['complete_results']=True
+    response=client.post('/api/v1/omni/clarify',json=selection)
+    assert response.status_code==200 and response.json()['status']=='ok'
+    assert any(enabled for _,enabled in observed)
+
+
+def test_model_free_text_clarification_keeps_server_time_options(client,monkeypatch):
+    class ClarifyingClient:
+        audit={'status':'completed','http_status':200}
+        def generate(self,*args,**kwargs):
+            return {'route':'clarify','effective_question':'销售额趋势',
+                    'tasks_json':'[]','clarification':'请补充时间范围和粒度。'}
+    monkeypatch.setattr(app_module,'generation_client',ClarifyingClient())
+    def must_not_execute(*args,**kwargs):
+        raise AssertionError('Missing trend choices must not enter model SQL execution')
+    monkeypatch.setattr(app_module.engine,'answer',must_not_execute)
+    body=client.post('/api/v1/omni/query',json={'question':'销售额趋势','session_id':'model-pending'}).json()
+    assert body['route']=='sql' and body['status']=='clarification'
+    assert body['result']['clarification_code']=='missing_time_range'
+    assert 'year' in {option['value'] for option in body['result']['clarification_options']}
+    assert body['result']['sql'] is None
+
+
 def test_unified_clarification_retains_state_and_next_followup(client):
     request=pending(client)
     response=client.post('/api/v1/omni/clarify',json=request)
@@ -39,6 +75,90 @@ def test_unified_clarification_retains_state_and_next_followup(client):
     followup=client.post('/api/v1/omni/query',json={'question':'那华南呢','session_id':'clarify'}).json()
     assert followup['status']=='ok' and '华南' in followup['effective_question']
     assert '华东' not in followup['effective_question'] and '2025年' in followup['effective_question']
+
+
+def test_retained_pending_task_still_accepts_validated_ui_choice(client):
+    original=pending(client)
+    retained=client.post('/api/v1/omni/query',json={'question':'不知道','session_id':'clarify'}).json()
+    assert retained['status']=='clarification' and retained['effective_question']==original['original_question']
+    filled=client.post('/api/v1/omni/clarify',json=original)
+    assert filled.status_code==200
+    assert filled.json()['result']['rows']==[{'销售额':29584.0}]
+
+
+def test_ui_choice_closes_original_pending_task(client):
+    body=client.post('/api/v1/omni/query',json={'question':'2025年华东销售额趋势','session_id':'ui-close'}).json()
+    completed=client.post('/api/v1/omni/clarify',json={'session_id':'ui-close',
+        'original_question':body['effective_question'],'clarification_code':body['result']['clarification_code'],
+        'selected_value':'monthly_trend'}).json()
+    assert completed['status']=='ok'
+    restored=client.post('/api/v1/omni/query',json={'session_id':'ui-close',
+        'question':f"继续待补查询编号{body['query_reference_id']}"}).json()
+    assert restored['result']['clarification_code']=='pending_reference_completed'
+
+
+def test_ui_multi_choice_retains_one_task_lineage(client):
+    body=client.post('/api/v1/omni/query',json={'question':'销售额趋势','session_id':'ui-lineage'}).json()
+    identifiers=[body['query_reference_id']]
+    for value, time_value in [('year','2025'),('monthly_trend',None)]:
+        response=client.post('/api/v1/omni/clarify',json={'session_id':'ui-lineage',
+            'original_question':body['effective_question'],'clarification_code':body['result']['clarification_code'],
+            'selected_value':value,'selected_time':time_value})
+        assert response.status_code==200, response.json()
+        body=response.json()
+        assert 'query_reference_id' in body, body
+        identifiers.append(body['query_reference_id'])
+    assert body['status']=='ok'
+    for identifier in identifiers[:-1]:
+        restored=client.post('/api/v1/omni/query',json={'session_id':'ui-lineage',
+            'question':f'继续待补查询编号{identifier}'}).json()
+        assert restored['result']['clarification_code']=='pending_reference_completed'
+
+
+@pytest.mark.parametrize('reply',['按月统计','解释一下','时间改成2024年，按月统计',
+    '时间改成2024年，指标改成订单数，按月统计'])
+def test_pending_source_change_blocks_dependent_text_without_execution(client,reply,monkeypatch):
+    client.post('/api/v1/omni/query',json={'question':'2025年华东销售额趋势','session_id':'source-change'})
+    with sqlite3.connect(app_module.engine.database_path) as connection:
+        connection.execute('UPDATE sales_orders SET sales_amount=sales_amount+1 WHERE region=?',('华东',))
+    def forbidden(*args,**kwargs):raise AssertionError('stale pending scope must not execute')
+    monkeypatch.setattr(app_module.engine,'answer',forbidden)
+    body=client.post('/api/v1/omni/query',json={'question':reply,'session_id':'source-change'}).json()
+    assert body['status']=='clarification'
+    assert body['result']['clarification_code']=='pending_source_changed'
+    assert body['result']['sql'] is None
+
+
+def test_pending_source_change_rejects_ui_and_reference_but_allows_new_query(client):
+    body=client.post('/api/v1/omni/query',json={'question':'2025年华东销售额趋势','session_id':'source-change'}).json()
+    with sqlite3.connect(app_module.engine.database_path) as connection:
+        connection.execute('UPDATE sales_orders SET sales_amount=sales_amount+1 WHERE region=?',('华东',))
+    response=client.post('/api/v1/omni/clarify',json={'session_id':'source-change',
+        'original_question':body['effective_question'],'clarification_code':body['result']['clarification_code'],
+        'selected_value':'monthly_trend'})
+    assert response.status_code==409
+    old=client.post('/api/v1/omni/query',json={'session_id':'source-change',
+        'question':f"继续待补查询编号{body['query_reference_id']}"}).json()
+    assert old['result']['clarification_code']=='pending_reference_source_changed'
+    fresh=client.post('/api/v1/omni/query',json={'session_id':'source-change','question':'2025年华东销售额 按月'}).json()
+    assert fresh['status']=='ok'
+
+
+def test_same_schema_new_database_cannot_reuse_pending_identity(client,tmp_path,monkeypatch):
+    body=client.post('/api/v1/omni/query',json={'question':'2025年华东销售额趋势','session_id':'new-database'}).json()
+    monkeypatch.setattr(app_module,'engine',Nl2SqlEngine(initialize_database(tmp_path/'replacement.sqlite')))
+    response=client.post('/api/v1/omni/query',json={'session_id':'new-database',
+        'question':f"继续待补查询编号{body['query_reference_id']}"}).json()
+    assert response['result']['clarification_code']=='pending_reference_source_changed'
+
+
+def test_unbound_legacy_pending_requires_fresh_confirmation(client):
+    body=client.post('/api/v1/omni/query',json={'question':'2025年华东销售额趋势','session_id':'legacy'}).json()
+    turn=app_module.conversation_store.context('legacy')[-1]
+    state=dict(turn.state);state.pop('pending_source_revision')
+    app_module.conversation_store.remember('legacy',question=turn.question,effective_question=turn.effective_question,state=state)
+    response=client.post('/api/v1/omni/query',json={'question':'按月统计','session_id':'legacy'}).json()
+    assert response['result']['clarification_code']=='pending_source_changed'
 
 
 @pytest.mark.parametrize('change',[{'selected_value':'fake_column'},{'clarification_code':'ambiguous_value'}])
@@ -76,6 +196,126 @@ def test_duplicate_metric_names_offer_distinct_qualified_choices(client):
     answer=client.post('/api/v1/omni/clarify',json=request).json()
     assert answer['result']['plan']['metric_table']=='customers'
     assert answer['result']['plan']['metric_column']=='customer_id'
+
+
+def comparison_pending(client,question='把比较值改成完整问题：销售额趋势'):
+    session='comparison-pending'
+    for text in ['2024年销售额趋势 按月','2025年销售额趋势 按月','比较最近两次SQL查询','按月份对齐']:
+        response=client.post('/api/v1/omni/query',json={'question':text,'session_id':session})
+        assert response.status_code==200
+    assert response.json()['status']=='ok'
+    response=client.post('/api/v1/omni/query',json={'question':question,'session_id':session})
+    assert response.status_code==200
+    return response.json()
+
+
+def fill_comparison(client,answer,value,time=None):
+    payload={'session_id':'comparison-pending','original_question':answer['effective_question'],
+        'clarification_code':answer['result']['clarification_code'],'selected_value':value}
+    if time:payload['selected_time']=time
+    return client.post('/api/v1/omni/clarify',json=payload)
+
+
+def test_comparison_time_range_then_grain_restores_selected_operand(client):
+    pending=comparison_pending(client)
+    assert pending['result']['clarification_code']=='missing_time_range'
+    assert pending['effective_question']=='销售额趋势'
+    assert 'comparison_pending_query' not in pending['state']
+    response=fill_comparison(client,pending,'year','2025')
+    assert response.status_code==200
+    grain=response.json()
+    assert grain['result']['clarification_code']=='missing_time_grain'
+    assert grain['effective_question']=='销售额趋势 2025年'
+    response=fill_comparison(client,grain,'monthly_trend')
+    assert response.status_code==200
+    final=response.json()
+    assert final['route']=='comparison' and final['status']=='ok'
+    assert final['result']['edit_evidence']['replacement_question']=='销售额趋势 2025年 按月'
+    sources=final['result']['comparison_evidence']['sources']
+    assert sources[0]['question']=='2024年销售额趋势 按月'
+    assert sources[1]['question']=='销售额趋势 2025年 按月'
+    assert final['result']['comparison_evidence']['alignment']=='month_of_year'
+    assert len(final['result']['rows'])==8
+
+
+def test_comparison_field_selection_and_stale_old_options(client):
+    pending=comparison_pending(client,'把比较值改成完整问题：2025年华东地区的情况')
+    assert pending['result']['clarification_code']=='missing_metric'
+    response=fill_comparison(client,pending,'sales_amount')
+    assert response.status_code==200
+    # The replacement executed; differing scalar/monthly grouping needs its own
+    # comparison clarification, not a lost pending query or a fabricated row.
+    body=response.json()
+    assert body['result']['clarification_code']=='comparison_dimension_mismatch'
+    assert body['result']['edit_evidence']['query_status']=='ok'
+    assert fill_comparison(client,pending,'sales_amount').status_code==409
+
+
+def test_comparison_unknown_reply_preserves_choices_and_cancel_restores_original(client):
+    pending=comparison_pending(client)
+    response=client.post('/api/v1/omni/query',json={'question':'乱七八糟','session_id':'comparison-pending'})
+    assert response.status_code==200
+    body=response.json()
+    assert body['effective_question']==pending['effective_question']
+    assert body['result']['clarification_options']==pending['result']['clarification_options']
+    response=client.post('/api/v1/omni/query',json={'question':'取消修改','session_id':'comparison-pending'})
+    assert response.json()['status']=='ok'
+    sources=response.json()['result']['comparison_evidence']['sources']
+    assert sources[1]['question']=='2025年销售额趋势 按月'
+    assert fill_comparison(client,pending,'year','2025').status_code==409
+
+
+def test_comparison_pending_text_replies_and_sqlite_rebuild(client):
+    comparison_pending(client)
+    storage=app_module.conversation_store.storage_path
+    app_module.conversation_store=ConversationStore(storage_path=storage)
+    response=client.post('/api/v1/omni/query',json={'question':'2025年','session_id':'comparison-pending'})
+    assert response.json()['result']['clarification_code']=='missing_time_grain'
+    response=client.post('/api/v1/omni/query',json={'question':'按月','session_id':'comparison-pending'})
+    assert response.json()['status']=='ok'
+    assert response.json()['result']['edit_evidence']['replacement_question']=='销售额趋势 2025年 按月'
+
+
+def test_forged_comparison_choice_does_not_consume_pending_state(client):
+    pending=comparison_pending(client)
+    assert fill_comparison(client,pending,'fake_field').status_code==400
+    assert fill_comparison(client,pending,'year','2025').status_code==200
+
+
+def test_comparison_pending_document_topic_switch_does_not_trap_the_user(client):
+    pending=comparison_pending(client)
+    response=client.post('/api/v1/omni/query',json={'question':'那保修政策呢','session_id':'comparison-pending'})
+    assert response.json()['route']=='document'
+    assert fill_comparison(client,pending,'year','2025').status_code==409
+
+
+def test_comparison_pending_fresh_sql_ignores_stale_source_revision(client):
+    comparison_pending(client)
+    with sqlite3.connect(app_module.engine.database_path) as connection:
+        connection.execute('UPDATE sales_orders SET sales_amount=sales_amount+1 WHERE order_id=(SELECT order_id FROM sales_orders LIMIT 1)')
+    response=client.post('/api/v1/omni/query',json={'question':'2024年华东销售额','session_id':'comparison-pending'})
+    assert response.json()['route']=='sql' and response.json()['status']=='ok'
+
+
+def test_comparison_qualified_field_choice_reexecutes_before_metric_mismatch(client):
+    pending=comparison_pending(client,'把比较值改成完整问题：2025年华东地区的情况')
+    response=fill_comparison(client,pending,'sales_orders.customer_id')
+    assert response.status_code==200
+    result=response.json()['result']
+    assert result['clarification_code']=='comparison_metric_mismatch'
+    assert result['edit_evidence']['query_status']=='ok'
+    assert '[field:metric:sales_orders.customer_id]' in result['edit_evidence']['replacement_question']
+
+
+def test_comparison_pending_source_change_prevents_selection_execution(client,monkeypatch):
+    pending=comparison_pending(client)
+    with sqlite3.connect(app_module.engine.database_path) as connection:
+        connection.execute('UPDATE sales_orders SET sales_amount=sales_amount+1 WHERE order_id=(SELECT order_id FROM sales_orders LIMIT 1)')
+    def forbidden(*args,**kwargs):raise AssertionError('stale pending source must not execute')
+    monkeypatch.setattr(app_module.engine,'answer',forbidden)
+    response=fill_comparison(client,pending,'year','2025')
+    assert response.status_code==200
+    assert response.json()['result']['clarification_code']=='comparison_source_changed'
 
 
 @pytest.mark.parametrize('selection,expression',[

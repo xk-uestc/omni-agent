@@ -2,6 +2,55 @@ const $=id=>document.getElementById(id);
 const base=location.origin;
 let apiToken='',visualBlobUrl=null,visualController=null,visualRevision=0,visualDocument=null,visualDisplayedPage=null,visualRenderSha=null;
 const documentCatalog=new Map();
+let excelRevision=0,excelFile=null,excelPayload=null,excelOptions=null,excelController=null;
+const excelSection=element('section');excelSection.id='excel-reader';excelSection.style.cssText='max-width:1210px;margin:0 auto 30px';
+const excelForm=element('form'),excelInput=element('input'),excelSend=element('button','识别与预览'),excelStatus=element('p',null,'muted'),excelResult=element('div');
+excelInput.type='file';excelInput.accept='.xlsx';excelInput.required=true;excelInput.setAttribute('aria-label','不规则Excel文件');excelStatus.setAttribute('aria-live','polite');
+excelForm.append(excelInput,excelSend);excelSection.append(element('h2','Excel · 表格识别与单元格核对'),
+  element('p','识别分层表头、多个表块、独立单位行与合并关系；点击单元格可看原始坐标。空值、零、公式和合计分别展示。未知表头可以指定区域和层数，0表示无表头。预览不修改原文件。','muted'),excelForm,excelStatus,excelResult);
+$('text-quality-form').closest('section').insertAdjacentElement('beforebegin',excelSection);
+excelInput.addEventListener('change',()=>{excelRevision++;excelController?.abort();excelController=null;excelPayload=null;excelFile=null;excelOptions=null;excelSend.disabled=false;excelResult.replaceChildren();excelStatus.textContent='';});
+function renderExcel(payload){
+  const tables=window.ExcelPreview.tables(payload),controls=[];excelResult.replaceChildren();
+  excelStatus.textContent=`${payload.stats.visible_sheet_count}个可见工作表 · ${tables.length}个表块 · ${payload.stats.preserved_visible_cells}个原始单元格已保留`;
+  for(const table of tables){
+    const section=element('div',null,'scan-table-structure');section.append(element('h3',`${table.sheet_name} · ${table.table_range}`),
+      element('p',table.needsConfirmation?'表头尚需确认，原始数据均保留。':`已整理${table.header_rows.length}层表头，${table.row_count}行；小计、合计单独标记。`,'muted'));
+    const grid=element('table'),head=element('thead'),hr=element('tr');hr.append(element('th','原行号'));table.headers.forEach(h=>hr.append(element('th',h)));head.append(hr);grid.append(head);
+    const body=element('tbody');table.rows.forEach(row=>{const tr=element('tr');tr.append(element('td',`${row.row}${row.role==='summary'?' · 合计/小计':''}`));
+      row.cells.forEach(cell=>{const td=element('td',cell.label);td.tabIndex=0;td.style.cursor='pointer';td.title=cell.coordinate||'原单元格为空';
+        function inspect(){excelResult.querySelectorAll('td[data-selected]').forEach(old=>{old.removeAttribute('data-selected');old.style.background='';old.style.outline='';});
+          td.dataset.selected='true';td.style.background='#e9f4ff';td.style.outline='2px solid #4285db';td.style.outlineOffset='-2px';
+          excelStatus.textContent=`${table.sheet_name}!${cell.coordinate||'空单元格'} · ${cell.label}`;detail.textContent=JSON.stringify(cell.raw,null,2);details.open=true;}
+        td.addEventListener('click',inspect);td.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspect();}});tr.append(td);});body.append(tr);});grid.append(body);section.append(grid);
+    if(table.hiddenPreviewRows||table.hiddenPreviewColumns)section.append(element('p',`仅预览前12行、20列；另有${table.hiddenPreviewRows}行、${table.hiddenPreviewColumns}列未展开，后端读取结果保留。`,'muted'));
+    const settings=element('div',null,'toolbar'),sheet=element('input'),range=element('input'),count=element('input');
+    sheet.value=table.sheet_name;sheet.setAttribute('aria-label','工作表名称');range.value=table.table_range;range.setAttribute('aria-label','表区域');count.type='number';count.min='0';count.max='8';count.value=table.header_rows.length;count.setAttribute('aria-label','表头层数');
+    settings.append(element('span','工作表'),sheet,element('span','区域'),range,element('span','表头层数'),count);section.append(settings);controls.push({sheet,range,count});excelResult.append(section);
+  }
+  const details=element('details'),detail=element('pre');details.append(element('summary','查看选中单元格的原值、格式与合并关系'),detail);excelResult.append(details);
+  const actions=element('div',null,'toolbar'),confirm=element('button','按指定表头重新识别'),ingest=element('button','将当前识别结果加入资料库');confirm.type=ingest.type='button';confirm.disabled=!controls.length;
+  confirm.addEventListener('click',()=>{try{const selected=window.ExcelPreview.selections(controls.map(c=>({sheet_name:c.sheet.value,range:c.range.value,header_rows:c.count.value})));previewExcel(selected);}catch(error){excelStatus.textContent=error.message;}});
+  ingest.addEventListener('click',async()=>{if(!excelPayload||!excelFile)return;const revision=excelRevision;ingest.disabled=true;
+    try{await request('/api/v1/knowledge/ingest',{...excelPayload,document_id:'excel-'+crypto.randomUUID(),title:excelFile.name,filename:excelFile.name,excel_tables:excelOptions||[]});
+      if(revision===excelRevision){excelStatus.textContent='已将当前识别结果加入资料库；原Excel保持不变。';await refresh();}}
+    catch(error){if(revision===excelRevision)excelStatus.textContent=error.message;}finally{if(revision===excelRevision)ingest.disabled=false;}});
+  actions.append(confirm,ingest);excelResult.append(actions);
+  if(payload.warnings.length)excelResult.append(element('p',payload.warnings.map(w=>w.startsWith('header_ambiguous:')?'表头无法明确，请确认区域和表头层数':w.startsWith('formula_cache_')?'公式未重算，缓存不可作为已核验结果':w.startsWith('inherited_header_requires_review:')?'空行后暂沿用前表字段，请核对':w.startsWith('merged_cells:')?'已保留合并单元格及其原始锚点':w.startsWith('hidden_')?'已略过隐藏内容，原文件仍保留':w.startsWith('cell_error:')?'存在Excel错误值，不能作为计算输入':w.startsWith('repeated_header_removed:')?'重复表头已与业务记录区分':w.startsWith('section_header_inferred:')?'已按不同表头拆分连续表块，请核对':w).filter((v,i,a)=>a.indexOf(v)===i).join('；'),'muted'));
+}
+async function previewExcel(options=null){
+  if(!excelPayload)return;excelController?.abort();const controller=new AbortController(),revision=++excelRevision;excelController=controller;excelSend.disabled=true;excelStatus.textContent='正在核对表格与原始单元格…';
+  try{const result=await request('/api/v1/documents/chunks-preview',{...excelPayload,excel_tables:options||[]},controller.signal);
+    if(revision!==excelRevision)return;excelOptions=options;renderExcel(result);}
+  catch(error){if(revision===excelRevision&&!controller.signal.aborted)excelStatus.textContent=error.message;}
+  finally{if(revision===excelRevision){excelSend.disabled=false;excelController=null;}}
+}
+excelForm.addEventListener('submit',async event=>{event.preventDefault();const file=excelInput.files[0];if(!file)return;
+  const revision=++excelRevision;excelSend.disabled=true;
+  try{if(!file.name.toLowerCase().endsWith('.xlsx'))throw Error('此入口支持.xlsx；旧.xls请另存为.xlsx');if(file.size>20*1024*1024)throw Error('单个文件不能超过20 MiB');
+    const bytes=new Uint8Array(await file.arrayBuffer());if(revision!==excelRevision)return;let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+    excelFile=file;excelPayload={document_id:'excel-preview-'+crypto.randomUUID(),modality:'xlsx',file_base64:btoa(binary)};await previewExcel();}
+  catch(error){if(revision===excelRevision){excelStatus.textContent=error.message;excelSend.disabled=false;}}});
 async function authFetch(path,options={}){
   const url=new URL(path,base);
   if(url.origin!==base||!url.pathname.startsWith('/api/v1/'))throw Error('只允许当前项目的资料接口');
@@ -13,45 +62,78 @@ $('api-authorize').addEventListener('submit',event=>{
   $('api-auth-status').textContent=apiToken?'已设置当前页面访问凭据；刷新或关闭后清除。':'已清除当前页面访问凭据。';
   refresh().catch(error=>{$('status').textContent=error.message;});
 });
-function rememberedSession(){try{return sessionStorage.getItem('ict8.omni-session');}catch{return null;}}
-function retainSession(){try{sessionStorage.setItem('ict8.omni-session',sessionId);}catch{/* Queries still work when browser storage is disabled. */}}
-const savedSession=rememberedSession();
-let sessionId=savedSession&&/^[A-Za-z0-9._:-]{1,128}$/.test(savedSession)?savedSession:'omni-'+crypto.randomUUID();
-retainSession();
-$('reset-dialogue').addEventListener('click',()=>{sessionId='omni-'+crypto.randomUUID();retainSession();$('dialogue').replaceChildren(element('p','已开始新对话，不继承之前的条件。','muted'));});
+const conversationSessions=window.ConversationSessions.create({scope:window.ConversationSessions.scopeFor(base,location.href),
+  legacyKeys:[{key:'ict8.omni-session',label:'原文档会话'},{key:'ict8_lattice_session',label:'原问数会话'}]});
+let sessionId=conversationSessions.current(),conversationController=null,conversationSessionPicker=null;
+function switchConversation(next){conversationController?.abort();conversationController=null;sessionId=next;
+  $('omni').querySelector('button').disabled=false;
+  $('dialogue').replaceChildren(element('p','已切换会话；可以继续提问或输入“查看待补问题”。旧会话记录保留。','muted'));conversationSessionPicker?.refresh();}
+$('reset-dialogue').addEventListener('click',()=>{try{switchConversation(conversationSessions.start());}catch(error){$('dialogue').append(element('p',error.message,'error'));}});
+const conversationSessionHost=element('div');$('omni').insertAdjacentElement('beforebegin',conversationSessionHost);
+conversationSessionPicker=window.ConversationSessions.mount(conversationSessions,conversationSessionHost,switchConversation);
+window.addEventListener('pageshow',()=>{const current=conversationSessions.current();if(current!==sessionId)switchConversation(current);else conversationSessionPicker.refresh();});
+async function runConversation(path,payload,onResult,onError){
+  if(conversationController)return;
+  const controller=new AbortController(),activeSession=sessionId,send=$('omni').querySelector('button');
+  conversationController=controller;send.disabled=true;
+  document.querySelectorAll('#dialogue button, #dialogue input').forEach(control=>control.disabled=true);
+  try{
+    const data=await request(path,payload,controller.signal);
+    if(conversationController===controller&&sessionId===activeSession&&!controller.signal.aborted)onResult(data);
+  }catch(error){if(conversationController===controller&&sessionId===activeSession&&!controller.signal.aborted)onError(error);}
+  finally{if(conversationController===controller){conversationController=null;send.disabled=false;}}
+}
 $('omni').addEventListener('submit',async event=>{
-  event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
+  event.preventDefault();if(conversationController)return;
   const question=$('omni-question').value, activeSession=sessionId;
   const box=element('article',null,'citation');box.append(element('b',question),element('p','正在处理…'));$('dialogue').append(box);
-  try{
-    const data=await request('/api/v1/omni/query',{question,session_id:activeSession});
-    if(sessionId===activeSession){renderOmni(box,question,data,activeSession);$('omni-question').value='';}
-  }catch(error){if(sessionId===activeSession)showError(box,error);}finally{button.disabled=false;}
+  await runConversation('/api/v1/omni/query',{question,session_id:activeSession},data=>{
+    renderOmni(box,question,data,activeSession);$('omni-question').value='';
+  },error=>showError(box,error));
 });
 function renderOmni(box,question,data,activeSession){
-  box.replaceChildren(element('b',question),element('small',`${data.route} · ${data.planner_source} · 已继承${data.context_turns}轮上下文`));
+  box.replaceChildren(element('b',question),element('small',`${data.route} · ${data.planner_source} · 已保留${data.context_turns}轮历史`));
   const r=data.result;box.append(element('p',`独立问题：${data.effective_question}`,'muted'));
   appendAnswer(box,r);
+  if(data.route==='tasks'){
+    const list=element('div');
+    for(const item of window.ConversationContext.catalogItems(data)){
+      const row=element('div');row.style.borderBottom='1px solid #dde3dc';row.style.padding='12px 0';
+      row.append(element('b',item.question),element('p',item.clarification,'muted'));
+      if(item.resumeQuestion){
+        const button=element('button','恢复这个问题');button.type='button';
+        button.addEventListener('click',async()=>{
+          if(sessionId!==activeSession||button.disabled)return;
+          await runConversation('/api/v1/omni/query',{question:item.resumeQuestion,session_id:activeSession},restored=>{
+            const answer=element('article',null,'citation');$('dialogue').append(answer);
+            renderOmni(answer,'恢复：'+item.question,restored,activeSession);
+          },error=>{row.append(element('p',error.message,'error'));button.disabled=false;});
+        });row.append(button);
+      }else row.append(element('small','当前无法恢复，请重新确认完整问题。','muted'));
+      list.append(row);
+    }box.append(list);
+  }
   if(r.rows?.length)box.append(element('pre',JSON.stringify(r.rows,null,2)));
   if(r.clarification)box.append(element('p',r.clarification));
   if(r.status==='clarification'){
     const choices=element('div',null,'toolbar');choices.setAttribute('aria-label','澄清选项');
     async function confirmSelection(option,time){
         if(sessionId!==activeSession)return;
-        choices.querySelectorAll('button').forEach(button=>button.disabled=true);
-        try{
-          const result=await request('/api/v1/omni/clarify',{
+        if(/^选择对话来源编号q_[a-f0-9]{32}$/.test(option.question||'')){
+          await runConversation('/api/v1/omni/query',{question:option.question,session_id:activeSession},result=>{
+            const answer=element('article',null,'citation');$('dialogue').append(answer);
+            renderOmni(answer,`选择：${option.label||option.value}`,result,activeSession);
+          },error=>box.append(element('p',error.message,'error')));return;
+        }
+        await runConversation('/api/v1/omni/clarify',{
             original_question:data.effective_question,clarification_code:r.clarification_code,
-            selected_value:option.value,selected_time:time,session_id:activeSession});
-          if(sessionId!==activeSession)return;
+            selected_value:option.value,selected_time:time,session_id:activeSession},result=>{
           const answer=element('article',null,'citation');$('dialogue').append(answer);
           renderOmni(answer,`选择：${option.label||option.value}`,result,activeSession);
-        }catch(error){
-          if(sessionId===activeSession){box.append(element('p',error.message,'error'));choices.querySelectorAll('button').forEach(button=>button.disabled=false);}
-        }
+        },error=>{box.append(element('p',error.message,'error'));choices.querySelectorAll('button').forEach(button=>button.disabled=false);});
     }
-    (r.clarification_options||[]).forEach(option=>{
-      const choice=element('button',option.label||option.value);choice.type='button';
+    (r.clarification_options||[]).forEach((option,index)=>{
+      const choice=element('button',window.ConversationContext.optionLabel(option,index));choice.type='button';
       choice.addEventListener('click',()=>{
         if(['year','month','time_range'].includes(option.value)){
           choices.querySelector('form')?.remove();
@@ -132,7 +214,7 @@ function appendAnswer(host,result){
   }
 }
 async function responseError(response){let data;try{data=await response.json();}catch{return Error(`服务请求失败（HTTP ${response.status}）`);}return Error(response.status===401?'需要服务访问授权，请在页首填写当前服务的访问令牌。':typeof data.detail==='string'?data.detail:JSON.stringify(data.detail||data));}
-async function request(path,payload){const r=await authFetch(path,{method:payload?'POST':'GET',headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined});if(!r.ok)throw await responseError(r);return r.json();}
+async function request(path,payload,signal){const r=await authFetch(path,{method:payload?'POST':'GET',headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined,signal});if(!r.ok)throw await responseError(r);return r.json();}
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
 async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();documentCatalog.clear();const previousSource=$('query-document').value;$('query-document').replaceChildren(element('option','由检索定位资料'));$('query-document').firstChild.value='';data.documents.forEach(doc=>{const option=element('option',doc.title);option.value=doc.document_id;$('query-document').append(option);documentCatalog.set(doc.document_id,doc);const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));addVisualAction(item,doc.document_id,1,doc.sha256,doc.modality);if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});if(documentCatalog.has(previousSource))$('query-document').value=previousSource;$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
 
@@ -313,21 +395,178 @@ $('text-quality-form').addEventListener('submit',async event=>{
   }catch(error){showError(host,error);}finally{button.disabled=false;}
 });
 
+const scanHeaderRows=element('input'),scanTableNumber=element('input');
+const scanPdfPage=element('input'),scanPdfPageLabel=element('label','PDF页码');
+const scanPdfEnd=element('input'),scanPdfEndLabel=element('label','结束页码（可选，最多连续4页）');
+const scanNextHeaders=element('input'),scanNextHeadersLabel=element('label','后续页表头行数（可选，无表头填0）');
+scanPdfEnd.type='number';scanPdfEnd.min='1';scanPdfEnd.max='1000';scanPdfEndLabel.append(scanPdfEnd);
+scanNextHeaders.type='number';scanNextHeaders.min='0';scanNextHeaders.max='5';scanNextHeadersLabel.append(scanNextHeaders);
+scanPdfPage.type='number';scanPdfPage.min='1';scanPdfPage.max='1000';scanPdfPage.value='1';
+scanPdfPage.setAttribute('aria-label','PDF表格预览页码，从1开始');scanPdfPageLabel.append(scanPdfPage);
+$('scan-file').accept='.png,.jpg,.jpeg,.webp,.pdf';
+$('scan-quality-form').insertBefore(scanPdfPageLabel,$('scan-quality-form').querySelector('button'));
+$('scan-quality-form').insertBefore(scanPdfEndLabel,$('scan-quality-form').querySelector('button'));
+$('scan-quality-form').insertBefore(scanNextHeadersLabel,$('scan-quality-form').querySelector('button'));
+scanHeaderRows.type='number';scanHeaderRows.min='0';scanHeaderRows.max='5';scanHeaderRows.placeholder='0表示无表头';
+scanHeaderRows.setAttribute('aria-label','人工指定表头行数，0到5行，0表示无表头');
+scanTableNumber.type='number';scanTableNumber.min='1';scanTableNumber.max='32';scanTableNumber.value='1';
+scanTableNumber.setAttribute('aria-label','要整理的网格表格序号，从1开始');
+const scanHeaderLabel=element('label','表头行数（可选）'),scanTableLabel=element('label','表格序号');
+scanHeaderLabel.append(scanHeaderRows);scanTableLabel.append(scanTableNumber);
+$('scan-quality-form').insertBefore(scanHeaderLabel,$('scan-quality-form').querySelector('button'));
+$('scan-quality-form').insertBefore(scanTableLabel,$('scan-quality-form').querySelector('button'));
+
+let scanRevision=0;
+$('scan-file').addEventListener('change',()=>{scanRevision++;$('scan-quality-form').querySelector('button').disabled=false;$('scan-quality-result').replaceChildren(element('p','已更换文件，请重新预览。','muted'));});
+const continuityReasons={incomplete_or_unlocated_table:'表格不完整或缺少原页位置',different_pdf_sources:'来源不是同一PDF',
+  nonadjacent_pages:'页面不相邻',column_count_changed:'列数不一致',first_page_header_missing:'首段缺少可对应的表头',
+  ambiguous_header_paths:'表头为空或存在重复含义',header_paths_changed:'表头不一致'};
+function appendAmountCheck(td,cell){
+  const presentation=window.PdfAmountCheck.describe(cell);if(!presentation)return;
+  const label=element('small',presentation.label);label.style.display='block';label.style.color=presentation.color;
+  label.title=presentation.detail;td.append(label);
+}
+function renderArithmeticCheck(report,host){
+  if(!report||report.status==='not_applicable')return;
+  const reasons={invalid_or_over_budget_table:'表格不完整或超过检查范围',ambiguous_total_scope:'总计所在范围不明确',
+    subtotal_or_carry_forward_present:'存在小计或结转，不能直接加总',merged_body_cells_require_review:'合并数据格需先核对',
+    missing_detail_label:'部分明细缺少名称',unit_scale_requires_confirmation:'金额单位或倍率需确认',
+    amount_missing_or_ambiguous:'存在空白或无法明确解析的金额',mixed_or_unspecified_currency_identity:'币种不一致或身份未确认'};
+  const label=report.status==='arithmetic_consistent'?'观察金额的合计一致':report.status==='conflict'?'观察金额的合计不一致':'合计尚不能核对';
+  const title=element('p',label);title.style.color=report.status==='conflict'?'#c62828':report.status==='arithmetic_consistent'?'#16803c':'#737373';host.append(title);
+  if(report.reason in reasons)host.append(element('p',reasons[report.reason],'muted'));
+  for(const check of report.checks||[]){
+    if(check.computed_total!=null)host.append(element('p',`第${check.column+1}列：${check.detail_count}项明细合计 ${check.currency} ${check.computed_total}；观察总计 ${check.observed_total}；差额 ${check.difference}`));
+    else host.append(element('p',`第${check.column+1}列：${reasons[check.reason]||'请对照原表复核'}。`,'muted'));
+    if(check.review_candidate){const candidate=check.review_candidate;
+      host.append(element('p',`待核对候选：原第${candidate.cell.original_row+1}行 ${candidate.cell.text||'空白'}，由观察总计减其余明细得 ${candidate.currency} ${candidate.candidate_amount}。${candidate.warning}`,'muted'));}
+  }host.append(element('small',report.warning,'muted'));
+}
+function renderAmountCellReview(report,host){
+  if(!report||report.status==='not_needed')return;
+  host.append(element('p',`金额局部复核：${report.accepted_count||0} 格有一致候选；原OCR值保留。`));
+  for(const review of report.reviews||[]){
+    const label=review.accepted?`候选 ${review.candidate_text}`:'未得到可靠一致候选';
+    host.append(element('p',`原第${review.row+1}行、第${review.column+1}列：${review.original_text} → ${label}`,'muted'));
+    const detail=element('details');detail.append(element('summary','查看裁剪来源与每次识别'),element('pre',JSON.stringify(review,null,2)));host.append(detail);
+  }
+  host.append(element('small',report.warning,'muted'));
+  if(report.revised_preview){host.append(element('p','局部OCR候选的合计预览（与原OCR分开，不自动入库）','muted'));renderArithmeticCheck(report.revised_preview.arithmetic_check,host);}
+}
+function renderPdfContinuity(data,payload,host,file,revision){
+  if($('scan-file').files[0]!==file||revision!==scanRevision)return;
+  host.replaceChildren(element('p','PDF逐页表格预览；确认续表关系后可拼接。原文和资料库保持原样。'));
+  (data.table_structures||[]).forEach(structure=>renderScanStructure(structure,host));
+  for(const assembly of data.table_continuity?.assemblies||[]){
+    if(assembly.status!=='assembled_preview'){host.append(element('p',`续表未连接：${continuityReasons[assembly.reason]||'请核对逐页结构'}`,'muted'));continue;}
+    const table=element('table'),head=element('tr');head.append(element('th','原页'));
+    assembly.columns.forEach(column=>head.append(element('th',column.header_path.join(' / ')||`第${column.column+1}列`)));
+    const thead=element('thead');thead.append(head);table.append(thead);const body=element('tbody');
+    for(const row of assembly.rows){
+      const tr=element('tr');tr.append(element('td',`${row.page_no} · 行${row.original_row+1}`));
+      for(const cell of row.cells){if(cell.status==='covered_by_merged_cell')continue;
+        const td=element('td',cell.text||'未识别或空白');td.rowSpan=cell.rowspan;td.colSpan=cell.colspan;
+        td.title=`原PDF第${row.page_no}页；坐标：${JSON.stringify(cell.original_geometry?.pdf_geometry?.pdf_user_polygon_pt)}`;appendAmountCheck(td,cell);tr.append(td);}
+      body.append(tr);
+    }table.append(body);host.append(element('h3',`跨页续表 · ${assembly.row_count}行`),element('p',assembly.warnings.join(' '),'muted'),table);renderArithmeticCheck(assembly.arithmetic_check,host);
+  }
+  const existing=payload.pdf_table_links||[];
+  for(const candidate of data.table_continuity?.candidates||[]){
+    const label=`第${candidate.from_page}页表${candidate.from_table+1} → 第${candidate.to_page}页表${candidate.to_table+1}`;
+    if(existing.some(edge=>edge.from_page===candidate.from_page&&edge.from_table===candidate.from_table&&edge.to_page===candidate.to_page&&edge.to_table===candidate.to_table))continue;
+    if(candidate.status!=='needs_confirmation'){host.append(element('p',`${label}：未连接（${continuityReasons[candidate.reason]||'请核对逐页结构'}）`,'muted'));continue;}
+    const button=element('button',`确认这是同一张表的续页：${label}`);button.type='button';host.append(button);
+    button.addEventListener('click',async()=>{
+      if($('scan-file').files[0]!==file||revision!==scanRevision)return;
+      const controls=[...host.querySelectorAll('button')];controls.forEach(control=>control.disabled=true);
+      try{const next={...payload,pdf_table_links:window.PdfTableContinuity.appendLink(existing,candidate)};
+        const result=await request('/api/v1/documents/chunks-preview',next);renderPdfContinuity(result,next,host,file,revision);
+      }catch(error){if(revision===scanRevision)host.append(element('p',error.message,'error'));}finally{controls.forEach(control=>control.disabled=false);}
+    });
+  }
+  const details=element('details');details.append(element('summary','查看逐页来源、续表选择和坐标'),element('pre',JSON.stringify(data,null,2)));host.append(details);
+}
+
+function renderScanStructure(structure,host){
+  if(structure?.status==='structure_observed'){
+    const section=element('section'),table=element('table'),head=element('thead'),body=element('tbody'),heading=element('tr');
+    section.className='scan-table-structure';
+    if(structure.amount_verification){const counts=structure.amount_verification.counts||{};
+      section.append(element('p',`金额核对：与原文字一致 ${counts.matched||0} 格；冲突 ${counts.conflict||0} 格；需复核 ${counts.needs_review||0} 格。${structure.amount_verification.warning}`,'muted'));}
+    const page=structure.page_no?`PDF第${structure.page_no}页 · `:'';
+    section.append(element('h3',page+'表头层级与数据预览'),element('p',`按你指定的前${structure.header_rows}行整理第${structure.table_index+1}个网格；OCR文字和字段含义仍需对照原图核对。空白不是零，合并数据不自动复制。`,'muted'));
+    structure.columns.forEach(column=>heading.append(element('th',column.header_path.length?
+      column.header_path.map(text=>text||'未识别').join(' / ')+(column.status==='observed'?'':'（待核对）'):`第${column.column+1}列（无表头）`)));head.append(heading);
+    structure.body_cells.forEach(row=>{const tr=element('tr');row.forEach(cell=>{
+      if(cell.status==='covered_by_merged_cell')return;
+      const td=element('td',cell.text||'未识别或空白');td.rowSpan=cell.rowspan;td.colSpan=cell.colspan;
+      const geometry=cell.original_geometry?.pdf_geometry;
+      if(geometry?.pdf_highlight_eligible)td.title=`PDF第${geometry.page_no}页；原PDF坐标：${JSON.stringify(geometry.pdf_user_polygon_pt)}`;
+      appendAmountCheck(td,cell);
+      tr.append(td);
+    });body.append(tr);});table.append(head,body);section.append(table);renderArithmeticCheck(structure.arithmetic_check,section);renderAmountCellReview(structure.amount_cell_review,section);
+    if(structure.blank_cell_review?.reviews?.length){const review=structure.blank_cell_review;
+      section.append(element('p',`空白格复核：${review.accepted_count||0}格有一致文字候选；原空白保留。`),element('small',review.warning,'muted'));
+      for(const cell of review.reviews){section.append(element('p',`原第${cell.row+1}行、第${cell.column+1}列：${cell.accepted?cell.candidate_text:'未得到一致可靠候选'}${cell.candidate_kind==='ambiguous_amount_text'?'（金额仍有歧义）':''}`,'muted'));}
+    }host.append(section);
+  }else if(structure)host.append(element('p',`该表头选择不能整理：${structure.reason}。请对照原图检查页码、表格序号、表头行数或合并范围。`,'muted'));
+}
+
 $('scan-quality-form').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.target.querySelector('button'),host=$('scan-quality-result'),file=$('scan-file').files[0];
-  if(!file)return;button.disabled=true;host.replaceChildren(element('p','本地OCR检测中…'));
+  if(!file)return;const revision=++scanRevision;button.disabled=true;host.replaceChildren(element('p','本地OCR检测中…'));
   try{
-    if(file.size>8*1024*1024)throw Error('检测图片不能超过8 MiB');
+    const isPdf=file.name.toLowerCase().endsWith('.pdf');
+    if(file.size>(isPdf?20:8)*1024*1024)throw Error(isPdf?'PDF不能超过20 MiB':'检测图片不能超过8 MiB');
     const bytes=new Uint8Array(await file.arrayBuffer());let binary='';
     for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
-    const source=btoa(binary),data=await request('/api/v1/documents/ocr',{image_base64:source,language:'chi_sim+eng',max_attempts:3});
+    const source=btoa(binary);
+    if(isPdf){
+      if(scanHeaderRows.value==='')throw Error('请指定PDF表头行数；没有表头请填0。');
+      host.replaceChildren(element('p','正在解析PDF并整理指定页表格…'));
+      const payload={document_id:'pdf-table-preview-'+crypto.randomUUID(),modality:'pdf',file_base64:source,language:'chi_sim+eng',
+        pdf_table_headers:window.PdfTableContinuity.selections(Number(scanPdfPage.value),Number(scanPdfEnd.value||scanPdfPage.value),
+          Number(scanTableNumber.value),Number(scanHeaderRows.value),Number(scanNextHeaders.value===''?scanHeaderRows.value:scanNextHeaders.value))};
+      const data=await request('/api/v1/documents/chunks-preview',payload);renderPdfContinuity(data,payload,host,file,revision);
+      return;
+    }
+    const data=await request('/api/v1/documents/ocr',{image_base64:source,language:'chi_sim+eng',max_attempts:3,auto_perspective:$('scan-auto-perspective').checked,
+      table_header_rows:scanHeaderRows.value===''?null:Number(scanHeaderRows.value),table_index:Number(scanTableNumber.value)-1});
+    if(revision!==scanRevision)return;
     const orientation=data.metadata?.orientation,quality=data.metadata?.input_quality;
     host.replaceChildren(element('p',`识别状态：${data.status} · ${data.attempts.length}次有界尝试`));
+    const boundary=data.metadata?.page_boundary_detection;
+    if(boundary?.status==='attempted')host.append(element('p',`已检测页面轮廓并尝试透视校正；文字采用${boundary.selected_for_text?'校正图':'较可靠的原图或其他预处理结果'}，请对照原图核对。`));
+    else if(boundary?.status==='rejected')host.append(element('p','页面轮廓不能覆盖已观察文字，保留原图范围。','muted'));
+    else if(boundary?.status==='ambiguous')host.append(element('p','存在多张候选页面，未自动裁剪。','muted'));
+    if(window.ScanSourceOverlay&&data.metadata?.original_pixel_mapping?.status==='mapped'){
+      try{
+        const sourceSha=await window.ScanSourceOverlay.digest(bytes);
+        const normalized=await request('/api/v1/documents/image-enhance',{image_base64:source,transforms:[]});
+        const overlay=await window.ScanSourceOverlay.render(data.metadata,normalized,sourceSha);
+        if(revision!==scanRevision)return;host.append(overlay);
+      }catch(error){if(revision!==scanRevision)return;host.append(element('p',error.message||'原图位置预览不可用。','muted'));}
+    }
     if(quality)host.append(element('p',`图像质量估计：${quality.quality_score}；${quality.width} × ${quality.height}。这是图像启发式分数，不是识别准确率。`,'muted'));
     if(orientation?.status==='estimated')host.append(element('p',`方向估计：逆时针${orientation.rotation_ccw_degrees}°；倾斜${orientation.skew_ccw_degrees}°。依据${orientation.eligible_lines}条可靠文字框。`));
     else host.append(element('p','方向无法判定，请核对原图；不会自动给出旋转预览。','muted'));
     if(data.warnings.length)host.append(element('p',data.warnings.map(qualityMessage).join('；'),'muted'));
     host.append(element('pre',data.text||'未识别到可靠文字'));
+    renderScanStructure(data.metadata?.table_structure,host);
+    if(boundary?.status==='attempted'&&Array.isArray(boundary.quad_px)){
+      const preview=element('button','查看页面校正与定位'),previewResult=element('div');preview.type='button';host.append(preview,previewResult);
+      preview.addEventListener('click',async()=>{
+        preview.disabled=true;previewResult.replaceChildren(element('p','正在生成页面校正预览…'));
+        try{
+          const sourceSha=await window.ScanSourceOverlay.digest(bytes);
+          if(sourceSha!==boundary.source_image_sha256)throw Error('页面轮廓与当前原图来源不一致。');
+          const corrected=await request('/api/v1/documents/image-enhance',{image_base64:source,transforms:['perspective_rectify'],perspective_quad:boundary.quad_px});
+          previewResult.replaceChildren(element('p','页面校正预览；原文件保持不变。位置来自原图观察，不代表数值已经核验。','muted'));
+          previewResult.append(await window.ScanSourceOverlay.render(data.metadata,corrected,sourceSha));
+          preview.remove();
+        }catch(error){showError(previewResult,error);preview.disabled=false;}
+      });
+    }
     if(orientation?.status==='estimated'&&Math.abs(orientation.correction_ccw_degrees)>=2){
       const preview=element('button','生成校正预览'),previewResult=element('div');preview.type='button';host.append(preview,previewResult);
       preview.addEventListener('click',async()=>{
@@ -341,5 +580,5 @@ $('scan-quality-form').addEventListener('submit',async event=>{
       });
     }
     const details=element('details');details.append(element('summary','查看检测依据、坐标帧、原图SHA和尝试记录'),element('pre',JSON.stringify(data,null,2)));host.append(details);
-  }catch(error){showError(host,error);}finally{button.disabled=false;}
+  }catch(error){if(revision===scanRevision)showError(host,error);}finally{if(revision===scanRevision)button.disabled=false;}
 });

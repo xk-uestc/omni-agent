@@ -1,0 +1,1815 @@
+{
+  "synthetic_developer_fixtures": true,
+  "passed": 26,
+  "total": 26,
+  "baseline": null,
+  "source_hashes": {
+    "ict-track8/backend/chunk_cleaning.py": "3c63f7371caf43e8d22fa0bc92023da7ce997d360f96fa29cc95878d476b3947",
+    "ict-track8/backend/excel_layout.py": "15e67b8f90777f0f5b9561148a1c5eedb77464c32fd4b482509e1564befc47a0"
+  },
+  "results": [
+    {
+      "name": "01_standard",
+      "description": "标准数据与首末行",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 82,
+        "cleaned_character_count": 82,
+        "chunk_count": 3,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 3
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 6,
+        "preserved_visible_cells": 6,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B3",
+            "table_range": "A1:B3",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.00649379997048527
+    },
+    {
+      "name": "02_title_footer",
+      "description": "合并标题与脚注不混入记录",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:3:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:4:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "text:2025年度经营报表",
+          "passed": true
+        },
+        {
+          "check": "text:备注：金额单位为万元",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "merged_cells:数据:2"
+      ],
+      "stats": {
+        "raw_character_count": 120,
+        "cleaned_character_count": 120,
+        "chunk_count": 5,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 3,
+        "modality_breakdown": {
+          "xlsx": 5
+        },
+        "content_type_breakdown": {
+          "spreadsheet_context": 2,
+          "table_header": 1,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A2:B5",
+            "table_range": "A2:B5",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              2
+            ],
+            "header_decision": "selected",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005615800037048757
+    },
+    {
+      "name": "03_merged_header",
+      "description": "两层横纵合并表头",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:3:地区|2025年 / 销售额|2025年 / 订单数",
+          "passed": true
+        },
+        {
+          "check": "row:数据:4:地区|2025年 / 销售额|2025年 / 订单数",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "merged_cells:数据:2"
+      ],
+      "stats": {
+        "raw_character_count": 200,
+        "cleaned_character_count": 200,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 3,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 2,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 10,
+        "preserved_visible_cells": 10,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:C4",
+            "table_range": "A1:C4",
+            "headers": [
+              "地区",
+              "2025年 / 销售额",
+              "2025年 / 订单数"
+            ],
+            "header_rows": [
+              1,
+              2
+            ],
+            "header_decision": "merged_hierarchy",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.019696899922564626
+    },
+    {
+      "name": "04_merged_dimension",
+      "description": "合并数据维度保留锚点，不伪造原值",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|产品|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:地区|产品|销售额",
+          "passed": true
+        },
+        {
+          "check": "text:华东",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "merged_cells:数据:1"
+      ],
+      "stats": {
+        "raw_character_count": 141,
+        "cleaned_character_count": 141,
+        "chunk_count": 3,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 3,
+        "modality_breakdown": {
+          "xlsx": 3
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:C3",
+            "table_range": "A1:C3",
+            "headers": [
+              "地区",
+              "产品",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.004952499992214143
+    },
+    {
+      "name": "05_stacked_tables",
+      "description": "纵向两个不同业务表",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:5:产品|数量",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 100,
+        "cleaned_character_count": 100,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 2,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 2,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          },
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A4:B5",
+            "table_range": "A4:B5",
+            "headers": [
+              "产品",
+              "数量"
+            ],
+            "header_rows": [
+              4
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.004789500031620264
+    },
+    {
+      "name": "06_side_by_side",
+      "description": "并排表格不串列",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:2:产品|数量",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:产品|数量",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 158,
+        "cleaned_character_count": 158,
+        "chunk_count": 6,
+        "duplicate_content_count": 0,
+        "table_row_count": 4,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 6
+        },
+        "content_type_breakdown": {
+          "table_header": 2,
+          "row": 4
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 2,
+        "effective_cells": 12,
+        "preserved_visible_cells": 12,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B3",
+            "table_range": "A1:B3",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          },
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!D1:E3",
+            "table_range": "D1:E3",
+            "headers": [
+              "产品",
+              "数量"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005148899974301457
+    },
+    {
+      "name": "07_offsets_gaps",
+      "description": "偏移表格、内部空列与空行",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:7:地区|column_E|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:9:地区|column_E|销售额",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "inherited_header_requires_review:数据:9"
+      ],
+      "stats": {
+        "raw_character_count": 104,
+        "cleaned_character_count": 104,
+        "chunk_count": 3,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 3
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 2,
+        "effective_cells": 6,
+        "preserved_visible_cells": 6,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!D6:F7",
+            "table_range": "D6:F7",
+            "headers": [
+              "地区",
+              "column_E",
+              "销售额"
+            ],
+            "header_rows": [
+              6
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          },
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!D9:F9",
+            "table_range": "D9:F9",
+            "headers": [
+              "地区",
+              "column_E",
+              "销售额"
+            ],
+            "header_rows": [],
+            "header_decision": "inherited_after_blank",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.004413499962538481
+    },
+    {
+      "name": "08_repeated_header",
+      "description": "分页重复表头仅移除有证据的重复",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:4:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "repeated_header_removed:数据:3"
+      ],
+      "stats": {
+        "raw_character_count": 103,
+        "cleaned_character_count": 103,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 2,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B4",
+            "table_range": "A1:B4",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.014684899942949414
+    },
+    {
+      "name": "09_headerless_numeric",
+      "description": "无表头纯数值，重复数据不丢",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:1:column_A|column_B",
+          "passed": true
+        },
+        {
+          "check": "row:数据:2:column_A|column_B",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:column_A|column_B",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "header_ambiguous:数据:1"
+      ],
+      "stats": {
+        "raw_character_count": 162,
+        "cleaned_character_count": 162,
+        "chunk_count": 3,
+        "duplicate_content_count": 1,
+        "table_row_count": 3,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 3
+        },
+        "content_type_breakdown": {
+          "row": 3
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 6,
+        "preserved_visible_cells": 6,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B3",
+            "table_range": "A1:B3",
+            "headers": [
+              "column_A",
+              "column_B"
+            ],
+            "header_rows": [],
+            "header_decision": "preserved_ambiguous",
+            "row_count": 3,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005063399905338883
+    },
+    {
+      "name": "10_headerless_text",
+      "description": "全字符串无表头，首行不可丢失",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:1:column_A|column_B",
+          "passed": true
+        },
+        {
+          "check": "row:数据:2:column_A|column_B",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "header_ambiguous:数据:1"
+      ],
+      "stats": {
+        "raw_character_count": 110,
+        "cleaned_character_count": 110,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 4,
+        "preserved_visible_cells": 4,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "column_A",
+              "column_B"
+            ],
+            "header_rows": [],
+            "header_decision": "preserved_ambiguous",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005087299970909953
+    },
+    {
+      "name": "11_duplicate_headers",
+      "description": "重复字段和空表头使用唯一名称",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|金额|金额_2|column_D",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 102,
+        "cleaned_character_count": 102,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 7,
+        "preserved_visible_cells": 7,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:D2",
+            "table_range": "A1:D2",
+            "headers": [
+              "地区",
+              "金额",
+              "金额_2",
+              "column_D"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.004428599961102009
+    },
+    {
+      "name": "12_typed_formats",
+      "description": "前导零编号、日期、百分数、货币与布尔",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:编号|日期|增长率|金额|启用",
+          "passed": true
+        },
+        {
+          "check": "text:12.5%",
+          "passed": true
+        },
+        {
+          "check": "text:000123",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 153,
+        "cleaned_character_count": 153,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 10,
+        "preserved_visible_cells": 10,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:E2",
+            "table_range": "A1:E2",
+            "headers": [
+              "编号",
+              "日期",
+              "增长率",
+              "金额",
+              "启用"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.0047753999242559075
+    },
+    {
+      "name": "13_formula_no_cache",
+      "description": "未计算公式不捏造结果",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:产品|数量|单价|金额",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "formula_cache_missing:数据:D2"
+      ],
+      "stats": {
+        "raw_character_count": 106,
+        "cleaned_character_count": 106,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 1,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:D2",
+            "table_range": "A1:D2",
+            "headers": [
+              "产品",
+              "数量",
+              "单价",
+              "金额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005058699985966086
+    },
+    {
+      "name": "14_formula_stale_cache",
+      "description": "故意错误缓存999仍不可作为验证值",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:产品|数量|金额",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "formula_cache_present_unverified:数据:C2"
+      ],
+      "stats": {
+        "raw_character_count": 96,
+        "cleaned_character_count": 96,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 1,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 6,
+        "preserved_visible_cells": 6,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:C2",
+            "table_range": "A1:C2",
+            "headers": [
+              "产品",
+              "数量",
+              "金额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005262600025162101
+    },
+    {
+      "name": "15_hidden",
+      "description": "隐藏行、列、工作表不进入可检索内容",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|金额",
+          "passed": true
+        },
+        {
+          "check": "hidden_absent:隐藏行",
+          "passed": true
+        },
+        {
+          "check": "hidden_absent:秘密",
+          "passed": true
+        },
+        {
+          "check": "hidden_absent:内部内容",
+          "passed": true
+        },
+        {
+          "check": "hidden_absent:隐藏表机密",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "hidden_rows_skipped:数据:1",
+        "hidden_columns_skipped:数据:1",
+        "hidden_sheet_skipped:隐藏"
+      ],
+      "stats": {
+        "raw_character_count": 48,
+        "cleaned_character_count": 48,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 3,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1
+        },
+        "sheet_count": 2,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 9,
+        "preserved_visible_cells": 4,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "地区",
+              "金额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005214200005866587
+    },
+    {
+      "name": "16_subtotals",
+      "description": "小计和总计保留但与明细区分",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:4:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:5:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 144,
+        "cleaned_character_count": 144,
+        "chunk_count": 5,
+        "duplicate_content_count": 0,
+        "table_row_count": 4,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 5
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 4
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 10,
+        "preserved_visible_cells": 10,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B5",
+            "table_range": "A1:B5",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 4,
+            "summary_rows": [
+              3,
+              5
+            ],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.011046500061638653
+    },
+    {
+      "name": "17_null_errors",
+      "description": "空值不变零，Excel错误不冒充数值",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|金额|数量",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:地区|金额|数量",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "cell_error:数据:B3"
+      ],
+      "stats": {
+        "raw_character_count": 111,
+        "cleaned_character_count": 111,
+        "chunk_count": 3,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 3
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:C3",
+            "table_range": "A1:C3",
+            "headers": [
+              "地区",
+              "金额",
+              "数量"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 2,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005148099968209863
+    },
+    {
+      "name": "18_sparse_far_cell",
+      "description": "最远单元格与格式膨胀不扫描万亿空格",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "text:远端注释",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 73,
+        "cleaned_character_count": 73,
+        "chunk_count": 3,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 3
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1,
+          "spreadsheet_context": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 5,
+        "preserved_visible_cells": 5,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.0047036000760272145
+    },
+    {
+      "name": "19_explicit_table",
+      "description": "Excel正式Table范围确认未知文本字段",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:4:甲|乙",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 40,
+        "cleaned_character_count": 40,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 4,
+        "preserved_visible_cells": 4,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!B3:C4",
+            "table_range": "B3:C4",
+            "headers": [
+              "甲",
+              "乙"
+            ],
+            "header_rows": [
+              3
+            ],
+            "header_decision": "excel_table",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.011065899976529181
+    },
+    {
+      "name": "20_three_header_levels",
+      "description": "三层嵌套合并表头展开完整路径",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:4:地区|经营情况 / 2024年 / 销售额|经营情况 / 2024年 / 订单数|经营情况 / 2025年 / 销售额|经营情况 / 2025年 / 订单数",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "merged_cells:数据:4"
+      ],
+      "stats": {
+        "raw_character_count": 287,
+        "cleaned_character_count": 287,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 2,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 3,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 13,
+        "preserved_visible_cells": 13,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:E4",
+            "table_range": "A1:E4",
+            "headers": [
+              "地区",
+              "经营情况 / 2024年 / 销售额",
+              "经营情况 / 2024年 / 订单数",
+              "经营情况 / 2025年 / 销售额",
+              "经营情况 / 2025年 / 订单数"
+            ],
+            "header_rows": [
+              1,
+              2,
+              3
+            ],
+            "header_decision": "merged_hierarchy",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.006414700066670775
+    },
+    {
+      "name": "21_key_value",
+      "description": "纵向键值表不错误转置",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:字段|值",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:字段|值",
+          "passed": true
+        },
+        {
+          "check": "row:数据:4:字段|值",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 99,
+        "cleaned_character_count": 99,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 3,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 3
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B4",
+            "table_range": "A1:B4",
+            "headers": [
+              "字段",
+              "值"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 3,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.0052325999131426215
+    },
+    {
+      "name": "22_multiple_sheets",
+      "description": "多工作表与空工作表",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:第二表:2:产品|数量",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 102,
+        "cleaned_character_count": 102,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 2,
+          "row": 2
+        },
+        "sheet_count": 3,
+        "visible_sheet_count": 3,
+        "table_count": 2,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          },
+          {
+            "sheet_name": "第二表",
+            "table_id": "第二表!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "产品",
+              "数量"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.006370099959895015
+    },
+    {
+      "name": "23_adjacent_sections",
+      "description": "没有空行的不同表头分段",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|销售额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:4:产品|数量",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [
+        "section_header_inferred:数据:3"
+      ],
+      "stats": {
+        "raw_character_count": 100,
+        "cleaned_character_count": 100,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 2,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 1,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 2,
+          "row": 2
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 2,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "地区",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          },
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A3:B4",
+            "table_range": "A3:B4",
+            "headers": [
+              "产品",
+              "数量"
+            ],
+            "header_rows": [
+              3
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.004557300009764731
+    },
+    {
+      "name": "24_separate_unit_row",
+      "description": "独立单位行不混进业务记录",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:3:地区|数量|销售额",
+          "passed": true
+        },
+        {
+          "check": "text:万元",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 93,
+        "cleaned_character_count": 93,
+        "chunk_count": 3,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 3
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "spreadsheet_context": 1,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:C3",
+            "table_range": "A1:C3",
+            "headers": [
+              "地区",
+              "数量",
+              "销售额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {
+              "数量": "台",
+              "销售额": "万元"
+            }
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.013004799955524504
+    },
+    {
+      "name": "25_identifiers_annotations",
+      "description": "特殊表名、数字编号格式、批注和链接",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:预算! 空格:2:编号|金额",
+          "passed": true
+        },
+        {
+          "check": "text:000123",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 61,
+        "cleaned_character_count": 61,
+        "chunk_count": 2,
+        "duplicate_content_count": 0,
+        "table_row_count": 1,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 2
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 1
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 4,
+        "preserved_visible_cells": 4,
+        "table_layouts": [
+          {
+            "sheet_name": "预算! 空格",
+            "table_id": "预算! 空格!A1:B2",
+            "table_range": "A1:B2",
+            "headers": [
+              "编号",
+              "金额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 1,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.005438399966806173
+    },
+    {
+      "name": "26_numeric_precision",
+      "description": "零、负数和大数精度不改变",
+      "passed": true,
+      "checks": [
+        {
+          "check": "row:数据:2:地区|金额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:3:地区|金额",
+          "passed": true
+        },
+        {
+          "check": "row:数据:4:地区|金额",
+          "passed": true
+        },
+        {
+          "check": "no_extra_title_note_unit_or_header_records",
+          "passed": true,
+          "unexpected_rows": []
+        }
+      ],
+      "warnings": [],
+      "stats": {
+        "raw_character_count": 118,
+        "cleaned_character_count": 118,
+        "chunk_count": 4,
+        "duplicate_content_count": 0,
+        "table_row_count": 3,
+        "formula_count": 0,
+        "low_quality_chunk_count": 0,
+        "warning_count": 0,
+        "modality_breakdown": {
+          "xlsx": 4
+        },
+        "content_type_breakdown": {
+          "table_header": 1,
+          "row": 3
+        },
+        "sheet_count": 1,
+        "visible_sheet_count": 1,
+        "table_count": 1,
+        "effective_cells": 8,
+        "preserved_visible_cells": 8,
+        "table_layouts": [
+          {
+            "sheet_name": "数据",
+            "table_id": "数据!A1:B4",
+            "table_range": "A1:B4",
+            "headers": [
+              "地区",
+              "金额"
+            ],
+            "header_rows": [
+              1
+            ],
+            "header_decision": "selected",
+            "row_count": 3,
+            "summary_rows": [],
+            "column_units": {}
+          }
+        ],
+        "excel_parser": "source_preserving_layout_v1"
+      },
+      "seconds": 0.004741600016131997
+    }
+  ]
+}

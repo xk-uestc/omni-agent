@@ -39,6 +39,19 @@ def test_invalid_image_is_rejected():
         ImageQualityAnalyzer().analyze(b"not-an-image")
 
 
+@pytest.mark.parametrize('angle', [float('nan'), float('inf'), 361, True])
+def test_invalid_rotation_is_rejected_before_processing(angle):
+    with pytest.raises(ValueError, match='rotation_degrees'):
+        ImageEnhancer().enhance(image_bytes(), transforms=('rotate_to_upright',), rotation_degrees=angle)
+
+
+def test_skew_padding_remains_white_instead_of_creating_black_scan_edges():
+    result = ImageEnhancer().enhance(image_bytes(width=120, height=80),
+        transforms=('rotate_to_upright',), rotation_degrees=5)
+    with Image.open(BytesIO(result.image_bytes)) as image:
+        assert image.getpixel((0, 0)) == (255, 255, 255)
+
+
 def test_image_enhancer_outputs_standardized_ocr_input():
     source = image_bytes(width=320, height=240, flat=True)
     result = ImageEnhancer().enhance(

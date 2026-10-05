@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import math
 import re
+import time
 from decimal import Decimal
 
 from sqlglot import exp, parse_one, tokenize
@@ -38,6 +39,8 @@ _PHYSICAL_EACH = re.compile(
 _NONNULL_COUNT_INTENT = re.compile(
     r'(?:非空|不为空|非null|not\s+null).{0,24}(?:记录数|数量|个数)'
     r'|(?:记录数|数量|个数).{0,24}(?:非空|不为空)', re.I)
+_NULL_ROW_COUNT_INTENT = re.compile(
+    r'记录数|行数|数量|个数|计数|多少(?:条|个|行)?|\bcount\b|\bhow many\b', re.I)
 
 
 def explicit_nonnull_count_fields(question, tables):
@@ -65,6 +68,32 @@ def explicit_nonnull_count_fields(question, tables):
             named_owners = {t.name for t in owners if t.name in named_tables}
             if explicit_count and mentioned and (qualified or (len(owners) == 1 and
                     (not named_tables or table.name in named_tables))
+                    or (len(named_owners) == 1 and table.name in named_owners)):
+                fields.append((table.name, column.name))
+    return fields
+
+
+def explicit_null_row_count_fields(question, tables):
+    """Resolve a uniquely named field whose NULL rows are being counted."""
+    if not isinstance(question, str) or not _NULL_ROW_COUNT_INTENT.search(question):
+        return []
+    named_tables = {table.name for table in tables if re.search(
+        r'(?<![A-Za-z_0-9])' + re.escape(table.name) + r'(?![A-Za-z_0-9])', question, re.I)}
+    fields = []
+    for table in tables:
+        for column in table.columns:
+            field = re.escape(column.name)
+            null_predicate = re.compile(
+                r'(?<![A-Za-z_0-9])' + field
+                + r'\s*(?:字段)?\s*(?:(?:为|是|等于|=|is)\s*)?(?:null|为空|空值?)(?![A-Za-z_0-9])', re.I)
+            if not null_predicate.search(question):
+                continue
+            qualified = bool(re.search(r'(?<![A-Za-z_0-9])' + re.escape(table.name)
+                + r'(?:\.|的|表的|中的)\s*' + field + r'(?![A-Za-z_0-9])', question, re.I))
+            owners = [owner for owner in tables if any(c.name.casefold() == column.name.casefold()
+                                                       for c in owner.columns)]
+            named_owners = {owner.name for owner in owners if owner.name in named_tables}
+            if (qualified or (len(owners) == 1 and (not named_tables or table.name in named_tables))
                     or (len(named_owners) == 1 and table.name in named_owners)):
                 fields.append((table.name, column.name))
     return fields
@@ -295,25 +324,199 @@ def validate_proposal(sql, tables):
     return parameterized, tuple(ordered), canonical_sql, sorted(physical), sorted(used_columns)
 
 
-def _verify_nonnull_count_projection(question, sql, tables):
-    requested = explicit_nonnull_count_fields(question, tables)
-    if not requested:
+def _column_origin(column, scope, seen=None):
+    if not isinstance(column, exp.Column):
+        return None
+    seen = set() if seen is None else seen
+    key = (id(scope), column.table, column.name)
+    if key in seen:
+        return None
+    seen.add(key)
+    owner = scope
+    while owner is not None and column.table not in owner.sources:
+        owner = owner.parent
+    if owner is None:
+        return None
+    source = owner.sources[column.table]
+    if isinstance(source, exp.Table):
+        return source.name, column.name
+    if isinstance(source, Scope):
+        selections = [selection for selection in source.expression.selects
+                      if selection.alias_or_name == column.name]
+        if len(selections) == 1:
+            projection = selections[0]
+            if isinstance(projection, exp.Alias):
+                projection = projection.this
+            return _column_origin(projection, source, seen)
+    return None
+
+
+def _unwrap_parens(expression):
+    while isinstance(expression, exp.Paren):
+        expression = expression.this
+    return expression
+
+
+def _positive_null_conjuncts(expression, scope):
+    """Resolve positive IS NULL predicates that constrain all rows in an AND."""
+    expression = _unwrap_parens(expression)
+    if isinstance(expression, exp.And):
+        return (_positive_null_conjuncts(expression.this, scope)
+                | _positive_null_conjuncts(expression.expression, scope))
+    if not (isinstance(expression, exp.Is) and isinstance(expression.expression, exp.Null)):
+        return set()
+    origin = _column_origin(expression.this, scope)
+    return {(origin[0].casefold(), origin[1].casefold())} if origin else set()
+
+
+def _exact_null_predicate_fields(expression, scope):
+    expression = _unwrap_parens(expression)
+    if not (isinstance(expression, exp.Is) and isinstance(expression.expression, exp.Null)):
+        return set()
+    origin = _column_origin(expression.this, scope)
+    return {(origin[0].casefold(), origin[1].casefold())} if origin else set()
+
+
+def _literal_integer(expression, value):
+    return (isinstance(expression, exp.Literal) and not expression.is_string
+            and expression.this == str(value))
+
+
+def _requested_count_columns(question, sql, tables):
+    requested_nonnull = explicit_nonnull_count_fields(question, tables)
+    requested_null = explicit_null_row_count_fields(question, tables)
+    if not requested_nonnull and not requested_null:
+        return requested_nonnull, requested_null, set(), set(), False, set(), set()
+    schema = {table.name: {column.name: column.data_type for column in table.columns} for table in tables}
+    tree = qualify(parse_one(sql, read='sqlite'), dialect='sqlite', schema=schema,
+                   validate_qualify_columns=True)
+    root_scope = next((scope for scope in reversed(list(traverse_scope(tree)))
+                       if scope.expression is tree), None)
+    if root_scope is None:
+        return requested_nonnull, requested_null, set(), set(), False, set(), set()
+    direct_counts, safe_row_count_columns, count_all = set(), set(), False
+    null_filter_fields = set()
+    conditional_null_counts = set()
+    for table in tables:
+        for column in table.columns:
+            if column.primary_key or not column.nullable:
+                safe_row_count_columns.add((table.name.casefold(), column.name.casefold()))
+    for projection in tree.expressions:
+        for count in projection.find_all(exp.Count):
+            if count.find_ancestor(exp.Select) is not tree:
+                continue
+            if isinstance(count.this, exp.Star):
+                count_all = True
+                continue
+            origin = _column_origin(count.this, root_scope)
+            if origin:
+                direct_counts.add((origin[0].casefold(), origin[1].casefold()))
+
+        for filtered in projection.find_all(exp.Filter):
+            count = filtered.this
+            if (not isinstance(count, exp.Count)
+                    or count.find_ancestor(exp.Select) is not tree):
+                continue
+            count_is_row_safe = isinstance(count.this, exp.Star)
+            if not count_is_row_safe:
+                origin = _column_origin(count.this, root_scope)
+                count_is_row_safe = bool(origin and
+                    (origin[0].casefold(), origin[1].casefold()) in safe_row_count_columns)
+            if count_is_row_safe:
+                condition = filtered.expression.this if isinstance(filtered.expression, exp.Where) \
+                    else filtered.expression
+                conditional_null_counts |= _exact_null_predicate_fields(condition, root_scope)
+
+        for aggregate in projection.find_all(exp.Sum, exp.Count):
+            if aggregate.find_ancestor(exp.Select) is not tree:
+                continue
+            case = aggregate.this
+            branches = case.args.get('ifs', []) if isinstance(case, exp.Case) else []
+            if len(branches) != 1:
+                continue
+            branch = branches[0]
+            if not _literal_integer(branch.args.get('true'), 1):
+                continue
+            if isinstance(aggregate, exp.Sum):
+                if not _literal_integer(case.args.get('default'), 0):
+                    continue
+            elif case.args.get('default') is not None and not isinstance(case.args.get('default'), exp.Null):
+                continue
+            conditional_null_counts |= _exact_null_predicate_fields(branch.this, root_scope)
+
+    where = tree.args.get('where')
+    if where is not None:
+        null_filter_fields = _positive_null_conjuncts(where.this, root_scope)
+    return (requested_nonnull, requested_null, direct_counts, safe_row_count_columns,
+            count_all, null_filter_fields, conditional_null_counts)
+
+
+def _verify_date_comparators(sql, tables, profiles):
+    verified = {str(item.get('field', '')).casefold() for item in profiles
+        if isinstance(item, dict) and item.get('format') == 'iso_text'
+        and isinstance(item.get('time_comparison'), dict)
+        and item['time_comparison'].get('operator') == 'JULIANDAY'
+        and item['time_comparison'].get('verification') == 'whole_column_sqlite_parse_non_null_values'
+        and item['time_comparison'].get('text_order_verified') is False}
+    if not verified:
         return
-    tree = parse_one(sql, read='sqlite')
-    direct_counts = set()
-    for count in tree.find_all(exp.Count):
-        value = count.this
-        if isinstance(value, exp.Column):
-            direct_counts.add((value.table.casefold(), value.name.casefold()))
-    if any(not any(column.casefold() == actual_column and
-                   (not table.casefold() or table.casefold() == actual_table)
-                   for actual_table, actual_column in direct_counts)
-           for table, column in requested):
-        raise SqlSafetyError('complex_query_explicit_nonnull_count_requires_field_projection')
+    schema = {table.name: {column.name: column.data_type for column in table.columns} for table in tables}
+    tree = qualify(parse_one(sql, read='sqlite'), dialect='sqlite', schema=schema,
+                   validate_qualify_columns=True)
+    comparisons = (exp.EQ, exp.NEQ, exp.GT, exp.GTE, exp.LT, exp.LTE, exp.Between)
+    for scope in traverse_scope(tree):
+        for column in scope.columns:
+            origin = _column_origin(column, scope)
+            if not origin or f'{origin[0]}.{origin[1]}'.casefold() not in verified:
+                continue
+            comparison = column.find_ancestor(*comparisons)
+            if comparison is None:
+                continue
+            wrapper = column.parent
+            if not (isinstance(wrapper, exp.Anonymous) and wrapper.name.upper() == 'JULIANDAY'):
+                raise SqlSafetyError('complex_query_verified_date_requires_julianday')
+
+
+def _verify_count_projection(question, sql, tables):
+    (requested_nonnull, requested_null, direct_counts, safe_row_count_columns, count_all,
+     null_filter_fields, conditional_null_counts) = \
+        _requested_count_columns(question, sql, tables)
+    nonnull_set = {(table.casefold(), column.casefold()) for table, column in requested_nonnull}
+    null_set = {(table.casefold(), column.casefold()) for table, column in requested_null}
+    for table, column in requested_nonnull:
+        if (table.casefold(), column.casefold()) not in direct_counts:
+            raise SqlSafetyError('complex_query_explicit_nonnull_count_requires_field_projection')
+    if requested_null:
+        globally_filtered = null_set & null_filter_fields
+        if globally_filtered & nonnull_set:
+            raise SqlSafetyError('complex_query_null_and_nonnull_count_scope_requires_separate_query')
+        if not null_set <= (null_filter_fields | conditional_null_counts):
+            raise SqlSafetyError('complex_query_null_row_count_requires_null_predicate')
+        if globally_filtered and (not count_all and not (direct_counts & safe_row_count_columns)):
+            raise SqlSafetyError('complex_query_null_row_count_requires_row_projection')
+        unsafe_counts = direct_counts - safe_row_count_columns - nonnull_set
+        if unsafe_counts:
+            raise SqlSafetyError('complex_query_null_row_count_requires_row_projection')
+
+
+def _generate_with_transient_retries(provider, instructions, context, schema, **kwargs):
+    client = provider.client
+    retries = getattr(provider, 'max_retries', 0)
+    retries = retries if type(retries) is int and 0 <= retries <= 2 else 0
+    for attempt in range(retries + 1):
+        try:
+            return client.generate(instructions, context, schema, **kwargs)
+        except GenerationError as exc:
+            audit = getattr(client, 'audit', {})
+            http_status = audit.get('http_status') if isinstance(audit, dict) else None
+            status = exc.status if exc.status is not None else http_status
+            retryable = status is None or status == 429 or status >= 500
+            if not retryable or attempt >= retries:
+                raise
+            time.sleep(0.05 * (2 ** attempt))
 
 
 def propose_complex(provider, question, tables, *, date_profiles=None, date_profile_loader=None):
-    client = provider.client
     context = {'question': question, 'schema': [t.to_dict() for t in tables],
                'reference_date': provider.reference_date.isoformat(),
                'metric_catalog': provider.catalog.model_context() if provider.catalog else None,
@@ -327,7 +530,7 @@ def propose_complex(provider, question, tables, *, date_profiles=None, date_prof
                      metric_label='复杂关系查询', metric_function='RELATIONAL')
     attempts=[]
     for attempt in range(2):
-        proposal = client.generate(INSTRUCTIONS, context, PROPOSAL,
+        proposal = _generate_with_transient_retries(provider, INSTRUCTIONS, context, PROPOSAL,
             name='complex_sql_proposal' if attempt==0 else 'complex_sql_structural_repair', max_tokens=6000)
         sql, clarification = proposal.get('sql'), proposal.get('clarification')
         if bool(sql) == bool(clarification):
@@ -337,7 +540,11 @@ def propose_complex(provider, question, tables, *, date_profiles=None, date_prof
             return plan, None
         try:
             compiled, parameters, canonical, physical, columns = validate_proposal(sql, tables)
-            _verify_nonnull_count_projection(question, canonical, tables)
+            if date_profile_loader is not None:
+                profiles = date_profile_loader(columns, context['date_storage_profiles'])
+                context = {**context, 'date_storage_profiles': profiles}
+            _verify_count_projection(question, canonical, tables)
+            _verify_date_comparators(canonical, tables, context['date_storage_profiles'])
             attempts.append({'attempt':attempt+1,'status':'statically_validated'})
             break
         except SqlSafetyError as exc:
@@ -345,14 +552,19 @@ def propose_complex(provider, question, tables, *, date_profiles=None, date_prof
             if attempt:raise
             # One representation repair only; no retries of semantic rejection
             # or ambiguity. Every original constraint is reviewed afterward.
+            repair_constraint = ('One corrected SQLite representation; preserve original semantics. '
+                'No CROSS JOIN; use scalar subquery for a global aggregate. Do not invent fields or relax the question.')
+            if str(exc) == 'complex_query_verified_date_requires_julianday':
+                repair_constraint += (' For every verified iso_text date field in date_storage_profiles, '
+                    'wrap the field and date bound with JULIANDAY() in comparisons; preserve the original '
+                    'half-open or inclusive interval exactly.')
+            if str(exc) == 'complex_query_null_and_nonnull_count_scope_requires_separate_query':
+                repair_constraint += (' Do not put IS NULL in the query-wide WHERE when the question also asks '
+                    'for the same field non-null or total counts. Use COUNT(*) FILTER (WHERE field IS NULL) '
+                    'or SUM(CASE WHEN field IS NULL THEN 1 ELSE 0 END) for the null-row metric.')
             context={**context,'previous_candidate_sql':sql,'structural_failure':str(exc),
-                'repair_constraint':'One corrected SQLite representation; preserve original semantics. No CROSS JOIN; use scalar subquery for a global aggregate. Do not invent fields or relax the question.'}
-    # Only structurally validated physical dependencies may request additional
-    # snapshot probes. Candidate SQL is never executed by this callback.
-    if date_profile_loader is not None:
-        additional = date_profile_loader(columns, context['date_storage_profiles'])
-        context = {**context, 'date_storage_profiles': additional}
-    review = client.generate(REVIEW_INSTRUCTIONS, {**context, 'sql': canonical}, REVIEW,
+                'repair_constraint':repair_constraint}
+    review = _generate_with_transient_retries(provider, REVIEW_INSTRUCTIONS, {**context, 'sql': canonical}, REVIEW,
                              name='complex_sql_independent_review', max_tokens=2000)
     if (review.get('approved') is not True or review.get('clarification')
             or not isinstance(review.get('checks'), dict)

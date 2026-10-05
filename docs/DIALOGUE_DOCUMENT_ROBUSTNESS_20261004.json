@@ -1,0 +1,214 @@
+{
+  "not_official_score": true,
+  "source_hashes_at_receipt": {
+    "ict-track8/backend/ocr.py": "6dec1a01704c1840479723d1122efce105dd6660780a94265057299936dc6b43",
+    "ict-track8/backend/orientation_quality.py": "90d541f1b4dbb5cab679af921aa881968812358401191a8c12e19e587829f7dd",
+    "ict-track8/backend/scanned_table_layout.py": "fa81c23dbbbab85363fb70f00d235803fe9c0e53210960344fc3f988feb7974e",
+    "ict-track8/backend/image_quality.py": "7a7ffeba68c8429023037f3fff5e754073564906bfebb7af7e7af7de5ffa1fca",
+    "ict-track8/backend/chunk_cleaning.py": "3b27d5cc5e78471147b8628c7b15453b28583c991f68d888c7a894a82b13ca54",
+    "ict-track8/backend/session.py": "3b7fa2fa0c48429072115cd8a9bbb6b0e72c8fec9140efdd6ada1ea14df0ba1f",
+    "ict-track8/backend/omni_agent.py": "873dfeb626927fc4b5b6b7ddb5b0a75d571170fab38ce43fb4e9849054c043ab",
+    "ict-track8/backend/sql_history_scope.py": "f09a47a9dfe099a244b630b0dcb09a65925439137a5c180e7e6079fa4f22b440",
+    "ict-track8/backend/app.py": "915b5fe06c15da8e32939d04a56b22f85008c9b910a823510e60927d3523024b"
+  },
+  "limitation": "Historical reports bind their own run. Source hashes at receipt do not retroactively bind older inference.",
+  "reports": [
+    {
+      "path": "D:\\ICT8-OmniAgent\\runtime\\document-robustness-finance-gold-20261004.json",
+      "sha256": "f464ffa389a5736eef70dc569d58d0a02ced7ca5b8ab176c32460d60f4989c70",
+      "summary": [
+        {
+          "variant": "upright",
+          "character_error_rate": 0.7338220424671386,
+          "edit_distance": 2903,
+          "reference_characters": 3956,
+          "observed_characters": 3763,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "rotated90",
+          "character_error_rate": 0.737360970677452,
+          "edit_distance": 2917,
+          "reference_characters": 3956,
+          "observed_characters": 3847,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "rotated180",
+          "character_error_rate": 0.737360970677452,
+          "edit_distance": 2917,
+          "reference_characters": 3956,
+          "observed_characters": 3847,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "rotated270",
+          "character_error_rate": 0.737360970677452,
+          "edit_distance": 2917,
+          "reference_characters": 3956,
+          "observed_characters": 3847,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "skew5",
+          "character_error_rate": 0.75,
+          "edit_distance": 2967,
+          "reference_characters": 3956,
+          "observed_characters": 3881,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "dark",
+          "character_error_rate": 0.7350859453993933,
+          "edit_distance": 2908,
+          "reference_characters": 3956,
+          "observed_characters": 3760,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "blur",
+          "character_error_rate": 0.7269969666329625,
+          "edit_distance": 2876,
+          "reference_characters": 3956,
+          "observed_characters": 3564,
+          "ocr_status": "ok"
+        }
+      ]
+    },
+    {
+      "path": "D:\\ICT8-OmniAgent\\runtime\\document-robustness-finance-final-gold-20261004.json",
+      "sha256": "e99fed100ff4f5a5f3b096c134af0afa8dacaa36b60c807c2b2d1265eab217b7",
+      "summary": [
+        {
+          "variant": "upright",
+          "character_error_rate": 0.056875631951466124,
+          "edit_distance": 225,
+          "reference_characters": 3956,
+          "observed_characters": 3763,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "rotated90",
+          "character_error_rate": 0.03564206268958544,
+          "edit_distance": 141,
+          "reference_characters": 3956,
+          "observed_characters": 3847,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "rotated180",
+          "character_error_rate": 0.03564206268958544,
+          "edit_distance": 141,
+          "reference_characters": 3956,
+          "observed_characters": 3847,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "rotated270",
+          "character_error_rate": 0.03564206268958544,
+          "edit_distance": 141,
+          "reference_characters": 3956,
+          "observed_characters": 3847,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "skew5",
+          "character_error_rate": 0.054600606673407485,
+          "edit_distance": 216,
+          "reference_characters": 3956,
+          "observed_characters": 3881,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "dark",
+          "character_error_rate": 0.056875631951466124,
+          "edit_distance": 225,
+          "reference_characters": 3956,
+          "observed_characters": 3760,
+          "ocr_status": "ok"
+        },
+        {
+          "variant": "blur",
+          "character_error_rate": 0.12765419615773507,
+          "edit_distance": 505,
+          "reference_characters": 3956,
+          "observed_characters": 3564,
+          "ocr_status": "ok"
+        }
+      ]
+    },
+    {
+      "path": "D:\\ICT8-OmniAgent\\runtime\\document-table-cell-recovery-20261004.json",
+      "sha256": "84b40a1770d041c6d172861d36434a8503c1ed94c8cc0bf6e09837be08f8dd18",
+      "summary": [
+        {
+          "variant": "upright",
+          "ocr_status": "ok",
+          "grids_status": "observed",
+          "cell_recovery": {
+            "calls": 6,
+            "failures": 0,
+            "max_cells": 8,
+            "scheduling_budget_seconds": 10,
+            "elapsed_seconds": 6.078,
+            "values_independently_verified": false
+          },
+          "tables": [
+            {
+              "rows": 11,
+              "columns": 2,
+              "unbound_region_count": 6,
+              "cells_with_text": 22,
+              "values_verified": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "D:\\ICT8-OmniAgent\\runtime\\scanned-pdf-http-20261004.json",
+      "sha256": "407c52720087520a5dd1cc42eee4dd95728ad804f0151cb30f657f4ffcc53bfc",
+      "summary": {
+        "not_official_benchmark": true,
+        "source_sha256": "7386776d1a2bada2f9d8068dec77c79e0ff832d90af6cf2c869f84651065b4bd",
+        "status": "passed",
+        "stats": {
+          "raw_character_count": 4144,
+          "cleaned_character_count": 2191,
+          "chunk_count": 2,
+          "duplicate_content_count": 0,
+          "table_row_count": 0,
+          "formula_count": 0,
+          "low_quality_chunk_count": 0,
+          "warning_count": 3,
+          "modality_breakdown": {
+            "pdf": 2
+          },
+          "content_type_breakdown": {
+            "paragraph": 2
+          },
+          "page_count": 1,
+          "ocr_required_pages": [],
+          "extract_failed_pages": [],
+          "repeated_lines_removed": 0,
+          "document_quality_score": 0.92,
+          "ocr_succeeded_pages": [
+            1
+          ],
+          "ocr_failed_pages": [],
+          "rotated_pages": [],
+          "coordinate_evidence_version": "pdf-coordinate-chain-v1"
+        },
+        "chunk_count": 2,
+        "grid_statuses": [
+          "observed",
+          "observed"
+        ],
+        "grid_table_counts": [
+          1,
+          1
+        ]
+      }
+    }
+  ]
+}
