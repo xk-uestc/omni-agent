@@ -78,6 +78,8 @@ def test_complete_comparison_and_source_replay(tmp_path):
     _replay_computation(store, result)
     context = _review_component(1, QUESTION, result, store=store)
     assert len(context['native_row_context']['original_registries'][0]['pages']) == 2
+    assert len(context['native_page_contexts']) == 2
+    assert 'Entity F' in list(context['native_page_contexts'].values())[1]['complete_native_page_text']
     assert client.calls == ['native_row_comparison_selection', 'native_row_comparison_independent_review']
 
 

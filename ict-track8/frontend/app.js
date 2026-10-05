@@ -240,7 +240,7 @@ function sourcePageViewer(host,item,part,nativeSelection){
           svg.append(shape);
         }stage.append(svg);
       }
-      info.textContent=`第 ${page} 页 · 原文件 ${sourceSha.slice(0,16)}… · ${nativeBoxes?.length?"实体与数值字段已定位；原件坐标及页面映射已核对。":matched&&valid?"引用位置已高亮；位置由独立视觉模型复核。":"原页内容已核对，本引用未提供匹配的位置标注。"}`;
+      info.textContent=`第 ${page} 页 · 原文件 ${sourceSha.slice(0,16)}… · ${nativeBoxes?.length?"实体与查询字段已定位；原件坐标及页面映射已核对。":matched&&valid?"引用位置已高亮；位置由独立视觉模型复核。":"原页内容已核对，本引用未提供匹配的位置标注。"}`;
     }catch(error){if(!signal.aborted&&current===revision)info.textContent=error.message||"原页读取失败。";}
   };
   details.addEventListener("toggle",onToggle);
@@ -251,6 +251,7 @@ function renderDocumentEvidence(host,data){
   const docs=el("div","docs");
   if(data.answer_mode==="visual_source_model_reviewed")docs.append(el("p","schema-caption","原页读取 · 独立视觉模型复核；下面展示返回的原文片段，可展开原页核对数值与单位。"));
   if(data.answer_mode==="native_row_comparison_model_reviewed")docs.append(el("p","schema-caption","原页表格比较 · 样本编号与单位已核对，数值关系由服务器计算；下方保留两页原始记录。"));
+  if(data.answer_mode==="native_row_selection_model_reviewed")docs.append(el("p","schema-caption","原页字段筛选 · 已遍历本次候选表格内匹配记录，并独立复核输出字段；可展开原页查看对应位置。"));
   if(data.answer_mode==="source_multi_span_model_reviewed")docs.append(el("p","schema-caption","回答由多段原文组成，各子问与所选资料中的相关项目已分别复核。可展开来源核对；本次范围不包含未检索的页面。"));
   items.forEach(item=>{
     const row=el("article","doc"),metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;

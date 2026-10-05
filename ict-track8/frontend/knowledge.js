@@ -315,7 +315,7 @@ async function loadVisualPage(pageNo){
         }
       }
     }
-    $('visual-summary').textContent=`第 ${pageNo} / ${manifest.page_count} 页 · ${manifest.size_px.join(' × ')} 像素 · 原文件 SHA-256 ${snapshot.sourceSha.slice(0,16)}…${nativeBoxes?.length?' · 主体与数值字段已定位；原件坐标与显示映射已核对。':''}`;
+    $('visual-summary').textContent=`第 ${pageNo} / ${manifest.page_count} 页 · ${manifest.size_px.join(' × ')} 像素 · 原文件 SHA-256 ${snapshot.sourceSha.slice(0,16)}…${nativeBoxes?.length?' · 主体与查询字段已定位；原件坐标与显示映射已核对。':''}`;
     $('visual-detail').textContent=JSON.stringify({document_id:manifest.document_id,page_no:manifest.page_no,source_sha256:manifest.source_sha256,render_sha256:manifest.render_sha256,renderer:manifest.renderer,rotation_degrees:manifest.rotation_degrees,coordinate_frame:manifest.coordinate_frame,warnings:manifest.warnings},null,2);
   }catch(error){if(revision===visualRevision&&!signal.aborted)$('visual-summary').textContent=error.message;}
 }

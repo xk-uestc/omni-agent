@@ -60,9 +60,15 @@ def recovery_eligible(result, client, *, answer_audit_start=(0, 0)):
             or getattr(client, 'reasoning', None) != 'medium'):
         return False
     # A successful substantive answer is not regenerated for a better score.
+    if (result.get('status') == 'clarification'
+            and result.get('answer_mode') in {'native_row_selection_model_reviewed', 'native_row_selection_requires_scope'}
+            and result.get('clarification_code') in {'document_native_row_count_ambiguous', 'document_native_row_projection_unverified'}):
+        # A reviewed count conflict needs a user constraint, not another
+        # attempt to select an arbitrary subset from the same evidence.
+        return False
     if (result.get('status') == 'ok' and result.get('answer_mode') in {
             'model_grounded', 'source_span_model_reviewed', 'source_multi_span_model_reviewed',
-            'native_table_model_reviewed', 'native_row_comparison_model_reviewed', 'visual_chart_native_annotated',
+            'native_table_model_reviewed', 'native_row_comparison_model_reviewed', 'native_row_selection_model_reviewed', 'visual_chart_native_annotated',
             'visual_source_model_reviewed'}):
         return False
     history = getattr(client, 'audit_history', None)

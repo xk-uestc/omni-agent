@@ -8,20 +8,24 @@ const {chromium}=require('playwright');
 const ROOT=path.resolve(__dirname,'..'),python='C:/Users/lenovo/AppData/Local/Programs/Python/Python312/python.exe';
 const receiptPath=path.resolve(ROOT,process.argv[2]||'docs/NATIVE_ROW_COMPARISON_PRODUCTION_ROUND24_REPLAY_20261006.json');
 const baselinePath=path.join(ROOT,'docs/OHR_ROUND9_FINAL_20261004.json');
-const baseline=JSON.parse(fs.readFileSync(baselinePath)),receipt=JSON.parse(fs.readFileSync(receiptPath));
+const baseline=JSON.parse(fs.readFileSync(baselinePath)),input=JSON.parse(fs.readFileSync(receiptPath));
+const receipt=input.cases?input.cases.find(c=>c.passed&&c.result?.status==='ok')?.result:input;
+const sourceStore=process.argv[3]?path.resolve(process.argv[3]):baseline.store_path;
+const selectionMode=receipt?.answer_mode==='native_row_selection_model_reviewed';
+const executionTool=selectionMode?'document.table.filter':'document.compare';
 const output=path.join(ROOT,'runtime','native-row-browser-'+crypto.randomUUID());fs.mkdirSync(output);
 let browser,server,log;const checks=[],errors=[];
 const assert=(ok,message)=>{if(!ok)throw Error(message);};
 async function check(name,run){await run();checks.push({name,passed:true});console.log(JSON.stringify({name,passed:true}));}
 async function main(){
-  assert(receipt.status==='ok'&&receipt.implementation_stable===true,'successful stable model receipt required');
-  execFileSync(python,['-c',"import sys,json;sys.path.insert(0,'ict-track8');from backend.knowledge_store import KnowledgeStore;from backend.native_row_comparison import replay_comparison;r=json.load(open(sys.argv[1],encoding='utf-8'));assert replay_comparison(KnowledgeStore(sys.argv[2]),r)",receiptPath,baseline.store_path],{cwd:ROOT});
+  assert(receipt?.status==='ok'&&input.implementation_stable===true,'successful stable model receipt required');
+  execFileSync(python,['-c',"import sys,json;sys.path.insert(0,'ict-track8');from backend.knowledge_store import KnowledgeStore;from backend.native_row_comparison import replay_comparison;from backend.native_row_selection import replay_selection;r=json.load(open(sys.argv[1],encoding='utf-8'));r=next(c['result'] for c in r['cases'] if c['passed'] and c['result']['status']=='ok') if 'cases' in r else r;replay=replay_selection if r['answer_mode']=='native_row_selection_model_reviewed' else replay_comparison;assert replay(KnowledgeStore(sys.argv[2]),r)",receiptPath,sourceStore],{cwd:ROOT});
   checks.push({name:'retained model proof replays against unchanged originals',passed:true});
   const port=await new Promise(resolve=>{const socket=net.createServer();socket.listen(0,'127.0.0.1',()=>{const port=socket.address().port;socket.close(()=>resolve(port));});});
   const base=`http://127.0.0.1:${port}`;
   execFileSync(python,['-c',"import sys;from pathlib import Path;sys.path.insert(0,'ict-track8');from backend.nl2sql.seed import initialize_database;initialize_database(Path(sys.argv[1]))",path.join(output,'business.sqlite')],{cwd:ROOT});
   log=fs.openSync(path.join(output,'server.log'),'w');
-  const env={...process.env,ICT8_KNOWLEDGE_ROOT:baseline.store_path,ICT8_DB_PATH:path.join(output,'business.sqlite'),ICT8_SESSION_DB:path.join(output,'sessions.sqlite'),ICT8_DENSE_MODEL_PATH:'',PYTHONIOENCODING:'utf-8'};
+  const env={...process.env,ICT8_KNOWLEDGE_ROOT:sourceStore,ICT8_DB_PATH:path.join(output,'business.sqlite'),ICT8_SESSION_DB:path.join(output,'sessions.sqlite'),ICT8_DENSE_MODEL_PATH:'',PYTHONIOENCODING:'utf-8'};
   server=spawn(python,['tools/run_server.py','--port',String(port)],{cwd:ROOT,env,windowsHide:true,stdio:['ignore',log,log]});
   const deadline=Date.now()+45000;let ready=false;
   while(Date.now()<deadline){if(server.exitCode!==null)throw Error('isolated server exited');try{if((await fetch(base+'/health',{signal:AbortSignal.timeout(1000)})).ok){ready=true;break;}}catch{}await new Promise(resolve=>setTimeout(resolve,200));}
@@ -34,7 +38,7 @@ async function main(){
   await page.goto(base+'/');await page.locator('#q').fill(receipt.question);await page.locator('#send').click();await page.locator('#send:not(:disabled)').waitFor();
   await check('native table reading and comparison appear as distinct actual receipts',async()=>{
     assert(await page.locator('.agent-tool-row[data-tool="document.table.read"][data-status="success"]').count()===1,'native read receipt missing');
-    assert(await page.locator('.agent-tool-row[data-tool="document.compare"][data-status="success"]').count()===1,'comparison receipt missing');
+    assert(await page.locator(`.agent-tool-row[data-tool="${executionTool}"][data-status="success"]`).count()===1,'execution receipt missing');
   });
   for(let i=0;i<2;i++)await check('main page source '+(i+1)+' shows both subject and queried value',async()=>{
     const viewer=page.locator('.source-page-viewer').nth(i);await viewer.locator(':scope>summary').click();
@@ -50,19 +54,20 @@ async function main(){
   await page.locator('#question').fill(receipt.question);await page.locator('#ask button').click();await page.locator('#ask button:not(:disabled)').waitFor();
   await check('direct document query also displays React tool feedback',async()=>{
     assert(await page.locator('#answer .agent-tool-row[data-tool="knowledge.answer"][data-status="success"]').count()===1,'direct query receipt missing');
-    assert(await page.locator('#answer .agent-tool-row[data-tool="document.compare"][data-status="success"]').count()===1,'direct comparison receipt missing');
+    assert(await page.locator(`#answer .agent-tool-row[data-tool="${executionTool}"][data-status="success"]`).count()===1,'direct execution receipt missing');
   });
   for(let i=0;i<2;i++)await check('knowledge page source '+(i+1)+' maps exact fields to verified PNG',async()=>{
     await page.locator('#answer .visual-action').nth(i).click();await page.locator('#visual-source-highlight rect').nth(1).waitFor();
     assert(await page.locator('#visual-source-highlight rect').count()===2,'knowledge field overlay missing');
-    assert((await page.locator('#visual-summary').innerText()).includes('主体与数值字段已定位'),'field coordinates not verified');
+    assert((await page.locator('#visual-summary').innerText()).includes('主体与查询字段已定位'),'field coordinates not verified');
     await page.locator('#visual-dialog').screenshot({path:path.join(output,'knowledge-source-'+(i+1)+'.png')});
     await page.locator('#visual-close').click();
   });
   await check('switching to an unselected page removes stale field highlights',async()=>{
     await page.locator('#answer .visual-action').first().click();await page.locator('#visual-source-highlight rect').nth(1).waitFor();
-    await page.locator('#visual-page').fill('2');await page.locator('#visual-page-form button').click();
-    await page.waitForFunction(()=>document.querySelector('#visual-summary').textContent.startsWith('第 2 /'));
+    const otherPage=receipt.citations[0].metadata.page_no===1?2:1;
+    await page.locator('#visual-page').fill(String(otherPage));await page.locator('#visual-page-form button').click();
+    await page.waitForFunction(pageNo=>document.querySelector('#visual-summary').textContent.startsWith('第 '+pageNo+' /'),otherPage);
     assert(await page.locator('#visual-source-highlight rect').count()===0,'old page field locations survived navigation');
   });
   await check('no page or React runtime errors',async()=>assert(errors.length===0,JSON.stringify(errors)));
@@ -70,5 +75,5 @@ async function main(){
 (async()=>{try{await main();}catch(error){errors.push(error.message);console.log(JSON.stringify({fatal:error.message}));}
 finally{await browser?.close();if(server&&server.exitCode===null)server.kill();if(log!==undefined)fs.closeSync(log);
   const report={created_at:new Date().toISOString(),scope:'recorded_model_receipt_ui_replay_real_original_page_rendering_not_new_model_accuracy',model_calls:0,
-    receipt:receiptPath,receipt_sha256:crypto.createHash('sha256').update(fs.readFileSync(receiptPath)).digest('hex'),checks,errors,output,passed:checks.length===9&&errors.length===0};
+    receipt:receiptPath,source_store:sourceStore,answer_mode:receipt?.answer_mode,receipt_sha256:crypto.createHash('sha256').update(fs.readFileSync(receiptPath)).digest('hex'),checks,errors,output,passed:checks.length===9&&errors.length===0};
   fs.writeFileSync(path.join(output,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));if(!report.passed)process.exitCode=1;}})();

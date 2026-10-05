@@ -50,13 +50,58 @@ def _parts(question, contract, proposal):
     return [indexed[index] for index in range(1, expected + 1)]
 
 
+def _row_page_contexts(context):
+    pages = {}
+    for registry in context['original_registries']:
+        for page in registry['pages']:
+            if not page['text'].strip() or len(page['text']) > 5000:
+                raise ValueError('component_native_context_budget')
+            key = f"{registry['document_id']}:{registry['source_sha256']}:{page['page_no']}"
+            pages[key] = {'document_id': registry['document_id'], 'source_sha256': registry['source_sha256'],
+                'page_no': page['page_no'], 'complete_native_page_text': page['text'],
+                'text_sha256': page['text_sha256'], 'scope': 'fresh_original_candidate_table_chain_page'}
+    return pages
+
+
+def _compact_row_review_context(context):
+    # Keep EVERY original row/field literal and every page reference. Geometry
+    # and repeated digests were already source-replayed, and duplicate full
+    # page text is available in native_page_contexts. Do not enlarge the
+    # existing whole-question review budget to accommodate duplication.
+    result = {k: deepcopy(v) for k, v in context.items() if k != 'original_registries'}
+    result['original_registries'] = [{
+        'document_id': registry['document_id'], 'source_sha256': registry['source_sha256'],
+        'pages': [{'page_no': p['page_no'], 'native_page_context_id':
+            f"{registry['document_id']}:{registry['source_sha256']}:{p['page_no']}"} for p in registry['pages']],
+        'records': [{k: deepcopy(row[k]) for k in ('row_id', 'chain_index', 'page_no', 'row_text')} | {
+            'fields': [{k: deepcopy(f[k]) for k in ('column_index', 'header', 'text', 'numeric_annotation')}
+                for f in row['fields']]} for row in registry['records']]
+    } for registry in context['original_registries']]
+    return result
+
+
+def _row_component_evidence(result):
+    return [{'document_id': c['metadata']['document_id'], 'source_sha256': c['metadata']['source_sha256'],
+        'page_no': c['metadata']['page_no'], 'row_id': c['metadata']['native_row']['row_id'],
+        'text': c['metadata']['native_row']['row_text']} for c in result['citations']]
+
+
 def _review_component(index, query, result, *, store=None):
+    if result.get('answer_mode') == 'native_row_selection_model_reviewed':
+        from .native_row_selection import review_context
+        context = review_context(store, result)
+        return {'part_id': index, 'standalone_question': query, 'answer': result['answer'],
+            'answer_mode': result['answer_mode'], 'evidence': _row_component_evidence(result),
+            'native_row_context': _compact_row_review_context(context), 'native_page_contexts': _row_page_contexts(context),
+            'answer_scope': deepcopy(result['answer_scope']),
+            'source_verification': 'fresh_original_rows_complete_inventory_and_literal_projection_replay'}
     if result.get('answer_mode') == 'native_row_comparison_model_reviewed':
         from .native_row_comparison import review_context
         context = review_context(store, result)
         return {'part_id': index, 'standalone_question': query, 'answer': result['answer'],
-            'answer_mode': result['answer_mode'], 'evidence': deepcopy(result['citations']),
-            'native_row_context': context, 'server_computation': deepcopy(result['computation']),
+            'answer_mode': result['answer_mode'], 'evidence': _row_component_evidence(result),
+            'native_row_context': _compact_row_review_context(context), 'native_page_contexts': _row_page_contexts(context),
+            'server_computation': deepcopy(result['computation']),
             'answer_scope': deepcopy(result['answer_scope']),
             'source_verification': 'fresh_original_rows_scope_and_comparator_replay'}
     evidence, pages = [], {}
