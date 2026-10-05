@@ -624,7 +624,8 @@ def extract_native_page_context(raw, page_no, anchor_text, max_chars=1800):
         return None
     uncapped = None if captioned else _uncaptioned_table_region(ordered, touched)
     if uncapped is False:
-        return None
+        from .native_table_chain import page_context
+        return page_context(raw,page_no,anchor_text,max_chars)
     # A small title/header hit can recover one adjacent table block. Competing
     # tables, distant tables and unrelated column blocks do not expand it.
     tables = [block for block in ordered if _tabular_runs(block)]

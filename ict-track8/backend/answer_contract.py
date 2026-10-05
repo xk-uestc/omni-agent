@@ -27,6 +27,7 @@ _MISSING_FACT = re.compile(r'\b(?:not\s+(?:stated|specified|recorded|provided|re
     r'(?:unknown|unspecified|unreported))\b|'
     r'(?:没有|未|尚未)(?:记载|记录|说明|提供|披露|给出)|未明确|无法确定|不详', re.I)
 _NATIVE_MODES = {
+    'original-native-table-chain-page-v1': frozenset({'original_native_candidate_table_chain_page'}),
     'original-native-bounded-page-region-v1': frozenset({'original_native_complete_table_region', 'original_native_complete_paragraph_region'}),
     'original-native-bounded-page-region-v2': frozenset({'original_native_complete_table_region', 'original_native_complete_paragraph_region', 'original_native_complete_captioned_table_region'}),
     'original-native-bounded-page-region-v3': frozenset({'original_native_complete_table_region', 'original_native_complete_paragraph_region', 'original_native_complete_captioned_table_region'}),
@@ -145,6 +146,17 @@ def literal_answer_shape_error(question, literal):
 
 def native_source_only_contract_valid(native):
     """New geometry modes are provenance only, never verified numeric rows."""
+    if isinstance(native,dict) and native.get('extraction_version')=='original-native-table-chain-page-v1':
+        chain=native.get('table_chain',{})
+        pages=chain.get('pages',[])
+        return (native_context_mode_valid(native) and native.get('calculator_input_eligible') is False
+            and native.get('anchor_match_policy')==ANCHOR_POLICY_VERSION
+            and len(pages)==2 and all(type(p) is int and p>0 for p in pages)
+            and pages[1]==pages[0]+1 and native.get('page_no') in pages
+            and chain.get('header_exact_and_lanes_aligned') is True
+            and chain.get('semantic_sample_identity_verified') is False
+            and chain.get('exhaustive_table_closure_verified') is False
+            and isinstance(native.get('members'),list) and bool(native['members']))
     if not isinstance(native, dict) or native.get('extraction_version') not in {
             'original-native-complete-block-context-v4', 'original-native-bounded-page-region-v2',
             'original-native-complete-block-context-v5', 'original-native-bounded-page-region-v3',

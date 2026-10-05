@@ -612,6 +612,10 @@ class KnowledgeStore:
         result['trace'].append(table_trace)
         if self.generator and selected:
             from .responses_client import GenerationError
+            from .answer_contract import question_contract
+            if page_no is None and question_contract(question)['exhaustive_selection_required']:
+                result['citations'],chain_trace=self._table_chain_citations(result['citations'])
+                result['trace'].append(chain_trace)
             generation_citations, omitted = self._generation_citations(result['citations'])
             by_id = {hit['citation_id']: hit for hit in generation_citations}
             # Keep the public retrieval excerpt and ordering unchanged. The
@@ -846,6 +850,41 @@ class KnowledgeStore:
             expected[source] = digest
         for source, digest in expected.items():
             self.verify_source(source, expected_sha256=digest)
+
+    def _table_chain_citations(self,citations):
+        """Add sibling-page anchors only; no table semantics or closure assumed."""
+        from .native_table_chain import probe
+        result=list(citations); added=[];visited=set()
+        records=self.records()
+        for hit in citations:
+            metadata=hit['metadata'];did=metadata['document_id']
+            if did in visited or len(visited)>=4:
+                continue
+            visited.add(did)
+            doc=self.document(did)
+            if doc['modality']!='pdf':
+                continue
+            raw=self.verify_source(did,expected_sha256=metadata['source_sha256']).read_bytes()
+            chains=probe(raw)['candidates']
+            matching=[c for c in chains if metadata.get('page_no') in [p['page_no'] for p in c['pages']]]
+            if len(matching)!=1:
+                continue
+            for page in matching[0]['pages']:
+                if any(h['metadata']['document_id']==did and h['metadata'].get('page_no')==page['page_no'] for h in result):
+                    continue
+                anchors=[r for r in records if r.metadata['document_id']==did
+                    and r.metadata.get('page_no')==page['page_no']
+                    and DocumentChunker.clean_text(r.content)==page['header_text']]
+                if len(anchors)!=1 or len(result)>=MAX_EVIDENCE_ITEMS:
+                    continue
+                record=anchors[0]
+                extra=DocumentHit(record.document_id,record.title,0,(),record.content,record.source_uri,
+                    {**record.metadata,'navigation_only':'native_repeated_header_sibling_page'}).to_dict()
+                extra['citation_id']=max(h['citation_id'] for h in result)+1
+                result.append(extra);added.append({'document_id':did,'page_no':page['page_no']})
+        return result,{'stage':'native_table_chain_navigation','added_pages':added,
+            'semantic_sample_identity_verified':False,'exhaustive_table_closure_verified':False,
+            'model_called':False}
 
     def _generation_citations(self, citations):
         """Rehydrate hit chunks and bounded, original-native PDF contexts.
