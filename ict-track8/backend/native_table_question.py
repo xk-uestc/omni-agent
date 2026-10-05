@@ -221,12 +221,29 @@ def annotation_arithmetic(facts, operation, *, allow_column_comparison=False, pe
             symbol = facts[0]['unit'].split(':',1)[1]
         suffix = suffixes[0]
         answer = symbol + format(total, ',f') + suffix
-        if facts[0].get('unit_evidence') and not symbol and not suffix:
-            code = facts[0].get('currency', 'unknown')
-            scale_label = {'1000':'thousand', '1000000':'million', '1000000000':'billion'}.get(facts[0].get('scale'), '')
-            label = ' '.join(part for part in (code if code != 'unknown' else '', scale_label) if part)
-            if facts[0]['unit']=='percent':label='%'
-            if label:answer += ' '+label
+    if operation not in {'ratio', 'percentage'} and facts[0].get('unit_evidence'):
+        # Numeric cell literals omit units declared by their own column. The
+        # exact header/path/geometry/scale proof was checked above. Preserve
+        # that verified scope in lookup as well as computed amount answers;
+        # having a printed currency symbol must not hide its multiplier.
+        fact = facts[0]
+        declaration = column_unit_declaration(fact['column_header_path'])
+        if declaration['symbol'] and not answer.startswith(('$', '€', '¥', '£')):
+            answer = declaration['symbol'] + answer
+        labels = []
+        if declaration['currency'] != 'unknown':
+            labels.append(declaration['currency'])
+        if declaration['scale'] is not None:
+            scale_label = {'1000':'thousand', '1000000':'million',
+                           '1000000000':'billion'}[declaration['scale']]
+            if (scale_label == 'billion' and re.search(r'\bbn\b',
+                    ' '.join(fact['column_header_path']), re.I)):
+                scale_label = 'bn'
+            labels.append(scale_label)
+        if labels:
+            answer += ' ' + ' '.join(labels)
+        if declaration['unit'] == 'percent' and not answer.endswith('%'):
+            answer += '%'
     return {'answer': answer, 'operation': operation, 'operands': [f['raw_value'] for f in facts],
             'numeric_result': format(total, 'f'), 'unit': 'percent' if operation == 'percentage' else 'ratio' if operation == 'ratio' else facts[0]['unit'],
             'scale': None if operation in {'ratio','percentage'} else facts[0].get('scale'),

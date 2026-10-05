@@ -1,0 +1,769 @@
+{
+  "created_at": "2026-10-05T22:57:48.486146+00:00",
+  "scope": "synthetic_original_PDF_amount_display_not_model_accuracy",
+  "model_calls": 0,
+  "fixtures": "D:\\ICT8-OmniAgent\\runtime\\native-amount-display-round32",
+  "implementation_sha_start": "8260147f5a083b2d76816c1268ee1a45feeff76dc965ae1502681fee1934f756",
+  "implementation_sha_end": "8260147f5a083b2d76816c1268ee1a45feeff76dc965ae1502681fee1934f756",
+  "implementation_stable": true,
+  "passed": 30,
+  "total": 30,
+  "records": [
+    {
+      "fixture": "symbol-billion",
+      "pdf_sha256": "395de3f14bfb7430775abac2c0e4c0dcc69dec913592de5f2176aa5f4c999611",
+      "original_header": "Amount ($ bn)",
+      "operation": "lookup",
+      "labels": [
+        "North"
+      ],
+      "expected_display": "$4.1 bn",
+      "result": {
+        "answer": "$4.1 bn",
+        "operation": "lookup",
+        "operands": [
+          "4.1"
+        ],
+        "numeric_result": "4.1",
+        "unit": "currency_symbol:$",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-billion",
+      "pdf_sha256": "395de3f14bfb7430775abac2c0e4c0dcc69dec913592de5f2176aa5f4c999611",
+      "original_header": "Amount ($ bn)",
+      "operation": "sum",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$6.7 bn",
+      "result": {
+        "answer": "$6.7 bn",
+        "operation": "sum",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "6.7",
+        "unit": "currency_symbol:$",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-billion",
+      "pdf_sha256": "395de3f14bfb7430775abac2c0e4c0dcc69dec913592de5f2176aa5f4c999611",
+      "original_header": "Amount ($ bn)",
+      "operation": "difference",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$1.5 bn",
+      "result": {
+        "answer": "$1.5 bn",
+        "operation": "difference",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "1.5",
+        "unit": "currency_symbol:$",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-billion",
+      "pdf_sha256": "395de3f14bfb7430775abac2c0e4c0dcc69dec913592de5f2176aa5f4c999611",
+      "original_header": "Amount ($ bn)",
+      "operation": "difference",
+      "labels": [
+        "South",
+        "North"
+      ],
+      "expected_display": "$-1.5 bn",
+      "result": {
+        "answer": "$-1.5 bn",
+        "operation": "difference",
+        "operands": [
+          "2.6",
+          "4.1"
+        ],
+        "numeric_result": "-1.5",
+        "unit": "currency_symbol:$",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-billion",
+      "pdf_sha256": "395de3f14bfb7430775abac2c0e4c0dcc69dec913592de5f2176aa5f4c999611",
+      "original_header": "Amount ($ bn)",
+      "operation": "ratio",
+      "labels": [
+        "Total",
+        "South"
+      ],
+      "expected_display": null,
+      "error": "native_annotation_ratio_nonterminating_decimal",
+      "passed": true
+    },
+    {
+      "fixture": "symbol-million",
+      "pdf_sha256": "188c07178d2acb7cdd4aab53fa05d078d8c34d144339b32a90387b11b5a6b46f",
+      "original_header": "Amount ($ million)",
+      "operation": "lookup",
+      "labels": [
+        "North"
+      ],
+      "expected_display": "$4.1 million",
+      "result": {
+        "answer": "$4.1 million",
+        "operation": "lookup",
+        "operands": [
+          "4.1"
+        ],
+        "numeric_result": "4.1",
+        "unit": "currency_symbol:$",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-million",
+      "pdf_sha256": "188c07178d2acb7cdd4aab53fa05d078d8c34d144339b32a90387b11b5a6b46f",
+      "original_header": "Amount ($ million)",
+      "operation": "sum",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$6.7 million",
+      "result": {
+        "answer": "$6.7 million",
+        "operation": "sum",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "6.7",
+        "unit": "currency_symbol:$",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-million",
+      "pdf_sha256": "188c07178d2acb7cdd4aab53fa05d078d8c34d144339b32a90387b11b5a6b46f",
+      "original_header": "Amount ($ million)",
+      "operation": "difference",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$1.5 million",
+      "result": {
+        "answer": "$1.5 million",
+        "operation": "difference",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "1.5",
+        "unit": "currency_symbol:$",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-million",
+      "pdf_sha256": "188c07178d2acb7cdd4aab53fa05d078d8c34d144339b32a90387b11b5a6b46f",
+      "original_header": "Amount ($ million)",
+      "operation": "difference",
+      "labels": [
+        "South",
+        "North"
+      ],
+      "expected_display": "$-1.5 million",
+      "result": {
+        "answer": "$-1.5 million",
+        "operation": "difference",
+        "operands": [
+          "2.6",
+          "4.1"
+        ],
+        "numeric_result": "-1.5",
+        "unit": "currency_symbol:$",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-million",
+      "pdf_sha256": "188c07178d2acb7cdd4aab53fa05d078d8c34d144339b32a90387b11b5a6b46f",
+      "original_header": "Amount ($ million)",
+      "operation": "ratio",
+      "labels": [
+        "Total",
+        "South"
+      ],
+      "expected_display": null,
+      "error": "native_annotation_ratio_nonterminating_decimal",
+      "passed": true
+    },
+    {
+      "fixture": "symbol-thousand",
+      "pdf_sha256": "c78e99717dad7b99f77e8707ebdf6b63e4c92cc3dc23f6a21661fda11a196e6d",
+      "original_header": "Amount ($ thousand)",
+      "operation": "lookup",
+      "labels": [
+        "North"
+      ],
+      "expected_display": "$4.1 thousand",
+      "result": {
+        "answer": "$4.1 thousand",
+        "operation": "lookup",
+        "operands": [
+          "4.1"
+        ],
+        "numeric_result": "4.1",
+        "unit": "currency_symbol:$",
+        "scale": "1000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-thousand",
+      "pdf_sha256": "c78e99717dad7b99f77e8707ebdf6b63e4c92cc3dc23f6a21661fda11a196e6d",
+      "original_header": "Amount ($ thousand)",
+      "operation": "sum",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$6.7 thousand",
+      "result": {
+        "answer": "$6.7 thousand",
+        "operation": "sum",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "6.7",
+        "unit": "currency_symbol:$",
+        "scale": "1000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-thousand",
+      "pdf_sha256": "c78e99717dad7b99f77e8707ebdf6b63e4c92cc3dc23f6a21661fda11a196e6d",
+      "original_header": "Amount ($ thousand)",
+      "operation": "difference",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$1.5 thousand",
+      "result": {
+        "answer": "$1.5 thousand",
+        "operation": "difference",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "1.5",
+        "unit": "currency_symbol:$",
+        "scale": "1000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-thousand",
+      "pdf_sha256": "c78e99717dad7b99f77e8707ebdf6b63e4c92cc3dc23f6a21661fda11a196e6d",
+      "original_header": "Amount ($ thousand)",
+      "operation": "difference",
+      "labels": [
+        "South",
+        "North"
+      ],
+      "expected_display": "$-1.5 thousand",
+      "result": {
+        "answer": "$-1.5 thousand",
+        "operation": "difference",
+        "operands": [
+          "2.6",
+          "4.1"
+        ],
+        "numeric_result": "-1.5",
+        "unit": "currency_symbol:$",
+        "scale": "1000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-thousand",
+      "pdf_sha256": "c78e99717dad7b99f77e8707ebdf6b63e4c92cc3dc23f6a21661fda11a196e6d",
+      "original_header": "Amount ($ thousand)",
+      "operation": "ratio",
+      "labels": [
+        "Total",
+        "South"
+      ],
+      "expected_display": null,
+      "error": "native_annotation_ratio_nonterminating_decimal",
+      "passed": true
+    },
+    {
+      "fixture": "code-million",
+      "pdf_sha256": "20d12aed05e0b7f34b1e40418baefd5113eff81a00541a940af91c8964a789e1",
+      "original_header": "Amount USD million",
+      "operation": "lookup",
+      "labels": [
+        "North"
+      ],
+      "expected_display": "4.1 USD million",
+      "result": {
+        "answer": "4.1 USD million",
+        "operation": "lookup",
+        "operands": [
+          "4.1"
+        ],
+        "numeric_result": "4.1",
+        "unit": "currency:USD",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-million",
+      "pdf_sha256": "20d12aed05e0b7f34b1e40418baefd5113eff81a00541a940af91c8964a789e1",
+      "original_header": "Amount USD million",
+      "operation": "sum",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "6.7 USD million",
+      "result": {
+        "answer": "6.7 USD million",
+        "operation": "sum",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "6.7",
+        "unit": "currency:USD",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-million",
+      "pdf_sha256": "20d12aed05e0b7f34b1e40418baefd5113eff81a00541a940af91c8964a789e1",
+      "original_header": "Amount USD million",
+      "operation": "difference",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "1.5 USD million",
+      "result": {
+        "answer": "1.5 USD million",
+        "operation": "difference",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "1.5",
+        "unit": "currency:USD",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-million",
+      "pdf_sha256": "20d12aed05e0b7f34b1e40418baefd5113eff81a00541a940af91c8964a789e1",
+      "original_header": "Amount USD million",
+      "operation": "difference",
+      "labels": [
+        "South",
+        "North"
+      ],
+      "expected_display": "-1.5 USD million",
+      "result": {
+        "answer": "-1.5 USD million",
+        "operation": "difference",
+        "operands": [
+          "2.6",
+          "4.1"
+        ],
+        "numeric_result": "-1.5",
+        "unit": "currency:USD",
+        "scale": "1000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-million",
+      "pdf_sha256": "20d12aed05e0b7f34b1e40418baefd5113eff81a00541a940af91c8964a789e1",
+      "original_header": "Amount USD million",
+      "operation": "ratio",
+      "labels": [
+        "Total",
+        "South"
+      ],
+      "expected_display": null,
+      "error": "native_annotation_ratio_nonterminating_decimal",
+      "passed": true
+    },
+    {
+      "fixture": "code-billion",
+      "pdf_sha256": "30eff8d8fa80929612e087c39d66d5880a0e8a3e60af5e29c687787acd95db90",
+      "original_header": "Amount EUR billion",
+      "operation": "lookup",
+      "labels": [
+        "North"
+      ],
+      "expected_display": "4.1 EUR billion",
+      "result": {
+        "answer": "4.1 EUR billion",
+        "operation": "lookup",
+        "operands": [
+          "4.1"
+        ],
+        "numeric_result": "4.1",
+        "unit": "currency:EUR",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-billion",
+      "pdf_sha256": "30eff8d8fa80929612e087c39d66d5880a0e8a3e60af5e29c687787acd95db90",
+      "original_header": "Amount EUR billion",
+      "operation": "sum",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "6.7 EUR billion",
+      "result": {
+        "answer": "6.7 EUR billion",
+        "operation": "sum",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "6.7",
+        "unit": "currency:EUR",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-billion",
+      "pdf_sha256": "30eff8d8fa80929612e087c39d66d5880a0e8a3e60af5e29c687787acd95db90",
+      "original_header": "Amount EUR billion",
+      "operation": "difference",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "1.5 EUR billion",
+      "result": {
+        "answer": "1.5 EUR billion",
+        "operation": "difference",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "1.5",
+        "unit": "currency:EUR",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-billion",
+      "pdf_sha256": "30eff8d8fa80929612e087c39d66d5880a0e8a3e60af5e29c687787acd95db90",
+      "original_header": "Amount EUR billion",
+      "operation": "difference",
+      "labels": [
+        "South",
+        "North"
+      ],
+      "expected_display": "-1.5 EUR billion",
+      "result": {
+        "answer": "-1.5 EUR billion",
+        "operation": "difference",
+        "operands": [
+          "2.6",
+          "4.1"
+        ],
+        "numeric_result": "-1.5",
+        "unit": "currency:EUR",
+        "scale": "1000000000",
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "code-billion",
+      "pdf_sha256": "30eff8d8fa80929612e087c39d66d5880a0e8a3e60af5e29c687787acd95db90",
+      "original_header": "Amount EUR billion",
+      "operation": "ratio",
+      "labels": [
+        "Total",
+        "South"
+      ],
+      "expected_display": null,
+      "error": "native_annotation_ratio_nonterminating_decimal",
+      "passed": true
+    },
+    {
+      "fixture": "symbol-unscaled",
+      "pdf_sha256": "c4a5d5e62c41ae55237970be86fa6b3b855a9429c7f02b1ced20479cf5cbdec0",
+      "original_header": "Amount ($)",
+      "operation": "lookup",
+      "labels": [
+        "North"
+      ],
+      "expected_display": "$4.1",
+      "result": {
+        "answer": "$4.1",
+        "operation": "lookup",
+        "operands": [
+          "4.1"
+        ],
+        "numeric_result": "4.1",
+        "unit": "currency_symbol:$",
+        "scale": null,
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-unscaled",
+      "pdf_sha256": "c4a5d5e62c41ae55237970be86fa6b3b855a9429c7f02b1ced20479cf5cbdec0",
+      "original_header": "Amount ($)",
+      "operation": "sum",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$6.7",
+      "result": {
+        "answer": "$6.7",
+        "operation": "sum",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "6.7",
+        "unit": "currency_symbol:$",
+        "scale": null,
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-unscaled",
+      "pdf_sha256": "c4a5d5e62c41ae55237970be86fa6b3b855a9429c7f02b1ced20479cf5cbdec0",
+      "original_header": "Amount ($)",
+      "operation": "difference",
+      "labels": [
+        "North",
+        "South"
+      ],
+      "expected_display": "$1.5",
+      "result": {
+        "answer": "$1.5",
+        "operation": "difference",
+        "operands": [
+          "4.1",
+          "2.6"
+        ],
+        "numeric_result": "1.5",
+        "unit": "currency_symbol:$",
+        "scale": null,
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-unscaled",
+      "pdf_sha256": "c4a5d5e62c41ae55237970be86fa6b3b855a9429c7f02b1ced20479cf5cbdec0",
+      "original_header": "Amount ($)",
+      "operation": "difference",
+      "labels": [
+        "South",
+        "North"
+      ],
+      "expected_display": "$-1.5",
+      "result": {
+        "answer": "$-1.5",
+        "operation": "difference",
+        "operands": [
+          "2.6",
+          "4.1"
+        ],
+        "numeric_result": "-1.5",
+        "unit": "currency_symbol:$",
+        "scale": null,
+        "computation_domain": "same_table_literal_numeric_annotations_not_inferred_physical_quantity",
+        "physical_calculator_input_eligible": false,
+        "operand_periods": [
+          null,
+          null
+        ]
+      },
+      "passed": true
+    },
+    {
+      "fixture": "symbol-unscaled",
+      "pdf_sha256": "c4a5d5e62c41ae55237970be86fa6b3b855a9429c7f02b1ced20479cf5cbdec0",
+      "original_header": "Amount ($)",
+      "operation": "ratio",
+      "labels": [
+        "Total",
+        "South"
+      ],
+      "expected_display": null,
+      "error": "native_annotation_ratio_nonterminating_decimal",
+      "passed": true
+    }
+  ]
+}
