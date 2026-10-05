@@ -174,7 +174,8 @@ def answer_output_fields(result, gold):
     fields = {'answer': result['answer'], 'scores': answer_scores(result['answer'], gold)}
     for key in ('answer_strategy', 'answer_span_result', 'answer_scope', 'computation',
                 'semantic_review', 'semantic_verification', 'calculator_input_eligible', 'chart_binding',
-                'evidence_recovery', 'native_row_proof', 'native_row_proof_sha256'):
+                  'evidence_recovery', 'native_row_proof', 'native_row_proof_sha256',
+                  'native_total_proof', 'native_total_proof_sha256'):
         if key in result:
             fields[key] = result[key]
     if 'full_fact_answer' in result:

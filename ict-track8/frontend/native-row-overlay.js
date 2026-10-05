@@ -21,5 +21,18 @@
       return {bbox_normalized:normalized,label:field.header,text:field.text,role:i===0&&indices.some(index=>index!==0)?'subject':'value'};
     });
   }
-  return {model};
+  function totalModel(metadata,manifest,selected){
+    const annotation=metadata.native_total_annotation;
+    const approved=Array.isArray(selected)?selected.filter(item=>item.annotation_id===annotation?.annotation_id):[];
+    if(!annotation||approved.length!==1||JSON.stringify(approved[0])!==JSON.stringify(annotation)
+      ||annotation.source_sha256!==metadata.source_sha256||annotation.page_no!==metadata.page_no
+      ||!annotation.annotation_id.startsWith(metadata.document_id+':')
+      ||metadata.locator?.coordinate_system!=='fitz_unrotated_pt'
+      ||typeof annotation.label!=='string'||typeof annotation.raw_value!=='string')throw Error('总额标注与本次原件选择不一致。');
+    return model({...metadata,native_row:{document_id:metadata.document_id,page_no:metadata.page_no,
+      source_sha256:metadata.source_sha256,fields:[
+        {bbox_pt:annotation.label_bbox_pt,header:'总额标签',text:annotation.label},
+        {bbox_pt:annotation.amount_bbox_pt,header:'原件金额',text:annotation.raw_value}]}},manifest,{column_index:1});
+  }
+  return {model,totalModel};
 });

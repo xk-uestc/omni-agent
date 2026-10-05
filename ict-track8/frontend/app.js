@@ -1,7 +1,6 @@
 const API = new URLSearchParams(location.search).get("api") || window.ICT8_API_BASE || (location.protocol === "file:" ? "http://127.0.0.1:8030" : location.origin);
 const STREAM = new URLSearchParams(location.search).get("stream") !== "false";
 const $ = (id) => document.getElementById(id);
-const stageNames = {intent:"理解问题与上下文",structured_query:"规划并执行只读 SQL",document_retrieval:"检索文档依据",evidence_fusion:"融合结果与证据",clarification:"等待澄清",pending_task_resume:"恢复待补问题",pending_scope_edit:"修改查询条件",pending_source_validation:"核对待补问题的数据来源",conversation_comparison:"核对并比较历史查询结果",comparison_operand_edit:"确认修改对象并重新查询",comparison_batch_edit:"核对并同时更新两项查询"};
 const capabilities = [
   {name:"文档问答",group:"资料",endpoint:"omni",hint:"原文片段、页码与位置",questions:["销售额的统计口径是什么","资料中列出了哪些考核要求"]},
   {name:"基础问数",group:"问数",hint:"指标、筛选与聚合",questions:["2025年华东地区的销售额是多少","2025年各地区销售额排名","2025年华南地区的订单数"]},
@@ -10,9 +9,6 @@ const capabilities = [
   {name:"跨源依据",group:"分析",hint:"结构化结果与文档证据",questions:["2025年华东地区的销售额政策","销售额的统计口径是什么"]},
   {name:"澄清补全",group:"分析",hint:"口径不足时由后端提示",questions:["增长率是多少","各地区排名","2025年销售额同比","查看待补问题"]},
 ];
-stageNames.pending_task_catalog="查看待补问题";
-stageNames.relational_scope_edit="修改跨表查询条件";
-const chevron = '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 9 6 6 6-6"/></svg>';
 const conversationScope=window.ConversationSessions.scopeFor(API,location.href);
 const conversationSessions=window.ConversationSessions.create({scope:conversationScope,
   legacyKeys:conversationScope===location.origin?[{key:"ict8_lattice_session",label:"原问数会话"},{key:"ict8.omni-session",label:"原文档会话"}]:[]});
@@ -195,10 +191,10 @@ function normalizeOmniResponse(data){
     result.rows?.length?`查询返回 ${result.rows.length} 行结果，具体数据如下。`:"查询完成，当前条件下没有找到数据。":null;
   return {...data,omni_response:true,answer:result.answer||result.clarification||sqlSummary||result.explanation?.join("；")||"本次未返回文字说明。",
     structured:["sql","comparison"].includes(data.route)?result:{},document_evidence:result.citations||[],
-    visual_source_proof:result.visual_source_proof,native_row_proof:result.native_row_proof,answer_mode:result.answer_mode,
+    visual_source_proof:result.visual_source_proof,native_row_proof:result.native_row_proof,native_total_proof:result.native_total_proof,answer_mode:result.answer_mode,
     answer_span_result:result.answer_span_result};
 }
-function sourcePageViewer(host,item,part,nativeSelection){
+function sourcePageViewer(host,item,part,nativeSelection,totalSelection){
   const metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
   const sourceSha=metadata.source_sha256;
   if(typeof did!=="string"||!Number.isInteger(page)||page<1||!/^[a-f0-9]{64}$/.test(sourceSha||""))return;
@@ -227,7 +223,8 @@ function sourcePageViewer(host,item,part,nativeSelection){
       if(sha!==manifest.render_sha256)throw Error("页图内容核对失败。");
       if(signal.aborted||current!==revision||!details.open)return;
       blobUrl=URL.createObjectURL(blob);image.src=blobUrl;image.hidden=false;
-      const nativeBoxes=metadata.native_row&&nativeSelection?window.NativeRowOverlay?.model(metadata,manifest,nativeSelection):null;
+      const nativeBoxes=metadata.native_row&&nativeSelection?window.NativeRowOverlay?.model(metadata,manifest,nativeSelection):
+        metadata.native_total_annotation&&totalSelection?window.NativeRowOverlay?.totalModel(metadata,manifest,totalSelection):null;
       const box=part?.bbox_normalized,matched=Boolean(nativeBoxes?.length)||(part?.page_no===page&&part.source_sha256===sourceSha&&part.render_sha256===sha);
       const valid=Array.isArray(box)&&box.length===4&&box.every(v=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3];
       if(matched&&(valid||nativeBoxes?.length)){
@@ -261,7 +258,7 @@ function renderDocumentEvidence(host,data){
     }
     const candidate=data.visual_source_proof?.parts?.[item.citation_id-1];
     const part=candidate?.quote===item.snippet?candidate:null;
-    sourcePageViewer(row,item,part,data.native_row_proof?.selection);docs.append(row);
+    sourcePageViewer(row,item,part,data.native_row_proof?.selection,data.native_total_proof?.selected_annotations);docs.append(row);
   });host.append(docs);
 }
 function renderResult(view,data,originalQuestion){

@@ -8,6 +8,7 @@ The caller owns the shared visual work slot; this module never acquires it.
 from __future__ import annotations
 
 import hashlib
+from contextlib import contextmanager
 import json
 import os
 from pathlib import Path
@@ -36,6 +37,37 @@ MAX_SOURCE_BYTES = 20 * 1024 * 1024
 MAX_PAGES = 1000
 MAX_BUILD_SECONDS = 60
 _INDEX_LOCK = threading.Lock()
+_CACHE_LOCK = threading.Lock()
+_BUILD_LOCKS = {}
+MAX_ACTIVE_BUILD_KEYS = 16
+MAX_BUILD_WAIT_SECONDS = 60
+
+
+@contextmanager
+def _source_build(path):
+    """Bounded single-flight per cache identity; unrelated PDFs build in parallel."""
+    key = str(path.resolve())
+    with _INDEX_LOCK:
+        entry = _BUILD_LOCKS.get(key)
+        if entry is None:
+            if len(_BUILD_LOCKS) >= MAX_ACTIVE_BUILD_KEYS:
+                raise VisualWorkBusy('PDF索引构建任务已满，请稍后重试')
+            entry = [threading.Lock(), 0]
+            _BUILD_LOCKS[key] = entry
+        entry[1] += 1
+    acquired = False
+    try:
+        acquired = entry[0].acquire(timeout=MAX_BUILD_WAIT_SECONDS)
+        if not acquired:
+            raise VisualWorkBusy('等待同一PDF的完整页索引超时，请稍后重试')
+        yield
+    finally:
+        if acquired:
+            entry[0].release()
+        with _INDEX_LOCK:
+            entry[1] -= 1
+            if entry[1] == 0:
+                del _BUILD_LOCKS[key]
 
 
 class PageIndexError(ValueError):
@@ -154,7 +186,7 @@ def complete_pdf_page_index(root, pdf_bytes, *, expected_source_sha256):
     """Return complete native-grid routing coverage or raise, never a prefix.
 
     Source page count comes from the actual pinned PDF, not ingestion stats.
-    A process-wide nonblocking build lock avoids duplicate expensive builds.
+    A bounded per-source build lock reuses concurrent requests for the same PDF.
     Cache checksums detect corruption, not a hostile writer controlling disk.
     """
     if (not isinstance(pdf_bytes, bytes) or not pdf_bytes or len(pdf_bytes) > MAX_SOURCE_BYTES
@@ -179,9 +211,7 @@ def complete_pdf_page_index(root, pdf_bytes, *, expected_source_sha256):
     cached = _load(path, expected_source_sha256, len(pdf_bytes), page_count)
     if cached is not None:
         return cached, 'cache_hit'
-    if not _INDEX_LOCK.acquire(blocking=False):
-        raise VisualWorkBusy('PDF完整页索引正在构建，请稍后重试')
-    try:
+    with _source_build(path):
         cached = _load(path, expected_source_sha256, len(pdf_bytes), page_count)
         if cached is not None:
             return cached, 'cache_hit'
@@ -206,9 +236,8 @@ def complete_pdf_page_index(root, pdf_bytes, *, expected_source_sha256):
             raise PageIndexError('page_index_build_time_budget_exceeded')
         _validate(payload, expected_source_sha256, len(pdf_bytes), page_count)
         try:
-            _persist(root, path, payload)
+            with _CACHE_LOCK:
+                _persist(root, path, payload)
         except OSError as exc:
             raise PageIndexError('page_index_cache_write_failed') from exc
         return payload, 'built_complete'
-    finally:
-        _INDEX_LOCK.release()

@@ -300,7 +300,9 @@ async function loadVisualPage(pageNo){
     const part=snapshot.visualPart;
     const native=snapshot.nativeContext;
     const nativeBoxes=native?.metadata?.native_row&&native.selection&&native.metadata.page_no===pageNo?
-      window.NativeRowOverlay.model(native.metadata,manifest,native.selection):null;
+      window.NativeRowOverlay.model(native.metadata,manifest,native.selection):
+      native?.metadata?.native_total_annotation&&native.totalSelection&&native.metadata.page_no===pageNo?
+        window.NativeRowOverlay.totalModel(native.metadata,manifest,native.totalSelection):null;
     if(nativeBoxes?.length||(part&&part.page_no===pageNo&&part.source_sha256===snapshot.sourceSha&&part.render_sha256===manifest.render_sha256)){
       const box=part?.bbox_normalized;
       if(nativeBoxes?.length||(Array.isArray(box)&&box.length===4&&box.every(v=>Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3])){
@@ -390,7 +392,7 @@ $('ask').addEventListener('submit',async event=>{
     data.citations.forEach(hit=>{
       const box=element('article',null,'citation');
       box.append(element('b',`[${hit.citation_id}] ${hit.title}`),element('pre',hit.snippet),element('small',`${hit.metadata.source_locator} · ${hit.metadata.retrieval_channel} · BM25 ${hit.metadata.bm25_raw??'—'} · Dense ${hit.metadata.dense_cosine??'—'} · `),originalLink(hit.metadata.document_id,'查看原文件'));
-      addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256,undefined,data.visual_source_proof?.parts?.[hit.citation_id-1],{metadata:hit.metadata,selection:data.native_row_proof?.selection});
+      addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256,undefined,data.visual_source_proof?.parts?.[hit.citation_id-1],{metadata:hit.metadata,selection:data.native_row_proof?.selection,totalSelection:data.native_total_proof?.selected_annotations});
       $('answer').append(box);
     });
     const trace=element('details');trace.append(element('summary','查看路由、范围与实际核验记录'),element('pre',JSON.stringify(data,null,2)));$('answer').append(trace);

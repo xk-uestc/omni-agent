@@ -38,6 +38,12 @@ async function main(){
     assert(await page.locator('.agent-tool-row[data-tool="database.read"][data-status="success"]').count()===1,'verified DB read missing');
     assert(await page.locator('.agent-tool-summary>.agent-icon').count()>=2,'tool icons missing');
     assert(await page.locator('.answer table').count()>0,'real result table missing');});
+  await check('Codex-style call previews and per-tool feedback icons',async()=>{
+    const read=page.locator('.agent-tool-row[data-tool="database.read"]');
+    assert((await read.locator('.agent-tool-preview').innerText()).includes('SELECT'),'SQL call preview missing');
+    const paths=await read.locator('.agent-action-note>.agent-icon path,.agent-tool-summary>.agent-icon:first-child path').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('d')));
+    assert(paths.length===2&&paths[0]===paths[1],'feedback does not use the database tool icon');
+    assert(!(await page.locator('#feed').innerText()).includes('01理解问题'),'numbered placeholder remains');});
   await check('SQL feedback has syntax colors and input/output tabs',async()=>{
     const tool=page.locator('.agent-tool-row[data-tool="nl2sql"]');await tool.locator('.agent-tool-summary').click();
     assert(await tool.locator('.agent-tool-code .tok-keyword').count()>0,'SQL syntax tokens absent');
@@ -98,6 +104,26 @@ async function main(){
     assert(await page.locator('#dialogue .agent-tool-summary>.agent-icon').count()>0,'knowledge tool icons absent');});
   await page.locator('#reset-dialogue').click();
   await check('switching knowledge chat unmounts old tools',async()=>assert(await page.locator('#dialogue .agent-timeline').count()===0,'old React timeline survived reset'));
+  const amountReport=path.join(ROOT,'docs','FRESH_NATIVE_TOTALS_REPLAY_ROUND33_20261006.json');
+  if(fs.existsSync(amountReport)){
+    const retained=JSON.parse(fs.readFileSync(amountReport,'utf8')),result=retained.records[0].result;
+    const originalPath=execFileSync(python,['-c',"import sys;from pathlib import Path;sys.path.insert(0,'ict-track8');from backend.knowledge_store import KnowledgeStore;s=KnowledgeStore(Path(sys.argv[1])/'knowledge');print(s.verify_source(sys.argv[2],expected_sha256=sys.argv[3]))",
+      retained.run_directory,result.answer_scope.document_id,result.citations[0].metadata.source_sha256],{cwd:ROOT,encoding:'utf8'}).trim();
+    await check('retained real-model amount tools render as separate successful receipts',async()=>{
+      await page.evaluate(data=>{const t=window.ToolTimeline.create();document.getElementById('dialogue').append(t.root);t.finish(data);window.amountCheckTimeline=t;},result);
+      assert(await page.locator('[data-tool="document.amount.read"][data-status="success"]').count()===1,'amount tool missing');
+      assert(await page.locator('[data-tool="calculate"][data-status="success"]').count()===1,'calculation tool missing');});
+    await check('amount label and value map onto the actual SHA-verified PDF render',async()=>{
+      const did=result.answer_scope.document_id;
+      const ingest=await fetch(base+'/api/v1/knowledge/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({document_id:did,title:'Retained amount original',filename:did+'.pdf',modality:'pdf',file_base64:fs.readFileSync(originalPath).toString('base64')})});
+      assert(ingest.ok,'amount original ingestion failed');
+      const evidence=await fetch(base+`/api/v1/knowledge/documents/${did}/visual-evidence`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page_no:result.answer_scope.page_no,expected_source_sha256:result.citations[0].metadata.source_sha256})});
+      assert(evidence.ok,'original rendered evidence failed');const manifest=await evidence.json();
+      const boxes=await page.evaluate(({data,manifest})=>window.NativeRowOverlay.totalModel(data.citations[0].metadata,manifest,data.native_total_proof.selected_annotations),{data:result,manifest});
+      assert(boxes.length===2&&boxes[0].role==='subject'&&boxes[1].role==='value','label/value locations missing');
+      assert(boxes.every(b=>b.bbox_normalized.every(v=>v>=0&&v<=1)),'amount outside actual rendered original');});
+    await page.evaluate(()=>{window.amountCheckTimeline.dispose();delete window.amountCheckTimeline;});
+  }
   await check('no React or page runtime errors',async()=>assert(errors.length===0,JSON.stringify(errors)));
 }
 (async()=>{try{await main();}catch(error){errors.push(error.message);console.log(JSON.stringify({fatal:error.message}));}

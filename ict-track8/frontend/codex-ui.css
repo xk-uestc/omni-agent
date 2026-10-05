@@ -11,6 +11,9 @@
 .agent-tool-summary>.agent-icon { color:var(--ui-muted); }
 .agent-tool-verb { white-space:nowrap; }
 .agent-tool-name { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ui-text); }
+.agent-tool-preview { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:12px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; color:var(--ui-muted); background:none; padding:0; }
+.agent-tool-details[open]>.agent-tool-summary { color:var(--ui-text); }
+.agent-tool-details[open]>.agent-tool-summary .agent-tool-name { font-weight:500; }
 .agent-tool-state { margin-left:auto; display:flex; align-items:center; gap:4px; font-size:12px; white-space:nowrap; color:var(--ui-muted); }
 .agent-tool-state>.agent-icon { width:13px; height:13px; flex-basis:13px; }
 .agent-tool-summary .agent-disclosure { width:13px; height:13px; flex-basis:13px; transition:transform .16s; }
@@ -75,7 +78,7 @@
   .agent-timeline {font-size:13px;}
   .agent-tool-panel {margin-left:0;}
   .agent-tool-summary {gap:6px;}
-  .agent-tool-verb {display:none;}
+  .agent-tool-verb,.agent-tool-preview {display:none;}
   .agent-tool-state {font-size:11px;}
   .agent-tool-code {font-size:11px;padding:12px!important;}
 }

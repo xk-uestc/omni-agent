@@ -2,6 +2,7 @@
 import hashlib
 import json
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 import fitz
 import pytest
@@ -78,21 +79,69 @@ def test_build_budget_failure_no_partial_cache(tmp_path, monkeypatch):
     assert not list(tmp_path.iterdir())
 
 
-def test_build_lock_is_fail_fast_and_release_on_failure(tmp_path, monkeypatch):
+def test_build_key_budget_and_release_on_failure(tmp_path, monkeypatch):
     raw, digest = source()
-    lock = threading.Lock()
-    monkeypatch.setattr(module, '_INDEX_LOCK', lock)
-    lock.acquire()
-    try:
-        with pytest.raises(VisualWorkBusy):
-            module.complete_pdf_page_index(tmp_path, raw, expected_source_sha256=digest)
-    finally:
-        lock.release()
+    monkeypatch.setattr(module, 'MAX_ACTIVE_BUILD_KEYS', 0)
+    with pytest.raises(VisualWorkBusy):
+        module.complete_pdf_page_index(tmp_path, raw, expected_source_sha256=digest)
+    monkeypatch.setattr(module, 'MAX_ACTIVE_BUILD_KEYS', 16)
     monkeypatch.setattr(module, 'MAX_BUILD_SECONDS', -1)
     with pytest.raises(module.PageIndexError):
         module.complete_pdf_page_index(tmp_path, raw, expected_source_sha256=digest)
-    assert lock.acquire(blocking=False)
-    lock.release()
+    assert not module._BUILD_LOCKS
+
+
+def test_different_cold_sources_build_concurrently_with_complete_coverage(tmp_path, monkeypatch):
+    sources = [source(2), source(3)]
+    rendezvous = threading.Barrier(2)
+    extract = module.extract_pdf_tables
+    def synchronized(*args, **kwargs):
+        if kwargs['page_no'] == 1:
+            rendezvous.wait(timeout=10)
+        return extract(*args, **kwargs)
+    monkeypatch.setattr(module, 'extract_pdf_tables', synchronized)
+    def build(item):
+        raw, digest = item
+        return module.complete_pdf_page_index(tmp_path, raw, expected_source_sha256=digest)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(build, sources))
+    assert [len(payload['pages']) for payload, status in results] == [2, 3]
+    assert all(status == 'built_complete' and payload['complete'] for payload, status in results)
+    assert len(list(tmp_path.glob('*.json'))) == 2
+    assert not list(tmp_path.glob('*.tmp')) and not module._BUILD_LOCKS
+
+
+def test_same_cold_source_reuses_one_build(tmp_path, monkeypatch):
+    raw, digest = source(3)
+    started, release = threading.Event(), threading.Event()
+    extract = module.extract_pdf_tables
+    calls = []
+    def synchronized(*args, **kwargs):
+        calls.append(kwargs['page_no'])
+        if kwargs['page_no'] == 1:
+            started.set()
+            assert release.wait(timeout=10)
+        return extract(*args, **kwargs)
+    monkeypatch.setattr(module, 'extract_pdf_tables', synchronized)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(module.complete_pdf_page_index, tmp_path, raw, expected_source_sha256=digest)
+        assert started.wait(timeout=10)
+        second = pool.submit(module.complete_pdf_page_index, tmp_path, raw, expected_source_sha256=digest)
+        release.set()
+        a, b = first.result(timeout=15), second.result(timeout=15)
+    assert a[0] == b[0] and {a[1], b[1]} == {'built_complete', 'cache_hit'}
+    assert calls == [1, 2, 3] and not module._BUILD_LOCKS
+
+
+def test_same_source_wait_timeout_does_not_leak_registry(tmp_path, monkeypatch):
+    monkeypatch.setattr(module, 'MAX_BUILD_WAIT_SECONDS', 0)
+    path = tmp_path / 'identity.json'
+    with module._source_build(path):
+        with pytest.raises(VisualWorkBusy, match='超时'):
+            with module._source_build(path):
+                pytest.fail('contended build entered')
+        assert len(module._BUILD_LOCKS) == 1
+    assert not module._BUILD_LOCKS
 
 
 def test_invalid_source_or_source_budget_fails_before_cache(tmp_path, monkeypatch):

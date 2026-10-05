@@ -14,6 +14,7 @@
     compare:['比较结果','chart'], policy_select:['核对适用条款','file'],
     'visualization.build':['构建可视化','chart'], 'fusion.execute':['执行跨源任务','layers'],
     'document.table.read':['读取原页表格','database'], 'document.compare':['比较原页数据','calculator'],
+    'document.amount.read':['读取原件金额','file'],
     'document.table.filter':['筛选原页字段','search'],
     structured_query:['查询数据库','database']
   };
@@ -107,6 +108,12 @@
   function invocationVerb(status){
     return {running:'正在调用',success:'已调用',error:'调用失败',attention:'调用待确认',stopped:'调用已停止',reported:'调用记录'}[status]||'调用记录';
   }
+  function invocationPreview(item){
+    const input=item.input||{},output=item.output||{};
+    const value=input.sql||output.sql||input.question||input.query||input.document_id||input.source||
+      (item.tool==='visualization.build'&&Array.isArray(input.columns)?input.columns.join(' · '):'');
+    return typeof value==='string'?value.replace(/\s+/g,' ').trim().slice(0,180):'';
+  }
   function create(options={}){
     const React=window.React,ReactDOM=window.ReactDOM;
     if(!React||!ReactDOM)throw Error('工具时间线组件未加载');
@@ -133,14 +140,16 @@
     function Tool({item}){
       const [tab,setTab]=React.useState('output');
       const sql=item.input?.sql||item.output?.sql;
+      const preview=invocationPreview(item);
       const output=item.tool==='nl2sql'&&item.output?.sql?
         item.output.sql+'\n\n-- 参数\n'+JSON.stringify(item.output.parameters||[],null,2):item.output;
       return h('div',{className:'agent-tool-row','data-tool':item.tool,'data-status':item.status},
-        item.summary?h('p',{className:'agent-action-note'},h(Icon,{name:'thought'}),h('span',null,item.summary)):null,
+        item.summary?h('p',{className:'agent-action-note'},h(Icon,{name:item.icon}),h('span',null,item.summary)):null,
         h('details',{className:'agent-tool-details'},
           h('summary',{className:'agent-tool-summary'},h(Icon,{name:item.icon}),
             h('span',{className:'agent-tool-verb'},invocationVerb(item.status)),
             h('span',{className:'agent-tool-name'},item.title),
+            preview?h('code',{className:'agent-tool-preview',title:preview},preview):null,
             h('span',{className:`agent-tool-state state-${item.status}`},item.status==='running'?h('i',{className:'agent-spinner'}):
               h(Icon,{name:item.status==='success'?'check':item.status==='error'?'close':'chevron'}),STATUS[item.status]),
             h(Icon,{name:'chevron',className:'agent-disclosure'})),
@@ -186,5 +195,5 @@
       rows.push({id:'request:failed',kind:'commentary',status:'error',summary:message});draw();}
     draw();return {root,update,finish,record,attach,fail,dispose:()=>{mount.unmount();attachments.clear();}};
   }
-  return {normalizeEvent,reduceEvents,fromResult,invocationVerb,create};
+  return {normalizeEvent,reduceEvents,fromResult,invocationVerb,invocationPreview,create};
 });

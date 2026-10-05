@@ -604,6 +604,13 @@ class KnowledgeStore:
                 if recovery_trace['status'] != 'not_applicable':
                     table_result['trace'].append(recovery_trace)
             return table_result
+        from .native_total_question import route as route_native_totals
+        total_result, total_trace = (route_native_totals(self, question, hits, document_id=document_id, page_no=page_no)
+            if table_trace['status'] in {'not_applicable', 'no_native_aligned_tables',
+                'no_related_literal_row_labels', 'native_table_whole_question_unsupported'}
+            else (None, {'stage': 'native_total_routing', 'status': 'not_applicable'}))
+        if total_result is not None:
+            return total_result
         query_terms = set(_tokenize(question))
         # This local baseline returns attributed quotations, not inferred factual claims.
         selected = [hit for hit in hits if len(query_terms.intersection(hit.matched_terms)) >= min(2, len(query_terms))
@@ -618,6 +625,7 @@ class KnowledgeStore:
         result['trace'].append(visual_trace)
         result['trace'].append(chart_trace)
         result['trace'].append(table_trace)
+        result['trace'].append(total_trace)
         result['trace'].append(row_trace)
         result['trace'].append(selection_trace)
         if self.generator and selected:
