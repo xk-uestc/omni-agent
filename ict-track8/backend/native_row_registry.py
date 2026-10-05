@@ -1,11 +1,45 @@
 """Original-PDF aligned rows; geometry is provenance, never semantic authority."""
 from copy import deepcopy
 import hashlib
+import json
 import re
 import fitz
 from .chunk_cleaning import DocumentChunker
 from .native_table_chain import probe
 from .pdf_native_context import _aligned_native_cells
+
+
+def model_rows(rows):
+    """Every row and field literal, without already-replayed display geometry."""
+    return [{k: deepcopy(row[k]) for k in ('row_id', 'chain_index', 'page_no', 'row_text')} | {
+        'fields': [{k: deepcopy(field[k]) for k in
+            ('column_index', 'header', 'text', 'numeric_annotation', 'calculator_input_eligible')}
+            for field in row['fields']]} for row in rows]
+
+
+def model_registries(registries):
+    """Lossless semantic input projection; the full registry remains the proof.
+
+    No truncation, ranking, selection, whitespace normalization or inference:
+    every candidate source, full candidate-page text, row, column and qualifier
+    remains available to both independent model operations. Geometry and member
+    text already occur in the original page/field literals and stay on the server.
+    """
+    return [{k: deepcopy(registry[k]) for k in ('version', 'document_id', 'source_sha256',
+        'header_alignment_verified', 'semantic_sample_identity_verified',
+        'exhaustive_table_closure_verified', 'calculator_input_eligible')} | {
+        'pages': [{k: deepcopy(page[k]) for k in ('page_no', 'text', 'text_sha256')}
+            for page in registry['pages']], 'records': model_rows(registry['records'])}
+        for registry in registries]
+
+
+def model_context_audit(registries, projected):
+    return {'scope': 'semantic_input_projection_not_source_or_evidence_truncation',
+        'full_registry_characters': len(json.dumps(registries, ensure_ascii=False)),
+        'model_registry_characters': len(json.dumps(projected, ensure_ascii=False)),
+        'sources': len(registries), 'candidate_pages': sum(len(r['pages']) for r in registries),
+        'candidate_rows': sum(len(r['records']) for r in registries),
+        'all_candidate_pages_rows_fields_retained': True}
 
 
 def extract_rows(raw, *, document_id):

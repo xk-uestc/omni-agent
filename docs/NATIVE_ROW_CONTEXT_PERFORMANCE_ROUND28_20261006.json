@@ -1,0 +1,96 @@
+{
+  "created_at": "2026-10-05T21:31:28.382727+00:00",
+  "scope": "same_exposed_question_operation_request_audits_not_controlled_latency_or_accuracy",
+  "before_report_sha256": "a73ed1785b0b3adbb73547de5d1810df0bea0dfd7661dadf718c4789c1a28f55",
+  "after_report_sha256": "30eeb47550e7e648bae052fb02b4430d67f52cf6c56620007172c84777f9a370",
+  "paired_calls": [
+    {
+      "ID": "02fea0e2-41a7-42d6-895f-a84518cb913a",
+      "operation": "native_row_selection_independent_review",
+      "occurrence": 1,
+      "question_sha256": "2c487378db1725b4fbd5f385572b3fd88833de2a612528fa78578772148d8540",
+      "before_input_tokens": 34801,
+      "after_input_tokens": 9652,
+      "before_latency_ms": 10620.935,
+      "after_latency_ms": 20397.644,
+      "before_cached_input_tokens": 0,
+      "after_cached_input_tokens": 0
+    },
+    {
+      "ID": "02fea0e2-41a7-42d6-895f-a84518cb913a",
+      "operation": "native_row_selection_plan",
+      "occurrence": 1,
+      "question_sha256": "2c487378db1725b4fbd5f385572b3fd88833de2a612528fa78578772148d8540",
+      "before_input_tokens": 29716,
+      "after_input_tokens": 6524,
+      "before_latency_ms": 23859.416,
+      "after_latency_ms": 25702.565,
+      "before_cached_input_tokens": 0,
+      "after_cached_input_tokens": 0
+    },
+    {
+      "ID": "b4e19614-da5c-4ae1-9a16-f5df06635409",
+      "operation": "native_row_comparison_independent_review",
+      "occurrence": 1,
+      "question_sha256": "209963e314687d30e2d8436aff19a9cb2e8b4557e519728ac62a4bb638402b09",
+      "before_input_tokens": 31317,
+      "after_input_tokens": 7338,
+      "before_latency_ms": 12003.907,
+      "after_latency_ms": 8879.167,
+      "before_cached_input_tokens": 0,
+      "after_cached_input_tokens": 0
+    },
+    {
+      "ID": "b4e19614-da5c-4ae1-9a16-f5df06635409",
+      "operation": "native_row_comparison_selection",
+      "occurrence": 1,
+      "question_sha256": "209963e314687d30e2d8436aff19a9cb2e8b4557e519728ac62a4bb638402b09",
+      "before_input_tokens": 30319,
+      "after_input_tokens": 7127,
+      "before_latency_ms": 9940.143,
+      "after_latency_ms": 7522.702,
+      "before_cached_input_tokens": 0,
+      "after_cached_input_tokens": 0
+    },
+    {
+      "ID": "b82d1659-2e69-432e-ad19-8aa397bf238e",
+      "operation": "native_row_selection_independent_review",
+      "occurrence": 1,
+      "question_sha256": "27dbf181a0475ef67fc64a726f7990fa6970d79a1bdcc481cf7564c0905e9022",
+      "before_input_tokens": 35019,
+      "after_input_tokens": 9635,
+      "before_latency_ms": 9365.991,
+      "after_latency_ms": 11298.51,
+      "before_cached_input_tokens": 0,
+      "after_cached_input_tokens": 0
+    },
+    {
+      "ID": "b82d1659-2e69-432e-ad19-8aa397bf238e",
+      "operation": "native_row_selection_plan",
+      "occurrence": 1,
+      "question_sha256": "27dbf181a0475ef67fc64a726f7990fa6970d79a1bdcc481cf7564c0905e9022",
+      "before_input_tokens": 29717,
+      "after_input_tokens": 6525,
+      "before_latency_ms": 17535.64,
+      "after_latency_ms": 16811.715,
+      "before_cached_input_tokens": 29440,
+      "after_cached_input_tokens": 0
+    }
+  ],
+  "unpaired_calls": [],
+  "summary": {
+    "paired_native_calls": 6,
+    "before_input_tokens": 190889,
+    "after_input_tokens": 46801,
+    "input_token_reduction_fraction": 0.754826,
+    "before_observed_latency_ms_sum": 83326.032,
+    "after_observed_latency_ms_sum": 90612.303
+  },
+  "limitations": [
+    "Existing reports are immutable; no new API requests or rescore.",
+    "Different API calls and provider/cache/load conditions: no controlled speedup claim.",
+    "Call alignment is original question ID, text and operation; unmatched calls retained separately.",
+    "Input tokens include instructions and other context, not registry JSON alone.",
+    "Factual correctness must use separate retained evaluation; this cannot award accuracy points."
+  ]
+}

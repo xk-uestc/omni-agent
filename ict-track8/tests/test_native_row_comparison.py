@@ -36,6 +36,8 @@ class Client:
         self.calls = []; self.approve = approve; self.on_review = on_review
     def generate(self, instructions, context, schema, **kwargs):
         self.calls.append(kwargs['name'])
+        assert all('members' not in p for r in context['original_registries'] for p in r['pages'])
+        assert all('bbox_pt' not in f for r in context['original_registries'] for row in r['records'] for f in row['fields'])
         self.audit = {'status': 'completed', 'model_verified': True, 'http_status': 200,
             'model': self.model, 'response_model': self.model, 'reasoning': self.reasoning}
         if kwargs['name'] == 'native_row_comparison_selection':
@@ -69,6 +71,8 @@ def test_complete_comparison_and_source_replay(tmp_path):
     store, client, hits = setup(tmp_path)
     result = answer(store, hits)
     assert result['status'] == 'ok'
+    assert 'bbox_pt' in result['native_row_proof']['selected_rows'][0]['fields'][0]
+    assert result['trace'][0]['model_context']['candidate_rows']==6
     assert result['computation']['operands'] == ['211.000 UG/L', '35.000 UG/L']
     assert result['computation']['operator'] == '>'
     assert [c['metadata']['page_no'] for c in result['citations']] == [1, 2]

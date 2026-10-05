@@ -25,11 +25,15 @@ def main():
     if args.output.resolve().parent!=(ROOT/'docs').resolve() or args.output.exists():
         parser.error('New output directly in docs required')
     baseline=json.loads(args.baseline.read_text(encoding='utf-8'))
-    if baseline.get('gold_sent_to_model') is not False or baseline.get('implementation_stable') is not True:
+    anonymous = baseline.get('gold_sent_to_model') is False
+    public = baseline.get('gold_used_as_corpus_or_model_input') is False
+    if not (anonymous or public) or baseline.get('implementation_stable') is not True:
         parser.error('Stable isolated-reference baseline required')
-    case=next(c for c in baseline['cases'] if c['case_id']==args.case_id)
-    location=Path(baseline['run_directory']).resolve()/case['case_id']/'knowledge'
-    if not location.is_relative_to((ROOT/'runtime').resolve()):
+    case=next(c for c in baseline['cases'] if c.get('case_id',c.get('ID'))==args.case_id)
+    location=(Path(baseline['run_directory']).resolve()/case['case_id']/'knowledge' if anonymous
+        else Path(baseline['store_path']).resolve())
+    required_root=(ROOT/'runtime').resolve() if anonymous else Path('D:/ICT8-OfficialDatasets/ohr-bench/evaluations').resolve()
+    if not location.is_relative_to(required_root):
         parser.error('Retained local source required')
     enable_local_model('gpt-6-luna');before=implementation_snapshot()
     client=StructuredResponses(os.environ['ICT8_OPENAI_BASE_URL'],os.environ['ICT8_OPENAI_API_KEY'],
@@ -41,11 +45,16 @@ def main():
             observed.append({'operation':kw['name'],'returned_selection_or_review':value})
         return value
     client.generate=observe
-    store=KnowledgeStore(location,generator=GroundedGenerator(client))
+    if public:
+        from backend.dense_retrieval import LocalBgeEmbedder
+        embedder=LocalBgeEmbedder(ROOT/'models/bge-small-zh-v1.5')
+    else:
+        embedder=None
+    store=KnowledgeStore(location,embedder=embedder,generator=GroundedGenerator(client))
     result,trace=route_native_row_selection(store,case['question'],store.search(case['question'],top_k=4))
     after=implementation_snapshot()
     report={'created_at':datetime.now(timezone.utc).isoformat(),'scope':'observed_production_plan_protocol_not_accuracy',
-        'gold_sent_to_model':False,'question':case['question'],'case_id':case['case_id'],
+        'gold_sent_to_model':False,'question':case['question'],'case_id':args.case_id,
         'model':'gpt-6-luna','reasoning':'medium','observed':observed,'result':result,'trace':trace,
         'api_audits':safe_audits(client),'implementation_stable':before==after,
         'implementation_file_sha256_start':before,'implementation_file_sha256_end':after}

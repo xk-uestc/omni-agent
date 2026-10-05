@@ -39,6 +39,8 @@ class Client:
         self.review_context = None
     def generate(self, instructions, context, schema, **kwargs):
         self.calls.append(kwargs['name'])
+        assert all('members' not in p for r in context['original_registries'] for p in r['pages'])
+        assert all('bbox_pt' not in f for r in context['original_registries'] for row in r['records'] for f in row['fields'])
         self.audit = {'status': 'completed', 'model_verified': True, 'http_status': 200,
             'model': self.model, 'response_model': self.model, 'reasoning': self.reasoning}
         if kwargs['name'] == 'native_row_selection_plan':
@@ -82,6 +84,8 @@ def answer(store, hits, question=QUESTION, **kwargs):
 def test_full_inventory_excludes_prefix_method_and_wrong_operator(tmp_path):
     store, client, hits = setup(tmp_path); result = answer(store, hits)
     assert result['status'] == 'ok'
+    assert 'bbox_pt' in result['native_row_proof']['selected_rows'][0]['fields'][0]
+    assert result['trace'][0]['model_context']['candidate_rows']==6
     assert result['answer'] == 'Item A\nItem B\nItem D\nItem F\nOperator: PERSON_A'
     assert result['answer_scope']['matching_row_count'] == 4
     assert [c['metadata']['page_no'] for c in result['citations']] == [1, 1, 2, 2]
