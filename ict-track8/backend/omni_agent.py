@@ -771,6 +771,23 @@ class OmniAgent:
                     # static error codes, never arbitrary rejected model text.
                     context = {**context, 'plan_completion_feedback': {'errors': errors,
                         'instruction': '重新规划同一用户任务，修正协议并补齐实际依赖操作；保留全部用户约束，不直接给答案。'}}
+                    if rejection_code in {'single_source_task_not_discardable', 'single_source_task_graph_invalid'}:
+                        # Describe the actual representation error, rather than
+                        # relying on an opaque code. The model must submit a new
+                        # plan; the server still never drops a multi-step DAG.
+                        context['plan_completion_feedback']['route_task_contract'] = {
+                            'non_fusion_routes': ['sql', 'document', 'clarify'],
+                            'required_tasks_json_for_non_fusion_routes': '[]',
+                            'tasks_json_is_a_string': True,
+                            'server_will_not_execute_or_discard_rejected_graph': True,
+                            'repair_choices': [
+                                '仅文档问答：route=document，tasks_json="[]"；后续文档模块检索并生成有依据答案。',
+                                '仅数据库问数：route=sql，tasks_json="[]"；后续SQL模块生成并执行只读查询。',
+                                '用户确实要求跨源或多步计算：route=fusion，保留完整依赖任务数组，不能省略任何操作。'],
+                        }
+                        context['plan_completion_feedback']['instruction'] += (
+                            '当前非fusion路由与非空任务图不兼容。按route_task_contract重新输出完整计划，'
+                            '不要重复提交document/sql路由加多步任务；不能为了格式合规删掉用户要求的实际操作。')
                     if protocol_details:
                         context['plan_completion_feedback']['reference_type_errors'] = protocol_details
                         context['plan_completion_feedback']['instruction'] += (

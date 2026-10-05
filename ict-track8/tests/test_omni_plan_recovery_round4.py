@@ -85,8 +85,27 @@ def test_single_source_dag_rejection_gets_one_protocol_repair_without_discarding
     assert result['status'] == 'ok' and '2小时' in result['result']['answer']
     assert result['planner_source'] == 'model_validated' and len(planner.calls) == 2
     assert planner.calls[1]['context']['plan_completion_feedback']['errors'] == ['single_source_task_not_discardable']
+    contract = planner.calls[1]['context']['plan_completion_feedback']['route_task_contract']
+    assert contract['required_tasks_json_for_non_fusion_routes'] == '[]'
+    assert contract['server_will_not_execute_or_discard_rejected_graph'] is True
+    assert contract['tasks_json_is_a_string'] is True
     assert [attempt['validation'] for attempt in result['trace'][0]['attempts']] == ['plan_protocol_rejected', 'complete']
     assert result['trace'][0]['normalizations'] == []
+
+
+def test_repeated_nonfusion_graph_still_rejects_instead_of_silently_dropping_tools(tmp_path, monkeypatch):
+    question = '紧急工单首次响应几小时'
+    wrong = plan('document', question, [
+        {'id': 'search', 'tool': 'search', 'args': {'query': question}},
+        {'id': 'fact', 'tool': 'search_fact', 'args': {
+            'evidence': {'ref': 'search', 'path': []}, 'scope': '紧急工单', 'label': '首次响应', 'unit': '小时'}}])
+    planner = ReplayPlanner([wrong, wrong])
+    monkeypatch.setattr(DependencyAgent, 'execute', lambda *a, **k: pytest.fail('Rejected graph executed'))
+    result = make_agent(tmp_path, planner).query(question)
+    assert len(planner.calls) == 2 and result['planner_source'] == 'rules_fallback'
+    assert result['trace'][0]['rejection_code'] == 'single_source_task_not_discardable'
+    assert [row['validation'] for row in result['trace'][0]['attempts']] == [
+        'plan_protocol_rejected', 'plan_protocol_rejected']
 
 
 def test_fusion_normalization_rejection_is_replanned_before_any_dependency_executes(tmp_path, monkeypatch):

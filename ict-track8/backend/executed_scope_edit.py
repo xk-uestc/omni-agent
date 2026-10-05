@@ -41,6 +41,17 @@ class ExecutedScopeEditAgent:
             return reject('executed_edit_context_invalid',
                 '原查询的执行记录或数据版本已变化，请重新查询完整问题后再修改。')
         before = original.to_dict()
+        if not _complete(original):
+            # A successful relational query may not fit the rule planner's
+            # slots. That is missing representation, not a rejected edit.
+            # Defer a short follow-up to the existing independent rewrite and
+            # review channel; it rechecks source authority before any API call.
+            # Complete rule scopes and mismatched saved slots still fail closed.
+            from .sql_history_scope import _FOLLOWUP
+            provider = getattr(self.engine, 'model_plan_provider', None)
+            if (getattr(provider, 'supports_complex_queries', False) is True
+                    and _FOLLOWUP.search(question)):
+                return None
         if (not _complete(original)
                 or _filters(state.get('filters', [])) != _filters(before['filters'])
                 or not _saved_metrics_match(state,before,self.engine)

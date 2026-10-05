@@ -101,3 +101,31 @@ def test_changed_database_cannot_authorize_saved_followup(context):
     assert scope == question and audit['requires_clarification']
     assert audit['reason'] == 'sql_history_source_revision_changed'
     assert not client.calls
+
+
+def test_named_followup_of_unrepresented_success_gets_independent_review(context,monkeypatch):
+    from backend.nl2sql.models import QueryPlan
+    engine,turn=context
+    client=Client('2024年华东销售额');attach(engine,client)
+    # The actual rule planner cannot represent some successful relational SQL.
+    monkeypatch.setattr(engine,'extract_required_intent',lambda *a,**kw:
+        QueryPlan(clarification='规则槽位不能表示该查询',clarification_code='unresolved_terms'))
+    scope,audit=resolve_sql_followup_scope('那改成2024年呢，仍按sales_amount合计？',[turn],engine)
+    assert scope=='2024年华东销售额'
+    assert audit['mode']=='model_reviewed_sql_followup'
+    assert client.calls==['sql_followup_rewrite','sql_followup_independent_review']
+
+
+def test_unrepresented_success_does_not_bypass_reviewer_or_source(context,monkeypatch):
+    from backend.nl2sql.models import QueryPlan
+    engine,turn=context
+    monkeypatch.setattr(engine,'extract_required_intent',lambda *a,**kw:
+        QueryPlan(clarification='unrepresented',clarification_code='unresolved_terms'))
+    client=Client('2024年华东销售额',approved=False);attach(engine,client)
+    question='那改成2024年呢，仍按sales_amount合计？'
+    scope,audit=resolve_sql_followup_scope(question,[turn],engine)
+    assert audit.get('requires_clarification') and audit['mode']=='independent'
+    assert scope==question
+    client.calls.clear();turn.state['executed_sql_context']['sha256']='0'*64
+    scope,audit=resolve_sql_followup_scope(question,[turn],engine)
+    assert audit.get('requires_clarification') and not client.calls
