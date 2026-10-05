@@ -39,15 +39,23 @@ async function main(){
     assert(await page.locator('.agent-tool-summary>.agent-icon').count()>=2,'tool icons missing');
     assert(await page.locator('.answer table').count()>0,'real result table missing');});
   await check('SQL feedback has syntax colors and input/output tabs',async()=>{
-    const tool=page.locator('.agent-tool-row[data-tool="nl2sql"]');await tool.locator('summary').click();
-    assert(await tool.locator('.tok-keyword').count()>0,'SQL syntax tokens absent');
-    await tool.getByRole('tab',{name:'输入',exact:true}).click();assert((await tool.locator('pre').innerText()).includes('2025年'),'input not shown');
-    await tool.getByRole('tab',{name:'反馈',exact:true}).click();assert((await tool.locator('pre').innerText()).includes('SELECT'),'SQL not shown');});
+    const tool=page.locator('.agent-tool-row[data-tool="nl2sql"]');await tool.locator('.agent-tool-summary').click();
+    assert(await tool.locator('.agent-tool-code .tok-keyword').count()>0,'SQL syntax tokens absent');
+    await tool.getByRole('tab',{name:'输入',exact:true}).click();assert((await tool.locator('.agent-tool-code').innerText()).includes('2025年'),'input not shown');
+    await tool.getByRole('tab',{name:'反馈',exact:true}).click();assert((await tool.locator('.agent-tool-code').innerText()).includes('SELECT'),'SQL not shown');});
   await check('schema SVG and result visualization preserved',async()=>{
-    const inspect=page.locator('.agent-inspection-host>.agent-inspector');await inspect.locator(':scope>summary').click();
+    const sqlTool=page.locator('.agent-tool-row[data-tool="nl2sql"]');
+    const inspect=sqlTool.locator('.agent-tool-attachment>.agent-inspector');await inspect.locator(':scope>summary').click();
     assert(await inspect.locator('.schema-explorer svg').count()>0,'schema SVG lost');
     assert(await page.locator('.agent-tool-row[data-tool="visualization.build"][data-status="success"]').count()===1,'visualization receipt absent');
     await inspect.locator(':scope>summary').click();});
+  await check('chart belongs to the visualization tool rather than the answer',async()=>{
+    const chart=page.locator('.agent-tool-row[data-tool="visualization.build"]');
+    await chart.locator('.agent-tool-summary').click();
+    await chart.locator('.agent-tool-attachment summary').click();
+    assert(await chart.locator('.query-result-viz').isVisible(),'chart output is not visible');
+    assert(await page.locator('.answer .query-result-viz').count()===0,'chart duplicated in the answer');
+    await chart.locator('.agent-tool-summary').click();});
   await check('the composer never covers the last answer at the end of the thread',async()=>{
     await page.locator('#thread').evaluate(element=>element.scrollTop=element.scrollHeight);
     const answer=await page.locator('.answer').boundingBox(),composer=await page.locator('#askComposer').boundingBox();

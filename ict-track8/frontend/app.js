@@ -267,7 +267,10 @@ function renderResult(view,data,originalQuestion){
   inspectorSummary.innerHTML='<svg class="agent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 6c0-4 16-4 16 0s-16 4-16 0v12c0 4 16 4 16 0V6M4 12c0 4 16 4 16 0"/></svg>';
   inspectorSummary.append(document.createTextNode(data.route==='comparison'?"查看比较依据与 SQL":"查看字段 SVG、SQL 与数据关系"));
   renderAudit(inspectorBody,data);
-  if(inspectorBody.childNodes.length){inspector.append(inspectorSummary,inspectorBody);view.body.append(inspector);}
+  if(inspectorBody.childNodes.length){
+    inspector.append(inspectorSummary,inspectorBody);
+    if(!view.live.attach('nl2sql',inspector))view.body.append(inspector);
+  }
   const answer=el("div","answer"),structured=data.structured||{};answer.append(el("p","",data.answer||"后端未返回文字说明"));
   if(data.route==='tasks'){
     view.title.textContent="待补问题";view.turn.status="已查看";
@@ -365,10 +368,11 @@ function renderResult(view,data,originalQuestion){
   if(data.structured?.status==='ok'&&data.structured?.sql&&window.QueryResultViz){
     const visual=window.QueryResultViz.render(data.structured);
     if(visual){
-      const detail=el('details','agent-inspector'),label=el('summary','','查看可视化');detail.append(label,visual);answer.append(detail);
+      const detail=el('details','agent-inspector'),label=el('summary','','查看可视化');detail.append(label,visual);
       view.live.record({id:'client:visualization',tool:'visualization.build',status:'success',executed:true,
         summary:'根据本次返回的数据构建可视化。',input:{columns:data.structured.columns,row_count:data.structured.rows?.length||0},
         output:{renderer:'本地可视化组件',data_scope:'本次查询预览',row_count:data.structured.rows?.length||0}});
+      view.live.attach('visualization.build',detail);
     }
   }
   clearSourceViewers(view.answer);view.answer.replaceChildren(answer);$("thread").scrollTop=$("thread").scrollHeight;

@@ -108,6 +108,13 @@
     const h=React.createElement,root=document.createElement('div');root.className='agent-timeline';
     root.setAttribute('aria-label','工具调用与执行反馈');
     const mount=ReactDOM.createRoot(root);let rows=[],waiting=true,finished=false;
+    const attachments=new Map();
+    // Legacy SVG explorers retain their event handlers inside a React-owned tool receipt.
+    function Attachment({node}){
+      const host=React.useRef(null);
+      React.useLayoutEffect(()=>{host.current.append(node);return ()=>node.remove();},[node]);
+      return h('div',{ref:host,className:'agent-tool-attachment'});
+    }
     function Icon({name,className=''}){return h('svg',{className:`agent-icon ${className}`,viewBox:'0 0 24 24',fill:'none',
       stroke:'currentColor',strokeWidth:1.6,strokeLinecap:'round',strokeLinejoin:'round','aria-hidden':true},
       h('path',{d:ICONS[name]||ICONS.terminal}));}
@@ -138,10 +145,11 @@
                 ['input','output'].map(value=>h('button',{key:value,type:'button',role:'tab','aria-selected':tab===value,
                   onClick:()=>setTab(value)},value==='input'?'输入':'反馈'))),
               h('button',{type:'button',className:'agent-tool-copy',onClick:async(event)=>{
-                const button=event.currentTarget;try{await navigator.clipboard.writeText(typeof output==='string'?output:JSON.stringify(output,null,2));
+                const button=event.currentTarget,value=tab==='input'?item.input:output;try{await navigator.clipboard.writeText(typeof value==='string'?value:JSON.stringify(value,null,2));
                   button.textContent='已复制';}catch{button.textContent='请选中复制';}}},'复制')),
             item.status==='running'&&tab==='output'?h('p',{className:'agent-tool-wait'},'等待工具返回…'):
               h(Code,{value:tab==='input'?item.input:output,language:tab==='output'&&item.tool==='nl2sql'?'sql':'json'}),
+            attachments.has(item.id)?h(Attachment,{node:attachments.get(item.id)}):null,
             h('footer',{className:`agent-tool-footer state-${item.status}`},
               Number.isFinite(item.latency_ms)?h('span',null,`${(item.latency_ms/1000).toFixed(2)} s`):h('span'),
               h('span',null,STATUS[item.status])))));
@@ -162,10 +170,15 @@
       rows=rows.map(row=>row.status==='running'?{...row,status:'stopped',summary:row.summary||'未收到此工具的完成记录。'}:row);
       finished=true;draw();}
     function record(event){rows=reduceEvents(rows,event);draw();}
+    function attach(tool,node){
+      const item=rows.find(row=>row.tool===tool);
+      if(!item)return false;
+      attachments.set(item.id,node);draw();return true;
+    }
     function fail(message='请求未完成'){waiting=false;finished=true;
       rows=rows.map(item=>item.status==='running'?{...item,status:'stopped'}:item);
       rows.push({id:'request:failed',kind:'commentary',status:'error',summary:message});draw();}
-    draw();return {root,update,finish,record,fail,dispose:()=>mount.unmount()};
+    draw();return {root,update,finish,record,attach,fail,dispose:()=>{mount.unmount();attachments.clear();}};
   }
   return {normalizeEvent,reduceEvents,fromResult,create};
 });

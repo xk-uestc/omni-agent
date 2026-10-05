@@ -26,6 +26,11 @@
 .agent-tool-wait { padding:14px 16px; color:var(--ui-muted); }
 .agent-output-limit { color:var(--ui-muted); }
 .agent-tool-footer { display:flex; justify-content:space-between; gap:16px; padding:7px 13px; color:var(--ui-muted); font-size:11px; }
+.agent-tool-attachment { border-top:1px solid var(--ui-line); padding:0 14px; background:var(--ui-bg); }
+.agent-tool-attachment .agent-inspector { margin:0; }
+.agent-tool-attachment .agent-inspector>summary { padding:12px 0; }
+.agent-tool-attachment .query-journey { min-width:0; }
+.agent-tool-summary:focus-visible,.agent-tool-tabs button:focus-visible,.agent-tool-copy:focus-visible { outline:2px solid var(--ui-muted); outline-offset:3px; }
 .state-error,.agent-commentary[data-status="error"] { color:#bf453a; }
 .state-attention { color:#9e741d; }
 .agent-request-wait { display:flex; align-items:center; gap:9px; margin:14px 0; color:var(--ui-muted); font-size:13px; }
