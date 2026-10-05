@@ -60,6 +60,8 @@ _SAFETY_REASON_CODES = frozenset({
     'complex_query_integer_literal_out_of_range', 'complex_query_nonfinite_literal',
     'complex_query_parameter_binding_mismatch', 'complex_query_proposal_contract',
     'complex_query_explicit_nonnull_count_requires_field_projection',
+    'complex_query_record_count_requires_row_projection',
+    'complex_query_explicit_group_source_mismatch',
     'complex_query_null_row_count_requires_row_projection',
     'complex_query_null_row_count_requires_null_predicate',
     'complex_query_null_and_nonnull_count_scope_requires_separate_query',

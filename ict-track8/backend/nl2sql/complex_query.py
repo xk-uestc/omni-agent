@@ -125,10 +125,15 @@ INSTRUCTIONS = """你是只读SQLite复杂关系查询规划器。按schema输�
 所有表/列来自实际schema；名称不是业务公式。问题缺少业务指标、日期口径、关联依据时必须澄清。
 保留整题所有过滤、NULL语义、分组层次、排序、最新/最早与并列决胜、输出字段和范围。
 COUNT(*)是记录数，COUNT(column)仅非空；条件计数用CASE WHEN。二层AVG须先按原粒度聚合。
+时间字段限定记录所属期间，不自动把记录计数改成该日期字段的非空值计数。
+单表记录总数优先COUNT(*)；明确请求非空字段数量才COUNT(该字段)。
 COUNT在零匹配输入上返回0是原生行为，不是擅自填零；SUM在零匹配输入上返回NULL。
 明确询问唯一确定物理字段的非空记录数时使用COUNT(该字段)投影；不要改为COUNT(*)并加IS NOT NULL过滤，
 以保留用户请求字段的输出血缘。
 用户指定物理输出字段时必须逐个投影该字段，不能替换成FK另一侧名称相似的主键。
+explicit_physical_group_fields仅来自原问题中明确写出的真实table.column分组字段，不是答案或SQL。
+保留每个字段的物理所属表，不能用外键另一侧同值字段替代。必须经schema真实FK或同一目标键的
+直传CTE列构造完整关联路径；没有直接关联时保留必要中间表，不能虚构直连或因两列同名就JOIN。
 GROUP BY只按用户明确的粒度；不能擅加主键改变同名实体的分组。独立日期过滤绑定各自字段。
 反连接优先用键集合或预聚合避免无索引相关全表重复扫描；NOT IN的NULL行为不得替换。
 多事实先各自聚合再关联，不能用SUM(DISTINCT amount)掩盖扇出；加权平均需要明确权重与零分母处理。
@@ -477,7 +482,42 @@ def _verify_date_comparators(sql, tables, profiles):
                 raise SqlSafetyError('complex_query_verified_date_requires_julianday')
 
 
+def _verify_scalar_record_count(question, sql, tables):
+    """Preserve literal row-count intent, without inferring joined entity grain.
+
+    This deliberately covers only one physical table and one direct scalar
+    COUNT. Compound, distinct and explicit NULL counts use their own contracts.
+    A declared non-null key may anchor row counting; nullable fields may not.
+    """
+    if (not re.search(r'记录(?:总数|数量|数)|总记录数|行数|\brow\s+count\b|\bnumber\s+of\s+(?:rows|records)\b', question, re.I)
+            or re.search(r'非空|不为空|为空|空值|不同|去重|唯一|分别|(?<![A-Za-z_0-9])(?:null|distinct|unique)(?![A-Za-z_0-9])|(?<![A-Za-z_0-9])COUNT\s*\(', question, re.I)):
+        return
+    schema = {t.name: {c.name: c.data_type for c in t.columns} for t in tables}
+    tree = qualify(parse_one(sql, read='sqlite'), dialect='sqlite', schema=schema,
+                   validate_qualify_columns=True)
+    scopes = list(traverse_scope(tree))
+    if (len(scopes) != 1 or not isinstance(tree, exp.Select) or len(tree.expressions) != 1
+            or tree.args.get('group') or tree.args.get('joins') or tree.args.get('having')):
+        return
+    scope = scopes[0]
+    sources = list(scope.selected_sources.values())
+    if len(sources) != 1 or not isinstance(sources[0][1], exp.Table):
+        return
+    expression = tree.expressions[0]
+    count = expression.this if isinstance(expression, exp.Alias) else expression
+    if not isinstance(count, exp.Count) or isinstance(count.this, (exp.Star, exp.Distinct)):
+        return
+    origin = _column_origin(count.this, scope)
+    if origin:
+        column = next((c for t in tables if t.name.casefold() == origin[0].casefold()
+                       for c in t.columns if c.name.casefold() == origin[1].casefold()), None)
+        if column is not None and not column.nullable:
+            return
+    raise SqlSafetyError('complex_query_record_count_requires_row_projection')
+
+
 def _verify_count_projection(question, sql, tables):
+    _verify_scalar_record_count(question, sql, tables)
     (requested_nonnull, requested_null, direct_counts, safe_row_count_columns, count_all,
      null_filter_fields, conditional_null_counts) = \
         _requested_count_columns(question, sql, tables)
@@ -499,6 +539,48 @@ def _verify_count_projection(question, sql, tables):
             raise SqlSafetyError('complex_query_null_row_count_requires_row_projection')
 
 
+def _explicit_group_sources(question, tables):
+    """Extract only literal, actual physical owners from grouping clauses.
+
+    Only explicit table.column names in a local grouping clause bind this
+    contract. Filter/join mentions, bare ambiguous fields and negated grouping
+    do not. This proves physical origins only; semantic review still owns grain.
+    """
+    known = {(t.name.casefold(), c.name.casefold()) for t in tables for c in t.columns}
+    required = []
+    patterns = (r'按([^;。?!？；]{1,160}?)(?:分组|统计|计算|汇总|返回)',
+                r'\bgroup(?:ed)?\s+by\s+(.{1,160}?)(?=\s+(?:return|report|count|calculate|select|sum|compute)\b|[;!?]|$)')
+    for pattern in patterns:
+        for match in re.finditer(pattern, question, re.I):
+            if (re.search(r'(?:不|不要|别|do\s+not|don\x27t|not)\s*$', question[:match.start()], re.I)
+                    or re.search(r'筛选|过滤|\bfilter\b', match[1], re.I)):
+                continue
+            fields = {(a.casefold(), b.casefold()) for a, b in re.findall(
+                r'(?<![A-Za-z0-9_])([A-Za-z_][A-Za-z0-9_]*)\s*\.\s*([A-Za-z_][A-Za-z0-9_]*)(?![A-Za-z0-9_])', match[1])}
+            if fields and fields <= known:
+                required.append(fields)
+    return required
+
+
+def _verify_explicit_group_sources(question, sql, tables):
+    """Preserve physical owners through GROUP BY and direct CTE lineage."""
+    required = _explicit_group_sources(question, tables)
+    if not required:
+        return
+    schema = {t.name: {c.name: c.data_type for c in t.columns} for t in tables}
+    tree = qualify(parse_one(sql, read='sqlite'), dialect='sqlite', schema=schema)
+    actual = []
+    for scope in traverse_scope(tree):
+        group = scope.expression.args.get('group')
+        if group is None:
+            continue
+        origins = {_column_origin(c, scope) for c in group.find_all(exp.Column)}
+        actual.append({(t.casefold(), c.casefold()) for origin in origins if origin
+                       for t, c in [origin]})
+    if any(not any(fields <= group for group in actual) for fields in required):
+        raise SqlSafetyError('complex_query_explicit_group_source_mismatch')
+
+
 def _generate_with_transient_retries(provider, instructions, context, schema, **kwargs):
     client = provider.client
     retries = getattr(provider, 'max_retries', 0)
@@ -518,6 +600,9 @@ def _generate_with_transient_retries(provider, instructions, context, schema, **
 
 def propose_complex(provider, question, tables, *, date_profiles=None, date_profile_loader=None):
     context = {'question': question, 'schema': [t.to_dict() for t in tables],
+               'explicit_physical_group_fields': [
+                   [{'table': table, 'column': column} for table, column in sorted(group)]
+                   for group in _explicit_group_sources(question, tables)],
                'reference_date': provider.reference_date.isoformat(),
                'metric_catalog': provider.catalog.model_context() if provider.catalog else None,
                'date_storage_profiles': date_profiles or [],
@@ -544,6 +629,7 @@ def propose_complex(provider, question, tables, *, date_profiles=None, date_prof
                 profiles = date_profile_loader(columns, context['date_storage_profiles'])
                 context = {**context, 'date_storage_profiles': profiles}
             _verify_count_projection(question, canonical, tables)
+            _verify_explicit_group_sources(question, canonical, tables)
             _verify_date_comparators(canonical, tables, context['date_storage_profiles'])
             attempts.append({'attempt':attempt+1,'status':'statically_validated'})
             break
@@ -562,6 +648,14 @@ def propose_complex(provider, question, tables, *, date_profiles=None, date_prof
                 repair_constraint += (' Do not put IS NULL in the query-wide WHERE when the question also asks '
                     'for the same field non-null or total counts. Use COUNT(*) FILTER (WHERE field IS NULL) '
                     'or SUM(CASE WHEN field IS NULL THEN 1 ELSE 0 END) for the null-row metric.')
+            if str(exc) == 'complex_query_explicit_group_source_mismatch':
+                repair_constraint += (' Preserve every explicitly requested table.column grouping owner. '
+                    'A foreign-key column with equal values is not a substitute for the named parent column; '
+                    'use only actual verified FK joins or direct CTE lineage, and preserve the original grain.')
+            if str(exc) == 'complex_query_record_count_requires_row_projection':
+                repair_constraint += (' The question requests record rows, not non-null values. '
+                    'Use COUNT(*) for this scalar single-table row count, retaining every existing filter. '
+                    'Do not add IS NOT NULL or change the date field, interval, population or NULL rules.')
             context={**context,'previous_candidate_sql':sql,'structural_failure':str(exc),
                 'repair_constraint':repair_constraint}
     review = _generate_with_transient_retries(provider, REVIEW_INSTRUCTIONS, {**context, 'sql': canonical}, REVIEW,

@@ -58,6 +58,19 @@ def main():
             code = str(value[1])
             if re.fullmatch(r'(?:document_parts|component|unsupported_component|native|multi)_[a-z0-9_]{1,100}', code):
                 entry = {'module': filename, 'function': frame.f_code.co_name, 'code': code}
+                if code == 'multi_selection_contract_invalid' and frame.f_code.co_name == '_fragments':
+                    selection = frame.f_locals.get('selection')
+                    # Metadata only: distinguish a valid abstention from a
+                    # malformed response without logging model payload text.
+                    valid_object = isinstance(selection, dict)
+                    fragments = selection.get('fragments') if valid_object else None
+                    entry['selection_diagnostic'] = {
+                        'object': valid_object,
+                        'expected_keys': valid_object and set(selection) == {'abstain', 'fragments'},
+                        'abstain': selection.get('abstain') if valid_object and
+                            type(selection.get('abstain')) is bool else None,
+                        'fragments_is_list': isinstance(fragments, list),
+                        'fragment_count': len(fragments) if isinstance(fragments, list) else None}
                 if code == 'document_parts_whole_question_rejected':
                     review = frame.f_locals.get('review', {})
                     entry['review_checks'] = {k: v for k, v in review.items()
