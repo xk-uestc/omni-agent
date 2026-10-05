@@ -57,6 +57,30 @@ def test_actual_rank1_reference_retains_original_search_target(engine):
     assert audit['target_text'] == '冠军团队的方法'
 
 
+def test_original_business_label_reference_uses_verified_physical_slot(engine):
+    tasks = graph()
+    tasks[1]['args']['query'][0]['path'] = ['rows', 0, '地区']
+    unchanged = deepcopy(tasks)
+    result = search_agent(engine).run(tasks, original_question=QUESTION)
+    assert result['status'] == 'ok'
+    assert tasks == unchanged
+    binding = result['user_constraint_validation']['document_search_bindings'][0]
+    assert binding['original_reference_path'] == ['rows', 0, '地区']
+    assert binding['reference_path'] == ['dimension_values', 'sales_orders', 'region', 0]
+    proof = result['results']['method']['dependency_reference_validation']
+    assert proof['status'] == 'verified' and proof['value'] == '华东'
+
+
+def test_business_label_rebinding_never_omits_tied_winners(engine):
+    make_tie(engine)
+    tasks = graph()
+    tasks[1]['args']['query'][0]['path'] = ['rows', 0, '地区']
+    result = search_agent(engine).run(tasks, original_question=QUESTION)
+    assert result['status'] == 'incomplete'
+    assert result['failed_task'] == 'method' and 'method' not in result['results']
+    assert len(result['results']['winner']['rows']) == 2
+
+
 def test_scoped_search_preserves_original_sql_dimension_reference_binding(engine):
     tasks=graph()
     tasks[1]['args'].update(document_id='service-playbook',page_no=2)

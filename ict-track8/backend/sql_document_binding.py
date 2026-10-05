@@ -275,3 +275,32 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
             'result_verification': 'independent_original_scope_rules_and_complete_physical_result_replay',
             'independent_query_hash': hashlib.sha256(json.dumps({'sql': canonical_sql, 'parameters': canonical_parameters},
                 ensure_ascii=False, default=str, sort_keys=True).encode()).hexdigest()[:16]}
+
+
+def normalize_sql_document_references(bundle, tasks):
+    """Bind an authorized business/physical label to the stable dimension path.
+
+    This runs only after original-question authorization, on a copied graph.
+    It cannot guess arbitrary aliases or change the referenced row or source.
+    The existing independent SQL replay and complete-tie verification still
+    run before the search uses the value.
+    """
+    by_id = {task['id']: task for task in tasks}
+    for binding in bundle['bindings']:
+        original = binding['reference_path']
+        if original[0] != 'rows':
+            continue
+        if original[2] not in {binding['dimension_label'], binding['dimension_column']}:
+            # Preserve the original strict path contract for arbitrary labels.
+            continue
+        task = by_id[binding['search_task_id']]
+        ref, target = _reference_and_target(task)
+        if ref != {'ref': binding['sql_task_id'], 'path': original} or target != _canonical(binding['target_text']):
+            _reject()
+        physical = ['dimension_values', binding['dimension_table'],
+                    binding['dimension_column'], binding['row_index']]
+        ref['path'] = physical
+        binding['original_reference_path'] = list(original)
+        binding['reference_path'] = list(physical)
+        binding['output_column'] = None
+        binding['reference_normalization'] = 'authorized_original_dimension_to_physical_slot'

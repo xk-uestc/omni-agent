@@ -1,0 +1,829 @@
+{
+  "created_at": "2026-10-05T16:54:25.754141+00:00",
+  "scope": "two_live_http_scalar_caps_not_general_sql_accuracy",
+  "source_sha256": {
+    "ict-track8/backend/nl2sql/engine.py": "f8405b037c8e4575d234f344a04e0100fa7f77df839719be4c637003a60316cc",
+    "ict-track8/backend/nl2sql/result_scope.py": "f93cca84cffcc3b7eb6aae8fcd73820dc820693274fa433e5b58a23b15c9a0c5"
+  },
+  "source_stable": true,
+  "database_sha256": "f3e34a247bdc35966fb643892bd0c65b055560050a0a11e86ee37c34c339f294",
+  "checks": [
+    {
+      "question": "销售额是多少",
+      "passed": true,
+      "result": {
+        "status": "ok",
+        "result_state": "rows",
+        "notices": [],
+        "question": "销售额是多少",
+        "rewritten_question": "销售额是多少",
+        "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\"), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+        "parameters": [
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": 95052.0
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [],
+          "having": null,
+          "links": [
+            {
+              "source_text": "sales_amount",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.99,
+              "matched_alias": "销售额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.99,
+          "rewritten_question": "销售额是多少",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "模型计划已通过 Schema、外键图和只读执行契约校验"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "销售额是多少",
+            "metric": {
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "function": "SUM",
+              "label": "销售额"
+            },
+            "filters": [],
+            "time_range": null,
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.99,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "candidate_source": "external_model",
+              "final_source": "model_validated",
+              "fallback": false,
+              "decision": "accepted",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "nl2sql_plan",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "transport_attempts": 1,
+                "transport_failures": [],
+                "response_model": "gpt-6-luna",
+                "input_tokens": 2437,
+                "output_tokens": 124,
+                "total_tokens": 2561,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 0,
+                "call_index": 1,
+                "latency_ms": 19966.721,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              }
+            },
+            "metrics": [
+              {
+                "id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "label": "销售额",
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {
+              "strategy": "aggregate_each_fact_then_join",
+              "metrics": [
+                {
+                  "metric_id": "m0",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "function": "SUM",
+                  "native_grain": [
+                    "order_id"
+                  ],
+                  "unit": "currency",
+                  "currency": "CNY",
+                  "missing": "null",
+                  "filter_strategy": "many_to_one",
+                  "dimension_path": [],
+                  "filter_path": []
+                }
+              ],
+              "formulas": [],
+              "null_group_alignment": "IS",
+              "order_metric": "m0",
+              "ordering": "metric"
+            },
+            "semantic_audit": {}
+          },
+          "planner_audit": {
+            "candidate_source": "external_model",
+            "final_source": "model_validated",
+            "fallback": false,
+            "decision": "accepted",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "transport_attempts": 1,
+              "transport_failures": [],
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2437,
+              "output_tokens": 124,
+              "total_tokens": 2561,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 0,
+              "call_index": 1,
+              "latency_ms": 19966.721,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            }
+          },
+          "model_plan_diagnostics": {
+            "attempts": [
+              {
+                "attempt": 1,
+                "original_structure": {
+                  "payload": {
+                    "type": "dict",
+                    "length": 15,
+                    "sha256": "db18255e767c0d592aee016d99fb947710be43aa3f949bceb63ad8dec0914a2c",
+                    "identifier_valid": false
+                  },
+                  "version": 2,
+                  "metrics": [
+                    {
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "id": {
+                        "type": "str",
+                        "length": 2,
+                        "sha256": "2ead1f027078eee5ee00c1285fed04b1d7dcb4faa5e90c3ccec936a651dd1078",
+                        "identifier_valid": true
+                      },
+                      "label": {
+                        "type": "str",
+                        "length": 3,
+                        "sha256": "94185face61e0a08f5bcbf0b8069b53ca3526840c68d61483ffe4a1c4431cd6d",
+                        "identifier_valid": true
+                      },
+                      "function": "SUM",
+                      "filters": []
+                    }
+                  ],
+                  "dimensions": [],
+                  "filters": [],
+                  "derived_metrics": [],
+                  "order_metric": {
+                    "type": "NoneType",
+                    "length": null,
+                    "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+                    "identifier_valid": false
+                  },
+                  "output_metrics": {
+                    "type": "list",
+                    "length": 1,
+                    "sha256": "cc0a6d0d1ba2aaf7f932d43b45894760d8a75fbdb01c07c3273f2765cf1119ab",
+                    "identifier_valid": false
+                  }
+                },
+                "provider": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "transport_attempts": 1,
+                  "transport_failures": [],
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2437,
+                  "output_tokens": 124,
+                  "total_tokens": 2561,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 0,
+                  "call_index": 1,
+                  "latency_ms": 19966.721,
+                  "reasoning_effort": "medium",
+                  "response_status": "completed"
+                },
+                "structural_normalizations": [],
+                "status": "accepted"
+              }
+            ],
+            "repair_attempted": false
+          },
+          "metrics": [
+            {
+              "id": "m0",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "function": "SUM",
+              "label": "销售额",
+              "unit": "currency",
+              "currency": "CNY",
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {
+            "strategy": "aggregate_each_fact_then_join",
+            "metrics": [
+              {
+                "metric_id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "native_grain": [
+                  "order_id"
+                ],
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filter_strategy": "many_to_one",
+                "dimension_path": [],
+                "filter_path": []
+              }
+            ],
+            "formulas": [],
+            "null_group_alignment": "IS",
+            "order_metric": "m0",
+            "ordering": "metric"
+          },
+          "semantic_audit": {},
+          "output_metrics": [
+            "m0"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额（SUM）",
+          "查询表：sales_orders",
+          "模型计划已通过 Schema、外键图和只读执行契约校验",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "demo_sales.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "row_limit": 1,
+          "result_completeness": "within_return_limit",
+          "query_hash": "ba353b5a8f4c37c8",
+          "field_links": [
+            {
+              "source_text": "sales_amount",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.99,
+              "matched_alias": "销售额",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "c09e52c1beec9eee5996fd7a9e5d8c8d21f112deb1e40e9fec12d15e21744d33",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {
+            "strategy": "aggregate_each_fact_then_join",
+            "metrics": [
+              {
+                "metric_id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "native_grain": [
+                  "order_id"
+                ],
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filter_strategy": "many_to_one",
+                "dimension_path": [],
+                "filter_path": []
+              }
+            ],
+            "formulas": [],
+            "null_group_alignment": "IS",
+            "order_metric": "m0",
+            "ordering": "metric"
+          },
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "销售额",
+              "query_hash": "ba353b5a8f4c37c8",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "销售额"
+              }
+            }
+          ],
+          "output_cardinality": {
+            "status": "verified",
+            "maximum_output_rows": 1,
+            "method": "executed_select_scope_cardinality",
+            "verified_singleton_scopes": 3,
+            "aggregate_functions": [
+              "SUM"
+            ],
+            "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "independent_sqlite_cells": [
+        [
+          95052.0
+        ]
+      ]
+    },
+    {
+      "question": "2019年销售额",
+      "passed": true,
+      "result": {
+        "status": "ok",
+        "result_state": "empty",
+        "notices": [
+          "该时间范围内没有数据；sales_orders.order_date 的数据覆盖 2024-01-15 至 2025-08-09"
+        ],
+        "question": "2019年销售额",
+        "rewritten_question": "2019年销售额",
+        "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+        "parameters": [
+          "2019-01-01",
+          "2020-01-01",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "rows": [
+          {
+            "销售额": null
+          }
+        ],
+        "plan": {
+          "table": "sales_orders",
+          "metric_table": "sales_orders",
+          "metric_column": "sales_amount",
+          "metric_function": "SUM",
+          "metric_label": "销售额",
+          "analysis_mode": "aggregate",
+          "dimensions": [],
+          "dimension_tables": {},
+          "dimension_transforms": {},
+          "dimension_labels": {},
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2019-01-01",
+                "2020-01-01"
+              ],
+              "source_text": "2019年",
+              "explanation": "模型过滤",
+              "table": "sales_orders"
+            }
+          ],
+          "having": null,
+          "links": [
+            {
+              "source_text": "sales_amount",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.99,
+              "matched_alias": "销售额",
+              "metric_function": null
+            }
+          ],
+          "join_tables": [],
+          "join_conditions": [],
+          "join_path": [],
+          "join_alternatives": [],
+          "order_desc": true,
+          "limit": 100,
+          "complete_results": false,
+          "semantic_row_limit": null,
+          "preview_row_limit": null,
+          "confidence": 0.99,
+          "rewritten_question": "2019年销售额",
+          "comparison_mode": "none",
+          "comparison_period": {},
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "assumptions": [
+            "模型计划已通过 Schema、外键图和只读执行契约校验"
+          ],
+          "planner_source": "model_validated",
+          "top_n": null,
+          "fan_out": false,
+          "coverage": {},
+          "intent_audit": {
+            "question": "2019年销售额",
+            "metric": {
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "function": "SUM",
+              "label": "销售额"
+            },
+            "filters": [
+              {
+                "column": "order_date",
+                "operator": "RANGE",
+                "value": [
+                  "2019-01-01",
+                  "2020-01-01"
+                ],
+                "source_text": "2019年",
+                "explanation": "模型过滤",
+                "table": "sales_orders"
+              }
+            ],
+            "time_range": [
+              "2019-01-01",
+              "2020-01-01"
+            ],
+            "group_by": [],
+            "comparison": "none",
+            "comparison_window": null,
+            "top_n": null,
+            "confidence": 0.99,
+            "unresolved": [],
+            "execution_allowed": true,
+            "planner_source": "model_validated",
+            "planner_audit": {
+              "candidate_source": "external_model",
+              "final_source": "model_validated",
+              "fallback": false,
+              "decision": "accepted",
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "nl2sql_plan",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "transport_attempts": 1,
+                "transport_failures": [],
+                "response_model": "gpt-6-luna",
+                "input_tokens": 2518,
+                "output_tokens": 251,
+                "total_tokens": 2769,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 83,
+                "call_index": 2,
+                "latency_ms": 7349.332,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              }
+            },
+            "metrics": [
+              {
+                "id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "label": "销售额",
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filters": []
+              }
+            ],
+            "derived_metrics": [],
+            "grain_audit": {
+              "strategy": "aggregate_each_fact_then_join",
+              "metrics": [
+                {
+                  "metric_id": "m0",
+                  "table": "sales_orders",
+                  "column": "sales_amount",
+                  "function": "SUM",
+                  "native_grain": [
+                    "order_id"
+                  ],
+                  "unit": "currency",
+                  "currency": "CNY",
+                  "missing": "null",
+                  "filter_strategy": "many_to_one",
+                  "dimension_path": [],
+                  "filter_path": []
+                }
+              ],
+              "formulas": [],
+              "null_group_alignment": "IS",
+              "order_metric": "m0",
+              "ordering": "metric"
+            },
+            "semantic_audit": {}
+          },
+          "planner_audit": {
+            "candidate_source": "external_model",
+            "final_source": "model_validated",
+            "fallback": false,
+            "decision": "accepted",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "transport_attempts": 1,
+              "transport_failures": [],
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2518,
+              "output_tokens": 251,
+              "total_tokens": 2769,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 83,
+              "call_index": 2,
+              "latency_ms": 7349.332,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            }
+          },
+          "model_plan_diagnostics": {
+            "attempts": [
+              {
+                "attempt": 1,
+                "original_structure": {
+                  "payload": {
+                    "type": "dict",
+                    "length": 15,
+                    "sha256": "cf9fc96dc6e147738ab20b862b04ee22f1c3d3f8ef64ca8f8ba5aca0581c9dea",
+                    "identifier_valid": false
+                  },
+                  "version": 2,
+                  "metrics": [
+                    {
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "id": {
+                        "type": "str",
+                        "length": 2,
+                        "sha256": "2ead1f027078eee5ee00c1285fed04b1d7dcb4faa5e90c3ccec936a651dd1078",
+                        "identifier_valid": true
+                      },
+                      "label": {
+                        "type": "str",
+                        "length": 3,
+                        "sha256": "94185face61e0a08f5bcbf0b8069b53ca3526840c68d61483ffe4a1c4431cd6d",
+                        "identifier_valid": true
+                      },
+                      "function": "SUM",
+                      "filters": []
+                    }
+                  ],
+                  "dimensions": [],
+                  "filters": [
+                    {
+                      "table": "sales_orders",
+                      "column": "order_date",
+                      "value": {
+                        "type": "list",
+                        "length": 2,
+                        "sha256": "28eaeb00f70694f09053c3d2ca94e00f2794e32bbf21538fd19523b2199e0698",
+                        "identifier_valid": false
+                      },
+                      "operator": "RANGE"
+                    }
+                  ],
+                  "derived_metrics": [],
+                  "order_metric": {
+                    "type": "NoneType",
+                    "length": null,
+                    "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+                    "identifier_valid": false
+                  },
+                  "output_metrics": {
+                    "type": "list",
+                    "length": 1,
+                    "sha256": "cc0a6d0d1ba2aaf7f932d43b45894760d8a75fbdb01c07c3273f2765cf1119ab",
+                    "identifier_valid": false
+                  }
+                },
+                "provider": {
+                  "provider": "responses",
+                  "model": "gpt-6-luna",
+                  "reasoning": "medium",
+                  "operation": "nl2sql_plan",
+                  "http_status": 200,
+                  "status": "completed",
+                  "model_verified": true,
+                  "transport_attempts": 1,
+                  "transport_failures": [],
+                  "response_model": "gpt-6-luna",
+                  "input_tokens": 2518,
+                  "output_tokens": 251,
+                  "total_tokens": 2769,
+                  "cached_input_tokens": 0,
+                  "reasoning_tokens": 83,
+                  "call_index": 2,
+                  "latency_ms": 7349.332,
+                  "reasoning_effort": "medium",
+                  "response_status": "completed"
+                },
+                "structural_normalizations": [],
+                "status": "accepted"
+              }
+            ],
+            "repair_attempted": false
+          },
+          "metrics": [
+            {
+              "id": "m0",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "function": "SUM",
+              "label": "销售额",
+              "unit": "currency",
+              "currency": "CNY",
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "order_metric": null,
+          "grain_audit": {
+            "strategy": "aggregate_each_fact_then_join",
+            "metrics": [
+              {
+                "metric_id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "native_grain": [
+                  "order_id"
+                ],
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filter_strategy": "many_to_one",
+                "dimension_path": [],
+                "filter_path": []
+              }
+            ],
+            "formulas": [],
+            "null_group_alignment": "IS",
+            "order_metric": "m0",
+            "ordering": "metric"
+          },
+          "semantic_audit": {},
+          "output_metrics": [
+            "m0"
+          ]
+        },
+        "explanation": [
+          "识别指标：销售额（SUM）",
+          "查询表：sales_orders",
+          "模型过滤",
+          "模型计划已通过 Schema、外键图和只读执行契约校验",
+          "该时间范围内没有数据；sales_orders.order_date 的数据覆盖 2024-01-15 至 2025-08-09",
+          "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+        ],
+        "provenance": {
+          "source_type": "structured_database",
+          "database": "demo_sales.sqlite",
+          "table": "sales_orders",
+          "row_count": 1,
+          "row_limit": 1,
+          "result_completeness": "within_return_limit",
+          "query_hash": "16562ee9e059737c",
+          "field_links": [
+            {
+              "source_text": "sales_amount",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "role": "metric",
+              "score": 0.99,
+              "matched_alias": "销售额",
+              "metric_function": null
+            }
+          ],
+          "coverage": {},
+          "consistency": "sqlite_read_transaction",
+          "source_revision": "c09e52c1beec9eee5996fd7a9e5d8c8d21f112deb1e40e9fec12d15e21744d33",
+          "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+          "grain_audit": {
+            "strategy": "aggregate_each_fact_then_join",
+            "metrics": [
+              {
+                "metric_id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "native_grain": [
+                  "order_id"
+                ],
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filter_strategy": "many_to_one",
+                "dimension_path": [],
+                "filter_path": []
+              }
+            ],
+            "formulas": [],
+            "null_group_alignment": "IS",
+            "order_metric": "m0",
+            "ordering": "metric"
+          },
+          "result_cells": [
+            {
+              "row": 0,
+              "column": "销售额",
+              "query_hash": "16562ee9e059737c",
+              "locator": {
+                "type": "sql_result",
+                "row": 0,
+                "column": "销售额"
+              }
+            }
+          ],
+          "output_cardinality": {
+            "status": "verified",
+            "maximum_output_rows": 1,
+            "method": "executed_select_scope_cardinality",
+            "verified_singleton_scopes": 3,
+            "aggregate_functions": [
+              "SUM"
+            ],
+            "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+          }
+        },
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": []
+      },
+      "independent_sqlite_cells": [
+        [
+          null
+        ]
+      ]
+    }
+  ],
+  "passed": 2,
+  "total": 2
+}

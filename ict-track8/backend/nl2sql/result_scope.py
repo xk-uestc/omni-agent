@@ -7,6 +7,75 @@ from .lexicon import cn_to_int
 from .security import SqlSafetyError
 
 
+def scalar_aggregate_cardinality(sql: str) -> dict | None:
+    """Prove at most one output row from the executed SELECT scope graph.
+
+    A window aggregate or an aggregate inside a scalar subquery does not
+    collapse the outer rows. A final LIMIT 1 alone proves no completeness.
+    This describes output cardinality only, not whether the answer is correct
+    or whether NULL means no input rows.
+    """
+    from sqlglot import exp, parse
+    from sqlglot.errors import SqlglotError
+    from sqlglot.optimizer.scope import Scope, traverse_scope
+
+    if not isinstance(sql, str) or not sql or len(sql) > 100_000:
+        return None
+    try:
+        statements = [item for item in parse(sql, read='sqlite') if item is not None]
+    except (SqlglotError, ValueError, RecursionError):
+        return None
+    if len(statements) != 1:
+        return None
+    root = statements[0]
+    if not isinstance(root, exp.Select):
+        return None
+    try:
+        scopes = list(traverse_scope(root))
+        if not scopes or len(scopes) > 64:
+            return None
+        functions, verified = [], set()
+        def singleton(scope, ancestors=frozenset()):
+            if id(scope) in ancestors or not isinstance(scope.expression, exp.Select):
+                return False
+            select = scope.expression
+            if select.args.get('group') is not None:
+                return False
+            local = []
+            for selected in select.expressions:
+                # A nested SELECT/window's aggregate cannot collapse this scope.
+                for node in selected.walk(prune=lambda item: isinstance(item,
+                        (exp.Select, exp.Subquery, exp.Window))):
+                    if isinstance(node, (exp.Sum, exp.Avg, exp.Count, exp.Min, exp.Max)):
+                        local.append(node.sql_name())
+            if local:
+                functions.extend(local)
+                verified.add(id(scope))
+                return True
+            # FULL JOIN can produce two unmatched rows from two singleton inputs.
+            if any(join.args.get('side') == 'FULL' for join in select.args.get('joins', [])):
+                return False
+            sources = list(scope.selected_sources.values())
+            if select.args.get('from_') is not None and not sources:
+                return False
+            if any(not isinstance(source, Scope) or not singleton(source, ancestors | {id(scope)})
+                   for _, source in sources):
+                return False
+            # No FROM is one constant row; passthrough joins of proven singleton
+            # CTEs/derived tables cannot multiply it. LIMIT never proves a source.
+            verified.add(id(scope))
+            return True
+        if not singleton(scopes[-1]):
+            return None
+    except (SqlglotError, ValueError, KeyError, RecursionError):
+        return None
+    return {'status': 'verified', 'maximum_output_rows': 1,
+            'method': 'executed_select_scope_cardinality',
+            'verified_singleton_scopes': len(verified),
+            'aggregate_functions': sorted(set(functions)),
+            'scope': 'output_cardinality_not_input_population_or_semantic_accuracy'}
+
+
 _ROW_VERBS = r'(?:return|show|display|list|get|fetch|retrieve|output|emit)'
 _EXPLICIT_ROWS = re.compile(
     r'(?:返回|展示|显示|只取|仅取|最多|只要|只看|仅看|取)\s*'

@@ -11,6 +11,7 @@ import math
 import re
 import sqlite3
 import time
+from copy import deepcopy
 from contextlib import nullcontext
 from typing import Any
 
@@ -111,6 +112,8 @@ class DependencyAgent:
         return text
 
     def run(self, tasks, *, on_event=None, original_question=None, source_constraints=None):
+        # Server-bound reference normalization never mutates the caller graph.
+        tasks = deepcopy(tasks)
         ordered, dependencies = self.validate(tasks)
         read_scope = getattr(self.sql_engine, 'consistent_reads', None)
         with read_scope() if read_scope else nullcontext():
@@ -118,8 +121,9 @@ class DependencyAgent:
             search_bindings = {'source_ranges': [], 'bindings': []}
             try:
                 if original_question is not None:
-                    from .sql_document_binding import authorize_sql_document_search
+                    from .sql_document_binding import authorize_sql_document_search, normalize_sql_document_references
                     search_bindings = authorize_sql_document_search(original_question, tasks, self.sql_engine)
+                    normalize_sql_document_references(search_bindings, tasks)
                     proofs = []
                     for task in tasks:
                         if task['tool'] != 'document_formula' or self.references(task['args']):

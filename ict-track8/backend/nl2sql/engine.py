@@ -27,7 +27,7 @@ from .semantics import MetricCatalog
 from .value_index import ValueIndex
 from .plan_structure import canonicalize, diagnose
 from .question_roles import association_scope, binding_present, group_fields, group_grains
-from .result_scope import configure_complete_scope, requests_complete_result
+from .result_scope import configure_complete_scope, requests_complete_result, scalar_aggregate_cardinality
 from .result_artifact import (ResultBudgets, execute_complete_read_only,
                               pin_database, read_result_page)
 
@@ -968,7 +968,12 @@ class Nl2SqlEngine:
                     columns, rows = execute_read_only(connection, sql, parameters, max_rows=row_cap, max_steps=self.max_steps, max_seconds=self.max_seconds)
             result_state, notices = self._result_state(connection, plan, rows)
             effective_limit = min(plan.limit, row_cap)
+            cardinality = scalar_aggregate_cardinality(sql) if complete_metadata is None else None
             limit_reached = len(rows) >= effective_limit if not complete_results else complete_metadata['preview_truncated']
+            if cardinality is not None:
+                # Execution has already succeeded. A single scalar aggregate
+                # cannot hide a second output row behind the presentation cap.
+                limit_reached = False
             if complete_metadata is not None:
                 if complete_metadata['status'] == 'complete':
                     notices.append(f"预览 {len(rows)} 行；完整查询结果 {complete_metadata['row_count']} 行，已核验游标结束并保存可分页原始结果。")
@@ -1019,6 +1024,8 @@ class Nl2SqlEngine:
             provenance['rank_return_cap_normalization'] = rank_return_audit
         if complete_metadata is not None:
             provenance['complete_result'] = complete_metadata
+        if cardinality is not None:
+            provenance['output_cardinality'] = cardinality
         return QueryResult(
             status=('incomplete' if complete_metadata is not None and complete_metadata['status'] != 'complete' else 'ok'),
             question=question, rewritten_question=plan.rewritten_question, sql=sql,
