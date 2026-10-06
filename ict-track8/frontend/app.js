@@ -61,12 +61,26 @@ function selectCapability(capability) {
 }
 async function loadMeta() {
   try {
-    const [health,schema]=await Promise.all([fetch(API+"/health").then(json),fetch(API+"/api/v1/nl2sql/schema").then(json)]);
+    const [health,schema,sources]=await Promise.all([
+      fetch(API+"/health").then(json),fetch(API+"/api/v1/nl2sql/schema").then(json),
+      fetch(API+"/api/v1/data-sources").then(json)]);
     liveSchema={tables:Array.isArray(schema.tables)?schema.tables:[],source:schema.source||null};
     $("apiHealth").dataset.state=health.ok?"ok":"error";$("healthText").textContent=health.ok?"API 已连接":"API 异常";
     const tables=schema.tables||[],box=$("schema");box.replaceChildren();
-    box.append(el("b","",health.database||"数据库"),el("div","",`${tables.length} 张表 · ${schema.source||"当前数据源"}`));
+    const recordCount=tables.reduce((sum,table)=>sum+(Number(table.row_count)||0),0);
+    box.append(el("b","",health.database||"数据库"),el("div","",`${tables.length} 张表 · ${recordCount.toLocaleString()} 条记录`));
     tables.slice(0,6).forEach(t=>box.append(el("div","",`${t.name} · ${t.row_count??"?"} 行`)));
+    const sourceList=$("dataSources");sourceList.replaceChildren();
+    function source(kind,name,detail,state="ok"){
+      const item=el("div","data-source-item");item.dataset.state=state;
+      const head=el("div","data-source-head");head.append(el("span","data-source-dot"),el("span","data-source-name",name));
+      item.append(head,el("div","data-source-kind",kind),el("div","data-source-detail",detail));sourceList.append(item);
+    }
+    source("合成示例 · 问数数据库",health.database||"当前业务库",`${tables.length} 张表 · ${recordCount.toLocaleString()} 条记录`);
+    const documents=sources.documents||{};
+    source("文档资料库",documents.name||"knowledge.sqlite",
+      `${Number(documents.document_count)||0} 份资料 · ${Number(documents.chunk_count)||0} 个检索片段`,
+      documents.status==="connected"?"ok":"error");
   } catch { liveSchema={tables:[],source:null};$("apiHealth").dataset.state="error";$("healthText").textContent="API 不可达";$("schema").textContent="无法读取当前数据源"; }
 }
 function renderSchemaDiagram(host,plan,links){

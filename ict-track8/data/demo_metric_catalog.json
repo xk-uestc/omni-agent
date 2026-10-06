@@ -1,13 +1,35 @@
 {
-  "version": "demo-sales-2026-10-01",
-  "data_origin": "Synthetic demonstration schema; not a real enterprise policy",
+  "version": "demo-enterprise-2026-10-06",
+  "data_origin": "Deterministic synthetic demonstration data; not a real enterprise dataset",
   "metrics": [
     {"id":"revenue","table":"sales_orders","column":"sales_amount","function":"SUM","label":"销售额","aliases":["销售额","销售金额"],"query_alias":"销售额","unit":"currency","currency":"CNY"},
     {"id":"orders","table":"sales_orders","column":"order_id","function":"COUNT","label":"订单数","aliases":["订单数"],"query_alias":"订单数","unit":"count"},
-    {"id":"units","table":"sales_orders","column":"quantity","function":"SUM","label":"销量","aliases":["销量"],"query_alias":"销量","unit":"item"}
+    {"id":"units","table":"sales_orders","column":"quantity","function":"SUM","label":"销量","aliases":["销量","销售件数"],"query_alias":"销量","unit":"item"},
+    {"id":"gross_profit","table":"sales_orders","column":"gross_profit","function":"SUM","label":"毛利","aliases":["毛利","销售毛利"],"query_alias":"毛利","unit":"currency","currency":"CNY"},
+    {"id":"discount_amount","table":"sales_orders","column":"discount_amount","function":"SUM","label":"优惠金额","aliases":["优惠金额","折扣金额"],"query_alias":"优惠金额","unit":"currency","currency":"CNY"},
+    {"id":"product_count","table":"products","column":"product_id","function":"COUNT","label":"产品数","aliases":["产品数","商品数","SKU数"],"query_alias":"产品数","unit":"count"},
+    {"id":"customer_count","table":"customers","column":"customer_id","function":"COUNT","label":"客户数","aliases":["客户数","客户数量"],"query_alias":"客户数","unit":"count"},
+    {"id":"ticket_count","table":"support_tickets","column":"ticket_id","function":"COUNT","label":"工单数","aliases":["工单数","售后工单数"],"query_alias":"工单数","unit":"count"},
+    {"id":"resolution_hours","table":"support_tickets","column":"resolution_hours","function":"SUM","label":"工单处理时长","aliases":["工单处理时长","售后处理时长"],"query_alias":"处理时长","unit":"hour"},
+    {"id":"satisfaction_score","table":"support_tickets","column":"satisfaction_score","function":"AVG","label":"平均满意度","aliases":["平均满意度","客户满意度"],"query_alias":"平均满意度","unit":"score"},
+    {"id":"first_response_minutes","table":"support_tickets","column":"first_response_minutes","function":"AVG","label":"平均首次响应分钟","aliases":["平均首次响应时间","平均响应分钟"],"query_alias":"平均响应分钟","unit":"minute"},
+    {"id":"inventory_quantity","table":"inventory_snapshots","column":"on_hand_quantity","function":"SUM","label":"库存量","aliases":["库存量","现有库存数量"],"query_alias":"库存量","unit":"item"},
+    {"id":"inbound_quantity","table":"inventory_snapshots","column":"inbound_quantity","function":"SUM","label":"在途库存量","aliases":["在途库存量","待入库数量"],"query_alias":"在途库存量","unit":"item"},
+    {"id":"inventory_value","table":"inventory_snapshots","column":"inventory_value","function":"SUM","label":"库存金额","aliases":["库存金额","库存价值"],"query_alias":"库存金额","unit":"currency","currency":"CNY"},
+    {"id":"campaign_budget","table":"marketing_campaigns","column":"budget","function":"SUM","label":"营销预算","aliases":["营销预算","广告投入","营销投入"],"query_alias":"营销预算","unit":"currency","currency":"CNY"},
+    {"id":"campaign_impressions","table":"marketing_campaigns","column":"impressions","function":"SUM","label":"广告曝光量","aliases":["广告曝光量","营销曝光量"],"query_alias":"曝光量","unit":"count"},
+    {"id":"campaign_clicks","table":"marketing_campaigns","column":"clicks","function":"SUM","label":"广告点击量","aliases":["广告点击量","营销点击量"],"query_alias":"点击量","unit":"count"},
+    {"id":"campaign_conversions","table":"marketing_campaigns","column":"conversions","function":"SUM","label":"营销转化数","aliases":["营销转化数","广告转化数"],"query_alias":"转化数","unit":"count"},
+    {"id":"campaign_sales","table":"marketing_campaigns","column":"attributed_sales","function":"SUM","label":"广告归因销售额","aliases":["广告归因销售额","营销归因销售额"],"query_alias":"归因销售额","unit":"currency","currency":"CNY"},
+    {"id":"sales_target","table":"sales_targets","column":"target_sales","function":"SUM","label":"销售目标","aliases":["销售目标","目标销售额"],"query_alias":"销售目标","unit":"currency","currency":"CNY"},
+    {"id":"customer_value","table":"customers","column":"annual_value","function":"SUM","label":"客户年度价值","aliases":["客户年度价值","客户价值"],"query_alias":"客户年度价值","unit":"currency","currency":"CNY"},
+    {"id":"return_count","table":"sales_returns","column":"return_id","function":"COUNT","label":"退货单数","aliases":["退货单数","退货数量"],"query_alias":"退货单数","unit":"count"},
+    {"id":"refund_amount","table":"sales_returns","column":"refund_amount","function":"SUM","label":"退款金额","aliases":["退款金额","退货退款额"],"query_alias":"退款金额","unit":"currency","currency":"CNY"}
   ],
   "derived_metrics": [
     {"id":"aov","label":"客单价","aliases":["客单价","平均每单金额"],"expression":{"op":"divide","left":{"ref":"revenue"},"right":{"ref":"orders"}}},
-    {"id":"revenue_per_unit","label":"平均每件收入","aliases":["平均每件收入"],"expression":{"op":"divide","left":{"ref":"revenue"},"right":{"ref":"units"}}}
+    {"id":"revenue_per_unit","label":"平均每件收入","aliases":["平均每件收入"],"expression":{"op":"divide","left":{"ref":"revenue"},"right":{"ref":"units"}}},
+    {"id":"gross_margin","label":"毛利率","aliases":["毛利率"],"expression":{"op":"divide","left":{"ref":"gross_profit"},"right":{"ref":"revenue"}}},
+    {"id":"campaign_click_rate","label":"广告点击率","aliases":["广告点击率","营销点击率"],"expression":{"op":"divide","left":{"ref":"campaign_clicks"},"right":{"ref":"campaign_impressions"}}}
   ]
 }

@@ -41,7 +41,7 @@ from .nl2sql.responses_provider import ResponsesModelPlanProvider
 from .nl2sql.annotation import validate_schema_annotations
 from .production_audit import to_production_audit
 from .session import ConversationStore
-from .nl2sql.seed import initialize_database
+from .nl2sql.seed import initialize_database, initialize_rich_demo_data
 from .nl2sql.security import SqlSafetyError
 
 
@@ -117,6 +117,8 @@ if not DATABASE_PATH.exists():
         initialize_database(DATABASE_PATH)
     else:
         raise RuntimeError(f"ICT8_DB_PATH 指向的数据库不存在: {DATABASE_PATH.name}")
+if DATABASE_PATH.resolve() == DEFAULT_DATABASE.resolve():
+    initialize_rich_demo_data(DATABASE_PATH)
 
 engine = Nl2SqlEngine(
     DATABASE_PATH,
@@ -564,6 +566,15 @@ def schema() -> dict[str, object]:
         return engine.schema()
     except (OSError, ValueError) as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/data-sources")
+def data_sources() -> dict[str, object]:
+    with knowledge_store.connect() as connection:
+        document_count = connection.execute("SELECT COUNT(*) FROM documents").fetchone()[0]
+        chunk_count = connection.execute("SELECT COUNT(*) FROM chunks").fetchone()[0]
+    return {"documents": {"name": "knowledge.sqlite", "document_count": document_count,
+                           "chunk_count": chunk_count, "status": "connected"}}
 
 
 @app.get("/api/v1/knowledge/documents")
