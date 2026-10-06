@@ -530,6 +530,10 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
             report['tables'].append(table);report['facts'].extend(facts)
         for table in _currency_panels(page_rows,sha,page_no,matrix,report['facts']):
             report['tables'].append(table);report['facts'].extend(table['facts'])
+        from .native_label_amounts import extract_candidates as inline_candidates
+        for table in inline_candidates(words, source_sha256=sha, page_no=page_no,
+                                      display_matrix=matrix, existing=report['facts']):
+            report['tables'].append(table);report['facts'].extend(table['facts'])
         if 'native_layout_orientation' not in report:
             from .native_financial_tables import extract_candidates
             for table in extract_candidates(p, words, source_sha256=sha, page_no=page_no, display_matrix=matrix):

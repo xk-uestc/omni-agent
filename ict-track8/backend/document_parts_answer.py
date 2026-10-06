@@ -201,7 +201,8 @@ def _replay_computation(store, child):
     if not _operation_request_supported(operation, query):
         raise ValueError('component_operation_scope_invalid')
     fresh = annotation_arithmetic(facts, operation, allow_column_comparison=True,
-        percentage_decimal_places=_percentage_decimal_places(query) if operation in {'percentage', 'fraction_percentage'} else 2)
+        percentage_decimal_places=_percentage_decimal_places(query) if operation in {
+            'percentage', 'fraction_percentage', 'sum_percentage', 'max_plus_percentage'} else 2)
     if fresh != computation or child.get('answer') != fresh['answer']:
         raise ValueError('component_computation_replay_failed')
 

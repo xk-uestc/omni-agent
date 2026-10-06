@@ -61,6 +61,15 @@ def test_entity_extremum_cannot_be_a_literal_value_lookup():
     assert not _operation_request_supported('argmax',q+' Explain why.')
     assert not _operation_request_supported('argmax',q+' And by how much?')
 
+
+@pytest.mark.parametrize('prefix',['In LedgerA, ','Within the FY 2045 report, ','According to LedgerB, '])
+def test_source_preamble_classifies_entity_extrema_without_erasing_original_scope(prefix):
+    question=prefix+'which unit has the highest budget among North, West and East?'
+    assert _operation_request_supported('argmax',question)
+    assert not _operation_request_supported('lookup',question)
+    assert not _operation_request_supported('argmin',question)
+    assert not _operation_request_supported('argmax',question+' Explain why.')
+
 @pytest.mark.parametrize('approved',[True,False])
 def test_production_selection_complete_independent_review_and_literal_replay(tmp_path,approved):
     store=KnowledgeStore(tmp_path/'knowledge');store.ingest(original(),document_id='budget',title='Budget',modality='pdf',filename='budget.pdf')

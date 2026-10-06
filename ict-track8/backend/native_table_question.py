@@ -21,9 +21,9 @@ from .responses_client import GenerationError, object_schema
 from .visual_work_budget import visual_work_slot
 
 OPERATIONS = ('lookup', 'sum', 'ratio', 'difference', 'absolute_difference', 'percentage', 'fraction_percentage',
-              'increase_check', 'decrease_check', 'argmax', 'argmin')
+              'increase_check', 'decrease_check', 'argmax', 'argmin', 'sum_percentage', 'max_plus_percentage')
 PLAN = object_schema({'abstain': {'type': 'boolean'}, 'operation': {'type': 'string', 'enum': list(OPERATIONS)},
-                      'fact_ids': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 12}})
+                      'fact_ids': {'type': 'array', 'items': {'type': 'string'}, 'maxItems': 256}})
 REVIEW = object_schema({key: {'type': 'boolean'} for key in
     ('approved', 'whole_question_answered', 'all_entity_period_conditions_bound',
      'all_requested_rows_and_columns_selected', 'no_competing_source_or_scope', 'unit_scale_and_sign_preserved')})
@@ -122,7 +122,7 @@ def _operation_request_supported(operation, question):
     # A source preamble does not turn a Boolean question into a statement.
     # Strip ONLY for grammatical classification; selection and review retain
     # the entire original question, including this explicit source condition.
-    classified = re.sub(r'^\s*(?:according to|based on|using|from)\s+[^?;\n]{1,240}?,\s*(?=(?:does|do|did|is|are|was|were|can|has|have|which|who)\b)', '', question, count=1, flags=re.I)
+    classified = re.sub(r'^\s*(?:according to|based on|using|from|in|within)\s+[^?;\n]{1,240}?,\s*(?=(?:does|do|did|is|are|was|were|can|has|have|which|who)\b)', '', question, count=1, flags=re.I)
     entity_extremum = (bool(re.match(r'\s*(?:which|who)\b', classified, re.I) or re.search(r'哪个|哪些|谁', classified))
         and bool(re.search(r'\b(?:highest|lowest|maximum|minimum|largest|smallest|most|least)\b|最高|最低|最大|最小|最多|最少', question,re.I)))
     if operation in {'argmax','argmin'}:
@@ -141,15 +141,64 @@ def _operation_request_supported(operation, question):
         directional = r'\b(?:minus|subtract|signed|increase|decrease|growth|change)\b|减去|减掉|增[长加]|下降|减少|变[化动]'
         magnitude = r'\b(?:absolute\s+difference|gap|difference\s+between)\b|绝对差|相差|差距'
         return not re.search(directional, question, re.I) and bool(re.search(magnitude, question, re.I))
-    if operation in {'percentage', 'fraction_percentage'}:
+    if operation in {'percentage', 'fraction_percentage', 'sum_percentage', 'max_plus_percentage'}:
+        extremum = bool(re.search(r'\b(?:highest|lowest|maximum|minimum|largest|smallest|most|least)\b|最高|最低|最大|最小|最多|最少',question,re.I))
+        if operation=='sum_percentage' and extremum:
+            return False
+        if operation=='max_plus_percentage' and not re.search(r'\b(?:highest|maximum|largest|most)\b|最高|最大|最多',question,re.I):
+            return False
         return (bool(re.search(r'\b(?:percentage|percent)\b|百分比|占比', question, re.I))
                 and not re.search(r'\b(?:growth|change|increase|decrease|percentage\s+points?|(?:percentage|percent)\s+difference)\b|增长率|变化率|增幅|降幅|百分点|百分比差(?:异|值)?', question, re.I))
     return True
 
 
 def annotation_arithmetic(facts, operation, *, allow_column_comparison=False, percentage_decimal_places=2):
-    if operation not in OPERATIONS or not facts or len(facts) > 12:
+    limit = 256 if operation in {'argmax', 'argmin', 'max_plus_percentage'} else 13 if operation == 'sum_percentage' else 12
+    if operation not in OPERATIONS or not facts or len(facts) > limit:
         raise ValueError('native_annotation_operation_invalid')
+    if operation == 'max_plus_percentage':
+        if len(facts) < 4:
+            raise ValueError('native_composite_candidate_set_required')
+        candidates, addend, denominator = facts[:-2], facts[-2], facts[-1]
+        maximum = annotation_arithmetic(candidates, 'argmax')
+        winners = [f for f in candidates if f['fact_id'] in maximum['winner_fact_ids']]
+        if len(winners) != 1:
+            raise ValueError('native_composite_unique_winner_required')
+        winner = winners[0]
+        if winner['fact_id'] in {addend['fact_id'], denominator['fact_id']} or denominator['fact_id'] in {f['fact_id'] for f in candidates}:
+            raise ValueError('native_composite_duplicate_or_total_candidate')
+        result = annotation_arithmetic([winner, addend, denominator], 'sum_percentage',
+            percentage_decimal_places=percentage_decimal_places)
+        return {**result, 'operation':operation,
+            'operands':[f['raw_value'] for f in facts], 'operand_periods':[f.get('period') for f in facts],
+            'comparison':maximum, 'winner_fact_ids':maximum['winner_fact_ids'],
+            'named_addend_fact_id':addend['fact_id'], 'denominator_fact_id':denominator['fact_id'],
+            'executed_steps':['argmax','sum','percentage'],
+            'distinct_numerator_fact_ids':[winner['fact_id'],addend['fact_id']]}
+    if operation == 'sum_percentage':
+        if len(facts) < 3 or len({f['fact_id'] for f in facts}) != len(facts):
+            raise ValueError('native_composite_distinct_operands_required')
+        # Use the existing proof validator on every original operand. The
+        # numerator is a computed sum, never a fabricated source fact.
+        numerator = annotation_arithmetic(facts[:-1], 'sum')
+        denominator = annotation_arithmetic([facts[-1]], 'lookup')
+        annotation_arithmetic([facts[0], facts[-1]], 'percentage',
+            percentage_decimal_places=percentage_decimal_places)
+        fraction = Fraction(Decimal(numerator['numeric_result'])) / Fraction(Decimal(denominator['numeric_result'])) * 100
+        digits, remainder = divmod(abs(fraction.numerator)*10**percentage_decimal_places, fraction.denominator)
+        digits += int(remainder*2 >= fraction.denominator)
+        digits *= -1 if fraction.numerator < 0 else 1
+        result = Decimal((int(digits < 0),tuple(int(ch) for ch in str(abs(digits))),-percentage_decimal_places))
+        rounded = Fraction(result) != fraction
+        return {**numerator,'operation':operation,
+            'answer':('≈' if rounded else '')+format(result,f'.{percentage_decimal_places}f')+'%',
+            'numeric_result':format(result,'f'),'unit':'percent','scale':None,
+            'operands':[f['raw_value'] for f in facts], 'operand_periods':[f.get('period') for f in facts],
+            'exact_fraction':{'numerator':str(fraction.numerator),'denominator':str(fraction.denominator)},
+            'display_decimal_places':percentage_decimal_places,'rounding':'ROUND_HALF_UP','rounded':rounded,
+            'numerator_sum':numerator,'denominator_lookup':denominator,
+            'distinct_numerator_fact_ids':[f['fact_id'] for f in facts[:-1]],
+            'denominator_fact_id':facts[-1]['fact_id'],'executed_steps':['sum','percentage']}
     if operation in {'argmax','argmin'}:
         if len(facts)<2 or len({f['fact_id'] for f in facts})!=len(facts):
             raise ValueError('native_extrema_distinct_candidates_required')
@@ -382,6 +431,43 @@ def _completed(client):
             and re.fullmatch(r'gpt-6-luna(?:-\d{4}-\d{2}-\d{2})?', str(audit.get('response_model'))) is not None)
 
 
+def bind_explicit_composite_addend(question, plan, facts):
+    """Bind ONE explicitly named row within the proposed same-column set.
+
+    Selection still chooses the source and complete comparison scope; this is
+    not alias inference or a guessed entity. Correcting an ID-role mix-up is
+    permitted only when an exact, boundary-delimited original label occurs in
+    the ORIGINAL question and uniquely identifies a row in that column. The
+    original proposal is retained, and the final selection is independently
+    reviewed before any answer is accepted.
+    """
+    if plan['operation']!='max_plus_percentage' or len(plan['fact_ids'])<4:
+        return deepcopy(plan),None
+    ids=plan['fact_ids'];proposed=facts[ids[-2]][1]
+    first=facts[ids[0]][1]
+    def scope(f):
+        return (f['source_sha256'],f['page_no'],f['table_id'],tuple(f['column_header_path']),
+                f.get('period'),f['unit'],f.get('currency'),f.get('scale'))
+    matches=[]
+    for key,(document,fact) in facts.items():
+        label=fact['row_header'].strip()
+        if (document['document_id']!=facts[ids[0]][0]['document_id'] or scope(fact)!=scope(first)
+                or re.search(r'\b(?:total|subtotal|other)\b|合计|总计|小计|其他',label,re.I)):
+            continue
+        pattern=r'(?<!\w)'+r'\s+'.join(re.escape(part) for part in label.split())+r'(?!\w)'
+        found=list(re.finditer(pattern,question,re.I))
+        if len(found)==1:matches.append((key,fact,found[0]))
+    if len(matches)!=1:
+        raise ValueError('native_composite_named_addend_not_uniquely_literal_bound')
+    key,fact,match=matches[0]
+    bound=deepcopy(plan);bound['fact_ids'][-2]=key
+    return bound,{'binding':'exact_original_question_label_same_source_column',
+        'question_span':[match.start(),match.end()],'question_literal':match.group(),
+        'original_proposed_selection_id':ids[-2],'original_proposed_row_label':proposed['row_header'],
+        'bound_selection_id':key,'bound_row_label':fact['row_header'],
+        'corrected_model_role_reference':key!=ids[-2]}
+
+
 def route_native_table_question(store, question, hits, *, document_id=None, page_no=None):
     trace = {'stage': 'native_aligned_table_routing', 'status': 'not_applicable', 'model_requests_attempted': 0}
     audits = []
@@ -444,6 +530,15 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                         'source_sha256': d['sha256'], 'page_no': page, 'complete_native_page_text': context_text,
                         'scope': 'whole_native_text_layer_of_table_page_not_ocr_or_whole_document'})
                 for table in manifest['tables']:
+                    if (table.get('table_kind')=='explicit_inline_label_collection_not_grid'
+                            and not any(_operation_request_supported(op,question) for op in ('argmax','argmin'))):
+                        # Inline chart labels are entity-comparison candidates,
+                        # never unit-bearing monetary lookup operands. Keep the
+                        # full original page text for review, but do not expose
+                        # inadmissible facts that can divert a lookup away from
+                        # its explicit scaled table column.
+                        trace['excluded_inline_comparison_only_tables']=trace.get('excluded_inline_comparison_only_tables',0)+1
+                        continue
                     # Same bytes under two separately registered documents are
                     # still competing sources, never silently overwritten.
                     wire_facts = []
@@ -461,7 +556,9 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                             **({'native_row_id':fact['native_row_id']} if 'native_row_id' in fact else {}),
                             **({'sign_evidence':deepcopy(fact['sign_evidence'])} if 'sign_evidence' in fact else {}),
                             **({'fraction_proof':deepcopy(fact['fraction_proof'])}
-                               if 'fraction_proof' in fact else {})})
+                               if 'fraction_proof' in fact else {}),
+                            **({'inline_pair_proof':deepcopy(fact['inline_pair_proof'])}
+                               if 'inline_pair_proof' in fact else {})})
                     registries.append({'document_id': d['document_id'], 'page_no': page,
                         'source_sha256': d['sha256'], 'table_key': f'T{len(registries)+1:03d}',
                         'bbox_display_pt':deepcopy(table.get('bbox_display_pt')),
@@ -521,7 +618,15 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'argmax/argmin answer WHICH entity/category has the highest/lowest value: select ALL eligible '
                 'candidate row facts from ONE column/table in the explicitly requested comparison set, not '
                 'only the guessed winner. The server compares exact literals and returns ALL tied row labels. '
+                'Up to 256 IDs are allowed for complete extrema/composite comparison sets; do not truncate '
+                'a 20-member comparison to twelve members. Ordinary sums remain limited to twelve operands. '
                 'Never use lookup to answer which entity has the highest/lowest amount; lookup returns a value, not an entity. '
+                'native_inline_label_amount_literal is an explicit printed comma-separated label and '
+                'currency amount, possibly wrapped across adjacent native lines. These facts support '
+                'ONLY argmax/argmin on an explicitly requested category set. Inspect the WHOLE page '
+                'to establish that all selected labels belong to the SAME chart/comparison scope. '
+                'An inline collection does not prove chart membership or inherit a heading multiplier; '
+                'do not use it for lookup, sums, percentages or physical monetary computations. '
                 'Do not compare TOTAL against its components unless the question explicitly includes that total as a candidate. '
                 '(not source/table/fact IDs). Supported: lookup one annotation, sum explicitly requested distinct '
                 'rows from ONE table, ratio exactly two annotations ordered [numerator, denominator], '
@@ -538,6 +643,16 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'of a named total, NOT growth rate, percent change, or a percentage-point difference. '
                 'It uses TWO explicit same-table facts, ordered [numerator, denominator], with identical '
                 'measure/unit/scale/period. '
+                'sum_percentage computes the combined share of explicitly named distinct components: '
+                'fact_ids=[component_1,component_2,...,printed_total_denominator]. '
+                'max_plus_percentage supports finding the HIGHEST individual member, adding ONE named '
+                'distinct member, and computing their combined share of a printed total. Its fact_ids '
+                'are [ALL eligible individual comparison members...,named_addend,printed_total_denominator]. '
+                'The named addend can also occur in the comparison prefix; this is a role reference, not '
+                'double counting. Exclude aggregate/Other/total rows from an individual-member comparison. '
+                'Never substitute a guessed highest member: the server must compute argmax from the '
+                'complete eligible set. Ties, winner=addend, missing members or differing scope abstain. '
+                'These composites execute original-cell arithmetic server-side, not a source quote. '
                 'fraction_percentage is a DISTINCT operation: select exactly ONE fact with '
                 'value_kind=native_count_fraction_literal and a fraction_proof from an explicit '
                 'attendance/completion count column. Its entire n/d token supplies both ordered '
@@ -576,17 +691,23 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 return fallback('native_table_whole_question_unsupported')
             if not _operation_request_supported(plan['operation'], question):
                 return fallback('native_table_selection_invalid')
+            plan,addend_binding=bind_explicit_composite_addend(question,plan,facts)
+            if addend_binding is not None:
+                trace['explicit_named_addend_binding']=deepcopy(addend_binding)
             if len({facts[k][0]['document_id'] for k in plan['fact_ids']}) != 1:
                 return fallback('native_table_competing_document_operands')
             selected = [facts[k][1] for k in plan['fact_ids']]
+            if (any(f.get('value_kind') == 'native_inline_label_amount_literal' for f in selected)
+                    and plan['operation'] not in {'argmax','argmin'}):
+                return fallback('native_inline_labels_entity_comparison_only')
             percentage_places = (_percentage_decimal_places(question)
-                                 if plan['operation'] in {'percentage','fraction_percentage'} else 2)
+                                 if plan['operation'] in {'percentage','fraction_percentage','sum_percentage','max_plus_percentage'} else 2)
             computation = annotation_arithmetic(selected, plan['operation'], allow_column_comparison=True,
                                                percentage_decimal_places=percentage_places)
             precision_contract = ({'decimal_places':percentage_places,
                                    'verification':'server_original_question_precision',
                                    'default_decimal_places':2}
-                                  if plan['operation'] in {'percentage','fraction_percentage'} else None)
+                                  if plan['operation'] in {'percentage','fraction_percentage','sum_percentage','max_plus_percentage'} else None)
             if precision_contract is not None:
                 trace['percentage_precision_contract'] = deepcopy(precision_contract)
             display_contract = {
@@ -600,6 +721,14 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
             trace['selection_operation'] = plan['operation']
             trace['selected_fact_ids'] = list(plan['fact_ids'])
             trace['server_annotation_computation'] = deepcopy(computation)
+            role_bindings=({'comparison_selection_ids':plan['fact_ids'][:-2],
+                'comparison_original_row_labels':[f['row_header'] for f in selected[:-2]],
+                'named_addend_selection_id':plan['fact_ids'][-2],
+                'named_addend_original_fact':deepcopy(selected[-2]),
+                'printed_denominator_selection_id':plan['fact_ids'][-1],
+                'printed_denominator_original_fact':deepcopy(selected[-1]),
+                'exact_question_named_addend_binding':addend_binding}
+                if plan['operation']=='max_plus_percentage' else None)
             # Values and arithmetic come from the server. The independent
             # reviewer only decides whether this answers the whole question.
             review = generate('Independently check the ORIGINAL question against ALL table candidates. '
@@ -611,9 +740,26 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 'With no explicit report-version condition, conflicting same-period values still require rejection. '
                 'For argmax/argmin independently verify EVERY eligible candidate in the requested comparison '
                 'set was selected, that no larger/smaller eligible row was omitted, exact entity/period/unit '
-                'and source scope bind, and ALL ties are preserved. The server winner_labels are derived '
-                'from exact cell literals, not source quotes or model rankings. Reject a TOTAL/component '
+                'and source scope bind, and ALL ties are preserved. '
+                'For inline label/amount facts separately establish SAME-chart membership from the '
+                'complete original page, their explicit comma labels and native-word proofs. A page '
+                'collection alone is not membership evidence. Only label-only extrema are supported; '
+                'no chart-wide scale/currency code or unprinted amounts may be inferred. '
+                'The server winner_labels are derived from exact cell literals, not source quotes or model rankings. Reject a TOTAL/component '
                 'comparison unless the total was explicitly requested as an eligible candidate. '
+                'For sum_percentage verify every requested component and the LAST printed denominator '
+                'are distinct, same measure/unit/scale/period, and no total/component double count occurs '
+                'inside the numerator. For max_plus_percentage verify the COMPLETE eligible individual '
+                'comparison prefix, the penultimate named addend and LAST printed total. Exclude aggregates '
+                'from an individual-member candidate set. The server independently finds the unique '
+                'highest member, adds the distinct named member and divides by the same-table total. '
+                'selected_role_bindings separates the long comparison prefix from the named addend '
+                'and printed denominator; never mistake the last comparison member for the addend. '
+                'An exact_question_named_addend_binding is a server verbatim ORIGINAL question label '
+                'match to a unique SAME-column row, not a model entity guess. Verify its question span '
+                'and native source row, as well as the complete comparison membership and denominator. '
+                'Check all three executed steps against the WHOLE question; a model-guessed winner, '
+                'omitted member, tie, duplicate numerator or different scope must reject. '
                 'Reject extra narrative/amount requests that a row-label-only answer cannot satisfy. '
                 'Reject partial answers, inferred currency/scale, double counting a total '
                 'and components in a SUM, missing narrative operands or additional qualitative comparisons/explanations. '
@@ -679,6 +825,7 @@ def route_native_table_question(store, question, hits, *, document_id=None, page
                 {'question': question, 'all_native_table_candidates': deepcopy(registries),
                  'complete_table_page_contexts': deepcopy(page_contexts),
                  'selected_fact_ids': plan['fact_ids'], 'server_annotation_computation': computation,
+                 'selected_role_bindings':role_bindings,
                  'percentage_precision_contract':precision_contract,
                  'annotation_display_contract':display_contract}, REVIEW,
                 name='native_table_independent_scope_review', max_tokens=900)
