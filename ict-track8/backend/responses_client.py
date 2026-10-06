@@ -29,6 +29,7 @@ class StructuredResponses:
     # This adapter supports raw-source selection and its independent-review
     # schemas. Other generator adapters must explicitly declare this capability.
     supports_source_first_projection = True
+    supports_native_answer_dossier = True
 
     def __init__(self, base_url, token, *, model, reasoning='medium', timeout=60, session=None, http_headers=None,
                  transport_attempts=2):

@@ -1,0 +1,129 @@
+{
+  "created_at": "2026-10-06T15:42:00.740701+08:00",
+  "sources": [
+    {
+      "repo": "HITsz-TMG/LongRAG",
+      "status": "fetch_failed",
+      "error_type": "HTTPError"
+    },
+    {
+      "full_name": "OSU-NLP-Group/HippoRAG",
+      "html_url": "https://github.com/OSU-NLP-Group/HippoRAG",
+      "description": "[NeurIPS'24] HippoRAG is a novel RAG framework inspired by human long-term memory that enables LLMs to continuously integrate knowledge across external documents. RAG + Knowledge Graphs + Personalized PageRank.",
+      "updated_at": "2026-10-06T03:42:02Z",
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      }
+    },
+    {
+      "full_name": "HKUDS/LightRAG",
+      "html_url": "https://github.com/HKUDS/LightRAG",
+      "description": "[EMNLP2025] LightRAG: Simple and Fast Retrieval-Augmented Generation",
+      "updated_at": "2026-10-06T05:54:47Z",
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      }
+    },
+    {
+      "full_name": "microsoft/graphrag",
+      "html_url": "https://github.com/microsoft/graphrag",
+      "description": "A modular graph-based Retrieval-Augmented Generation (RAG) system",
+      "updated_at": "2026-10-06T06:26:55Z",
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      }
+    },
+    {
+      "full_name": "TIGER-AI-Lab/LongRAG",
+      "html_url": "https://github.com/TIGER-AI-Lab/LongRAG",
+      "description": "Official repo for \"LongRAG: Enhancing Retrieval-Augmented Generation with Long-context LLMs\".",
+      "default_branch": "main",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      }
+    }
+  ],
+  "scope": "repository_metadata_verification_not_reproduced_benchmarks",
+  "implementation_decisions": [
+    "Read complete source context after snippet navigation; no graph index added without evidence of benefit.",
+    "Keep source provenance, answer composition and semantic checks distinct.",
+    "Independent model review is fallible; preserve paired ablation and regressions."
+  ],
+  "readme_evidence": [
+    {
+      "repo": "OSU-NLP-Group/HippoRAG",
+      "url": "https://raw.githubusercontent.com/OSU-NLP-Group/HippoRAG/main/README.md",
+      "http_status": 200,
+      "excerpts": [
+        "Our experiments show that HippoRAG 2 improves associativity (multi-hop retrieval) and sense-making (the process of integrating large and complex contexts) in even the most advanced RAG systems, without sacrificing their performance on simpler tasks.",
+        "Like its predecessor, HippoRAG 2 remains cost and latency efficient in online processes, while using significantly fewer resources for offline indexing compared to other graph-based solutions such as GraphRAG, RAPTOR, and LightRAG.",
+        "### Upgrading existing indexes",
+        "Version 2.0.0a5 binds persisted vectors and OpenIE state to the endpoint, deployment, model, normalization, and component identity that produced them. Existing indexes without an `index_manifest.json`, or indexes whose identity no longer matches the active configuration, are rejected rather than mixed silently. Re-index into a fresh `save_dir`; copying or fabricating only the manifest is not a safe migration. When injecting a custom embedding model, extraction LLM, or text preprocessor, set `index_identity` to a stable version string so configuration changes cannot reuse incompatible state. The default OpenIE output limits are `openie_ner_max_tokens=2048` and `openie_triple_max_tokens=4096`, sized to leave room for reasoning tokens; they are part of the OpenIE identity, so an index built with the earlier development defaults (512 and 2048) must either be re-indexed or loaded with those values set explicitly.",
+        "docs = [\"George Rankin is a politician.\"] queries = [\"What is George Rankin's occupation?\"] with HippoRAG(save_dir=\"outputs\", llm_model_name=\"gpt-4o-mini\", embedding_model_name=\"text-embedding-3-small\") as hipporag: hipporag.index(docs=docs) results = hipporag.rag_qa(queries=queries) ```",
+        "# Same indexing, retrieval and QA as with OpenAI models above ```"
+      ],
+      "scope": "project_self_description_not_independent_performance_validation"
+    },
+    {
+      "repo": "HKUDS/LightRAG",
+      "url": "https://raw.githubusercontent.com/HKUDS/LightRAG/main/README.md",
+      "http_status": 200,
+      "excerpts": [
+        "# 🚀 LightRAG: Simple and Fast Retrieval-Augmented Generation",
+        "## 🎉 News - [2026.07]🎯[New Feature]: Add **Smart Heading** recognition feature for word documents. - [2026.05]🎯[New Feature]: **Merge RagAnything into LightRAG**🎉. Multimodal content parsing and extraction via **MinerU / Docling** services. - [2026.05]🎯[New Feature]: Introducing four selectable text chunking strategies: `Fix`, `Recursive`, `Vector`, and `Paragraph`. - [2026.05]🎯[New Feature]: **Role-specific LLM configuration** support, 4 distinct roles: EXTRACT, QUERY, KEYWORDS, and VLM, with independent LLM settings. - [2026.03]🎯[New Feature]: Integrated **OpenSearch** as a unified storage backend, providing comprehensive support for all four LightRAG storage. - [2026.03]🎯[New Feature]: Introduced a setup wizard. Support for local deployment of embedding, reranking, and storage backends via Docker. - [2025.11]🎯[New Feature]: Integrated **RAGAS for Evaluation** and **Langfuse for Tracing**. Updated the API to return retrieved contexts alongside query results to support context precision metrics. - [2025.10]🎯[Scalability Enhancement]: Eliminated processing bottlenecks to support **Large-Scale Datasets Efficiently**. - [2025.09]🎯[New Feature] Enhances knowledge graph extraction accuracy for **Open-Sourced LLMs** such as Qwen3-30B-A3B. - [2025.08]🎯[New Feature] **Reranker** is now supported, significantly boosting performance for mixed queries (set as default query mode). - [2025.08]🎯[New Feature] Added **Document Deletion** with automatic KG regeneration to ensure optimal query performance. - [2025.06]🎯[New Release] Our team has released [RAG-Anything](https://github.com/HKUDS/RAG-Anything) — an **All-in-One Multimodal RAG** system for seamless processing of text, images, tables, and equations. - [2025.06]🎯[New Feature] LightRAG now supports comprehensive multimodal data handling through [RAG-Anything](https://github.com/HKUDS/RAG-Anything) integration, enabling seamless document parsing and RAG capabilities across diverse formats including PDFs, images, Office documents, tables, and formulas. Please refer to the new [multimodal section](https://github.com/HKUDS/LightRAG/?tab=readme-ov-file#multimodal-document-processing-rag-anything-integration) for details. - [2025.03]🎯[New Feature] LightRAG now supports citation functionality, enabling proper source attribution and enhanced document traceability. - [2025.02]🎯[New Feature] You can now use MongoDB as an all-in-one storage solution for unified data management. - [2025.02]🎯[New Release] Our team has released [VideoRAG](https://github.com/HKUDS/VideoRAG)-a RAG system for understanding extremely long-context videos - [2025.01]🎯[New Release] Our team has released [MiniRAG](https://github.com/HKUDS/MiniRAG) making RAG simpler with small models. - [2025.01]🎯You can now use PostgreSQL as an all-in-one storage solution for data management. - [2024.11]🎯[New Resource] A comprehensive guide to LightRAG is now available on [LearnOpenCV](https://learnopencv.com/lightrag). — explore in-depth tutorials and best practices. Many thanks to the blog author for this excellent contribution! - [2024.11]🎯[New Feature] Introducing the LightRAG WebUI — an interface that allows you to insert, query, and visualize LightRAG knowledge through an intuitive web-based dashboard. - [2024.11]🎯[New Feature] You can now [use Neo4J for Storage](https://github.com/HKUDS/LightRAG?tab=readme-ov-file#using-neo4j-for-storage)-enabling graph database support. - [2024.10]🎯[New Feature] We've added a link to a [LightRAG Introduction Video](https://youtu.be/oageL-1I0GE). — a walkthrough of LightRAG's capabilities. Thanks to the author for this excellent contribution! - [2024.10]🎯[New Channel] We have created a [Discord channel](https://discord.gg/yF2MmDJyGJ)!💬 Welcome to join our community for sharing, discussions, and collaboration! 🎉🎉",
+        "![LightRAG Indexing Flowchart](https://learnopencv.com/wp-content/uploads/2024/11/LightRAG-VectorDB-Json-KV-Store-Indexing-Flowchart-scaled.jpg) *Figure 1: LightRAG Indexing Flowchart - Img Caption : [Source](https://learnopencv.com/lightrag/)* ![LightRAG Retrieval and Querying Flowchart](https://learnopencv.com/wp-content/uploads/2024/11/LightRAG-Querying-Flowchart-Dual-Level-Retrieval-Generation-Knowledge-Graphs-scaled.jpg) *Figure 2: LightRAG Retrieval and Querying Flowchart - Img Caption : [Source](https://learnopencv.com/lightrag/)*",
+        "### A Lightweight, Graph-Based RAG Framework",
+        "LightRAG is a lightweight knowledge-graph RAG framework and an efficient alternative to Microsoft GraphRAG. It adopts a dual-layer architecture to manage both knowledge graphs (KGs) and vector embeddings, effectively bridging the gap between traditional vector-based RAG and graph-based RAG approaches. Designed for high scalability, LightRAG addresses key challenges in large-scale graph indexing and retrieval, including heavy computational overhead, slow response times, and the high cost of incremental updates. While supporting large datasets, LightRAG can still deliver exceptionally high RAG quality, even when paired with a 30B open-source large language model (LLM).",
+        "- **Deep Contextual Understanding:** Through graph-structured indexing, LightRAG captures complex semantic dependencies between entities, overcoming the fragmented context limitations typical of traditional chunk-based retrieval methods. Its generation quality and context awareness are particularly outstanding in vertical domains (e.g., legal, financial) that require global comprehension or logical reasoning. - **Exceptional Comprehensiveness & Diversity:** LightRAG’s dual-level retrieval mechanism allows it to integrate detailed facts and abstract concepts concurrently. This enables the system to achieve remarkable performance in query result comprehensiveness and diversity, making it highly effective at handling complex, cross-document queries. - **Extreme Retrieval Efficiency & Low Cost:** LightRAG does not rely on inefficient community reports or multi-hop reasoning for complex queries. This drastically reduces the number of LLM calls required during both the indexing and querying phases, significantly lowering response latency and LLM computational costs. - **Incremental Updates & Selective Deletion:** LightRAG addresses the challenges of incrementally updating and selectively deleting content from graph-based knowledge bases, keeping them current in dynamic data environments. When a document is deleted, the system can use the LLM cache created during indexing to quickly rebuild the affected entities and relationships, substantially improving update efficiency. - **Multiple Document Parsing Engines:** LightRAG's document processing pipeline supports MinerU, Docling, and Native and can be extended with third-party parsers. LightRAG's Native engine efficiently parses images, tables, and formulas in Word and Markdown documents, making it especially suitable for documents rich in multimodal content. The Native engine also automatically detects and corrects section headings in Word documents, improving content extraction from documents with inconsistent outlines and laying the foundation for section-aware text chunking. - **Multiple Text Chunking Strategies:** LightRAG supports four text chunking strategies: `Fixed-length (F)`, `Recursive character (R)`, `Vector semantic (V)`, and `Paragraph semantic (P)`. The LightRAG-native `Paragraph semantic (P)` strategy **aligns chunk boundaries with the document's native semantic boundaries**—headings, paragraphs, and tables—as closely as possible. This reduces problems such as mismatched headings and content or missing header rows when long tables are split. - **Multiple Storage Backends:** LightRAG's default KV, vector, and graph stores are in-memory databases with local file persistence — suitable only for small-scale testing and evaluation, **not for production**. LightRAG also supports a wide range of commonly used storage backends (PostgreSQL recommended) for production deployments with large datasets."
+      ],
+      "scope": "project_self_description_not_independent_performance_validation"
+    },
+    {
+      "repo": "microsoft/graphrag",
+      "url": "https://raw.githubusercontent.com/microsoft/graphrag/main/README.md",
+      "http_status": 200,
+      "excerpts": [
+        "# GraphRAG",
+        "> [!WARNING] > GraphRAG is a research project that explores the functional use of graphs to form a targeted context for question answering. Since our first release in July 2024 the capabilities of frontier models have changed dramatically, and our portfolio of research projects has diversified to match. This project is largely in maintenance mode, and won't be accepting new PRs or implementing new features. We'll perform bug fixes and dependency updates as appropriate, particularly to address CVEs as they arise.",
+        "👉 [Microsoft Research Blog Post](https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/)<br/> 👉 [Read the docs](https://microsoft.github.io/graphrag)<br/> 👉 [GraphRAG Arxiv](https://arxiv.org/pdf/2404.16130)",
+        "<div align=\"left\"> <a href=\"https://pypi.org/project/graphrag/\"> <img alt=\"PyPI - Version\" src=\"https://img.shields.io/pypi/v/graphrag\"> </a> <a href=\"https://pypi.org/project/graphrag/\"> <img alt=\"PyPI - Downloads\" src=\"https://img.shields.io/pypi/dm/graphrag\"> </a> <a href=\"https://github.com/microsoft/graphrag/issues\"> <img alt=\"GitHub Issues\" src=\"https://img.shields.io/github/issues/microsoft/graphrag\"> </a> <a href=\"https://github.com/microsoft/graphrag/discussions\"> <img alt=\"GitHub Discussions\" src=\"https://img.shields.io/github/discussions/microsoft/graphrag\"> </a> </div>",
+        "The GraphRAG project is a data pipeline and transformation suite that is designed to extract meaningful, structured data from unstructured text using the power of LLMs.",
+        "To learn more about GraphRAG and how it can be used to enhance your LLM's ability to reason about your private data, please visit the <a href=\"https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/\" target=\"_blank\">Microsoft Research Blog Post.</a>"
+      ],
+      "scope": "project_self_description_not_independent_performance_validation"
+    },
+    {
+      "repo": "TIGER-AI-Lab/LongRAG",
+      "url": "https://raw.githubusercontent.com/TIGER-AI-Lab/LongRAG/main/README.md",
+      "http_status": 200,
+      "excerpts": [
+        "# **LongRAG** This repo contains the code for \"LongRAG: Enhancing Retrieval-Augmented Generation with Long-context LLMs\". <span style=\"color: red;\">We are still in the process to polish our repo.</span>",
+        "## **Table of Contents** - [Introduction](#introduction) - [Installation](#installation) - [Quick Start](#quick-start) - [Corpus Preparation (Optional)](#corpus) - [Long Retriever](#long-retriever) - [Long Reader](#long-reader) - [License](#license) - [Citation](#citation)",
+        "## **Introduction** In traditional RAG framework, the basic retrieval units are normally short. Such a design forces the retriever to search over a large corpus to find the \"needle\" unit. In contrast, the readers only need to extract answers from the short retrieved units. Such an imbalanced heavy retriever and light reader design can lead to sub-optimal performance. We propose a new framework LongRAG, consisting of a \"long retriever\" and a \"long reader\". Our framework use a 4K-token retrieval unit, which is 30x longer than before. Our study offers insights into the future roadmap for combining RAG with long-context LLMs.",
+        "## **Corpus Preparation (Optional)** This is an optional step. You can use our processed corpus directly. We have released two versions of the retrieval corpus for NQ and HotpotQA on Hugging Face. ```python from datasets import load_dataset corpus_nq = load_dataset(\"TIGER-Lab/LongRAG\", \"nq_corpus\") corpus_hotpotqa = load_dataset(\"TIGER-Lab/LongRAG\", \"hotpot_qa_corpus\") ```",
+        "***Preprocess Wikipedia data*** After cleaning the Wikipedia raw data, run the following script to gather more information. ```bash sh scripts/process_wiki_page.sh ``` + ``dir_path``: The directory path of the cleaned Wikipedia dump, which is the output of the previous step. + ``output_path_dir``: The output directory will contain several pickle files, each representing a dictionary for the Wikipedia page. ``degree.pickle``: The key is the Wikipedia page title, and the value is the number of hyperlinks. ``abs_adj.pickle``: The key is the Wikipedia page title, and the value is the linked page in the abstract paragraph. ``full_adj.pickle``: The key is the Wikipedia page title, and the value is the linked page in the entire page. ``doc_size.pickle``: The key is the Wikipedia page title, and the value is the number of tokens on that page. ``doc_dict.pickle``: The key is the Wikipedia page title, and the value is the text of the page. + ``corpus_title_path``: The key is used to filter the NQ dataset. In the original DPR paper, certain Wikipedia pages, such as list pages and disambiguation pages, were removed, reducing the total number of Wikipedia pages from 5 million to 3 million. For a fair comparison, we also chose to exclude these pages. (For HotpotQA, we did not remove any pages, so the number of Wikipedia pages remains at 5 million.) You can download the DPR's titles from this [link](https://dl.fbaipublicfiles.com/dpr/wikipedia_split/psgs_w100.tsv.gz).",
+        "***Retrieval Corpus:*** By grouping multiple related documents, we can construct long retrieval units with more than 4K tokens. This design could also significantly reduce the corpus size (number of retrieval units in the corpus). Then, the retriever’s task becomes much easier. Additionally, the long retrieval unit will also improve the information completeness to avoid ambiguity or confusion."
+      ],
+      "scope": "project_self_description_not_independent_performance_validation"
+    }
+  ]
+}

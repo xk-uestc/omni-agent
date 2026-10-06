@@ -127,6 +127,27 @@ def test_success_preserves_original_question_scope_literals_and_server_computati
     assert [row['answer_scope'] for row in packet['components']] == [
         child['answer_scope'] for child in store.children]
     assert all('navigation must not' not in row['evidence'][0]['text'] for row in packet['components'])
+
+
+def test_dossier_role_component_reaches_whole_question_review(monkeypatch):
+    from backend import source_answer_dossier
+    store = Store()
+    store.children[1]['answer_mode'] = 'native_page_dossier_model_reviewed'
+    context = {'original_pages': [{'document_id': 'report-r17', 'source_sha256': 'a'*64,
+        'page_no': 3, 'text': 'Morgan is Managing Director of the Group in 2025.',
+        'text_sha256': 'b'*64}], 'support_quotes': [{'document_id': 'report-r17',
+        'source_sha256': 'a'*64, 'page_no': 3,
+        'quote': 'Morgan is Managing Director of the Group in 2025.'}],
+        'answer_clauses': [{'text': 'Managing Director', 'support_ids': [1]}],
+        'scope': {'included_pages': 1}}
+    monkeypatch.setattr(source_answer_dossier, 'replay_context', lambda *args: deepcopy(context))
+    result, trace = run(store)
+    assert result and trace['status'] == 'complete_original_question_reviewed'
+    assert store.client.calls[-1][0] == 'document_parts_original_question_review'
+    component = store.client.calls[-1][1]['components'][1]
+    assert component['answer_clauses'] == context['answer_clauses']
+    assert component['evidence'][0]['text'] == context['support_quotes'][0]['quote']
+    assert len(component['native_page_contexts']) == 1
     assert store.verifications >= 6
 
 

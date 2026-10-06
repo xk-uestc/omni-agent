@@ -87,6 +87,21 @@ def _row_component_evidence(result):
 
 
 def _review_component(index, query, result, *, store=None):
+    if result.get('answer_mode') == 'native_page_dossier_model_reviewed':
+        from .source_answer_dossier import replay_context
+        context = replay_context(store, result)
+        pages = {f"{p['document_id']}:{p['source_sha256']}:{p['page_no']}": {
+            'document_id': p['document_id'], 'source_sha256': p['source_sha256'],
+            'page_no': p['page_no'], 'complete_native_page_text': p['text'],
+            'text_sha256': p['text_sha256'],
+            'scope': 'complete_reviewed_native_page_not_unseen_document_closure'}
+            for p in context['original_pages']}
+        return {'part_id': index, 'standalone_question': query, 'answer': result['answer'],
+            'answer_mode': result['answer_mode'], 'native_page_contexts': pages,
+            'evidence': [{'document_id': q['document_id'], 'source_sha256': q['source_sha256'],
+                'page_no': q['page_no'], 'text': q['quote']} for q in context['support_quotes']],
+            'answer_clauses': context['answer_clauses'], 'answer_scope': context['scope'],
+            'source_verification': 'fresh_original_complete_native_pages_and_clause_support_replay'}
     if result.get('answer_mode') == 'native_row_selection_model_reviewed':
         from .native_row_selection import review_context
         context = review_context(store, result)
@@ -163,6 +178,12 @@ def _review_component(index, query, result, *, store=None):
 
 def _replay_computation(store, child):
     """Only accept the native tool output, replayed from pinned original cells."""
+    if child.get('answer_mode') == 'native_page_dossier_model_reviewed':
+        from .source_answer_dossier import replay_context
+        replay_context(store, child)
+        if child.get('computation'):
+            raise ValueError('unsupported_component_computation')
+        return
     computation = child.get('computation')
     if not computation:
         return

@@ -15,6 +15,7 @@
     'visualization.build':['构建可视化','chart'], 'fusion.execute':['执行跨源任务','layers'],
     'document.table.read':['读取原页表格','database'], 'document.compare':['比较原页数据','calculator'],
     'document.amount.read':['读取原件金额','file'],
+    'document.read':['读取原文','file'], 'document.answer':['整理文档答案','file'],
     'document.table.filter':['筛选原页字段','search'],
     structured_query:['查询数据库','database']
   };

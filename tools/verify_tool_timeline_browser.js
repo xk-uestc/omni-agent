@@ -144,6 +144,23 @@ async function main(){
       });
     }
   }
+  const dossierReport=path.join(ROOT,'docs','NATIVE_DOSSIER_PAIRED10_ROUND38_20261006.json');
+  if(fs.existsSync(dossierReport)){
+    const retained=JSON.parse(fs.readFileSync(dossierReport,'utf8'));
+    const result=retained.records.find(r=>r.dossier_enabled&&r.mode==='native_page_dossier_model_reviewed'&&r.passed);
+    assert(result,'retained reviewed dossier answer missing');
+    await check('reviewed original reading and answer have distinct named tool receipts',async()=>{
+      await page.evaluate(data=>{const t=window.ToolTimeline.create();document.getElementById('dialogue').append(t.root);t.finish(data);window.dossierCheckTimeline=t;},result);
+      const read=page.locator('[data-tool="document.read"][data-status="success"]');
+      const answer=page.locator('[data-tool="document.answer"][data-status="success"]');
+      assert(await read.count()===1&&await answer.count()===1,'dossier tool receipts missing or duplicated');
+      assert((await read.innerText()).includes('读取原文'),'original read label missing');
+      assert((await answer.innerText()).includes('整理文档答案'),'answer label missing');
+      await answer.locator('.agent-tool-summary').click();
+      assert((await answer.innerText()).includes(result.answer),'reviewed answer absent from feedback');
+    });
+    await page.evaluate(()=>{window.dossierCheckTimeline.dispose();delete window.dossierCheckTimeline;});
+  }
   await check('no React or page runtime errors',async()=>assert(errors.length===0,JSON.stringify(errors)));
 }
 (async()=>{try{await main();}catch(error){errors.push(error.message);console.log(JSON.stringify({fatal:error.message}));}
