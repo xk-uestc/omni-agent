@@ -278,15 +278,21 @@ function renderResult(view,data,originalQuestion){
     if(window.SchemaSvg){
       const schemaDetail=el('details','agent-inspector'),schemaLabel=el('summary','','查看完整数据库字段 SVG');
       const plan=data.structured.plan||{};
-      schemaDetail.append(schemaLabel,window.SchemaSvg.render(liveSchema,plan,data.structured.provenance?.field_links||plan.links||[]));
+      schemaDetail.append(schemaLabel);
+      schemaDetail.addEventListener('toggle',()=>{
+        if(schemaDetail.open&&schemaDetail.childElementCount===1)
+          schemaDetail.append(window.SchemaSvg.render(liveSchema,plan,data.structured.provenance?.field_links||plan.links||[]));
+      });
       view.live.attach('database.schema',schemaDetail);
     }
   }
   const inspector=el("details","agent-inspector"),inspectorBody=el("div"),inspectorSummary=el("summary");
   inspectorSummary.innerHTML='<svg class="agent-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 6c0-4 16-4 16 0s-16 4-16 0v12c0 4 16 4 16 0V6M4 12c0 4 16 4 16 0"/></svg>';
   inspectorSummary.append(document.createTextNode(data.route==='comparison'?"查看比较依据与 SQL":"查看字段 SVG、SQL 与数据关系"));
-  renderAudit(inspectorBody,data);
-  if(inspectorBody.childNodes.length){
+  inspector.addEventListener('toggle',()=>{
+    if(inspector.open&&!inspectorBody.childNodes.length)renderAudit(inspectorBody,data);
+  });
+  {
     inspector.append(inspectorSummary,inspectorBody);
     if(!view.live.attach('nl2sql',inspector))view.body.append(inspector);
   }

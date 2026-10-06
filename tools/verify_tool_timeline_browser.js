@@ -44,14 +44,20 @@ async function main(){
     const paths=await read.locator('.agent-action-note>.agent-icon path,.agent-tool-summary>.agent-icon:first-child path').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('d')));
     assert(paths.length===2&&paths[0]===paths[1],'feedback does not use the database tool icon');
     assert(!(await page.locator('#feed').innerText()).includes('01理解问题'),'numbered placeholder remains');});
+  await check('collapsed tools defer code highlighting and field SVG construction',async()=>{
+    assert(await page.locator('.agent-tool-details:not([open]) .agent-tool-code').count()===0,'closed feedback rendered eagerly');
+    assert(await page.locator('.agent-tool-row[data-tool="database.schema"] .schema-explorer svg').count()===0,'closed schema rendered eagerly');
+  });
   await check('SQL feedback has syntax colors and input/output tabs',async()=>{
     const tool=page.locator('.agent-tool-row[data-tool="nl2sql"]');await tool.locator('.agent-tool-summary').click();
+    await tool.locator('.agent-tool-code .tok-keyword').first().waitFor({state:'visible'});
     assert(await tool.locator('.agent-tool-code .tok-keyword').count()>0,'SQL syntax tokens absent');
     await tool.getByRole('tab',{name:'输入',exact:true}).click();assert((await tool.locator('.agent-tool-code').innerText()).includes('2025年'),'input not shown');
     await tool.getByRole('tab',{name:'反馈',exact:true}).click();assert((await tool.locator('.agent-tool-code').innerText()).includes('SELECT'),'SQL not shown');});
   await check('schema SVG and result visualization preserved',async()=>{
     const sqlTool=page.locator('.agent-tool-row[data-tool="nl2sql"]');
     const inspect=sqlTool.locator('.agent-tool-attachment>.agent-inspector');await inspect.locator(':scope>summary').click();
+    await inspect.locator('.schema-explorer svg').first().waitFor({state:'visible'});
     assert(await inspect.locator('.schema-explorer svg').count()>0,'schema SVG lost');
     assert(await inspect.locator('.query-part-number').count()===0,'legacy numbered stages remain in tool details');
     assert((await inspect.locator('.query-part-head h4').allTextContents()).includes('数据库字段'),'tool detail headings missing');
@@ -63,6 +69,7 @@ async function main(){
     await schema.locator('.agent-tool-summary').click();
     assert((await schema.locator('.agent-tool-code').innerText()).includes('本步未重新请求数据库'),'cached metadata misrepresented as new execution');
     await schema.locator('.agent-tool-attachment summary').click();
+    await schema.locator('.schema-explorer svg').waitFor({state:'visible'});
     assert(await schema.locator('.schema-explorer svg').isVisible(),'complete schema SVG is not visible');
     await schema.locator('.agent-tool-summary').click();});
   await check('chart belongs to the visualization tool rather than the answer',async()=>{
@@ -157,6 +164,7 @@ async function main(){
       assert((await read.innerText()).includes('读取原文'),'original read label missing');
       assert((await answer.innerText()).includes('整理文档答案'),'answer label missing');
       await answer.locator('.agent-tool-summary').click();
+      await answer.locator('.agent-tool-code').waitFor({state:'visible'});
       assert((await answer.innerText()).includes(result.answer),'reviewed answer absent from feedback');
     });
     await page.evaluate(()=>{window.dossierCheckTimeline.dispose();delete window.dossierCheckTimeline;});

@@ -131,22 +131,23 @@
     function Icon({name,className=''}){return h('svg',{className:`agent-icon ${className}`,viewBox:'0 0 24 24',fill:'none',
       stroke:'currentColor',strokeWidth:1.6,strokeLinecap:'round',strokeLinejoin:'round','aria-hidden':true},
       h('path',{d:ICONS[name]||ICONS.terminal}));}
-    function Code({value,language}){
+    const Code=React.memo(function Code({value,language}){
       const source=typeof value==='string'?value:JSON.stringify(value,null,2);
       const rendered=source.slice(0,16000),tokens=window.LatticeSyntaxHighlight?.tokenize(rendered,language)||[{kind:'plain',text:rendered}];
       return h('pre',{className:'agent-tool-code','data-language':language,'data-query-visual':'true'},
         h('code',null,tokens.map((token,i)=>h('span',{key:i,className:`tok-${token.kind}`},token.text))),
         source.length>16000?h('span',{className:'agent-output-limit'},'\n… 已折叠超过 16,000 字符的展示内容'):null);
-    }
-    function Tool({item}){
+    });
+    const Tool=React.memo(function Tool({item,attachment}){
       const [tab,setTab]=React.useState('output');
+      const [opened,setOpened]=React.useState(false);
       const sql=item.input?.sql||item.output?.sql;
       const preview=invocationPreview(item);
       const output=item.tool==='nl2sql'&&item.output?.sql?
         item.output.sql+'\n\n-- 参数\n'+JSON.stringify(item.output.parameters||[],null,2):item.output;
       return h('div',{className:'agent-tool-row','data-tool':item.tool,'data-status':item.status},
         item.summary?h('p',{className:'agent-action-note'},h(Icon,{name:item.icon}),h('span',null,item.summary)):null,
-        h('details',{className:'agent-tool-details'},
+        h('details',{className:'agent-tool-details',onToggle:event=>setOpened(event.currentTarget.open)},
           h('summary',{className:'agent-tool-summary'},h(Icon,{name:item.icon}),
             h('span',{className:'agent-tool-verb'},invocationVerb(item.status)),
             h('span',{className:'agent-tool-name'},item.title),
@@ -162,16 +163,16 @@
               h('button',{type:'button',className:'agent-tool-copy',onClick:async(event)=>{
                 const button=event.currentTarget,value=tab==='input'?item.input:output;try{await navigator.clipboard.writeText(typeof value==='string'?value:JSON.stringify(value,null,2));
                   button.textContent='已复制';}catch{button.textContent='请选中复制';}}},'复制')),
-            item.status==='running'&&tab==='output'?h('p',{className:'agent-tool-wait'},'等待工具返回…'):
+            !opened?null:item.status==='running'&&tab==='output'?h('p',{className:'agent-tool-wait'},'等待工具返回…'):
               h(Code,{value:tab==='input'?item.input:output,language:tab==='output'&&item.tool==='nl2sql'?'sql':'json'}),
-            attachments.has(item.id)?h(Attachment,{node:attachments.get(item.id)}):null,
+            attachment?h(Attachment,{node:attachment}):null,
             h('footer',{className:`agent-tool-footer state-${item.status}`},
               Number.isFinite(item.latency_ms)?h('span',null,`${(item.latency_ms/1000).toFixed(2)} s`):h('span'),
               h('span',{className:'agent-tool-receipt'},item.status==='running'?h('i',{className:'agent-spinner'}):
                 h(Icon,{name:item.status==='success'?'check':item.status==='error'?'close':'chevron'}),STATUS[item.status])))));
-    }
+    });
     function Timeline(){return h(React.Fragment,null,
-      rows.map(item=>item.kind==='tool'?h(Tool,{key:item.id,item}):h('p',{key:item.id,className:'agent-commentary',
+      rows.map(item=>item.kind==='tool'?h(Tool,{key:item.id,item,attachment:attachments.get(item.id)}):h('p',{key:item.id,className:'agent-commentary',
         'data-status':item.status},h(Icon,{name:'thought'}),h('span',null,item.summary))),
       waiting?h('div',{className:'agent-request-wait',role:'status'},h('i',{className:'agent-spinner'}),'正在处理你的请求…'):null);
     }
