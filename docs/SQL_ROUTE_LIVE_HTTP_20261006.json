@@ -1,0 +1,607 @@
+{
+  "scope": "live_8030_real_model_SQL_stream_latency",
+  "question": "2025年华东地区销售额",
+  "duration_ms": 16484.225,
+  "events": [
+    {
+      "elapsed_ms": 29.129,
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "elapsed_ms": 29.424,
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "elapsed_ms": 58.659,
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "running",
+      "input": {
+        "question": "2025年华东地区销售额"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "elapsed_ms": 16244.46,
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华东",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "result_state": "rows",
+        "row_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "elapsed_ms": 16439.057,
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "sql"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-3"
+    }
+  ],
+  "response": {
+    "status": "ok",
+    "question": "2025年华东地区销售额",
+    "effective_question": "2025年华东地区销售额",
+    "route": "sql",
+    "planner_source": "server_verified_sql_route",
+    "session_id": "latency-0ba9017b42634672a3bbd2040b4ff960",
+    "context_turns": 0,
+    "state": {
+      "route": "sql",
+      "metrics": [
+        {
+          "id": "m0",
+          "table": "sales_orders",
+          "column": "sales_amount",
+          "function": "SUM",
+          "label": "销售额",
+          "unit": "currency",
+          "currency": "CNY",
+          "missing": "null",
+          "filters": []
+        }
+      ],
+      "filters": [
+        {
+          "column": "order_date",
+          "operator": "RANGE",
+          "value": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "source_text": "2025年",
+          "explanation": "模型过滤",
+          "table": "sales_orders"
+        },
+        {
+          "column": "region",
+          "operator": "=",
+          "value": "华东",
+          "source_text": "华东",
+          "explanation": "模型过滤",
+          "table": "sales_orders"
+        }
+      ],
+      "dimensions": [],
+      "clarification_code": null,
+      "pending_question": null,
+      "executed_sql_context": {
+        "payload": {
+          "question": "2025年华东地区销售额",
+          "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "华东",
+            100
+          ],
+          "source_revision": "c09e52c1beec9eee5996fd7a9e5d8c8d21f112deb1e40e9fec12d15e21744d33"
+        },
+        "sha256": "b03ac4c63164fd7cdb9ab1cdd60340e1d19e63ed81dc8ccf1495f9243d672587"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "result_state": "rows",
+      "notices": [],
+      "question": "2025年华东地区销售额",
+      "rewritten_question": "统计2025年华东地区的销售额",
+      "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销售额\" FROM \"__m0\") SELECT \"销售额\" FROM \"__combined\" ORDER BY \"销售额\" DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "columns": [
+        "销售额"
+      ],
+      "rows": [
+        {
+          "销售额": 29584.0
+        }
+      ],
+      "plan": {
+        "table": "sales_orders",
+        "metric_table": "sales_orders",
+        "metric_column": "sales_amount",
+        "metric_function": "SUM",
+        "metric_label": "销售额",
+        "analysis_mode": "aggregate",
+        "dimensions": [],
+        "dimension_tables": {},
+        "dimension_transforms": {},
+        "dimension_labels": {},
+        "filters": [
+          {
+            "column": "order_date",
+            "operator": "RANGE",
+            "value": [
+              "2025-01-01",
+              "2026-01-01"
+            ],
+            "source_text": "2025年",
+            "explanation": "模型过滤",
+            "table": "sales_orders"
+          },
+          {
+            "column": "region",
+            "operator": "=",
+            "value": "华东",
+            "source_text": "华东",
+            "explanation": "模型过滤",
+            "table": "sales_orders"
+          }
+        ],
+        "having": null,
+        "links": [
+          {
+            "source_text": "sales_amount",
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "role": "metric",
+            "score": 1.0,
+            "matched_alias": "销售额",
+            "metric_function": null
+          }
+        ],
+        "join_tables": [],
+        "join_conditions": [],
+        "join_path": [],
+        "join_alternatives": [],
+        "order_desc": true,
+        "limit": 100,
+        "complete_results": false,
+        "semantic_row_limit": null,
+        "preview_row_limit": null,
+        "confidence": 1.0,
+        "rewritten_question": "统计2025年华东地区的销售额",
+        "comparison_mode": "none",
+        "comparison_period": {},
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": [],
+        "assumptions": [
+          "模型计划已通过 Schema、外键图和只读执行契约校验"
+        ],
+        "planner_source": "model_validated",
+        "top_n": null,
+        "fan_out": false,
+        "coverage": {},
+        "intent_audit": {
+          "question": "2025年华东地区销售额",
+          "metric": {
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "function": "SUM",
+            "label": "销售额"
+          },
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "模型过滤",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华东",
+              "source_text": "华东",
+              "explanation": "模型过滤",
+              "table": "sales_orders"
+            }
+          ],
+          "time_range": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "group_by": [],
+          "comparison": "none",
+          "comparison_window": null,
+          "top_n": null,
+          "confidence": 1.0,
+          "unresolved": [],
+          "execution_allowed": true,
+          "planner_source": "model_validated",
+          "planner_audit": {
+            "candidate_source": "external_model",
+            "final_source": "model_validated",
+            "fallback": false,
+            "decision": "accepted",
+            "provider": {
+              "provider": "responses",
+              "model": "gpt-6-luna",
+              "reasoning": "medium",
+              "operation": "nl2sql_plan",
+              "http_status": 200,
+              "status": "completed",
+              "model_verified": true,
+              "transport_attempts": 1,
+              "transport_failures": [],
+              "response_model": "gpt-6-luna",
+              "input_tokens": 2567,
+              "output_tokens": 371,
+              "total_tokens": 2938,
+              "cached_input_tokens": 0,
+              "reasoning_tokens": 176,
+              "call_index": 1,
+              "latency_ms": 16160.958,
+              "reasoning_effort": "medium",
+              "response_status": "completed"
+            }
+          },
+          "metrics": [
+            {
+              "id": "m0",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "function": "SUM",
+              "label": "销售额",
+              "unit": "currency",
+              "currency": "CNY",
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "grain_audit": {
+            "strategy": "aggregate_each_fact_then_join",
+            "metrics": [
+              {
+                "metric_id": "m0",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "native_grain": [
+                  "order_id"
+                ],
+                "unit": "currency",
+                "currency": "CNY",
+                "missing": "null",
+                "filter_strategy": "many_to_one",
+                "dimension_path": [],
+                "filter_path": []
+              }
+            ],
+            "formulas": [],
+            "null_group_alignment": "IS",
+            "order_metric": "m0",
+            "ordering": "metric"
+          },
+          "semantic_audit": {}
+        },
+        "planner_audit": {
+          "candidate_source": "external_model",
+          "final_source": "model_validated",
+          "fallback": false,
+          "decision": "accepted",
+          "provider": {
+            "provider": "responses",
+            "model": "gpt-6-luna",
+            "reasoning": "medium",
+            "operation": "nl2sql_plan",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "transport_attempts": 1,
+            "transport_failures": [],
+            "response_model": "gpt-6-luna",
+            "input_tokens": 2567,
+            "output_tokens": 371,
+            "total_tokens": 2938,
+            "cached_input_tokens": 0,
+            "reasoning_tokens": 176,
+            "call_index": 1,
+            "latency_ms": 16160.958,
+            "reasoning_effort": "medium",
+            "response_status": "completed"
+          }
+        },
+        "model_plan_diagnostics": {
+          "attempts": [
+            {
+              "attempt": 1,
+              "original_structure": {
+                "payload": {
+                  "type": "dict",
+                  "length": 15,
+                  "sha256": "644a1d6ddcfc0f9ee6c41f54f5452c980e8c7ee4fb2af959592f65733427722c",
+                  "identifier_valid": false
+                },
+                "version": 2,
+                "metrics": [
+                  {
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "id": {
+                      "type": "str",
+                      "length": 2,
+                      "sha256": "2ead1f027078eee5ee00c1285fed04b1d7dcb4faa5e90c3ccec936a651dd1078",
+                      "identifier_valid": true
+                    },
+                    "label": {
+                      "type": "str",
+                      "length": 3,
+                      "sha256": "94185face61e0a08f5bcbf0b8069b53ca3526840c68d61483ffe4a1c4431cd6d",
+                      "identifier_valid": true
+                    },
+                    "function": "SUM",
+                    "filters": []
+                  }
+                ],
+                "dimensions": [],
+                "filters": [
+                  {
+                    "table": "sales_orders",
+                    "column": "order_date",
+                    "value": {
+                      "type": "list",
+                      "length": 2,
+                      "sha256": "a7039fef1d4f9fd224fddcd11379d186b6cffaa73a73c8d277e676fa795ca6fa",
+                      "identifier_valid": false
+                    },
+                    "operator": "RANGE"
+                  },
+                  {
+                    "table": "sales_orders",
+                    "column": "region",
+                    "value": {
+                      "type": "str",
+                      "length": 2,
+                      "sha256": "9222e46ccb4ed007d5981b8de5f34d6f6ff3e9c13f4cfb2364ee598dd414fd9b",
+                      "identifier_valid": true
+                    },
+                    "operator": "="
+                  }
+                ],
+                "derived_metrics": [],
+                "order_metric": {
+                  "type": "NoneType",
+                  "length": null,
+                  "sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+                  "identifier_valid": false
+                },
+                "output_metrics": {
+                  "type": "list",
+                  "length": 1,
+                  "sha256": "cc0a6d0d1ba2aaf7f932d43b45894760d8a75fbdb01c07c3273f2765cf1119ab",
+                  "identifier_valid": false
+                }
+              },
+              "provider": {
+                "provider": "responses",
+                "model": "gpt-6-luna",
+                "reasoning": "medium",
+                "operation": "nl2sql_plan",
+                "http_status": 200,
+                "status": "completed",
+                "model_verified": true,
+                "transport_attempts": 1,
+                "transport_failures": [],
+                "response_model": "gpt-6-luna",
+                "input_tokens": 2567,
+                "output_tokens": 371,
+                "total_tokens": 2938,
+                "cached_input_tokens": 0,
+                "reasoning_tokens": 176,
+                "call_index": 1,
+                "latency_ms": 16160.958,
+                "reasoning_effort": "medium",
+                "response_status": "completed"
+              },
+              "structural_normalizations": [],
+              "status": "accepted"
+            }
+          ],
+          "repair_attempted": false
+        },
+        "metrics": [
+          {
+            "id": "m0",
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "function": "SUM",
+            "label": "销售额",
+            "unit": "currency",
+            "currency": "CNY",
+            "missing": "null",
+            "filters": []
+          }
+        ],
+        "derived_metrics": [],
+        "order_metric": null,
+        "grain_audit": {
+          "strategy": "aggregate_each_fact_then_join",
+          "metrics": [
+            {
+              "metric_id": "m0",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "function": "SUM",
+              "native_grain": [
+                "order_id"
+              ],
+              "unit": "currency",
+              "currency": "CNY",
+              "missing": "null",
+              "filter_strategy": "many_to_one",
+              "dimension_path": [],
+              "filter_path": []
+            }
+          ],
+          "formulas": [],
+          "null_group_alignment": "IS",
+          "order_metric": "m0",
+          "ordering": "metric"
+        },
+        "semantic_audit": {},
+        "output_metrics": [
+          "m0"
+        ]
+      },
+      "explanation": [
+        "识别指标：销售额（SUM）",
+        "查询表：sales_orders",
+        "模型过滤",
+        "模型过滤",
+        "模型计划已通过 Schema、外键图和只读执行契约校验",
+        "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+      ],
+      "provenance": {
+        "source_type": "structured_database",
+        "database": "demo_sales.sqlite",
+        "table": "sales_orders",
+        "row_count": 1,
+        "row_limit": 100,
+        "result_completeness": "within_return_limit",
+        "query_hash": "fd75bc4ca5382419",
+        "field_links": [
+          {
+            "source_text": "sales_amount",
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "role": "metric",
+            "score": 1.0,
+            "matched_alias": "销售额",
+            "metric_function": null
+          }
+        ],
+        "coverage": {},
+        "consistency": "sqlite_read_transaction",
+        "source_revision": "c09e52c1beec9eee5996fd7a9e5d8c8d21f112deb1e40e9fec12d15e21744d33",
+        "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+        "grain_audit": {
+          "strategy": "aggregate_each_fact_then_join",
+          "metrics": [
+            {
+              "metric_id": "m0",
+              "table": "sales_orders",
+              "column": "sales_amount",
+              "function": "SUM",
+              "native_grain": [
+                "order_id"
+              ],
+              "unit": "currency",
+              "currency": "CNY",
+              "missing": "null",
+              "filter_strategy": "many_to_one",
+              "dimension_path": [],
+              "filter_path": []
+            }
+          ],
+          "formulas": [],
+          "null_group_alignment": "IS",
+          "order_metric": "m0",
+          "ordering": "metric"
+        },
+        "result_cells": [
+          {
+            "row": 0,
+            "column": "销售额",
+            "query_hash": "fd75bc4ca5382419",
+            "locator": {
+              "type": "sql_result",
+              "row": 0,
+              "column": "销售额"
+            }
+          }
+        ],
+        "output_cardinality": {
+          "status": "verified",
+          "maximum_output_rows": 1,
+          "method": "executed_select_scope_cardinality",
+          "verified_singleton_scopes": 3,
+          "aggregate_functions": [
+            "SUM"
+          ],
+          "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+        }
+      },
+      "clarification": null,
+      "clarification_code": null,
+      "clarification_options": []
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "server_verified_sql_route",
+        "route": "sql",
+        "latency_ms": 19.791,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [
+          "complete_schema_value_time_coverage_model_sql_planner_retained"
+        ],
+        "attempts": []
+      }
+    ],
+    "audit_id": "21effb7d26da32e539286c4c",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华东地区销售额"
+    },
+    "query_reference_id": "q_30a4497fcf4544268d5fb20c2bfdac52"
+  },
+  "passed": true
+}

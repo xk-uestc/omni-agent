@@ -320,6 +320,48 @@ class OmniAgent:
             return {'route': 'sql', 'effective_question': effective, 'clarification': '', 'tasks_json': '[]'}
         return {'route': 'document', 'effective_question': question, 'clarification': '', 'tasks_json': '[]'}
 
+    def _verified_sql_route(self, question):
+        """Select a source only for a completely covered simple SQL request.
+
+        This never supplies an executable plan. The existing model planner,
+        independent intent checks and read-only compiler still run unchanged.
+        Any unexplained text stays on the general multi-source planning path.
+        """
+        if getattr(self.client, 'supports_verified_sql_routing', False) is not True:
+            return None
+        if self.engine.model_plan_provider is None:
+            return None
+        if re.search(r'文档|资料|报告|政策|根据|依据|参照|公式|预测|目标|比较|对比|为什么|原因|解释|那|改成|换成|呢', question):
+            return None
+        normalized = normalize_text(question)
+        slots = self.engine.analyze_slots(question)
+        if not slots['metrics'] or not slots['time_spans']:
+            return None
+        intent = self.engine.extract_required_intent(question)
+        if (intent.clarification or not (intent.metrics or intent.metric_column)
+                or intent.derived_metrics or intent.comparison_mode != 'none'
+                or intent.coverage.get('unresolved')):
+            return None
+        # Actual aliases/value spans/time expressions must cover all semantic
+        # content. The remaining vocabulary only describes presentation or
+        # ordinary aggregation; unknown subjects cannot be silently discarded.
+        spans = [x.source_text for x in slots['metrics'] + slots['dimensions']]
+        spans += [x.span for x in slots['values']] + list(slots['time_spans'])
+        remainder = normalized
+        for span in sorted(set(map(normalize_text, spans)), key=len, reverse=True):
+            if span:
+                remainder = remainder.replace(span, '')
+        remainder = re.sub(r'查询|统计|查看|请问|请|帮我|各个|各|按|的|和|与|总计|合计|汇总|排名|排行|排序|多少|是多少|为多少|从高到低|从低到高', '', remainder)
+        if remainder.strip(' ，,。.?？!！、:：;；'):
+            return None
+        # A literal document title/ID names a source even if all its words
+        # happen to match database aliases. Metadata lookup does not retrieve.
+        for document in self.knowledge.list_documents():
+            for label in (document['document_id'], document['title']):
+                if len(normalize_text(label)) >= 4 and normalize_text(label) in normalized:
+                    return None
+        return {'route': 'sql', 'effective_question': question, 'tasks_json': '[]', 'clarification': ''}
+
     def _remember(self, session_id, *, question, effective_question, state, pending_parent_id=None):
         state = dict(state)
         if state.get('route') == 'sql' and state.get('pending_question'):
@@ -690,6 +732,10 @@ class OmniAgent:
         planning_notes = []
         planning_attempts = []
         rejection_code = None
+        direct_sql = (self._verified_sql_route(scope_question) if not history_error
+            and inherited is None and scope_question == question
+            and (not planning_history or fresh_scope)
+            and not fusion_history_audit.get('requires_clarification') else None)
         if history_error:
             plan = {'route': 'clarify', 'effective_question': question, 'tasks_json': '[]',
                     'clarification': ('追问中的原有约束尚未核验，请完整说明查询指标、筛选条件和时间范围。'
@@ -703,6 +749,9 @@ class OmniAgent:
             # documents/fusion or silently replace the selected history turn.
             plan = {'route':'sql','effective_question':scope_question,'tasks_json':'[]','clarification':''}
             planning_notes.append('server_verified_explicit_sql_reference')
+        elif direct_sql is not None:
+            plan, source = direct_sql, 'server_verified_sql_route'
+            planning_notes.append('complete_schema_value_time_coverage_model_sql_planner_retained')
         elif self.client:
             try:
                 context_question = scope_question

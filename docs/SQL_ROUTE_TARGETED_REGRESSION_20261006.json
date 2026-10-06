@@ -1,0 +1,27 @@
+{
+  "scope": "targeted_SQL_routing_followup_fusion_stream_regression",
+  "passed": 248,
+  "failed": 0,
+  "warnings": 1,
+  "duration_seconds": 213.17,
+  "model_called": false,
+  "test_files": [
+    "test_verified_sql_routing.py",
+    "test_omni_agent.py",
+    "test_omni_query_stream.py",
+    "test_model_sql_followup.py",
+    "test_omni_plan_recovery_round4.py",
+    "test_fusion_history.py",
+    "test_omni_clarification.py",
+    "test_responses_grounded_intent.py",
+    "test_responses_provider.py",
+    "test_pending_task_resume.py",
+    "test_pending_scope_edit.py"
+  ],
+  "source_sha256": {
+    "ict-track8/backend/omni_agent.py": "ffad8ee08152ed56fd9d8e1b70654c72ef56dcde63a064260ebb2092425f356f",
+    "ict-track8/backend/responses_client.py": "24bce4c70631c0f53f3d658283cba19b7962eb49aad74d526197ba914b61bf08",
+    "ict-track8/tests/test_verified_sql_routing.py": "7e876e2a8d736826516fbf408ecbd69a6970438869616082a50055bfa47c8f7f"
+  },
+  "limitation": "Targeted regression only, not complete backend suite or official benchmark."
+}
