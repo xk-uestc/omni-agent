@@ -53,6 +53,8 @@ async function main(){
     const sqlTool=page.locator('.agent-tool-row[data-tool="nl2sql"]');
     const inspect=sqlTool.locator('.agent-tool-attachment>.agent-inspector');await inspect.locator(':scope>summary').click();
     assert(await inspect.locator('.schema-explorer svg').count()>0,'schema SVG lost');
+    assert(await inspect.locator('.query-part-number').count()===0,'legacy numbered stages remain in tool details');
+    assert((await inspect.locator('.query-part-head h4').allTextContents()).includes('数据库字段'),'tool detail headings missing');
     assert(await page.locator('.agent-tool-row[data-tool="visualization.build"][data-status="success"]').count()===1,'visualization receipt absent');
     await inspect.locator(':scope>summary').click();});
   await check('database structure has its own tool feedback and complete field SVG',async()=>{
@@ -123,6 +125,24 @@ async function main(){
       assert(boxes.length===2&&boxes[0].role==='subject'&&boxes[1].role==='value','label/value locations missing');
       assert(boxes.every(b=>b.bbox_normalized.every(v=>v>=0&&v<=1)),'amount outside actual rendered original');});
     await page.evaluate(()=>{window.amountCheckTimeline.dispose();delete window.amountCheckTimeline;});
+  }
+  const financeReport=path.join(ROOT,'docs','FRESH_FINANCIAL_CHANGE_REPLAY_ROUND34_20261006.json');
+  if(fs.existsSync(financeReport)){
+    const retained=JSON.parse(fs.readFileSync(financeReport,'utf8'));
+    const result=retained.records.find(r=>r.passed)?.result;
+    if(result){
+      const citation=result.citations[0],did=citation.document_id,metadata=citation.metadata;
+      const originalPath=execFileSync(python,['-c',"import sys;from pathlib import Path;sys.path.insert(0,'ict-track8');from backend.knowledge_store import KnowledgeStore;s=KnowledgeStore(Path(sys.argv[1])/'knowledge');print(s.verify_source(sys.argv[2],expected_sha256=sys.argv[3]))",retained.run_directory,did,metadata.source_sha256],{cwd:ROOT,encoding:'utf8'}).trim();
+      await check('financial original headers and amount map to a real verified PDF render',async()=>{
+        const ingest=await fetch(base+'/api/v1/knowledge/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({document_id:did,title:'Retained financial layout original',filename:did+'.pdf',modality:'pdf',file_base64:fs.readFileSync(originalPath).toString('base64')})});
+        assert(ingest.ok,'financial original ingestion failed');
+        const response=await fetch(base+`/api/v1/knowledge/documents/${did}/visual-evidence`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({page_no:metadata.page_no,expected_source_sha256:metadata.source_sha256})});
+        assert(response.ok,'financial original rendering failed');const manifest=await response.json();
+        const boxes=await page.evaluate(({metadata,manifest,selected})=>window.NativeRowOverlay.factModel(metadata,manifest,selected),{metadata,manifest,selected:result.citations.map(c=>c.metadata.fact)});
+        assert(boxes.length===5&&boxes[4].role==='value','financial header/amount positions absent');
+        assert(boxes[4].text===metadata.fact.raw_value,'original financial literal changed');
+      });
+    }
   }
   await check('no React or page runtime errors',async()=>assert(errors.length===0,JSON.stringify(errors)));
 }

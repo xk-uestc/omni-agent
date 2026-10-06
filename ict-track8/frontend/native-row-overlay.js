@@ -34,5 +34,32 @@
         {bbox_pt:annotation.label_bbox_pt,header:'总额标签',text:annotation.label},
         {bbox_pt:annotation.amount_bbox_pt,header:'原件金额',text:annotation.raw_value}]}},manifest,{column_index:1});
   }
-  return {model,totalModel};
+  function factModel(metadata,manifest,selected){
+    const fact=metadata.fact,source=metadata.source_sha256;
+    const matches=Array.isArray(selected)?selected.filter(item=>item.fact_id===fact?.fact_id):[];
+    if(!fact||fact.value_kind!=='native_grouped_financial_cell_literal'||matches.length!==1
+      ||JSON.stringify(matches[0])!==JSON.stringify(fact)||!hex.test(source||'')
+      ||fact.source_sha256!==source||fact.page_no!==metadata.page_no
+      ||manifest.source_sha256!==source||manifest.document_id!==metadata.document_id||manifest.page_no!==metadata.page_no
+      ||!Array.isArray(fact.column_header_path)||!Array.isArray(fact.column_header_bboxes_display_pt)
+      ||fact.column_header_path.length!==fact.column_header_bboxes_display_pt.length
+      ||typeof fact.raw_value!=='string'||typeof fact.row_header!=='string')throw Error('财务字段与本次原件选择不一致。');
+    const size=manifest.size_px;
+    if(!Array.isArray(size)||size.length!==2||!size.every(v=>Number.isInteger(v)&&v>0))throw Error('原页尺寸不可用。');
+    // These facts already use displayed page points, including PDF rotation.
+    // Applying the unrotated-to-display transform again would rotate twice.
+    const raster=matrix(manifest.mappings?.display_to_asset_px);
+    const fields=[{box:fact.row_header_bbox_display_pt,label:'指标',text:fact.row_header,role:'subject'},
+      ...fact.column_header_path.map((text,i)=>({box:fact.column_header_bboxes_display_pt[i],label:'列头',text,role:'subject'})),
+      {box:fact.bbox_display_pt,label:'原件金额',text:fact.raw_value,role:'value'}];
+    return fields.map(field=>{
+      const box=field.box;
+      if(!Array.isArray(box)||box.length!==4||!box.every(Number.isFinite)||box[0]>=box[2]||box[1]>=box[3])throw Error('字段坐标不可用。');
+      const points=[[box[0],box[1]],[box[2],box[1]],[box[2],box[3]],[box[0],box[3]]].map(p=>point(p,raster));
+      const normalized=[Math.min(...points.map(p=>p[0]))/size[0],Math.min(...points.map(p=>p[1]))/size[1],Math.max(...points.map(p=>p[0]))/size[0],Math.max(...points.map(p=>p[1]))/size[1]];
+      if(normalized.some(v=>v<0||v>1))throw Error('字段超出本次原页显示范围。');
+      return {bbox_normalized:normalized,label:field.label,text:field.text,role:field.role};
+    });
+  }
+  return {model,totalModel,factModel};
 });

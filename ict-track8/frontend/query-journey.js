@@ -175,12 +175,11 @@
     });
     function section(title, subtitle) {
       const node = el("section", "query-part"), h = el("div", "query-part-head");
-      const label = el("h4", ""), parts = title.split(" · ");
-      label.append(el("span", "query-part-number", parts[0]), document.createTextNode(parts.slice(1).join(" · ")));
+      const label = el("h4", "", title);
       h.append(label); if (subtitle) h.append(el("span", "", subtitle));
       node.append(h); sections.push(node); root.append(node); return node;
     }
-    const understanding = section("01 · 问题理解", model.original !== model.question ? "已结合对话上下文" : "本次原问题");
+    const understanding = section("问题与使用条件", model.original !== model.question ? "已结合对话上下文" : "本次原问题");
     if (model.original !== model.question) understanding.append(el("p", "query-original", `原问题：${model.original}`));
     const sentence = el("p", "query-sentence");
     questionSegments(model.question, fields, plan.coverage?.unresolved).forEach((part) => {
@@ -191,7 +190,7 @@
     const legend = el("div", "query-role-legend"); [...new Set(fields.map((f) => f.role))].forEach((role) => { const item = el("span", `role-${role}`); item.append(el("i"), document.createTextNode(ROLES[role])); legend.append(item); }); understanding.append(legend);
     if (arr(plan.coverage?.unresolved).length) understanding.append(el("p", "query-attention", `待确认内容：${plan.coverage.unresolved.map(text).join("、")}`));
 
-    const mapping = section("02 · 字段选择", "词语 → 数据库字段");
+    const mapping = section("数据库字段", "词语 → 数据库字段");
     const list = el("div", "query-field-list");
     fields.forEach((field) => {
       const row = button("", `query-field-row role-${field.role}`, () => focusFields([field.key], ROLES[field.role], true)); row.dataset.queryField = field.key;
@@ -209,7 +208,7 @@
     drawSchema(schema);
     if (!arr(schema?.tables).length && schemaPromise) schemaPromise.then(drawSchema).catch(() => {});
 
-    const queryPlan = section("03 · 查询步骤", `依据后端返回的查询方案${plan.planner_source ? ` · ${plan.planner_source}` : ""}`);
+    const queryPlan = section("SQL执行信息", `依据后端返回的查询方案${plan.planner_source ? ` · ${plan.planner_source}` : ""}`);
     if (model.operations.length) {
       const viewport = el("div", "query-plan-viewport"), width = Math.max(630, model.operations.length * 126), graph = svg("svg", { class: "query-plan-svg", viewBox: `0 0 ${width} 146`, width, height: 146, role: "group", "aria-label": "本次查询步骤：" + model.operations.map((o) => o.label).join("、") });
       const details = el("div", "query-operation-detail"); details.setAttribute("aria-live", "polite");
@@ -251,7 +250,7 @@
     }
     if (structured.status === "clarification") queryPlan.append(el("p", "query-attention", structured.clarification || "需要补充条件；本次未执行 SQL。"));
 
-    const sqlSection = section("04 · SQL 与参数", structured.sql ? "点击字段查看对应位置" : "尚未执行 SQL");
+    const sqlSection = section("SQL 与参数", structured.sql ? "点击字段查看对应位置" : "尚未执行 SQL");
     if (structured.sql) {
       const toolbar = el("div", "query-sql-toolbar"), copy = button("复制 SQL", "query-text-button", async () => {
         try { await navigator.clipboard.writeText(structured.sql); copy.textContent = "已复制"; } catch { copy.textContent = "请选中代码复制"; }

@@ -37,7 +37,7 @@ def _text(words):
 def column_unit_declaration(path):
     """Only literal declarations inside one geometrically bounded column."""
     text = ' '.join(path)
-    codes = set(re.findall(r'\b(?:USD|EUR|GBP|CNY|JPY|CAD|AUD)\b', text))
+    codes = set(re.findall(r'\b(?:USD|EUR|GBP|CNY|JPY|CAD|AUD|MYR|SGD|INR|RM)\b', text))
     symbols = set(re.findall(r'[$€£¥]', text))
     percent = bool(re.search(r'%|\bpercent(?:age)?\b', text, re.I))
     if len(codes) > 1 or len(symbols) > 1 or percent and (codes or symbols):
@@ -530,5 +530,11 @@ def extract_native_text_tables(raw:bytes,*,page_no:int,expected_source_sha256=No
             report['tables'].append(table);report['facts'].extend(facts)
         for table in _currency_panels(page_rows,sha,page_no,matrix,report['facts']):
             report['tables'].append(table);report['facts'].extend(table['facts'])
+        if 'native_layout_orientation' not in report:
+            from .native_financial_tables import extract_candidates
+            for table in extract_candidates(p, words, source_sha256=sha, page_no=page_no, display_matrix=matrix):
+                if any(f['bbox_display_pt'] == old['bbox_display_pt'] for f in table['facts'] for old in report['facts']):
+                    continue
+                report['tables'].append(table);report['facts'].extend(table['facts'])
     report['status']='native_alignment_verified' if report['tables'] else 'incomplete'
     return report

@@ -302,7 +302,9 @@ async function loadVisualPage(pageNo){
     const nativeBoxes=native?.metadata?.native_row&&native.selection&&native.metadata.page_no===pageNo?
       window.NativeRowOverlay.model(native.metadata,manifest,native.selection):
       native?.metadata?.native_total_annotation&&native.totalSelection&&native.metadata.page_no===pageNo?
-        window.NativeRowOverlay.totalModel(native.metadata,manifest,native.totalSelection):null;
+        window.NativeRowOverlay.totalModel(native.metadata,manifest,native.totalSelection):
+      native?.metadata?.fact?.value_kind==='native_grouped_financial_cell_literal'&&native.metadata.page_no===pageNo?
+        window.NativeRowOverlay.factModel(native.metadata,manifest,[native.metadata.fact]):null;
     if(nativeBoxes?.length||(part&&part.page_no===pageNo&&part.source_sha256===snapshot.sourceSha&&part.render_sha256===manifest.render_sha256)){
       const box=part?.bbox_normalized;
       if(nativeBoxes?.length||(Array.isArray(box)&&box.length===4&&box.every(v=>Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3])){

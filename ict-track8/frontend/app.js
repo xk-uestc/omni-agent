@@ -194,7 +194,7 @@ function normalizeOmniResponse(data){
     visual_source_proof:result.visual_source_proof,native_row_proof:result.native_row_proof,native_total_proof:result.native_total_proof,answer_mode:result.answer_mode,
     answer_span_result:result.answer_span_result};
 }
-function sourcePageViewer(host,item,part,nativeSelection,totalSelection){
+function sourcePageViewer(host,item,part,nativeSelection,totalSelection,financialSelection){
   const metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
   const sourceSha=metadata.source_sha256;
   if(typeof did!=="string"||!Number.isInteger(page)||page<1||!/^[a-f0-9]{64}$/.test(sourceSha||""))return;
@@ -224,7 +224,9 @@ function sourcePageViewer(host,item,part,nativeSelection,totalSelection){
       if(signal.aborted||current!==revision||!details.open)return;
       blobUrl=URL.createObjectURL(blob);image.src=blobUrl;image.hidden=false;
       const nativeBoxes=metadata.native_row&&nativeSelection?window.NativeRowOverlay?.model(metadata,manifest,nativeSelection):
-        metadata.native_total_annotation&&totalSelection?window.NativeRowOverlay?.totalModel(metadata,manifest,totalSelection):null;
+        metadata.native_total_annotation&&totalSelection?window.NativeRowOverlay?.totalModel(metadata,manifest,totalSelection):
+        metadata.fact?.value_kind==='native_grouped_financial_cell_literal'&&financialSelection?
+          window.NativeRowOverlay?.factModel(metadata,manifest,financialSelection):null;
       const box=part?.bbox_normalized,matched=Boolean(nativeBoxes?.length)||(part?.page_no===page&&part.source_sha256===sourceSha&&part.render_sha256===sha);
       const valid=Array.isArray(box)&&box.length===4&&box.every(v=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3];
       if(matched&&(valid||nativeBoxes?.length)){
@@ -258,7 +260,8 @@ function renderDocumentEvidence(host,data){
     }
     const candidate=data.visual_source_proof?.parts?.[item.citation_id-1];
     const part=candidate?.quote===item.snippet?candidate:null;
-    sourcePageViewer(row,item,part,data.native_row_proof?.selection,data.native_total_proof?.selected_annotations);docs.append(row);
+    const financialSelection=items.filter(c=>c.metadata?.document_id===did&&c.metadata?.page_no===page&&c.metadata?.source_sha256===metadata.source_sha256).map(c=>c.metadata?.fact).filter(Boolean);
+    sourcePageViewer(row,item,part,data.native_row_proof?.selection,data.native_total_proof?.selected_annotations,financialSelection);docs.append(row);
   });host.append(docs);
 }
 function renderResult(view,data,originalQuestion){
