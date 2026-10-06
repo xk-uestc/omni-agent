@@ -41,6 +41,9 @@ textarea:focus-visible, summary:focus-visible { outline: 2px solid #12806d; outl
   color: var(--ui-text);
   text-decoration: none;
 }
+.site-sidebar-brand { justify-content: center; padding: 5px 4px 10px; }
+.site-sidebar-brand picture { display: block; width: 100%; line-height: 0; }
+.site-sidebar-logo { display: block; width: 100%; height: auto; }
 .site-sidebar-brand strong, .brand b { display: block; font-size: 14px; font-weight: 650; }
 .site-sidebar-brand small, .brand span { display: block; margin-top: 2px; color: var(--ui-muted); font-size: 11px; }
 .site-brand-mark, .mark {
@@ -443,7 +446,8 @@ body:has(.site-sidebar) .visual-dialog { border: 1px solid var(--ui-line); borde
   .top-route svg { width: 18px; height: 18px; }
   body:has(.site-sidebar) { padding-left: 0; }
   .site-sidebar { position: sticky; inset: 0 0 auto; width: 100%; height: auto; min-height: 52px; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 16px; overflow: visible; border-right: 0; border-bottom: 1px solid var(--ui-line); }
-  .site-sidebar-brand { flex: 0 0 auto; padding: 0; }
+  .site-sidebar-brand { width: 38px; flex: 0 0 38px; padding: 0; }
+  .site-sidebar-brand picture { width: 38px; }
   .site-nav { display: flex; flex: 1; justify-content: flex-end; gap: 2px; }
   .site-nav a, .site-nav button { min-height: 34px; gap: 7px; padding: 6px 8px; white-space: nowrap; }
   .site-sidebar-foot { display: none; }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lattice Studio · ICT 赛题八</title>
+  <title>数智问问 · ICT 赛题八</title>
   <style>
     :root {
       --bg: #fff; --soft: #f7f7f8; --hover: #f0f0f2; --line: #ececec;
@@ -39,6 +39,8 @@
       padding: 12px; display: flex; flex-direction: column;
       min-height: 0; overflow: hidden;
     }
+    .brand { padding: 5px 6px 10px; }
+    .brand-logo { display: block; width: min(100%, 264px); max-height: 96px; height: auto; object-fit: contain; object-position: left center; }
     .brand { display: flex; gap: 10px; align-items: center; padding: 8px 8px 14px; }
     .mark { width: 28px; height: 28px; background: #111; color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
     .brand b { font-size: 14px; } .brand span { display: block; font-size: 11px; color: var(--muted); }
@@ -282,7 +284,7 @@
       .meta { flex-wrap: wrap; gap: 5px 12px; }
     }
   </style>
-  <link rel="stylesheet" href="./modern-ui.css?v=20261005-stable-reference-1" />
+  <link rel="stylesheet" href="./modern-ui.css?v=20261006-brand-1" />
   <link rel="stylesheet" href="./query-journey.css?v=20261003-polish-6" />
   <link rel="stylesheet" href="./codex-ui.css?v=20261006-tools-8" />
   <link rel="stylesheet" href="./query-result-viz.css?v=20261003-polish-6" />
@@ -292,8 +294,7 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg></div>
-        <div><b>Lattice Studio</b><span>问数 · 文档 · 跨源</span></div>
+        <img class="brand-logo" src="./brand-logo.png?v=20261006-brand-1" alt="数智问问 Cloud Data Intelligence" />
       </div>
       <button class="new-chat" id="newChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>新对话</button>
       <a class="new-chat" href="./knowledge.html" aria-label="文档资料库与跨源计算"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>文档资料库与跨源</a>
@@ -313,7 +314,7 @@
     </aside>
     <main class="stage">
       <header class="topbar">
-        <div class="model-chip">Lattice <em id="capTitle">问数推理</em></div>
+        <div class="model-chip">数智问问 <em id="capTitle">问数推理</em></div>
         <a class="top-route" href="./knowledge.html" title="文档资料库与跨源计算" aria-label="文档资料库与跨源计算"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料库</a>
         <a class="top-route" href="./capabilities.html" title="赛题全量验收台" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>验收</a>
         <button class="top-new" id="newChatTop" type="button" title="新对话">＋ 新对话</button>
