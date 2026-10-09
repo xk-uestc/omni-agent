@@ -37,7 +37,7 @@ class DialogueReference:
 
 class DocumentDialogueAgent:
     ID = re.compile(r'^回到文档查询编号\s*(q_[a-f0-9]{32})[，,:：\s]+(.+)$',re.I)
-    TITLE = re.compile(r'^(?:查询|根据|回到)文档[“「"]([^”」"]+)[”」"][，,:：\s]+(.+)$')
+    TITLE = re.compile(r'^(?:查询|根据|回到|按照|按)(?:文档)?[“「"《]([^”」"》]+)[”」"》][，,:：\s]+(.+)$')
     SWITCH = re.compile(r'^(?:换成|改用|同样的问题换成)文档[“「"]([^”」"]+)[”」"]$')
     POINTER = re.compile(r'^(?:那么|那)?(?P<pointer>它(?=的|呢|改成|换成|按|再查|再看|[，,:：]|$)|(?:刚才)?(?:这个|那个)(?=的|呢|改成|换成|按|再查|再看|[，,:：]|$)|这份文档|那份文档|这份资料|那份资料|上述文档|刚才那份文档|之前那份文档|前一份文档|后一份文档|前者|后者)(?:的)?(?P<tail>.*)$')
     SELECT = re.compile(r'^选择对话来源编号\s*(q_[a-f0-9]{32})$')
@@ -116,6 +116,25 @@ class DocumentDialogueAgent:
             return DialogueReference(reason='dialogue_reference_not_offered')
         pointer = self.POINTER.fullmatch(text)
         if pointer is None:
+            # A temporal ellipsis changes the date in the last pinned question,
+            # retaining its subject; no source or SQL scope is inferred.
+            if history and (history[-1].state or {}).get('document_context'):
+                temporal=re.fullmatch(r'(?:那么|那)(\d{4}年)(.{0,32}?)(?:呢)?',text)
+                previous=history[-1].effective_question
+                dates=list(re.finditer(r'\d{4}年',previous))
+                if temporal and len(dates)==1 and temporal[2] in previous:
+                    return self._bound(history[-1],previous[:dates[0].start()]+temporal[1]+previous[dates[0].end():])
+            # Explicit conversational wording binds only the latest successful
+            # single-document answer; independent questions keep global routing.
+            from .unified_routing import DOCUMENT_INTENT
+            if (history and (history[-1].state or {}).get('document_context')
+                    and (DOCUMENT_INTENT.search(text) or re.search(r'生效|适用|期限',text))
+                    and re.fullmatch(r'(?:(?:那么|那|还有).{1,80}?|\d{4}版.{1,80}?)(?:呢)?', text)
+                    and not re.search(r'数据库|SQL|查询|统计|排名|销售额|订单数|文档|资料|手册|[“「"《]',text,re.I)
+                    and not any(name and name in text for document in self.knowledge.list_documents()
+                                for name in (document['title'], document['document_id']))):
+                followup=re.sub(r'^(?:那么|那|还有)', '',text).removesuffix('呢')
+                return self._bound(history[-1],followup)
             return None
         tail = pointer['tail'].strip('，,:： ')
         if tail in {'呢','再查一次','再看一次'}:

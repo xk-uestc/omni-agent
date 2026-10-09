@@ -1,0 +1,173 @@
+{
+  "run_id": "difficulty-serial-repair-20261008T230424Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8035",
+  "until_utc": "2026-10-10T00:00:00+00:00",
+  "started_utc": "2026-10-08T23:04:24.530832+00:00",
+  "source_case_count": 389,
+  "case_count_per_cycle": 389,
+  "task_count_per_cycle": 389,
+  "question_order": "ascending_difficulty",
+  "case_selection": "full-authored-corpus-serial-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 77,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 176,
+    "3": 178,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "da4ef0b813b8adbfda81a1c3a44ffcbe08c1d13f2e3d79ffa33f9462e86f84dc",
+  "catalog_sha256": "3db36ccca00f9e432b60a4210e5c684c966c6300e4c60063214e7e6121e737e0",
+  "scorer_sha256": "c1d6964f451ce04be9bfe7a31c90670899443e29ecf1ecb3b25df5007a4bf7ce",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-08T23:16:23.860695+00:00",
+  "elapsed_seconds": 719.0,
+  "total_requests": 389,
+  "passed": 384,
+  "failed": 5,
+  "pass_rate": 0.987147,
+  "latency_ms": {
+    "p50": 299.53,
+    "p95": 6540.95,
+    "p99": 11533.95,
+    "max": 23700.554
+  },
+  "health_checks": {
+    "passed": 22,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 2337.79,
+      "p95_ms": 3193.22
+    },
+    "legacy": {
+      "total": 31,
+      "passed": 31,
+      "pass_rate": 1.0,
+      "p50_ms": 291.35,
+      "p95_ms": 320.19
+    },
+    "catalog_alias": {
+      "total": 77,
+      "passed": 77,
+      "pass_rate": 1.0,
+      "p50_ms": 290.98,
+      "p95_ms": 306.9
+    },
+    "vocabulary_variant": {
+      "total": 108,
+      "passed": 108,
+      "pass_rate": 1.0,
+      "p50_ms": 292.22,
+      "p95_ms": 322.8
+    },
+    "domain_colloquial": {
+      "total": 25,
+      "passed": 25,
+      "pass_rate": 1.0,
+      "p50_ms": 283.21,
+      "p95_ms": 297.49
+    },
+    "grouping": {
+      "total": 72,
+      "passed": 69,
+      "pass_rate": 0.958333,
+      "p50_ms": 5124.6,
+      "p95_ms": 9705.82
+    },
+    "topic_switch": {
+      "total": 8,
+      "passed": 8,
+      "pass_rate": 1.0,
+      "p50_ms": 2275.75,
+      "p95_ms": 2628.29
+    },
+    "slang": {
+      "total": 32,
+      "passed": 30,
+      "pass_rate": 0.9375,
+      "p50_ms": 5059.81,
+      "p95_ms": 8328.11
+    },
+    "derived_metric": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 205.06,
+      "p95_ms": 218.3
+    },
+    "literal_value": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 10475.12,
+      "p95_ms": 10475.12
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 389,
+      "passed": 384,
+      "pass_rate": 0.987147,
+      "p50_ms": 299.53,
+      "p95_ms": 6540.95
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 27,
+      "passed": 27,
+      "pass_rate": 1.0,
+      "p50_ms": 291.35,
+      "p95_ms": 428.98
+    },
+    "2": {
+      "total": 176,
+      "passed": 176,
+      "pass_rate": 1.0,
+      "p50_ms": 292.69,
+      "p95_ms": 322.05
+    },
+    "3": {
+      "total": 178,
+      "passed": 173,
+      "pass_rate": 0.97191,
+      "p50_ms": 2912.82,
+      "p95_ms": 8328.11
+    },
+    "4": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 205.06,
+      "p95_ms": 218.3
+    },
+    "5": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 10475.12,
+      "p95_ms": 10475.12
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\difficulty-serial-repair-20261008T230424Z\\results.jsonl"
+}

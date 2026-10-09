@@ -9,6 +9,7 @@ import io
 import sqlite3
 from datetime import date
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -167,6 +168,20 @@ def test_having_average_compares_group_aggregates(sales):
     assert sorted(values(result)) == sorted(expected)
 
 
+def test_single_metric_amount_sort_uses_explicit_metric_and_direction(sales, monkeypatch):
+    monkeypatch.setenv("ICT8_FAST_SQL", "1")
+    _, engine = sales
+    calls = []
+    engine.model_plan_provider = SimpleNamespace(propose=lambda *args: calls.append(args))
+    result = engine.answer("2025年销售额超过1万元的地区，按金额从低到高排")
+    assert result.status == "ok"
+    assert result.plan["order_desc"] is False
+    assert result.plan["having"]["operator"] == ">"
+    assert "ORDER BY" in result.sql and "ASC" in result.sql
+    assert result.plan["planner_audit"]["model_called"] is False
+    assert calls == []
+
+
 def test_unknown_coordinated_entity_is_not_silently_dropped(sales):
     _, engine = sales
     result = engine.answer("华东和华中的销售额")
@@ -193,7 +208,15 @@ def test_typo_tolerance_rejects_head_change_and_domain_terms(tmp_path, sales):
     assert engine.answer("消售额是多少").status == "ok"
     assert engine.answer("销售员有哪些").status == "clarification"
     industry = Nl2SqlEngine(initialize_industry_database(tmp_path / "i.sqlite"), aliases_path=ALIASES)
-    assert industry.answer("各地区工单数").status == "clarification"
+    result = industry.answer("各地区工单数")
+    assert result.status == "ok", result.to_dict()
+    assert result.plan["metric_table"] == "support_tickets"
+    assert result.plan["dimensions"] == ["region_name"]
+    expected = gold(industry.database_path,
+        "SELECT r.region_name, COUNT(*) FROM support_tickets t "
+        "JOIN customers c ON t.customer_id = c.customer_id "
+        "JOIN regions r ON c.region_id = r.region_id GROUP BY r.region_name")
+    assert sorted(values(result)) == sorted(expected)
 
 
 def test_fan_out_count_uses_distinct(tmp_path):
@@ -371,8 +394,9 @@ def test_low_confidence_model_plan_falls_back(sales):
     path, _ = sales
     payload = {"version": 1, "table": "sales_orders", "metric": {"table": "sales_orders", "column": "sales_amount", "function": "SUM"},
                "dimensions": [], "filters": [], "analysis_mode": "aggregate", "limit": 20, "confidence": 0.01}
-    result = Nl2SqlEngine(path, model_plan_provider=lambda *_: payload).answer("2025年华东地区的销售额")
+    result = Nl2SqlEngine(path, model_plan_provider=lambda *_: payload).answer("2025年华东销售额按周统计")
     assert result.plan["planner_source"] == "rules_fallback"
+    assert result.clarification_code == "unsupported_time_grain"
 
 
 def test_ungrounded_model_filter_is_rejected(sales):
@@ -380,8 +404,9 @@ def test_ungrounded_model_filter_is_rejected(sales):
     payload = {"version": 1, "table": "sales_orders", "metric": {"table": "sales_orders", "column": "sales_amount", "function": "SUM"},
                "dimensions": [], "filters": [{"table": "sales_orders", "column": "region", "operator": "=", "value": "华北"}],
                "analysis_mode": "aggregate", "limit": 20, "confidence": 0.95}
-    result = Nl2SqlEngine(path, model_plan_provider=lambda *_: payload).answer("2025年华东地区的销售额")
+    result = Nl2SqlEngine(path, model_plan_provider=lambda *_: payload).answer("2025年华东销售额按周统计")
     assert result.plan["planner_source"] == "rules_fallback"
+    assert result.clarification_code == "unsupported_time_grain"
 
 
 def test_model_provider_crash_falls_back(sales):
@@ -390,7 +415,9 @@ def test_model_provider_crash_falls_back(sales):
     def boom(*_):
         raise TimeoutError("upstream")
 
-    assert Nl2SqlEngine(path, model_plan_provider=boom).answer("销售额是多少").plan["planner_source"] == "rules_fallback"
+    result = Nl2SqlEngine(path, model_plan_provider=boom).answer("2025年华东销售额按周统计")
+    assert result.plan["planner_source"] == "rules_fallback"
+    assert result.clarification_code == "unsupported_time_grain"
 
 
 # ------------------------------------------------------------------ execution budget

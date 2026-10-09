@@ -1,0 +1,233 @@
+{
+  "input_policy": "explicit-new-topic",
+  "input_sha256": "684e8d955920f9b793a7a5069e90c9837a098296bea0743d0344bffb0afc434f",
+  "total": 22,
+  "cases": [
+    {
+      "session": "new-cost_amount",
+      "question": "2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "new-cost_amount",
+      "question": "成本",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "previous-cost_amount",
+      "question": "2024年华南销售额",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "previous-cost_amount",
+      "question": "换个主题，2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "previous-cost_amount",
+      "question": "成本",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "new-loan_amount",
+      "question": "2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "new-loan_amount",
+      "question": "借款本金",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(loan_amount) FROM finance_loans WHERE loan_date>='2025-01-01' AND loan_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "loan_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "previous-loan_amount",
+      "question": "2024年华南销售额",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "previous-loan_amount",
+      "question": "换个主题，2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "previous-loan_amount",
+      "question": "借款本金",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(loan_amount) FROM finance_loans WHERE loan_date>='2025-01-01' AND loan_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "loan_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "abandon",
+      "question": "2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "abandon",
+      "question": "换个主题，2024年华南销售额",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "abandon",
+      "question": "成本",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "reset",
+      "question": "2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "reset",
+      "question": "成本",
+      "reset_context": true,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "reset",
+      "question": "2025年华东销售额",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "isolation-a",
+      "question": "2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "isolation-b",
+      "question": "成本",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "isolation-a",
+      "question": "成本",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "switch-canonical",
+      "question": "2025年华东本金是多少",
+      "reset_context": false,
+      "expected_status": "clarification",
+      "gold_sql": null,
+      "metric_fields": [],
+      "dimension_fields": []
+    },
+    {
+      "session": "switch-canonical",
+      "question": "2024年华南销售额",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    {
+      "session": "switch-canonical",
+      "question": "成本",
+      "reset_context": false,
+      "expected_status": null,
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    }
+  ]
+}

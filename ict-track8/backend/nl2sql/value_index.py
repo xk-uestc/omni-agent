@@ -139,8 +139,10 @@ class ValueIndex:
 
     # ------------------------------------------------------------------ match
     def match(self, normalized: str, linked_columns: set[tuple[str, str]],
-              blocked: list[tuple[int, int]] | None = None) -> tuple[list[ValueMatch], list[ValueAmbiguity]]:
+              blocked: list[tuple[int, int]] | None = None, *,
+              preferred_tables: Iterable[str] = ()) -> tuple[list[ValueMatch], list[ValueAmbiguity]]:
         occupied: list[tuple[int, int]] = list(blocked or [])
+        preferred_tables = set(preferred_tables)
 
         def free(start: int, end: int) -> bool:
             return all(end <= a or start >= b for a, b in occupied)
@@ -153,11 +155,15 @@ class ValueIndex:
 
         candidates: list[tuple[int, int, str, list[ValueEntry], str]] = []
         for key, entries in self.by_normalized.items():
+            if key not in normalized:
+                continue
             usable = [e for e in entries if len(key) >= 2 or (e.table, e.column) in linked_columns]
             if usable:
                 candidates.extend((m.start(), m.end(), key, usable, "exact") for m in re.finditer(re.escape(key), normalized)
                                   if word_boundary(m.start(), m.end(), key))
         for key, entries in self.synonyms.items():
+            if key not in normalized:
+                continue
             candidates.extend((m.start(), m.end(), key, list(entries), "synonym") for m in re.finditer(re.escape(key), normalized)
                               if word_boundary(m.start(), m.end(), key))
         # 最长优先，其次靠前
@@ -173,14 +179,23 @@ class ValueIndex:
                 if len({(e.table, e.column) for e in linked}) == 1:
                     entries = linked
                 else:
-                    ambiguities.append(ValueAmbiguity(normalized[start:end], tuple(entries), "column"))
-                    occupied.append((start, end))
-                    continue
+                    # An unambiguous metric anchors its own fact table. Do not
+                    # confuse duplicated dimension values across unrelated facts
+                    # with two possible fields inside the selected fact.
+                    scoped = [e for e in entries if e.table in preferred_tables]
+                    if len({(e.table, e.column) for e in scoped}) == 1:
+                        entries = scoped
+                    else:
+                        ambiguities.append(ValueAmbiguity(normalized[start:end], tuple(entries), "column"))
+                        occupied.append((start, end))
+                        continue
             entry = entries[0]
             matches.append(ValueMatch(entry.table, entry.column, entry.value, normalized[start:end], start, end, via=via))
             occupied.append((start, end))
         # 词头：只在没有被精确匹配覆盖的位置检查
         for head, entries in self.by_head.items():
+            if head not in normalized:
+                continue
             for m in re.finditer(re.escape(head), normalized):
                 if not free(m.start(), m.end()) or not word_boundary(m.start(), m.end(), head):
                     continue

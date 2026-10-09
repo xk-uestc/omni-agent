@@ -1,0 +1,258 @@
+{
+  "run_id": "literal-fastpath-hard-serial-20261009T000953Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8037",
+  "until_utc": "2026-10-09T00:14:00+00:00",
+  "started_utc": "2026-10-09T00:09:53.105573+00:00",
+  "source_case_count": 391,
+  "case_count_per_cycle": 74,
+  "task_count_per_cycle": 74,
+  "question_order": "ascending_difficulty",
+  "case_selection": "balanced-coverage-tail-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "history": 28,
+    "domain_colloquial": 6,
+    "grouping": 14,
+    "topic_switch": 8,
+    "slang": 6,
+    "vocabulary_variant": 4,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 3,
+    "3": 63,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "ee5674d6ed0ea2164ea4d89bf689c86a08272e71ddd96b85f4429d1e9cd8bd24",
+  "catalog_sha256": "a0e0af6fc1d088d3298836e39950b5615f65fd895d9e1358d6ebaa367f03751c",
+  "scorer_sha256": "fd6c724cdeb5af9d29b092125e9f71b4a900d260b80617ffdc4bd4991d0a4128",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-09T00:14:00.016949+00:00",
+  "elapsed_seconds": 246.9,
+  "total_requests": 535,
+  "passed": 535,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "latency_ms": {
+    "p50": 321.44,
+    "p95": 856.54,
+    "p99": 910.58,
+    "max": 1286.32
+  },
+  "health_checks": {
+    "passed": 9,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 199,
+      "passed": 199,
+      "pass_rate": 1.0,
+      "p50_ms": 727.38,
+      "p95_ms": 898.74
+    },
+    "domain_colloquial": {
+      "total": 48,
+      "passed": 48,
+      "pass_rate": 1.0,
+      "p50_ms": 188.16,
+      "p95_ms": 203.34
+    },
+    "grouping": {
+      "total": 106,
+      "passed": 106,
+      "pass_rate": 1.0,
+      "p50_ms": 307.72,
+      "p95_ms": 329.52
+    },
+    "topic_switch": {
+      "total": 56,
+      "passed": 56,
+      "pass_rate": 1.0,
+      "p50_ms": 540.98,
+      "p95_ms": 747.07
+    },
+    "slang": {
+      "total": 42,
+      "passed": 42,
+      "pass_rate": 1.0,
+      "p50_ms": 310.17,
+      "p95_ms": 328.36
+    },
+    "vocabulary_variant": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 188.59,
+      "p95_ms": 204.79
+    },
+    "derived_metric": {
+      "total": 49,
+      "passed": 49,
+      "pass_rate": 1.0,
+      "p50_ms": 205.21,
+      "p95_ms": 218.83
+    },
+    "literal_value": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 204.62,
+      "p95_ms": 214.79
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 535,
+      "passed": 535,
+      "pass_rate": 1.0,
+      "p50_ms": 321.44,
+      "p95_ms": 856.54
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 24,
+      "passed": 24,
+      "pass_rate": 1.0,
+      "p50_ms": 326.19,
+      "p95_ms": 352.56
+    },
+    "3": {
+      "total": 455,
+      "passed": 455,
+      "pass_rate": 1.0,
+      "p50_ms": 336.46,
+      "p95_ms": 865.09
+    },
+    "4": {
+      "total": 49,
+      "passed": 49,
+      "pass_rate": 1.0,
+      "p50_ms": 205.21,
+      "p95_ms": 218.83
+    },
+    "5": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 204.62,
+      "p95_ms": 214.79
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\literal-fastpath-hard-serial-20261009T000953Z\\results.jsonl",
+  "acceptance_classification": {
+    "attempt_outcomes": {
+      "correct_execution": 535
+    },
+    "first_attempt_unique_cases": 74,
+    "first_attempt_outcomes": {
+      "correct_execution": 74
+    },
+    "unique_cases_seen": 74,
+    "difficulty_order_by_cycle": {
+      "1": "valid",
+      "2": "valid",
+      "3": "valid",
+      "4": "valid",
+      "5": "valid",
+      "6": "valid",
+      "7": "valid",
+      "8": "valid"
+    },
+    "difficulty_order_violations": [],
+    "max_observed_concurrency": 1,
+    "failed_unique_case_count": 0,
+    "repeated_failure_case_count": 0,
+    "top_failed_cases": [],
+    "by_category": {
+      "history": {
+        "correct_execution": 199
+      },
+      "domain_colloquial": {
+        "correct_execution": 48
+      },
+      "grouping": {
+        "correct_execution": 106
+      },
+      "topic_switch": {
+        "correct_execution": 56
+      },
+      "slang": {
+        "correct_execution": 42
+      },
+      "vocabulary_variant": {
+        "correct_execution": 28
+      },
+      "derived_metric": {
+        "correct_execution": 49
+      },
+      "literal_value": {
+        "correct_execution": 7
+      }
+    },
+    "by_difficulty": {
+      "1": {
+        "correct_execution": 24
+      },
+      "3": {
+        "correct_execution": 455
+      },
+      "4": {
+        "correct_execution": 49
+      },
+      "5": {
+        "correct_execution": 7
+      }
+    },
+    "by_difficulty_latency_ms": {
+      "1": {
+        "p50": 326.19,
+        "p95": 352.56,
+        "p99": 356.93
+      },
+      "3": {
+        "p50": 336.46,
+        "p95": 865.09,
+        "p99": 912.55
+      },
+      "4": {
+        "p50": 205.21,
+        "p95": 218.83,
+        "p99": 226.6
+      },
+      "5": {
+        "p50": 204.62,
+        "p95": 214.79,
+        "p99": 214.79
+      }
+    },
+    "model_planning": {
+      "local_rule_calls": 535,
+      "by_model": {},
+      "provider_attempts": {}
+    },
+    "by_load_stage": {
+      "difficulty_serial": {
+        "requests": 535,
+        "outcomes": {
+          "correct_execution": 535
+        },
+        "p50_ms": 321.44,
+        "p95_ms": 856.54,
+        "p99_ms": 910.58,
+        "max_ms": 1286.32
+      }
+    },
+    "health_checks": {
+      "sample_count": 9,
+      "passed": 9,
+      "failed": 0
+    }
+  }
+}

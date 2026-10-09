@@ -175,6 +175,20 @@ def main():
             reports.append(result)
             print(json.dumps({'document': item['document_id'], 'chunks': result['chunk_count'], 'warnings': result['warnings']}, ensure_ascii=False))
         (ROOT / 'docs/SAMPLE_INGEST_REPORT.json').write_text(json.dumps(reports, ensure_ascii=False, indent=2), encoding='utf-8')
+        raysource_manifest = json.loads((ROOT / 'samples/raysource-rag-manifest.json').read_text(encoding='utf-8'))
+        raysource_reports = []
+        for item in raysource_manifest['files']:
+            path = ROOT / 'samples/raysource-rag' / item['filename']
+            raw = path.read_bytes()
+            if hashlib.sha256(raw).hexdigest() != item['sha256']:
+                raise ValueError('睿视清源样例文件与来源清单不一致：' + item['filename'])
+            result = store.ingest(raw, document_id=item['document_id'], title=item['title'],
+                modality=item['modality'], filename=item['filename'], language='chi_sim+eng')
+            raysource_reports.append(result)
+            print(json.dumps({'document': item['document_id'], 'chunks': result['chunk_count'],
+                'source_project': raysource_manifest['source_project']}, ensure_ascii=False))
+        (ROOT / 'docs/RAYSOURCE_SAMPLE_INGEST_REPORT.json').write_text(
+            json.dumps(raysource_reports, ensure_ascii=False, indent=2), encoding='utf-8')
     # Deliver the actual schema, not only an informal field list.
     from backend.nl2sql.seed import initialize_database
     if not (ROOT / 'ict-track8/data/demo_sales.sqlite').exists():

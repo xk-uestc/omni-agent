@@ -32,6 +32,28 @@ def enable_local_model(model='gpt-6-luna'):
                 for name, value in headers.items())):
             raise ValueError('项目模型请求头配置无效')
         os.environ['ICT8_OPENAI_HEADERS'] = json.dumps(headers)
+        fallback_file = project_config.with_name('fallback_model_config.json')
+        fallback_config = json.loads(fallback_file.read_text(encoding='utf-8')) if fallback_file.exists() else []
+        allowed = {
+            'conpera': ('code.conpera.ai', 'gpt-5.6-sol'),
+            'yescode': ('ai.yescode.cloud', 'gpt-5.5'),
+            'spacetime': ('spacetimeai.cc', 'gpt-5.5'),
+        }
+        if not isinstance(fallback_config, list) or len(fallback_config) > 3:
+            raise ValueError('备用模型配置必须包含不超过3个服务')
+        for item in fallback_config:
+            if not isinstance(item, dict) or item.get('provider') not in allowed:
+                raise ValueError('备用模型来源无效')
+            host, expected_model = allowed[item['provider']]
+            endpoint = urlsplit(item.get('base_url', ''))
+            if (endpoint.scheme != 'https' or endpoint.hostname != host or endpoint.port not in (None, 443)
+                    or endpoint.username or endpoint.password or endpoint.query or endpoint.fragment
+                    or item.get('model') != expected_model
+                    or not isinstance(item.get('api_key'), str) or not item['api_key'].strip()
+                    or item.get('reasoning', 'medium') not in {'low', 'medium', 'high', 'xhigh'}):
+                raise ValueError('备用模型配置校验失败')
+        os.environ['ICT8_OPENAI_FALLBACKS'] = json.dumps(fallback_config)
+        os.environ.setdefault('ICT8_OPENAI_HEDGE_DELAY', '2.5')
         os.environ['ICT8_GENERATION_PROVIDER'] = 'responses'
         os.environ['ICT8_PLAN_PROVIDER'] = 'responses'
         return {'model': model, 'reasoning': config.get('reasoning', 'medium'), 'credential_source': 'project_local_excluded_file'}

@@ -1,0 +1,173 @@
+{
+  "run_id": "full-corpus-serial-20261008T215403Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8035",
+  "until_utc": "2026-10-09T01:00:00+00:00",
+  "started_utc": "2026-10-08T21:54:03.617656+00:00",
+  "source_case_count": 377,
+  "case_count_per_cycle": 377,
+  "task_count_per_cycle": 377,
+  "question_order": "ascending_difficulty",
+  "case_selection": "full-authored-corpus-serial-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 65,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 164,
+    "3": 178,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "58d2eb096dfe34d1406f6cbae8ceadd60f29a6c168f230b6357934bf981371eb",
+  "catalog_sha256": "677705c589db82758f5ef9db9ca82534eb04d9fbb6c74e79159331761666a9c8",
+  "scorer_sha256": "c1d6964f451ce04be9bfe7a31c90670899443e29ecf1ecb3b25df5007a4bf7ce",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-08T22:14:06.430641+00:00",
+  "elapsed_seconds": 1202.8,
+  "total_requests": 377,
+  "passed": 342,
+  "failed": 35,
+  "pass_rate": 0.907162,
+  "latency_ms": {
+    "p50": 302.26,
+    "p95": 15172.06,
+    "p99": 20202.52,
+    "max": 34923.907
+  },
+  "health_checks": {
+    "passed": 35,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 741.59,
+      "p95_ms": 902.62
+    },
+    "legacy": {
+      "total": 31,
+      "passed": 31,
+      "pass_rate": 1.0,
+      "p50_ms": 285.79,
+      "p95_ms": 312.73
+    },
+    "catalog_alias": {
+      "total": 65,
+      "passed": 65,
+      "pass_rate": 1.0,
+      "p50_ms": 292.27,
+      "p95_ms": 321.06
+    },
+    "vocabulary_variant": {
+      "total": 108,
+      "passed": 103,
+      "pass_rate": 0.953704,
+      "p50_ms": 289.15,
+      "p95_ms": 343.85
+    },
+    "domain_colloquial": {
+      "total": 25,
+      "passed": 25,
+      "pass_rate": 1.0,
+      "p50_ms": 278.31,
+      "p95_ms": 302.45
+    },
+    "grouping": {
+      "total": 72,
+      "passed": 49,
+      "pass_rate": 0.680556,
+      "p50_ms": 6063.23,
+      "p95_ms": 14362.29
+    },
+    "topic_switch": {
+      "total": 8,
+      "passed": 8,
+      "pass_rate": 1.0,
+      "p50_ms": 633.51,
+      "p95_ms": 783.93
+    },
+    "slang": {
+      "total": 32,
+      "passed": 25,
+      "pass_rate": 0.78125,
+      "p50_ms": 14434.55,
+      "p95_ms": 21439.45
+    },
+    "derived_metric": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 205.33,
+      "p95_ms": 218.48
+    },
+    "literal_value": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 20202.52,
+      "p95_ms": 20202.52
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 377,
+      "passed": 342,
+      "pass_rate": 0.907162,
+      "p50_ms": 302.26,
+      "p95_ms": 15172.06
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 27,
+      "passed": 27,
+      "pass_rate": 1.0,
+      "p50_ms": 285.79,
+      "p95_ms": 436.2
+    },
+    "2": {
+      "total": 164,
+      "passed": 160,
+      "pass_rate": 0.97561,
+      "p50_ms": 289.93,
+      "p95_ms": 324.37
+    },
+    "3": {
+      "total": 178,
+      "passed": 147,
+      "pass_rate": 0.825843,
+      "p50_ms": 4838.28,
+      "p95_ms": 17255.88
+    },
+    "4": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 205.33,
+      "p95_ms": 218.48
+    },
+    "5": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 20202.52,
+      "p95_ms": 20202.52
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\full-corpus-serial-20261008T215403Z\\results.jsonl"
+}

@@ -117,6 +117,30 @@ def test_complete_new_sql_question_with_followup_particle_clears_prior_planning_
     assert '2024-01-01' in result['result']['parameters'] and '华北' in result['result']['parameters']
 
 
+def test_contextless_followup_and_write_only_command_bypass_model_planning(tmp_path):
+    database = initialize_database(tmp_path / 'sales.sqlite')
+    class ForbiddenPlanner:
+        def __init__(self):
+            self.calls = 0
+        def generate(self, *args, **kwargs):
+            self.calls += 1
+            raise AssertionError('incomplete follow-ups and write-only commands are deterministic')
+    planner = ForbiddenPlanner()
+    agent = OmniAgent(Nl2SqlEngine(database), KnowledgeStore(tmp_path / 'knowledge'),
+                      ConversationStore(), planner)
+
+    followup = agent.query('那华南呢', session_id='empty-followup')
+    write = agent.query('把成本改为零', session_id='write-only')
+
+    assert followup['status'] == 'clarification'
+    assert followup['result']['clarification_code'] == 'missing_followup_context'
+    assert followup['context_resolution']['executed'] is False
+    assert write['status'] == 'clarification'
+    assert write['result']['clarification_code'] == 'read_only_query_required'
+    assert write['context_resolution']['executed'] is False
+    assert planner.calls == 0
+
+
 def test_sql_followup_uses_verified_replacement_instead_of_model_added_grouping(tmp_path):
     database = initialize_database(tmp_path/'sales.sqlite')
     class VerboseRewrite:

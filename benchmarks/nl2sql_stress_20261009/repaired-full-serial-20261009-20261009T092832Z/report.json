@@ -1,0 +1,229 @@
+{
+  "run_id": "repaired-full-serial-20261009-20261009T092832Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8039",
+  "until_utc": "2026-10-10T00:00:00+00:00",
+  "started_utc": "2026-10-09T09:28:32.918037+00:00",
+  "source_case_count": 743,
+  "case_count_per_cycle": 743,
+  "task_count_per_cycle": 711,
+  "question_order": "difficulty_bands_preserving_dialogue_sessions",
+  "case_selection": "full-authored-plus-composition-challenges-serial-v2",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 79,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "compound_query": 13,
+    "challenge_grouped": 288,
+    "challenge_multi_metric": 20,
+    "challenge_literal_filter": 13,
+    "challenge_ranked": 8,
+    "safety_clarification": 9,
+    "safety_readonly": 1,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 178,
+    "3": 178,
+    "4": 318,
+    "5": 42
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "53613f2252127e057172c0d54ab5d445a9b0a6b30e66aee33e0052a53f09719b",
+  "catalog_sha256": "a0e0af6fc1d088d3298836e39950b5615f65fd895d9e1358d6ebaa367f03751c",
+  "scorer_sha256": "04b868cba82e16c410fe4983875d7d6790a0cc9f6329e1ee18091427f774deb3",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-09T09:47:26.708147+00:00",
+  "elapsed_seconds": 1133.7,
+  "total_requests": 743,
+  "passed": 723,
+  "failed": 20,
+  "pass_rate": 0.973082,
+  "latency_ms": {
+    "p50": 481.29,
+    "p95": 976.86,
+    "p99": 40011.19,
+    "max": 40022.828
+  },
+  "health_checks": {
+    "passed": 30,
+    "failed": 0
+  },
+  "by_category": {
+    "legacy": {
+      "total": 31,
+      "passed": 31,
+      "pass_rate": 1.0,
+      "p50_ms": 235.44,
+      "p95_ms": 441.15
+    },
+    "history": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 973.43,
+      "p95_ms": 1399.29
+    },
+    "catalog_alias": {
+      "total": 79,
+      "passed": 79,
+      "pass_rate": 1.0,
+      "p50_ms": 229.12,
+      "p95_ms": 297.27
+    },
+    "vocabulary_variant": {
+      "total": 108,
+      "passed": 108,
+      "pass_rate": 1.0,
+      "p50_ms": 230.36,
+      "p95_ms": 469.78
+    },
+    "domain_colloquial": {
+      "total": 25,
+      "passed": 25,
+      "pass_rate": 1.0,
+      "p50_ms": 218.83,
+      "p95_ms": 246.57
+    },
+    "grouping": {
+      "total": 72,
+      "passed": 72,
+      "pass_rate": 1.0,
+      "p50_ms": 527.44,
+      "p95_ms": 655.38
+    },
+    "topic_switch": {
+      "total": 8,
+      "passed": 8,
+      "pass_rate": 1.0,
+      "p50_ms": 704.21,
+      "p95_ms": 1156.62
+    },
+    "slang": {
+      "total": 32,
+      "passed": 32,
+      "pass_rate": 1.0,
+      "p50_ms": 419.61,
+      "p95_ms": 525.8
+    },
+    "challenge_grouped": {
+      "total": 288,
+      "passed": 288,
+      "pass_rate": 1.0,
+      "p50_ms": 541.88,
+      "p95_ms": 828.29
+    },
+    "derived_metric": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 222.31,
+      "p95_ms": 235.75
+    },
+    "compound_query": {
+      "total": 13,
+      "passed": 12,
+      "pass_rate": 0.923077,
+      "p50_ms": 411.74,
+      "p95_ms": 607.74
+    },
+    "safety_readonly": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 338.5,
+      "p95_ms": 338.5
+    },
+    "safety_clarification": {
+      "total": 9,
+      "passed": 7,
+      "pass_rate": 0.777778,
+      "p50_ms": 12.61,
+      "p95_ms": 40008.08
+    },
+    "challenge_literal_filter": {
+      "total": 13,
+      "passed": 13,
+      "pass_rate": 1.0,
+      "p50_ms": 489.69,
+      "p95_ms": 505.96
+    },
+    "challenge_multi_metric": {
+      "total": 20,
+      "passed": 10,
+      "pass_rate": 0.5,
+      "p50_ms": 10799.31,
+      "p95_ms": 40016.43
+    },
+    "challenge_ranked": {
+      "total": 8,
+      "passed": 1,
+      "pass_rate": 0.125,
+      "p50_ms": 40010.9,
+      "p95_ms": 40016.08
+    },
+    "literal_value": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 227.61,
+      "p95_ms": 227.61
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 743,
+      "passed": 723,
+      "pass_rate": 0.973082,
+      "p50_ms": 481.29,
+      "p95_ms": 976.86
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 27,
+      "passed": 27,
+      "pass_rate": 1.0,
+      "p50_ms": 233.68,
+      "p95_ms": 706.83
+    },
+    "3": {
+      "total": 178,
+      "passed": 178,
+      "pass_rate": 1.0,
+      "p50_ms": 507.62,
+      "p95_ms": 1095.28
+    },
+    "2": {
+      "total": 178,
+      "passed": 178,
+      "pass_rate": 1.0,
+      "p50_ms": 231.45,
+      "p95_ms": 455.42
+    },
+    "4": {
+      "total": 318,
+      "passed": 315,
+      "pass_rate": 0.990566,
+      "p50_ms": 535.49,
+      "p95_ms": 852.27
+    },
+    "5": {
+      "total": 42,
+      "passed": 25,
+      "pass_rate": 0.595238,
+      "p50_ms": 566.49,
+      "p95_ms": 40016.08
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\repaired-full-serial-20261009-20261009T092832Z\\results.jsonl"
+}

@@ -37,10 +37,10 @@ def reference_clarification(reason):
 
 class ConversationReferenceAgent:
     _identifier=re.compile(r'^\s*回到(成功的)?SQL查询编号\s*(q_[a-f0-9]{32})[，,:：\s]+(.+)$',re.I)
-    _previous = re.compile(r'^\s*回到(?:上一次|上一条)(成功的)?SQL查询[，,:：\s]+(.+)$', re.I)
-    _backward = re.compile(r'^\s*回到倒数第([0-9]{1,3}|[一二三四五六七八九十两]{1,3})(?:次|条)(成功的)?SQL查询[，,:：\s]+(.+)$', re.I)
+    _previous = re.compile(r'^\s*(?:回到|接着)(?:上一次|上一条|刚才那次|刚才那条)(成功的)?(?:SQL查询|问数查询|数据库查询)[，,:：\s]+(.+)$', re.I)
+    _backward = re.compile(r'^\s*(?:回到|接着)倒数第([0-9]{1,3}|[一二三四五六七八九十两]{1,3})(?:次|条)(成功的)?(?:SQL查询|问数查询|数据库查询)[，,:：\s]+(.+)$', re.I)
     _quote = re.compile(r'^\s*回到(成功的)?SQL查询(?:“([^”]+)”|「([^」]+)」|"([^"]+)")[，,:：\s]+(.+)$', re.I)
-    _prefix = re.compile(r'^\s*回到.*SQL查询', re.I)
+    _prefix = re.compile(r'^\s*(?:回到|接着).*(?:SQL查询|问数查询|数据库查询)', re.I)
 
     @staticmethod
     def _number(value):

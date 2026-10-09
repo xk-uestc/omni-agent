@@ -1,0 +1,415 @@
+{
+  "run_id": "postrepair-serial-20261008T204734Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8035",
+  "until_utc": "2026-10-09T00:00:00+00:00",
+  "started_utc": "2026-10-08T20:47:34.537037+00:00",
+  "source_case_count": 377,
+  "case_count_per_cycle": 154,
+  "task_count_per_cycle": 154,
+  "question_order": "ascending_difficulty",
+  "case_selection": "balanced-coverage-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "history": 28,
+    "legacy": 31,
+    "catalog_alias": 40,
+    "vocabulary_variant": 13,
+    "domain_colloquial": 6,
+    "grouping": 14,
+    "topic_switch": 8,
+    "slang": 6,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 56,
+    "3": 63,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "b5a7d27f9281d0084d172b36d3138b7dcbefc2113a3a6b065c9cb72257666754",
+  "catalog_sha256": "677705c589db82758f5ef9db9ca82534eb04d9fbb6c74e79159331761666a9c8",
+  "scorer_sha256": "2aa56b3c2ca14bd756de0ab2e2b096571cd3a04bdace3061f006a340fbaa1c96",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-08T20:53:59.968005+00:00",
+  "elapsed_seconds": 385.4,
+  "total_requests": 154,
+  "passed": 148,
+  "failed": 6,
+  "pass_rate": 0.961039,
+  "latency_ms": {
+    "p50": 290.23,
+    "p95": 14333.05,
+    "p99": 39829.32,
+    "max": 40031.0
+  },
+  "health_checks": {
+    "passed": 11,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 747.84,
+      "p95_ms": 967.35
+    },
+    "legacy": {
+      "total": 31,
+      "passed": 31,
+      "pass_rate": 1.0,
+      "p50_ms": 282.71,
+      "p95_ms": 305.19
+    },
+    "catalog_alias": {
+      "total": 40,
+      "passed": 40,
+      "pass_rate": 1.0,
+      "p50_ms": 282.31,
+      "p95_ms": 304.44
+    },
+    "vocabulary_variant": {
+      "total": 13,
+      "passed": 10,
+      "pass_rate": 0.769231,
+      "p50_ms": 289.01,
+      "p95_ms": 40031.0
+    },
+    "domain_colloquial": {
+      "total": 6,
+      "passed": 6,
+      "pass_rate": 1.0,
+      "p50_ms": 275.83,
+      "p95_ms": 297.9
+    },
+    "grouping": {
+      "total": 14,
+      "passed": 12,
+      "pass_rate": 0.857143,
+      "p50_ms": 6604.02,
+      "p95_ms": 28273.85
+    },
+    "topic_switch": {
+      "total": 8,
+      "passed": 8,
+      "pass_rate": 1.0,
+      "p50_ms": 627.39,
+      "p95_ms": 733.05
+    },
+    "slang": {
+      "total": 6,
+      "passed": 5,
+      "pass_rate": 0.833333,
+      "p50_ms": 13973.04,
+      "p95_ms": 39829.32
+    },
+    "derived_metric": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 197.42,
+      "p95_ms": 207.11
+    },
+    "literal_value": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 30657.33,
+      "p95_ms": 30657.33
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 154,
+      "passed": 148,
+      "pass_rate": 0.961039,
+      "p50_ms": 290.23,
+      "p95_ms": 14333.05
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 27,
+      "passed": 27,
+      "pass_rate": 1.0,
+      "p50_ms": 283.68,
+      "p95_ms": 432.59
+    },
+    "2": {
+      "total": 56,
+      "passed": 54,
+      "pass_rate": 0.964286,
+      "p50_ms": 283.72,
+      "p95_ms": 306.51
+    },
+    "3": {
+      "total": 63,
+      "passed": 59,
+      "pass_rate": 0.936508,
+      "p50_ms": 800.58,
+      "p95_ms": 20729.65
+    },
+    "4": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 197.42,
+      "p95_ms": 207.11
+    },
+    "5": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 30657.33,
+      "p95_ms": 30657.33
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\postrepair-serial-20261008T204734Z\\results.jsonl",
+  "acceptance_classification": {
+    "attempt_outcomes": {
+      "correct_execution": 148,
+      "technical_failure": 1,
+      "clarification_unanswered": 5
+    },
+    "first_attempt_unique_cases": 154,
+    "first_attempt_outcomes": {
+      "correct_execution": 148,
+      "technical_failure": 1,
+      "clarification_unanswered": 5
+    },
+    "unique_cases_seen": 154,
+    "difficulty_order_by_cycle": {
+      "1": "valid"
+    },
+    "difficulty_order_violations": [],
+    "max_observed_concurrency": 1,
+    "failed_unique_case_count": 6,
+    "repeated_failure_case_count": 0,
+    "top_failed_cases": [
+      {
+        "case_id": "variant-legacy-03-1-shipping_cost-02",
+        "question": "2025年华东地区配送成本",
+        "category": "vocabulary_variant",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "technical_failure": 1
+        },
+        "mean_ms": 40031.0,
+        "max_ms": 40030.996,
+        "clarification": null,
+        "last_error": "TimeoutError"
+      },
+      {
+        "case_id": "slang-refund_amount-01",
+        "question": "麻烦查下2025年退回来的钱，给个总数",
+        "category": "slang",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 25607.58,
+        "max_ms": 25607.575,
+        "clarification": "当前数据源没有识别出可查询的数据表，请说明业务对象或数据主题。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-campaign_budget-campaign_type",
+        "question": "2025年按营销类型分别统计营销预算",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 16437.49,
+        "max_ms": 16437.487,
+        "clarification": "请确认 marketing_campaigns.start_date 的存储格式（例如 ISO 文本 YYYY-MM-DD）。该字段为 TEXT，当前未提供已验证的日期格式，无法可靠限定 2025 年范围。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-expense_amount-expense_category",
+        "question": "2025年按费用类别分别统计费用金额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 14333.05,
+        "max_ms": 14333.049,
+        "clarification": "expense_date 的日期存储格式未提供验证信息。请确认是否为可按 ISO 文本范围比较的格式（例如 YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS），以便按 2025-01-01（含）至 2026-01-01（不含）筛选。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "variant-legacy-05-1-purchase_amount-02",
+        "question": "2025年华东地区买进花了多少",
+        "category": "vocabulary_variant",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 29.78,
+        "max_ms": 29.781,
+        "clarification": "“花了多少”的含义需要确认：同一个口语概念对应多个真实指标，请确认具体口径。可选字段：purchase_orders.purchase_amount（采购金额）、shipment_records.shipping_cost（运费）、operating_expenses.expense_amount（费用金额）、payroll_records.salary_amount（薪酬总额）、payroll_records.base_salary（薪资）、sales_orders.sales_amount（销售成本）。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "variant-history-topic-06-purchase_amount-02",
+        "question": "2025年华北买进花了多少",
+        "category": "vocabulary_variant",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 4.72,
+        "max_ms": 4.72,
+        "clarification": "“花了多少”的含义需要确认：同一个口语概念对应多个真实指标，请确认具体口径。可选字段：purchase_orders.purchase_amount（采购金额）、shipment_records.shipping_cost（运费）、operating_expenses.expense_amount（费用金额）、payroll_records.salary_amount（薪酬总额）、payroll_records.base_salary（薪资）、sales_orders.sales_amount（销售成本）。",
+        "last_error": "missing_sql"
+      }
+    ],
+    "by_category": {
+      "history": {
+        "correct_execution": 28
+      },
+      "legacy": {
+        "correct_execution": 31
+      },
+      "catalog_alias": {
+        "correct_execution": 40
+      },
+      "vocabulary_variant": {
+        "correct_execution": 10,
+        "technical_failure": 1,
+        "clarification_unanswered": 2
+      },
+      "domain_colloquial": {
+        "correct_execution": 6
+      },
+      "grouping": {
+        "clarification_unanswered": 2,
+        "correct_execution": 12
+      },
+      "topic_switch": {
+        "correct_execution": 8
+      },
+      "slang": {
+        "correct_execution": 5,
+        "clarification_unanswered": 1
+      },
+      "derived_metric": {
+        "correct_execution": 7
+      },
+      "literal_value": {
+        "correct_execution": 1
+      }
+    },
+    "by_difficulty": {
+      "1": {
+        "correct_execution": 27
+      },
+      "2": {
+        "correct_execution": 54,
+        "technical_failure": 1,
+        "clarification_unanswered": 1
+      },
+      "3": {
+        "correct_execution": 59,
+        "clarification_unanswered": 4
+      },
+      "4": {
+        "correct_execution": 7
+      },
+      "5": {
+        "correct_execution": 1
+      }
+    },
+    "by_difficulty_latency_ms": {
+      "1": {
+        "p50": 283.68,
+        "p95": 432.59,
+        "p99": 906.3
+      },
+      "2": {
+        "p50": 283.72,
+        "p95": 306.51,
+        "p99": 40031.0
+      },
+      "3": {
+        "p50": 800.58,
+        "p95": 20729.65,
+        "p99": 39829.32
+      },
+      "4": {
+        "p50": 197.42,
+        "p95": 207.11,
+        "p99": 207.11
+      },
+      "5": {
+        "p50": 30657.33,
+        "p95": 30657.33,
+        "p99": 30657.33
+      }
+    },
+    "model_planning": {
+      "local_rule_calls": 141,
+      "by_model": {
+        "gpt-5.6-sol": {
+          "calls": 5,
+          "p50_ms": 9142.48,
+          "p95_ms": 9838.84,
+          "winning_providers": {
+            "code.conpera.ai": 5
+          }
+        },
+        "gpt-6-luna": {
+          "calls": 2,
+          "p50_ms": 6933.46,
+          "p95_ms": 22291.3,
+          "winning_providers": {
+            "spacetimeai.cc": 2
+          }
+        }
+      },
+      "provider_attempts": {
+        "spacetimeai.cc": {
+          "attempts": 12,
+          "p50_ms": 4432.8,
+          "p95_ms": 19785.73
+        },
+        "code.conpera.ai": {
+          "attempts": 9,
+          "p50_ms": 9142.33,
+          "p95_ms": 9838.58
+        }
+      }
+    },
+    "by_load_stage": {
+      "difficulty_serial": {
+        "requests": 154,
+        "outcomes": {
+          "correct_execution": 148,
+          "technical_failure": 1,
+          "clarification_unanswered": 5
+        },
+        "p50_ms": 290.23,
+        "p95_ms": 14333.05,
+        "p99_ms": 39829.32,
+        "max_ms": 40031.0
+      }
+    },
+    "health_checks": {
+      "sample_count": 11,
+      "passed": 11,
+      "failed": 0
+    }
+  }
+}

@@ -57,11 +57,36 @@ def alias_owner_prefix(text, start, tables, alias_tables=None):
     return first, chosen
 
 
-def _group_spans(text):
+def _group_spans(text, metric_rules=()):
     """Local grouping syntax; 'each latest record' is not an aggregate grain."""
     spans = [(m.start(1), m.end(1)) for m in re.finditer(
-        r'(?<!不)按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', text)
+        r'(?<!不)按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总|拆开|拆分|分开)', text)
         if not re.search(r'筛选|过滤|限定', m.group(1))]
+    # Chinese ``各X指标`` and ``每个X指标`` omit an explicit group-by verb.
+    # A real metric alias provides the boundary without guessing the dimension.
+    metric_starts = set()
+    dimension_aliases = [normalized(alias)
+        for rule in metric_rules if getattr(rule, 'role', None) == 'dimension'
+        for alias in getattr(rule, 'aliases', ()) if len(normalized(alias)) >= 2]
+    for rule in metric_rules:
+        if getattr(rule, 'role', None) != 'metric':
+            continue
+        for alias in getattr(rule, 'aliases', ()):
+            normalized_alias = normalized(alias)
+            if len(normalized_alias) < 2:
+                continue
+            for match in re.finditer(re.escape(normalized_alias), text):
+                if not any(len(alias) > len(normalized_alias) and text.startswith(alias, match.start())
+                           for alias in dimension_aliases):
+                    metric_starts.add(match.start())
+    for marker in re.finditer(r'各|每个|每一', text):
+        metric_start = min((start for start in metric_starts if start >= marker.end()), default=None)
+        if metric_start is None:
+            continue
+        scope = text[marker.end():metric_start]
+        if (0 < len(scope) <= 80 and not re.search(
+                r'筛选|过滤|限定|分组|统计|计算|汇总|按月|按年', scope)):
+            spans.append((marker.end(), metric_start))
     # A bare physical identifier is admitted only at an aggregate clause,
     # not from '每个X最新记录' or an arbitrary occurrence of '各'.
     spans.extend((m.start(1), m.end(1)) for m in re.finditer(
@@ -116,9 +141,9 @@ def excluded_filter_scope(text, tables):
     return masked, spans
 
 
-def alias_in_group(text, start, end):
+def alias_in_group(text, start, end, metric_rules=()):
     """Only this occurrence's local grouping clause gives a numeric alias a role."""
-    return any(a <= start and end <= b for a, b in _group_spans(text))
+    return any(a <= start and end <= b for a, b in _group_spans(text, metric_rules))
 
 
 def _qualified_fields(text, tables):
@@ -270,17 +295,65 @@ def filter_only(text, column):
         text[m.end():]) for m in occurrences)
 
 
-def group_fields(text, tables):
-    groups = _group_spans(text)
+def group_fields(text, tables, alias_rules=()):
+    alias_rules = tuple(alias_rules) or tuple(infer_rules(tables))
+    groups = _group_spans(text, alias_rules)
     ownership = field_owners(text, tables)
     fields = set()
     for start, end in groups:
-        for column, owners in field_owners(text[start:end], tables).items():
+        scope = text[start:end]
+        for column, owners in field_owners(scope, tables).items():
             # A local explicit owner wins; a bare group name uses the whole
             # question's uniquely named source, otherwise retains ambiguity.
             if len(owners) > 1:
                 owners = ownership.get(column, owners)
             fields.update((owner, column) for owner in owners)
+        alias_matches = []
+        for rule in alias_rules:
+            if getattr(rule, 'role', None) != 'dimension':
+                continue
+            for alias in getattr(rule, 'aliases', ()):
+                value = normalized(alias)
+                if len(value) < 2:
+                    continue
+                score = (min(.99, .58 + len(value) * .08)
+                         if getattr(rule, 'confidence', None) is None
+                         else min(.99, rule.confidence + min(.2, len(value) * .02)))
+                alias_matches.extend((match.start(), match.end(), score, rule.table, rule.column)
+                                     for match in re.finditer(re.escape(value), scope))
+        specific_matches = [item for item in alias_matches if not any(
+            other[:2] != item[:2] and other[0] <= item[0] and item[1] <= other[1]
+            and other[1] - other[0] > item[1] - item[0]
+            for other in alias_matches)]
+        for alias_start, alias_end, score, table, column in specific_matches:
+            same_span = [item for item in specific_matches
+                         if item[:2] == (alias_start, alias_end)]
+            if score < max(item[2] for item in same_span):
+                continue
+            owners = []
+            for candidate in tables:
+                for table_alias in table_aliases(candidate.name):
+                    prefix = (r'(?<![a-z0-9_])' + re.escape(normalized(table_alias))
+                              + r'(?:表的|中的|内的|里的|的|表中|中|\.)?$')
+                    match = re.search(prefix, scope[:alias_start])
+                    if match:
+                        owners.append((match.start(), candidate.name))
+            if owners:
+                nearest = max(position for position, _ in owners)
+                scoped_owners = {owner for position, owner in owners if position == nearest}
+                if len(scoped_owners) == 1 and table not in scoped_owners:
+                    continue
+            elif alias_end - alias_start <= 2:
+                # Short labels like 地区/渠道/状态 are reused across tables
+                # and may also name a dimension on the fact table. Let the
+                # metric-aware dimension picker bind them after source choice.
+                continue
+            elif len({(item[3], item[4]) for item in same_span
+                      if item[2] == max(candidate[2] for candidate in same_span)}) > 1:
+                # Generic aliases such as “地区” occur on many fact tables.
+                # Leave their final scope to the metric-aware dimension picker.
+                continue
+            fields.add((table, column))
     return fields
 
 

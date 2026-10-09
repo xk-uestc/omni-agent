@@ -8,7 +8,7 @@ const excelForm=element('form'),excelInput=element('input'),excelSend=element('b
 excelInput.type='file';excelInput.accept='.xlsx';excelInput.required=true;excelInput.setAttribute('aria-label','不规则Excel文件');excelStatus.setAttribute('aria-live','polite');
 excelForm.append(excelInput,excelSend);excelSection.append(element('h2','Excel · 表格识别与单元格核对'),
   element('p','识别分层表头、多个表块、独立单位行与合并关系；点击单元格可看原始坐标。空值、零、公式和合计分别展示。未知表头可以指定区域和层数，0表示无表头。预览不修改原文件。','muted'),excelForm,excelStatus,excelResult);
-$('text-quality-form').closest('section').insertAdjacentElement('beforebegin',excelSection);
+document.querySelector('#visual-dialog').insertAdjacentElement('beforebegin',excelSection);
 excelInput.addEventListener('change',()=>{excelRevision++;excelController?.abort();excelController=null;excelPayload=null;excelFile=null;excelOptions=null;excelSend.disabled=false;excelResult.replaceChildren();excelStatus.textContent='';});
 function renderExcel(payload){
   const tables=window.ExcelPreview.tables(payload),controls=[];excelResult.replaceChildren();
@@ -122,7 +122,9 @@ function renderOmni(box,question,data,activeSession,timeline=null){
   timeline=timeline||createConversationTimeline();timeline.finish(data);
   box.replaceChildren(element('b',question),timeline.root);
   const r=data.result;box.append(element('p',`独立问题：${data.effective_question}`,'muted'));
+  if(data.routing?.label)box.append(element('p',`${data.routing.label} · ${data.routing.reason||''}`,'muted'));
   appendAnswer(box,r);
+  const tableSource=window.SourceEvidence?.sql(r,{api:base,request});if(tableSource)box.append(tableSource);
   if(data.route==='tasks'){
     const list=element('div');
     for(const item of window.ConversationContext.catalogItems(data)){
@@ -141,7 +143,12 @@ function renderOmni(box,question,data,activeSession,timeline=null){
       list.append(row);
     }box.append(list);
   }
-  if(r.rows?.length)box.append(element('pre',JSON.stringify(r.rows,null,2)));
+  if(r.rows?.length){
+    const wrap=element('div',null,'scan-table-structure'),table=element('table'),head=element('thead'),line=element('tr');
+    const columns=r.columns||Object.keys(r.rows[0]);columns.forEach(column=>line.append(element('th',column)));head.append(line);table.append(head);
+    const body=element('tbody');r.rows.forEach(row=>{const tr=element('tr');columns.forEach(column=>tr.append(element('td',row[column]??'—')));body.append(tr);});
+    table.append(body);wrap.append(table);box.append(wrap);
+  }
   if(r.clarification)box.append(element('p',r.clarification));
   if(r.status==='clarification'){
     const choices=element('div',null,'toolbar');choices.setAttribute('aria-label','澄清选项');
@@ -177,11 +184,40 @@ function renderOmni(box,question,data,activeSession,timeline=null){
     else box.append(element('p','请在输入框补充具体时间、字段或统计口径。','muted'));
   }
   if(r.results){
-    if(r.status==='ok')box.append(element('pre',JSON.stringify(Object.values(r.results).at(-1),null,2)));
+    if(r.status==='ok'){
+      for(const [id,step] of Object.entries(r.results)){
+        const section=element('section',null,'citation');section.append(element('b',`联合查询 · ${id}`));
+        if(step.rows?.length){
+          const wrap=element('div',null,'scan-table-structure'),table=element('table'),head=element('tr');
+          const columns=step.columns||Object.keys(step.rows[0]);columns.forEach(column=>head.append(element('th',column)));table.append(head);
+          step.rows.forEach(row=>{const line=element('tr');columns.forEach(column=>line.append(element('td',row[column]??'—')));table.append(line);});
+          wrap.append(table);section.append(wrap);
+          const source=window.SourceEvidence?.sql(step,{api:base,request});if(source)section.append(source);
+        }
+        else if(Array.isArray(step.hits)){
+          if(!step.hits.length)section.append(element('p','当前检索没有找到相关资料。','muted'));
+          step.hits.forEach(hit=>{
+            const source=element('article',null,'citation');source.append(element('b',hit.title||'资料片段'),element('pre',hit.snippet||hit.text||''));
+            if(hit.metadata?.document_id){source.append(originalLink(hit.metadata.document_id,'查看原文'));addVisualAction(source,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256);}
+            const chunkSource=window.SourceEvidence?.citation(hit,{api:base,request});if(chunkSource)source.append(chunkSource);
+            section.append(source);
+          });
+        }
+        else section.append(element('pre',JSON.stringify(step,null,2)));
+        box.append(section);
+      }
+    }
     else box.append(element('p','计算尚未完成，中间结果仅保留于审计详情。','muted'));
   }
   if(r.error)box.append(element('p',r.error,'error'));
-  if(r.citations?.length){const sources=element('div',null,'toolbar');r.citations.forEach(hit=>addVisualAction(sources,hit.metadata?.document_id,hit.metadata?.page_no,hit.metadata?.source_sha256,undefined,r.visual_source_proof?.parts?.[hit.citation_id-1],{metadata:hit.metadata,selection:r.native_row_proof?.selection}));if(sources.childElementCount)box.append(sources);}
+  if(r.citations?.length){
+    const sources=element('div',null,'source-answer-citations');sources.append(element('h3','回答来源'));
+    r.citations.forEach(hit=>{
+      const card=element('article',null,'citation');card.append(element('b',`[${hit.citation_id}] ${hit.title||'资料'}`),element('pre',hit.snippet||''));
+      const chunkSource=window.SourceEvidence?.citation(hit,{api:base,request});if(chunkSource)card.append(chunkSource);
+      addVisualAction(card,hit.metadata?.document_id,hit.metadata?.page_no,hit.metadata?.source_sha256,undefined,r.visual_source_proof?.parts?.[hit.citation_id-1],{metadata:hit.metadata,selection:r.native_row_proof?.selection});sources.append(card);
+    });box.append(sources);
+  }
   const details=element('details');details.append(element('summary','查看真实工具步骤、SQL、引用和状态'),element('pre',JSON.stringify(data,null,2)));box.append(details);
 }
 function element(tag,text,className){const e=document.createElement(tag);if(text!=null)e.textContent=String(text);if(className)e.className=className;return e;}
@@ -248,7 +284,87 @@ function appendAnswer(host,result){
 async function responseError(response){let data;try{data=await response.json();}catch{return Error(`服务请求失败（HTTP ${response.status}）`);}return Error(response.status===401?'需要服务访问授权，请在页首填写当前服务的访问令牌。':typeof data.detail==='string'?data.detail:JSON.stringify(data.detail||data));}
 async function request(path,payload,signal){const r=await authFetch(path,{method:payload?'POST':'GET',headers:payload?{'Content-Type':'application/json'}:{},body:payload?JSON.stringify(payload):undefined,signal});if(!r.ok)throw await responseError(r);return r.json();}
 function originalLink(documentId,label){const a=element('a',label);a.href=`/api/v1/knowledge/documents/${encodeURIComponent(documentId)}/original`;a.target='_blank';a.rel='noopener';return a;}
-async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();documentCatalog.clear();const previousSource=$('query-document').value;$('query-document').replaceChildren(element('option','由检索定位资料'));$('query-document').firstChild.value='';data.documents.forEach(doc=>{const option=element('option',doc.title);option.value=doc.document_id;$('query-document').append(option);documentCatalog.set(doc.document_id,doc);const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));addVisualAction(item,doc.document_id,1,doc.sha256,doc.modality);if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));const quality=doc.analysis?.metrics?.text_quality;if(quality&&(quality.changed_lines||quality.typo_candidate_count))item.append(element('p',`文字质量：繁简 ${quality.changed_lines} 行 · 疑似错字 ${quality.typo_candidate_count} 处（请核对原文）`,'muted'));$('documents').append(item);});if(documentCatalog.has(previousSource))$('query-document').value=previousSource;$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
+async function streamKnowledgeQuery(payload,onAudit,onTrace,signal){
+  const response=await authFetch('/api/v1/knowledge/query/stream',{method:'POST',headers:{'Content-Type':'application/json',Accept:'text/event-stream'},body:JSON.stringify(payload),signal});
+  if(!response.ok)throw await responseError(response);if(!response.body)throw Error('连接没有返回检索事件。');
+  const reader=response.body.getReader(),decoder=new TextDecoder();let buffer='',result=null;
+  while(true){
+    const {value,done}=await reader.read();buffer+=decoder.decode(value||new Uint8Array(),{stream:!done}).replace(/\r\n/g,'\n');
+    let boundary;
+    while((boundary=buffer.indexOf('\n\n'))>=0){
+      const block=buffer.slice(0,boundary);buffer=buffer.slice(boundary+2);let type='message';const data=[];
+      for(const line of block.split('\n')){if(line.startsWith('event:'))type=line.slice(6).trim();if(line.startsWith('data:'))data.push(line.slice(5).trimStart());}
+      if(!data.length)continue;const event=JSON.parse(data.join('\n'));
+      if(type==='audit')onAudit?.(event);
+      if(type==='trace')onTrace?.(event);
+      if(type==='done')result=event;
+      if(type==='error')throw Error(event.detail?.message||'文档问答执行失败');
+    }
+    if(done)break;
+  }
+  if(!result)throw Error('连接结束，但没有返回完整结果。');return result;
+}
+function renderRetrievalAudit(result){
+  const runs=[];
+  if(result.retrieval_audit)runs.push({label:'主问题',audit:result.retrieval_audit});
+  (result.component_answers||[]).forEach((part,index)=>{if(part.retrieval_audit)runs.push({label:`子问题 ${index+1}`,audit:part.retrieval_audit});});
+  if(!runs.length)return null;
+  const panel=element('section',null,'rag-audit');panel.append(element('h2','RAG 检索审计'));
+  for(const run of runs){
+    const audit=run.audit||{},candidates=audit.candidates||[];
+    const details=element('details',null,'rag-run');details.open=true;
+    const dense=audit.dense_status==='enabled'?'BGE Dense 已参与':audit.dense_status==='skipped_unsupported_query_language'?'Dense 因语言范围跳过':audit.dense_status==='not_configured'?'Dense 未配置':audit.dense_status==='not_run_no_exact_identifier_match'?'精确标识符无匹配，未执行 Dense':'Dense 未执行';
+    details.append(element('summary',`${run.label} · ${audit.candidate_count||0} 个候选 · ${audit.selected_count||0} 个初选证据`));
+    details.append(element('p',`问题：${audit.query||'见整问'} · ${audit.ranking_method==='rrf_then_page_scope_and_body_affinity'?'BM25 / Dense / RRF 后按页范围与正文相关度排序':'BM25 候选排序'}`,'rag-query'));
+    const overview=element('div',null,'rag-overview');
+    [[`范围`,audit.scope?.document_id?(documentCatalog.get(audit.scope.document_id)?.title||audit.scope.document_id):'自动检索'],['BM25','关键词召回'],['Dense',dense],['RRF',audit.channels?.includes('rrf')?'名次融合':'未执行'],['证据选择',`${audit.selected_count||0} / ${audit.selection_budget||0}`]].forEach(([label,value])=>{
+      const item=element('div',null,'rag-stage');item.append(element('small',label),element('strong',value));overview.append(item);
+    });
+    details.append(overview,element('p','BM25 原始分、向量余弦相似度和 RRF 名次分属于不同尺度；RRF 不是概率。候选排序只用于检索导航，入选不代表事实已核实。','rag-note'));
+    const selection=audit.selection||{};
+    if(selection.query_facets){
+      const coverage=element('div',null,'rag-coverage'),covered=selection.covered_lexical_facets||[],uncovered=selection.uncovered_lexical_facets||[];
+      coverage.append(element('strong',`词面覆盖 ${covered.length} / ${Object.keys(selection.query_facets).length}`));
+      coverage.append(element('span',uncovered.length?`未覆盖：${uncovered.slice(0,12).join('、')}${uncovered.length>12?'…':''}`:'本轮可见词面均有候选覆盖','muted'));
+      details.append(coverage);
+    }
+    const renderCandidate=candidate=>{
+      const card=element('article',null,'rag-candidate'),heading=element('div',null,'rag-candidate-heading');
+      heading.append(element('span',candidate.ranking_rank==null?(candidate.evidence_recovery_rank?`补充检索 #${candidate.evidence_recovery_rank}`:'后续证据'):`#${candidate.ranking_rank}`,'rag-rank'),element('strong',candidate.title||candidate.chunk_id||'未命名片段'));
+      const role=candidate.selection_role||candidate.evidence_recovery_role;
+      if(role)heading.append(element('span',role==='primary'?'主证据候选':'补充证据候选','rag-tag selected'));
+      else if(candidate.final_citation_ids?.length)heading.append(element('span','后续核验引用','rag-tag cited'));
+      else heading.append(element('span','未进入初选','rag-tag muted-tag'));
+      card.append(heading);if(candidate.snippet)card.append(element('p',candidate.snippet,'rag-snippet'));
+      const score=(value,digits=4)=>typeof value==='number'&&Number.isFinite(value)?value.toFixed(digits):'未产生';
+      const metrics=element('div',null,'rag-metrics');
+      [['BM25',candidate.bm25_rank?`#${candidate.bm25_rank} · 原始 ${score(candidate.bm25_raw,3)} · 相对 ${score(candidate.bm25_relative)}`:'未命中'],
+        ['Dense',candidate.dense_rank?`#${candidate.dense_rank} · ${score(candidate.dense_cosine)}`:audit.dense_status==='enabled'?'无 Dense 命中或低于阈值':dense],
+        ['RRF',candidate.rrf_rank?`#${candidate.rrf_rank} · ${score(candidate.rrf_score,6)}`:'未执行'],
+        ['融合排序',candidate.ranking_rank==null?(candidate.evidence_recovery_rank?`补充检索 #${candidate.evidence_recovery_rank} · ${score(candidate.ranking_score,5)}`:'后续补入'):`#${candidate.ranking_rank} · ${score(candidate.ranking_score,5)}`]
+      ].forEach(([label,value])=>{const metric=element('span',null,'rag-metric');metric.append(element('small',label),element('b',value));metrics.append(metric);});
+      card.append(metrics);
+      const footer=element('div',null,'rag-candidate-footer');
+      const locator=[candidate.source_locator,candidate.page_no?`第 ${candidate.page_no} 页`:null,candidate.sheet_name?`${candidate.sheet_name}${candidate.row_start?` · 行 ${candidate.row_start}${candidate.row_end&&candidate.row_end!==candidate.row_start?`-${candidate.row_end}`:''}`:''}`:null].filter(Boolean).join(' · ');
+      if(locator)footer.append(element('span',locator,'muted'));
+      if(candidate.source_document_id)footer.append(originalLink(candidate.source_document_id,'打开原文件'));
+      (candidate.final_citation_ids||[]).forEach(id=>{const link=element('a',`回答引用 [${id}]`);link.href=`#citation-${encodeURIComponent(id)}`;footer.append(link);});
+      if(candidate.new_lexical_facets?.length)footer.append(element('span',`本步新增覆盖：${candidate.new_lexical_facets.slice(0,8).join('、')}`,'muted'));
+      if(footer.childElementCount)card.append(footer);return card;
+    };
+    const selected=candidates.filter(item=>item.selected_in_initial_coverage||item.evidence_recovery_role||item.final_citation_ids?.length),visible=[...candidates.slice(0,6)];
+    selected.forEach(item=>{if(!visible.includes(item))visible.push(item);});
+    const list=element('div',null,'rag-candidates');visible.forEach(item=>list.append(renderCandidate(item)));
+    if(!candidates.length)list.append(element('p','本轮没有形成可展示的检索候选。','muted'));
+    details.append(list);
+    const rest=candidates.filter(item=>!visible.includes(item));
+    if(rest.length){const more=element('details',null,'rag-more'),restList=element('div',null,'rag-candidates');more.append(element('summary',`查看其余 ${rest.length} 个候选`));rest.forEach(item=>restList.append(renderCandidate(item)));more.append(restList);details.append(more);}
+    if(audit.evidence_recovery_navigation){const recovery=audit.evidence_recovery_navigation;details.append(element('p',`证据补充检索：${recovery.status||'已执行'} · ${recovery.queries?.length||0} 条导航查询 · ${recovery.new_chunk_ids?.length||0} 个新增片段`,'rag-note'));}
+    panel.append(details);
+  }
+  return panel;
+}
+async function refresh(){const data=await request('/api/v1/knowledge/documents');$('documents').replaceChildren();documentCatalog.clear();const previousSource=$('query-document').value;$('query-document').replaceChildren(element('option','由检索定位资料'));$('query-document').firstChild.value='';data.documents.forEach(doc=>{const option=element('option',doc.title);option.value=doc.document_id;$('query-document').append(option);documentCatalog.set(doc.document_id,doc);const item=element('div',null,'doc');item.append(element('b',doc.title),element('span',doc.modality.toUpperCase(),'tag'),element('small',` · ${doc.chunk_count} 个片段 · `),originalLink(doc.document_id,'原文件'));addVisualAction(item,doc.document_id,1,doc.sha256,doc.modality);if(doc.warnings.length)item.append(element('p',doc.warnings.join('；'),'muted'));$('documents').append(item);});if(documentCatalog.has(previousSource))$('query-document').value=previousSource;$('status').textContent=`${data.documents.length} 份资料 · 本项目独立知识库`;}
 
 function addVisualAction(host,documentId,pageNo,sourceSha,modality,visualPart,nativeContext){
   const record=documentCatalog.get(documentId);
@@ -364,14 +480,13 @@ $('visual-table-form').addEventListener('submit',async event=>{
   }catch(error){if(revision===visualRevision&&!signal.aborted)showError(host,error);}
   finally{if(revision===visualRevision&&!signal.aborted&&$('visual-dialog').open)button.disabled=false;}
 });
-const qualityLabels={page_orientation_detected:'检测到颠倒或侧转，请核对原图',page_skew_detected:'检测到页面倾斜',page_orientation_undetermined:'文字不足或方向混杂，无法判定页面方向',page_exif_orientation_corrected:'已按EXIF方向信息校正OCR输入'};
-function qualityMessage(code){return qualityLabels[code]||code;}
 function showError(host,error){host.replaceChildren(element('p',error.message,'error'));}
-let documentQueryTimeline=null;
-window.addEventListener('pagehide',()=>documentQueryTimeline?.dispose());
+let documentQueryTimeline=null,documentQueryController=null;
+window.addEventListener('pagehide',()=>{documentQueryController?.abort();documentQueryTimeline?.dispose();});
 $('upload').addEventListener('submit',async event=>{event.preventDefault();const file=$('file').files[0];if(!file)return;const button=event.target.querySelector('button');button.disabled=true;try{if(file.size>20*1024*1024)throw Error('单个文件不能超过20 MiB');const ext=file.name.split('.').pop().toLowerCase();const modality=['png','jpg','jpeg','webp'].includes(ext)?'image':ext;const bytes=new Uint8Array(await file.arrayBuffer());let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));await request('/api/v1/knowledge/ingest',{document_id:'upload-'+crypto.randomUUID(),title:$('title').value||file.name,filename:file.name,modality,file_base64:btoa(binary),language:'chi_sim+eng'});await refresh();event.target.reset();}catch(e){$('status').textContent=e.message;}finally{button.disabled=false;}});
 $('ask').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
+  documentQueryController?.abort();const controller=new AbortController();documentQueryController=controller;
   documentQueryTimeline?.dispose();documentQueryTimeline=window.ToolTimeline.create();
   const timeline=documentQueryTimeline;
   $('answer').replaceChildren(timeline.root);
@@ -381,7 +496,11 @@ $('ask').addEventListener('submit',async event=>{
     const selectedDocument=$('query-document').value;
     const selectedPage=$('query-page').value;
     if(selectedPage&&(!selectedDocument||documentCatalog.get(selectedDocument)?.modality!=='pdf'))throw Error('指定页码时请先选择PDF资料。');
-    const data=await request('/api/v1/knowledge/query',{question:$('question').value,top_k:4,...(selectedDocument?{document_id:selectedDocument}:{}),...(selectedPage?{page_no:Number(selectedPage)}:{})});
+    const payload={question:$('question').value,top_k:4,...(selectedDocument?{document_id:selectedDocument}:{}),...(selectedPage?{page_no:Number(selectedPage)}:{})};
+    const data=await streamKnowledgeQuery(payload,event=>{
+      const prior=$('answer').querySelector('.rag-audit');prior?.remove();
+      const live=renderRetrievalAudit({retrieval_audit:event.retrieval_audit});if(live)$('answer').append(live);
+    },event=>timeline.update(event),controller.signal);
     timeline.update({call_id:'document-query',tool:'knowledge.answer',status:data.status,executed:true,
       summary:data.status==='ok'?'文档处理已返回，下面保留回答及原文来源。':'文档处理已返回，当前仍需补充条件或证据。',
       output:{status:data.status,answer_mode:data.answer_mode,citation_count:data.citations?.length||0}});
@@ -393,12 +512,16 @@ $('ask').addEventListener('submit',async event=>{
     (data.source_options||[]).forEach(option=>{const source=element('div',null,'toolbar');source.append(element('span',`${option.title} · 第${option.page_no}页`));addVisualAction(source,option.document_id,option.page_no,option.source_sha256);$('answer').append(source);});
     data.citations.forEach(hit=>{
       const box=element('article',null,'citation');
+      box.id=`citation-${hit.citation_id}`;
       box.append(element('b',`[${hit.citation_id}] ${hit.title}`),element('pre',hit.snippet),element('small',`${hit.metadata.source_locator} · ${hit.metadata.retrieval_channel} · BM25 ${hit.metadata.bm25_raw??'—'} · Dense ${hit.metadata.dense_cosine??'—'} · `),originalLink(hit.metadata.document_id,'查看原文件'));
+      const chunkSource=window.SourceEvidence?.citation(hit,{api:base,request});if(chunkSource)box.append(chunkSource);
       addVisualAction(box,hit.metadata.document_id,hit.metadata.page_no,hit.metadata.source_sha256,undefined,data.visual_source_proof?.parts?.[hit.citation_id-1],{metadata:hit.metadata,selection:data.native_row_proof?.selection,totalSelection:data.native_total_proof?.selected_annotations});
       $('answer').append(box);
     });
+    $('answer').querySelector('.rag-audit')?.remove();
+    const ragAudit=renderRetrievalAudit(data);if(ragAudit)$('answer').append(ragAudit);
     const trace=element('details');trace.append(element('summary','查看路由、范围与实际核验记录'),element('pre',JSON.stringify(data,null,2)));$('answer').append(trace);
-  }catch(e){timeline.fail(e.message);$('answer').append(element('p',e.message,'error'));}finally{button.disabled=false;}
+  }catch(e){timeline.fail(e.message);$('answer').append(element('p',e.message,'error'));}finally{if(documentQueryController===controller)documentQueryController=null;button.disabled=false;}
 });
 const ref=(node,path=[])=>({ref:node,path});const task=(id,tool,args)=>({id,tool,args});
 function buildPlan(){const region=$('region').value,year=Number($('year').value),mode=$('workflow').value;
@@ -426,213 +549,3 @@ $('execute').addEventListener('click',async()=>{
 });
 refresh().catch(e=>{$('status').textContent=e.message;});
 
-$('text-quality-form').addEventListener('submit',async event=>{
-  event.preventDefault();const button=event.target.querySelector('button');button.disabled=true;
-  const source=$('quality-text').value,host=$('text-quality-result');host.replaceChildren(element('p','检查中…'));
-  try{
-    const report=await request('/api/v1/documents/text-quality',{text:source});
-    host.replaceChildren(element('p',`繁简转换涉及 ${report.changed_lines} 行 · 疑似错字 ${report.typo_candidate_count} 处`));
-    host.append(element('p','繁简预览（不是原文引用）','muted'),element('pre',report.simplified_preview));
-    const options=element('div');
-    report.typo_candidates.forEach(item=>{const label=element('label'),check=element('input');check.type='checkbox';check.value=item.id;
-      label.append(check,document.createTextNode(`第${item.line_no}行：${item.before} → ${item.after}（需确认）`));options.append(label,element('br'));});
-    host.append(options);const preview=element('button','生成已确认的校正预览');preview.type='button';host.append(preview);
-    preview.addEventListener('click',async()=>{
-      if($('quality-text').value!==source){host.append(element('p','输入已变化，请重新检查。','error'));return;}
-      preview.disabled=true;
-      try{const result=await request('/api/v1/documents/text-repair',{text:source,source_sha256:report.source_sha256,
-        accepted_ids:[...options.querySelectorAll('input:checked')].map(item=>item.value),simplify:true});
-        host.querySelector('[data-repair-preview]')?.remove();const box=element('div');box.dataset.repairPreview='true';
-        box.append(element('p',result.warning,'muted'),element('pre',result.revised_text));host.append(box);
-      }catch(error){host.append(element('p',error.message,'error'));}finally{preview.disabled=false;}
-    });
-  }catch(error){showError(host,error);}finally{button.disabled=false;}
-});
-
-const scanHeaderRows=element('input'),scanTableNumber=element('input');
-const scanPdfPage=element('input'),scanPdfPageLabel=element('label','PDF页码');
-const scanPdfEnd=element('input'),scanPdfEndLabel=element('label','结束页码（可选，最多连续4页）');
-const scanNextHeaders=element('input'),scanNextHeadersLabel=element('label','后续页表头行数（可选，无表头填0）');
-scanPdfEnd.type='number';scanPdfEnd.min='1';scanPdfEnd.max='1000';scanPdfEndLabel.append(scanPdfEnd);
-scanNextHeaders.type='number';scanNextHeaders.min='0';scanNextHeaders.max='5';scanNextHeadersLabel.append(scanNextHeaders);
-scanPdfPage.type='number';scanPdfPage.min='1';scanPdfPage.max='1000';scanPdfPage.value='1';
-scanPdfPage.setAttribute('aria-label','PDF表格预览页码，从1开始');scanPdfPageLabel.append(scanPdfPage);
-$('scan-file').accept='.png,.jpg,.jpeg,.webp,.pdf';
-$('scan-quality-form').insertBefore(scanPdfPageLabel,$('scan-quality-form').querySelector('button'));
-$('scan-quality-form').insertBefore(scanPdfEndLabel,$('scan-quality-form').querySelector('button'));
-$('scan-quality-form').insertBefore(scanNextHeadersLabel,$('scan-quality-form').querySelector('button'));
-scanHeaderRows.type='number';scanHeaderRows.min='0';scanHeaderRows.max='5';scanHeaderRows.placeholder='0表示无表头';
-scanHeaderRows.setAttribute('aria-label','人工指定表头行数，0到5行，0表示无表头');
-scanTableNumber.type='number';scanTableNumber.min='1';scanTableNumber.max='32';scanTableNumber.value='1';
-scanTableNumber.setAttribute('aria-label','要整理的网格表格序号，从1开始');
-const scanHeaderLabel=element('label','表头行数（可选）'),scanTableLabel=element('label','表格序号');
-scanHeaderLabel.append(scanHeaderRows);scanTableLabel.append(scanTableNumber);
-$('scan-quality-form').insertBefore(scanHeaderLabel,$('scan-quality-form').querySelector('button'));
-$('scan-quality-form').insertBefore(scanTableLabel,$('scan-quality-form').querySelector('button'));
-
-let scanRevision=0;
-$('scan-file').addEventListener('change',()=>{scanRevision++;$('scan-quality-form').querySelector('button').disabled=false;$('scan-quality-result').replaceChildren(element('p','已更换文件，请重新预览。','muted'));});
-const continuityReasons={incomplete_or_unlocated_table:'表格不完整或缺少原页位置',different_pdf_sources:'来源不是同一PDF',
-  nonadjacent_pages:'页面不相邻',column_count_changed:'列数不一致',first_page_header_missing:'首段缺少可对应的表头',
-  ambiguous_header_paths:'表头为空或存在重复含义',header_paths_changed:'表头不一致'};
-function appendAmountCheck(td,cell){
-  const presentation=window.PdfAmountCheck.describe(cell);if(!presentation)return;
-  const label=element('small',presentation.label);label.style.display='block';label.style.color=presentation.color;
-  label.title=presentation.detail;td.append(label);
-}
-function renderArithmeticCheck(report,host){
-  if(!report||report.status==='not_applicable')return;
-  const reasons={invalid_or_over_budget_table:'表格不完整或超过检查范围',ambiguous_total_scope:'总计所在范围不明确',
-    subtotal_or_carry_forward_present:'存在小计或结转，不能直接加总',merged_body_cells_require_review:'合并数据格需先核对',
-    missing_detail_label:'部分明细缺少名称',unit_scale_requires_confirmation:'金额单位或倍率需确认',
-    amount_missing_or_ambiguous:'存在空白或无法明确解析的金额',mixed_or_unspecified_currency_identity:'币种不一致或身份未确认'};
-  const label=report.status==='arithmetic_consistent'?'观察金额的合计一致':report.status==='conflict'?'观察金额的合计不一致':'合计尚不能核对';
-  const title=element('p',label);title.style.color=report.status==='conflict'?'#c62828':report.status==='arithmetic_consistent'?'#16803c':'#737373';host.append(title);
-  if(report.reason in reasons)host.append(element('p',reasons[report.reason],'muted'));
-  for(const check of report.checks||[]){
-    if(check.computed_total!=null)host.append(element('p',`第${check.column+1}列：${check.detail_count}项明细合计 ${check.currency} ${check.computed_total}；观察总计 ${check.observed_total}；差额 ${check.difference}`));
-    else host.append(element('p',`第${check.column+1}列：${reasons[check.reason]||'请对照原表复核'}。`,'muted'));
-    if(check.review_candidate){const candidate=check.review_candidate;
-      host.append(element('p',`待核对候选：原第${candidate.cell.original_row+1}行 ${candidate.cell.text||'空白'}，由观察总计减其余明细得 ${candidate.currency} ${candidate.candidate_amount}。${candidate.warning}`,'muted'));}
-  }host.append(element('small',report.warning,'muted'));
-}
-function renderAmountCellReview(report,host){
-  if(!report||report.status==='not_needed')return;
-  host.append(element('p',`金额局部复核：${report.accepted_count||0} 格有一致候选；原OCR值保留。`));
-  for(const review of report.reviews||[]){
-    const label=review.accepted?`候选 ${review.candidate_text}`:'未得到可靠一致候选';
-    host.append(element('p',`原第${review.row+1}行、第${review.column+1}列：${review.original_text} → ${label}`,'muted'));
-    const detail=element('details');detail.append(element('summary','查看裁剪来源与每次识别'),element('pre',JSON.stringify(review,null,2)));host.append(detail);
-  }
-  host.append(element('small',report.warning,'muted'));
-  if(report.revised_preview){host.append(element('p','局部OCR候选的合计预览（与原OCR分开，不自动入库）','muted'));renderArithmeticCheck(report.revised_preview.arithmetic_check,host);}
-}
-function renderPdfContinuity(data,payload,host,file,revision){
-  if($('scan-file').files[0]!==file||revision!==scanRevision)return;
-  host.replaceChildren(element('p','PDF逐页表格预览；确认续表关系后可拼接。原文和资料库保持原样。'));
-  (data.table_structures||[]).forEach(structure=>renderScanStructure(structure,host));
-  for(const assembly of data.table_continuity?.assemblies||[]){
-    if(assembly.status!=='assembled_preview'){host.append(element('p',`续表未连接：${continuityReasons[assembly.reason]||'请核对逐页结构'}`,'muted'));continue;}
-    const table=element('table'),head=element('tr');head.append(element('th','原页'));
-    assembly.columns.forEach(column=>head.append(element('th',column.header_path.join(' / ')||`第${column.column+1}列`)));
-    const thead=element('thead');thead.append(head);table.append(thead);const body=element('tbody');
-    for(const row of assembly.rows){
-      const tr=element('tr');tr.append(element('td',`${row.page_no} · 行${row.original_row+1}`));
-      for(const cell of row.cells){if(cell.status==='covered_by_merged_cell')continue;
-        const td=element('td',cell.text||'未识别或空白');td.rowSpan=cell.rowspan;td.colSpan=cell.colspan;
-        td.title=`原PDF第${row.page_no}页；坐标：${JSON.stringify(cell.original_geometry?.pdf_geometry?.pdf_user_polygon_pt)}`;appendAmountCheck(td,cell);tr.append(td);}
-      body.append(tr);
-    }table.append(body);host.append(element('h3',`跨页续表 · ${assembly.row_count}行`),element('p',assembly.warnings.join(' '),'muted'),table);renderArithmeticCheck(assembly.arithmetic_check,host);
-  }
-  const existing=payload.pdf_table_links||[];
-  for(const candidate of data.table_continuity?.candidates||[]){
-    const label=`第${candidate.from_page}页表${candidate.from_table+1} → 第${candidate.to_page}页表${candidate.to_table+1}`;
-    if(existing.some(edge=>edge.from_page===candidate.from_page&&edge.from_table===candidate.from_table&&edge.to_page===candidate.to_page&&edge.to_table===candidate.to_table))continue;
-    if(candidate.status!=='needs_confirmation'){host.append(element('p',`${label}：未连接（${continuityReasons[candidate.reason]||'请核对逐页结构'}）`,'muted'));continue;}
-    const button=element('button',`确认这是同一张表的续页：${label}`);button.type='button';host.append(button);
-    button.addEventListener('click',async()=>{
-      if($('scan-file').files[0]!==file||revision!==scanRevision)return;
-      const controls=[...host.querySelectorAll('button')];controls.forEach(control=>control.disabled=true);
-      try{const next={...payload,pdf_table_links:window.PdfTableContinuity.appendLink(existing,candidate)};
-        const result=await request('/api/v1/documents/chunks-preview',next);renderPdfContinuity(result,next,host,file,revision);
-      }catch(error){if(revision===scanRevision)host.append(element('p',error.message,'error'));}finally{controls.forEach(control=>control.disabled=false);}
-    });
-  }
-  const details=element('details');details.append(element('summary','查看逐页来源、续表选择和坐标'),element('pre',JSON.stringify(data,null,2)));host.append(details);
-}
-
-function renderScanStructure(structure,host){
-  if(structure?.status==='structure_observed'){
-    const section=element('section'),table=element('table'),head=element('thead'),body=element('tbody'),heading=element('tr');
-    section.className='scan-table-structure';
-    if(structure.amount_verification){const counts=structure.amount_verification.counts||{};
-      section.append(element('p',`金额核对：与原文字一致 ${counts.matched||0} 格；冲突 ${counts.conflict||0} 格；需复核 ${counts.needs_review||0} 格。${structure.amount_verification.warning}`,'muted'));}
-    const page=structure.page_no?`PDF第${structure.page_no}页 · `:'';
-    section.append(element('h3',page+'表头层级与数据预览'),element('p',`按你指定的前${structure.header_rows}行整理第${structure.table_index+1}个网格；OCR文字和字段含义仍需对照原图核对。空白不是零，合并数据不自动复制。`,'muted'));
-    structure.columns.forEach(column=>heading.append(element('th',column.header_path.length?
-      column.header_path.map(text=>text||'未识别').join(' / ')+(column.status==='observed'?'':'（待核对）'):`第${column.column+1}列（无表头）`)));head.append(heading);
-    structure.body_cells.forEach(row=>{const tr=element('tr');row.forEach(cell=>{
-      if(cell.status==='covered_by_merged_cell')return;
-      const td=element('td',cell.text||'未识别或空白');td.rowSpan=cell.rowspan;td.colSpan=cell.colspan;
-      const geometry=cell.original_geometry?.pdf_geometry;
-      if(geometry?.pdf_highlight_eligible)td.title=`PDF第${geometry.page_no}页；原PDF坐标：${JSON.stringify(geometry.pdf_user_polygon_pt)}`;
-      appendAmountCheck(td,cell);
-      tr.append(td);
-    });body.append(tr);});table.append(head,body);section.append(table);renderArithmeticCheck(structure.arithmetic_check,section);renderAmountCellReview(structure.amount_cell_review,section);
-    if(structure.blank_cell_review?.reviews?.length){const review=structure.blank_cell_review;
-      section.append(element('p',`空白格复核：${review.accepted_count||0}格有一致文字候选；原空白保留。`),element('small',review.warning,'muted'));
-      for(const cell of review.reviews){section.append(element('p',`原第${cell.row+1}行、第${cell.column+1}列：${cell.accepted?cell.candidate_text:'未得到一致可靠候选'}${cell.candidate_kind==='ambiguous_amount_text'?'（金额仍有歧义）':''}`,'muted'));}
-    }host.append(section);
-  }else if(structure)host.append(element('p',`该表头选择不能整理：${structure.reason}。请对照原图检查页码、表格序号、表头行数或合并范围。`,'muted'));
-}
-
-$('scan-quality-form').addEventListener('submit',async event=>{
-  event.preventDefault();const button=event.target.querySelector('button'),host=$('scan-quality-result'),file=$('scan-file').files[0];
-  if(!file)return;const revision=++scanRevision;button.disabled=true;host.replaceChildren(element('p','本地OCR检测中…'));
-  try{
-    const isPdf=file.name.toLowerCase().endsWith('.pdf');
-    if(file.size>(isPdf?20:8)*1024*1024)throw Error(isPdf?'PDF不能超过20 MiB':'检测图片不能超过8 MiB');
-    const bytes=new Uint8Array(await file.arrayBuffer());let binary='';
-    for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
-    const source=btoa(binary);
-    if(isPdf){
-      if(scanHeaderRows.value==='')throw Error('请指定PDF表头行数；没有表头请填0。');
-      host.replaceChildren(element('p','正在解析PDF并整理指定页表格…'));
-      const payload={document_id:'pdf-table-preview-'+crypto.randomUUID(),modality:'pdf',file_base64:source,language:'chi_sim+eng',
-        pdf_table_headers:window.PdfTableContinuity.selections(Number(scanPdfPage.value),Number(scanPdfEnd.value||scanPdfPage.value),
-          Number(scanTableNumber.value),Number(scanHeaderRows.value),Number(scanNextHeaders.value===''?scanHeaderRows.value:scanNextHeaders.value))};
-      const data=await request('/api/v1/documents/chunks-preview',payload);renderPdfContinuity(data,payload,host,file,revision);
-      return;
-    }
-    const data=await request('/api/v1/documents/ocr',{image_base64:source,language:'chi_sim+eng',max_attempts:3,auto_perspective:$('scan-auto-perspective').checked,
-      table_header_rows:scanHeaderRows.value===''?null:Number(scanHeaderRows.value),table_index:Number(scanTableNumber.value)-1});
-    if(revision!==scanRevision)return;
-    const orientation=data.metadata?.orientation,quality=data.metadata?.input_quality;
-    host.replaceChildren(element('p',`识别状态：${data.status} · ${data.attempts.length}次有界尝试`));
-    const boundary=data.metadata?.page_boundary_detection;
-    if(boundary?.status==='attempted')host.append(element('p',`已检测页面轮廓并尝试透视校正；文字采用${boundary.selected_for_text?'校正图':'较可靠的原图或其他预处理结果'}，请对照原图核对。`));
-    else if(boundary?.status==='rejected')host.append(element('p','页面轮廓不能覆盖已观察文字，保留原图范围。','muted'));
-    else if(boundary?.status==='ambiguous')host.append(element('p','存在多张候选页面，未自动裁剪。','muted'));
-    if(window.ScanSourceOverlay&&data.metadata?.original_pixel_mapping?.status==='mapped'){
-      try{
-        const sourceSha=await window.ScanSourceOverlay.digest(bytes);
-        const normalized=await request('/api/v1/documents/image-enhance',{image_base64:source,transforms:[]});
-        const overlay=await window.ScanSourceOverlay.render(data.metadata,normalized,sourceSha);
-        if(revision!==scanRevision)return;host.append(overlay);
-      }catch(error){if(revision!==scanRevision)return;host.append(element('p',error.message||'原图位置预览不可用。','muted'));}
-    }
-    if(quality)host.append(element('p',`图像质量估计：${quality.quality_score}；${quality.width} × ${quality.height}。这是图像启发式分数，不是识别准确率。`,'muted'));
-    if(orientation?.status==='estimated')host.append(element('p',`方向估计：逆时针${orientation.rotation_ccw_degrees}°；倾斜${orientation.skew_ccw_degrees}°。依据${orientation.eligible_lines}条可靠文字框。`));
-    else host.append(element('p','方向无法判定，请核对原图；不会自动给出旋转预览。','muted'));
-    if(data.warnings.length)host.append(element('p',data.warnings.map(qualityMessage).join('；'),'muted'));
-    host.append(element('pre',data.text||'未识别到可靠文字'));
-    renderScanStructure(data.metadata?.table_structure,host);
-    if(boundary?.status==='attempted'&&Array.isArray(boundary.quad_px)){
-      const preview=element('button','查看页面校正与定位'),previewResult=element('div');preview.type='button';host.append(preview,previewResult);
-      preview.addEventListener('click',async()=>{
-        preview.disabled=true;previewResult.replaceChildren(element('p','正在生成页面校正预览…'));
-        try{
-          const sourceSha=await window.ScanSourceOverlay.digest(bytes);
-          if(sourceSha!==boundary.source_image_sha256)throw Error('页面轮廓与当前原图来源不一致。');
-          const corrected=await request('/api/v1/documents/image-enhance',{image_base64:source,transforms:['perspective_rectify'],perspective_quad:boundary.quad_px});
-          previewResult.replaceChildren(element('p','页面校正预览；原文件保持不变。位置来自原图观察，不代表数值已经核验。','muted'));
-          previewResult.append(await window.ScanSourceOverlay.render(data.metadata,corrected,sourceSha));
-          preview.remove();
-        }catch(error){showError(previewResult,error);preview.disabled=false;}
-      });
-    }
-    if(orientation?.status==='estimated'&&Math.abs(orientation.correction_ccw_degrees)>=2){
-      const preview=element('button','生成校正预览'),previewResult=element('div');preview.type='button';host.append(preview,previewResult);
-      preview.addEventListener('click',async()=>{
-        preview.disabled=true;previewResult.replaceChildren(element('p','正在生成校正预览…'));
-        try{
-          const corrected=await request('/api/v1/documents/image-enhance',{image_base64:source,transforms:['rotate_to_upright'],rotation_degrees:-orientation.correction_ccw_degrees});
-          const figure=element('figure'),image=element('img'),caption=element('figcaption','校正预览：只改变显示方向，原文件与知识库保持原样。请人工核对。');
-          image.src='data:image/png;base64,'+corrected.image_base64;image.alt='扫描件方向校正预览';image.style.maxWidth='100%';image.style.maxHeight='380px';
-          figure.append(image,caption);previewResult.replaceChildren(figure);preview.remove();
-        }catch(error){showError(previewResult,error);preview.disabled=false;}
-      });
-    }
-    const details=element('details');details.append(element('summary','查看检测依据、坐标帧、原图SHA和尝试记录'),element('pre',JSON.stringify(data,null,2)));host.append(details);
-  }catch(error){if(revision===scanRevision)showError(host,error);}finally{if(revision===scanRevision)button.disabled=false;}
-});

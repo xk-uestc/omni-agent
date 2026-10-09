@@ -123,8 +123,22 @@ def authorize_sql_document_search(original_question, tasks, engine):
     from SQL outside-scope guards; no other document range is exempted.
     """
     bundle = {'source_ranges': [], 'bindings': []}
-    matches = list(re.finditer(r'(?:再|然后)?(?:根据|依据)(?:该|这个|此)(?P<label>[\u4e00-\u9fffA-Za-z_]+?)'
-                              r'(?:检索|搜索)(?P<target>[^，,。；;？！?\n]+)', original_question))
+    # Derive the pointer noun from real schema links, so the same grammar
+    # works for regions, clients, channels or another registered dimension.
+    names = set()
+    for pointer in re.finditer(r'(?:检索|搜索)(?:该|这个|此)([^，,。；;？！?\n]+)', original_question):
+        tail = pointer[1]
+        names.update(link.source_text for link in engine.analyze_slots(tail)['dimensions']
+                     if tail.startswith(link.source_text))
+    dimension_pattern = '|'.join(re.escape(name) for name in sorted(names, key=len, reverse=True))
+    patterns = [
+        r'(?:再|然后)?(?:根据|依据)(?:该|这个|此)(?P<label>[\u4e00-\u9fffA-Za-z_]+?)(?:检索|搜索)(?P<target>[^，,。；;？！?\n]+)',
+    ]
+    if dimension_pattern:
+        patterns.append(r'(?:再|然后)?(?:检索|搜索)(?:该|这个|此)(?P<label>' + dimension_pattern
+                        + r')(?:的)?(?P<target>[^，,。；;？！?\n]+)')
+    matches = sorted((match for pattern in patterns for match in re.finditer(pattern, original_question)),
+                     key=lambda match: match.start())
     if not matches:
         return bundle
     if len(matches) != 1:
@@ -138,18 +152,19 @@ def authorize_sql_document_search(original_question, tasks, engine):
     label, target = match.group('label'), match.group('target').strip()
     if (not target or len(target) > 200 or re.search(r'\d|不含|不包括|排除|仅|只|按|条件|限定|之外|以外', target)):
         _reject()
-    dimensions = {(link.table, link.column) for link in engine.analyze_slots(label)['dimensions']}
-    if len(dimensions) != 1:
-        _reject()
-    table, column = next(iter(dimensions))
-    clauses = extract_source_clauses(original_question, engine.schema(include_row_count=False), engine=engine)
+    clauses = extract_source_clauses(original_question, engine.schema(include_row_count=False), engine=engine,
+                                    verified_document_search_ranges=((match.start(), match.end()),))
     if len(clauses) != 1:
         _reject()
     required = engine.extract_required_intent(clauses[0].text)
+    if len(required.dimensions) != 1:
+        _reject()
+    column = required.dimensions[0]
+    table = required.dimension_tables.get(column, required.table)
+    dimensions = {(link.table, link.column) for link in engine.analyze_slots(label)['dimensions']}
     if (required.clarification or required.coverage.get('unresolved') or required.top_n != 1
             or required.analysis_mode != 'rank' or required.order_desc is not True
-            or required.dimensions != [column]
-            or required.dimension_tables.get(column, required.table) != table):
+            or (table, column) not in dimensions):
         _reject()
     searches = [task for task in tasks if task['tool'] == 'search']
     if not searches:
@@ -203,7 +218,7 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
     output_column = plan.get('dimension_labels', {}).get(dimension, dimension)
     physical = binding['reference_path'][0] == 'dimension_values'
     dimensions = {(link.table, link.column) for link in engine.analyze_slots(binding['dimension_label'])['dimensions']}
-    if dimensions != {(binding['dimension_table'], dimension)}:
+    if (binding['dimension_table'], dimension) not in dimensions:
         _reject()
     if (plan.get('top_n') != 1 or plan.get('analysis_mode') != 'rank' or plan.get('order_desc') is not True
             or plan.get('dimensions') != [dimension]

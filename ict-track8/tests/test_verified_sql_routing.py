@@ -4,7 +4,7 @@ import pytest
 from backend.omni_agent import OmniAgent
 from backend.knowledge_store import KnowledgeStore
 from backend.nl2sql.engine import Nl2SqlEngine
-from backend.nl2sql.seed import initialize_database
+from backend.nl2sql.seed import initialize_database, initialize_rich_demo_data
 from backend.session import ConversationStore
 
 
@@ -65,3 +65,31 @@ def test_capability_disabled_keeps_original_behavior(tmp_path):
     agent = setup(tmp_path)
     agent.client.supports_verified_sql_routing = False
     assert agent._verified_sql_route('2025年华东地区销售额') is None
+
+
+def test_fast_rules_route_complex_wording_when_schema_proves_complete_plan(tmp_path, monkeypatch):
+    monkeypatch.setenv('ICT8_FAST_SQL', '1')
+    database = initialize_rich_demo_data(initialize_database(tmp_path/'rich.sqlite'))
+    engine = Nl2SqlEngine(database, model_plan_provider=SimpleNamespace())
+    agent = OmniAgent(engine, KnowledgeStore(tmp_path/'knowledge'), ConversationStore(),
+        SimpleNamespace(supports_verified_sql_routing=False))
+    for question in ['2025年按渠道分别统计广告曝光量',
+                     '2025年按优先级分别统计平均首次响应分钟',
+                     '2025年销售目标',
+                     '2025年目标销售额']:
+        route = agent._verified_sql_route(question)
+        assert route and route['route'] == 'sql', question
+        assert route['effective_question'] == question
+
+
+def test_target_language_without_a_complete_database_plan_keeps_general_planner(tmp_path, monkeypatch):
+    monkeypatch.setenv('ICT8_FAST_SQL', '1')
+    database = initialize_rich_demo_data(initialize_database(tmp_path/'rich.sqlite'))
+    engine = Nl2SqlEngine(database, model_plan_provider=SimpleNamespace())
+    agent = OmniAgent(engine, KnowledgeStore(tmp_path/'knowledge'), ConversationStore(),
+        SimpleNamespace(supports_verified_sql_routing=False))
+    for question in ['根据预测报告公式计算2025年目标销售额',
+                     '2025年华东地区销售额达到目标了吗',
+                     '2025年火星地区销售目标',
+                     '2025年华东销售目标']:
+        assert agent._verified_sql_route(question) is None

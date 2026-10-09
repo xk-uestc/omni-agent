@@ -9,7 +9,7 @@ from decimal import Decimal
 from functools import lru_cache
 from types import MappingProxyType
 
-from .responses_client import GenerationError, object_schema
+from .responses_client import GenerationError, object_schema, verified_response_audit
 from .evidence_context import sentence_spans, sentence_texts
 from .answer_contract import question_contract, whole_answer_shape_error
 
@@ -327,7 +327,7 @@ class GroundedGenerator:
             counts[citation_id] = counts.get(citation_id, 0) + 1
         return selected
 
-    def answer(self, question, citations):
+    def answer(self, question, citations, *, image_attachments=None):
         evidence = [{'citation_id': hit['citation_id'], 'text': hit.get('generation_evidence', {}).get('text', hit['snippet']), 'title': hit['title'],
                      'locator': hit['metadata']['source_locator']} for hit in citations]
         context = {'question': question, 'evidence': evidence,
@@ -337,7 +337,9 @@ class GroundedGenerator:
         for index in range(2):
             operation = 'grounded_answer' if index == 0 else 'grounded_answer_correction'
             try:
-                result = self.client.generate(INSTRUCTIONS, deepcopy(context), SCHEMA, name=operation)
+                generation_options = {'image_attachments': image_attachments} if image_attachments else {}
+                result = self.client.generate(INSTRUCTIONS, deepcopy(context), SCHEMA, name=operation,
+                                              **generation_options)
             except GenerationError as exc:
                 attempts.append({'attempt': index + 1, 'operation': operation,
                                  'validation_status': 'not_validated', 'error_category': 'provider_unavailable',
@@ -438,10 +440,7 @@ class GroundedGenerator:
              'evidence':deepcopy(evidence)}, schema, name='grounded_whole_question_review', max_tokens=1200)
         audit = dict(self.client.audit)
         rows = review.get('parts') if isinstance(review,dict) else None
-        if (audit.get('status')!='completed' or audit.get('model_verified') is not True
-                or audit.get('model')!='gpt-6-luna' or audit.get('reasoning')!='medium'
-                or type(audit.get('http_status')) is not int or not 200<=audit['http_status']<300
-                or re.fullmatch(r'gpt-6-luna(?:-\d{4}-\d{2}-\d{2})?',str(audit.get('response_model'))) is None
+        if (not verified_response_audit(audit) or audit.get('reasoning')!='medium'
                 or not isinstance(review,dict) or set(review) != {'approved','parts'} or review.get('approved') is not True
                 or not isinstance(rows,list) or len(rows)!=len(parts)
                 or any(not isinstance(row,dict) or set(row)!={'part_id','answered','claim_ids'}

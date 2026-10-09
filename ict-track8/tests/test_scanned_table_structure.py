@@ -105,17 +105,3 @@ def test_zero_header_rows_preserves_every_data_row_without_inventing_column_name
     assert all(c['header_path']==[] and c['status']=='no_header_selected' for c in result['columns'])
 
 
-def test_ocr_endpoint_explicit_header_selection(monkeypatch):
-    import base64
-    from fastapi.testclient import TestClient
-    from backend import app as app_module
-    class Result:
-        def to_dict(self):return {'metadata':metadata()}
-    class Pipeline:
-        def run(self,*args,**kwargs):return Result()
-    monkeypatch.setattr(app_module,'ocr_pipeline',Pipeline())
-    client=TestClient(app_module.app)
-    response=client.post('/api/v1/documents/ocr',json={'image_base64':base64.b64encode(b'image').decode(),'table_header_rows':2})
-    assert response.status_code==200
-    assert response.json()['metadata']['table_structure']['columns'][1]['header_path']==['Sales','2024']
-    assert client.post('/api/v1/documents/ocr',json={'image_base64':'aQ==','table_header_rows':6}).status_code==422

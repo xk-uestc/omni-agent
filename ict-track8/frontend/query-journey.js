@@ -129,6 +129,141 @@
     return parts;
   }
 
+  function formatSql(source) {
+    const tokens = (window.LatticeSyntaxHighlight?.tokenize(source, "sql") || [])
+      .filter((token) => token.text.trim());
+    if (!tokens.length) return source;
+    const clauses = new Set(["select", "from", "where", "having", "limit", "offset", "union", "intersect", "except", "returning"]);
+    const output = [];
+    const subqueries = [];
+    let indent = 0, continuation = 0, caseDepth = 0, lineStart = true, pendingIndent = 0, previous = null;
+    const newline = (level = indent) => {
+      while (output.length && output[output.length - 1] === " ") output.pop();
+      if (output.length && output[output.length - 1] !== "\n") output.push("\n");
+      lineStart = true; pendingIndent = Math.max(0, level);
+    };
+    const emit = (value) => {
+      if (lineStart) { output.push("  ".repeat(pendingIndent)); lineStart = false; }
+      output.push(value);
+    };
+    const space = () => { if (!lineStart && output[output.length - 1] !== " ") output.push(" "); };
+    tokens.forEach((token, index) => {
+      const lower = token.text.toLowerCase(), prev = tokens[index - 1], next = tokens[index + 1];
+      const insideExpression = subqueries.some((frame) => !frame.isSubquery);
+      const clause = !insideExpression && token.kind === "keyword" && (clauses.has(lower) ||
+        ((lower === "group" || lower === "order") && next?.text.toLowerCase() === "by") ||
+        (["join", "left", "right", "inner", "full", "cross", "on"].includes(lower)));
+      const booleanBreak = token.kind === "keyword" && ["and", "or"].includes(lower) && caseDepth === 0;
+      if ((clause || booleanBreak || token.kind === "comment") && output.length) {
+        continuation = 0;
+        newline(booleanBreak ? indent + 1 : indent);
+      }
+
+      if (token.text === ")") {
+        const frame = subqueries.pop();
+        if (frame?.isSubquery) {
+          indent = Math.max(0, indent - 1); continuation = frame.continuation; newline(indent);
+        }
+        emit(token.text);
+      } else if (token.text === ",") {
+        emit(token.text);
+        if (!subqueries.some((frame) => !frame.isSubquery)) newline(indent + continuation);
+        else space();
+      } else if (token.text === ".") {
+        emit(token.text);
+      } else if (token.text === "(") {
+        if (prev && prev.kind !== "function" && prev.text !== ".") space();
+        emit(token.text);
+        const isSubquery = next?.kind === "keyword" && ["select", "with"].includes(next.text.toLowerCase());
+        subqueries.push({ isSubquery, continuation });
+        if (isSubquery) { indent += 1; continuation = 0; newline(indent); }
+      } else if (token.kind === "operator") {
+        space(); emit(token.text); space();
+      } else if (token.text === ";") {
+        emit(token.text);
+      } else {
+        if (previous && previous.text !== "(" && previous.text !== "." && output[output.length - 1] !== "\n") space();
+        emit(token.text);
+      }
+      if (clause && token.text !== "from" && token.text !== "join" && token.text !== "left" && token.text !== "right" && token.text !== "inner" && token.text !== "full" && token.text !== "cross") continuation = 1;
+      if (token.kind === "keyword" && (lower === "select" || lower === "where" || lower === "having" || lower === "group" || lower === "order" || lower === "on" || lower === "set" || lower === "values")) continuation = 1;
+      if ((lower === "group" || lower === "order") && next?.text.toLowerCase() === "by") continuation = 1;
+      if (lower === "case" && token.kind === "keyword") caseDepth += 1;
+      if (lower === "end" && token.kind === "keyword") caseDepth = Math.max(0, caseDepth - 1);
+      previous = token;
+      if (token.kind === "comment") newline();
+    });
+    return output.join("").trim();
+  }
+
+  function formatSqlWithComments(source, plan = {}, schema = {}, manifest = {}) {
+    const formatted = formatSql(source);
+    const tableName = (name) => window.SchemaSvg?.tableLabel(name) || name;
+    const columnName = (table, column) => window.SchemaSvg?.columnLabel(table, column) || column;
+    const dimensions = arr(plan.dimensions).map((item) => {
+      const column = typeof item === "string" ? item : item?.column;
+      const table = (typeof item === "object" && item?.table) || plan.dimension_tables?.[column] || plan.table;
+      return plan.dimension_labels?.[column] || columnName(table, column);
+    }).filter(Boolean);
+    const metrics = arr(plan.metrics).map((item) => {
+      const table = item.table || item.metric_table || plan.metric_table || plan.table;
+      const column = item.column || item.metric_column;
+      return metricName(table, column, item.function || item.metric_function, item.label || item.metric_label);
+    });
+    if (!metrics.length && plan.metric_column) {
+      metrics.push(metricName(plan.metric_table || plan.table, plan.metric_column, plan.metric_function, plan.metric_label));
+    }
+    const outputNames = [...dimensions, ...metrics].filter(Boolean);
+    const sourceTables = arr(manifest.tables).map((table) => tableName(table.name)).filter(Boolean);
+    if (!sourceTables.length) sourceTables.push(...[plan.table, plan.metric_table, ...arr(plan.join_tables)].filter(Boolean).map(tableName));
+    const filters = arr(plan.filters).map((filter) => columnName(filter.table || plan.table, filter.column)).filter(Boolean);
+    const notes = {
+      with: "先生成供后续查询复用的中间结果。",
+      select: outputNames.length ? `输出${outputNames.join("、")}${plan.analysis_mode === "rank" ? "及排名" : ""}。` : "确定本段查询要返回的字段。",
+      from: sourceTables.length ? `读取${sourceTables.join("、")}表。` : "确定本段查询的数据来源。",
+      where: filters.length ? `按${[...new Set(filters)].join("、")}筛选记录` : "筛选满足查询条件的记录",
+      group: dimensions.length ? `按${dimensions.join("、")}分组后分别计算指标。` : "按查询指定字段分组汇总。",
+      having: "在分组计算后筛选汇总结果。",
+      order: "按查询指定的字段和方向排列结果。",
+      limit: Number.isFinite(plan.top_n) ? `仅返回排名前 ${plan.top_n} 项。` : Number.isFinite(plan.limit) ? `最多返回 ${plan.limit} 行。` : "限制本次返回的行数。",
+      join: "按后续关联条件合并相关数据表。",
+      on: "指定关联数据表之间的匹配条件。",
+      union: "合并多段查询的结果。",
+      intersect: "保留多段查询结果中的共同记录。",
+      except: "保留前段查询中未出现在后段查询的记录。",
+    };
+    return formatted.split("\n").flatMap((line) => {
+      const match = line.match(/^(\s*)(WITH|SELECT|FROM|WHERE|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT|JOIN|LEFT|RIGHT|INNER|FULL|CROSS|ON|UNION|INTERSECT|EXCEPT)\b/i);
+      if (!match || match[1].length) return [line];
+      const clause = match[2].toLowerCase().replace(/\s+/g, " ");
+      const key = clause === "group by" ? "group" : clause === "order by" ? "order" : clause.split(" ")[0];
+      let note = notes[key];
+      if (!note) return [line];
+      if (key === "from") {
+        const source = line.match(/^\s*FROM\s+["`]([^"`]+)["`]/i)?.[1] || line.match(/^\s*FROM\s+([\w$]+)/i)?.[1];
+        const physicalTables = new Set([...sourceTables, ...arr(schema.tables).map((table) => table.name)]);
+        note = source && physicalTables.has(source)
+          ? `读取${tableName(source)}表。`
+          : source ? `读取中间结果 ${source}。` : "读取本段查询的数据来源。";
+      } else if (key === "where" && filters.length) {
+        note += line.includes("?") ? "；条件值通过参数绑定。" : "。";
+      }
+      if (key === "order") {
+        const direction = /\bDESC\b/i.test(line) ? "降序" : /\bASC\b/i.test(line) ? "升序" : "指定顺序";
+        const metricColumn = plan.metric_column || arr(plan.metrics)[0]?.column || arr(plan.metrics)[0]?.metric_column;
+        const metric = metricColumn && line.toLowerCase().includes(String(metricColumn).toLowerCase()) ? metrics[0] : null;
+        return [`-- ${metric ? `按${metric}${direction}排列结果。` : `按查询指定字段${direction}排列结果。`}`, line];
+      }
+      return [`-- ${note}`, line];
+    }).join("\n");
+
+    function metricName(table, column, aggregate, explicitLabel) {
+      const name = explicitLabel && explicitLabel !== column ? explicitLabel : column && column !== "*" ? columnName(table, column) : "记录数";
+      const suffix = ({ SUM: "求和", AVG: "平均值", COUNT: "数量", COUNT_DISTINCT: "去重计数", MIN: "最小值", MAX: "最大值" })[String(aggregate || "").toUpperCase()];
+      return suffix && name && !name.includes(suffix) ? `${name}${suffix}` : name;
+    }
+  }
+
 
   function render(data, schema, schemaPromise) {
     const model = buildModel(data), { structured, plan, fields } = model;
@@ -256,7 +391,8 @@
         try { await navigator.clipboard.writeText(structured.sql); copy.textContent = "已复制"; } catch { copy.textContent = "请选中代码复制"; }
       }); toolbar.append(el("span", "", "SQL · 真实执行语句"), copy); sqlSection.append(toolbar);
       const pre = el("pre", "sqlbox syntax-highlighted query-sql"); pre.dataset.language = "sql"; pre.dataset.queryVisual = "true";
-      const tokenized = window.LatticeSyntaxHighlight?.tokenize(structured.sql, "sql") || [{ text: structured.sql, kind: "plain" }];
+      const displaySql = formatSqlWithComments(structured.sql, plan, schema || {}, structured.source_tables || {});
+      const tokenized = window.LatticeSyntaxHighlight?.tokenize(displaySql, "sql") || [{ text: displaySql, kind: "plain" }];
       const schemaFields = arr(schema?.tables).filter((t) => model.tables.includes(t.name)).flatMap((t) => arr(t.columns).map((c) => ({ key: key(t.name, c.name), table: t.name, column: c.name })));
       const tokens = annotateSql(tokenized, [...schemaFields, ...fields]);
       tokens.forEach((token) => {
@@ -313,5 +449,5 @@
     closeReplay.addEventListener("click", () => { replayIndex = -1; replay.textContent = "逐步查看"; closeReplay.hidden = true; sections.forEach((node) => node.hidden = false); navButtons.forEach((b) => { b.classList.remove("is-current"); b.removeAttribute("aria-current"); }); });
     return root;
   }
-  return { buildModel, questionSegments, annotateSql, render };
+  return { buildModel, questionSegments, annotateSql, formatSql, formatSqlWithComments, render };
 });

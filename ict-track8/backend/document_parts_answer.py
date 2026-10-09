@@ -229,7 +229,7 @@ def _replay_computation(store, child):
 
 
 def compose_document_parts(store, question, prior, *, top_k, document_id=None, page_no=None,
-                           answer_audit_start=None):
+                           answer_audit_start=None, image_attachments=None, retrieval_context=None):
     """Try once, only after a completed but insufficient mixed document answer."""
     trace = {'stage': 'document_part_execution', 'status': 'not_applicable',
              'question_preserved': True, 'round_limit': 1, 'model_audits': []}
@@ -280,7 +280,8 @@ def compose_document_parts(store, question, prior, *, top_k, document_id=None, p
             # Private entry intentionally skips this composition wrapper,
             # while retaining all ordinary retrieval/reconstruction/review.
             child_start = audit_boundary(client)
-            child = store._answer_with_recovery(query, top_k=top_k, **scope)
+            child = store._answer_with_recovery(query, top_k=top_k, **scope,
+                image_attachments=image_attachments, retrieval_context=retrieval_context)
             children.append(child)
             store._verify_citation_sources(child.get('citations', []))
             child_end = audit_boundary(client)
@@ -336,18 +337,31 @@ def compose_document_parts(store, question, prior, *, top_k, document_id=None, p
         if len(answer) > 4000:
             raise ValueError('document_parts_answer_budget_exceeded')
         trace['status'] = 'complete_original_question_reviewed'
-        citations = []
+        citations, citation_id_remaps = [], {}
         for part_id, child in enumerate(children, 1):
+            citation_id_remaps[part_id] = {}
             for original in child.get('citations', []):
                 citation = deepcopy(original)
                 citation['component_part_id'] = part_id
                 citation['component_citation_id'] = citation.get('citation_id')
                 citation['citation_id'] = len(citations) + 1
+                if citation['component_citation_id'] is not None:
+                    citation_id_remaps[part_id][str(citation['component_citation_id'])] = citation['citation_id']
                 citations.append(citation)
+            audit = child.get('retrieval_audit') or {}
+            for candidate in audit.get('candidates', []):
+                candidate['final_citation_ids'] = [
+                    citation_id_remaps[part_id].get(str(citation_id), citation_id)
+                    for citation_id in candidate.get('final_citation_ids', [])]
+        prior_retrieval_audit = deepcopy(prior.get('retrieval_audit'))
+        if prior_retrieval_audit:
+            for candidate in prior_retrieval_audit.get('candidates', []):
+                candidate.pop('final_citation_ids', None)
         return {'status': 'ok', 'question': question, 'answer': answer,
             'answer_mode': 'document_parts_model_reviewed', 'component_answers': children,
             'semantic_review': review, 'semantic_verification': 'independent_model_review_not_formal_entailment',
             'calculator_input_eligible': False, 'citations': citations,
+            'retrieval_audit': prior_retrieval_audit,
             'retrieval': store.retrieval_health(), 'trace': [trace],
             'prior_answer': {'status': prior.get('status'), 'answer_mode': prior.get('answer_mode'),
                              'answer': prior.get('answer'), 'trace': prior.get('trace', [])}}, trace

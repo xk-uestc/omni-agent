@@ -37,8 +37,10 @@
     .sidebar {
       background: #f9f9f9; border-right: 1px solid var(--line);
       padding: 12px; display: flex; flex-direction: column;
-      min-height: 0; overflow: hidden;
+      min-height: 0; overflow-y: auto;
     }
+    .sidebar > * { flex-shrink: 0; }
+    #ragSources { min-height: 110px; max-height: 220px; }
     .brand { padding: 5px 6px 10px; }
     .brand-logo { display: block; width: min(100%, 264px); max-height: 96px; height: auto; object-fit: contain; object-position: left center; }
     .brand { display: flex; gap: 10px; align-items: center; padding: 8px 8px 14px; }
@@ -47,10 +49,6 @@
     .new-chat { padding: 10px 12px; border: 1px solid var(--line); background: #fff; border-radius: 10px; font-size: 13.5px; font-weight: 500; }
     .new-chat:hover { background: var(--hover); }
     .nav-label { font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; padding: 16px 8px 6px; }
-    .plates { overflow-y: auto; flex: 1; min-height: 0; -webkit-overflow-scrolling: touch; }
-    .plate { width: 100%; text-align: left; padding: 8px 10px; border-radius: 8px; font-size: 13px; color: var(--dim); }
-    .plate:hover { background: #fff; color: var(--text); }
-    .plate small { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
     .cap {
       width: 100%; text-align: left; padding: 7px 10px; border-radius: 8px;
       font-size: 12.5px; color: var(--dim); display: flex; gap: 8px; align-items: center;
@@ -59,15 +57,13 @@
     .cap i { font-style: normal; font-size: 10px; color: var(--muted); width: 28px; flex: none; }
     .schema { margin-top: 8px; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 8px; font-size: 12px; color: var(--dim); line-height: 1.5; }
     .schema b { color: var(--text); font-weight: 600; }
-    .data-source-list { display: grid; gap: 5px; max-height: 126px; overflow: auto; }
-    .data-source-item { min-width: 0; padding: 7px 9px; border: 1px solid var(--line); border-radius: 7px; background: #fff; }
-    .data-source-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
-    .data-source-dot { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #23856d; }
-    .data-source-name { min-width: 0; overflow-wrap: anywhere; font-size: 11.5px; font-weight: 600; color: var(--text); }
-    .data-source-kind, .data-source-detail { color: var(--muted); font-size: 10.5px; line-height: 1.4; }
-    .data-source-detail { margin: 3px 0 0 14px; }
-    .data-source-item[data-state="error"] .data-source-dot { background: #c65353; }
-    :root[data-theme="dark"] .data-source-item { background: var(--soft); }
+    .schema-legend-item.role-used { --schema-role-color: #257b64; }
+    .schema-column.role-used .schema-column-bg { fill: color-mix(in srgb, #257b64 18%, var(--bg)); }
+    .schema-column.role-used .schema-column-bar { fill: #257b64; }
+    .result-schema-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; align-items:start; min-width:0; margin-top:24px; padding-top:18px; border-top:1px solid var(--line); }
+    .result-schema-section { min-width:0; }
+    .result-schema-section + .result-schema-section { min-width:0; padding-left:22px; border-left:1px solid var(--line); }
+    .result-schema-section h3 { font-size:15px; margin-bottom:8px; }
     .side-foot { padding: 8px 8px 2px; font-size: 10.5px; color: var(--muted); line-height: 1.45; }
     .stage {
       display: flex; flex-direction: column;
@@ -238,24 +234,33 @@
     .schema-graphic .badge { fill:var(--bg); } .schema-graphic .card { fill:var(--dim); font:600 10px ui-sans-serif,system-ui,sans-serif; }
     .schema-caption { color:var(--muted); font-size:11.5px; line-height:1.5; margin:5px 0; }
     .audit .astep h4 { flex-wrap:wrap; } .audit .astep .bd { line-height:1.55; }
+    @media(max-width:900px){ .result-schema-grid { grid-template-columns:minmax(0,1fr); gap:18px; } .result-schema-section + .result-schema-section { padding:18px 0 0; border-left:0; border-top:1px solid var(--line); } }
     @media(max-width:640px){ .col { width:calc(100% - 28px); } .qline { font-size:17px; } .audit-summary { grid-template-columns:1fr; gap:2px; } .audit-summary .key:not(:first-child){margin-top:5px;} }
     .turns { list-style:none; display:flex; flex-direction:column; gap:4px; max-height:180px; overflow:auto; }
     .turn-item { width:100%; text-align:left; padding:7px 8px; border-radius:8px; font-size:12.5px; }
     .turn-item:hover { background:#fff; }
     .turn-item .eff { color:var(--muted); font-size:11.5px; }
-    #view-doc { display:none; flex:1; min-height:0; overflow:auto; padding:20px 24px 40px; }
-    #view-doc.on { display:block; }
-    .docbox { width:min(980px,100%); margin:0 auto; display:grid; grid-template-columns:minmax(280px,360px) 1fr; gap:16px; }
-    @media(max-width:900px){ .docbox { grid-template-columns:1fr; } }
-    .docbox textarea { width:100%; min-height:200px; border:1px solid var(--line); border-radius:10px; padding:10px; font:13px/1.6 inherit; }
-    .fields { display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:12px; color:var(--dim); }
-    .fields input { width:100%; border:1px solid var(--line); border-radius:8px; padding:6px 8px; }
-    .docres { border:1px solid var(--line); border-radius:14px; padding:14px; background:#fff; }
-    :root[data-theme="dark"] .docres { background:#161616; }
-    .composer { width: min(760px,100%); margin: 0 auto; border: 1px solid #e4e4e7; border-radius: 26px; box-shadow: 0 8px 28px rgba(0,0,0,.06); padding: 8px 8px 8px 16px; display: flex; align-items: flex-end; gap: 8px; background: #fff; }
+    .composer { width: min(760px,100%); margin: 0 auto; border: 1px solid #e4e4e7; border-radius: 22px; box-shadow: 0 8px 28px rgba(0,0,0,.06); padding: 8px 10px 8px 14px; display: flex; flex-direction: column; align-items: stretch; gap: 6px; background: #fff; }
+    .composer-row { width: 100%; display: flex; align-items: flex-end; gap: 8px; }
     .composer textarea { flex: 1; resize: none; border: 0; outline: none; font-size: 15px; line-height: 1.5; max-height: 160px; min-height: 28px; padding: 10px 0; }
     .send { width: 36px; height: 36px; border-radius: 50%; background: #0d0d0d; color: #fff; display: grid; place-items: center; }
     .send:disabled { opacity: .25; }
+    .composer-image-picker { width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--dim); }
+    .composer-image-picker:hover:not(:disabled) { background: var(--soft); color: var(--text); }
+    .composer-image-picker:disabled { opacity: .4; }
+    .composer-image-previews { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 0 3px; }
+    .composer-image-previews[hidden], .composer-image-status[hidden] { display: none; }
+    .composer-image-thumb { position: relative; width: 56px; height: 56px; flex: 0 0 56px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; }
+    .composer-image-thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .composer-image-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: rgba(20,20,20,.8); color: #fff; font-size: 15px; line-height: 1; }
+    .composer-image-status { width: 100%; margin: 0; color: #b33939; font-size: 12px; }
+    .user-image-attachments { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 0 10px; }
+    .user-image-attachments img { width: 72px; height: 72px; object-fit: cover; border: 1px solid var(--line); border-radius: 7px; }
+    .doc-images { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
+    .doc-image { width: min(240px,100%); margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: var(--soft); }
+    .doc-image img { display: block; width: 100%; max-height: 210px; object-fit: contain; }
+    .doc-image figcaption { padding: 6px 8px; color: var(--muted); font-size: 11px; }
+    :root[data-theme="dark"] .composer-image-picker, :root[data-theme="dark"] .doc-image { background: var(--soft); color: var(--text); }
     .top-new { border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; font-size: 12px; margin-left: auto; margin-right: 10px; white-space: nowrap; }
     .top-new:hover { background: var(--soft); }
     .hint { text-align: center; font-size: 11.5px; color: var(--muted); margin-top: 8px; }
@@ -264,8 +269,7 @@
     :root[data-theme="dark"] .opt, :root[data-theme="dark"] .chip,
     :root[data-theme="dark"] .doc, :root[data-theme="dark"] .composer,
     :root[data-theme="dark"] .evidence summary, :root[data-theme="dark"] .sqlbox { background: var(--soft); color: var(--text); }
-    :root[data-theme="dark"] .composer textarea, :root[data-theme="dark"] .docbox textarea,
-    :root[data-theme="dark"] .fields input { background: var(--soft); color: var(--text); }
+    :root[data-theme="dark"] .composer textarea { background: var(--soft); color: var(--text); }
     .health[data-state="error"] .dot { background: #d64545; }
     .health[data-state="loading"] .dot { background: #e5a22b; }
     .error-line { margin: 8px 0 14px; padding: 10px 12px; border-left: 3px solid #d64545; background: #fff4f4; color: #8d2626; font-size: 13px; }
@@ -283,13 +287,14 @@
       .composer-wrap { padding: 0 12px 12px; }
       .meta { flex-wrap: wrap; gap: 5px 12px; }
     }
-  </style>
-  <link rel="stylesheet" href="./modern-ui.css?v=20261006-brand-1" />
-  <link rel="stylesheet" href="./query-journey.css?v=20261003-polish-6" />
-  <link rel="stylesheet" href="./codex-ui.css?v=20261006-tools-8" />
+
+</style>
+  <link rel="stylesheet" href="./modern-ui.css?v=20261008-floating-question-catalog-2" />
+  <link rel="stylesheet" href="./query-journey.css?v=20261007-sql-layout-2" />
+  <link rel="stylesheet" href="./codex-ui.css?v=20261008-rag-process-1" />
   <link rel="stylesheet" href="./query-result-viz.css?v=20261003-polish-6" />
   <link rel="stylesheet" href="./result-browser.css?v=20261003-full-results-1" />
-</head>
+<link rel="stylesheet" href="./source-evidence.css?v=20261008-sql-source-highlight-1"></head>
 <body>
   <div class="app">
     <aside class="sidebar">
@@ -297,32 +302,23 @@
         <img class="brand-logo" src="./brand-logo.png?v=20261006-brand-1" alt="数智问问 Cloud Data Intelligence" />
       </div>
       <button class="new-chat" id="newChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>新对话</button>
-      <a class="new-chat" href="./knowledge.html" aria-label="文档资料库与跨源计算"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>文档资料库与跨源</a>
+      <a class="new-chat" href="./knowledge.html" aria-label="资料管理与原件浏览"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料管理与原件浏览</a>
       <a class="new-chat" href="./capabilities.html" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>赛题全量验收台</a>
       <button class="new-chat" id="sixDemo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16" stroke-linecap="round"/><circle cx="8" cy="5" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="17" cy="19" r="1" fill="currentColor"/></svg>演示六轮追问</button>
       <div class="nav-label">会话记忆</div>
       <ol class="turns" id="turns"></ol>
-      <div class="nav-label">查询能力</div>
-      <div id="caps"></div>
-      <div class="nav-label">本能力样题</div>
-      <div class="plates" id="plates"></div>
-      <div class="nav-label">当前数据库结构</div>
-      <div class="schema" id="schema"></div>
       <div class="nav-label">已接入数据源</div>
       <div class="data-source-list" id="dataSources" aria-live="polite"></div>
+      <div class="nav-label">RAG 知识库</div>
+      <div class="rag-file-grid" id="ragSources" aria-live="polite"></div>
       <div class="side-foot">查询与证据来自后端；没有结果时会明确说明。</div>
     </aside>
     <main class="stage">
       <header class="topbar">
-        <div class="model-chip">数智问问 <em id="capTitle">问数推理</em></div>
-        <a class="top-route" href="./knowledge.html" title="文档资料库与跨源计算" aria-label="文档资料库与跨源计算"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料库</a>
+        <div class="model-chip">数智问问 <em id="capTitle">智能问答</em></div>
+        <a class="top-route" href="./knowledge.html" title="资料管理与原件浏览" aria-label="资料管理与原件浏览"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料库</a>
         <a class="top-route" href="./capabilities.html" title="赛题全量验收台" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>验收</a>
         <button class="top-new" id="newChatTop" type="button" title="新对话">＋ 新对话</button>
-        <nav class="tabs" aria-label="工作模式">
-          <button class="tab on" id="tabAsk" type="button" aria-pressed="true">问数推理</button>
-          <button class="tab" id="tabDocs" type="button" aria-pressed="false">文档问答</button>
-          <button class="tab" id="tabDoc" type="button" aria-pressed="false">文档体检</button>
-        </nav>
         <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--dim)">
           <span class="health" id="apiHealth" data-state="loading"><span class="dot"></span> <span id="healthText">正在连接 API</span></span>
           <button class="theme-btn" id="theme" type="button" title="深浅色">◐</button>
@@ -332,42 +328,26 @@
         <div class="col" id="feed">
           <div class="empty" id="empty">
             <h1>问数据，查依据</h1>
-            <p>提出业务问题，查看真实查询、结果和执行过程。</p>
+            <p>直接提出问题，系统自动选择数据查询、资料检索，或结合两者回答。</p>
             <div class="grid" id="suggests"></div>
           </div>
-        </div>
-      </div>
-      <div id="view-doc">
-        <div class="docbox">
-          <div>
-            <h3 style="margin-bottom:8px">文档输入</h3>
-            <textarea id="docText">第一章 总则
-1.1 适用范围
-本办法适用于华东区域销售考核。
-第二章 指标口径
-2.1 毛利率
-毛利率 = (500 - 300) / 500
-2.2 客单价
-客单价 = 销售额 / 订单数
-三、附則</textarea>
-            <div class="fields" style="margin-top:10px">
-              <label>OCR 置信度<input id="sigConf" type="number" min="0" max="1" step="0.05" value="0.62"></label>
-              <label>旋转°<input id="sigRot" type="number" value="8"></label>
-              <label>倾斜°<input id="sigSkew" type="number" value="3.5"></label>
-              <label>清晰度<input id="sigBlur" type="number" min="0" max="1" step="0.05" value="0.25"></label>
-            </div>
-            <button class="new-chat" id="docRun" style="margin-top:10px">分析文本</button>
-          </div>
-          <div class="docres" id="docRes">分析结果将显示在这里。</div>
         </div>
       </div>
       <div class="composer-wrap" id="askComposer">
         <div id="contextComposer" class="context-composer" role="status" aria-live="polite" hidden></div>
         <form class="composer" id="form">
-          <textarea id="q" rows="1" placeholder="问销售额、同比，或接着说「那华南呢」"></textarea>
-          <button class="send" id="send" type="submit" aria-label="发送">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5l-7 7M12 5l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
+          <div class="composer-image-previews" id="imagePreviews" aria-live="polite" hidden></div>
+          <div class="composer-row">
+            <textarea id="q" rows="1" placeholder="直接提问：查数据、找依据，或结合两者分析"></textarea>
+            <input id="imageFiles" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+            <button class="composer-image-picker" id="imagePicker" type="button" title="添加图片" aria-label="添加图片">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="1.6"/><path d="m21 15-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="send" id="send" type="submit" aria-label="发送">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5l-7 7M12 5l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <p class="composer-image-status" id="imageStatus" role="status" hidden></p>
         </form>
         <div class="meta">
           <label><input id="useContext" type="checkbox" checked> 承接上一轮</label>
@@ -378,17 +358,18 @@
       </div>
     </main>
   </div>
-<script src="./schema-svg.js?v=20261003-polish-1" defer></script>
+  <div id="demoDomainCatalog"></div>
+<script src="./schema-svg.js?v=20261007-result-schema-clean-1" defer></script>
 <script src="./syntax-highlight.js?v=20261003-journey-2" defer></script>
 <script src="./query-result-viz.js?v=20261003-full-results-2" defer></script>
-<script src="./query-journey.js?v=20261006-tool-details-3" defer></script>
+<script src="./query-journey.js?v=20261007-sql-notes-1" defer></script>
 <script src="./result-browser.js?v=20261003-full-results-1" defer></script>
 <script src="./conversation-context.js?v=20261005-dialogue-sources-2" defer></script>
 <script src="./conversation-session.js?v=20261006-tools-2" defer></script>
 <script src="./vendor/react.production.min.js" defer></script>
 <script src="./vendor/react-dom.production.min.js" defer></script>
-<script src="./tool-timeline.js?v=20261006-tools-10" defer></script>
+<script src="./tool-timeline.js?v=20261008-rag-process-2" defer></script>
 <script src="./native-row-overlay.js?v=20261006-financial-4" defer></script>
-<script src="./app.js?v=20261006-enterprise-data-1" defer></script>
+<script src="./source-evidence.js?v=20261009-precise-source-cells-2" defer></script><script src="./app.js?v=20261008-generalization-repair-1" defer></script>
 </body>
 </html>

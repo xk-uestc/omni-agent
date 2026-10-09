@@ -62,6 +62,8 @@ class ConversationStore:
         self.pending_tasks = PendingTaskStore(self, ttl_seconds=pending_ttl_seconds, max_records=max_pending_records)
         from .conversation_sources import ConversationSourceStore
         self.sources = ConversationSourceStore(self, ttl_seconds=pending_ttl_seconds, max_records=max_pending_records)
+        from .semantic_pending import SemanticPendingStore
+        self.semantic_pending = SemanticPendingStore(self)
 
     @staticmethod
     def validate_id(session_id: str) -> str:
@@ -131,11 +133,13 @@ class ConversationStore:
                 connection.execute('DELETE FROM conversation_sessions WHERE session_id=?', (key,))
                 self.pending_tasks.clear(key, connection)
                 self.sources.clear(key, connection)
+                self.semantic_pending.clear(key, connection)
         else:
             with self._lock:
                 self._sessions.pop(key, None)
                 self.pending_tasks.clear(key)
                 self.sources.clear(key)
+                self.semantic_pending.clear(key)
 
     def remember(self, session_id: str, *, question: str, effective_question: str, state: dict | None = None,
                  pending_parent_id: str | None = None) -> None:

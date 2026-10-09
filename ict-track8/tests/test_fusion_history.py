@@ -76,6 +76,28 @@ def test_four_cross_source_turns_use_verified_server_scopes(agent):
     assert set(four['state']['fusion_context']['documents']) == {'policy', 'targets'}
 
 
+def test_same_algorithm_reuses_sealed_tasks_with_fresh_region_reads(agent,monkeypatch):
+    first=agent.query('先查2025年华东销售额作预测基准，再结合《指标与预测公式》的公式和《区域目标》中华东2026目标增长率，算出华东2026目标销售额，并分别标明PDF、Excel和数据库来源。',session_id='template')
+    assert first['status']=='ok',first
+    def forbidden(*args,**kwargs):pytest.fail('Verified region replacement must not call the model planner')
+    monkeypatch.setattr(agent.client,'generate',forbidden)
+    second=agent.query('同样算法改成华南，继续用2025销售额为基准，并使用区域目标对应增长率。',session_id='template')
+    assert second['status']=='ok',second
+    assert second['result']['results']['calculate']['value']==pytest.approx(22992*1.1)
+    assert second['trace'][0]['source']=='server_verified_fusion_task_template'
+
+
+def test_tampered_task_template_never_reaches_execution(agent,monkeypatch):
+    assert agent.query(FORECAST,session_id='sealed')['status']=='ok'
+    turn=agent.conversations.context('sealed')[-1]
+    state=turn.state
+    state['fusion_context']['task_template']['payload']['tasks'][2]['args']['where']['年份']=2025
+    agent.conversations.remember('sealed',question=turn.question,effective_question=turn.effective_question,state=state)
+    monkeypatch.setattr(DependencyAgent,'run',lambda *args,**kwargs:pytest.fail('Tampered task template reached execution'))
+    result=agent.query('那华南2026年的目标呢，基准还是2025年，增长率取该地区Excel？',session_id='sealed')
+    assert result['status']=='clarification'
+
+
 @pytest.mark.parametrize('question', [
     '那华南2025年的目标呢，基准还是2026年，增长率取该地区Excel？',
     '那华南2027年的目标呢，基准还是2025年，增长率取该地区Excel？',
@@ -109,6 +131,12 @@ def test_new_topic_and_reset_do_not_inherit_sources(agent):
 
 def test_model_cannot_switch_verified_document_in_followup(agent):
     assert agent.query(FIRST, session_id='source')['status'] == 'ok'
+    # Legacy sessions predate sealed task templates; retain coverage of the
+    # model replanning fallback as well as the new template path.
+    turn=agent.conversations.context('source')[-1]
+    state=dict(turn.state);state['fusion_context']=dict(state['fusion_context'])
+    state['fusion_context'].pop('task_template',None)
+    agent.conversations.remember('source',question=turn.question,effective_question=turn.effective_question,state=state)
     original = agent.client.generate
     def changed(*args, **kwargs):
         plan = original(*args, **kwargs)
@@ -126,6 +154,10 @@ def test_model_cannot_switch_verified_document_in_followup(agent):
 @pytest.mark.parametrize('mutation', ['label', 'column', 'year'])
 def test_same_documents_cannot_authorize_changed_parameter_contracts(agent, mutation, monkeypatch):
     assert agent.query(FORECAST, session_id='bindings')['status'] == 'ok'
+    turn=agent.conversations.context('bindings')[-1]
+    state=dict(turn.state);state['fusion_context']=dict(state['fusion_context'])
+    state['fusion_context'].pop('task_template',None)
+    agent.conversations.remember('bindings',question=turn.question,effective_question=turn.effective_question,state=state)
     monkeypatch.setattr(DependencyAgent, 'run',
                         lambda *args, **kwargs: pytest.fail('Changed parameter contract reached tool execution'))
     original = agent.client.generate
@@ -178,6 +210,10 @@ def test_changed_document_revision_does_not_inherit(agent):
 
 def test_followup_cannot_drop_document_route(agent):
     assert agent.query(FORECAST, session_id='route')['status'] == 'ok'
+    turn=agent.conversations.context('route')[-1]
+    state=dict(turn.state);state['fusion_context']=dict(state['fusion_context'])
+    state['fusion_context'].pop('task_template',None)
+    agent.conversations.remember('route',question=turn.question,effective_question=turn.effective_question,state=state)
     def changed(*args, **kwargs):
         return {'route': 'sql', 'effective_question': '2025年华南销售额', 'tasks_json': '[]', 'clarification': ''}
     agent.client.generate = changed
@@ -269,3 +305,83 @@ def test_fresh_sql_does_not_require_old_document_revision(agent):
     result = agent.query('2024年华北地区销售额呢', session_id='oldrevision')
     assert result['status'] == 'ok'
     assert result['result']['rows'][0]['销售额'] == 3999
+
+
+@pytest.mark.parametrize('region,scenario,percent,rate',[('华东','保守',8,.12),('华南','积极',18,.10)])
+def test_scenario_switch_compare_summary_use_fresh_source_without_planner(agent,monkeypatch,region,scenario,percent,rate):
+    import sqlite3
+    workbook=Workbook()
+    workbook.active.append(['地区','年份','目标增长率'])
+    for entity,growth in [('华东',.12),('华南',.10)]:
+        workbook.active.append([entity,2026,growth])
+        workbook.active.cell(workbook.active.max_row,3).number_format='0.0%'
+    buffer=BytesIO();workbook.save(buffer)
+    agent.knowledge.ingest(buffer.getvalue(),document_id='targets',title='区域目标',modality='xlsx',filename='t.xlsx')
+    agent.knowledge.ingest(('目标销售额 = 基准销售额 * (1 + 目标增长率)\n'
+        '2026年目标增长率为12%，预测基准为2025年销售额。\n'
+        '保守目标增长率为8%，积极目标增长率为18%。').encode(),
+        document_id='policy',title='指标与预测公式',modality='txt',filename='p.txt')
+    question=f'先查2025年{region}销售额作预测基准，再结合《指标与预测公式》的公式和《区域目标》中华东2026目标增长率，算出{region}2026目标销售额'
+    question=question.replace('中华东2026',f'中{region}2026')
+    first=agent.query(question,session_id='scenario')
+    assert first['status']=='ok',first
+    monkeypatch.setattr(agent.client,'generate',lambda *a,**kw:pytest.fail('Verified parameter operation called the planner'))
+    with sqlite3.connect(agent.engine.database_path) as con:
+        base=con.execute("SELECT SUM(sales_amount) FROM sales_orders WHERE region=? AND order_date>='2025-01-01' AND order_date<'2026-01-01'",(region,)).fetchone()[0]
+    switched=agent.query(f'基准年份和地区不变，把增长率改用预测公式的{scenario}情景{percent}%，重算{region}目标。',session_id='scenario')
+    assert switched['status']=='ok',switched
+    assert switched['result']['results']['scenario_target']['value']==pytest.approx(base*(1+percent/100))
+    assert switched['result']['results']['scenario_target']['result_unit']=='CNY'
+    compared=agent.query(f'{scenario}情景目标比区域目标口径高多少金额？保持相同的2025年{region}销售额基准。',session_id='scenario')
+    assert compared['status']=='ok',compared['result'].get('error') or compared['result']
+    assert compared['result']['results']['scenario_compare']['difference']==pytest.approx(base*(percent/100-rate))
+    summary=agent.query(f'总结{region}2026目标额：区域目标{rate*100:g}%口径和报告{scenario}情景{percent}%口径各是多少？请注明两者都是预测目标，不能当作2026实际销售额。',session_id='scenario')
+    assert summary['status']=='ok',summary
+    assert '不能当作实际销售额' in summary['result']['answer']
+    assert '差额' in summary['result']['answer']
+    for key in ('calculate','scenario_target'):
+        assert '不能当作实际' in summary['result']['results'][key]['result_interpretation']
+
+
+@pytest.mark.parametrize('mutation',['percent','origin','revision','year'])
+def test_scenario_operation_refuses_unverified_input_before_execution(agent,monkeypatch,mutation):
+    agent.knowledge.ingest(('目标销售额 = 基准销售额 * (1 + 目标增长率)\n'
+        '2026年目标增长率为12%，预测基准为2025年销售额。\n积极目标增长率为18%。').encode(),
+        document_id='policy',title='指标与预测公式',modality='txt',filename='p.txt')
+    assert agent.query(FORECAST,session_id='invalid-scenario')['status']=='ok'
+    q='基准年份和地区不变，把增长率改用预测公式的积极情景18%，重算华东目标。'
+    if mutation=='percent':q=q.replace('18%','19%')
+    elif mutation=='year':q=q.replace('重算华东目标','重算华东2027目标')
+    elif mutation=='revision':
+        agent.knowledge.ingest('积极目标增长率为20%。'.encode(),document_id='policy',title='指标与预测公式',modality='txt',filename='p.txt')
+    else:
+        turn=agent.conversations.context('invalid-scenario')[-1]
+        state=turn.state
+        state['fusion_context']['parameter_origin']=state['fusion_context']['task_template']
+        state['fusion_context']['parameter_origin']['payload']['tasks'][1]['args']['question']='2024年华南销售额'
+        agent.conversations.remember('invalid-scenario',question=turn.question,effective_question=turn.effective_question,state=state)
+    monkeypatch.setattr(DependencyAgent,'run',lambda *a,**kw:pytest.fail('Unverified scenario reached execution'))
+    result=agent.query(q,session_id='invalid-scenario')
+    assert result['status']=='clarification',result
+
+
+@pytest.mark.parametrize('region,rate',[('华东',.12),('华南',.10)])
+def test_explicit_formula_plan_with_unique_real_cell_never_calls_model(agent,monkeypatch,region,rate):
+    monkeypatch.setenv('ICT8_FAST_SQL','1')
+    monkeypatch.setattr(agent.client,'generate',lambda *a,**kw:pytest.fail('Explicit verified formula request called model'))
+    q=f'先统计2025年{region}销售额作为预测基准，结合《指标与预测公式》的公式和《区域目标》中{region}2026目标增长率，计算{region}2026目标销售额。'
+    result=agent.query(q,session_id='explicit')
+    assert result['status']=='ok',result
+    assert result['planner_source']=='server_verified_explicit_formula_plan'
+    assert result['result']['results']['target']['value']==pytest.approx((29584 if region=='华东' else 22992)*(1+rate))
+
+
+@pytest.mark.parametrize('mutation',['unknown_condition','unbound_target','extra_operation','wrong_source'])
+def test_explicit_formula_compiler_does_not_drop_unknown_request(agent,mutation):
+    from backend.fusion_formula_planner import plan_explicit_formula_request
+    q='先查2025年华东销售额作预测基准，再结合《指标与预测公式》的公式和《区域目标》中华东2026目标增长率，算出华东2026目标销售额。'
+    if mutation=='unknown_condition':q=q.replace('2025年华东销售额','2025年华东销售额且未批准的不算')
+    elif mutation=='unbound_target':q=q.replace('算出华东','算出华北')
+    elif mutation=='extra_operation':q=q.rstrip('。')+'，再算实际增长额。'
+    else:q=q.replace('《区域目标》','《不存在的表》')
+    assert plan_explicit_formula_request(q,agent.engine,agent.knowledge) is None

@@ -271,7 +271,9 @@ class DependencyAgent:
                     from .dynamic_source_binding import bind_dynamic_source_filters
                     required = bind_dynamic_source_filters(self, task=task, tasks=tasks, results=results,
                         required_intent=required, original_question=original_question)
-                result = (self.execute(task['tool'], args, task['args'], results, required_intent=required)
+                result = (self.execute(task['tool'], args, task['args'], results, original_question=original_question)
+                          if task['tool'] == 'calculate' else
+                          self.execute(task['tool'], args, task['args'], results, required_intent=required)
                           if required is not None else self.execute(task['tool'], args, task['args'], results))
                 if search_validation is not None:
                     result['dependency_reference_validation'] = search_validation
@@ -310,7 +312,7 @@ class DependencyAgent:
                                       'scope': 'selected_original_hash_and_logical_version_not_semantic_truth'},
                 'edges': [{'from': dependency, 'to': key} for key, refs in dependencies.items() for dependency in sorted(refs)]}
 
-    def execute(self, tool, args, original_args, results, *, required_intent=None):
+    def execute(self, tool, args, original_args, results, *, required_intent=None, original_question=None):
         if tool == 'policy_select':
             from .policy_evidence import select_policy
             if set(args) != {'document_id', 'as_of', 'label'}:
@@ -334,6 +336,14 @@ class DependencyAgent:
                     and 'provenance' in source_result and 'aggregate_cells' in source_result)
                 if not isinstance(ref, dict) or ref.get('ref') not in results or not (path == [] or aggregate_ref):
                     raise DependencyPlanError('比较对象必须直接引用工具证据')
+                calculated_ref=(path==[] and args[key]==source_result
+                    and source_result.get('parameter_semantics_validation',{}).get('status')=='verified'
+                    and source_result.get('unit_validation')=='validated'
+                    and isinstance(source_result.get('formula_source'),str)
+                    and isinstance(source_result.get('formula_locator'),str))
+                if calculated_ref:
+                    args[key]={**source_result,'source_uri':source_result['formula_source'],
+                        'locator':source_result['formula_locator'],'unit':source_result['result_unit']}
                 if not isinstance(args[key], dict) or not {'value', 'source_uri', 'locator'} <= args[key].keys():
                     raise DependencyPlanError('比较对象缺少可定位证据')
             left, right = args['left'], args['right']
@@ -510,7 +520,8 @@ class DependencyAgent:
                 raise DependencyPlanError('公式没有有效文档来源')
             from .formula_parameter_binding import validate_formula_sql_parameters
             parameter_validation = validate_formula_sql_parameters(
-                self.sql_engine, formula, original_args['parameters'], args['parameters'], results)
+                self.sql_engine, formula, original_args['parameters'], args['parameters'], results,
+                original_question=original_question, knowledge=self.knowledge_store)
             temporal = formula.get('temporal_constraints')
             if temporal:
                 base_ref = original_args['parameters'].get('基准销售额', {})
@@ -521,7 +532,17 @@ class DependencyAgent:
                 actual_window = base_result.get('plan', {}).get('intent_audit', {}).get('time_range')
                 if actual_window != expected_window:
                     raise DependencyPlanError('预测基准年份必须严格匹配文档规定的全年统计区间')
-                if growth_result.get('matched_conditions', {}).get('年份') != temporal['target_year']:
+                # A literal scenario in the very same version of the formula
+                # document inherits its unique source-declared target year.
+                # Rates from other documents still need an explicit year cell.
+                same_document_fact = (
+                    growth_result.get('validation') == 'literal_scoped_numeric_fact_not_general_entailment'
+                    and growth_result.get('source_uri') == formula.get('source_uri')
+                    and growth_result.get('sha256') == formula.get('sha256')
+                    and set(map(int, re.findall(r'(?<!\d)(?:19|20)\d{2}(?!\d)', growth_result.get('quote', ''))))
+                        <= {temporal['target_year']})
+                if (growth_result.get('matched_conditions', {}).get('年份') != temporal['target_year']
+                        and not same_document_fact):
                     raise DependencyPlanError('目标增长率适用年份与文档预测年份不一致')
             bindings = {}
             for name, value in args['parameters'].items():
@@ -536,16 +557,30 @@ class DependencyAgent:
                     numeric = value
                     source = 'sql://' + str(result['provenance']['query_hash'])
                     locator = '/'.join(str(x) for x in reference['path'])
-                    metrics = result['plan'].get('metrics', [])
-                    metric = next((m for m in metrics if m['label'] == reference['path'][2]), {})
-                    unit = metric.get('currency') if metric.get('unit') == 'currency' else metric.get('unit', 'unknown')
+                    # Single-metric plans do not populate plan.metrics. Use
+                    # the same executed physical slot already certified by
+                    # the parameter validator, rather than its display name.
+                    proof=next(p for p in parameter_validation['bindings'] if p['parameter']==name)
+                    cell=aggregate_evidence(result)[0][proof['table']][proof['column']][proof['function']][proof['row']]
+                    unit=cell.get('unit','unknown')
                 else:
                     raise DependencyPlanError('参数来源没有结构化单元格证据')
+                if unit == 'unknown':
+                    proof=next(p for p in parameter_validation['bindings'] if p['parameter']==name)
+                    catalog=getattr(self.sql_engine,'metric_catalog',None)
+                    declared={m.currency if m.unit=='currency' else m.unit
+                        for m in catalog.sources.values()
+                        if proof.get('source_type')=='sql' and
+                        (m.table,m.column,m.function)==(proof.get('table'),proof.get('column'),proof.get('function'))} if catalog else set()
+                    if len(declared)==1 and next(iter(declared)):
+                        unit=next(iter(declared))
                 if isinstance(numeric, bool) or not isinstance(numeric, (int, float)) or not math.isfinite(numeric):
                     raise DependencyPlanError('参数不是有限数字')
                 bindings[name] = ParameterEvidence(numeric, source, locator, unit or 'unknown')
             calculated = FormulaBinder().calculate(formula['expression'], bindings, formula_source=formula['source_uri'], formula_locator=formula['locator'])
             calculated['parameter_semantics_validation'] = parameter_validation
             calculated['temporal_validation'] = {'status': 'verified', **temporal} if temporal else {'status': 'not_inferred'}
+            if temporal:
+                calculated['result_interpretation']='预测目标，不能当作实际销售额。'
             return calculated
         raise DependencyPlanError('未授权工具')

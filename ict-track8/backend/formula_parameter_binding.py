@@ -118,7 +118,7 @@ def _parameter_candidates(engine, name, tables, source_tables):
     return candidates
 
 
-def _document_parameter(name, path, result, resolved):
+def _document_parameter(name, path, result, resolved, *, original_question=None, knowledge=None):
     if path != [] or not isinstance(resolved, dict) or resolved != result:
         _reject()
     if (not isinstance(result.get('source_uri'), str) or not result['source_uri'].startswith('/api/v1/knowledge/documents/')
@@ -127,13 +127,53 @@ def _document_parameter(name, path, result, resolved):
         _reject()
     locator = result.get('locator', '')
     label = locator.rsplit('/column:', 1)[1] if '/column:' in locator else result.get('label')
-    if not isinstance(label, str) or _stem(name) != _stem(label):
+    qualifier = None
+    if isinstance(label, str) and _stem(name) != _stem(label):
+        # A scenario is a qualifier of a literal metric, not a new metric.
+        # Authorize it only from the user's explicit selection and a fresh
+        # extraction from the pinned original chunk. Never strip arbitrary
+        # business prefixes or use numeric equality to infer semantics.
+        stem = _stem(name)
+        qualifier = label[:-len(stem)] if stem and label.endswith(stem) else None
+        question = original_question or ''
+        followup = re.search(r'文档追问：[（(](.*)[）)]$', question, re.S)
+        if followup:
+            question = followup[1]
+        clauses = re.split(r'[，,；;。]', question)
+        selected = [c for c in clauses if qualifier and qualifier + '情景' in c]
+        if (not qualifier or len(qualifier) > 12 or len(selected) != 1 or knowledge is None
+                or re.search(r'不是|并非|不使用|不用|不要|排除|取消|不能', selected[0])
+                or result.get('validation') != 'literal_scoped_numeric_fact_not_general_entailment'
+                or result.get('label_binding', {}).get('method') != 'literal_label'
+                or result.get('label_binding', {}).get('literal_label') != label):
+            _reject()
+        from .evidence_fact import extract_search_fact
+        document = knowledge.document(result.get('document_id'))
+        knowledge.verify_source(document['document_id'], expected_sha256=result['sha256'])
+        chunk = next((c for c in document['chunks'] if c['chunk_id'] == result.get('chunk_id')), None)
+        if chunk is None:
+            _reject()
+        hit = {'snippet': chunk['text'], 'source_uri': result['source_uri'], 'metadata': {
+            'document_id': document['document_id'], 'chunk_id': chunk['chunk_id'],
+            'source_sha256': document['sha256'], 'source_locator': chunk['source_locator']}}
+        try:
+            fact = extract_search_fact(knowledge, {'hits': [hit]}, scope=result.get('scope'),
+                                       label=label, unit=result.get('unit'))
+        except (ValueError, TypeError):
+            _reject()
+        if any(fact.get(key) != result.get(key) for key in (
+                'value', 'unit', 'source_uri', 'sha256', 'locator', 'quote', 'label_binding')):
+            _reject()
+    elif not isinstance(label, str):
         _reject()
     return {'parameter': name, 'source_type': 'document', 'label': label,
-            'source_uri': result['source_uri'], 'source_sha256': result['sha256'], 'locator': locator}
+            'source_uri': result['source_uri'], 'source_sha256': result['sha256'], 'locator': locator,
+            **({'qualifier': qualifier, 'verification': 'user_selected_scenario_and_reextracted_literal_metric'}
+               if qualifier else {})}
 
 
-def validate_formula_sql_parameters(engine, formula, original_parameters, resolved_parameters, results):
+def validate_formula_sql_parameters(engine, formula, original_parameters, resolved_parameters, results,
+                                    *, original_question=None, knowledge=None):
     """Validate exact original refs against actual executed aggregate slots.
 
     Returns audit only, never rewrites/switches parameters. Optional future
@@ -166,7 +206,8 @@ def validate_formula_sql_parameters(engine, formula, original_parameters, resolv
         if not isinstance(result, dict):
             _reject()
         if 'rows' not in result:
-            proofs.append(_document_parameter(name, reference['path'], result, resolved))
+            proofs.append(_document_parameter(name, reference['path'], result, resolved,
+                original_question=original_question, knowledge=knowledge))
             continue
         metric, row, value = _actual_metric(result, reference['path'], resolved)
         candidates = _parameter_candidates(engine, name, tables, source_tables)

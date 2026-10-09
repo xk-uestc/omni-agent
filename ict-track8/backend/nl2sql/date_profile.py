@@ -10,6 +10,7 @@ import time
 
 
 _ISO = re.compile(r'\d{4}-\d{2}-\d{2}(?:[ T]\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)?\Z')
+_ISO_MONTH = re.compile(r'\d{4}-\d{2}\Z')
 _TIME_INTENT = re.compile(
     r'\b(?:19|20)\d{2}\b|(?:19|20)\d{2}年|日期|时间|月份|年份|年度|月度|'
     r'最新|最早|天数|用时|间隔|归还|租出|\b(?:date|time|year|month|latest|earliest|duration)\b', re.I)
@@ -111,6 +112,10 @@ def storage_profiles(connection, tables, question, *, candidate_fields=(),
         return int(steps>max_steps or time.monotonic()-started>max_seconds)
     def classify(value):
         if value is None:return 'null'
+        if isinstance(value,str) and _ISO_MONTH.fullmatch(value):
+            try:datetime.strptime(value, '%Y-%m')
+            except ValueError:return 'unknown'
+            return 'iso_month_text'
         if isinstance(value,str) and _ISO.fullmatch(value):
             try:datetime.fromisoformat(value)
             except ValueError:return 'unknown'
@@ -129,13 +134,19 @@ def storage_profiles(connection, tables, question, *, candidate_fields=(),
                     raise sqlite3.OperationalError('date_profile_budget')
                 quote=lambda name:'"'+name.replace('"','""')+'"'
                 rows=connection.execute(f'SELECT internal_date_storage_kind({quote(column)}),COUNT(*),'
-                    f'SUM(CASE WHEN {quote(column)} IS NOT NULL AND JULIANDAY({quote(column)}) IS NULL '
+                    f'SUM(CASE WHEN {quote(column)} IS NOT NULL AND ('
+                    f'internal_date_storage_kind({quote(column)}) = \'unknown\' '
+                    f'OR (internal_date_storage_kind({quote(column)}) = \'iso_text\' '
+                    f'AND JULIANDAY({quote(column)}) IS NULL) '
+                    f'OR (internal_date_storage_kind({quote(column)}) = \'iso_month_text\' '
+                    f'AND strftime(\'%Y-%m\', date({quote(column)} || \'-01\')) != {quote(column)})) '
                     f'THEN 1 ELSE 0 END) '
                     f'FROM {quote(table)} GROUP BY 1').fetchall()
                 if steps>max_steps or time.monotonic()-started>=max_seconds:
                     raise sqlite3.OperationalError('date_profile_budget')
                 kinds={kind for kind,count,_ in rows if count and kind!='null'}
-                item['format']='iso_text' if kinds=={'iso_text'} else 'unknown'
+                item['format'] = ('iso_text' if kinds == {'iso_text'} else
+                                  'iso_month_text' if kinds == {'iso_month_text'} else 'unknown')
                 # Parseable ISO permits mixed T/space separators and precision.
                 # It does not prove chronological text ordering. A separate
                 # whole-column SQLite parse observation authorizes only the
@@ -146,6 +157,13 @@ def storage_profiles(connection, tables, question, *, candidate_fields=(),
                         'verification':'whole_column_sqlite_parse_non_null_values',
                         'text_order_verified':False,
                         'precision_contract':'native_sqlite_time_semantics'}
+                elif item['format'] == 'iso_month_text' and not sum(invalid for _,_,invalid in rows):
+                    item['time_comparison'] = {
+                        'operator': 'text_half_open',
+                        'verification': 'whole_column_calendar_month_values',
+                        'text_order_verified': True,
+                        'precision_contract': 'calendar_month',
+                    }
                 if len(kinds)==1 and next(iter(kinds)).startswith('numeric_'):
                     item['numeric_encoding_hint']=next(iter(kinds))
                     item['numeric_unit_verification']='not_proven_by_magnitude'

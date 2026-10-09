@@ -1,0 +1,2414 @@
+{
+  "type": "independent scorer-only gold and frozen input audit",
+  "input185_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "clarification22_input_sha256": "684e8d955920f9b793a7a5069e90c9837a098296bea0743d0344bffb0afc434f",
+  "gold_queries_replayed": 188,
+  "errors": [],
+  "databases_unchanged": true,
+  "database_sha256": {
+    "rich.sqlite": "6fbccdbe607e5d1edc6e6f80eb885d373144e0da63038f50890acedd061d563e",
+    "commerce.sqlite": "383017ccd79cee0cef98f131105a68652dc10050826f4fc164d18ef061f22999",
+    "renamed.sqlite": "7bb9ccdf1d6385014a8feff90465d8e35c53a7c7133426a069fca6a0827696bc",
+    "mixed.sqlite": "230ccf5a96637c1b46efad7748e1f3227075be45f8f81559f2172aacf29f8235"
+  },
+  "results": [
+    {
+      "corpus": "frozen185",
+      "id": "legacy-00-0",
+      "question": "2024年华东地区销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4141783.32
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-00-1",
+      "question": "2025年华东地区销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-01-0",
+      "question": "2024年华东地区销量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1517
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-01-1",
+      "question": "2025年华东地区销量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1515
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-02-0",
+      "question": "2024年华东地区毛利",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1382865.02
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-02-1",
+      "question": "2025年华东地区毛利",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1379868.14
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-03-0",
+      "question": "2024年华东地区运费",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          14344.8
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-03-1",
+      "question": "2025年华东地区运费",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          16588.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-04-0",
+      "question": "2024年华东地区回款金额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4020510.05
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-04-1",
+      "question": "2025年华东地区回款金额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4280490.23
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-05-0",
+      "question": "2024年华东地区采购金额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          79525387.17999999
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-05-1",
+      "question": "2025年华东地区采购金额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          80456097.44
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-06-0",
+      "question": "2024年华东地区工资总额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5126135.52
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-06-1",
+      "question": "2025年华东地区工资总额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5119260.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-07-0",
+      "question": "2024年华东地区奖金总额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          611735.52
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-07-1",
+      "question": "2025年华东地区奖金总额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          604860.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-08-0",
+      "question": "2024年华东地区网页浏览量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          6858762
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-08-1",
+      "question": "2025年华东地区网页浏览量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          6644935
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-09-0",
+      "question": "2024年华东地区网站访问量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1710129
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-09-1",
+      "question": "2025年华东地区网站访问量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1656045
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-10-0",
+      "question": "2024年华东地区运营费用",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1793916.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-10-1",
+      "question": "2025年华东地区运营费用",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1746684.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-11-0",
+      "question": "2024年工单数",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          802
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-11-1",
+      "question": "2025年工单数",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          800
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-group-0",
+      "question": "2025年各地区销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "东南",
+          6280960.41
+        ],
+        [
+          "华中",
+          6255298.41
+        ],
+        [
+          "华北",
+          5685161.57
+        ],
+        [
+          "东北",
+          5618029.5
+        ],
+        [
+          "华南",
+          5039053.54
+        ],
+        [
+          "西北",
+          4882546.11
+        ],
+        [
+          "西南",
+          4256499.41
+        ],
+        [
+          "华东",
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-group-1",
+      "question": "2025年各渠道销量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "企业直销",
+          3131
+        ],
+        [
+          "经销商",
+          3129
+        ],
+        [
+          "直播电商",
+          3115
+        ],
+        [
+          "线上商城",
+          3108
+        ],
+        [
+          "直营网店",
+          3108
+        ],
+        [
+          "线上",
+          20
+        ],
+        [
+          "门店",
+          17
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-group-2",
+      "question": "2025年各产品类别毛利",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "电脑",
+          4179633.08
+        ],
+        [
+          "手机",
+          2719516.88
+        ],
+        [
+          "影像设备",
+          2693863.24
+        ],
+        [
+          "平板",
+          2241447.14
+        ],
+        [
+          "穿戴设备",
+          783033.92
+        ],
+        [
+          "智能家居",
+          702781.05
+        ],
+        [
+          "耳机",
+          537085.3
+        ],
+        [
+          "配件",
+          159666.68
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-group-3",
+      "question": "2025年各设备类型网页浏览量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "手机",
+          17960237
+        ],
+        [
+          "平板",
+          17864519
+        ],
+        [
+          "电脑",
+          17855994
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-group-4",
+      "question": "2025年各流量来源网站访问量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "付费搜索",
+          2699861
+        ],
+        [
+          "自然搜索",
+          2691559
+        ],
+        [
+          "邮件营销",
+          2686012
+        ],
+        [
+          "社交媒体",
+          2681163
+        ],
+        [
+          "直接访问",
+          2671465
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-avg",
+      "question": "2025年华东平均运输天数",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          3.007936507936508
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "legacy-multi",
+      "question": "2025年华东销售额和销量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4188944.0,
+          1515
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-00",
+      "question": "2025年华东卖了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-01",
+      "question": "2025年华东卖出去多少件",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1515
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-02",
+      "question": "2025年华东赚了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1379868.14
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-03",
+      "question": "2025年华东运输花了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          16588.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-04",
+      "question": "2025年华东物流花了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          16588.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-05",
+      "question": "2025年华东配送花了多少",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          16588.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-06",
+      "question": "2025年华东运货花的钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          16588.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-07",
+      "question": "2025年华东采购花了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          80456097.44
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-08",
+      "question": "2025年华东进货花了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          80456097.44
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-09",
+      "question": "2025年华东采购花的钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          80456097.44
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-10",
+      "question": "2025年华东买了多少件",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          18943
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-11",
+      "question": "2025年华东采购了多少件",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          18943
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-12",
+      "question": "2025年华东工资发了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5119260.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-13",
+      "question": "2025年华东发了多少工资",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5119260.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-14",
+      "question": "2025年华东发出去的工资",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5119260.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-15",
+      "question": "2025年华东奖金发了多少",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          604860.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-16",
+      "question": "2025年华东发了多少奖金",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          604860.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-17",
+      "question": "2025年华东实际收了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4280490.23
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-18",
+      "question": "2025年华东到账了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4280490.23
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-19",
+      "question": "2025年华东回款到账金额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4280490.23
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-20",
+      "question": "2025年华东网页被看了多少次",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          6644935
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-21",
+      "question": "2025年华东页面被浏览了多少次",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          6644935
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-22",
+      "question": "2025年华东网站来了多少次访问",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1656045
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-23",
+      "question": "2025年华东运营花了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1746684.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "domain-slang-24",
+      "question": "2025年华东报销花了多少钱",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1746684.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-00",
+      "question": "2025年华东成本",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-01",
+      "question": "2025年华东本钱",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-02",
+      "question": "2025年华东本金",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-03",
+      "question": "2025年华東地区进货钱是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-04",
+      "question": "2025年华东进货花了多少钱",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-05",
+      "question": "2025年华东成本金额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-06",
+      "question": "2025年华东销售成本",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-07",
+      "question": "2025年华東地区卖货成本是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-08",
+      "question": "2025年华东拿货成本",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-09",
+      "question": "2025年华东投入成本",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-10",
+      "question": "2025年华东拿货花的钱",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-cost_amount-11",
+      "question": "2025年华東地区进货花的钱是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-00",
+      "question": "2025年华东毛利",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-01",
+      "question": "2025年华东利润",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-02",
+      "question": "2025年华东赚了多少钱",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-03",
+      "question": "2025年华東地区挣了多少钱是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-04",
+      "question": "2025年华东赚的钱",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-05",
+      "question": "2025年华东盈利金额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-06",
+      "question": "2025年华东赚头",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-07",
+      "question": "2025年华東地区毛利润是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-08",
+      "question": "2025年华东卖货赚了多少",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-09",
+      "question": "2025年华东赚了多少",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-10",
+      "question": "2025年华东获利",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-gross_profit-11",
+      "question": "2025年华東地区赚的钱有多少是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-sales_amount-00",
+      "question": "2025年华东销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-sales_amount-01",
+      "question": "2025年华东销售金额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-sales_amount-02",
+      "question": "2025年华东营业额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-sales_amount-03",
+      "question": "2025年华東地区卖了多少钱是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-sales_amount-04",
+      "question": "2025年华东卖出多少钱",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-sales_amount-05",
+      "question": "2025年华东成交金额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-quantity-00",
+      "question": "2025年华东销量",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-quantity-01",
+      "question": "2025年华东销售件数",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-quantity-02",
+      "question": "2025年华东卖了多少件",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-quantity-03",
+      "question": "2025年华東地区售出数量是多少？",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-quantity-04",
+      "question": "2025年华东卖出多少件",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "vocab-quantity-05",
+      "question": "2025年华东销售数量",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-00",
+      "question": "2025年华东成本",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-01",
+      "question": "2025年华东本钱",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-02",
+      "question": "2025年华东本金",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-03",
+      "question": "2025年华东拿货成本",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-04",
+      "question": "2025年华东毛利",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-05",
+      "question": "2025年华东利润",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-06",
+      "question": "2025年华东赚了多少钱",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          2492.04
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-07",
+      "question": "2025年华东销售额",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-08",
+      "question": "2025年华东卖了多少钱",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-09",
+      "question": "2025年华东销量",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-10",
+      "question": "2025年华东卖了多少件",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "renamed-11",
+      "question": "2025年华东订单数",
+      "fixture": "renamed.sqlite",
+      "gold_rows": [
+        [
+          8
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-01",
+      "question": "2025年华东销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-02",
+      "question": "那华南呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5039053.54
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-03",
+      "question": "看看订单数",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          304
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-04",
+      "question": "换成华北",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          301
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-05",
+      "question": "换成2024年",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          301
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-06",
+      "question": "看看销量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          2101
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-07",
+      "question": "那华东呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1517
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-classic-08",
+      "question": "换成2025年",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1515
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-01",
+      "question": "2025年华东销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-02",
+      "question": "本金呢",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-03",
+      "question": "那华南呢",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2730.92
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-04",
+      "question": "再看利润",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2705.08
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-05",
+      "question": "换成2024年",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2293.8
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-06",
+      "question": "那华北呢",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2506.84
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-07",
+      "question": "本钱呢",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2721.16
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-colloquial-08",
+      "question": "看看销量",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          30
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-01",
+      "question": "2025年华东销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-02",
+      "question": "再给我订单数，其他条件不变",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          8
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-03",
+      "question": "只看华南",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          8
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-04",
+      "question": "同样条件，换成2024年",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          8
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-05",
+      "question": "销量也查一下",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-06",
+      "question": "华北也查一下",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          30
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-07",
+      "question": "利润也查一下",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2506.84
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-inherit-08",
+      "question": "同样条件，2025年，华东，销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-01",
+      "question": "2025年华东线上销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2400.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-02",
+      "question": "那华南呢",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2684.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-03",
+      "question": "换成销量",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          16
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-04",
+      "question": "删除渠道筛选",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          30
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-05",
+      "question": "增加渠道筛选为门店",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          14
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-06",
+      "question": "那2024年呢",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          16
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-07",
+      "question": "换成销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          2364.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-filter-08",
+      "question": "时间改成2025年，地区改成华东，指标改成订单数",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-01",
+      "question": "2025年各地区销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "东南",
+          6280960.41
+        ],
+        [
+          "华中",
+          6255298.41
+        ],
+        [
+          "华北",
+          5685161.57
+        ],
+        [
+          "东北",
+          5618029.5
+        ],
+        [
+          "华南",
+          5039053.54
+        ],
+        [
+          "西北",
+          4882546.11
+        ],
+        [
+          "西南",
+          4256499.41
+        ],
+        [
+          "华东",
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-02",
+      "question": "换成销量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "华中",
+          2404
+        ],
+        [
+          "东南",
+          2404
+        ],
+        [
+          "华北",
+          2110
+        ],
+        [
+          "东北",
+          2086
+        ],
+        [
+          "华南",
+          1818
+        ],
+        [
+          "西北",
+          1792
+        ],
+        [
+          "华东",
+          1515
+        ],
+        [
+          "西南",
+          1499
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-03",
+      "question": "那2024年呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "东南",
+          2404
+        ],
+        [
+          "华中",
+          2400
+        ],
+        [
+          "东北",
+          2115
+        ],
+        [
+          "华北",
+          2101
+        ],
+        [
+          "西北",
+          1806
+        ],
+        [
+          "华南",
+          1794
+        ],
+        [
+          "华东",
+          1517
+        ],
+        [
+          "西南",
+          1496
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-04",
+      "question": "换成毛利",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "华中",
+          2167258.63
+        ],
+        [
+          "东南",
+          2118252.72
+        ],
+        [
+          "东北",
+          1911684.35
+        ],
+        [
+          "华北",
+          1879820.9
+        ],
+        [
+          "华南",
+          1704228.29
+        ],
+        [
+          "西北",
+          1648890.54
+        ],
+        [
+          "华东",
+          1382865.02
+        ],
+        [
+          "西南",
+          1380679.39
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-05",
+      "question": "换成按渠道分组",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "企业直销",
+          2945941.25
+        ],
+        [
+          "直营网店",
+          2883227.96
+        ],
+        [
+          "线上商城",
+          2817507.02
+        ],
+        [
+          "直播电商",
+          2771889.98
+        ],
+        [
+          "经销商",
+          2767134.63
+        ],
+        [
+          "线上",
+          4556.0
+        ],
+        [
+          "门店",
+          3423.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-06",
+      "question": "那2025年呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "线上商城",
+          2896102.5
+        ],
+        [
+          "直播电商",
+          2837427.23
+        ],
+        [
+          "经销商",
+          2794313.23
+        ],
+        [
+          "企业直销",
+          2755794.79
+        ],
+        [
+          "直营网店",
+          2712166.54
+        ],
+        [
+          "线上",
+          11760.0
+        ],
+        [
+          "门店",
+          9463.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-07",
+      "question": "换成销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "线上商城",
+          8670046.43
+        ],
+        [
+          "直播电商",
+          8520808.28
+        ],
+        [
+          "经销商",
+          8496181.77
+        ],
+        [
+          "企业直销",
+          8296367.28
+        ],
+        [
+          "直营网店",
+          8152526.19
+        ],
+        [
+          "线上",
+          40580.0
+        ],
+        [
+          "门店",
+          29983.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-group-08",
+      "question": "换成按地区分组",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          "东南",
+          6280960.41
+        ],
+        [
+          "华中",
+          6255298.41
+        ],
+        [
+          "华北",
+          5685161.57
+        ],
+        [
+          "东北",
+          5618029.5
+        ],
+        [
+          "华南",
+          5039053.54
+        ],
+        [
+          "西北",
+          4882546.11
+        ],
+        [
+          "西南",
+          4256499.41
+        ],
+        [
+          "华东",
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-01",
+      "question": "2025年华东销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-02",
+      "question": "那华南呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5039053.54
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-03",
+      "question": "那华北呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5685161.57
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-04",
+      "question": "换成订单数",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          301
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-05",
+      "question": "那2024年呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          301
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-06",
+      "question": "那华南呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          301
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-07",
+      "question": "换成销量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1794
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-08",
+      "question": "那华东呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1517
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-09",
+      "question": "换成2025年",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1515
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-10",
+      "question": "换成毛利",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1379868.14
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-11",
+      "question": "那华北呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          1864123.77
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-long-12",
+      "question": "换成销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5685161.57
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-01",
+      "question": "2025年华东销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4188944.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-02",
+      "question": "2024年华南网页浏览量",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          6678810
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-03",
+      "question": "那华北呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          6763687
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-04",
+      "question": "2025年华东工资总额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5119260.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-05",
+      "question": "那华南呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          5140426.08
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-06",
+      "question": "2025年华北采购金额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          11099243.09
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-07",
+      "question": "那华东呢",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          80456097.44
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "history-topic-08",
+      "question": "2024年华南销售额",
+      "fixture": "rich.sqlite",
+      "gold_rows": [
+        [
+          4926530.33
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "collision-00",
+      "question": "2025年华东借款本金",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          12345.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "collision-01",
+      "question": "2025年华东贷款本金",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          12345.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "collision-02",
+      "question": "2025年华东销售成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "collision-03",
+      "question": "2025年华东卖货本金",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "collision-04",
+      "question": "2025年华东进货本钱",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "collision-05",
+      "question": "2025年华东利息金额",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          345.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "reset-1",
+      "question": "2025年华东销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "reset-2",
+      "question": "2024年华南销量",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          34
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "reset-3",
+      "question": "那华北呢",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          30
+        ]
+      ]
+    },
+    {
+      "corpus": "frozen185",
+      "id": "literal-value",
+      "question": "2025年产品名称为本钱包的销售额",
+      "fixture": "commerce.sqlite",
+      "gold_rows": [
+        [
+          1806.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "2024年华南销售额",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          4660.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "借款本金",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          12345.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "2024年华南销售额",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          4660.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "借款本金",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          12345.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "换个主题，2024年华南销售额",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          4660.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2366.2
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          30582.72
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "2025年华东销售额",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          4868.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          30582.72
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2375.96
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "2024年华南销售额",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          4660.0
+        ]
+      ]
+    },
+    {
+      "corpus": "explicit_clarification22",
+      "id": null,
+      "question": "成本",
+      "fixture": "mixed.sqlite",
+      "gold_rows": [
+        [
+          2366.2
+        ]
+      ]
+    }
+  ]
+}

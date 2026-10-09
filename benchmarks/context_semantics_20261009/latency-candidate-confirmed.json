@@ -1,0 +1,1190 @@
+{
+  "label": "latency-candidate-confirmed",
+  "created_at": "2026-10-08T18:15:18.715059+00:00",
+  "scope": "authored_development_regression_not_public_benchmark",
+  "external_api_calls": false,
+  "data_origin": "Deterministic self-authored synthetic rows and existing public synthetic demo seed",
+  "run_mode": "latency_only",
+  "reference_is_scorer_only": true,
+  "input_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "evaluation_script_sha256": "cb7663722282f4af9d9e0ad61e13c44e0e7b30f3fbe4d814c2413b206011f826",
+  "metric_catalog_sha256": "b5d88672eac49ac25f2ce9560d124c02041ac315cbc8aeddc705a851fe32b958",
+  "fixture_paths": {
+    "rich": {
+      "database": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\rich.sqlite",
+      "aliases": null,
+      "aliases_sha256": null
+    },
+    "commerce": {
+      "database": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\commerce.sqlite",
+      "aliases": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\commerce-aliases.json",
+      "aliases_sha256": "b67f4e99fe6d33aeba157f5538215149c4e703b97f4d8c964c11836f3e1d3b1c"
+    },
+    "mixed": {
+      "database": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\mixed.sqlite",
+      "aliases": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\mixed-aliases.json",
+      "aliases_sha256": "2e7cc387cec482e2579c83cbe50c490fda08528f393bb06123af50d48c64cd4c"
+    },
+    "renamed": {
+      "database": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\renamed.sqlite",
+      "aliases": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\renamed-aliases.json",
+      "aliases_sha256": "e6000961df0eed655c1bf4eb7457f7dc1c70b0bab27f2e8144e659f4d8c59872"
+    },
+    "unknown": {
+      "database": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-run-latency-candidate-confirmed\\unknown.sqlite",
+      "aliases": null,
+      "aliases_sha256": null
+    }
+  },
+  "implementation_root": "D:\\ICT8-OmniAgent\\runtime\\context-semantics-20261009-final",
+  "implementation_sha256_before": {
+    "backend/amount_cell_review.py": "79f23d04f7b29ccc3ee7c112b3f9ddbaefab17f8186bc0cfa310e9ad6e524b9c",
+    "backend/answer_contract.py": "1ace63ef88f6bb2bdda8ed4c1240c0aa9cee4150fdef1eaa164192d5985cdd38",
+    "backend/app.py": "dc83713f5dbe25d043f5159fcd73c552aecd0470cf392dabf42cdbdc6b7a6c4b",
+    "backend/blank_cell_review.py": "9e0c17118c7af8bce75823bf1695bb9d0fb6cdb328f38229af234fae24133d63",
+    "backend/cell_crop_quality.py": "5904e3aa7c15c527d35f81f070c5bba73b4a18773900e6e43f96292f8c2b1899",
+    "backend/chunk_cleaning.py": "a395c2951cf09ece5d1d867a4dec504918060c49013c3b359148195aa12884dd",
+    "backend/clarification.py": "e919e59572505ef1ebd242bd6eafc86a705d698808ac536714e1ad21328bcbf2",
+    "backend/clarification_continuation.py": "895228f875220e3c2c0f71b87ee49b960f870e13f7c59df8e1ccfc1f44a38031",
+    "backend/comparison_batch_edit.py": "84b521e46244d270f320ad2c845ee1faef61d8764920fe5e672b5ca91359e3d7",
+    "backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "backend/conversational_sql_edit.py": "a5c2e32fce7d1066939749a636fa34eb1a9ad46cadb1273c45a0b713e35b5a3a",
+    "backend/conversation_comparison.py": "590d04f52950d7f5202accbd938dd1883fa6dffa76d86db0c7f4601d545577a0",
+    "backend/conversation_sources.py": "956e6afeb65f4888e8bf8975224dc60183e928e7c42f4c15ee2325d5e7aebaf1",
+    "backend/cross_source.py": "c7c00594355f38a8d30d22274fb5a38f11b3f90d3ac7e41f86e2f37006560134",
+    "backend/dense_retrieval.py": "bb25f07dbe660e2cbb3b526eb35023a9134fe194cec8e5efde34157f5c748886",
+    "backend/dependency_agent.py": "29a890e1e70cd4accd41ff000b57456c7c07d769391d41b89a31e57385f0dce4",
+    "backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "backend/document_dialogue.py": "b5fa28038a6b1acd880299b874669485fc9dd0745fd114d76bde8e6a4ba6b797",
+    "backend/document_parts_answer.py": "491e03a166d718d8ae581736e756ccaa5849afceb25e97d3accbe43ad6d7922e",
+    "backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "backend/evidence_recovery.py": "d6b2b921496a0df1743e37c31e9cb494aa9a2e435531c6040cc279a9a6821596",
+    "backend/excel_layout.py": "15e67b8f90777f0f5b9561148a1c5eedb77464c32fd4b482509e1564befc47a0",
+    "backend/executed_scope_edit.py": "956efa3fb8a7df4b051b383a3a032c20811a585130765542d6556c9c4e55abff",
+    "backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "backend/formula_parameter_binding.py": "dd9573c757dbbfe1d758ab9d5277a7df731ea25fbc614975fc9dc3d6aed48050",
+    "backend/fusion_constraints.py": "27d53ea2d4492c2b4bdbc360d10ef38c87d81f6a9fa1f188150e251fb1c9e179",
+    "backend/fusion_formula_planner.py": "f79f40863ecb87d21504d2b025769bc4308628b1f116a292432216a42ccbd089",
+    "backend/fusion_history.py": "c363ecd847f99d74d2d9d36a3022ae4283ee70d0ee0d72e09c22200fdfa7a31b",
+    "backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "backend/fusion_parameter_followup.py": "93fbc3c9d5834ce789268e30252631140d7e053ad5e6ff369cb23401e724159c",
+    "backend/fusion_result_answer.py": "7ada3a145159f87e950b55d92e5ca5fcc2de5c19e03ff9f545f20f30ed2e209b",
+    "backend/grounded_generation.py": "65ce265392e685c6b0831e08a50d308b6ea89fcfe8723736938ee196b1afad9e",
+    "backend/grounded_span_answer.py": "6d0634e88e2e81cbca072259d941600cf762839b10668fcb631a740b95534aa7",
+    "backend/history_reference.py": "2bd41a9add5e440233033e0b763aa14a66e014517214dd9dab2546cc5d3a2e62",
+    "backend/image_geometry.py": "548d66430f34631fb1cee0172dccf0ce56e485e541cc672ae9847f34f402ce1f",
+    "backend/image_quality.py": "c4ac8d492966d597689b300c0ae31880bfe2278ac6889c75a79c7a508ce3f514",
+    "backend/knowledge_store.py": "4d01982543d2e533b983c5c76c99237ab56caadf189289c84da0e9645f7b4f53",
+    "backend/multimodal_input.py": "e45ef075b1796a5633ef98e3a1facee4dc03fefc142823afd2975c2e064c2769",
+    "backend/native_amount_annotations.py": "d1cde2be5a590d7d5eaa9715b0aa6dea49ad3fedf8b932c8049ab1a6865a90ee",
+    "backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "backend/native_financial_tables.py": "2fef01f2fcb74c6007df8387eb2dd16b72a00914a430c26ac4d4f95dfb78e656",
+    "backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "backend/native_fraction.py": "58e9bb44c864cb3024924d189a806098b75ac803195ff1bd62f3f9a8bbedeb81",
+    "backend/native_label_amounts.py": "f05d65953cc5a07e26f2dfaf8ee9d44fdc8471c8aa914ee5dad0e2c5be987133",
+    "backend/native_row_comparison.py": "b1596c32915ca3f2e3b793bc9594770e0e745ac196eac5075057fcc29d186f65",
+    "backend/native_row_registry.py": "6e6ed439e5038b429d576838cb4b31d85418580c903ec7e2834885c017147be9",
+    "backend/native_row_selection.py": "7b16683a58a3fa96137eea376e0265df854e23b966c13ada5dbd51cca54fce6d",
+    "backend/native_table_chain.py": "6763e5b28c75c7b7cf6bbbe2973d5200572614437e11ec0ca5d2d35f4aeab214",
+    "backend/native_table_question.py": "d4644f73791dcbf887d969ed90bc1486cb53aee3223c42aa521bfcddce0e4fcd",
+    "backend/native_text_tables.py": "85ebe2f07c495e453249d3758907b65b3e2f8052df0ad4e270ca7fbf3e1f4ad0",
+    "backend/native_total_question.py": "1b4d52cafc32a0439a4d4912ce1bcdd6ff323c81db71aabef0ae69fc24f31338",
+    "backend/ocr.py": "7f4199cb56a890968f0930906645db51111f2283974cfb3c6b10ee5d2050a8a4",
+    "backend/ocr_evidence_selection.py": "0f27eedc6667add900e4964715119515782046da9d792594db6ba576d3dc48aa",
+    "backend/ocr_fast_fusion.py": "21c3162565a996df9f57ac66ffa81cc940b0b16d858529adebc9d31308cc27da",
+    "backend/ocr_gap_fusion.py": "e8a80f101ab8235daaf6ce1e1cc30ea14e83b36c28a2af89cde3dc01a7482668",
+    "backend/ocr_pairing.py": "b37c1382184147a2843897d602ff9ed5010e328ab48549537cd9ef527d0c881b",
+    "backend/ocr_region_fusion.py": "1d689a63a3dd32aad794caf1054198c98ddaf90623103aa1eb1c22d3a729c5bb",
+    "backend/ocr_table_fusion.py": "fe87d2352324ded1f7fadaad3de63f2ca43c5c7c5edceed22b40450a3927ae2e",
+    "backend/omni_agent.py": "8a6dc4a7c37dfc3ab508b16ad635debb35f937f31efa4654c9151ce95428d3ea",
+    "backend/orientation_quality.py": "dc1fa8de4f1b67b7dc230628ce5b58a15f39555708bf02a96fcc891a2bf474d0",
+    "backend/pdf_amount_verification.py": "f6cb41333e916d2ee2b1a09cf6c90b35d5bdd8305ef5be53a650aa2df8bb54ab",
+    "backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "backend/pdf_native_context.py": "2fb1825c5adad87bf582032d926a98f99df5f339a9e7f3f2aa0b76d41d4a1b92",
+    "backend/pdf_page_index.py": "045fb9ecb3571d77ede9fc6aaae0ac2ff24517854b051caa70d1c2200fc59fd2",
+    "backend/pdf_table_continuity.py": "4db0e648b18826b0738abf1b9e041e1d179959dea1f8fd8b75c7f9fa95a18ddf",
+    "backend/pdf_table_preview.py": "194e7a04be35f82773951a19fb5200035901246d2f842aaec031387bf0dec9c5",
+    "backend/pending_comparison_resume.py": "0ef6e94f3e66740d8359e9e5cbc841a5bc5abd8cb96c1660a991371c0e8a0c21",
+    "backend/pending_filter_edit.py": "f5f416fdbe55e7767d7ab070b9733e92aa91ae1b2f3d45aff22e791cf275ac47",
+    "backend/pending_scope_edit.py": "797fa7d658258248e876452c1ea1ee8fd863ee70892aad9a4d99cdcc5d3ac4ca",
+    "backend/pending_source_validation.py": "469cf499e261a831878ebd9dfbd3361cc07e90b3dba58b7485ae2094ed4f5e9c",
+    "backend/pending_task_catalog.py": "8b27285383744c18aa2717f89ea0b7307400236754c424d20d81e0f7842d75a3",
+    "backend/pending_task_resume.py": "82cc83fe6f6edea7ebdd26af24eca28d45cff0a9e03211e7b0f28560570e0b09",
+    "backend/pending_task_store.py": "0df1d168cd790941397345673f8c12ddefeb2e0da24b45f292fd673d44b7b2eb",
+    "backend/perspective.py": "f92be7397a689af508b96a9a9d0f158af73d625b7bb955df97db2e8eba992d5c",
+    "backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "backend/ranked_result_followup.py": "d6a0878f63dd439ab529fd6277d03b283a7a8d95decddac120d57fa04f296839",
+    "backend/raysource_media.py": "b7f1c8a2e6c328f57a77e7e5bdf1d6f84082512592a752539dd9851cba921be5",
+    "backend/relational_scope_edit.py": "2fba5d364e38c2fc944c1271a53ddb0500fd40f6155deb385341b044d8cd58d2",
+    "backend/responses_client.py": "6acfd535d2b9071b093e06e24a5035125dfdace5de80e1f1a6322269fe35e15f",
+    "backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "backend/round13_document_scope_prototype.py": "5fe5693351a4e790394055ec9589b5107a5b20a4eafe2661da89217aabec023c",
+    "backend/scanned_grid_selection.py": "2533127e8f0448ff015110b08266a3e71719fd39eb4ee740246ceae99b01061a",
+    "backend/scanned_table_layout.py": "648e56820d2f0e0527a6df2bff3526461ccfe41bdf4ebe5fc5b5b11bec48ee91",
+    "backend/scanned_table_structure.py": "9de373f77d1d5b2a9279ac2704fe9a6c169835521ef7f102b577efe483937385",
+    "backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "backend/semantic_pending.py": "c9901b73fb242f96df01be4ee6a0e8d52f3cf6e185d0e4c46761687094116501",
+    "backend/session.py": "b9aac070ab8437c0a942d06e6347c830f1e9358958bd25aba310f420ddfb76cb",
+    "backend/source_answer_dossier.py": "a34301483390393c57dbc33eb806ef590fcd86e265d6031073d8eaa63f0068cb",
+    "backend/source_multi_span_answer.py": "0092e5283af289d63a00712858d66d757660ec055840613f60b59acd97e710fc",
+    "backend/source_provenance.py": "677ffad3e15d13832960a000a611bde1ec21d5df07afc38f44cee5240ce46bf9",
+    "backend/source_span_answer.py": "67277684700bb6e98246440a2b561fc03f06abd8e7e7cfa4d0747bf5c58041ae",
+    "backend/sql_document_binding.py": "fb166bd7b026e19eb796127708cac2ffeefe10aafc3a97a87c26725e86898504",
+    "backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "backend/sql_history_scope.py": "93511b107c988c85d5184c8adf3d20a3269f24cecd6b306e50a43a774cc6c6cd",
+    "backend/table_arithmetic.py": "34cd34f0081269f44397df4707a7bfca5c7d008b9aaca609ead693fe0df4f8d8",
+    "backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "backend/text_structure.py": "fdf5242f65283cf8c06644d9b05197c81c709fe2e7693bf6656646be941c37c2",
+    "backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "backend/unified_context.py": "76a070fbd125452cd292353306371225dcf8efeb8ef9bd718b67b3d2c018c59c",
+    "backend/unified_routing.py": "53171d999ad00da28eff8114c355e09415eb857dd48bfcadbc4c58b3807e4920",
+    "backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "backend/visual_chart_routing.py": "9be3033ead43d8c3177e388bdd9a3ef2f7baf7c8fef212941c80af538cbb8973",
+    "backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171",
+    "backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "backend/nl2sql/complex_query.py": "edcb071fba84cd09ab5b7d8b268b41bf4e5bf671ab748b38e9692e6d60bb1259",
+    "backend/nl2sql/date_profile.py": "e6935932528a1bf924c9e86a007ddc3283b044660ed50a0e93239667dae2139b",
+    "backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "backend/nl2sql/engine.py": "fbfd898ba9b0c9364633c50236a5e393bc628e4e7daf538a8297fdc063358c4a",
+    "backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "backend/nl2sql/operations_seed.py": "a7dd4c8633b0d46ed7a729a0b0ec74b49c359297dc84941c745170a6bd2ec3d0",
+    "backend/nl2sql/planner.py": "44ac5e48c35a8d40ce31cfa176f2bdeca04e47dbf82d2841a73b8830e39029a2",
+    "backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "backend/nl2sql/question_roles.py": "12b555f744013e0dc9b64279a691d4b1df7876d203e3a30a502222e2cd2a9037",
+    "backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "backend/nl2sql/responses_provider.py": "a4e2bd47236e1b7cb90050eee66dfcea10e105592aee948d7d59e1c960fd0314",
+    "backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "backend/nl2sql/result_scope.py": "f93cca84cffcc3b7eb6aae8fcd73820dc820693274fa433e5b58a23b15c9a0c5",
+    "backend/nl2sql/schema.py": "dae81d2d6e68ccdc1cdefc2b7375c24cb52fdb91bec2eb03bf27bc2e448be089",
+    "backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "backend/nl2sql/seed.py": "707dc7b401de9fda53f6b139e1bb9d2da05f14e33ee4f1c3e47fa9f422ddcd67",
+    "backend/nl2sql/semantics.py": "72afdff142c2c88bb70d239a7d1af5cceaf8d74d1a4e44222a975bc72904371e",
+    "backend/nl2sql/semantic_graph.py": "f89db7142353bc944e007a6eefa3b6bf5626ab2ff4fdc5f8e19eb45ca94041d6",
+    "backend/nl2sql/t2s.py": "3c5e5666b65da6e146da87458c6c4f651f97f587a06508e6bf1140d67442a59a",
+    "backend/nl2sql/value_index.py": "9fe51698229ad843f4c1e8b8e642ba0955b9d70d6568f130e504d82580765f12",
+    "backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30"
+  },
+  "implementation_sha256_after": {
+    "backend/amount_cell_review.py": "79f23d04f7b29ccc3ee7c112b3f9ddbaefab17f8186bc0cfa310e9ad6e524b9c",
+    "backend/answer_contract.py": "1ace63ef88f6bb2bdda8ed4c1240c0aa9cee4150fdef1eaa164192d5985cdd38",
+    "backend/app.py": "dc83713f5dbe25d043f5159fcd73c552aecd0470cf392dabf42cdbdc6b7a6c4b",
+    "backend/blank_cell_review.py": "9e0c17118c7af8bce75823bf1695bb9d0fb6cdb328f38229af234fae24133d63",
+    "backend/cell_crop_quality.py": "5904e3aa7c15c527d35f81f070c5bba73b4a18773900e6e43f96292f8c2b1899",
+    "backend/chunk_cleaning.py": "a395c2951cf09ece5d1d867a4dec504918060c49013c3b359148195aa12884dd",
+    "backend/clarification.py": "e919e59572505ef1ebd242bd6eafc86a705d698808ac536714e1ad21328bcbf2",
+    "backend/clarification_continuation.py": "895228f875220e3c2c0f71b87ee49b960f870e13f7c59df8e1ccfc1f44a38031",
+    "backend/comparison_batch_edit.py": "84b521e46244d270f320ad2c845ee1faef61d8764920fe5e672b5ca91359e3d7",
+    "backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "backend/conversational_sql_edit.py": "a5c2e32fce7d1066939749a636fa34eb1a9ad46cadb1273c45a0b713e35b5a3a",
+    "backend/conversation_comparison.py": "590d04f52950d7f5202accbd938dd1883fa6dffa76d86db0c7f4601d545577a0",
+    "backend/conversation_sources.py": "956e6afeb65f4888e8bf8975224dc60183e928e7c42f4c15ee2325d5e7aebaf1",
+    "backend/cross_source.py": "c7c00594355f38a8d30d22274fb5a38f11b3f90d3ac7e41f86e2f37006560134",
+    "backend/dense_retrieval.py": "bb25f07dbe660e2cbb3b526eb35023a9134fe194cec8e5efde34157f5c748886",
+    "backend/dependency_agent.py": "29a890e1e70cd4accd41ff000b57456c7c07d769391d41b89a31e57385f0dce4",
+    "backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "backend/document_dialogue.py": "b5fa28038a6b1acd880299b874669485fc9dd0745fd114d76bde8e6a4ba6b797",
+    "backend/document_parts_answer.py": "491e03a166d718d8ae581736e756ccaa5849afceb25e97d3accbe43ad6d7922e",
+    "backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "backend/evidence_recovery.py": "d6b2b921496a0df1743e37c31e9cb494aa9a2e435531c6040cc279a9a6821596",
+    "backend/excel_layout.py": "15e67b8f90777f0f5b9561148a1c5eedb77464c32fd4b482509e1564befc47a0",
+    "backend/executed_scope_edit.py": "956efa3fb8a7df4b051b383a3a032c20811a585130765542d6556c9c4e55abff",
+    "backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "backend/formula_parameter_binding.py": "dd9573c757dbbfe1d758ab9d5277a7df731ea25fbc614975fc9dc3d6aed48050",
+    "backend/fusion_constraints.py": "27d53ea2d4492c2b4bdbc360d10ef38c87d81f6a9fa1f188150e251fb1c9e179",
+    "backend/fusion_formula_planner.py": "f79f40863ecb87d21504d2b025769bc4308628b1f116a292432216a42ccbd089",
+    "backend/fusion_history.py": "c363ecd847f99d74d2d9d36a3022ae4283ee70d0ee0d72e09c22200fdfa7a31b",
+    "backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "backend/fusion_parameter_followup.py": "93fbc3c9d5834ce789268e30252631140d7e053ad5e6ff369cb23401e724159c",
+    "backend/fusion_result_answer.py": "7ada3a145159f87e950b55d92e5ca5fcc2de5c19e03ff9f545f20f30ed2e209b",
+    "backend/grounded_generation.py": "65ce265392e685c6b0831e08a50d308b6ea89fcfe8723736938ee196b1afad9e",
+    "backend/grounded_span_answer.py": "6d0634e88e2e81cbca072259d941600cf762839b10668fcb631a740b95534aa7",
+    "backend/history_reference.py": "2bd41a9add5e440233033e0b763aa14a66e014517214dd9dab2546cc5d3a2e62",
+    "backend/image_geometry.py": "548d66430f34631fb1cee0172dccf0ce56e485e541cc672ae9847f34f402ce1f",
+    "backend/image_quality.py": "c4ac8d492966d597689b300c0ae31880bfe2278ac6889c75a79c7a508ce3f514",
+    "backend/knowledge_store.py": "4d01982543d2e533b983c5c76c99237ab56caadf189289c84da0e9645f7b4f53",
+    "backend/multimodal_input.py": "e45ef075b1796a5633ef98e3a1facee4dc03fefc142823afd2975c2e064c2769",
+    "backend/native_amount_annotations.py": "d1cde2be5a590d7d5eaa9715b0aa6dea49ad3fedf8b932c8049ab1a6865a90ee",
+    "backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "backend/native_financial_tables.py": "2fef01f2fcb74c6007df8387eb2dd16b72a00914a430c26ac4d4f95dfb78e656",
+    "backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "backend/native_fraction.py": "58e9bb44c864cb3024924d189a806098b75ac803195ff1bd62f3f9a8bbedeb81",
+    "backend/native_label_amounts.py": "f05d65953cc5a07e26f2dfaf8ee9d44fdc8471c8aa914ee5dad0e2c5be987133",
+    "backend/native_row_comparison.py": "b1596c32915ca3f2e3b793bc9594770e0e745ac196eac5075057fcc29d186f65",
+    "backend/native_row_registry.py": "6e6ed439e5038b429d576838cb4b31d85418580c903ec7e2834885c017147be9",
+    "backend/native_row_selection.py": "7b16683a58a3fa96137eea376e0265df854e23b966c13ada5dbd51cca54fce6d",
+    "backend/native_table_chain.py": "6763e5b28c75c7b7cf6bbbe2973d5200572614437e11ec0ca5d2d35f4aeab214",
+    "backend/native_table_question.py": "d4644f73791dcbf887d969ed90bc1486cb53aee3223c42aa521bfcddce0e4fcd",
+    "backend/native_text_tables.py": "85ebe2f07c495e453249d3758907b65b3e2f8052df0ad4e270ca7fbf3e1f4ad0",
+    "backend/native_total_question.py": "1b4d52cafc32a0439a4d4912ce1bcdd6ff323c81db71aabef0ae69fc24f31338",
+    "backend/ocr.py": "7f4199cb56a890968f0930906645db51111f2283974cfb3c6b10ee5d2050a8a4",
+    "backend/ocr_evidence_selection.py": "0f27eedc6667add900e4964715119515782046da9d792594db6ba576d3dc48aa",
+    "backend/ocr_fast_fusion.py": "21c3162565a996df9f57ac66ffa81cc940b0b16d858529adebc9d31308cc27da",
+    "backend/ocr_gap_fusion.py": "e8a80f101ab8235daaf6ce1e1cc30ea14e83b36c28a2af89cde3dc01a7482668",
+    "backend/ocr_pairing.py": "b37c1382184147a2843897d602ff9ed5010e328ab48549537cd9ef527d0c881b",
+    "backend/ocr_region_fusion.py": "1d689a63a3dd32aad794caf1054198c98ddaf90623103aa1eb1c22d3a729c5bb",
+    "backend/ocr_table_fusion.py": "fe87d2352324ded1f7fadaad3de63f2ca43c5c7c5edceed22b40450a3927ae2e",
+    "backend/omni_agent.py": "8a6dc4a7c37dfc3ab508b16ad635debb35f937f31efa4654c9151ce95428d3ea",
+    "backend/orientation_quality.py": "dc1fa8de4f1b67b7dc230628ce5b58a15f39555708bf02a96fcc891a2bf474d0",
+    "backend/pdf_amount_verification.py": "f6cb41333e916d2ee2b1a09cf6c90b35d5bdd8305ef5be53a650aa2df8bb54ab",
+    "backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "backend/pdf_native_context.py": "2fb1825c5adad87bf582032d926a98f99df5f339a9e7f3f2aa0b76d41d4a1b92",
+    "backend/pdf_page_index.py": "045fb9ecb3571d77ede9fc6aaae0ac2ff24517854b051caa70d1c2200fc59fd2",
+    "backend/pdf_table_continuity.py": "4db0e648b18826b0738abf1b9e041e1d179959dea1f8fd8b75c7f9fa95a18ddf",
+    "backend/pdf_table_preview.py": "194e7a04be35f82773951a19fb5200035901246d2f842aaec031387bf0dec9c5",
+    "backend/pending_comparison_resume.py": "0ef6e94f3e66740d8359e9e5cbc841a5bc5abd8cb96c1660a991371c0e8a0c21",
+    "backend/pending_filter_edit.py": "f5f416fdbe55e7767d7ab070b9733e92aa91ae1b2f3d45aff22e791cf275ac47",
+    "backend/pending_scope_edit.py": "797fa7d658258248e876452c1ea1ee8fd863ee70892aad9a4d99cdcc5d3ac4ca",
+    "backend/pending_source_validation.py": "469cf499e261a831878ebd9dfbd3361cc07e90b3dba58b7485ae2094ed4f5e9c",
+    "backend/pending_task_catalog.py": "8b27285383744c18aa2717f89ea0b7307400236754c424d20d81e0f7842d75a3",
+    "backend/pending_task_resume.py": "82cc83fe6f6edea7ebdd26af24eca28d45cff0a9e03211e7b0f28560570e0b09",
+    "backend/pending_task_store.py": "0df1d168cd790941397345673f8c12ddefeb2e0da24b45f292fd673d44b7b2eb",
+    "backend/perspective.py": "f92be7397a689af508b96a9a9d0f158af73d625b7bb955df97db2e8eba992d5c",
+    "backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "backend/ranked_result_followup.py": "d6a0878f63dd439ab529fd6277d03b283a7a8d95decddac120d57fa04f296839",
+    "backend/raysource_media.py": "b7f1c8a2e6c328f57a77e7e5bdf1d6f84082512592a752539dd9851cba921be5",
+    "backend/relational_scope_edit.py": "2fba5d364e38c2fc944c1271a53ddb0500fd40f6155deb385341b044d8cd58d2",
+    "backend/responses_client.py": "6acfd535d2b9071b093e06e24a5035125dfdace5de80e1f1a6322269fe35e15f",
+    "backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "backend/round13_document_scope_prototype.py": "5fe5693351a4e790394055ec9589b5107a5b20a4eafe2661da89217aabec023c",
+    "backend/scanned_grid_selection.py": "2533127e8f0448ff015110b08266a3e71719fd39eb4ee740246ceae99b01061a",
+    "backend/scanned_table_layout.py": "648e56820d2f0e0527a6df2bff3526461ccfe41bdf4ebe5fc5b5b11bec48ee91",
+    "backend/scanned_table_structure.py": "9de373f77d1d5b2a9279ac2704fe9a6c169835521ef7f102b577efe483937385",
+    "backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "backend/semantic_pending.py": "c9901b73fb242f96df01be4ee6a0e8d52f3cf6e185d0e4c46761687094116501",
+    "backend/session.py": "b9aac070ab8437c0a942d06e6347c830f1e9358958bd25aba310f420ddfb76cb",
+    "backend/source_answer_dossier.py": "a34301483390393c57dbc33eb806ef590fcd86e265d6031073d8eaa63f0068cb",
+    "backend/source_multi_span_answer.py": "0092e5283af289d63a00712858d66d757660ec055840613f60b59acd97e710fc",
+    "backend/source_provenance.py": "677ffad3e15d13832960a000a611bde1ec21d5df07afc38f44cee5240ce46bf9",
+    "backend/source_span_answer.py": "67277684700bb6e98246440a2b561fc03f06abd8e7e7cfa4d0747bf5c58041ae",
+    "backend/sql_document_binding.py": "fb166bd7b026e19eb796127708cac2ffeefe10aafc3a97a87c26725e86898504",
+    "backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "backend/sql_history_scope.py": "93511b107c988c85d5184c8adf3d20a3269f24cecd6b306e50a43a774cc6c6cd",
+    "backend/table_arithmetic.py": "34cd34f0081269f44397df4707a7bfca5c7d008b9aaca609ead693fe0df4f8d8",
+    "backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "backend/text_reference_contract.py": "063290344887de18adf1c79c3bd3df08502979f4eb8bf27fd9222168801e65b0",
+    "backend/text_structure.py": "fdf5242f65283cf8c06644d9b05197c81c709fe2e7693bf6656646be941c37c2",
+    "backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "backend/unified_context.py": "76a070fbd125452cd292353306371225dcf8efeb8ef9bd718b67b3d2c018c59c",
+    "backend/unified_routing.py": "53171d999ad00da28eff8114c355e09415eb857dd48bfcadbc4c58b3807e4920",
+    "backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "backend/visual_chart_routing.py": "9be3033ead43d8c3177e388bdd9a3ef2f7baf7c8fef212941c80af538cbb8973",
+    "backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171",
+    "backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "backend/nl2sql/complex_query.py": "edcb071fba84cd09ab5b7d8b268b41bf4e5bf671ab748b38e9692e6d60bb1259",
+    "backend/nl2sql/date_profile.py": "e6935932528a1bf924c9e86a007ddc3283b044660ed50a0e93239667dae2139b",
+    "backend/nl2sql/date_semantics.py": "1449f3828d5e5edbec1e0b22f4e5858cd54ccdbfc18e1a47e4916a197350d3f7",
+    "backend/nl2sql/engine.py": "fbfd898ba9b0c9364633c50236a5e393bc628e4e7daf538a8297fdc063358c4a",
+    "backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "backend/nl2sql/lexicon.py": "590cee46cd01bb5e4946b64fbd8d94bd82ebb91c3dddf196978dc506a206b0f4",
+    "backend/nl2sql/metric_compiler.py": "b45bf97b0bb34a8dc72882d852f031ab45597493109f4221fc7ff89458602718",
+    "backend/nl2sql/models.py": "138e2d9e761b6a88f2ab3ceee69c455dc2ca7dba6fc4989652f7188d842efa41",
+    "backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "backend/nl2sql/operations_seed.py": "a7dd4c8633b0d46ed7a729a0b0ec74b49c359297dc84941c745170a6bd2ec3d0",
+    "backend/nl2sql/planner.py": "44ac5e48c35a8d40ce31cfa176f2bdeca04e47dbf82d2841a73b8830e39029a2",
+    "backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "backend/nl2sql/question_roles.py": "12b555f744013e0dc9b64279a691d4b1df7876d203e3a30a502222e2cd2a9037",
+    "backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "backend/nl2sql/responses_provider.py": "a4e2bd47236e1b7cb90050eee66dfcea10e105592aee948d7d59e1c960fd0314",
+    "backend/nl2sql/result_artifact.py": "3b767bb154a7d83ba9262dc0218cfddf761e4d75334057a1e0abc8f67f339e3f",
+    "backend/nl2sql/result_scope.py": "f93cca84cffcc3b7eb6aae8fcd73820dc820693274fa433e5b58a23b15c9a0c5",
+    "backend/nl2sql/schema.py": "dae81d2d6e68ccdc1cdefc2b7375c24cb52fdb91bec2eb03bf27bc2e448be089",
+    "backend/nl2sql/schema_profile.py": "2761c1b91ed66167dbf17b40f747bec4a8f5bf7e2f5428424212e39b51eb215f",
+    "backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "backend/nl2sql/seed.py": "707dc7b401de9fda53f6b139e1bb9d2da05f14e33ee4f1c3e47fa9f422ddcd67",
+    "backend/nl2sql/semantics.py": "72afdff142c2c88bb70d239a7d1af5cceaf8d74d1a4e44222a975bc72904371e",
+    "backend/nl2sql/semantic_graph.py": "f89db7142353bc944e007a6eefa3b6bf5626ab2ff4fdc5f8e19eb45ca94041d6",
+    "backend/nl2sql/t2s.py": "3c5e5666b65da6e146da87458c6c4f651f97f587a06508e6bf1140d67442a59a",
+    "backend/nl2sql/value_index.py": "9fe51698229ad843f4c1e8b8e642ba0955b9d70d6568f130e504d82580765f12",
+    "backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30"
+  },
+  "implementation_stable": true,
+  "database_sha256_before": {
+    "rich": "6fbccdbe607e5d1edc6e6f80eb885d373144e0da63038f50890acedd061d563e",
+    "commerce": "383017ccd79cee0cef98f131105a68652dc10050826f4fc164d18ef061f22999",
+    "mixed": "230ccf5a96637c1b46efad7748e1f3227075be45f8f81559f2172aacf29f8235",
+    "renamed": "7bb9ccdf1d6385014a8feff90465d8e35c53a7c7133426a069fca6a0827696bc",
+    "unknown": "0561c72606f7819dff0b34ae4bf9d9c07301bb6a441785897ca98364b223c61c"
+  },
+  "database_sha256_after": {
+    "rich": "6fbccdbe607e5d1edc6e6f80eb885d373144e0da63038f50890acedd061d563e",
+    "commerce": "383017ccd79cee0cef98f131105a68652dc10050826f4fc164d18ef061f22999",
+    "mixed": "230ccf5a96637c1b46efad7748e1f3227075be45f8f81559f2172aacf29f8235",
+    "renamed": "7bb9ccdf1d6385014a8feff90465d8e35c53a7c7133426a069fca6a0827696bc",
+    "unknown": "0561c72606f7819dff0b34ae4bf9d9c07301bb6a441785897ca98364b223c61c"
+  },
+  "database_read_only_verified": true,
+  "total": 0,
+  "passed": 0,
+  "by_category": {},
+  "cases": [],
+  "latency_method": "Serial warmed full OmniAgent query measured with high-resolution perf_counter; fixed 12 canonical questions, 10 repetitions, gold validation for every answer; excludes warm-up and scorer execution",
+  "latency": {
+    "observations": [
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 217.438
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 222.386
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 214.215
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 221.652
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 218.225
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 219.863
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 220.871
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 219.714
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 218.274
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 231.978
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 241.426
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 1,
+        "pass": true,
+        "wall_ms": 222.402
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 228.73
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 235.195
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 238.946
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 227.46
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 223.172
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 228.519
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 228.402
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 229.486
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 235.973
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 230.54
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 230.189
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 2,
+        "pass": true,
+        "wall_ms": 229.652
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 222.577
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 227.245
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 231.191
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 225.663
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 222.796
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 227.906
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 231.653
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 230.205
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 225.669
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 225.093
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 232.338
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 3,
+        "pass": true,
+        "wall_ms": 221.636
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 228.859
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 231.596
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 226.484
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 225.492
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 225.425
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 228.755
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 222.724
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 226.97
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 224.606
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 225.669
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 224.24
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 4,
+        "pass": true,
+        "wall_ms": 232.83
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 226.148
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 246.874
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 229.962
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 228.594
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 226.3
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 228.262
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 231.718
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 223.613
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 224.768
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 225.986
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 226.74
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 5,
+        "pass": true,
+        "wall_ms": 220.172
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 239.277
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 228.711
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 243.976
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 243.078
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 234.559
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 228.77
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 229.288
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 226.789
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 230.01
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 225.708
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 233.582
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 6,
+        "pass": true,
+        "wall_ms": 231.084
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 231.244
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 229.683
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 230.567
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 230.219
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 223.413
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 228.185
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 221.61
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 225.028
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 227.482
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 224.567
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 224.795
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 7,
+        "pass": true,
+        "wall_ms": 222.854
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 225.29
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 233.898
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 221.902
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 229.245
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 231.253
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 279.379
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 245.77
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 241.782
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 238.275
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 234.755
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 235.653
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 8,
+        "pass": true,
+        "wall_ms": 225.634
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 241.316
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 230.411
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 229.611
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 226.336
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 227.381
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 227.07
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 226.21
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 229.071
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 231.072
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 229.008
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 228.788
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 9,
+        "pass": true,
+        "wall_ms": 225.447
+      },
+      {
+        "case_id": "legacy-00-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 228.475
+      },
+      {
+        "case_id": "legacy-01-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 228.965
+      },
+      {
+        "case_id": "legacy-02-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 221.313
+      },
+      {
+        "case_id": "legacy-03-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 235.007
+      },
+      {
+        "case_id": "legacy-04-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 233.22
+      },
+      {
+        "case_id": "legacy-05-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 239.396
+      },
+      {
+        "case_id": "legacy-06-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 228.05
+      },
+      {
+        "case_id": "legacy-07-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 239.76
+      },
+      {
+        "case_id": "legacy-08-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 232.94
+      },
+      {
+        "case_id": "legacy-09-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 228.568
+      },
+      {
+        "case_id": "legacy-10-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 228.798
+      },
+      {
+        "case_id": "legacy-11-1",
+        "repeat": 10,
+        "pass": true,
+        "wall_ms": 238.369
+      }
+    ],
+    "correct_samples": 120,
+    "total_samples": 120,
+    "median_ms": 228.581,
+    "p95_ms": 241.444,
+    "p99_ms": 246.664,
+    "max_ms": 279.379
+  },
+  "elapsed_seconds": 30.796,
+  "limitations": [
+    "Self-authored regression, not official/blind scoring.",
+    "SQLite and local deterministic planner only; no remote API, vision, RAG, or concurrency latency claim.",
+    "A safe clarification can be correct, but a failed gold-required query is never counted as correct.",
+    "Renamed-schema canonical aliases declare business meaning; opaque identifiers cannot reveal business semantics by themselves."
+  ],
+  "comparison": {
+    "baseline": "benchmarks\\context_semantics_20261009\\latency-baseline-confirmed.json",
+    "baseline_passed": 0,
+    "candidate_passed": 0,
+    "regressions": [],
+    "newly_passed": [],
+    "correctness_compared": false,
+    "correctness_no_observed_regression": null,
+    "same_correct_latency_case_ids": [
+      "legacy-00-1",
+      "legacy-01-1",
+      "legacy-03-1",
+      "legacy-04-1",
+      "legacy-05-1",
+      "legacy-06-1",
+      "legacy-07-1",
+      "legacy-08-1",
+      "legacy-09-1",
+      "legacy-10-1",
+      "legacy-11-1"
+    ],
+    "latency_baseline_median_ms": 308.14,
+    "latency_candidate_median_ms": 228.543,
+    "latency_baseline_p95_ms": 317.185,
+    "latency_candidate_p95_ms": 241.377,
+    "latency_per_case": {
+      "legacy-00-1": {
+        "baseline_median_ms": 310.224,
+        "candidate_median_ms": 228.602,
+        "baseline_p95_ms": 323.263,
+        "candidate_p95_ms": 240.398
+      },
+      "legacy-01-1": {
+        "baseline_median_ms": 311.4,
+        "candidate_median_ms": 230.047,
+        "baseline_p95_ms": 317.276,
+        "candidate_p95_ms": 241.618
+      },
+      "legacy-03-1": {
+        "baseline_median_ms": 307.947,
+        "candidate_median_ms": 228.027,
+        "baseline_p95_ms": 312.874,
+        "candidate_p95_ms": 239.446
+      },
+      "legacy-04-1": {
+        "baseline_median_ms": 309.504,
+        "candidate_median_ms": 225.863,
+        "baseline_p95_ms": 315.006,
+        "candidate_p95_ms": 233.956
+      },
+      "legacy-05-1": {
+        "baseline_median_ms": 308.248,
+        "candidate_median_ms": 228.391,
+        "baseline_p95_ms": 311.144,
+        "candidate_p95_ms": 261.387
+      },
+      "legacy-06-1": {
+        "baseline_median_ms": 308.529,
+        "candidate_median_ms": 228.226,
+        "baseline_p95_ms": 317.384,
+        "candidate_p95_ms": 239.447
+      },
+      "legacy-07-1": {
+        "baseline_median_ms": 308.581,
+        "candidate_median_ms": 228.02,
+        "baseline_p95_ms": 310.86,
+        "candidate_p95_ms": 240.872
+      },
+      "legacy-08-1": {
+        "baseline_median_ms": 307.513,
+        "candidate_median_ms": 228.746,
+        "baseline_p95_ms": 311.005,
+        "candidate_p95_ms": 237.239
+      },
+      "legacy-09-1": {
+        "baseline_median_ms": 308.295,
+        "candidate_median_ms": 227.277,
+        "baseline_p95_ms": 316.911,
+        "candidate_p95_ms": 233.505
+      },
+      "legacy-10-1": {
+        "baseline_median_ms": 306.349,
+        "candidate_median_ms": 229.493,
+        "baseline_p95_ms": 320.332,
+        "candidate_p95_ms": 238.828
+      },
+      "legacy-11-1": {
+        "baseline_median_ms": 304.284,
+        "candidate_median_ms": 225.541,
+        "baseline_p95_ms": 309.026,
+        "candidate_p95_ms": 235.876
+      }
+    }
+  }
+}

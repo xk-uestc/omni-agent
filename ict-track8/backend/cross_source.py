@@ -30,6 +30,32 @@ def _terms(text: str) -> set[str]:
     return set(_tokenize(text))
 
 
+_NUMBERED_STEP = re.compile(r"^\s*\d{1,3}\s*[.)、]\s+")
+_SENTENCE_END = re.compile(r"[。！？!?；;]\s*$")
+
+
+def _retrieval_heading_path(document: "DocumentRecord") -> tuple[str, ...]:
+    path = document.metadata.get("title_path", ())
+    if not isinstance(path, (list, tuple)):
+        return ()
+    headings = []
+    for item in path:
+        value = str(item).strip()
+        if not value:
+            continue
+        # Markdown parsers can classify numbered procedural sentences as
+        # headings; they are source text, not a stable parent section.
+        if _NUMBERED_STEP.match(value) and _SENTENCE_END.search(value):
+            continue
+        headings.append(value)
+    return tuple(headings)
+
+
+def _retrieval_text(document: "DocumentRecord") -> str:
+    """Add authored section headings to recall without changing source text."""
+    return "\n".join((document.title, *_retrieval_heading_path(document), document.content))
+
+
 def _tokenize(text: str) -> tuple[str, ...]:
     """Tokenize mixed Chinese/Latin text without external segmentation libraries.
 
@@ -93,9 +119,12 @@ class JsonDocumentRetriever:
     def __init__(self, documents: list[DocumentRecord]):
         self.documents = tuple(documents)
         self._term_frequencies = tuple(
-            Counter(_tokenize(f"{document.title} {document.content}")) for document in self.documents
+            Counter(_tokenize(_retrieval_text(document))) for document in self.documents
         )
-        self._title_terms = tuple(set(_tokenize(document.title)) for document in self.documents)
+        self._title_terms = tuple(
+            set(_tokenize("\n".join((document.title, *_retrieval_heading_path(document)))))
+            for document in self.documents
+        )
         self._document_frequency = Counter(
             term for frequencies in self._term_frequencies for term in frequencies.keys()
         )
@@ -187,19 +216,37 @@ class JsonDocumentRetriever:
         return enriched[: max(1, min(candidate_limit, int(top_k)))]
 
     @staticmethod
-    def _snippet(content: str, matched: set[str], width: int = 180) -> str:
+    def _snippet(content: str, matched: set[str], width: int = 520) -> str:
         normalized = simplify_for_retrieval(content)
-        positions = [normalized.find(term) for term in matched if normalized.find(term) >= 0]
-        position = min(positions) if positions else 0
+        terms = list(dict.fromkeys(term for term in matched if term))
+        occurrences = []
+        for rank, term in enumerate(terms[:12]):
+            found, cursor = [], 0
+            while len(found) < 40:
+                cursor = normalized.find(term, cursor)
+                if cursor < 0:
+                    break
+                found.append(cursor)
+                cursor += max(1, len(term))
+            if found:
+                occurrences.append((1 / (rank + 1) ** 0.5, found))
+        max_start = max(0, len(normalized) - width)
+        starts = {0, max_start}
+        for _weight, positions in occurrences:
+            starts.update(max(0, min(max_start, position - width // 3)) for position in positions)
+        position = max(starts, key=lambda start: (
+            sum(weight for weight, positions in occurrences
+                if any(start <= match < start + width for match in positions)),
+            start,
+        ))
         # Map the retrieval-only normalized offset back to the literal source.
         # OpenCC phrase conversion is not assumed to preserve string length.
-        if normalized != content and positions:
+        if normalized != content and occurrences:
             for tag, a0, a1, b0, b1 in difflib.SequenceMatcher(None, content, normalized).get_opcodes():
                 if b0 <= position < b1:
-                    position = a0 + (position-b0 if tag == 'equal' else 0)
+                    position = a0 + (position - b0 if tag == 'equal' else 0)
                     break
-        start = max(0, position - 50)
-        return content[start : start + width].strip()
+        return content[max(0, position):max(0, position) + width].strip()
 
 
 class CrossSourceAgent:

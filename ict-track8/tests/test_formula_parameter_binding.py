@@ -187,3 +187,34 @@ def test_validator_does_not_invoke_or_mutate_provider(parcel):
     original, resolved = bindings(results)
     assert validate_formula_sql_parameters(engine, {'parameters': list(original)}, original, resolved, results)['status'] == 'verified'
     assert engine.model_plan_provider is provider
+
+
+@pytest.mark.parametrize('scenario,name,value', [
+    ('积极', '目标增长率', 18), ('保守', '目标增长率', 8), ('压力', '预计折损率', 23)])
+def test_scenario_qualifier_requires_user_selection_and_original_evidence(parcel,tmp_path,scenario,name,value):
+    engine,_ = parcel
+    knowledge = KnowledgeStore(tmp_path/'scenario-knowledge')
+    label = scenario + name
+    knowledge.ingest(f'{label}：{value}%。'.encode(), document_id='scenario',
+                     title='情景报告', modality='txt', filename='scenario.txt')
+    agent = DependencyAgent(engine,knowledge)
+    search = agent.execute('search',{'query':label,'document_id':'scenario'}, {},{})
+    fact = agent.execute('search_fact', {'evidence':search,'scope':label,'label':label,'unit':'%'},
+                         {'evidence':{'ref':'search','path':[]}}, {'search':search})
+    original = {name:{'ref':'rate','path':[]}}
+    kwargs = dict(original_question=f'按{scenario}情景计算',knowledge=knowledge)
+    audit = validate_formula_sql_parameters(engine,{'parameters':[name]},original,{name:fact},{'rate':fact},**kwargs)
+    assert audit['bindings'][0]['qualifier']==scenario
+    for question in ['使用正常情景计算',f'不要使用{scenario}情景',f'取消{scenario}情景']:
+        with pytest.raises(SourceConstraintError):
+            validate_formula_sql_parameters(engine,{'parameters':[name]},original,{name:fact},{'rate':fact},
+                                            original_question=question,knowledge=knowledge)
+    for key,wrong in [('value',value+1),('quote',f'{label}：{value+1}%'),('unit','元')]:
+        tampered={**fact,key:wrong}
+        with pytest.raises(SourceConstraintError):
+            validate_formula_sql_parameters(engine,{'parameters':[name]},original,{name:tampered},
+                                            {'rate':tampered},**kwargs)
+    wrong_name='其他增长率'
+    with pytest.raises(SourceConstraintError):
+        validate_formula_sql_parameters(engine,{'parameters':[wrong_name]},
+            {wrong_name:{'ref':'rate','path':[]}},{wrong_name:fact},{'rate':fact},**kwargs)

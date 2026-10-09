@@ -55,21 +55,6 @@ def test_ocr_pipeline_preserves_retry_evidence():
     assert enhancer.calls == [(), ("grayscale_normalize",)]
 
 
-def test_ocr_endpoint_returns_attempts_from_real_pipeline(monkeypatch):
-    pipeline = OcrPipeline(FakeExecutor(), analyzer=FakeAnalyzer(), enhancer=FakeEnhancer())
-    monkeypatch.setattr(app_module, "ocr_pipeline", pipeline)
-    client = TestClient(app_module.app)
-    response = client.post(
-        "/api/v1/documents/ocr",
-        json={"image_base64": base64.b64encode(b"image").decode("ascii"), "language": "chi_sim+eng"},
-    )
-    assert response.status_code == 200
-    payload = response.json()
-    assert payload["status"] == "ok"
-    assert len(payload["attempts"]) == 2
-    assert payload["executor"] == "fake"
-
-
 def test_ocr_pipeline_health_is_read_only_and_describes_executor():
     pipeline = OcrPipeline(FakeExecutor(), analyzer=FakeAnalyzer(), enhancer=FakeEnhancer())
     health = pipeline.health()

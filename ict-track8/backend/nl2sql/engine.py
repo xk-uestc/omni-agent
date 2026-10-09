@@ -10,7 +10,7 @@ import sqlite3
 import threading
 import time
 from collections import OrderedDict
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
@@ -19,12 +19,13 @@ from typing import Any
 from . import lexicon
 from .model_contract import ModelPlanError, ModelPlanProvider, ModelPlanValidator
 from .metric_compiler import MetricCompiler, MetricPlanError
-from .models import QueryPlan, QueryResult, TableInfo
-from .planner import SingleTablePlanner
+from .models import QueryPlan, QueryResult, TableInfo, LinkCandidate
+from .planner import SingleTablePlanner, _strip_unsafe_instruction_noise
 from .schema import SchemaIntrospector, SchemaLinker, normalize_text
 from .security import SqlSafetyError, execute_read_only
 from .semantics import MetricCatalog
 from .value_index import ValueIndex
+from .semantic_graph import SemanticGraph, needs_normalization
 from .plan_structure import canonicalize, diagnose
 from .question_roles import association_scope, binding_present, group_fields, group_grains
 from .result_scope import configure_complete_scope, requests_complete_result, scalar_aggregate_cardinality
@@ -160,6 +161,15 @@ class Nl2SqlEngine:
         self.metric_compiler = MetricCompiler(self.planner)
         catalog_path = metric_catalog_path or os.getenv("ICT8_METRIC_CATALOG", "").strip() or Path(__file__).resolve().parents[2] / "data" / "demo_metric_catalog.json"
         self.metric_catalog = MetricCatalog.from_file(catalog_path) if Path(catalog_path).exists() else None
+        # An external schema's explicit annotations do not implicitly opt in
+        # to additional aliases from this application's demonstration catalog.
+        language_catalog = self.metric_catalog if (not aliases_path or metric_catalog_path
+            or os.getenv('ICT8_METRIC_CATALOG', '').strip()) else None
+        self.planner.linker.set_metric_catalog(language_catalog)
+        self.semantic_graph = SemanticGraph(language_catalog)
+        self._semantic_normalizations = OrderedDict()
+        self._semantic_rules_tables = None
+        self._semantic_rules = ()
         # 相对时间的参考日期：显式参数 > ICT8_REFERENCE_DATE > 当天；始终写入假设便于审计
         self.reference_date = reference_date or _reference_from_env() or date.today()
         self.value_aliases_path = value_aliases_path or (os.getenv("ICT8_VALUE_ALIASES", "").strip() or None)
@@ -289,20 +299,409 @@ class Nl2SqlEngine:
         return {"tables": [table.to_dict() for table in tables], "source": "sqlite_read_only"}
 
     # ------------------------------------------------------------------ planning
+    def normalize_question(self, question, *, history_hint=None):
+        """Resolve colloquial concepts locally against the current real schema.
+
+        Old, already annotated questions skip the database entirely here.
+        Cached results are tied to source generation and the trusted hint;
+        changing schema, values or conversation scope cannot reuse a binding.
+        """
+        if not needs_normalization(question):
+            return None
+        with self._connect() as connection:
+            tables, index, revision = self._snapshot_for(connection)
+            return self._normalize_in_snapshot(question, tables, index, revision, history_hint)
+
+    def _normalize_in_snapshot(self, question, tables, index, revision, history_hint=None):
+        if not needs_normalization(question):
+            return None
+        hint_key = json.dumps(history_hint or {}, ensure_ascii=False, sort_keys=True)
+        key = (question, revision, hint_key, getattr(self.semantic_graph.metric_catalog, 'digest', None))
+        with self._lock:
+            cached = self._semantic_normalizations.get(key)
+            if cached is not None:
+                self._semantic_normalizations.move_to_end(key)
+                return cached
+            if self._semantic_rules_tables is not tables:
+                self._semantic_rules = self.planner.linker.rules_for(tables)
+                self._semantic_rules_tables = tables
+            rules = self._semantic_rules
+        # Only values occurring in this question need literal protection.
+        text = normalize_text(question)
+        values = tuple(entry.value for token, entries in index.by_normalized.items()
+                       if token in text for entry in entries)
+        normalized = self.semantic_graph.normalize(question, tables, rules,
+            history_hint=history_hint, protected_values=values)
+        with self._lock:
+            self._semantic_normalizations[key] = normalized
+            while len(self._semantic_normalizations) > 256:
+                self._semantic_normalizations.popitem(last=False)
+        return normalized
+
     def _rules_plan(self, question: str, tables, connection, index, cache_namespace=None) -> QueryPlan:
+        semantic = self._normalize_in_snapshot(question, tables, index, cache_namespace)
+        if semantic is not None and semantic.ambiguities:
+            return QueryPlan(rewritten_question=question, clarification=semantic.clarification,
+                clarification_code='ambiguous_business_expression',
+                semantic_audit={'language_normalization': semantic.to_dict()})
+        if semantic is not None:
+            question = semantic.normalized_question
         expanded, expansion = self.metric_catalog.expand(question, tables) if self.metric_catalog else (question, None)
+        if expansion and self._catalog_expansion_omits_an_explicit_metric(question, tables, expansion):
+            expansion = None
+        metric_override = None
+        date_binding_override = None
+        if (self.metric_catalog and expansion and not expansion.get("calculations")
+                and len(expansion.get("sources", ())) == 1 and expansion.get("source_alias")):
+            metric_id = expansion["sources"][0]
+            metric = self.metric_catalog.sources[metric_id]
+            metric_override = {"table": metric.table, "column": metric.column,
+                               "function": metric.function, "label": metric.label,
+                               "alias": expansion["source_alias"]}
+            time_column = self.metric_catalog.time_columns.get(metric_id)
+            if time_column and any(table.name == metric.table and
+                                   time_column in {column.name for column in table.columns}
+                                   for table in tables):
+                date_binding_override = (metric.table, time_column)
+        if expansion and self.metric_catalog:
+            source_ids = expansion.get("sources", ())
+            bindings = []
+            for metric_id in source_ids:
+                metric = self.metric_catalog.sources.get(metric_id)
+                time_column = self.metric_catalog.time_columns.get(metric_id)
+                if (metric is None or not time_column or not any(
+                        table.name == metric.table and time_column in {column.name for column in table.columns}
+                        for table in tables)):
+                    bindings = []
+                    break
+                bindings.append((metric.table, time_column))
+            if bindings and len(set(bindings)) == 1:
+                # Every requested measure declares the same temporal role, so
+                # a shared year/month filter has one catalog-verified meaning.
+                date_binding_override = bindings[0]
+        if date_binding_override is None:
+            date_binding_override = self._shared_catalog_time_binding(expanded, tables)
         plan = self.planner.plan(
             expanded, tables, connection, value_index=index, reference_date=self.reference_date,
             date_storage_cache=self._date_storage_cache,
             date_storage_cache_namespace=cache_namespace,
+            metric_override=metric_override,
+            date_binding_override=date_binding_override,
         )
-        return self.metric_catalog.apply(plan, expansion) if self.metric_catalog else plan
+        plan = self._remove_implicit_derived_source_groups(plan, question, expansion)
+        if plan.clarification and metric_override:
+            metric_id = expansion["sources"][0]
+            plan.semantic_audit = {**plan.semantic_audit,
+                "catalog_version": self.metric_catalog.version,
+                "catalog_sha256": self.metric_catalog.digest,
+                "sources": [metric_id], "calculations": [], "outputs": [metric_id],
+                "source_alias": metric_override["alias"],
+            }
+        plan = self.metric_catalog.apply(plan, expansion) if self.metric_catalog else plan
+        if (not plan.clarification and expansion and not expansion.get("calculations")
+                and len(expansion.get("sources", ())) == 1
+                and re.search(r"不同|去重|不重复|distinct", question, re.I)):
+            metric_id = expansion["sources"][0]
+            source_metric = self.metric_catalog.sources.get(metric_id)
+            if source_metric and source_metric.function == "COUNT":
+                for metric in plan.metrics:
+                    if metric.id == metric_id:
+                        metric.function = "COUNT_DISTINCT"
+                if (plan.metric_table, plan.metric_column) == (source_metric.table, source_metric.column):
+                    plan.metric_function = "COUNT_DISTINCT"
+        if semantic is not None and semantic.changed:
+            plan.semantic_audit['language_normalization'] = semantic.to_dict()
+        return plan
+
+    def _shared_catalog_time_binding(self, question, tables):
+        """Resolve one shared date role only for explicitly conjoined catalog metrics."""
+        if not self.metric_catalog:
+            return None
+        normalized = normalize_text(question)
+        links = [link for link in self.planner.linker.link(question, tables) if link.role == 'metric']
+        best = {}
+        for link in links:
+            alias = normalize_text(link.matched_alias)
+            if not alias:
+                continue
+            if alias not in best or link.score > best[alias][0]:
+                best[alias] = (link.score, {(link.table, link.column, link.metric_function)}, link)
+            elif link.score == best[alias][0]:
+                best[alias][1].add((link.table, link.column, link.metric_function))
+        ordered = []
+        for score, owners, link in best.values():
+            if len({(table, column) for table, column, _ in owners}) != 1:
+                return None
+            ordered.append(link)
+        ordered.sort(key=lambda link: normalized.find(normalize_text(link.matched_alias)))
+        selected = []
+        seen = set()
+        for link in ordered:
+            pair = (link.table, link.column, link.metric_function)
+            if pair not in seen:
+                seen.add(pair)
+                selected.append(link)
+        if len(selected) < 2:
+            return None
+        for left, right in zip(selected, selected[1:]):
+            start = normalized.find(normalize_text(left.matched_alias)) + len(normalize_text(left.matched_alias))
+            end = normalized.find(normalize_text(right.matched_alias), start)
+            if end < start or not re.search(r'(?:和|及|与|、|同时|以及|,)', normalized[start:end]):
+                return None
+        bindings = []
+        for link in selected:
+            candidates = [metric_id for metric_id, metric in self.metric_catalog.sources.items()
+                if (metric.table, metric.column) == (link.table, link.column)
+                and (link.metric_function is None or metric.function == link.metric_function)
+                and self.metric_catalog.time_columns.get(metric_id)]
+            candidate_bindings = {(self.metric_catalog.sources[metric_id].table,
+                                   self.metric_catalog.time_columns[metric_id])
+                                  for metric_id in candidates}
+            if len(candidate_bindings) != 1:
+                return None
+            bindings.append(next(iter(candidate_bindings)))
+        if len(set(bindings)) != 1:
+            return None
+        table_name, column_name = bindings[0]
+        if not any(table.name == table_name and column_name in {column.name for column in table.columns}
+                   for table in tables):
+            return None
+        return table_name, column_name
+
+    def _remove_implicit_derived_source_groups(self, plan, question, expansion):
+        """Keep derived inputs as measures unless the original asks to group by one."""
+        if (not expansion or not expansion.get("calculations") or plan.clarification
+                or not self.metric_catalog):
+            return plan
+        source_pairs = {(self.metric_catalog.sources[metric_id].table,
+                         self.metric_catalog.sources[metric_id].column)
+                        for metric_id in expansion.get("sources", ())}
+        normalized = normalize_text(question)
+        group_scopes = [normalize_text(match.group(1)) for match in re.finditer(
+            r'(?<!不)按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', question)]
+        for metric_id in expansion.get("calculations", ()):
+            for alias in self.metric_catalog.aliases.get(metric_id, ()):
+                for occurrence in re.finditer(re.escape(alias), normalized):
+                    prefix = normalized[:occurrence.start()]
+                    marker = re.search(r'(?:各|每个|每一)([^,;。?!？；]{0,80})$', prefix)
+                    if marker:
+                        group_scopes.append(marker.group(1))
+        removed = set()
+        kept = []
+        for column in plan.dimensions:
+            pair = (plan.dimension_tables.get(column, plan.table), column)
+            if pair not in source_pairs:
+                kept.append(column)
+                continue
+            metric_ids = [metric_id for metric_id in expansion.get("sources", ())
+                if (self.metric_catalog.sources[metric_id].table,
+                    self.metric_catalog.sources[metric_id].column) == pair]
+            explicitly_grouped = any(
+                alias in scope
+                for metric_id in metric_ids
+                for alias in self.metric_catalog.aliases.get(metric_id, ())
+                for scope in group_scopes
+            )
+            if explicitly_grouped:
+                kept.append(column)
+            else:
+                removed.add(pair)
+        if not removed:
+            return plan
+        plan.dimensions = kept
+        for column in {pair[1] for pair in removed}:
+            plan.dimension_tables.pop(column, None)
+            plan.dimension_transforms.pop(column, None)
+            plan.dimension_labels.pop(column, None)
+        plan.links = [replace(link, role="metric")
+                      if (link.table, link.column) in removed and link.role == "dimension"
+                      else link for link in plan.links]
+        return plan
+
+    def _catalog_expansion_omits_an_explicit_metric(self, question, tables, expansion):
+        """Do not let one catalog alias erase a second, explicitly linked metric."""
+        if (not self.metric_catalog or expansion.get("calculations")
+                or len(expansion.get("sources", ())) != 1):
+            return False
+        if not re.search(r"和|与|及|以及|、|并且|同时|加上|[,，]", question):
+            return False
+        metric = self.metric_catalog.sources.get(expansion["sources"][0])
+        selected_alias = normalize_text(expansion.get("source_alias", ""))
+        if metric is None or not selected_alias:
+            return False
+        normalized = normalize_text(question)
+        selected_pair = (metric.table, metric.column)
+        selected_spans = [match.span() for match in re.finditer(re.escape(selected_alias), normalized)]
+        if not selected_spans:
+            return False
+        separators = re.compile(r"和|与|及|以及|、|并且|同时|加上|[,，]")
+        order_value_spans = [match.span(1) for match in re.finditer(
+            r'(?:并)?按(总金额|金额|数额|指标值)(?:从高到低|从低到高|高到低|低到高|'
+            r'由高到低|由低到高|降序|升序)', normalized)]
+        for link in self.planner.linker.link(question, tables):
+            pair = (link.table, link.column)
+            alias = normalize_text(link.matched_alias)
+            if link.role != "metric" or pair == selected_pair or not alias or alias == selected_alias:
+                continue
+            for match in re.finditer(re.escape(alias), normalized):
+                start, end = match.span()
+                if (alias in {"金额", "总金额", "数额", "指标值"}
+                        and any(order_start <= start and end <= order_end
+                                for order_start, order_end in order_value_spans)):
+                    continue
+                for selected_start, selected_end in selected_spans:
+                    if start < selected_end and selected_start < end:
+                        continue
+                    between = normalized[min(end, selected_end):max(start, selected_start)]
+                    if separators.search(between):
+                        return True
+        return False
+
+    def _fast_sql_plan_eligible(self, plan, question, tables=None):
+        top_n_safe = (
+            plan.top_n is None
+            or (isinstance(plan.top_n, int) and not isinstance(plan.top_n, bool)
+                and 1 <= plan.top_n <= 100 and len(plan.dimensions) == 1
+                and len(plan.metrics) == 1 and not plan.derived_metrics and plan.having is None)
+        )
+        analysis_shape_safe = (
+            plan.analysis_mode == "aggregate"
+            or (plan.analysis_mode == "rank" and len(plan.dimensions) == 1
+                and len(plan.metrics) == 1 and not plan.derived_metrics and plan.having is None)
+        )
+        catalog_sources_safe = bool(plan.metrics) and all(
+            metric.id in getattr(self.metric_catalog, "sources", {})
+            and (metric.table, metric.column, metric.function, metric.label) == (
+                self.metric_catalog.sources[metric.id].table,
+                self.metric_catalog.sources[metric.id].column,
+                self.metric_catalog.sources[metric.id].function,
+                self.metric_catalog.sources[metric.id].label,
+            )
+            for metric in plan.metrics
+        ) if self.metric_catalog else False
+        catalog_derived_safe = all(
+            metric.id in getattr(self.metric_catalog, "derived", {})
+            and metric.label == self.metric_catalog.derived[metric.id].label
+            and metric.expression == self.metric_catalog.derived[metric.id].expression
+            for metric in plan.derived_metrics
+        ) if self.metric_catalog else False
+        catalog_formula_safe = catalog_sources_safe and catalog_derived_safe
+        having_safe = (plan.having is None or (
+            plan.having.mode in {"literal", "scalar"}
+            and plan.having.operator in {">", ">=", "<", "<=", "=", "!="}
+            and isinstance(plan.having.value, (int, float))
+            and not isinstance(plan.having.value, bool)
+            and len(plan.metrics) <= 1
+            and not plan.derived_metrics
+        ))
+        bindings = plan.semantic_audit.get("bindings", ())
+        catalog_binding_complete = (bool(plan.metrics) and isinstance(bindings, list)
+            and len(bindings) == len(plan.metrics)
+            and plan.semantic_audit.get("catalog_sha256") == getattr(self.metric_catalog, "digest", None))
+        catalog_metric = bool(plan.semantic_audit.get("source_alias")
+            and plan.semantic_audit.get("catalog_sha256") == getattr(self.metric_catalog, "digest", None))
+        catalog_calculation = bool(plan.semantic_audit.get("calculations")
+            and plan.semantic_audit.get("catalog_sha256") == getattr(self.metric_catalog, "digest", None))
+        if (catalog_metric or catalog_calculation) and plan.clarification:
+            return plan.clarification_code in {"unsupported_date_precision", "ambiguous_aggregation"}
+        if catalog_metric or catalog_calculation:
+            source_tables = {metric.table for metric in plan.metrics}
+            safe_shape = (not plan.clarification and catalog_formula_safe and len(source_tables) == 1
+                and analysis_shape_safe and top_n_safe
+                and plan.comparison_mode == "none"
+                and not plan.dimension_transforms and len(plan.dimensions) <= 1
+                and bool(plan.coverage) and not plan.coverage.get("unresolved")
+                and not plan.join_tables and not plan.join_conditions and not plan.join_path
+                and not plan.fan_out and having_safe)
+            if not safe_shape:
+                return False
+            if tables is None:
+                return False
+            try:
+                MetricCompiler(self.planner).compile(plan, tables)
+            except MetricPlanError:
+                return False
+            except (TypeError, ValueError):
+                return False
+            return True
+        if catalog_binding_complete and len(plan.metrics) > 1:
+            source_tables = {metric.table for metric in plan.metrics}
+            safe_shape = (not plan.clarification and len(source_tables) == 1
+                and not plan.derived_metrics and plan.analysis_mode == "aggregate"
+                and plan.comparison_mode == "none" and top_n_safe
+                and not plan.dimension_transforms and len(plan.dimensions) <= 1
+                and bool(plan.coverage) and not plan.coverage.get("unresolved")
+                and not plan.join_tables and not plan.join_conditions and not plan.join_path
+                and not plan.fan_out and having_safe)
+            if safe_shape and tables is not None:
+                try:
+                    MetricCompiler(self.planner).compile(plan, tables)
+                except MetricPlanError:
+                    pass
+                else:
+                    return True
+        if os.getenv('ICT8_FAST_SQL', '0') != '1':
+            return False
+        from .complex_query import needs_complex_query
+        # Listing verbs also occur in ordinary compiled Top-N requests.
+        # Ignore only those verbs, and only with complete typed coverage;
+        # NULL, ties, multi-stage aggregation and physical joins stay complex.
+        complexity_question = re.sub(r'列出|列举|找出|分别统计', '', question)
+        return (not needs_complex_query(complexity_question) and not plan.clarification
+            and bool(plan.metrics or plan.metric_column) and bool(plan.coverage)
+            and not plan.coverage.get('unresolved') and not plan.coverage.get('ignored_instruction_spans')
+            and not plan.join_tables and not plan.join_conditions and not plan.join_path
+            and not plan.fan_out and having_safe
+            and (plan.comparison_mode == 'none' or plan.comparison_mode in {'同比','环比'}
+                 and bool(plan.comparison_period) and not plan.metrics and not plan.derived_metrics)
+            and plan.analysis_mode in {'aggregate','rank','trend'}
+            and len({metric.table for metric in plan.metrics} or {plan.metric_table or plan.table}) == 1)
+
+    def _has_fast_sql_rule_plan(self, question):
+        """Check a fully covered rule plan against one current schema snapshot."""
+        with self._connect() as connection:
+            tables, index, revision = self._snapshot_for(connection)
+            plan = self._rules_plan(question, tables, connection, index, cache_namespace=revision)
+            return self._fast_sql_plan_eligible(plan, question, tables)
+
+    @staticmethod
+    def _single_metric_comparison_supported(plan):
+        """Use the legacy comparison builder only for its fully represented shape."""
+        if plan.comparison_mode not in {"同比", "环比"} or not plan.comparison_period:
+            return False
+        if len(plan.metrics) != 1 or plan.derived_metrics or plan.having or plan.top_n:
+            return False
+        metric = plan.metrics[0]
+        if (plan.metric_table or plan.table) != metric.table:
+            return False
+        if (plan.metric_column, plan.metric_function) != (metric.column, metric.function):
+            return False
+        if metric.filters or plan.analysis_mode != "aggregate":
+            return False
+        if plan.order_metric not in {None, metric.id}:
+            return False
+        return not plan.output_metrics or plan.output_metrics == [metric.id]
 
     def _model_plan(self, question: str, tables, connection, index, cache_namespace=None,
                     source_required=None) -> QueryPlan:
         attempts, repair_attempted = [], False
         try:
             rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
+            from ..fusion_constraints import verify_required_intent
+            provider = self.model_plan_provider
+            fast_path_enabled = (
+                getattr(provider, 'supports_verified_rule_fast_path', False) is True
+                or callable(getattr(provider, 'propose', None))
+                and os.getenv('ICT8_FAST_SQL', '0') == '1'
+            )
+            if (fast_path_enabled and self._fast_sql_plan_eligible(rule_plan, question, tables)
+                    and (source_required is None or not verify_required_intent(rule_plan,source_required))):
+                rule_plan.planner_source = 'server_verified_fast_rules'
+                rule_plan.planner_audit = {'candidate_source':'independent_rule_parser',
+                    'final_source':'server_verified_fast_rules','decision':'accepted',
+                    'fallback':False,'model_called':False,
+                    'verification':'complete_coverage_single_table_current_snapshot'}
+                return rule_plan
             propose = getattr(self.model_plan_provider, "propose", None)
             model_context = self._verified_model_intent(source_required or rule_plan)
             if source_required is not None:
@@ -337,7 +736,13 @@ class Nl2SqlEngine:
                     label_changes = self._normalize_model_labels(plan, rule_plan)
                     if plan.metrics:
                         try:
-                            MetricCompiler(self.planner).compile(plan, tables)
+                            if plan.comparison_mode == "none":
+                                MetricCompiler(self.planner).compile(plan, tables)
+                            elif self._single_metric_comparison_supported(plan):
+                                self.planner.build_sql(plan)
+                            else:
+                                raise MetricPlanError("多指标周期比较尚需明确每个指标的时间角色",
+                                                      "unsupported_comparison_combination")
                         except MetricPlanError as exc:
                             raise ModelPlanError(str(exc)) from exc
                     record['status'] = 'accepted'
@@ -521,7 +926,7 @@ class Nl2SqlEngine:
         # 否则模型可以用高置信度计划绕过“未知维度/未知值/不支持粒度”等门。
         if rule_plan is None:
             rule_plan = self._rules_plan(question, tables, connection, index, cache_namespace=cache_namespace)
-        if rule_plan.clarification_code in {'ambiguous_metric', 'ambiguous_dimension'}:
+        if rule_plan.clarification_code in {'ambiguous_metric', 'ambiguous_dimension', 'ambiguous_value'}:
             # A physical name appearing in multiple sources does not ground
             # ownership. A high model confidence cannot replace the user's
             # missing source/metric choice, including newly quoted schemas.
@@ -536,7 +941,10 @@ class Nl2SqlEngine:
             raise ModelPlanError('模型计划不得绕过未核验的平均比较范围')
         if rule_plan.metrics:
             expected = {(m.table, m.column, m.function) for m in rule_plan.metrics}
-            actual = {(m.table, m.column, m.function) for m in plan.metrics}
+            actual = ({(m.table, m.column, m.function) for m in plan.metrics}
+                      if plan.metrics else
+                      ({(plan.metric_table or plan.table, plan.metric_column, plan.metric_function)}
+                       if plan.metric_column and plan.metric_function else set()))
             if expected != actual:
                 raise ModelPlanError("模型计划遗漏了问题中的明确指标或聚合口径")
         elif len(plan.metrics) > 1:
@@ -743,6 +1151,51 @@ class Nl2SqlEngine:
 
     def answer(self, question: str, *, max_rows: int | None = None,
                required_intent: QueryPlan | None = None, complete_results: bool = False) -> QueryResult:
+        # One read snapshot covers lexical binding, rule extraction, model
+        # grounding and execution. The display always retains the user's text.
+        if not isinstance(question, str) or not question.strip():
+            raise ValueError("question 不能为空")
+        sanitized_question, ignored_instructions = _strip_unsafe_instruction_noise(question)
+        if ignored_instructions and not sanitized_question.strip():
+            message = "问数只支持只读查询，无法执行删除或修改操作。请改成查询问题。"
+            plan = QueryPlan(rewritten_question=question, clarification=message,
+                clarification_code="read_only_query_required", planner_source="read_only_guard",
+                coverage={"consumed": [], "unresolved": [],
+                          "ignored_instruction_spans": ignored_instructions},
+                planner_audit={"decision": "rejected", "model_called": False,
+                               "reason": "write_intent_without_read_query"})
+            return QueryResult(status="clarification", question=question,
+                rewritten_question=question, sql=None, parameters=(), columns=(), rows=(),
+                plan=plan.to_dict(), explanation=(message,), clarification=message,
+                clarification_code=plan.clarification_code,
+                provenance={"source_type": "structured_database", "execution_status": "not_executed"},
+                result_state="unexecuted")
+        with self.consistent_reads():
+            semantic = self.normalize_question(question)
+            if semantic is not None and semantic.ambiguities:
+                plan = QueryPlan(rewritten_question=question,
+                    clarification=semantic.clarification,
+                    clarification_code='ambiguous_business_expression',
+                    semantic_audit={'language_normalization':semantic.to_dict()})
+                return QueryResult(status='clarification', question=question,
+                    rewritten_question=question, sql=None, parameters=(), columns=(), rows=(),
+                    plan=plan.to_dict(), explanation=(semantic.clarification,),
+                    provenance={'source_type':'structured_database','execution_status':'not_executed'},
+                    clarification=semantic.clarification, clarification_code=plan.clarification_code,
+                    result_state='unexecuted')
+            canonical = semantic.normalized_question if semantic is not None else question
+            result = self._answer_canonical(canonical, max_rows=max_rows,
+                required_intent=required_intent, complete_results=complete_results)
+            if semantic is not None and semantic.changed:
+                plan = dict(result.plan)
+                plan['semantic_audit'] = {**plan.get('semantic_audit', {}),
+                    'language_normalization':semantic.to_dict()}
+                result = replace(result, question=question, plan=plan,
+                    provenance={**result.provenance,'language_normalization':semantic.to_dict()})
+            return result
+
+    def _answer_canonical(self, question: str, *, max_rows: int | None = None,
+               required_intent: QueryPlan | None = None, complete_results: bool = False) -> QueryResult:
         if not isinstance(question, str) or not question.strip():
             raise ValueError("question 不能为空")
         row_cap = int(max_rows or self.max_rows)
@@ -814,6 +1267,8 @@ class Nl2SqlEngine:
             elif self.model_plan_provider is None:
                 plan = self._rules_plan(question, tables, connection, index, cache_namespace=revision)
             elif (required_intent is None and needs_complex_query(question)
+                  and not self._fast_sql_plan_eligible(
+                      self._rules_plan(question, tables, connection, index, cache_namespace=revision), question, tables)
                   and getattr(self.model_plan_provider, 'supports_complex_queries', False) is True):
                 # A separate capability, not a bypass of typed fusion contracts.
                 try:
@@ -920,7 +1375,8 @@ class Nl2SqlEngine:
                 if plan.preview_row_limit is not None:
                     row_cap = min(row_cap, plan.preview_row_limit)
                 complete_scope['effective_preview_limit'] = row_cap
-            if compiled is None and not plan.clarification and (plan.metrics or plan.fan_out):
+            if (compiled is None and not plan.clarification and (plan.metrics or plan.fan_out)
+                    and not self._single_metric_comparison_supported(plan)):
                 try:
                     compiled = self.metric_compiler.compile(plan, tables)
                 except MetricPlanError as exc:
@@ -1075,16 +1531,57 @@ class Nl2SqlEngine:
             return "empty", ["该时间范围内没有数据"]
 
     # ------------------------------------------------------------------ multi-turn
-    def analyze_slots(self, question: str) -> dict[str, Any]:
+    def analyze_slots(self, question: str, *, preferred_tables=()) -> dict[str, Any]:
         with self._connect() as connection:
             tables, index, _revision = self._snapshot_for(connection)
+            semantic = self._normalize_in_snapshot(question, tables, index, _revision)
+        if semantic is not None and not semantic.ambiguities:
+            question = semantic.normalized_question
         normalized = normalize_text(question)
         links = self.planner.linker.link(question, tables)
+        # A declared derived metric is one linguistic slot backed by several
+        # real source fields. Keep its original alias as the replacement span
+        # instead of mistaking a substring (e.g. 成本) for a unit-cost column.
+        if self.metric_catalog:
+            _, expansion = self.metric_catalog.expand(question, tables)
+            if expansion:
+                derived_links, derived_aliases = [], []
+                for metric_id in expansion['outputs']:
+                    if metric_id not in self.metric_catalog.derived:
+                        continue
+                    aliases = sorted((alias for alias in self.metric_catalog.aliases[metric_id]
+                                      if alias in normalized), key=len, reverse=True)
+                    if not aliases:
+                        continue
+                    alias = aliases[0]
+                    derived_aliases.append(alias)
+                    sources, _ = self.metric_catalog.dependencies(metric_id)
+                    for source in sources:
+                        metric = self.metric_catalog.sources[source]
+                        derived_links.append(LinkCandidate(alias, metric.table, metric.column,
+                            'metric', 1.0, alias, metric.function))
+                def inside_derived(link):
+                    token = normalize_text(link.matched_alias)
+                    positions = list(re.finditer(re.escape(token), normalized)) if token else []
+                    spans = [m.span() for alias in derived_aliases for m in re.finditer(re.escape(alias), normalized)]
+                    return positions and all(any(start <= m.start() and m.end() <= end
+                        for start, end in spans) for m in positions)
+                links = [link for link in links if link.role != 'metric' or not inside_derived(link)] + derived_links
         time_parse = lexicon.parse_time(normalized, self.reference_date)
-        matches, _ = index.match(normalized, {(link.table, link.column) for link in links})
+        metric_links = [link for link in links if link.role == 'metric']
+        best_scores = {}
+        for link in metric_links:
+            alias = normalize_text(link.matched_alias)
+            best_scores[alias] = max(best_scores.get(alias, 0), link.score)
+        metric_links = [link for link in metric_links
+                        if link.score == best_scores[normalize_text(link.matched_alias)]]
+        metric_links=list(dict.fromkeys(metric_links))
+        metric_tables = {link.table for link in metric_links} or set(preferred_tables)
+        matches, _ = index.match(normalized, {(link.table, link.column) for link in links},
+                                 preferred_tables=metric_tables)
         return {
             "normalized": normalized,
-            "metrics": [link for link in links if link.role == "metric"],
+            "metrics": metric_links,
             "dimensions": [link for link in links if link.role == "dimension"],
             "values": matches,
             "time_spans": time_parse.spans,
@@ -1102,7 +1599,8 @@ class Nl2SqlEngine:
         current = (current or "").strip()
         if not previous or not current or previous == current:
             return current, {"mode": "none"}
-        prev, cur = self.analyze_slots(previous), self.analyze_slots(current)
+        prev = self.analyze_slots(previous)
+        cur = self.analyze_slots(current, preferred_tables={link.table for link in prev['metrics']})
         followup = bool(_FOLLOWUP_CUE.search(cur["normalized"]))
         has_content = cur["metrics"] or cur["dimensions"] or cur["values"] or cur["time_spans"]
         if not has_content and not followup:

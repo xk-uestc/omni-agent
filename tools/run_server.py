@@ -14,7 +14,7 @@ sys.path.insert(0, str(ROOT / 'ict-track8'))
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8030)
-    parser.add_argument('--with-model', action='store_true', help='读取 runtime/model_config.json，仅启用用户指定的 gpt-6-luna')
+    parser.add_argument('--with-model', action='store_true', help='读取 runtime 模型配置及备用 Responses 服务')
     parser.add_argument('--model', default='gpt-6-luna')
     parser.add_argument('--diagnostic-stack-after', type=int, choices=range(10, 601),
                         help='仅排障：在指定秒数后向服务日志写线程调用栈，不包含局部变量')
@@ -23,6 +23,7 @@ def main():
         import faulthandler
         faulthandler.dump_traceback_later(args.diagnostic_stack_after, repeat=False)
     if args.with_model:
+        os.environ.setdefault('ICT8_FAST_SQL', '1')
         from model_runtime import enable_local_model
         enable_local_model(args.model)
         # Several bounded upstream calls can form one dependent request.

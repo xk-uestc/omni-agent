@@ -23,7 +23,7 @@ from datetime import date, datetime, timezone
 from typing import Any
 
 from . import lexicon
-from .models import FilterSpec, HavingSpec, QueryPlan, TableInfo
+from .models import FilterSpec, HavingSpec, LinkCandidate, QueryPlan, TableInfo
 from .schema import SchemaLinker, normalize_text
 from .value_index import ValueIndex
 from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
@@ -33,7 +33,10 @@ from .result_scope import append_result_limit
 _DEFAULT_MAX_JOIN_HOPS = 4
 _JOIN_HINT_RE = re.compile(r"\[join_path:([A-Za-z0-9_.>\-]+)\]")
 _FIELD_HINT_RE = re.compile(r"\[field:(metric|dimension):([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z_][A-Za-z0-9_]*)\]")
+_ISO_MONTH_TEXT_RE = re.compile(r"\d{4}-\d{2}\Z")
 _ANALYSIS_WORDS = ("排名", "排行", "名次", "占比", "份额", "比例")
+_GENERIC_ORDER_ALIASES = {"金额", "总金额", "数额", "指标值"}
+_FIRST_METRIC_ORDER_ALIASES = {"第一项", "第一项指标", "第一个指标", "首项", "首个指标", "第1项", "第1项指标", "第1个指标"}
 _AGGREGATE_CUES = (
     (("去重计数",), "COUNT_DISTINCT", "去重数"),
     (("记录计数", "记录数", "计数"), "COUNT", "记录数"),
@@ -50,14 +53,19 @@ _COVERAGE_STRUCTURAL_WORDS = (
     "订单", "工单", "明细", "金额", "总额", "总金额", "销售额", "收入", "销售",
     "数据", "查询", "统计", "分组", "各", "每个", "按", "分别", "的", "有", "是多少",
     "那边", "告诉我", "情况", "政策", "规定", "说明", "只看", "把", "列出来",
+    "列出", "列举", "并附", "筛选", "过滤", "对应", "拆开", "拆分", "逐项", "汇总",
+    "逐条", "给出", "数值", "结果", "从高到低", "从低到高", "高到低", "低到高",
+    "降序", "升序", "排序", "排列", "排出来", "以及",
 )
 # 用户可能把破坏性指令和合法的统计意图写在同一句里。此处只移除带有明确
 # 顺序词的自然语言指令片段；不会接受原始 SQL，也不会放宽执行层的只读限制。
 _UNSAFE_INSTRUCTION_RE = re.compile(
     r"(?:"
-    r"(?:请|帮我)?(?:忽略|无视|跳过|绕过|不要遵守).{0,24}?(?:规则|指令|限制)[，,;；]*"
-    r"|(?:删除|清空|修改|更新|插入|新建|创建|drop|delete|update|insert|alter|truncate)"
-    r"[^，,。；;]{0,40}?(?:之后|以后|后|然后|再|并且|并|，|,|；|;|。)"
+    r"(?:请|帮我)?(?:忽略|无视|跳过|绕过|不要遵守).{0,24}?(?:规则|指令|限制)"
+    r"(?:\s*(?:并且|并|然后|再)?\s*(?:删除|清空|修改|更新|插入|新建|创建|drop|delete|update|insert|alter|truncate)"
+    r"[^，,。；;]{0,40})?"
+    r"|(?:把[^，,。；;]{1,40}?(?:改为|改成|设为|调整为)|删除|清空|修改|更新|插入|新建|创建|drop|delete|update|insert|alter|truncate)"
+    r"[^，,。；;]{0,40}?(?:之后|以后|后|然后|再|并且|并|，|,|；|;|。|$)"
     r")",
     re.IGNORECASE,
 )
@@ -110,6 +118,8 @@ class SingleTablePlanner:
         reference_date: date | None = None,
         date_storage_cache: dict[tuple[Any, ...], tuple[str, tuple[Any, Any, str]]] | None = None,
         date_storage_cache_namespace: tuple | None = None,
+        metric_override: dict[str, str] | None = None,
+        date_binding_override: tuple[str, str] | None = None,
     ) -> QueryPlan:
         path_hint = self._path_hint(question)
         clean_question = _JOIN_HINT_RE.sub("", question or "")
@@ -123,6 +133,20 @@ class SingleTablePlanner:
                 '关联条件未能唯一绑定到真实外键，请明确关联字段与来源。', .2)
         normalized = normalize_text(clean_question)
         links = self.linker.link(clean_question, tables)
+        if metric_override is not None:
+            target_table = metric_override.get("table")
+            target_column = metric_override.get("column")
+            alias = metric_override.get("alias")
+            function = metric_override.get("function")
+            table_info = next((item for item in tables if item.name == target_table), None)
+            if (table_info is None or target_column not in {column.name for column in table_info.columns}
+                    or not isinstance(alias, str) or normalize_text(alias) not in normalized
+                    or function not in {"SUM", "AVG", "MIN", "MAX", "COUNT", "COUNT_DISTINCT"}):
+                invalid = QueryPlan(rewritten_question=clean_question.strip())
+                return self._clarify(invalid, "invalid_catalog_metric_binding",
+                    "指标目录的字段绑定未通过当前 Schema 核验。", 0.1)
+            links = [link for link in links if link.role != "metric"]
+            links.append(LinkCandidate(alias, target_table, target_column, "metric", 1.0, alias, function))
         for role, target_table, target_column in hints:
             chosen = [link for link in links if (link.role, link.table, link.column) == (role, target_table, target_column)]
             if not chosen or sum(1 for hint in hints if hint[0] == role) > 1:
@@ -132,11 +156,69 @@ class SingleTablePlanner:
             links = [link for link in links if link.role != role or
                 ((link.table, link.column) == (target_table, target_column)) or
                 (role == "dimension" and normalize_text(link.matched_alias) not in aliases)]
-        table = self._choose_table(normalized, tables, links)
+        table = (next(item for item in tables if item.name == metric_override["table"])
+                 if metric_override is not None else self._choose_table(normalized, tables, links))
         plan = QueryPlan(table=table.name if table else None, rewritten_question=clean_question.strip() or (question or "").strip())
         consumed: list[str] = []
         if table is None:
             return self._clarify(plan, "missing_data_subject", "当前数据源没有识别出可查询的数据表，请说明业务对象或数据主题。", 0.1)
+        ordering = re.search(
+            r'(?:并)?按(?P<sort_target>总金额|金额|数额|指标值)'
+            r'(?P<direction>从高到低|从低到高|高到低|低到高|由高到低|由低到高|降序|升序)'
+            r'(?:排序|排列|排|列出来|列出)?', normalized)
+        composite_ordering = ordering is not None
+        if ordering is None:
+            ordering = re.search(
+                r'(?:并)?按(?P<target>(?:(?!按)[^,;。?!？；]){1,80}?)'
+                r'(?P<direction>从高到低|从低到高|高到低|低到高|由高到低|由低到高|降序|升序)'
+                r'(?:排序|排列|排|列出来|列出)?', normalized)
+        ordering_target = (normalize_text(ordering.group("sort_target") if composite_ordering
+                          else ordering.group("target")) if ordering else "")
+        ordering_direction = ordering.group("direction") if ordering else ""
+        ordering_span = ordering.group(0) if ordering else ""
+        ordering_target_span = (ordering.span("sort_target") if composite_ordering
+                                else ordering.span("target") if ordering else None)
+        if ordering is None:
+            direction_match = re.search(
+                r'(?P<direction>从高到低|从低到高|高到低|低到高|由高到低|由低到高|降序|升序)'
+                r'(?:排序|排列|排|列出来|列出)', normalized)
+            if direction_match:
+                prefix = normalized[:direction_match.start()]
+                first_selector = next((alias for alias in sorted(_FIRST_METRIC_ORDER_ALIASES, key=len, reverse=True)
+                                       if alias in prefix), None)
+                if first_selector:
+                    ordering_target = first_selector
+                    target_position = prefix.rfind(first_selector)
+                    ordering_target_span = (target_position, target_position + len(first_selector))
+                else:
+                    mentioned_metrics = [link for link in links if link.role == "metric"
+                                         and normalize_text(link.matched_alias) in prefix]
+                    metric_pairs = {(link.table, link.column) for link in mentioned_metrics}
+                    if len(metric_pairs) == 1:
+                        target_link = max(mentioned_metrics, key=lambda link: prefix.rfind(normalize_text(link.matched_alias)))
+                        ordering_target = normalize_text(target_link.matched_alias)
+                        target_position = prefix.rfind(ordering_target)
+                        ordering_target_span = (target_position, target_position + len(ordering_target))
+                ordering = direction_match
+                ordering_direction = direction_match.group("direction")
+                ordering_span = direction_match.group(0)
+        if ordering and ordering_target in _GENERIC_ORDER_ALIASES:
+            sort_start, sort_end = ordering_target_span
+            explicit_pairs = set()
+            for link in links:
+                if link.role != "metric" or normalize_text(link.matched_alias) in _GENERIC_ORDER_ALIASES:
+                    continue
+                alias = re.escape(normalize_text(link.matched_alias))
+                if any(not (sort_start <= match.start() and match.end() <= sort_end)
+                       for match in re.finditer(alias, normalized)):
+                    explicit_pairs.add((link.table, link.column))
+            if len(explicit_pairs) == 1:
+                generic_alias = ordering_target
+                links = [link for link in links if not (
+                    link.role == "metric" and normalize_text(link.matched_alias) == generic_alias
+                    and all(sort_start <= match.start() and match.end() <= sort_end
+                            for match in re.finditer(re.escape(generic_alias), normalized))
+                )]
         metric_alias_pairs: dict[str, set[tuple[str, str]]] = {}
         metric_aliases: dict[str, str] = {}
         for link in links:
@@ -163,6 +245,11 @@ class SingleTablePlanner:
                 for target_table, column in sorted(pairs)
             ]
             return self._clarify(plan, "ambiguous_metric", f"“{metric_aliases[alias]}”对应多个指标字段，请明确统计口径。", 0.3, options)
+        # A word has one winning binding after the ambiguity check above.
+        # Lower-scoring candidates for that same word are alternatives, not
+        # additional requested measures (e.g. 销量 must not add stock columns).
+        links = [link for link in links if link.role != 'metric'
+                 or link.score == best_metric_scores.get(normalize_text(link.matched_alias), link.score)]
         if ignored_instructions:
             plan.assumptions.append("检测到不可执行的操作或指令性片段，已忽略，仅处理剩余的只读统计意图。")
         plan.links = links
@@ -244,8 +331,8 @@ class SingleTablePlanner:
             if explicit_count and column.nullable and not integer_pk:
                 return self._clarify(plan, 'ambiguous_count_semantics',
                     '该字段可为空，请明确需要记录行数还是非空字段计数；当前不将COUNT(*)冒充COUNT(字段)。', 0.3)
-            if plan.metric_function == 'COUNT_DISTINCT' and '去重' in clause:
-                consumed.append('去重')
+            if plan.metric_function == 'COUNT_DISTINCT':
+                consumed.extend(cue for cue in ('去重', '不同') if cue in clause)
         reachable = self._many_to_one_distances(plan.metric_table, tables)
 
         # ---- "X所在Y"：X 只限定关联路径，不作为分组维度
@@ -265,7 +352,9 @@ class SingleTablePlanner:
             plan.dimension_tables,
             plan.dimension_transforms,
             plan.dimension_labels,
-        ) = self._choose_dimensions(dimension_links, normalized, table, plan.metric_column, links, tables=tables)
+        ) = self._choose_dimensions(dimension_links, normalized, table, plan.metric_column, links,
+                                    tables=tables,
+                                    metric_tables={link.table for link in all_metric_links})
         for grain, cues in (('month', ('按月', '每月', '月份', '月度')),
                             ('year', ('按年', '每年', '年份', '年度'))):
             if grain in plan.dimension_transforms.values():
@@ -292,18 +381,20 @@ class SingleTablePlanner:
                 self._dimension_options(tables),
             )
         dimension_aliases: dict[str, set[tuple[str, str]]] = {}
-        explicit_group_fields = group_fields(normalized, tables)
+        explicit_group_fields = group_fields(normalized, tables, self.linker.rules_for(tables))
         for link in dimension_links:
             if explicit_group_fields and (link.table, link.column) not in explicit_group_fields:
                 continue
-            if self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column)):
+            if self.linker.is_date_field(link.table, link.column, self._schema_column_type(tables, link.table, link.column)):
                 continue
             dimension_aliases.setdefault(normalize_text(link.matched_alias), set()).add((link.table, link.column))
+        ambiguity_links = [link for link in dimension_links
+                           if not explicit_group_fields or (link.table, link.column) in explicit_group_fields]
         ambiguous_dimensions = {
             alias: {
-                (link.table, link.column) for link in dimension_links
+                (link.table, link.column) for link in ambiguity_links
                 if normalize_text(link.matched_alias) == alias and link.score == max(
-                    candidate.score for candidate in dimension_links
+                    candidate.score for candidate in ambiguity_links
                     if normalize_text(candidate.matched_alias) == alias
                 )
             }
@@ -322,6 +413,32 @@ class SingleTablePlanner:
             consumed.append('分组')
 
         plan.analysis_mode = self._analysis_mode(normalized)
+        if ordering:
+            order_links=[link for link in links if link.role=='metric'
+                         and normalize_text(link.matched_alias)==ordering_target]
+            generic_sort = ordering_target in _GENERIC_ORDER_ALIASES
+            first_metric_sort = ordering_target in _FIRST_METRIC_ORDER_ALIASES
+            descending = ordering_direction in {"从高到低", "高到低", "由高到低", "降序"}
+            if first_metric_sort and (plan.metrics or plan.metric_column):
+                plan.order_desc = descending
+                if plan.metrics:
+                    plan.order_metric = plan.metrics[0].id
+                consumed.append(ordering_span)
+            if generic_sort and not order_links and not plan.metrics:
+                plan.order_desc=descending
+                consumed.append(ordering_span)
+            elif generic_sort and len(plan.metrics) > 1:
+                return self._clarify(plan, "ambiguous_order_metric",
+                    "问题包含多个指标，“金额排序”无法确定排序指标，请明确按哪个指标排序。", 0.3)
+            elif len({(link.table,link.column) for link in order_links})==1:
+                plan.order_desc=descending
+                consumed.append(ordering_span)
+                if plan.metrics:
+                    candidates=[metric.id for metric in plan.metrics if (metric.table,metric.column)==(order_links[0].table,order_links[0].column)]
+                    if len(candidates)==1:plan.order_metric=candidates[0]
+            elif not ordering_target and len(plan.metrics) > 1:
+                return self._clarify(plan, "ambiguous_order_metric",
+                    "问题包含多个指标，请明确按哪个指标排序。", 0.3)
         consumed.extend(word for word in _ANALYSIS_WORDS if word in normalized)
         # 当前 SQL 生成器只实现月/年日期变换；未实现的日期粒度必须进入
         # 覆盖率守卫并澄清，不能默默退化为总体聚合。
@@ -358,19 +475,32 @@ class SingleTablePlanner:
             )
 
         # ---- 时间
-        time_parse = lexicon.parse_time(normalized, reference_date)
+        annual_delta=re.search(r'((?:19|20)\d{2})年?比((?:19|20)\d{2})年?(?:增加|增长|多|变化)(?:了)?多少',normalized)
+        temporal_text=normalized
+        if annual_delta and int(annual_delta[1])-int(annual_delta[2])==1:
+            pair=re.search(r'(?:'+annual_delta[1]+r'年?[和与、]'+annual_delta[2]+r'年|'+annual_delta[2]+r'年?[和与、]'+annual_delta[1]+r'年)',normalized)
+            if pair and set(re.findall(r'(?<!\d)\d{4}(?!\d)',normalized))=={annual_delta[1],annual_delta[2]}:
+                temporal_text=normalized.replace(pair.group(),annual_delta[1]+'年',1).replace(annual_delta.group(),'',1)
+                consumed.extend([pair.group(),annual_delta.group(),'对比'])
+            else:annual_delta=None
+        else:annual_delta=None
+        time_parse = lexicon.parse_time(temporal_text, reference_date)
+        if annual_delta:time_parse.spans.extend([pair.group(),annual_delta.group()])
         consumed.extend(time_parse.spans)
         plan.assumptions.extend(time_parse.assumptions)
         if time_parse.error_code:
             return self._clarify(plan, time_parse.error_code, time_parse.error_message or "时间范围无法确定。", 0.3)
         needs_date_role = (time_parse.single is not None or bool(plan.dimension_transforms)
                            or any(word in normalized for word in ('同比', '环比')))
-        date_binding = self._bind_date_column(links, tables, plan.metric_table, reachable, plan) if needs_date_role else None
+        date_binding = self._bind_date_column(
+            links, tables, plan.metric_table, reachable, plan,
+            preferred_binding=date_binding_override,
+        ) if needs_date_role else None
         self._rebind_date_dimensions(plan, tables, reachable, links)
         if plan.clarification:
             return plan
 
-        comparison_words = tuple(word for word in ("同比", "环比") if word in normalized)
+        comparison_words = ('同比',) if annual_delta else tuple(word for word in ("同比", "环比") if word in normalized)
         consumed.extend(comparison_words)
         if len(comparison_words) > 1:
             return self._clarify(plan, "ambiguous_comparison_mode", "同比和环比不能在同一问题中混用，请选择一种比较口径。", 0.25)
@@ -396,6 +526,8 @@ class SingleTablePlanner:
             if period is None:
                 return self._clarify(plan, "ambiguous_date_storage", "日期字段的存储格式无法安全判断，请明确日期字段格式。", 0.25)
             plan.comparison_mode, plan.comparison_period = comparison_words[0], period
+            plan.semantic_audit.setdefault("date_storage_formats", {})[
+                f"{period['date_table']}.{period['date_column']}"] = period_format
             plan.assumptions.append(f"比较窗口：{period['current_start_text']} 至 {period['current_end_text']}（半开区间）")
             plan.assumptions.append(f"日期参数格式：{period_format}")
         elif time_parse.single is not None:
@@ -408,10 +540,16 @@ class SingleTablePlanner:
             )
             if date_binding is None:
                 return self._clarify(plan, "ambiguous_date_storage", "日期字段的存储格式无法安全判断，请明确日期字段格式。", 0.25)
+            if (date_params[2] == "iso_month_text"
+                    and re.search(r"(?:19|20)\d{2}年(?:\d{1,2}月)?\d{1,2}(?:日|号)", normalized)):
+                return self._clarify(plan, "unsupported_date_precision",
+                    "该指标仅按月记录，无法准确筛选到具体日期；请改按月份或年份查询。", 0.25)
             plan.filters.append(FilterSpec(
                 date_binding[1], "RANGE", date_params[:2], time_parse.single.span,
                 f"限制时间 [{start}, {end})，时间字段 {date_binding[0]}.{date_binding[1]}", date_binding[0],
             ))
+            plan.semantic_audit.setdefault("date_storage_formats", {})[
+                f"{date_binding[0]}.{date_binding[1]}"] = date_params[2]
             plan.assumptions.append(f"日期参数格式：{date_params[2]}")
 
         # SQLite strftime does not interpret Unix epochs without an explicit
@@ -427,15 +565,24 @@ class SingleTablePlanner:
             if actual is None:
                 return self._clarify(plan, 'ambiguous_date_storage',
                     '时间分组字段的日期存储格式无法安全判断，请明确格式。', 0.25)
-            if params[2] != 'iso_text':
+            if params[2] not in {'iso_text', 'iso_month_text'}:
                 return self._clarify(plan, 'unsupported_time_storage',
                     '当前月/年分组仅支持ISO文本日期，数值时间戳的日历分组尚未实现。', 0.3)
+            plan.semantic_audit.setdefault("date_storage_formats", {})[
+                f"{binding[0]}.{binding[1]}"] = params[2]
 
         # ---- 实体值
         linked_columns = {(link.table, link.column) for link in links}
+        value_matches = []
         if value_index is not None:
             blocked = [pos for pos in (_locate(normalized, span, []) for span in time_parse.spans) if pos]
-            matches, ambiguities = value_index.match(normalized, linked_columns, blocked=blocked)
+            if ordering_span:
+                ordering_position = _locate(normalized, ordering_span, [])
+                if ordering_position:
+                    blocked.append(ordering_position)
+            metric_tables = {metric.table for metric in plan.metrics} or {plan.metric_table}
+            matches, ambiguities = value_index.match(normalized, linked_columns, blocked=blocked,
+                                                     preferred_tables=metric_tables)
             if ambiguities:
                 item = ambiguities[0]
                 options = [
@@ -450,10 +597,15 @@ class SingleTablePlanner:
             for match in matches:
                 if match.via != "exact":
                     plan.assumptions.append(f"“{match.span}”按{'同义词' if match.via == 'synonym' else '唯一前缀'}识别为 {match.column}={match.value}")
+            value_matches = matches
         else:
             legacy = self._value_filters(clean_question, links, tables, connection)
             plan.filters.extend(legacy)
             consumed.extend(normalize_text(item.source_text) for item in legacy)
+        literal_filters, literal_spans = self._explicit_dimension_value_filters(
+            normalized, links, plan, tables, value_matches)
+        plan.filters.extend(literal_filters)
+        consumed.extend(literal_spans)
 
         # 单值过滤的字段不自动成为分组："华南地区各渠道"只按渠道分组。
         # 用户明确写"按地区"/"各地区"时仍保留该维度。
@@ -463,7 +615,8 @@ class SingleTablePlanner:
                         (f.operator == "=" or f.operator == "IN" and len(f.value) == 1) for f in plan.filters)
             aliases = [normalize_text(link.matched_alias) for link in links
                        if link.table == target_table and link.column == dimension and link.role == "dimension"]
-            explicit_dimension = ((target_table, dimension) in group_fields(normalized, tables)
+            explicit_dimension = ((target_table, dimension) in group_fields(
+                    normalized, tables, self.linker.rules_for(tables))
                 or any(re.search(r"(?:按|各|每个|每|分别按)" + re.escape(alias), normalized) for alias in aliases))
             if fixed and not explicit_dimension:
                 plan.dimensions.remove(dimension)
@@ -575,17 +728,37 @@ class SingleTablePlanner:
         # operation was actually represented. Keep the rank/Top-N predicate.
         if plan.dimensions and (plan.top_n is not None or plan.analysis_mode == 'rank'):
             consumed.extend(match.group(0) for match in re.finditer(r'(?:并且|并)?找出', normalized))
+            # Ranked entity questions end in an interrogative, not an extra
+            # filter. A bare metric definition must still fail this guard.
+            ending = re.search(r'(?:是什么|是谁)[。？！!?]*$', normalized)
+            if ending:
+                consumed.append(ending.group(0))
         if plan.dimensions and plan.top_n is not None:
             consumed.extend(cue for cue in ('取最高', '取最低', '含并列') if cue in normalized)
-        if any(self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column))
+            if plan.analysis_mode == 'rank':
+                consumed.extend(match.group(0) for match in re.finditer(
+                    r'(?:分别)?是(?:谁|哪些|哪几个|什么)', normalized))
+                consumed.extend(match.group(0) for match in re.finditer(
+                    r'带上(?:(?:名次|排名)(?:和|及)?数值|数值|名次|排名|结果)', normalized))
+        if any(self.linker.is_date_field(link.table, link.column, self._schema_column_type(tables, link.table, link.column))
                for link in links) and (plan.filters or plan.dimensions) and '对应' in normalized:
             # 日期字段→指标 is a syntactic bridge only after both are linked;
             # arbitrary association requests still leave their objects intact.
             consumed.append('对应')
-        if normalize_text(plan.table or '') in normalized:
-            topic = re.match(r'^(?:换个主题|换一个主题|换个问题)[,，:：]', normalized)
-            if topic:
-                consumed.append(topic.group(0))
+        topic = re.match(r'^(?:换个主题|换一个主题|换个话题|换一个话题|'
+                         r'换个问题|换一个问题|新问题|重新查询)[,，:：]', normalized)
+        if topic:
+            consumed.append(topic.group(0))
+        aggregate_functions = {metric.function for metric in plan.metrics} or {plan.metric_function}
+        if ("AVG" in aggregate_functions
+                and re.search(r"给个(?:总数|总量|总额)", normalized)):
+            explicit_average = re.search(r"(?:平均(?:值|分|分数|数)?|均值|均分|avg|average)", normalized, re.I)
+            if not explicit_average:
+                return self._clarify(plan, "ambiguous_aggregation",
+                    "该指标按平均值定义，“给个总数”可能表示记录数或数值合计，请明确统计口径。", 0.3)
+            consumed.extend(match.group(0) for match in re.finditer(r"给个(?:总数|总量|总额)", normalized))
+        if aggregate_functions and not aggregate_functions.intersection({"AVG"}):
+            consumed.extend(match.group(0) for match in re.finditer(r"给个(?:总数|总量|总额)", normalized))
         unresolved = self._coverage_guard(normalized, consumed)
         plan.coverage = {
             "consumed": sorted({item for item in consumed if item}),
@@ -681,7 +854,7 @@ class SingleTablePlanner:
         options: list[dict[str, str]] = []
         seen: set[str] = set()
         for rule in self.linker.rules_for(tables):
-            if rule.role == "dimension" and rule.table in names and rule.column not in seen and rule.aliases and not self._is_date_column(rule.column, self._schema_column_type(tables, rule.table, rule.column)):
+            if rule.role == "dimension" and rule.table in names and rule.column not in seen and rule.aliases and not self.linker.is_date_field(rule.table, rule.column, self._schema_column_type(tables, rule.table, rule.column)):
                 seen.add(rule.column)
                 options.append({"value": rule.column, "label": f"{prefix}{rule.aliases[0]}{suffix}"})
         return options[:6]
@@ -759,6 +932,123 @@ class SingleTablePlanner:
             filters.append(FilterSpec(column, operator, value, source, f"{verb} {column} ∈ {{{', '.join(values)}}}", table))
         return filters, spans
 
+    @staticmethod
+    def _explicit_dimension_value_filters(normalized: str, links: list, plan: QueryPlan,
+                                          tables: tuple[TableInfo, ...], value_matches: list
+                                          ) -> tuple[list[FilterSpec], list[str]]:
+        """Bind an explicit text-field equality even when its value is not in the index.
+
+        A phrase such as ``产品名称为本钱包的销售额`` supplies a typed field,
+        equality relation, and literal. Unknown literals remain safe parameters
+        and naturally return no matching rows instead of invoking the model.
+        """
+        by_name = {table.name: table for table in tables}
+        metric_tables = {metric.table for metric in plan.metrics} or {plan.metric_table or plan.table}
+        dimension_links = [link for link in links if link.role == "dimension"]
+        aliases = sorted({normalize_text(link.matched_alias) for link in dimension_links
+                          if len(normalize_text(link.matched_alias)) >= 2}, key=lambda item: (-len(item), item))
+        quote_pairs = {"'": "'", '"': '"', "“": "”", "‘": "’", "「": "」", "『": "』"}
+        relation_re = re.compile(r"(?:等于|名为|名叫|为|是|叫)")
+        punctuation_re = re.compile(r"[，,。;；?!？]|并且|以及|同时|且")
+        filters: list[FilterSpec] = []
+        consumed: list[str] = []
+        handled_fields: set[tuple[str, str]] = set()
+
+        for alias in aliases:
+            alias_links = [link for link in dimension_links
+                           if normalize_text(link.matched_alias) == alias]
+            owners = {(link.table, link.column) for link in alias_links}
+            scoped = {owner for owner in owners if owner[0] in metric_tables}
+            selected = scoped if len(scoped) == 1 else owners
+            if len(selected) != 1:
+                continue
+            table_name, column_name = next(iter(selected))
+            target_table = by_name.get(table_name)
+            column = next((item for item in target_table.columns if item.name == column_name), None) if target_table else None
+            if (column is None or column.primary_key or column_name.lower().endswith("id")
+                    or SingleTablePlanner._is_date_column(column_name, column.data_type)
+                    or column.data_type.upper().strip() not in {"", "TEXT", "CHAR", "CLOB", "VARCHAR", "STRING"}
+                    or (table_name, column_name) in handled_fields):
+                continue
+
+            for alias_match in re.finditer(re.escape(alias), normalized):
+                relation = relation_re.match(normalized, alias_match.end())
+                if relation is None:
+                    continue
+                value_start = relation.end()
+                if value_start >= len(normalized):
+                    continue
+                opening = normalized[value_start]
+                quoted_value = opening in quote_pairs
+                if quoted_value:
+                    closing = normalized.find(quote_pairs[opening], value_start + 1)
+                    if closing <= value_start + 1:
+                        continue
+                    value = normalized[value_start + 1:closing]
+                    value_end = closing + 1
+                else:
+                    boundaries = [match.start() for match in punctuation_re.finditer(normalized, value_start)]
+                    # In Chinese, 的 separates an explicit filter from a following
+                    # selected field (e.g. “产品名称为X的销售额”). Treat it as a
+                    # boundary only when a different schema field follows it.
+                    for de in re.finditer("的", normalized[value_start:]):
+                        position = value_start + de.start()
+                        suffix_start = position + 1
+                        follows_field = any(
+                            normalize_text(other.matched_alias) != alias
+                            and other.column != column_name
+                            and normalized.startswith(normalize_text(other.matched_alias), suffix_start)
+                            for other in links
+                        )
+                        if follows_field:
+                            boundaries.append(position)
+                    for other in links:
+                        other_alias = normalize_text(other.matched_alias)
+                        if other_alias == alias or other.column == column_name or len(other_alias) < 2:
+                            continue
+                        boundaries.extend(value_start + match.start() for match in
+                            re.finditer(re.escape(other_alias), normalized[value_start:])
+                            if match.start() > 0)
+                    value_end = min(boundaries, default=len(normalized))
+                    value = normalized[value_start:value_end].strip()
+                    if (not value or re.search(r"(?:和|与|及|、|或)", value)):
+                        continue
+                if (not value or len(value) > 120
+                        or not quoted_value and re.fullmatch(
+                            r"(?:什么|谁|哪些|哪(?:个|些|一|里|儿|天|年|月|种)|多少|几|何时|怎样|如何)",
+                            value)):
+                    continue
+
+                # A known indexed value has a canonical database spelling and
+                # has already been turned into a filter. Consume the explicit
+                # relation only when that match belongs to the selected field.
+                overlapping = [match for match in value_matches
+                               if match.start < value_end and match.end > value_start]
+                if overlapping:
+                    if not any((match.table, match.column) == (table_name, column_name)
+                               for match in overlapping):
+                        continue
+                    consumed.append(normalized[alias_match.end():value_end])
+                    handled_fields.add((table_name, column_name))
+                    break
+
+                existing = [item for item in plan.filters
+                            if (item.table or plan.table, item.column) == (table_name, column_name)]
+                if existing:
+                    if (len(existing) == 1 and existing[0].operator == "="
+                            and normalize_text(str(existing[0].value)) == value):
+                        consumed.append(normalized[alias_match.end():value_end])
+                        handled_fields.add((table_name, column_name))
+                    break
+
+                filters.append(FilterSpec(column_name, "=", value, value,
+                    f"按显式字段条件限定 {table_name}.{column_name}", table_name))
+                consumed.append(normalized[alias_match.end():value_end])
+                handled_fields.add((table_name, column_name))
+                break
+
+        return filters, consumed
+
     def _coverage_guard(self, normalized: str, consumed: list[str]) -> list[str]:
         residual = normalized
         for span in sorted({item for item in consumed if item}, key=len, reverse=True):
@@ -799,10 +1089,11 @@ class SingleTablePlanner:
                     queue.append(fk.table)
         return distances
 
-    def _bind_date_column(self, links, tables, metric_table, reachable, plan: QueryPlan) -> tuple[str, str] | None:
+    def _bind_date_column(self, links, tables, metric_table, reachable, plan: QueryPlan, *,
+                          preferred_binding: tuple[str, str] | None = None) -> tuple[str, str] | None:
         by_name = {table.name: table for table in tables}
         explicit = [link for link in links if link.role == "dimension"
-                    and self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column))]
+                    and self.linker.is_date_field(link.table, link.column, self._schema_column_type(tables, link.table, link.column))]
         specific = {(link.table, link.column) for link in explicit
                     if normalize_text(link.matched_alias) not in _GENERIC_TIME_ALIASES}
         if len(specific) == 1:
@@ -810,11 +1101,21 @@ class SingleTablePlanner:
         if len(specific) > 1:
             self._ambiguous_date_role(plan, sorted(specific))
             return None
+        if preferred_binding is not None:
+            preferred_table, preferred_column = preferred_binding
+            preferred_info = by_name.get(preferred_table)
+            if (preferred_info is not None and preferred_column in {column.name for column in preferred_info.columns}
+                    and preferred_table in reachable
+                    and self.linker.is_date_field(preferred_table, preferred_column,
+                        self._schema_column_type(tables, preferred_table, preferred_column))):
+                plan.assumptions.append(
+                    f"根据指标目录默认时间口径使用 {preferred_table}.{preferred_column}")
+                return preferred_binding
         candidates = sorted(
             (distance, name, column.name)
             for name, distance in reachable.items()
             for column in by_name[name].columns
-            if self._is_date_column(column.name, column.data_type)
+            if self.linker.is_date_field(name, column.name, column.data_type)
         )
         if not candidates:
             return None
@@ -845,6 +1146,16 @@ class SingleTablePlanner:
             storage_format, _ = cache[cache_key]
             if storage_format == "iso_text":
                 return binding, (start, end, storage_format)
+            if storage_format == "iso_month_text":
+                try:
+                    lower, upper = datetime.fromisoformat(start), datetime.fromisoformat(end)
+                    aligned = all(value.day == 1 and not any((value.hour, value.minute, value.second,
+                                                              value.microsecond)) for value in (lower, upper))
+                except ValueError:
+                    aligned = False
+                if aligned:
+                    return binding, (lower.strftime("%Y-%m"), upper.strftime("%Y-%m"), storage_format)
+                return None, (start, end, "unknown")
             if storage_format == "unix_epoch_seconds":
                 scale = 1
             elif storage_format == "unix_epoch_milliseconds":
@@ -888,6 +1199,36 @@ class SingleTablePlanner:
                 f'WHERE {quoted_column} IS NOT NULL AND typeof({quoted_column}) = \'text\' LIMIT 20'
             ).fetchall()
             text_values = [row[0] for row in sample]
+        if text_present and not numeric_kinds and not other_present:
+            text_count, month_candidate_count, month_valid_count = connection.execute(
+                f"SELECT COUNT(*), "
+                f"SUM(CASE WHEN length({quoted_column}) = 7 "
+                f"AND {quoted_column} GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]' THEN 1 ELSE 0 END), "
+                f"SUM(CASE WHEN length({quoted_column}) = 7 "
+                f"AND {quoted_column} GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]' "
+                f"AND strftime('%Y-%m', date({quoted_column} || '-01')) = {quoted_column} "
+                f"THEN 1 ELSE 0 END) FROM {quoted_table} "
+                f"WHERE {quoted_column} IS NOT NULL AND typeof({quoted_column}) = 'text'"
+            ).fetchone()
+            text_count = int(text_count or 0)
+            month_candidate_count = int(month_candidate_count or 0)
+            month_valid_count = int(month_valid_count or 0)
+            if month_candidate_count:
+                if month_candidate_count != text_count or month_valid_count != text_count:
+                    return None, (start, end, "unknown")
+                try:
+                    lower, upper = datetime.fromisoformat(start), datetime.fromisoformat(end)
+                    aligned = all(value.day == 1 and not any((value.hour, value.minute, value.second,
+                                                              value.microsecond)) for value in (lower, upper))
+                except ValueError:
+                    aligned = False
+                if not aligned:
+                    return None, (start, end, "unknown")
+                values = (lower.strftime("%Y-%m"), upper.strftime("%Y-%m"))
+                if cache is not None:
+                    cache[cache_key] = ("iso_month_text", values)
+                plan.assumptions.append(f"检测到 {table_name}.{column_name} 使用 YYYY-MM 月度文本")
+                return binding, (*values, "iso_month_text")
         values: list[Any] = [*numeric_values, *text_values, *other_present]
         if numeric_seconds and numeric_milliseconds:
             values.extend((1e9, 1e12))
@@ -923,6 +1264,8 @@ class SingleTablePlanner:
             # 非空样本混合文本/数值或其它 SQLite 类型，不能猜测比较语义。
             return None, (start, end, "unknown")
         if not values and column.data_type.upper() in {"TEXT", "DATE", "DATETIME", "TIMESTAMP"}:
+            if column_name.lower().endswith("_month"):
+                return None, (start, end, "unknown")
             return binding, (start, end, "iso_text")
         if not values and any(token in column.data_type.upper() for token in ("INT", "REAL", "NUM", "DEC", "FLOAT", "DOUBLE")):
             return None, (start, end, "unknown")
@@ -944,11 +1287,16 @@ class SingleTablePlanner:
         )
         if converted is None:
             return None, "unknown"
-        scale = 1 if params[2] == "iso_text" else (1000 if params[2] == "unix_epoch_milliseconds" else 1)
+        scale = 1 if params[2] in {"iso_text", "iso_month_text"} else (1000 if params[2] == "unix_epoch_milliseconds" else 1)
 
         def convert(value: str):
             if params[2] == "iso_text":
                 return value
+            if params[2] == "iso_month_text":
+                parsed = datetime.fromisoformat(value)
+                if parsed.day != 1 or any((parsed.hour, parsed.minute, parsed.second, parsed.microsecond)):
+                    raise ValueError("month_precision_boundary")
+                return parsed.strftime("%Y-%m")
             return int(datetime.fromisoformat(value).replace(tzinfo=timezone.utc).timestamp() * scale)
 
         result = dict(period)
@@ -968,7 +1316,7 @@ class SingleTablePlanner:
         by_name = {table.name: table for table in tables}
         for column in list(plan.dimensions):
             source_table = plan.dimension_tables.get(column, plan.table)
-            if not self._is_date_column(column, self._schema_column_type(tables, source_table, column)) or source_table in reachable:
+            if not self.linker.is_date_field(source_table, column, self._schema_column_type(tables, source_table, column)) or source_table in reachable:
                 continue
             if any(link.table == source_table and link.column == column
                    and normalize_text(link.matched_alias) not in _GENERIC_TIME_ALIASES for link in links):
@@ -980,7 +1328,7 @@ class SingleTablePlanner:
                 (distance, name, info.name)
                 for name, distance in reachable.items()
                 for info in by_name[name].columns
-                if self._is_date_column(info.name, info.data_type)
+                if self.linker.is_date_field(name, info.name, info.data_type)
             )
             if not candidates:
                 continue
@@ -1190,8 +1538,12 @@ class SingleTablePlanner:
         if groups:
             inner_sql += " GROUP BY " + ", ".join(groups)
         prefix = (", ".join(outer) + ", ") if outer else ""
+        absolute_delta=''
+        if re.search(r'\d{4}年?比\d{4}年?(?:增加|增长|多|变化)(?:了)?多少',plan.rewritten_question):
+            absolute_delta=f'({_quote(current_label)} - {_quote(previous_label)}) AS "变化量", '
         outer_sql = (
             f"SELECT {prefix}{_quote(current_label)}, {_quote(previous_label)}, "
+            f"{absolute_delta}"
             f"(100.0 * ({_quote(current_label)} - {_quote(previous_label)}) / NULLIF({_quote(previous_label)}, 0)) AS {_quote(change_label)} "
             f"FROM ({inner_sql}) AS comparison_base "
             f"ORDER BY {_quote(current_label)} {'DESC' if plan.order_desc else 'ASC'}"
@@ -1207,6 +1559,11 @@ class SingleTablePlanner:
 
     @staticmethod
     def _analysis_mode(question: str) -> str:
+        top = lexicon.parse_top_n(question)
+        if top is not None:
+            if any(word in question for word in ("排名", "排行", "名次")):
+                return "rank"
+            return "aggregate"
         if any(word in question for word in ("排名", "排行", "名次")):
             return "rank"
         if any(word in question for word in ("占比", "份额", "比例")):
@@ -1352,7 +1709,8 @@ class SingleTablePlanner:
         return [(cue, function) for cues, function, _ in _AGGREGATE_CUES
                 for cue in cues if cue in (cls._count_cue_text(question, links) if function == 'COUNT' else question)]
 
-    def _choose_dimensions(self, links: list, question: str, table: TableInfo, metric_column: str, all_links: list | None = None, *, tables=None):
+    def _choose_dimensions(self, links: list, question: str, table: TableInfo, metric_column: str,
+                           all_links: list | None = None, *, tables=None, metric_tables=None):
         tables = tuple(tables) if tables is not None else (table,)
         seen: set[str] = set()
         dimensions: list[str] = []
@@ -1362,19 +1720,73 @@ class SingleTablePlanner:
         grouping_question = re.sub(r'按[^,;。?!？；]{1,160}?(?:筛选|过滤|限定)', '', question)
         explicit = any(word in grouping_question for word in ("各", "每个", "按", "分别", "分组", "前", "top", "超过", "大于", "高于", "低于", "小于", "不超过", "至少", "排名", "占比", "倒数", "最高的", "最低的"))
         explicit = explicit or bool(lexicon.parse_ordinal_ranks(question))
-        named_group_fields = group_fields(question, tables)
+        named_group_fields = group_fields(question, tables, self.linker.rules_for(tables))
         named_group_grains = group_grains(question, tables)
+        by_name = {item.name: item for item in tables}
+        metric_tables = set(metric_tables or {table.name})
+        fact_table = next(iter(metric_tables)) if len(metric_tables) == 1 else None
+        group_text = " ".join(match.group(1) for match in re.finditer(
+            r'(?<!不)按([^,;。?!？；]{1,160}?)(?:分组|统计|计算|汇总)', question))
+        if not group_text:
+            normalized_question = normalize_text(question)
+            metric_positions = []
+            for link in all_links or ():
+                if link.role != "metric":
+                    continue
+                alias = normalize_text(link.matched_alias)
+                if alias:
+                    metric_positions.extend(match.start() for match in
+                                            re.finditer(re.escape(alias), normalized_question))
+            first_metric = min(metric_positions, default=len(normalized_question))
+            marker = re.search(r"各|每个|每一", normalized_question)
+            if marker and marker.end() < first_metric <= marker.end() + 100:
+                group_text = normalized_question[marker.end():first_metric]
+        metric_pairs = {(link.table, link.column) for link in (all_links or ())
+                        if link.role == "metric"}
+        group_names_source = any(
+            re.search(r'(?<![a-z0-9_])' + re.escape(item.name.lower()) + r'(?![a-z0-9_])',
+                      group_text.lower())
+            for item in tables
+        )
+        prepared_links = []
         for link in links:
+            if link.role != "dimension":
+                continue
+            if ((link.table, link.column) in metric_pairs
+                    and normalize_text(link.matched_alias) not in group_text):
+                continue
+            if (fact_table and not group_names_source and link.table != fact_table
+                    and link.column in {column.name for column in by_name[fact_table].columns}):
+                link = LinkCandidate(link.source_text, fact_table, link.column, link.role,
+                                     link.score, link.matched_alias, link.metric_function)
+            prepared_links.append(link)
+        fact_aliases = {normalize_text(link.matched_alias) for link in prepared_links
+                        if fact_table and link.table == fact_table}
+        prepared_links.sort(key=lambda link: (link.table != fact_table if fact_table else False,
+                                              -link.score))
+        for link in prepared_links:
             if link.role != "dimension" or link.column == metric_column or link.column in seen:
                 continue
             if named_group_fields and (link.table, link.column) not in named_group_fields:
+                continue
+            if fact_table and normalize_text(link.matched_alias) in fact_aliases and link.table != fact_table:
+                continue
+            if any(
+                candidate.role == 'dimension'
+                and normalize_text(candidate.matched_alias) == normalize_text(link.matched_alias)
+                and candidate.table == link.table and candidate.score > link.score for candidate in prepared_links
+            ):
+                # One linguistic slot must not silently become two grouping
+                # fields when an enriched schema adds a weaker alias match.
+                # Explicit physical owners have their own matched alias, while
+                # equal-score alternatives still reach the clarification gate.
                 continue
             if link.table == table.name and any(
                 candidate.table == table.name and candidate.column == link.column and candidate.role == "metric"
                 for candidate in (all_links or ())
             ):
                 continue
-            is_date = self._is_date_column(link.column, self._schema_column_type(tables, link.table, link.column))
+            is_date = self.linker.is_date_field(link.table, link.column, self._schema_column_type(tables, link.table, link.column))
             if is_date and not any(word in question for word in _TREND_WORDS) and (link.table, link.column) not in named_group_fields:
                 continue
             if explicit or is_date:

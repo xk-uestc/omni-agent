@@ -34,10 +34,12 @@ def test_query_api_exposes_planner_audit(monkeypatch, tmp_path):
     assert response.status_code == 200
     payload = response.json()
     expected = {
-        "candidate_source": "external_model",
-        "final_source": "model_validated",
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
         "fallback": False,
         "decision": "accepted",
+        "model_called": False,
+        "verification": "complete_coverage_single_table_current_snapshot",
     }
     assert payload["plan"]["planner_audit"] == expected
     assert payload["plan"]["intent_audit"]["planner_audit"] == expected

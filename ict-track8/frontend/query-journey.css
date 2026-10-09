@@ -80,6 +80,7 @@
 .schema-explorer.is-query-focused .schema-column:not(.role-metric):not(.role-filter):not(.role-time):not(.role-dimension):not(.role-join):not(.is-target):not(.is-linked) { opacity: .28; }
 .schema-inspector { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; min-height: 43px; padding: 10px 0 0; font-size: 11px; color: var(--ui-muted); }
 .schema-inspector-text { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.schema-inspector-label { color: var(--ui-text); font-size: 12px; font-weight: 650; }
 .schema-inspector code { color: var(--ui-text); font: 11px ui-monospace, monospace; overflow-wrap: anywhere; }
 .schema-inspector-type { font: 10px ui-monospace, monospace; color: var(--query-blue); }
 .query-schema-host .schema-jump[aria-pressed="true"] { color: var(--query-blue); border-bottom-color: var(--query-blue); }
@@ -117,7 +118,7 @@
 .query-plan-notes p { font-size: 11px; line-height: 1.7; color: var(--ui-muted); margin: 4px 0; }
 .query-attention { font-size: 12px; line-height: 1.7; color: #b7781d; margin: 12px 0; }
 .query-sql-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 10px; color: var(--ui-muted); }
-.assistant pre.query-sql { padding: 20px 0; margin: 10px 0; border-radius: 0; background: transparent; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/2 "Cascadia Code", Consolas, ui-monospace, monospace; }
+.assistant pre.query-sql { width: 100%; max-width: 100%; max-height: 420px; overflow: auto; padding: 14px 16px; margin: 10px 0; border: 1px solid var(--ui-line); border-radius: 6px; background: var(--ui-soft); white-space: pre; overflow-wrap: normal; tab-size: 2; font: 12.5px/1.8 "Cascadia Code", Consolas, ui-monospace, monospace; }
 .assistant pre.query-sql::before { display: none; }
 .query-sql-token[data-field], .query-sql-token[data-parameter] { cursor: pointer; text-decoration: underline dotted; text-decoration-color: color-mix(in srgb, currentColor 35%, transparent); text-underline-offset: 3px; }
 .query-sql-token[data-field]:hover, .query-sql-token.is-linked { color: var(--query-blue); background: color-mix(in srgb, var(--query-blue) 14%, transparent); outline: 1px solid color-mix(in srgb, var(--query-blue) 35%, transparent); }

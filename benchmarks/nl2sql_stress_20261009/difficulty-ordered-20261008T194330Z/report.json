@@ -1,0 +1,755 @@
+{
+  "run_id": "difficulty-ordered-20261008T194330Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8031",
+  "until_utc": "2026-10-08T20:20:00+00:00",
+  "started_utc": "2026-10-08T19:43:30.559388+00:00",
+  "case_count_per_cycle": 377,
+  "task_count_per_cycle": 377,
+  "question_order": "ascending_difficulty",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 65,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "41ddca620eef0a17d2afaf52baefe9d4ce91595bdb66d707dcd33fea6422ebb6",
+  "catalog_sha256": "de5821fbd104c3c9cef7667e350820856e73e6c6ac2ae4eeeca771bbdc3f44e9",
+  "scorer_sha256": "4fe1659ef0c3e0c95ca6abed144a2c859c51cb6bdf60ea9e2d1c1d6648e9560b",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-08T19:59:38.585843+00:00",
+  "elapsed_seconds": 968.0,
+  "total_requests": 242,
+  "passed": 192,
+  "failed": 50,
+  "pass_rate": 0.793388,
+  "latency_ms": {
+    "p50": 193.66,
+    "p95": 23970.1,
+    "p99": 34887.15,
+    "max": 40012.48
+  },
+  "health_checks": {
+    "passed": 24,
+    "failed": 0
+  },
+  "acceptance_classification": {
+    "attempt_outcomes": {
+      "correct_execution": 192,
+      "incorrect_execution": 17,
+      "technical_failure": 1,
+      "clarification_unanswered": 32
+    },
+    "first_attempt_unique_cases": 242,
+    "first_attempt_outcomes": {
+      "correct_execution": 192,
+      "incorrect_execution": 17,
+      "technical_failure": 1,
+      "clarification_unanswered": 32
+    },
+    "unique_cases_seen": 242,
+    "difficulty_order_by_cycle": {
+      "1": "valid"
+    },
+    "difficulty_order_violations": [],
+    "max_observed_concurrency": 1,
+    "failed_unique_case_count": 50,
+    "repeated_failure_case_count": 0,
+    "top_failed_cases": [
+      {
+        "case_id": "catalog-campaign_sales-00",
+        "question": "2025年广告归因销售额",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "technical_failure": 1
+        },
+        "mean_ms": 40012.48,
+        "max_ms": 40012.476,
+        "clarification": null,
+        "last_error": "TimeoutError"
+      },
+      {
+        "case_id": "variant-legacy-05-0-purchase_amount-00",
+        "question": "2024年华东地区进货金额",
+        "category": "vocabulary_variant",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 35051.6,
+        "max_ms": 35051.595,
+        "clarification": "“金额”对应多个指标字段，请明确统计口径。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_impressions-01",
+        "question": "2025年营销曝光量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 34887.15,
+        "max_ms": 34887.152,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-bonus_amount-department",
+        "question": "2025年按部门分别统计奖金总额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 34412.22,
+        "max_ms": 34412.218,
+        "clarification": "请确认两点：1）“按部门”使用 payroll_records.department，还是通过 employee_id 关联 employees.department；2）payroll_records.payroll_date 的实际日期存储格式（例如 YYYY-MM-DD 文本）是什么，以便正确筛选 2025 年？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-sales_target-01",
+        "question": "2025年目标销售额",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 33335.71,
+        "max_ms": 33335.713,
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_impressions-00",
+        "question": "2025年广告曝光量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 30758.72,
+        "max_ms": 30758.715,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-bonus_amount-region",
+        "question": "2025年按地区分别统计奖金总额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 29909.59,
+        "max_ms": 29909.591,
+        "clarification": "请明确“地区”应按哪个物理字段分组：payroll_records.region、employees.region，还是通过 region_id 关联 regions.region_name？另外，payroll_records.payroll_date 的存储格式未在schema中核验，2025年是否按可解析日期的 [2025-01-01, 2026-01-01) 口径筛选？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-sales_target-00",
+        "question": "2025年销售目标",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 26379.23,
+        "max_ms": 26379.227,
+        "clarification": "指标所在主题没有可用的日期字段，无法按时间过滤，请说明时间口径。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_conversions-00",
+        "question": "2025年营销转化数",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 25058.56,
+        "max_ms": 25058.56,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-campaign_impressions-campaign_type",
+        "question": "2025年按营销类型分别统计广告曝光量",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 24345.73,
+        "max_ms": 24345.731,
+        "clarification": "请明确“2025年”针对营销活动的日期口径：是按 marketing_campaigns.start_date 落在2025年、按 end_date 落在2025年，还是统计与2025年有重叠的活动（start_date < 2026-01-01 且 end_date >= 2025-01-01）？另外，schema未提供已验证的日期存储格式，需确认 start_date/end_date 是否按可解析的 ISO 日期文本存储。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_budget-02",
+        "question": "2025年营销投入",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 23970.1,
+        "max_ms": 23970.101,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "variant-legacy-03-0-shipping_cost-02",
+        "question": "2024年华东地区配送成本",
+        "category": "vocabulary_variant",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 22857.11,
+        "max_ms": 22857.113,
+        "clarification": "“华东”对应多个取值，请选择具体对象。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-expense_amount-region",
+        "question": "2025年按地区分别统计费用金额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 21946.69,
+        "max_ms": 21946.689,
+        "clarification": "请明确两点后才能生成SQL：1）“地区”按 operating_expenses.region（费用记录中的地区文本）、operating_expenses.region_id，还是关联 regions.region_name 分组？2）expense_date 的实际存储格式是什么（例如 YYYY-MM-DD）？当前schema未提供已验证的日期格式，无法安全构造2025年区间过滤。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_sales-01",
+        "question": "2025年营销归因销售额",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 21630.99,
+        "max_ms": 21630.992,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-campaign_budget-channel",
+        "question": "2025年按渠道分别统计营销预算",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 21448.42,
+        "max_ms": 21448.425,
+        "clarification": "“2025年”应按营销活动的哪个日期字段筛选：marketing_campaigns.start_date、marketing_campaigns.end_date，还是统计与2025年有任意重叠的营销活动（start_date < '2026-01-01' 且 end_date >= '2025-01-01'）？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_budget-00",
+        "question": "2025年营销预算",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 21329.84,
+        "max_ms": 21329.841,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "catalog-campaign_clicks-01",
+        "question": "2025年营销点击量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 19735.3,
+        "max_ms": 19735.301,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-campaign_conversions-channel",
+        "question": "2025年按渠道分别统计营销转化数",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 18650.56,
+        "max_ms": 18650.565,
+        "clarification": "营销活动包含 start_date 和 end_date。请明确“2025年”按哪种日期口径筛选：仅 start_date 在2025年、仅 end_date 在2025年，还是与2025年有重叠（start_date < '2026-01-01' 且 end_date >= '2025-01-01'）？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_budget-01",
+        "question": "2025年广告投入",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 18557.53,
+        "max_ms": 18557.525,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-discount_amount-region",
+        "question": "2025年按地区分别统计优惠金额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 18066.12,
+        "max_ms": 18066.124,
+        "clarification": "请明确“地区”按哪个物理字段分组：sales_orders.region，还是通过 sales_orders.region_id 关联 regions.region_name？另外，请确认 sales_orders.order_date 的存储格式是否为可按 `2025-01-01` 至 `2026-01-01` 半开区间筛选的 ISO 日期文本。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-first_response_minutes-issue_type",
+        "question": "2025年按问题类型分别统计平均首次响应分钟",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 17190.24,
+        "max_ms": 17190.237,
+        "clarification": "support_tickets.created_date 的日期存储格式尚未在schema中核验。请确认该字段是否为可按 SQLite ISO 文本范围过滤的格式（例如 YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS），以便准确筛选 2025 年记录。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-inventory_quantity-00",
+        "question": "2025年库存量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 16814.5,
+        "max_ms": 16814.504,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "variant-legacy-03-1-shipping_cost-02",
+        "question": "2025年华东地区配送成本",
+        "category": "vocabulary_variant",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 16685.4,
+        "max_ms": 16685.4,
+        "clarification": "“华东”对应多个取值，请选择具体对象。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-gross_profit-product_category",
+        "question": "2025年按产品类别分别统计毛利",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 16015.59,
+        "max_ms": 16015.593,
+        "clarification": "请明确两点后再生成SQL：1）2025年应按哪个日期字段筛选（通常可选 sales_orders.order_date，但需确认）；2）“产品类别”使用 sales_orders.product_category，还是通过 product_id 关联 products.category？另外请提供或确认日期字段的存储格式（例如 YYYY-MM-DD 或含时间的 ISO 文本），因为当前schema未提供可验证的日期格式。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-campaign_budget-campaign_type",
+        "question": "2025年按营销类型分别统计营销预算",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 15875.46,
+        "max_ms": 15875.464,
+        "clarification": "“2025年”应按营销活动的哪个日期字段筛选：start_date（开始日期）、end_date（结束日期），还是筛选与2025年有重叠的营销活动（start_date早于2026-01-01且end_date晚于2025-01-01）？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-campaign_clicks-channel",
+        "question": "2025年按渠道分别统计广告点击量",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 15229.98,
+        "max_ms": 15229.98,
+        "clarification": "请明确“2025年”的日期口径：按 marketing_campaigns.start_date 在2025年、按 marketing_campaigns.end_date 在2025年，还是按活动期间与2025年有重叠来统计广告点击量？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-campaign_clicks-campaign_type",
+        "question": "2025年按营销类型分别统计广告点击量",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 14455.46,
+        "max_ms": 14455.456,
+        "clarification": "请明确“2025年”应按 marketing_campaigns.start_date 还是 marketing_campaigns.end_date 过滤；另外需要提供这两个日期字段在SQLite中的实际存储格式（例如 YYYY-MM-DD），以便按2025年全年范围准确筛选。最终将按 marketing_campaigns.campaign_type 分组，汇总 marketing_campaigns.clicks。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-first_response_minutes-priority",
+        "question": "2025年按优先级分别统计平均首次响应分钟",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 14416.35,
+        "max_ms": 14416.349,
+        "clarification": "请确认 support_tickets.created_date 的存储格式及 2025 年的日期过滤方式（例如可由 SQLite 按 ISO-8601 文本解析，并使用 created_date >= '2025-01-01' AND created_date < '2026-01-01'）。确认后可按 support_tickets.priority 分组计算 AVG(support_tickets.first_response_minutes)。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-campaign_impressions-channel",
+        "question": "2025年按渠道分别统计广告曝光量",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 13666.7,
+        "max_ms": 13666.698,
+        "clarification": "“2025年”对营销活动的日期口径未明确：应按 marketing_campaigns.start_date 落在2025年、按 marketing_campaigns.end_date 落在2025年，还是统计与2025年有任意重叠的活动（start_date < '2026-01-01' 且 end_date >= '2025-01-01'）？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-inventory_value-01",
+        "question": "2025年库存价值",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 13644.25,
+        "max_ms": 13644.246,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "variant-legacy-05-1-purchase_amount-00",
+        "question": "2025年华东地区进货金额",
+        "category": "vocabulary_variant",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 13470.22,
+        "max_ms": 13470.22,
+        "clarification": "“金额”对应多个指标字段，请明确统计口径。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-inventory_value-00",
+        "question": "2025年库存金额",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 13436.06,
+        "max_ms": 13436.057,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-orders-channel",
+        "question": "2025年按渠道分别统计订单数",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 13347.46,
+        "max_ms": 13347.458,
+        "clarification": "请确认 sales_orders.order_date 的日期存储格式（例如 ISO 文本 YYYY-MM-DD，或包含时间的 YYYY-MM-DD HH:MM:SS）。当前 schema 未提供已验证的日期存储格式，无法安全构造 2025 年的时间范围过滤。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-first_response_minutes-status",
+        "question": "2025年按工单状态分别统计平均首次响应分钟",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 13091.3,
+        "max_ms": 13091.3,
+        "clarification": "请确认 support_tickets.created_date 的实际存储格式及时区口径（例如本地时间的 YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS）。该字段是 TEXT，且未提供已验证的日期存储格式，暂无法可靠限定 2025 年范围。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-inbound_quantity-00",
+        "question": "2025年在途库存量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 12621.06,
+        "max_ms": 12621.064,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "group-orders-product_category",
+        "question": "2025年按产品类别分别统计订单数",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 12563.84,
+        "max_ms": 12563.843,
+        "clarification": "请确认两点：1）“2025年”应按哪一种日期存储格式筛选 sales_orders.order_date（当前schema未提供已验证的日期存储格式）；2）“产品类别”应按 sales_orders.product_category 分组，还是通过 sales_orders.product_id 关联 products.category 分组？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-gross_profit-region",
+        "question": "2025年按地区分别统计毛利",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 12562.89,
+        "max_ms": 12562.887,
+        "clarification": "请确认地区口径及日期格式：地区是按 sales_orders.region 分组，还是通过 sales_orders.region_id 关联 regions.region_id 后按 regions.region_name 分组？另外，sales_orders.order_date 的实际存储格式是什么（例如 YYYY-MM-DD）？确认后将按该字段筛选2025年，并汇总 SUM(sales_orders.gross_profit)。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-campaign_conversions-campaign_type",
+        "question": "2025年按营销类型分别统计营销转化数",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 12232.23,
+        "max_ms": 12232.225,
+        "clarification": "“2025年”应按营销活动的哪个日期字段限定：marketing_campaigns.start_date、marketing_campaigns.end_date，还是统计与2025年有重叠的营销活动（start_date至end_date）？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_conversions-01",
+        "question": "2025年广告转化数",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 12198.96,
+        "max_ms": 12198.964,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "catalog-inventory_quantity-01",
+        "question": "2025年现有库存数量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 11993.85,
+        "max_ms": 11993.851,
+        "clarification": null,
+        "last_error": null
+      }
+    ],
+    "by_category": {
+      "history": {
+        "correct_execution": 3
+      },
+      "legacy": {
+        "correct_execution": 31
+      },
+      "catalog_alias": {
+        "correct_execution": 45,
+        "incorrect_execution": 17,
+        "technical_failure": 1,
+        "clarification_unanswered": 2
+      },
+      "vocabulary_variant": {
+        "correct_execution": 86,
+        "clarification_unanswered": 6
+      },
+      "domain_colloquial": {
+        "correct_execution": 25
+      },
+      "grouping": {
+        "clarification_unanswered": 24,
+        "correct_execution": 2
+      }
+    },
+    "by_difficulty": {
+      "1": {
+        "correct_execution": 27
+      },
+      "2": {
+        "correct_execution": 138,
+        "incorrect_execution": 17,
+        "technical_failure": 1,
+        "clarification_unanswered": 8
+      },
+      "3": {
+        "correct_execution": 27,
+        "clarification_unanswered": 24
+      }
+    },
+    "by_difficulty_latency_ms": {
+      "1": {
+        "p50": 192.72,
+        "p95": 338.5,
+        "p99": 409.2
+      },
+      "2": {
+        "p50": 193.45,
+        "p95": 22857.11,
+        "p99": 35051.6
+      },
+      "3": {
+        "p50": 7883.39,
+        "p95": 26754.14,
+        "p99": 34412.22
+      }
+    },
+    "model_planning": {
+      "local_rule_calls": 191,
+      "by_model": {
+        "gpt-5.6-sol": {
+          "calls": 9,
+          "p50_ms": 11659.46,
+          "p95_ms": 25888.0,
+          "winning_providers": {
+            "code.conpera.ai": 9
+          }
+        },
+        "gpt-5.5": {
+          "calls": 9,
+          "p50_ms": 13110.57,
+          "p95_ms": 17887.22,
+          "winning_providers": {
+            "spacetimeai.cc": 9
+          }
+        }
+      },
+      "provider_attempts": {
+        "spacetimeai.cc": {
+          "attempts": 27,
+          "p50_ms": 10801.37,
+          "p95_ms": 17887.02
+        },
+        "code.conpera.ai": {
+          "attempts": 27,
+          "p50_ms": 11659.3,
+          "p95_ms": 23379.69
+        }
+      }
+    },
+    "by_load_stage": {
+      "difficulty_serial": {
+        "requests": 242,
+        "outcomes": {
+          "correct_execution": 192,
+          "incorrect_execution": 17,
+          "technical_failure": 1,
+          "clarification_unanswered": 32
+        },
+        "p50_ms": 193.66,
+        "p95_ms": 23970.1,
+        "p99_ms": 34887.15,
+        "max_ms": 40012.48
+      }
+    },
+    "process_resources": {
+      "sample_count": 63,
+      "sample_interval_seconds": 15,
+      "listener_pids": [
+        22856
+      ],
+      "cpu_seconds_delta": 70.219,
+      "average_cpu_cores_used": 0.0725,
+      "working_set_mb_max": 605.76,
+      "private_memory_mb_max": 3952.19,
+      "thread_count_max": 106,
+      "health_status_samples": {
+        "200": 63
+      }
+    },
+    "health_checks": {
+      "sample_count": 24,
+      "passed": 24,
+      "failed": 0
+    }
+  }
+}

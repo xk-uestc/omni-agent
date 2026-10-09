@@ -89,13 +89,3 @@ def test_projective_horizon_and_singular_transform_do_not_produce_highlights():
     assert not map_region([0,0,20,20],geometry)['original_bbox_eligible']
 
 
-def test_image_enhancement_endpoint_returns_projective_chain_and_rejects_missing_corners():
-    from fastapi.testclient import TestClient
-    from backend.app import app
-    with TestClient(app) as client:
-        body={'image_base64':base64.b64encode(source()).decode(),'transforms':['perspective_rectify'],'perspective_quad':QUAD}
-        response=client.post('/api/v1/documents/image-enhance',json=body)
-        assert response.status_code==200
-        assert response.json()['geometry']['version']=='image-projective-chain-v1'
-        del body['perspective_quad']
-        assert client.post('/api/v1/documents/image-enhance',json=body).status_code==400

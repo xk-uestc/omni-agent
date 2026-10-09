@@ -1,0 +1,294 @@
+{
+  "run_id": "literal-fastpath-full-20261009T000720Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8037",
+  "until_utc": "2026-10-09T00:30:00+00:00",
+  "started_utc": "2026-10-09T00:07:20.020362+00:00",
+  "source_case_count": 391,
+  "case_count_per_cycle": 391,
+  "task_count_per_cycle": 391,
+  "question_order": "ascending_difficulty",
+  "case_selection": "full-authored-corpus-serial-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 79,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 178,
+    "3": 178,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "ee5674d6ed0ea2164ea4d89bf689c86a08272e71ddd96b85f4429d1e9cd8bd24",
+  "catalog_sha256": "a0e0af6fc1d088d3298836e39950b5615f65fd895d9e1358d6ebaa367f03751c",
+  "scorer_sha256": "fd6c724cdeb5af9d29b092125e9f71b4a900d260b80617ffdc4bd4991d0a4128",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-09T00:09:13.841042+00:00",
+  "elapsed_seconds": 113.8,
+  "total_requests": 391,
+  "passed": 391,
+  "failed": 0,
+  "pass_rate": 1.0,
+  "latency_ms": {
+    "p50": 200.44,
+    "p95": 708.41,
+    "p99": 870.13,
+    "max": 5815.03
+  },
+  "health_checks": {
+    "passed": 4,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 713.46,
+      "p95_ms": 870.13
+    },
+    "legacy": {
+      "total": 31,
+      "passed": 31,
+      "pass_rate": 1.0,
+      "p50_ms": 194.25,
+      "p95_ms": 213.71
+    },
+    "catalog_alias": {
+      "total": 79,
+      "passed": 79,
+      "pass_rate": 1.0,
+      "p50_ms": 193.01,
+      "p95_ms": 215.96
+    },
+    "vocabulary_variant": {
+      "total": 108,
+      "passed": 108,
+      "pass_rate": 1.0,
+      "p50_ms": 191.02,
+      "p95_ms": 216.04
+    },
+    "domain_colloquial": {
+      "total": 25,
+      "passed": 25,
+      "pass_rate": 1.0,
+      "p50_ms": 186.83,
+      "p95_ms": 201.3
+    },
+    "grouping": {
+      "total": 72,
+      "passed": 72,
+      "pass_rate": 1.0,
+      "p50_ms": 303.71,
+      "p95_ms": 328.93
+    },
+    "topic_switch": {
+      "total": 8,
+      "passed": 8,
+      "pass_rate": 1.0,
+      "p50_ms": 503.54,
+      "p95_ms": 757.44
+    },
+    "slang": {
+      "total": 32,
+      "passed": 32,
+      "pass_rate": 1.0,
+      "p50_ms": 306.46,
+      "p95_ms": 337.42
+    },
+    "derived_metric": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 205.11,
+      "p95_ms": 214.13
+    },
+    "literal_value": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 208.66,
+      "p95_ms": 208.66
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 391,
+      "passed": 391,
+      "pass_rate": 1.0,
+      "p50_ms": 200.44,
+      "p95_ms": 708.41
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 27,
+      "passed": 27,
+      "pass_rate": 1.0,
+      "p50_ms": 196.43,
+      "p95_ms": 334.52
+    },
+    "2": {
+      "total": 178,
+      "passed": 178,
+      "pass_rate": 1.0,
+      "p50_ms": 192.03,
+      "p95_ms": 216.04
+    },
+    "3": {
+      "total": 178,
+      "passed": 178,
+      "pass_rate": 1.0,
+      "p50_ms": 303.71,
+      "p95_ms": 792.05
+    },
+    "4": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 205.11,
+      "p95_ms": 214.13
+    },
+    "5": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 208.66,
+      "p95_ms": 208.66
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\literal-fastpath-full-20261009T000720Z\\results.jsonl",
+  "acceptance_classification": {
+    "attempt_outcomes": {
+      "correct_execution": 390,
+      "expected_clarification": 1
+    },
+    "first_attempt_unique_cases": 391,
+    "first_attempt_outcomes": {
+      "correct_execution": 390,
+      "expected_clarification": 1
+    },
+    "unique_cases_seen": 391,
+    "difficulty_order_by_cycle": {
+      "1": "valid"
+    },
+    "difficulty_order_violations": [],
+    "max_observed_concurrency": 1,
+    "failed_unique_case_count": 0,
+    "repeated_failure_case_count": 0,
+    "top_failed_cases": [],
+    "by_category": {
+      "history": {
+        "correct_execution": 28
+      },
+      "legacy": {
+        "correct_execution": 31
+      },
+      "catalog_alias": {
+        "correct_execution": 79
+      },
+      "vocabulary_variant": {
+        "correct_execution": 108
+      },
+      "domain_colloquial": {
+        "correct_execution": 25
+      },
+      "grouping": {
+        "correct_execution": 72
+      },
+      "topic_switch": {
+        "correct_execution": 8
+      },
+      "slang": {
+        "correct_execution": 31,
+        "expected_clarification": 1
+      },
+      "derived_metric": {
+        "correct_execution": 7
+      },
+      "literal_value": {
+        "correct_execution": 1
+      }
+    },
+    "by_difficulty": {
+      "1": {
+        "correct_execution": 27
+      },
+      "2": {
+        "correct_execution": 178
+      },
+      "3": {
+        "correct_execution": 177,
+        "expected_clarification": 1
+      },
+      "4": {
+        "correct_execution": 7
+      },
+      "5": {
+        "correct_execution": 1
+      }
+    },
+    "by_difficulty_latency_ms": {
+      "1": {
+        "p50": 196.43,
+        "p95": 334.52,
+        "p99": 757.93
+      },
+      "2": {
+        "p50": 192.03,
+        "p95": 216.04,
+        "p99": 3574.98
+      },
+      "3": {
+        "p50": 303.71,
+        "p95": 792.05,
+        "p99": 870.13
+      },
+      "4": {
+        "p50": 205.11,
+        "p95": 214.13,
+        "p99": 214.13
+      },
+      "5": {
+        "p50": 208.66,
+        "p95": 208.66,
+        "p99": 208.66
+      }
+    },
+    "model_planning": {
+      "local_rule_calls": 390,
+      "by_model": {},
+      "provider_attempts": {}
+    },
+    "by_load_stage": {
+      "difficulty_serial": {
+        "requests": 391,
+        "outcomes": {
+          "correct_execution": 390,
+          "expected_clarification": 1
+        },
+        "p50_ms": 200.44,
+        "p95_ms": 708.41,
+        "p99_ms": 870.13,
+        "max_ms": 5815.03
+      }
+    },
+    "health_checks": {
+      "sample_count": 4,
+      "passed": 4,
+      "failed": 0
+    }
+  }
+}

@@ -7,7 +7,7 @@ import hashlib
 from .history_reference import ConversationReferenceAgent
 
 
-_FOLLOWUP = re.compile(r'^(?:那么|那|改成|换成|再看|再查|同样|也|仍查|仍是|还是)|^按.+(?:分组|统计|汇总)[？?]?$|呢[？?]?$')
+_FOLLOWUP = re.compile(r'^(?:那么|那|改成|换成|再看|再查|看看|看一下|查看|改看|换看|改为|换为|同样|相同|同一|沿用|保持|刚才的?条件|之前的?条件|只看|只查|仅看|仅查|再给我|再给出|也|仍查|仍是|还是)|^按.+(?:分组|统计|汇总)[？?]?$|呢[？?]?$|(?:也查一下|也看一下|也查查|也看看)[？?]?$')
 _UNSAFE = re.compile(r'排除|不含|不包括|除了|大于|小于|超过|不足|至少|至多|不要|但|或者|如果|同一|之前|刚才|上次')
 _NEW_QUERY = re.compile(r'^(?:换个主题|换一个主题|换个问题|新问题|重新查询)')
 _CONFIRMED_FILTER_REMAINDER = re.compile(r'^(?:(?:仍然?|还是|继续)(?:看|按|统计|查询)?|看|按|统计|查询)?$')
@@ -27,6 +27,13 @@ def saved_sql_context(question, result):
         return None
     payload = {'question':question, 'sql':result['sql'], 'parameters':result['parameters'],
                'source_revision':result.get('provenance',{}).get('source_revision')}
+    plan = result.get('plan') or {}
+    if plan.get('derived_metrics'):
+        # Bind the successful derived formula and its dependencies, not just
+        # the database generation. Catalog changes cannot silently reinterpret
+        # an old cost/rate/etc. query that used the same physical fields.
+        payload['metric_semantics_sha256'] = _metric_semantics_sha256(plan)
+        payload['metric_catalog_sha256'] = plan.get('semantic_audit', {}).get('catalog_sha256')
     return {'payload':payload, 'sha256':hashlib.sha256(
         json.dumps(payload,ensure_ascii=False,sort_keys=True).encode()).hexdigest()}
 
@@ -119,9 +126,59 @@ def _physical_metrics(plan):
     return [(plan.get('metric_table') or plan.get('table'), plan.get('metric_column'), plan.get('metric_function'))]
 
 
+def _metric_aliases(links):
+    """One declared derived alias may link to several physical dependencies."""
+    return list(dict.fromkeys(link.matched_alias for link in links))
+
+
+def _metric_alias_groups_verified(slots, engine):
+    """Aliases are linguistic slots, but their physical closure needs proof.
+
+    Unknown expressions or same-alias links to unrelated owners cannot be
+    treated as a single metric just because they share presentation text.
+    """
+    for alias in _metric_aliases(slots['metrics']):
+        required = engine.extract_required_intent(alias)
+        if not _complete(required):
+            return False
+        expected = set(_physical_metrics(required.to_dict()))
+        links = [link for link in slots['metrics'] if link.matched_alias == alias]
+        if ({(link.table, link.column) for link in links}
+                != {(table, column) for table, column, function in expected}
+                or any(not any((link.table, link.column) == (table, column)
+                    and (link.metric_function is None or link.metric_function == function)
+                    for table, column, function in expected) for link in links)):
+            return False
+    return True
+
+
+def _metric_semantics(plan):
+    """Formula/output equality in addition to physical dependency equality."""
+    return (_physical_metrics(plan),
+        sorted((item['id'], json.dumps(item['expression'], sort_keys=True, ensure_ascii=False))
+               for item in plan.get('derived_metrics', [])),
+        list(plan.get('output_metrics', [])),
+        sorted(json.dumps({'table':item['table'], 'column':item['column'],
+            'function':item['function'], 'unit':item.get('unit', 'unknown'),
+            'currency':item.get('currency'), 'missing':item.get('missing', 'null'),
+            'filters':_filters(item.get('filters', []))}, sort_keys=True, ensure_ascii=False)
+            for item in plan.get('metrics', [])))
+
+
+def _metric_semantics_sha256(plan):
+    return hashlib.sha256(json.dumps(_metric_semantics(plan), sort_keys=True,
+        ensure_ascii=False).encode()).hexdigest()
+
+
 def _saved_metrics_match(state, required, engine):
     """Legacy/v2 equality is physical; catalog metadata remains authoritative."""
     saved = state.get('metrics', [])
+    if required.get('derived_metrics'):
+        record = state.get('executed_sql_context') or {}
+        payload = record.get('payload') or {}
+        if (payload.get('metric_semantics_sha256') != _metric_semantics_sha256(required)
+                or payload.get('metric_catalog_sha256') != required.get('semantic_audit', {}).get('catalog_sha256')):
+            return False
     if not saved:
         # Historical legacy state serializes no v2 metrics. Its successful
         # server-owned scope remains independently parsed, never model text.
@@ -155,7 +212,14 @@ def _complete(plan):
 
 def _self_contained(question, slots, engine):
     # A confirmation tail does not supply omitted scope (region, store, etc.).
-    if re.search(r'(?:那么|那)[^，,。;；]{0,40}呢[，,]|之前|刚才|上次|同一|保持不变|其他不变', question):
+    # An emphasis prefix may precede an explicitly complete new request. Only
+    # remove it when time AND entity/group AND metric are all supplied; a bare
+    # "还是销售额" or "仍是2024年销售额" must keep inheriting safely.
+    if (slots['metrics'] and slots['time_spans'] and (slots['values'] or slots['dimensions'])
+            and re.match(r'^(?:仍是|还是)', question)):
+        question = re.sub(r'^(?:仍是|还是)', '', question, count=1)
+    if re.search(r'(?:那么|那)[^，,。;；]{0,40}呢[，,]|之前|刚才|上次|同一|不变|沿用|仍是|还是|'
+                 r'(?:同样|相同)的?(?:查询)?(?:条件|范围)|保持(?:原来的?|原有)?条件', question):
         return False
     if slots['metrics'] and (slots['time_spans'] or slots['values']):
         return True
@@ -171,12 +235,29 @@ def _self_contained(question, slots, engine):
     return False
 
 
-def _unchanged_query_controls(before, after):
+def _unchanged_query_controls(before, after, *, metric_replacement=False):
     """A follow-up must never silently lose ranking, HAVING or comparison."""
-    return all(before.get(key) == after.get(key) for key in
-               ('having', 'analysis_mode', 'comparison_mode', 'comparison_period',
+    controls = ('having', 'analysis_mode', 'comparison_mode', 'comparison_period',
                 'top_n', 'limit', 'order_desc', 'derived_metrics', 'order_metric',
-                'output_metrics', 'semantic_row_limit', 'complete_results'))
+                'output_metrics', 'semantic_row_limit', 'complete_results')
+    if metric_replacement:
+        # Callers independently prove the new alias's physical/formula closure
+        # before granting this exception. Other edits retain exact equality.
+        controls = tuple(key for key in controls if key not in
+                         {'derived_metrics', 'output_metrics', 'order_metric'})
+        if after.get('order_metric') is not None and after['order_metric'] not in {
+                item['id'] for item in after.get('metrics', []) + after.get('derived_metrics', [])}:
+            return False
+    return all(before.get(key) == after.get(key) for key in controls)
+
+
+def _unchanged_grouping(before, after):
+    """A same-named column is not the same group on another table/grain."""
+    def identity(plan):
+        return [(plan.get('dimension_tables', {}).get(column, plan.get('table')),
+                 column, plan.get('dimension_transforms', {}).get(column, 'raw'))
+                for column in plan.get('dimensions', [])]
+    return identity(before) == identity(after)
 
 
 def _resolve_group_change(question, base, base_plan, engine):
@@ -187,12 +268,39 @@ def _resolve_group_change(question, base, base_plan, engine):
         return None
     clause = match[1]
     slots = engine.analyze_slots(clause)
-    requested = {(link.table, link.column) for link in slots['dimensions']}
+    # A declared alias and a weaker auto-profile suggestion are not equal
+    # ownership claims. Mirror metric linking's strongest-per-alias rule;
+    # ties across tables remain ambiguous and are never chosen by list order.
+    scores = {}
+    for link in slots['dimensions']:
+        scores[link.matched_alias] = max(scores.get(link.matched_alias, 0), link.score)
+    requested = {(link.table, link.column) for link in slots['dimensions']
+                 if link.score == scores[link.matched_alias]}
     if len(requested) != 1 or any(slots[key] for key in ('metrics', 'values', 'time_spans')):
         return None
     old_groups = list(re.finditer(r'按[^,;。?!？；]{1,60}?(?:分组|统计|汇总)', base))
     if base_plan['dimensions']:
-        if len(old_groups) != 1 or len(base_plan['dimensions']) != 1:
+        if len(base_plan['dimensions']) != 1:
+            return None
+        if not old_groups:
+            # "各地区销售额" and "每个品类的销量" have real grouped
+            # execution plans, although they omit the literal word 分组.
+            # Bind the replaced phrase to the independently saved group and
+            # require exactly one bounded occurrence; never remove a filter.
+            column = base_plan['dimensions'][0]
+            owner = base_plan['dimension_tables'].get(column, base_plan['table'])
+            if base_plan.get('dimension_transforms', {}).get(column, 'raw') != 'raw':
+                return None
+            old_slots = engine.analyze_slots(base)
+            aliases = {link.matched_alias for link in old_slots['dimensions']
+                       if (link.table, link.column) == (owner, column)}
+            candidates = []
+            for alias in sorted(aliases, key=len, reverse=True):
+                candidates.extend(re.finditer(r'(?:各个?|每个|每一|按)\s*'
+                    + re.escape(alias) + r'(?:的)?', base))
+            unique = {(match.start(), match.end()):match for match in candidates}
+            old_groups = list(unique.values())
+        if len(old_groups) != 1:
             return None
         old = old_groups[0]
         scope = base[:old.start()] + clause + base[old.end():]
@@ -275,7 +383,7 @@ def _resolve_confirmed_filter_replacement(question, base, previous_slots, curren
         if (item.get('table') or plan.get('table'), item.get('column')) != target]
     if (_filters(unchanged_before) != _filters(unchanged_after)
             or _physical_metrics(base_plan) != _physical_metrics(plan)
-            or base_plan['dimensions'] != plan['dimensions']
+            or not _unchanged_grouping(base_plan, plan)
             or not _unchanged_query_controls(base_plan, plan)):
         return None
     return scope, {'slot': f'{target[0]}.{target[1]}', 'from': old_value.span,
@@ -290,8 +398,24 @@ def _confirmed_replacement_context_valid(question, base, state, engine):
             or not isinstance(payload.get('parameters'), list)
             or payload.get('source_revision') != engine.current_source_revision()):
         return False
+    if (payload.get('metric_catalog_sha256') is not None
+            and payload['metric_catalog_sha256'] != getattr(getattr(engine, 'metric_catalog', None), 'digest', None)):
+        return False
     expected = hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
-    return record.get('sha256') == expected
+    if record.get('sha256') != expected:
+        return False
+    catalog = getattr(engine, 'metric_catalog', None)
+    from .nl2sql.schema import normalize_text
+    derived_scope = (payload.get('metric_semantics_sha256') is not None or catalog is not None
+        and any(alias in normalize_text(base) for metric_id in catalog.derived for alias in catalog.aliases[metric_id]))
+    if derived_scope:
+        required = engine.extract_required_intent(base)
+        plan = required.to_dict()
+        if (not _complete(required) or not plan.get('derived_metrics')
+                or payload.get('metric_semantics_sha256') != _metric_semantics_sha256(plan)
+                or payload.get('metric_catalog_sha256') != plan.get('semantic_audit', {}).get('catalog_sha256')):
+            return False
+    return True
 
 
 def _resolve_pending_metric(question, previous, engine):
@@ -504,14 +628,15 @@ def _resolve_sql_followup_scope(question, history, engine):
             or not isinstance(base, str) or not base or _UNSAFE.search(question)):
         return question, unchanged
     try:
-        current_slots = engine.analyze_slots(question)
+        previous_slots = engine.analyze_slots(base)
+        current_slots = engine.analyze_slots(question,
+            preferred_tables={link.table for link in previous_slots['metrics']})
         # Complete questions start a fresh scope, even with 那/呢 punctuation.
         if _self_contained(question, current_slots, engine):
             return question, {**unchanged, 'reason': 'self_contained_sql'}
-        if (len(current_slots['metrics']) > 1 or len(current_slots['time_spans']) > 1
+        if (len(_metric_aliases(current_slots['metrics'])) > 1 or len(current_slots['time_spans']) > 1
                 or not any(current_slots[key] for key in ('metrics', 'values', 'time_spans', 'dimensions'))):
             return question, unchanged
-        previous_slots = engine.analyze_slots(base)
         old_value_keys = {(value.table, value.column) for value in previous_slots['values']}
         if any(getattr(value, 'via', '') != 'exact' or (value.table, value.column) not in old_value_keys
                for value in current_slots['values']):
@@ -550,7 +675,7 @@ def _resolve_sql_followup_scope(question, history, engine):
                            'verification': 'explicit_group_change_full_scope_reparse_and_saved_sql_slots'}
         # Normalize only explicit conversational prefixes, never the slots or
         # residual conditions checked below. Keep the user's original in audit.
-        contextual_question = re.sub(r'^(?:再查|同样)', '那', question)
+        contextual_question = re.sub(r'^(?:再查|同样|再看(?:一下)?|看看|看一下|查看|改看|换看|改为|换为)', '那', question)
         scope, resolution = engine.contextualize(base, contextual_question)
         if (resolution.get('mode') != 'merged' or resolution.get('appended')
                 or not resolution.get('replaced') or scope == base):
@@ -561,9 +686,10 @@ def _resolve_sql_followup_scope(question, history, engine):
         new_plan = required.to_dict()
         changed_slots = {item['slot'] for item in resolution['replaced']}
         if 'metric' in changed_slots:
-            requested_metric = engine.extract_required_intent(question)
+            requested_metric = engine.extract_required_intent(contextual_question)
             if (not _complete(requested_metric)
-                    or _physical_metrics(requested_metric.to_dict()) != _physical_metrics(new_plan)):
+                    or not _metric_alias_groups_verified(current_slots, engine)
+                    or _metric_semantics(requested_metric.to_dict()) != _metric_semantics(new_plan)):
                 return question, unchanged
         allowed_columns = {tuple(slot.split('.', 1)) for slot in changed_slots if '.' in slot}
         if 'time' in changed_slots:
@@ -576,10 +702,10 @@ def _resolve_sql_followup_scope(question, history, engine):
         def retained_filters(plan):
             return _filters([item for item in plan['filters']
                              if (item.get('table'), item['column']) not in allowed_columns])
-        if (not _unchanged_query_controls(base_plan, new_plan)
+        if (not _unchanged_query_controls(base_plan, new_plan, metric_replacement='metric' in changed_slots)
                 or retained_filters(base_plan) != retained_filters(new_plan)
-                or base_plan['dimensions'] != new_plan['dimensions']
-                or 'metric' not in changed_slots and _physical_metrics(base_plan) != _physical_metrics(new_plan)
+                or not _unchanged_grouping(base_plan, new_plan)
+                or 'metric' not in changed_slots and _metric_semantics(base_plan) != _metric_semantics(new_plan)
                 or 'metric' not in changed_slots and
                 (required_base.metric_column, required_base.metric_function) != (required.metric_column, required.metric_function)):
             return question, unchanged
@@ -592,6 +718,24 @@ def _resolve_sql_followup_scope(question, history, engine):
 
 
 def resolve_sql_followup_scope(question, history, engine):
+    from .unified_routing import implicit_sql_fragment
+    from .pending_scope_edit import PendingScopeEditAgent
+    state = (history[-1].state or {}) if history else {}
+    preferred_tables = {metric.get('table') for metric in state.get('metrics', []) if metric.get('table')}
+    if not preferred_tables and history and state.get('route') == 'sql':
+        try:
+            previous_slots = engine.analyze_slots(history[-1].effective_question)
+            preferred_tables = {metric.table for metric in previous_slots.get('metrics', [])
+                                if metric.table}
+        except (ValueError, KeyError, TypeError, AttributeError):
+            pass
+    if (state.get('route') == 'sql' and state.get('executed_sql_context')
+            and not state.get('pending_question') and not state.get('clarification_code')
+            and not _FOLLOWUP.search(question)
+            and PendingScopeEditAgent.command(question) is None
+            and implicit_sql_fragment(question, engine, preferred_tables=preferred_tables)):
+        scope,audit=resolve_sql_followup_scope('那'+question+'呢',history,engine)
+        return scope,{**audit,'actual_question':question,'fragment_resolution':'fully_covered_schema_slot_fragment'}
     selection = ConversationReferenceAgent().select(question, history)
     if selection is not None:
         # Explicit user-selected topic return is separate from implicit
@@ -656,7 +800,7 @@ def resolve_sql_followup_scope(question, history, engine):
     if state.get('route') != 'sql' and not state.get('pending_sql_scope'):
         return scope, audit
     try:
-        slots = engine.analyze_slots(question)
+        slots = engine.analyze_slots(question, preferred_tables=preferred_tables)
         # Explicit new time/entity + metric is an independent request, even
         # after a failed turn. A metric-only answer is not a request to query
         # every row when its pending/follow-up scope was rejected above.

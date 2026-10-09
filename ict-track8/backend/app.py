@@ -24,13 +24,10 @@ from pydantic import BaseModel, Field, ConfigDict
 
 from .cross_source import CrossSourceAgent, JsonDocumentRetriever
 from .clarification import ClarificationResolver, ClarificationSelection
-from .document_analysis import DocumentAnalyzer, PageSignal
 from .formula_binding import FormulaBinder, ParameterEvidence
 from .knowledge_store import KnowledgeStore, SourceIntegrityError, SourceRevisionError
 from .visual_work_budget import VisualWorkBusy
 from .dependency_agent import DependencyAgent
-from .image_quality import ImageEnhancer, ImageQualityAnalyzer
-from .pdf_ingest import PdfIngestor
 from .chunk_cleaning import DocumentChunker
 from .ocr import build_ocr_pipeline
 from .config import env_float, env_int
@@ -162,10 +159,6 @@ else:
 agent = CrossSourceAgent(engine, document_retriever)
 session_db = os.getenv("ICT8_SESSION_DB", "").strip() or None
 conversation_store = ConversationStore(storage_path=session_db)
-document_analyzer = DocumentAnalyzer()
-image_quality_analyzer = ImageQualityAnalyzer()
-image_enhancer = ImageEnhancer()
-pdf_ingestor = PdfIngestor(document_analyzer)
 document_chunker = DocumentChunker()
 ocr_pipeline = build_ocr_pipeline(CONFIG_WARNINGS)
 embedder = None
@@ -175,11 +168,8 @@ if dense_path:
     embedder = LocalBgeEmbedder(dense_path)
 generation_client = None
 if os.getenv('ICT8_GENERATION_PROVIDER', '').lower() == 'responses':
-    from .responses_client import StructuredResponses
-    generation_client = StructuredResponses(os.getenv('ICT8_OPENAI_BASE_URL', 'https://api.openai.com/v1'),
-        os.getenv('ICT8_OPENAI_API_KEY', '') or os.getenv('OPENAI_API_KEY', ''),
-        model=os.getenv('ICT8_OPENAI_MODEL', ''), reasoning=os.getenv('ICT8_OPENAI_REASONING', 'medium'),
-        http_headers=json.loads(os.getenv('ICT8_OPENAI_HEADERS', '{}')))
+    from .responses_client import configured_responses_client
+    generation_client = configured_responses_client()
 generator = None
 if generation_client:
     from .grounded_generation import GroundedGenerator
@@ -191,6 +181,11 @@ if os.getenv("ICT8_KNOWLEDGE_ROOT", "").strip():
     agent = CrossSourceAgent(engine, document_retriever)
 clarification_resolver = ClarificationResolver()
 app = FastAPI(title="ICT Track 8 Structured QA", version="0.1.0")
+
+
+@app.on_event("startup")
+def warm_retrieval_encoder() -> None:
+    knowledge_store.warm_dense_index()
 
 
 @app.exception_handler(VisualWorkBusy)
@@ -288,37 +283,11 @@ class AgentQueryRequest(BaseModel):
     complete_results: bool = False
 
 
-class PageSignalRequest(BaseModel):
-    page_no: int = Field(ge=1)
-    text: str = ""
-    ocr_confidence: float = Field(default=1.0, ge=0.0, le=1.0)
-    rotation_degrees: float = Field(default=0.0, ge=-360.0, le=360.0)
-    skew_degrees: float = Field(default=0.0, ge=-90.0, le=90.0)
-    blur_score: float | None = Field(default=None, ge=0.0, le=1.0)
-    scanned: bool = False
-
-
-class DocumentAnalysisRequest(BaseModel):
-    document_id: str = Field(default="document", min_length=1, max_length=200)
-    text: str = Field(default="", max_length=500_000)
-    pages: list[PageSignalRequest] = Field(default_factory=list, max_length=500)
-
-
 class FormulaParameterRequest(BaseModel):
     value: float = Field(allow_inf_nan=False)
     source_uri: str = Field(min_length=1, max_length=500)
     locator: str = Field(min_length=1, max_length=500)
     unit: str = Field(default="unknown", max_length=64)
-
-
-class TextQualityRequest(BaseModel):
-    text: str = Field(min_length=1, max_length=20_000)
-
-
-class TextRepairRequest(TextQualityRequest):
-    source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
-    accepted_ids: list[str] = Field(default_factory=list, max_length=100)
-    simplify: bool = True
 
 
 class FormulaCalculationRequest(BaseModel):
@@ -369,23 +338,6 @@ class DependencyQueryRequest(BaseModel):
     tasks: list[dict[str, Any]] = Field(min_length=1, max_length=16)
 
 
-class ImageQualityRequest(BaseModel):
-    image_base64: str = Field(min_length=1, max_length=12_000_000)
-
-
-class ImageEnhancementRequest(ImageQualityRequest):
-    transforms: list[str] = Field(default_factory=list, max_length=8)
-    rotation_degrees: float = Field(default=0.0, ge=-360.0, le=360.0)
-    crop_box: list[int] | None = Field(default=None, min_length=4, max_length=4)
-    perspective_quad: list[list[float]] | None = Field(default=None, min_length=4, max_length=4)
-    max_dimension: int = Field(default=2400, ge=1, le=6000)
-
-
-class PdfAnalysisRequest(BaseModel):
-    document_id: str = Field(default="document.pdf", min_length=1, max_length=200)
-    pdf_base64: str = Field(min_length=1, max_length=28_000_000)
-
-
 class PdfTableHeaderSelection(BaseModel):
     page_no: int = Field(ge=1, le=1000)
     table_index: int = Field(default=0, ge=0, le=31)
@@ -409,15 +361,6 @@ class ChunkPreviewRequest(BaseModel):
     excel_tables: list[ExcelTableSelection] = Field(default_factory=list, max_length=64)
 
 
-class OcrRequest(ImageQualityRequest):
-    language: str = Field(default="eng", min_length=2, max_length=32)
-    max_attempts: int = Field(default=3, ge=1, le=3)
-    perspective_quad: list[list[float]] | None = Field(default=None, min_length=4, max_length=4)
-    auto_perspective: bool = True
-    table_header_rows: int | None = Field(default=None, ge=0, le=5)
-    table_index: int = Field(default=0, ge=0, le=31)
-
-
 class ClarificationRequest(BaseModel):
     original_question: str = Field(min_length=1, max_length=1000)
     clarification_code: str = Field(min_length=1, max_length=80)
@@ -434,15 +377,18 @@ class OmniRequest(BaseModel):
     session_id: str | None = Field(default=None, max_length=128)
     reset_context: bool = False
     complete_results: bool = False
+    images: list[Annotated[str, Field(max_length=8_400_000)]] = Field(default_factory=list, max_length=3)
 
 
 @app.post('/api/v1/omni/query')
 def omni_query(request: OmniRequest):
     from .omni_agent import OmniAgent
+    from .multimodal_input import decode_chat_images
     try:
+        image_attachments = decode_chat_images(request.images)
         return OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
             request.question, session_id=request.session_id, reset_context=request.reset_context,
-            complete_results=request.complete_results)
+            complete_results=request.complete_results, image_attachments=image_attachments or None)
     except SourceIntegrityError as exc:
         raise HTTPException(status_code=409,detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
     except ValueError as exc:
@@ -453,11 +399,13 @@ def omni_query(request: OmniRequest):
 def omni_query_stream(request: OmniRequest):
     """Stream actual unified-agent calls, then the unchanged query snapshot."""
     from .omni_agent import OmniAgent
+    from .multimodal_input import decode_chat_images
     try:
         if request.session_id:
             ConversationStore.validate_id(request.session_id)
         if not request.question.strip():
             raise ValueError('问题为空或过长')
+        image_attachments = decode_chat_images(request.images)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
     if not STREAM_SLOTS.acquire(blocking=False):
@@ -468,13 +416,15 @@ def omni_query_stream(request: OmniRequest):
             response = OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
                 request.question, session_id=request.session_id, reset_context=request.reset_context,
                 complete_results=request.complete_results,
+                image_attachments=image_attachments or None,
                 trace_callback=lambda event: events.put(('trace', event)))
             events.put(('done', response))
         except SourceIntegrityError:
             events.put(('error', {'detail': {'code': 'evidence_integrity_failed',
                                              'message': '来源已变化或原件完整性检查失败'}}))
-        except ValueError:
-            events.put(('error', {'detail': {'code': 'invalid_query', 'message': '请求或查询条件未通过检查'}}))
+        except ValueError as exc:
+            message = str(exc)[:200] if image_attachments else '请求或查询条件未通过检查'
+            events.put(('error', {'detail': {'code': 'invalid_query', 'message': message}}))
         except Exception:
             events.put(('error', {'detail': {'code': 'query_failed', 'message': '查询执行失败'}}))
         finally:
@@ -555,7 +505,10 @@ def health() -> dict[str, object]:
         "document_source": document_source,
         "planner_source": planner_source,
         "retrieval": knowledge_store.retrieval_health(),
-        "generation": {'mode': 'responses' if generator else 'attributed_extracts', 'model': generation_client.model if generation_client else None},
+        "generation": {'mode': 'responses' if generator else 'attributed_extracts',
+            'model': generation_client.model if generation_client else None,
+            'provider_count': len(generation_client.providers) if hasattr(generation_client, 'providers') else int(generation_client is not None),
+            'hedge_delay_ms': round(generation_client.hedge_delay * 1000) if hasattr(generation_client, 'hedge_delay') else None},
         "configuration_warnings": list(CONFIG_WARNINGS),
     }
 
@@ -577,9 +530,137 @@ def data_sources() -> dict[str, object]:
                            "chunk_count": chunk_count, "status": "connected"}}
 
 
+@app.get('/api/v1/nl2sql/tables/{table_name}/preview')
+def source_table_preview(table_name: str,
+                         expected_source_revision: str = Query(pattern=r'^[a-f0-9]{64}$'),
+                         limit: int = Query(default=10, ge=1, le=100),
+                         offset: int = Query(default=0, ge=0, le=1000000)):
+    from .nl2sql.security import execute_read_only
+    try:
+        with engine.consistent_reads(), engine._connect() as connection:
+            tables, _, revision = engine._snapshot_for(connection)
+            digest = hashlib.sha256(repr(revision).encode()).hexdigest()
+            if digest != expected_source_revision:
+                raise HTTPException(status_code=409, detail='数据库已更新，请重新查询后再定位数据表。')
+            table = next((item for item in tables if item.name == table_name), None)
+            if table is None:
+                raise HTTPException(status_code=404, detail='数据表不存在。')
+            quoted = '"' + table.name.replace('"', '""') + '"'
+            order = ', '.join('"'+column.name.replace('"','""')+'"' for column in table.columns if column.primary_key)
+            order = order or ', '.join('"'+column.name.replace('"','""')+'"' for column in table.columns)
+            columns, rows = execute_read_only(connection, f'SELECT * FROM {quoted} ORDER BY {order} LIMIT ? OFFSET ?', (limit,offset),
+                max_rows=limit, max_steps=engine.max_steps, max_seconds=engine.max_seconds)
+            # Binary fields are represented by size; raw bytes are not JSON.
+            rows = [{key: {'binary_bytes':len(value)} if isinstance(value, bytes) else value
+                     for key, value in row.items()} for row in rows]
+            return {'database':engine.database_path.name, 'table':table.name, 'source_revision':digest,
+                'schema':table.to_dict(), 'columns':list(columns), 'rows':rows, 'limit':limit, 'offset':offset,
+                'scope':'source_table_preview_not_filtered_query_result'}
+    except (OSError, sqlite3.DatabaseError, SqlSafetyError):
+        raise HTTPException(status_code=503, detail='当前数据表暂不可读取。')
+
+
+@app.get('/api/v1/knowledge/documents/{document_id}/chunks/{chunk_id}')
+def knowledge_chunk_source(document_id: str, chunk_id: str,
+                           expected_source_sha256: str = Query(pattern=r'^[a-f0-9]{64}$')):
+    try:
+        knowledge_store.verify_source(document_id, expected_sha256=expected_source_sha256)
+        with knowledge_store.connect() as connection:
+            row = connection.execute('SELECT rowid,payload FROM chunks WHERE document_id=? AND chunk_id=?',
+                                     (document_id, chunk_id)).fetchone()
+            if row is None:
+                raise HTTPException(status_code=404, detail='引用的chunk已移除，请重新查询。')
+            before = connection.execute('SELECT payload FROM chunks WHERE document_id=? AND rowid<? ORDER BY rowid DESC LIMIT 1',
+                                        (document_id,row[0])).fetchone()
+            after = connection.execute('SELECT payload FROM chunks WHERE document_id=? AND rowid>? ORDER BY rowid LIMIT 1',
+                                       (document_id,row[0])).fetchone()
+            chunks = [json.loads(item[0]) for item in (before, (row[1],), after) if item]
+        knowledge_store.verify_source(document_id, expected_sha256=expected_source_sha256)
+        return {'document_id':document_id, 'source_sha256':expected_source_sha256,
+                'selected_chunk_id':chunk_id, 'chunks':chunks}
+    except SourceRevisionError:
+        raise HTTPException(status_code=409, detail='资料版本已变化，请重新查询后再定位。')
+    except (KeyError, ValueError, SourceIntegrityError):
+        raise HTTPException(status_code=409, detail='当前资料无法核验，请重新查询。')
+
+
+class TableLocatorRequest(BaseModel):
+    expected_source_revision: str = Field(pattern=r'^[a-f0-9]{64}$')
+    filters: list[dict] = Field(default_factory=list, max_length=32)
+
+
+@app.post('/api/v1/nl2sql/tables/{table_name}/locate')
+def locate_table_rows(table_name: str, request: TableLocatorRequest):
+    from .nl2sql.metric_compiler import MetricCompiler, MetricPlanError, quote
+    from .nl2sql.models import FilterSpec
+    from .nl2sql.security import execute_read_only
+    try:
+        with engine.consistent_reads(), engine._connect() as connection:
+            tables, _, revision = engine._snapshot_for(connection)
+            digest = hashlib.sha256(repr(revision).encode()).hexdigest()
+            if digest != request.expected_source_revision:
+                raise HTTPException(status_code=409, detail='数据库版本已变化，请重新查询。')
+            table = next((item for item in tables if item.name == table_name), None)
+            if table is None:
+                raise HTTPException(status_code=404, detail='数据表不存在。')
+            filters = [FilterSpec(column=item['column'], operator=item['operator'], value=item.get('value'),
+                source_text='', explanation='', table=item.get('table') or table_name) for item in request.filters]
+            if any(item.table != table_name for item in filters):
+                raise HTTPException(status_code=400, detail='跨表条件请查看来源 SQL，当前原表定位不推断关联行。')
+            clauses, params = MetricCompiler(None)._filters(filters, {table_name:table})
+            ordering = ', '.join(quote(column.name) for column in table.columns if column.primary_key)
+            ordering = ordering or ', '.join(quote(column.name) for column in table.columns)
+            numbered = f'SELECT *, ROW_NUMBER() OVER (ORDER BY {ordering}) - 1 AS "__source_offset" FROM {quote(table_name)}'
+            where = ' AND '.join(clauses) or '1=1'
+            sql = f'WITH "__source_rows" AS ({numbered}) SELECT "__source_offset" FROM "__source_rows" AS {quote(table_name)} WHERE {where} ORDER BY "__source_offset" LIMIT 1'
+            _, rows = execute_read_only(connection, sql, tuple(params), max_rows=1,
+                max_steps=engine.max_steps, max_seconds=engine.max_seconds)
+            return {'source_revision':digest, 'table':table_name,
+                'first_offset':rows[0]['__source_offset'] if rows else None,
+                'scope':'original_table_filter_navigation_not_result_lineage'}
+    except (KeyError, TypeError, ValueError, MetricPlanError):
+        raise HTTPException(status_code=400, detail='定位条件无效，请重新查询。')
+
+
+class SourceLocationRequest(BaseModel):
+    expected_source_sha256: str = Field(pattern=r'^[a-f0-9]{64}$')
+    quote: str = Field(min_length=1, max_length=12000)
+    page_no: int | None = Field(default=None, ge=1, le=1000)
+
+
+@app.post('/api/v1/knowledge/documents/{document_id}/source-location')
+def locate_source_quote(document_id: str, request: SourceLocationRequest):
+    from .source_provenance import locate_quote_chunks
+    try:
+        knowledge_store.verify_source(document_id, expected_sha256=request.expected_source_sha256)
+        with knowledge_store.connect() as connection:
+            records = connection.execute('SELECT payload FROM chunks WHERE document_id=? ORDER BY rowid',
+                                         (document_id,)).fetchall()
+        chunks = [json.loads(row[0]) for row in records]
+        if request.page_no is not None:
+            chunks = [chunk for chunk in chunks if chunk.get('page_no') == request.page_no]
+        selected = locate_quote_chunks(request.quote, chunks)
+        knowledge_store.verify_source(document_id, expected_sha256=request.expected_source_sha256)
+        return {'document_id':document_id, 'source_sha256':request.expected_source_sha256,
+            'matched_chunk_ids':[chunk['chunk_id'] for chunk in selected], 'chunks':selected,
+            'match_basis':'NFKC_and_whitespace_for_source_navigation',
+            'page_no':request.page_no, 'status':'literal_chunk_match' if selected else 'chunk_match_unavailable'}
+    except (KeyError, ValueError, SourceIntegrityError):
+        raise HTTPException(status_code=409, detail='资料已变化或无法核验，请重新查询。')
+
+
 @app.get("/api/v1/knowledge/documents")
 def knowledge_documents():
     return {"documents": knowledge_store.list_documents()}
+
+
+@app.get('/api/v1/knowledge/raysource-images/{image_id}')
+def raysource_sample_image(image_id: str):
+    from .raysource_media import image_path
+    path = image_path(image_id)
+    if path is None:
+        raise HTTPException(status_code=404, detail='手册图片不存在')
+    return FileResponse(path, media_type='image/jpeg', headers={'Cache-Control': 'public, max-age=86400'})
 
 
 @app.get('/api/v1/specification')
@@ -656,6 +737,65 @@ def knowledge_query(request: KnowledgeQueryRequest):
         raise HTTPException(status_code=409, detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.post('/api/v1/knowledge/query/stream')
+def knowledge_query_stream(request: KnowledgeQueryRequest) -> StreamingResponse:
+    """Send the deterministic retrieval audit before the final answer snapshot."""
+    if not STREAM_SLOTS.acquire(blocking=False):
+        raise HTTPException(status_code=429,
+            detail={'code': 'stream_busy', 'message': '并发流式请求过多，请稍后重试'})
+    events: queue.Queue[tuple[str, object]] = queue.Queue()
+
+    def worker():
+        try:
+            result = knowledge_store.answer(request.question, top_k=request.top_k,
+                **({'document_id': request.document_id} if request.document_id is not None else {}),
+                **({'page_no': request.page_no} if request.page_no is not None else {}),
+                audit_callback=lambda audit: events.put(('audit', audit)),
+                progress_callback=lambda item: events.put(('trace', item)))
+            events.put(('done', result))
+        except SourceIntegrityError:
+            events.put(('error', {'detail': {'code': 'evidence_integrity_failed',
+                                             'message': '来源已变化或原件完整性检查失败'}}))
+        except KeyError:
+            events.put(('error', {'detail': {'code': 'document_not_found',
+                                             'message': '指定资料不存在'}}))
+        except ValueError as exc:
+            events.put(('error', {'detail': {'code': 'invalid_query',
+                                             'message': str(exc)[:200]}}))
+        except Exception:
+            events.put(('error', {'detail': {'code': 'query_failed',
+                                             'message': '文档问答执行失败'}}))
+        finally:
+            STREAM_SLOTS.release()
+
+    try:
+        threading.Thread(target=worker, name='ict8-knowledge-stream', daemon=True).start()
+    except Exception:
+        STREAM_SLOTS.release()
+        raise
+
+    def generate():
+        deadline = time.monotonic() + STREAM_TIMEOUT_SECONDS
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                yield 'event: error\ndata: ' + json.dumps(
+                    {'detail': {'code': 'timeout', 'message': '文档问答超时，后台执行可能仍在继续'}},
+                    ensure_ascii=False) + '\n\n'
+                return
+            try:
+                kind, payload = events.get(timeout=min(10.0, remaining))
+            except queue.Empty:
+                yield ': keep-alive\n\n'
+                continue
+            yield f'event: {kind}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n'
+            if kind in {'done', 'error'}:
+                return
+
+    return StreamingResponse(generate(), media_type='text/event-stream',
+        headers={'Cache-Control': 'no-cache', 'X-Accel-Buffering': 'no'})
 
 
 def _registered_visual_asset(document_id, request):
@@ -892,13 +1032,6 @@ def agent_query_stream(request: AgentQueryRequest) -> StreamingResponse:
     )
 
 
-@app.post("/api/v1/documents/analyze")
-def analyze_document(request: DocumentAnalysisRequest) -> dict[str, object]:
-    pages = tuple(PageSignal(**page.model_dump()) for page in request.pages)
-    result = document_analyzer.analyze(request.text, document_id=request.document_id, pages=pages)
-    return result.to_dict()
-
-
 @app.post("/api/v1/documents/formulas/calculate")
 def calculate_document_formula(request: FormulaCalculationRequest) -> dict[str, object]:
     try:
@@ -907,64 +1040,6 @@ def calculate_document_formula(request: FormulaCalculationRequest) -> dict[str, 
             formula_source=request.formula_source, formula_locator=request.formula_locator)
     except (ValueError, SyntaxError, OverflowError) as exc:
         raise HTTPException(status_code=422, detail={"code": "invalid_formula_binding", "message": str(exc)[:200]}) from exc
-
-
-@app.post('/api/v1/documents/text-quality')
-def analyze_text_quality(request: TextQualityRequest):
-    from .text_quality import text_quality
-    return text_quality(request.text, include_preview=True)
-
-
-@app.post('/api/v1/documents/text-repair')
-def preview_text_repair(request: TextRepairRequest):
-    from .text_quality import repair_preview
-    try:
-        return repair_preview(**request.model_dump())
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-
-
-@app.post("/api/v1/documents/image-quality")
-def image_quality(request: ImageQualityRequest) -> dict[str, object]:
-    try:
-        raw = base64.b64decode(request.image_base64, validate=True)
-    except (binascii.Error, ValueError) as exc:
-        raise HTTPException(status_code=400, detail="image_base64 不是有效的 Base64") from exc
-    if len(raw) > 8 * 1024 * 1024:
-        raise HTTPException(status_code=413, detail="图片超过 8MB 限制")
-    try:
-        return image_quality_analyzer.analyze(raw).to_dict()
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-
-@app.post("/api/v1/documents/image-enhance")
-def image_enhance(request: ImageEnhancementRequest) -> dict[str, object]:
-    try:
-        raw = base64.b64decode(request.image_base64, validate=True)
-    except (binascii.Error, ValueError) as exc:
-        raise HTTPException(status_code=400, detail="image_base64 不是有效的 Base64") from exc
-    if len(raw) > 8 * 1024 * 1024:
-        raise HTTPException(status_code=413, detail="图片超过 8MB 限制")
-    try:
-        crop_box = tuple(request.crop_box) if request.crop_box is not None else None
-        result = image_enhancer.enhance(
-            raw,
-            transforms=tuple(request.transforms),
-            rotation_degrees=request.rotation_degrees,
-            crop_box=crop_box,
-            perspective_quad=request.perspective_quad,
-            max_dimension=request.max_dimension,
-        )
-        if len(result.image_bytes) > 12 * 1024 * 1024:
-            raise HTTPException(status_code=413, detail="增强后的图片超过 12MB 限制")
-        return {
-            **result.to_dict(),
-            "image_base64": base64.b64encode(result.image_bytes).decode("ascii"),
-            "ocr_executed": False,
-        }
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
 @app.post("/api/v1/nl2sql/clarify")
@@ -992,48 +1067,6 @@ def clarify(request: ClarificationRequest) -> dict[str, object]:
             )
         result["session_id"] = session_id
         return {"enriched_question": enriched_question, "result": result, "session_id": session_id}
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-
-@app.post("/api/v1/documents/pdf-analyze")
-def pdf_analyze(request: PdfAnalysisRequest) -> dict[str, object]:
-    try:
-        raw = base64.b64decode(request.pdf_base64, validate=True)
-    except (binascii.Error, ValueError) as exc:
-        raise HTTPException(status_code=400, detail="pdf_base64 不是有效的 Base64") from exc
-    if len(raw) > 20 * 1024 * 1024:
-        raise HTTPException(status_code=413, detail="PDF 超过 20MB 限制")
-    try:
-        return pdf_ingestor.analyze(raw, document_id=request.document_id)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
-
-
-@app.post("/api/v1/documents/ocr")
-def ocr(request: OcrRequest) -> dict[str, object]:
-    if ocr_pipeline is None:
-        raise HTTPException(status_code=503, detail="OCR 执行器未配置；请设置 ICT8_OCR_URL 或 ICT8_OCR_ENGINE=tesseract")
-    try:
-        raw = base64.b64decode(request.image_base64, validate=True)
-    except (binascii.Error, ValueError) as exc:
-        raise HTTPException(status_code=400, detail="image_base64 不是有效的 Base64") from exc
-    if len(raw) > 8 * 1024 * 1024:
-        raise HTTPException(status_code=413, detail="图片超过 8MB 限制")
-    try:
-        result = ocr_pipeline.run(raw, language=request.language, max_attempts=request.max_attempts,
-            perspective_quad=request.perspective_quad,auto_perspective=request.auto_perspective).to_dict()
-        if request.table_header_rows is not None:
-            from .scanned_table_structure import ScannedTableStructureAgent
-            result['metadata']['table_structure'] = ScannedTableStructureAgent().run(
-                result['metadata'], table_index=request.table_index, header_rows=request.table_header_rows)
-            from .amount_cell_review import AmountCellReviewAgent
-            result['metadata']['table_structure']['amount_cell_review']=AmountCellReviewAgent().run(raw,
-                result['metadata']['table_structure'],getattr(getattr(ocr_pipeline,'executor',None),'recognize_line',None))
-            from .blank_cell_review import BlankCellReviewAgent
-            result['metadata']['table_structure']['blank_cell_review']=BlankCellReviewAgent().run(raw,
-                result['metadata']['table_structure'],getattr(getattr(ocr_pipeline,'executor',None),'recognize_line',None))
-        return result
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 

@@ -1,0 +1,63 @@
+{
+  "id": "authored-multiturn-25-20261008",
+  "title": "自创递进式多轮对话评测",
+  "scope": "基于项目合成演示数据库与合成/选取展示文档的开发评测，不是公开基准成绩。共5个会话、25轮，按场景逐组增加复杂度。",
+  "database": "ict-track8/data/demo_sales.sqlite",
+  "groups": [
+    {
+      "id": "sql-scope-followup",
+      "title": "指标、地区和年份继承/替换",
+      "turns": [
+        {"question": "查一下2025年华东地区销售额。", "kind": "sql_exact", "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region='华东' AND order_date>='2025-01-01' AND order_date<'2026-01-01'"},
+        {"question": "那华南呢？", "kind": "sql_exact", "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region='华南' AND order_date>='2025-01-01' AND order_date<'2026-01-01'"},
+        {"question": "换成订单数，地区仍是华南，年份不变。", "kind": "sql_exact", "gold_sql": "SELECT COUNT(DISTINCT order_id) FROM sales_orders WHERE region='华南' AND order_date>='2025-01-01' AND order_date<'2026-01-01'"},
+        {"question": "年份改成2024，地区换到华北，指标还是订单数。", "kind": "sql_exact", "gold_sql": "SELECT COUNT(DISTINCT order_id) FROM sales_orders WHERE region='华北' AND order_date>='2024-01-01' AND order_date<'2025-01-01'"},
+        {"question": "对比华北地区2024和2025年的订单数，2025年比2024年增加多少？", "kind": "sql_exact", "gold_sql": "SELECT (SELECT COUNT(DISTINCT order_id) FROM sales_orders WHERE region='华北' AND order_date>='2025-01-01' AND order_date<'2026-01-01')-(SELECT COUNT(DISTINCT order_id) FROM sales_orders WHERE region='华北' AND order_date>='2024-01-01' AND order_date<'2025-01-01')"}
+      ]
+    },
+    {
+      "id": "sql-filter-edits",
+      "title": "多条件维护、局部改写和分组 Top-N",
+      "turns": [
+        {"question": "统计2025年华东、手机品类、线上商城渠道的销售额。", "kind": "sql_exact", "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE region='华东' AND product_category='手机' AND channel='线上商城' AND order_date>='2025-01-01' AND order_date<'2026-01-01'"},
+        {"question": "同一范围再给我订单数。", "kind": "sql_exact", "gold_sql": "SELECT COUNT(DISTINCT order_id) FROM sales_orders WHERE region='华东' AND product_category='手机' AND channel='线上商城' AND order_date>='2025-01-01' AND order_date<'2026-01-01'"},
+        {"question": "只把品类改成平板，地区、渠道、年份不变；销售额和订单数一起给出。", "kind": "sql_exact", "gold_sql": "SELECT SUM(sales_amount),COUNT(DISTINCT order_id) FROM sales_orders WHERE region='华东' AND product_category='平板' AND channel='线上商城' AND order_date>='2025-01-01' AND order_date<'2026-01-01'"},
+        {"question": "年份换成2024、地区改华南、渠道改为经销商，其余条件沿用。", "kind": "sql_exact", "gold_sql": "SELECT SUM(sales_amount),COUNT(DISTINCT order_id) FROM sales_orders WHERE region='华南' AND product_category='平板' AND channel='经销商' AND order_date>='2024-01-01' AND order_date<'2025-01-01'"},
+        {"question": "取消单一地区限制，按地区分组，列出2024年经销商渠道平板销售额前三名，并附订单数。", "kind": "sql_exact", "gold_sql": "SELECT region,SUM(sales_amount),COUNT(DISTINCT order_id) FROM sales_orders WHERE product_category='平板' AND channel='经销商' AND order_date>='2024-01-01' AND order_date<'2025-01-01' GROUP BY region ORDER BY SUM(sales_amount) DESC LIMIT 3"}
+      ]
+    },
+    {
+      "id": "rag-policy-history",
+      "title": "政策版本、跨文档条件与边界",
+      "turns": [
+        {"question": "按《退货政策历史版本》，2024年签收的订单适用几日无理由退货？", "kind": "evidence", "required_terms": ["5日"], "required_document_ids": ["policy-history"]},
+        {"question": "那2025年签收呢？", "kind": "evidence", "required_terms": ["7日"], "required_document_ids": ["policy-history"]},
+        {"question": "2025版从什么时候生效？", "kind": "evidence", "required_terms": ["2025-01-01"], "required_document_ids": ["policy-history"]},
+        {"question": "如果商品在2025-01-01签收，适用几日，退货期限从哪天开始计算？", "kind": "evidence", "required_terms": ["7日", "签收次日"], "required_document_ids": ["policy-history", "return-policy"]},
+        {"question": "如果它是定制商品，仍能无理由退货吗？结合刚才的版本和例外回答；不要推断质量问题的处理结论。", "kind": "evidence", "required_terms": ["定制商品"], "required_any_terms": ["不适用", "不能", "不可"], "required_document_ids": ["return-policy"], "forbidden_answer_terms": ["质量问题一定可以退", "质量问题都能退", "质量问题必然退款"]}
+      ]
+    },
+    {
+      "id": "sql-rag-bridge",
+      "title": "SQL 排名驱动文档检索与因果边界",
+      "turns": [
+        {"question": "查询2025年各地区销售额，并按销售额从高到低排序。", "kind": "sql_exact", "gold_sql": "SELECT region,SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' GROUP BY region ORDER BY SUM(sales_amount) DESC"},
+        {"question": "第一名地区是谁，销售额是多少？", "kind": "sql_fact", "gold_sql": "SELECT region,SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' GROUP BY region ORDER BY SUM(sales_amount) DESC LIMIT 1", "required_terms": ["东南"]},
+        {"question": "查一下这个地区在《销售冠军经验分享》中的销售方法；如果文档没有该地区记录，请明确说明，别借用别的地区的方法。", "kind": "evidence_boundary", "required_terms": ["东南"], "required_document_ids": ["champion-method"], "required_any_terms": ["没有", "未提供", "未记录", "未找到", "不能确认", "无法确认"], "forbidden_answer_terms": ["东南团队采用重点客户分层", "东南团队通过渠道伙伴培训", "东南团队关注长期合同续签"]},
+        {"question": "把排名指标改成订单数，找订单数第一的地区，再查它在同一经验文档中的方法。", "kind": "evidence_fact", "gold_sql": "SELECT region,COUNT(DISTINCT order_id) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' GROUP BY region ORDER BY COUNT(DISTINCT order_id) DESC LIMIT 1", "required_terms": ["华南", "渠道伙伴培训"], "required_numbers_from_sql": true, "required_document_ids": ["champion-method"]},
+        {"question": "这些文档里的做法能证明订单数领先是它们造成的吗？请分开写数据库能确认的排名事实、文档能确认的方法和不能确认的因果。", "kind": "evidence_boundary", "required_terms": ["不能", "因果"], "required_document_ids": ["champion-method"], "forbidden_answer_terms": ["证明了因果", "已经证明是因为", "直接导致"]}
+      ]
+    },
+    {
+      "id": "cross-source-forecast",
+      "title": "PDF 公式、Excel 参数与 SQL 基准的连续测算",
+      "turns": [
+        {"question": "先查2025年华东销售额作预测基准，再结合《2026经营预测报告》的公式和《区域目标表》中华东2026目标增长率，算出华东2026目标销售额，并分别标明PDF、Excel和数据库来源。", "kind": "formula", "region": "华东", "year": 2025, "growth_source": "excel", "growth_rate": 0.12, "required_document_ids": ["forecast-report", "region-targets"]},
+        {"question": "同样算法改成华南，继续用2025销售额为基准，并使用区域目标表对应增长率。", "kind": "formula", "region": "华南", "year": 2025, "growth_source": "excel", "growth_rate": 0.10, "required_document_ids": ["forecast-report", "region-targets"]},
+        {"question": "基准年份和地区不变，把增长率改用预测报告的积极情景18%，重算华南目标。", "kind": "formula", "region": "华南", "year": 2025, "growth_source": "pdf_scenario", "growth_rate": 0.18, "required_document_ids": ["forecast-report"]},
+        {"question": "积极情景目标比区域目标表口径高多少金额？保持相同的2025年华南销售额基准。", "kind": "formula_difference", "region": "华南", "year": 2025, "growth_rates": [0.18, 0.10], "required_document_ids": ["forecast-report", "region-targets"]},
+        {"question": "总结华南2026目标额：区域目标表10%口径和报告积极情景18%口径各是多少？请注明两者都是预测目标，不能当作2026实际销售额。", "kind": "formula_pair", "region": "华南", "year": 2025, "growth_rates": [0.10, 0.18], "required_document_ids": ["forecast-report", "region-targets"], "required_terms": ["目标"]}
+      ]
+    }
+  ]
+}

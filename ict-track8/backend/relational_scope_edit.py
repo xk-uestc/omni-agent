@@ -37,7 +37,12 @@ class RelationalScopeEditAgent:
             raw = parse_one(sql,read='sqlite')
         except ParseError:
             return None
-        if len({table.name for table in raw.find_all(exp.Table)}) < 2:
+        # CTE names are logical query scopes, not additional physical tables.
+        # A derived metric can aggregate one fact table in several CTEs; its
+        # natural-language edits belong to the complete rule-scope verifier.
+        physical_tables = {source.name for scope in traverse_scope(raw)
+                           for source in scope.sources.values() if isinstance(source, exp.Table)}
+        if len(physical_tables) < 2:
             return None
         def rejected(reason):
             message='这次跨表修改未执行，原查询条件仍保留。请使用明确的表名.字段名和一个实际取值；不支持的条件请重新给出完整问题。'

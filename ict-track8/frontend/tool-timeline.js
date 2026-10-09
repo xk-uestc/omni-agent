@@ -75,6 +75,11 @@
   }
   function fromResult(data){
     let rows=[];
+    if(data.routing?.label)rows=reduceEvents(rows,{id:'response:routing',stage:'routing',status:'reported',
+      summary:`${data.routing.label} · ${data.routing.reason||''}`});
+    if(data.result?.provenance?.execution_status==='reused_verified_result')rows=reduceEvents(rows,
+      {id:'response:context-result',stage:'context_result',status:'reported',
+       summary:'已从上一轮核验结果中读取所问数据。'});
     for(const event of [...(data.trace||[]),...(data.result?.trace||[])])rows=reduceEvents(rows,event);
     const structured=data.structured||(['sql','comparison'].includes(data.route)?data.result:null)||{};
     const executed=structured.status==='ok'&&typeof structured.sql==='string'&&structured.sql.trim()
@@ -83,7 +88,7 @@
     if(executed){
       if(!rows.some(row=>row.tool==='nl2sql'))rows=reduceEvents(rows,{id:'response:nl2sql',tool:'nl2sql',status:'success',
         summary:'已返回本次 SQL 与独立绑定参数。',input:{question:data.effective_question||data.question},
-        output:{sql:structured.sql,parameters:structured.parameters||[]},executed:true});
+        output:{sql:structured.sql,parameters:structured.parameters||[],plan:structured.plan||{},source_tables:structured.source_tables||{}},executed:true});
       if(!rows.some(row=>['sql','database.read','structured_query'].includes(row.tool)))rows=reduceEvents(rows,
         {id:'response:database.read',tool:'database.read',status:'success',executed:true,
          summary:`查询返回 ${(structured.rows||[]).length} 行预览数据。`,input:{sql:structured.sql,parameters:structured.parameters||[]},
@@ -106,6 +111,33 @@
     check:'M5 12l4 4L19 6',close:'M6 6l12 12 M6 18L18 6',chevron:'M9 5l7 7-7 7'
   };
   const STATUS={running:'运行中',success:'完成',error:'失败',attention:'需要确认',stopped:'已停止',reported:'处理记录'};
+  const RAG_STEPS=[
+    ['question_analysis','问题解析'],
+    ['context_resolution','多轮上下文与部件指代消解'],
+    ['source_binding','知识库与资料范围绑定'],
+    ['bm25_retrieval','BM25 稀疏召回'],
+    ['dense_retrieval','Dense 向量召回'],
+    ['hybrid_ranking','RRF 融合与 Rerank 重排'],
+    ['evidence_selection','资料范围约束与关联证据裁剪'],
+    ['generation_evidence','证据限额与模型输入'],
+    ['answer_generation','答案生成与来源核验'],
+    ['completion','处理完成']
+  ];
+  const RAG_STATUS={pending:'等待',running:'进行中',success:'完成',error:'失败',attention:'需补充',skipped:'未执行',stopped:'已停止'};
+  const RAG_FIELDS={question:'原始问题',query:'检索问题',retrieval_query:'检索问题',query_rewrite:'查询改写',
+    retrieval_context_attached:'附加检索上下文',
+    mode:'处理方式',actual_question:'本轮问题',effective_question:'处理后问题',source_question:'引用的问题',
+    context_turns:'对话轮数',document_id:'资料编号',page_no:'页码',scope:'范围',exact_identifiers:'精确标识',
+    document_count:'资料数量',eligible_chunk_count:'可检索片段',candidate_limit:'候选上限',candidate_pool_limit:'候选池上限',
+    selection_limit:'入选上限',candidate_count:'候选数',
+    question_parts:'问题拆分导航词',part_candidate_count:'拆分候选数',part_selected_count:'拆分入选数',
+    dense_status:'Dense 状态',embedding_model:'向量模型',rrf_executed:'执行 RRF',ranking_method:'排序方式',
+    selected_count:'入选证据数',selection_method:'证据选择方式',evidence_count:'回答证据数',user_image_count:'用户图片数',
+    image_count:'关联图片数',status:'结果状态',answer_mode:'回答方式',citation_count:'引用数量'};
+  const RAG_TRACE_STAGES=new Set(['document_retrieval','evidence_selection','generation_evidence','grounded_generation']);
+  function formatRagDuration(milliseconds){
+    return milliseconds>=1000?`${(milliseconds/1000).toFixed(1)} s`:`${Math.round(milliseconds)} ms`;
+  }
   function invocationVerb(status){
     return {running:'正在调用',success:'已调用',error:'调用失败',attention:'调用待确认',stopped:'调用已停止',reported:'调用记录'}[status]||'调用记录';
   }
@@ -120,7 +152,9 @@
     if(!React||!ReactDOM)throw Error('工具时间线组件未加载');
     const h=React.createElement,root=document.createElement('div');root.className='agent-timeline';
     root.setAttribute('aria-label','工具调用与执行反馈');
-    const mount=ReactDOM.createRoot(root);let rows=[],waiting=true,finished=false;
+    const mount=ReactDOM.createRoot(root);let rows=[],waiting=true,finished=false,finalData=null,ragStarted=false;
+    const requestStartedAt=performance.now();
+    const ragProgress=new Map(RAG_STEPS.map(([key])=>[key,{status:'pending',input:{},output:{}}]));
     const attachments=new Map();
     // Legacy SVG explorers retain their event handlers inside a React-owned tool receipt.
     function Attachment({node}){
@@ -145,6 +179,13 @@
       const preview=invocationPreview(item);
       const output=item.tool==='nl2sql'&&item.output?.sql?
         item.output.sql+'\n\n-- 参数\n'+JSON.stringify(item.output.parameters||[],null,2):item.output;
+      const resultContext=finalData?.structured||finalData?.result||{};
+      const plan=item.output?.plan||item.input?.plan||resultContext.plan||{};
+      const sourceTables=item.output?.source_tables||item.input?.source_tables||resultContext.source_tables||{};
+      const schema=options.getSchema?.()||options.schema||{};
+      const displayOutput=item.tool==='nl2sql'&&item.output?.sql
+        ? (window.QueryJourney?.formatSqlWithComments(item.output.sql,plan,schema,sourceTables)||item.output.sql)+'\n\n-- 参数\n'+JSON.stringify(item.output.parameters||[],null,2)
+        :output;
       return h('div',{className:'agent-tool-row','data-tool':item.tool,'data-status':item.status},
         item.summary?h('p',{className:'agent-action-note'},h(Icon,{name:item.icon}),h('span',null,item.summary)):null,
         h('details',{className:'agent-tool-details',onToggle:event=>setOpened(event.currentTarget.open)},
@@ -163,28 +204,94 @@
               h('button',{type:'button',className:'agent-tool-copy',onClick:async(event)=>{
                 const button=event.currentTarget,value=tab==='input'?item.input:output;try{await navigator.clipboard.writeText(typeof value==='string'?value:JSON.stringify(value,null,2));
                   button.textContent='已复制';}catch{button.textContent='请选中复制';}}},'复制')),
-            !opened?null:item.status==='running'&&tab==='output'?h('p',{className:'agent-tool-wait'},'等待工具返回…'):
-              h(Code,{value:tab==='input'?item.input:output,language:tab==='output'&&item.tool==='nl2sql'?'sql':'json'}),
+              !opened?null:item.status==='running'&&tab==='output'?h('p',{className:'agent-tool-wait'},'等待工具返回…'):
+              h(Code,{value:tab==='input'?item.input:displayOutput,language:tab==='output'&&item.tool==='nl2sql'?'sql':'json'}),
             attachment?h(Attachment,{node:attachment}):null,
             h('footer',{className:`agent-tool-footer state-${item.status}`},
               Number.isFinite(item.latency_ms)?h('span',null,`${(item.latency_ms/1000).toFixed(2)} s`):h('span'),
               h('span',{className:'agent-tool-receipt'},item.status==='running'?h('i',{className:'agent-spinner'}):
                 h(Icon,{name:item.status==='success'?'check':item.status==='error'?'close':'chevron'}),STATUS[item.status])))));
     });
+    function ragValue(value){
+      if(value===null||value===undefined||value==='')return '—';
+      if(typeof value==='boolean')return value?'是':'否';
+      if(Array.isArray(value))return value.map(ragValue).join('、')||'无';
+      if(typeof value==='object')return Object.entries(value).map(([key,item])=>`${RAG_FIELDS[key]||key}：${ragValue(item)}`).join('；');
+      return String(value);
+    }
+    function RagFields({data}){
+      if(!data||typeof data!=='object')return null;
+      const source=Object.entries(data).filter(([key])=>!['selected_evidence','evidence'].includes(key));
+      const evidence=data.selected_evidence||data.evidence||[];
+      return h(React.Fragment,null,
+        source.length?h('dl',{className:'agent-rag-fields'},source.map(([key,value])=>h(React.Fragment,{key},
+          h('dt',null,RAG_FIELDS[key]||key),h('dd',null,ragValue(value))))):null,
+        Array.isArray(evidence)&&evidence.length?h('ul',{className:'agent-rag-evidence'},evidence.map((item,index)=>{
+          const locator=[item.source_locator,item.page_no?`第 ${item.page_no} 页`:null].filter(Boolean).join(' · ');
+          return h('li',{key:item.chunk_id||index},h('strong',null,item.title||item.chunk_id||`证据 ${index+1}`),
+            locator?h('small',null,locator):null,
+            item.snippet?h('p',null,item.snippet):null,
+            item.image_count?h('small',null,`关联图片 ${item.image_count} 张`):null);
+        })):null);
+    }
+    function RagProcess(){
+      const steps=RAG_STEPS.map(([key,title])=>({key,title,...ragProgress.get(key)}));
+      const completed=steps.filter(step=>['success','error','attention','skipped','stopped'].includes(step.status)).length;
+      const current=steps.find(step=>step.status==='running');
+      const percent=Math.round(completed/steps.length*100);
+      return h('section',{className:'agent-rag-process','aria-label':'RAG 可审计处理过程'},
+        h('header',{className:'agent-rag-head'},h('div',null,
+          h('strong',null,'知识库召回'),
+          h('p',null,'问题解析、混合检索、证据筛选与答案生成。')),
+          h('span',{className:'agent-rag-progress-label'},`${percent}% · ${completed}/${steps.length} · ${((performance.now()-requestStartedAt)/1000).toFixed(1)} s`)),
+        h('div',{className:'agent-rag-progress','role':'progressbar','aria-valuemin':0,'aria-valuemax':100,'aria-valuenow':percent},
+          h('i',{style:{width:`${percent}%`}})),
+        current?h('p',{className:'agent-rag-current','role':'status'},current.summary||`正在${current.title}…`):null,
+        h('ol',{className:'agent-rag-steps'},steps.map((step,index)=>{
+          const status=step.status||'pending',open=status==='running'||(!current&&step.key==='generation_evidence'&&status==='success');
+          const duration=Number.isFinite(step.latency_ms)?formatRagDuration(step.latency_ms):'';
+          return h('li',{key:step.key,'data-state':status},
+            h('span',{className:'agent-rag-marker','aria-hidden':true},status==='running'?h('i',{className:'agent-spinner'}):
+              status==='success'?h(Icon,{name:'check'}):`${String(index+1).padStart(2,'0')}`),
+            h('details',{open},h('summary',null,h('strong',null,step.title),
+              h('span',{className:'agent-rag-step-state'},RAG_STATUS[status]||'等待'),
+              duration?h('time',null,duration):null),
+              step.summary?h('p',{className:'agent-rag-step-summary'},step.summary):null,
+              Object.keys(step.input||{}).length?h('div',{className:'agent-rag-data'},
+                h('b',null,'输入'),h(RagFields,{data:step.input})):null,
+              Object.keys(step.output||{}).length?h('div',{className:'agent-rag-data'},
+                h('b',null,'处理结果'),h(RagFields,{data:step.output})):null));
+        })));
+    }
     function Timeline(){return h(React.Fragment,null,
-      rows.map(item=>item.kind==='tool'?h(Tool,{key:item.id,item,attachment:attachments.get(item.id)}):h('p',{key:item.id,className:'agent-commentary',
+      ragStarted?h(RagProcess,{key:'rag-process'}):null,
+      rows.filter(item=>!(ragStarted&&(item.tool==='knowledge.answer'||item.tool==='knowledge.search'||
+        item.tool==='document_retrieval'||RAG_TRACE_STAGES.has(item.stage)))).map(item=>item.kind==='tool'?h(Tool,{key:item.id,item,attachment:attachments.get(item.id)}):h('p',{key:item.id,className:'agent-commentary',
         'data-status':item.status},h(Icon,{name:'thought'}),h('span',null,item.summary))),
       waiting?h('div',{className:'agent-request-wait',role:'status'},h('i',{className:'agent-spinner'}),'正在处理你的请求…'):null);
     }
     function draw(){mount.render(h(Timeline));}
-    function update(event){if(finished)return;rows=reduceEvents(rows,event);waiting=!rows.some(item=>item.status==='running');draw();}
-    function finish(data){waiting=false;for(const item of fromResult(data)){
+    function update(event){if(finished)return;
+      if(event&&typeof event.rag_step==='string'&&ragProgress.has(event.rag_step)){
+        ragStarted=true;const old=ragProgress.get(event.rag_step),status=normalizedStatus(event);
+        ragProgress.set(event.rag_step,{...old,status,summary:event.summary||old.summary||'',
+          input:event.input&&Object.keys(event.input).length?event.input:old.input,
+          output:event.output&&Object.keys(event.output).length?event.output:old.output,
+          latency_ms:event.latency_ms,executed:event.executed});
+        if(event.rag_step==='completion'&&status!=='running')for(const [key,value] of ragProgress){
+          if(value.status==='pending')ragProgress.set(key,{...value,status:'skipped',summary:'本轮处理路径未执行此阶段。'});
+        }
+      }else rows=reduceEvents(rows,event);
+      waiting=!rows.some(item=>item.status==='running')&&![...ragProgress.values()].some(item=>item.status==='running');draw();}
+    function finish(data){waiting=false;finalData=data;for(const item of fromResult(data)){
       if(item.id==='response:nl2sql'&&rows.some(row=>row.tool==='nl2sql'))continue;
       if(item.id==='response:database.read'&&rows.some(row=>['sql','database.read','structured_query'].includes(row.tool)))continue;
       if(item.stage==='intent_planning'&&rows.some(row=>['intent.plan','context.resolve'].includes(row.tool)))continue;
       const index=rows.findIndex(row=>row.id===item.id);if(index<0)rows.push(item);else rows[index]={...rows[index],...item};
     }
       rows=rows.map(row=>row.status==='running'?{...row,status:'stopped',summary:row.summary||'未收到此工具的完成记录。'}:row);
+      for(const [key,value] of ragProgress)if(value.status==='running'||value.status==='pending')ragProgress.set(key,{...value,
+        status:value.status==='running'?'stopped':'skipped',summary:value.summary||'请求结束前未执行此阶段。'});
       finished=true;draw();}
     function record(event){rows=reduceEvents(rows,event);draw();}
     function attach(tool,node){
@@ -194,6 +301,8 @@
     }
     function fail(message='请求未完成'){waiting=false;finished=true;
       rows=rows.map(item=>item.status==='running'?{...item,status:'stopped'}:item);
+      for(const [key,value] of ragProgress)if(value.status==='running'||value.status==='pending')ragProgress.set(key,{...value,
+        status:value.status==='running'?'error':'skipped',summary:value.summary||'请求未执行此阶段。'});
       rows.push({id:'request:failed',kind:'commentary',status:'error',summary:message});draw();}
     draw();return {root,update,finish,record,attach,fail,dispose:()=>{mount.unmount();attachments.clear();}};
   }

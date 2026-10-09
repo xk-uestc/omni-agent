@@ -10,7 +10,7 @@ import re
 
 from .grounded_generation import GroundedGenerator
 from .evidence_context import sentence_spans
-from .responses_client import GenerationError, object_schema
+from .responses_client import GenerationError, object_schema, verified_response_audit
 from .typed_span_execution import boolean_question, entity_question, execute_threshold, question_observation
 from .answer_contract import (question_contract, literal_answer_shape_error,
     native_source_only_contract_valid, native_context_mode_valid)
@@ -34,7 +34,8 @@ THRESHOLD_REVIEW = object_schema({**deepcopy(REVIEW['properties']),
     'source_inequality_is_requirement_not_observation': {'type':'boolean'},
     'server_boolean_answers_whole_question': {'type':'boolean'}})
 _AUDIT = ('provider', 'model', 'reasoning', 'operation', 'http_status', 'status', 'model_verified',
-          'response_model', 'input_tokens', 'output_tokens', 'total_tokens', 'call_index', 'latency_ms')
+          'response_model', 'input_tokens', 'output_tokens', 'total_tokens', 'call_index', 'latency_ms',
+          'provider_attempts', 'winning_provider', 'hedge_delay_ms')
 MAX_QUOTE_CATALOG_ITEMS = 512
 MAX_QUOTE_CATALOG_JSON_CHARS = 60000
 SHORT_ANSWER_INSTRUCTIONS = (' Choose the smallest COMPLETE literal answer phrase. A who/person answer '
@@ -186,11 +187,7 @@ def _audit(client):
 
 
 def _completed(audit):
-    return (audit.get('status') == 'completed' and audit.get('model_verified') is True
-            and audit.get('model') == 'gpt-6-luna' and audit.get('reasoning') == 'medium'
-            and isinstance(audit.get('response_model'), str)
-            and re.fullmatch(r'gpt-6-luna(?:-\d{4}-\d{2}-\d{2})?', audit['response_model']) is not None
-            and type(audit.get('http_status')) is int and 200 <= audit['http_status'] < 300)
+    return verified_response_audit(audit) and audit.get('reasoning') == 'medium'
 
 
 def _snapshot(claims, citations):

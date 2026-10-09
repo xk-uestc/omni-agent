@@ -107,6 +107,15 @@ class MetricCompiler:
             raise MetricPlanError("多指标占比需要指定分母指标", "ambiguous_metric")
         keys = [f"__d{i}" for i in range(len(plan.dimensions))]
         ctes, params, audits, expressions, types = [], [], [], {}, {}
+        outputs_for_having = plan.output_metrics or [m.id for m in metrics] + [m.id for m in plan.derived_metrics]
+        having_sort_id = plan.order_metric or (outputs_for_having[0] if outputs_for_having else None)
+        push_literal_having = (
+            len(metrics) == 1 and not plan.derived_metrics and plan.having is not None
+            and plan.having.mode in {"literal", "scalar"}
+            and plan.having.operator in {">", ">=", "<", "<=", "=", "!="}
+            and having_sort_id == metrics[0].id
+            and (not plan.output_metrics or plan.output_metrics == [metrics[0].id])
+        )
         for index, metric in enumerate(metrics):
             table = by_name.get(metric.table)
             if table is None or metric.column not in {c.name for c in table.columns}:
@@ -137,7 +146,12 @@ class MetricCompiler:
                     info = next(col for col in by_name[target_table].columns if col.name == c)
                     if not is_date_column(info.name, info.data_type):
                         raise MetricPlanError('时间分组需要可验证的日期字段')
-                    expr = f"strftime('{ '%Y-%m' if transform == 'month' else '%Y' }', {expr})"
+                    storage_format = (plan.semantic_audit.get("date_storage_formats", {})
+                                      .get(f"{target_table}.{c}"))
+                    if storage_format == "iso_month_text":
+                        expr = expr if transform == "month" else f"substr({expr}, 1, 4)"
+                    else:
+                        expr = f"strftime('{ '%Y-%m' if transform == 'month' else '%Y' }', {expr})"
                 elif transform != "raw":
                     raise MetricPlanError("不支持的时间粒度")
                 dimensions.append((expr, f"__d{i}"))
@@ -175,6 +189,9 @@ class MetricCompiler:
             sql = f"SELECT {', '.join(select)} {self._from(metric.table, source_joins, left=True)}{where}"
             if dimensions:
                 sql += " GROUP BY " + ", ".join(expr for expr, _ in dimensions)
+            if push_literal_having:
+                sql += f" HAVING {aggregate} {plan.having.operator} ?"
+                params.append(plan.having.value)
             ctes.append(f'"__m{index}" AS ({sql})')
             value = f'"__m{index}"."__value"'
             if metric.missing == "zero":
@@ -219,7 +236,7 @@ class MetricCompiler:
         direction = "DESC" if plan.order_desc else "ASC"
         visible = [quote(label) for label in [*dim_labels, *(id_to_label[m] for m in outputs)]]
         where = ""
-        if plan.having:
+        if plan.having and not push_literal_having:
             if plan.having.operator not in {">", ">=", "<", "<=", "=", "!="}:
                 raise MetricPlanError("阈值运算符无效")
             if plan.having.mode in {"scalar", "literal"}:

@@ -17,7 +17,7 @@ import time
 
 from .native_text_tables import extract_native_text_tables, column_unit_declaration
 from .native_fraction import fraction_percentage, validate_native_fraction_proof, replay_native_fraction_cell
-from .responses_client import GenerationError, object_schema
+from .responses_client import GenerationError, object_schema, verified_response_audit
 from .visual_work_budget import visual_work_slot
 
 OPERATIONS = ('lookup', 'sum', 'ratio', 'difference', 'absolute_difference', 'percentage', 'fraction_percentage',
@@ -425,10 +425,7 @@ def annotation_arithmetic(facts, operation, *, allow_column_comparison=False, pe
 
 def _completed(client):
     audit = client.audit
-    return (audit.get('status') == 'completed' and audit.get('model_verified') is True
-            and type(audit.get('http_status')) is int and 200 <= audit['http_status'] < 300
-            and audit.get('model') == 'gpt-6-luna' and audit.get('reasoning') == 'medium'
-            and re.fullmatch(r'gpt-6-luna(?:-\d{4}-\d{2}-\d{2})?', str(audit.get('response_model'))) is not None)
+    return verified_response_audit(audit) and audit.get('reasoning') == 'medium'
 
 
 def bind_explicit_composite_addend(question, plan, facts):

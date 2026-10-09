@@ -330,6 +330,8 @@ def initialize_rich_demo_data(path: str | Path) -> Path:
             return_date=excluded.return_date,reason=excluded.reason,
             status=excluded.status,refund_amount=excluded.refund_amount""", returns)
 
+    from .operations_seed import initialize_operations_data
+    initialize_operations_data(destination)
     return destination
 
 

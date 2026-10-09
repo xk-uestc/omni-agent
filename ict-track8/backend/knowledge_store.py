@@ -5,7 +5,9 @@ import hashlib
 import json
 import re
 import sqlite3
+import time
 import unicodedata
+from copy import deepcopy
 from collections import Counter
 from contextlib import contextmanager
 from math import log
@@ -21,7 +23,24 @@ SAFE_ID = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,127}')
 SUPPORTED = {'pdf', 'docx', 'xlsx', 'txt', 'md', 'image'}
 _RETRIEVAL_STOP_WORDS = frozenset('a an the what which who whom whose is are was were be been being '
     'do does did how to of for from in on at by with and or as this that these those '
-    'it its please tell me can could would should according document report'.split())
+    'it its please tell me can could would should according document report '
+    '怎么 如何 什么 哪些 哪个 是否 可以 能否 能不能 可不可以 请问 加入 添加 放入 倒入'.split())
+
+
+def _publish_rag_progress(callback, step, status, summary, *, input=None, output=None,
+                          latency_ms=None, executed=None):
+    if callback is None:
+        return
+    event = {'stage': 'rag_process', 'tool': f'rag.{step}', 'rag_step': step,
+             'status': status, 'summary': summary, 'input': input or {}, 'output': output or {}}
+    if latency_ms is not None:
+        event['latency_ms'] = round(float(latency_ms), 3)
+    if executed is not None:
+        event['executed'] = executed
+    try:
+        callback(event)
+    except Exception:
+        pass
 
 
 def _page_scope_coverage(records, query):
@@ -33,7 +52,10 @@ def _page_scope_coverage(records, query):
     """
     pages = {}
     for record in records:
-        key = (record.metadata['document_id'], record.metadata.get('page_no'))
+        page_no = record.metadata.get('page_no')
+        if type(page_no) is not int or page_no < 1:
+            continue
+        key = (record.metadata['document_id'], page_no)
         pages.setdefault(key, set()).update(_tokenize(record.content))
     terms = set(_tokenize(query)) - _RETRIEVAL_STOP_WORDS
     if not terms or not pages:
@@ -43,6 +65,23 @@ def _page_scope_coverage(records, query):
     denominator = sum(weights.values())
     return {key: sum(weights[term] for term in terms.intersection(body)) / denominator
             for key, body in pages.items()}
+
+
+def _query_term_weights(retriever, query):
+    """Weight specific query terms for non-paginated chunk navigation."""
+    terms = set(_tokenize(query)) - _RETRIEVAL_STOP_WORDS
+    if not terms:
+        return {}, 0.0
+    frequencies = retriever._document_frequency
+    weights = {term: log(1 + (len(retriever.documents) + .5) / (frequencies[term] + .5))
+               for term in terms}
+    return weights, sum(weights.values())
+
+
+def _matched_query_term_coverage(hit, weights, denominator):
+    if not denominator:
+        return 0.0
+    return sum(weights.get(term, 0.0) for term in set(hit.matched_terms)) / denominator
 
 
 class SourceIntegrityError(ValueError):
@@ -120,6 +159,15 @@ class KnowledgeStore:
         return {'mode': 'bm25_dense_rrf' if self.dense_index else 'bm25',
                 'embedding_model': self.dense_index.embedder.identity if self.dense_index else None,
                 'dense_answer_threshold': 0.6 if self.dense_index else None}
+
+    def warm_dense_index(self):
+        if self.dense_index is None:
+            return 0
+        records = self.records()
+        if records:
+            self.dense_index.vectors(records)
+            self.dense_index.embedder.embed(['启动时预热检索编码器'], query=True)
+        return len(records)
 
     @contextmanager
     def connect(self):
@@ -303,6 +351,7 @@ class KnowledgeStore:
             rows = connection.execute('SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id) ORDER BY c.rowid').fetchall()
         records = []
         from .answer_contract import substantive_numbered_heading
+        from .raysource_media import image_refs_for_chunk
         for payload, title in rows:
             chunk = json.loads(payload)
             # Image resource placeholders and empty OCR outputs are never answer evidence.
@@ -315,12 +364,18 @@ class KnowledgeStore:
                 {**chunk['metadata'], 'document_id': document_id, 'chunk_id': chunk['chunk_id'],
                  'source_locator': chunk['source_locator'], 'page_no': chunk['page_no'],
                  'sheet_name': chunk['sheet_name'], 'row_start': chunk['row_start'], 'row_end': chunk['row_end'],
-                 'title_path': chunk['title_path'], 'quality': chunk['quality'], 'warnings': chunk['warnings']}))
+                 'title_path': chunk['title_path'], 'quality': chunk['quality'], 'warnings': chunk['warnings'],
+                 'raysource_images': image_refs_for_chunk(document_id, chunk['text'])}))
         return records
 
-    def search(self, query: str, *, top_k: int = 4, document_id=None, page_no=None) -> list[DocumentHit]:
+    def search(self, query: str, *, top_k: int = 4, document_id=None, page_no=None,
+               with_audit: bool = False, progress_callback=None) -> list[DocumentHit] | tuple[list[DocumentHit], dict[str, Any]]:
         if not isinstance(query, str) or not query.strip() or len(query) > 1000 or not 1 <= top_k <= 20:
             raise ValueError('问题或检索数量超出限制')
+        binding_started = time.perf_counter()
+        def finish(hits, audit):
+            return (hits, audit) if with_audit else hits
+
         records = self.records()
         if document_id is not None:
             document = self.document(document_id)
@@ -342,8 +397,29 @@ class KnowledgeStore:
                 return all(re.search(r'(?<![A-Za-z0-9_])' + re.escape(identifier) + r'(?![A-Za-z0-9_])', text, re.I)
                            for identifier in identifiers)
             records = [record for record in records if eligible(record)]
-            if not records:
-                return []
+        _publish_rag_progress(progress_callback, 'source_binding', 'success',
+            f"已限定到 {len({record.metadata['document_id'] for record in records})} 份资料、{len(records)} 个可检索片段。",
+            input={'document_id': document_id, 'page_no': page_no, 'exact_identifiers': list(identifiers)},
+            output={'document_count': len({record.metadata['document_id'] for record in records}),
+                    'eligible_chunk_count': len(records), 'scope': 'selected_source' if document_id else 'all_sources'},
+            latency_ms=(time.perf_counter() - binding_started) * 1000,
+            executed=True)
+        if identifiers and not records:
+            _publish_rag_progress(progress_callback, 'bm25_retrieval', 'skipped',
+                '精确标识范围内没有匹配片段，未执行关键词召回。', executed=False)
+            _publish_rag_progress(progress_callback, 'dense_retrieval', 'skipped',
+                '没有可检索片段，未执行向量召回。', executed=False)
+            _publish_rag_progress(progress_callback, 'hybrid_ranking', 'skipped',
+                '没有召回候选，未执行融合排序。', executed=False)
+            _publish_rag_progress(progress_callback, 'evidence_selection', 'attention',
+                '没有候选片段可供证据选择。', output={'candidate_count': 0, 'selected_count': 0}, executed=True)
+            return finish([], {'version': 'ict8-rag-audit-v1', 'query': query,
+                'scope': {'document_id': document_id, 'page_no': page_no,
+                          'exact_identifiers': list(identifiers)},
+                'retrieval': self.retrieval_health(), 'candidate_count': 0,
+                'dense_status': 'not_run_no_exact_identifier_match',
+                'channels': [], 'selected_count': 0, 'candidates': [],
+                'termination': 'exact_identifier_scope_had_no_matching_chunks'})
         contents = {record.document_id: record.content for record in records}
         from .answer_contract import body_answer_affinity, substantive_numbered_heading
         navigation_contents = dict(contents)
@@ -357,36 +433,167 @@ class KnowledgeStore:
                 # authorize a continuation; native source replay owns that.
                 navigation_contents[record.document_id] = previous.content + '\n' + record.content
         page_coverage = _page_scope_coverage(records, query)
-        hits = JsonDocumentRetriever(records).search(query, top_k=max(20, top_k * 5), candidate_limit=100)
+        retriever = JsonDocumentRetriever(records)
+        query_term_weights, query_term_weight_total = _query_term_weights(retriever, query)
+        bm25_started = time.perf_counter()
+        _publish_rag_progress(progress_callback, 'bm25_retrieval', 'running',
+            '正在按词项相关度查找手册片段。', input={'query': query, 'candidate_limit': 100})
+        try:
+            bm25_hits = retriever.search(query, top_k=max(20, top_k * 5), candidate_limit=100)
+        except Exception:
+            _publish_rag_progress(progress_callback, 'bm25_retrieval', 'error',
+                '关键词召回执行失败。', latency_ms=(time.perf_counter() - bm25_started) * 1000,
+                executed=False)
+            raise
+        _publish_rag_progress(progress_callback, 'bm25_retrieval', 'success',
+            f'关键词召回得到 {len(bm25_hits)} 个候选片段。',
+            output={'candidate_count': len(bm25_hits)},
+            latency_ms=(time.perf_counter() - bm25_started) * 1000, executed=True)
+        bm25_ranks = {hit.document_id: rank for rank, hit in enumerate(bm25_hits, 1)}
+        bm25_hits = [DocumentHit(hit.document_id, hit.title, hit.score, hit.matched_terms,
+            hit.snippet, hit.source_uri, {**hit.metadata, 'bm25_rank': bm25_ranks[hit.document_id]})
+            for hit in bm25_hits]
+        hits = bm25_hits
         # Explicit years/numbers are grounding anchors. Title matches alone cannot satisfy them.
         anchors = tuple(dict.fromkeys(re.findall(r'(?<![\w.])\d{4}(?!\d)', query)))
         def ranking(hit):
             anchor_matches = sum(bool(re.search(r'(?<!\d)' + re.escape(anchor) + r'(?!\d)', contents[hit.document_id])) for anchor in anchors)
             raw = float(hit.metadata.get('rrf_score', hit.metadata.get('bm25_raw', 0)))
             coverage = page_coverage.get((hit.metadata['document_id'], hit.metadata.get('page_no')), 0)
+            body_term_coverage = (_matched_query_term_coverage(hit, query_term_weights, query_term_weight_total)
+                                  if hit.metadata.get('page_no') is None else 0.0)
             affinity = body_answer_affinity(query, navigation_contents[hit.document_id])
-            return raw * (1 + 0.35 * anchor_matches) * (1 + 2 * coverage) * affinity, anchor_matches
-        hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
+            return (raw * (1 + 0.35 * anchor_matches) * (1 + 2 * coverage)
+                    * (1 + 1.5 * body_term_coverage) * affinity,
+                    anchor_matches, body_term_coverage)
         query_language = ('en' if not re.search(r'[\u3400-\u9fff]', query)
                           and len(re.findall(r'[A-Za-z]{2,}', query)) >= 3 else 'zh_or_mixed')
         encoder_languages = (getattr(self.dense_index.embedder, 'supported_query_languages', None)
                              if self.dense_index else None)
         unsupported_language = bool(query_language == 'en' and encoder_languages
                                     and 'en' not in encoder_languages)
+        dense_status = ('skipped_unsupported_query_language' if unsupported_language else
+                        'enabled' if self.dense_index else 'not_configured')
+        dense = []
+        dense_started = time.perf_counter()
         if self.dense_index and not unsupported_language:
+            _publish_rag_progress(progress_callback, 'dense_retrieval', 'running',
+                '正在计算问题与片段的向量相似度。',
+                input={'query': query, 'embedding_model': self.dense_index.embedder.identity})
             from .dense_retrieval import reciprocal_rank_fusion
-            dense = [hit for hit in self.dense_index.search(query, records, top_k=max(20, top_k * 5))
-                     if hit.metadata['dense_cosine'] >= 0.35]
-            hits = reciprocal_rank_fusion(hits, dense)
-            hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
+            try:
+                dense = self.dense_index.search(query, records, top_k=max(20, top_k * 5))
+            except Exception:
+                _publish_rag_progress(progress_callback, 'dense_retrieval', 'error',
+                    '向量召回执行失败。', latency_ms=(time.perf_counter() - dense_started) * 1000,
+                    executed=False)
+                raise
+            _publish_rag_progress(progress_callback, 'dense_retrieval', 'success',
+                f'向量召回得到 {len(dense)} 个候选片段。',
+                output={'candidate_count': len(dense), 'embedding_model': self.dense_index.embedder.identity},
+                latency_ms=(time.perf_counter() - dense_started) * 1000, executed=True)
+            hits = reciprocal_rank_fusion(bm25_hits, dense)
+            hits = [DocumentHit(hit.document_id, hit.title, hit.score, hit.matched_terms,
+                hit.snippet, hit.source_uri,
+                {**hit.metadata, 'bm25_rank': bm25_ranks.get(hit.document_id)}) for hit in hits]
+        else:
+            reason = ('当前向量模型不支持本轮查询语言' if unsupported_language else 'Dense 向量索引未配置')
+            _publish_rag_progress(progress_callback, 'dense_retrieval', 'skipped',
+                reason + '，本轮保留关键词召回。',
+                output={'dense_status': dense_status}, executed=False)
+        ranking_started = time.perf_counter()
+        _publish_rag_progress(progress_callback, 'hybrid_ranking', 'running',
+            '正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。',
+            input={'dense_status': dense_status})
+        hits.sort(key=lambda hit: (-ranking(hit)[0], hit.document_id))
+        _publish_rag_progress(progress_callback, 'hybrid_ranking', 'success',
+            '融合排序完成。' if dense_status == 'enabled' else 'BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。',
+            output={'dense_status': dense_status, 'rrf_executed': dense_status == 'enabled',
+                    'ranking_method': ('rrf_then_page_scope_and_body_affinity' if dense_status == 'enabled'
+                                       else 'bm25_then_page_scope_and_body_affinity')},
+            latency_ms=(time.perf_counter() - ranking_started) * 1000, executed=True)
+        selection_started = time.perf_counter()
+        _publish_rag_progress(progress_callback, 'evidence_selection', 'running',
+            '正在应用资料范围约束，并裁剪相关证据片段。',
+            input={'candidate_count': len(hits), 'selection_limit': top_k})
         from .evidence_coverage import select_coverage_hits
         hits = hits[:max(20, top_k * 5)]
         coverage_selection = select_coverage_hits(query, hits, contents, ranking, top_k)
+        selected_evidence = [{
+            'title': hit.title,
+            'chunk_id': hit.metadata.get('chunk_id'),
+            'source_locator': hit.metadata.get('source_locator'),
+            'page_no': hit.metadata.get('page_no'),
+            'snippet': str(hit.snippet or '')[:320],
+            'image_count': len(hit.metadata.get('raysource_images') or []),
+        } for hit in coverage_selection.hits]
+        _publish_rag_progress(progress_callback, 'evidence_selection', 'success',
+            f'从 {len(hits)} 个排序候选中选出 {len(coverage_selection.hits)} 个证据片段。',
+            output={'candidate_count': len(hits), 'selected_count': len(coverage_selection.hits),
+                    'selection_method': coverage_selection.audit.get('method'),
+                    'selected_evidence': selected_evidence},
+            latency_ms=(time.perf_counter() - selection_started) * 1000, executed=True)
+        steps_by_id = {str(step['chunk_id']): step for step in coverage_selection.audit['steps']}
+        selected_roles = {hit.document_id: ('primary' if index == 0 else 'supporting')
+                          for index, hit in enumerate(coverage_selection.hits)}
+        retrieval_audit = {
+            'version': 'ict8-rag-audit-v1',
+            'query': query,
+            'scope': {'document_id': document_id, 'page_no': page_no,
+                      'exact_identifiers': list(identifiers)},
+            'retrieval': self.retrieval_health(),
+            'query_language': query_language,
+            'dense_status': dense_status,
+            'channels': ['bm25', 'dense', 'rrf'] if dense_status == 'enabled' else ['bm25'],
+            'ranking_method': ('true_channel_rrf_then_idf_query_coverage_page_scope_and_body_affinity'
+                               if dense_status == 'enabled' else
+                               'bm25_then_idf_query_coverage_page_scope_and_body_affinity'),
+            'candidate_pool_limit': max(20, top_k * 5),
+            'candidate_count': len(hits),
+            'selection_budget': top_k,
+            'selected_count': len(coverage_selection.hits),
+            'selection': coverage_selection.audit,
+            'candidates': [],
+        }
+        for rank, hit in enumerate(hits, 1):
+            metadata = hit.metadata
+            selected_step = steps_by_id.get(str(hit.document_id))
+            retrieval_audit['candidates'].append({
+                'chunk_id': hit.document_id,
+                'source_document_id': metadata.get('document_id'),
+                'source_sha256': metadata.get('source_sha256'),
+                'title': hit.title,
+                'snippet': hit.snippet,
+                'source_locator': metadata.get('source_locator'),
+                'page_no': metadata.get('page_no'),
+                'sheet_name': metadata.get('sheet_name'),
+                'row_start': metadata.get('row_start'),
+                'row_end': metadata.get('row_end'),
+                'ranking_rank': rank,
+                'bm25_rank': metadata.get('bm25_rank'),
+                'bm25_raw': metadata.get('bm25_raw'),
+                'bm25_relative': metadata.get('bm25_relative'),
+                'dense_rank': metadata.get('dense_rank'),
+                'dense_cosine': metadata.get('dense_cosine'),
+                'rrf_rank': metadata.get('rrf_rank'),
+                'rrf_score': metadata.get('rrf_score'),
+                'ranking_score': ranking(hit)[0],
+                'body_query_term_coverage': ranking(hit)[2],
+                'matched_terms': list(hit.matched_terms),
+                'retrieval_channels': metadata.get('retrieval_channels',
+                    [metadata.get('retrieval_channel', 'bm25')]),
+                'selected_in_initial_coverage': hit.document_id in selected_roles,
+                'selection_role': selected_roles.get(hit.document_id),
+                'selection_utility': selected_step.get('utility') if selected_step else None,
+                'new_lexical_facets': selected_step.get('new_lexical_facets', []) if selected_step else [],
+                'selection_note': ('coverage_selector_selected' if selected_step else 'not_selected_by_coverage_selector'),
+                'evidence_status': 'retrieval_candidate_not_fact_verification',
+            })
         selected, counts = [], {}
         for hit, selection_step in zip(coverage_selection.hits, coverage_selection.audit['steps']):
             source = hit.metadata['document_id']
             role = 'primary' if not selected else 'supporting'
-            score, anchor_count = ranking(hit)
+            score, anchor_count, body_term_coverage = ranking(hit)
             selected.append(DocumentHit(hit.document_id, hit.title, hit.score, hit.matched_terms, hit.snippet, hit.source_uri,
                 {**hit.metadata, 'ranking_score': score, 'anchor_match_count': anchor_count,
                  'retrieval_language_policy': {'query_language': query_language,
@@ -394,6 +601,9 @@ class KnowledgeStore:
                      'strategy': 'lexical_unsupported_encoder_language' if unsupported_language else 'configured_retrieval'},
                  'page_scope_coverage': page_coverage.get((source, hit.metadata.get('page_no')), 0),
                  'page_scope_method': 'body_only_idf_coverage_rerank_not_generation_evidence',
+                 'body_query_term_coverage': body_term_coverage,
+                 'body_query_term_method': ('idf_weighted_query_term_coverage_for_non_paginated_chunks'
+                                            if hit.metadata.get('page_no') is None else 'not_applied_to_paginated_sources'),
                  'question_shape_navigation': {'method': 'generic_purpose_body_affinity_not_semantic_proof',
                      'body_affinity': body_answer_affinity(query, navigation_contents[hit.document_id])},
                  'identifier_anchors': list(identifiers), 'evidence_role': role,
@@ -413,7 +623,59 @@ class KnowledgeStore:
         # and BM25 caches cannot turn stale excerpts into verified evidence.
         for source in counts:
             self.verify_source(source)
-        return selected
+        return finish(selected, retrieval_audit)
+
+    @staticmethod
+    def _attach_retrieval_audit(result, retrieval_audit):
+        if not isinstance(retrieval_audit, dict):
+            return result
+        candidates = retrieval_audit.setdefault('candidates', [])
+        by_chunk = {str(item.get('chunk_id')): item for item in candidates}
+        for citation in result.get('citations', []):
+            metadata = citation.get('metadata') or {}
+            chunk_id = str(metadata.get('chunk_id') or citation.get('document_id') or '')
+            if not chunk_id:
+                continue
+            candidate = by_chunk.get(chunk_id)
+            if candidate is None:
+                candidate = {
+                    'chunk_id': chunk_id,
+                    'source_document_id': metadata.get('document_id'),
+                    'source_sha256': metadata.get('source_sha256'),
+                    'title': citation.get('title', ''),
+                    'snippet': citation.get('snippet', ''),
+                    'source_locator': metadata.get('source_locator'),
+                    'page_no': metadata.get('page_no'),
+                    'sheet_name': metadata.get('sheet_name'),
+                    'row_start': metadata.get('row_start'),
+                    'row_end': metadata.get('row_end'),
+                    'ranking_rank': None,
+                    'bm25_rank': metadata.get('bm25_rank'),
+                    'bm25_raw': metadata.get('bm25_raw'),
+                    'bm25_relative': metadata.get('bm25_relative'),
+                    'dense_rank': metadata.get('dense_rank'),
+                    'dense_cosine': metadata.get('dense_cosine'),
+                    'rrf_rank': metadata.get('rrf_rank'),
+                    'rrf_score': metadata.get('rrf_score'),
+                    'ranking_score': metadata.get('ranking_score'),
+                    'matched_terms': list(citation.get('matched_terms') or []),
+                    'retrieval_channels': metadata.get('retrieval_channels',
+                        [metadata.get('retrieval_channel', 'unknown')]),
+                    'selected_in_initial_coverage': False,
+                    'selection_role': metadata.get('evidence_role') or 'later_evidence_selection',
+                    'selection_utility': None,
+                    'new_lexical_facets': [],
+                    'selection_note': 'final_citation_added_after_initial_candidate_selection',
+                    'evidence_status': 'final_citation_source_checked_separately',
+                }
+                candidates.append(candidate)
+                by_chunk[chunk_id] = candidate
+            citation_ids = candidate.setdefault('final_citation_ids', [])
+            citation_id = citation.get('citation_id')
+            if citation_id is not None and citation_id not in citation_ids:
+                citation_ids.append(citation_id)
+        result['retrieval_audit'] = retrieval_audit
+        return result
 
     def _question_part_hits(self, question, hits, *, top_k, document_id=None, page_no=None):
         """Bounded explicit-clause navigation before answering; no model facts.
@@ -470,34 +732,153 @@ class KnowledgeStore:
             'selected_source_budget': 4, 'unselected_source_ids': sources[4:],
             'selection': selection.audit}
 
-    def answer(self, question: str, *, top_k=4, document_id=None, page_no=None) -> dict[str, Any]:
+    def answer(self, question: str, *, top_k=4, document_id=None, page_no=None,
+               audit_callback=None, progress_callback=None, context_resolution=None,
+               image_attachments=None, retrieval_context=None) -> dict[str, Any]:
         from .evidence_recovery import audit_boundary
         start = audit_boundary(getattr(self.generator, 'client', None))
-        result = self._answer_with_recovery(question, top_k=top_k, document_id=document_id, page_no=page_no)
+        if not isinstance(question, str) or not question.strip() or len(question) > 1000:
+            raise ValueError('问题为空或超出长度上限')
+        question_analysis_started = time.perf_counter()
+        _publish_rag_progress(progress_callback, 'question_analysis', 'running',
+            '正在整理本轮问题与检索目标。', input={'question': question})
+        retrieval_query = question
+        if isinstance(retrieval_context, str) and retrieval_context.strip():
+            extra = retrieval_context.strip()
+            retrieval_query = (question + '\n' + extra[:max(0, 1000 - len(question) - 1)])[:1000]
+        _publish_rag_progress(progress_callback, 'question_analysis', 'success',
+            '检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。',
+            output={'question': question, 'retrieval_query': retrieval_query,
+                    'query_rewrite': 'none'},
+            latency_ms=(time.perf_counter() - question_analysis_started) * 1000, executed=True)
+        context_started = time.perf_counter()
+        context = context_resolution if isinstance(context_resolution, dict) else {'mode': 'current_question_only'}
+        mode = context.get('mode')
+        context_summary = ('已通过服务端校验并绑定上一轮来源。'
+            if mode in {'server_verified_dialogue_source', 'server_verified_sql_entity_document_followup'}
+            else '已采用本轮确定的上下文问题。'
+            if mode == 'verified_context_resolution'
+            else '本轮附带图片或检索上下文，与文字问题共同处理。'
+            if image_attachments or retrieval_context
+            else '按本轮完整问题处理；没有沿用未经核验的历史文档来源。')
+        context_output = {key: context[key] for key in
+            ('mode', 'source_question', 'actual_question', 'effective_question', 'context_turns', 'document_id', 'entity')
+            if key in context and isinstance(context[key], (str, int, float, bool, type(None)))}
+        _publish_rag_progress(progress_callback, 'context_resolution', 'running',
+            '正在核对多轮上下文、指代和附加输入。',
+            input={'mode': mode or 'current_question_only'})
+        _publish_rag_progress(progress_callback, 'context_resolution', 'success', context_summary,
+            output={**context_output, 'image_count': len(image_attachments or []),
+                    'retrieval_context_attached': bool(retrieval_context)},
+            latency_ms=(time.perf_counter() - context_started) * 1000, executed=True)
+        _publish_rag_progress(progress_callback, 'source_binding', 'running',
+            '正在应用资料范围和页码限制。',
+            input={'document_id': document_id, 'page_no': page_no,
+                   'scope': 'selected_source' if document_id else 'all_sources'})
+        result = self._answer_with_recovery(question, top_k=top_k, document_id=document_id,
+                                            page_no=page_no, audit_callback=audit_callback,
+                                            progress_callback=progress_callback,
+                                            image_attachments=image_attachments,
+                                            retrieval_context=retrieval_context,
+                                            retrieval_query=retrieval_query)
         from .document_parts_answer import compose_document_parts
+        completion_started = time.perf_counter()
+        _publish_rag_progress(progress_callback, 'completion', 'running',
+            '正在整理最终回答与来源信息。')
         composed, trace = compose_document_parts(self, question, result, top_k=top_k,
-            document_id=document_id, page_no=page_no, answer_audit_start=start)
+            document_id=document_id, page_no=page_no, answer_audit_start=start,
+            image_attachments=image_attachments, retrieval_context=retrieval_context)
         if composed is not None:
-            return composed
-        if trace['status'] != 'not_applicable':
+            result = composed
+        elif trace['status'] != 'not_applicable':
             result['trace'].append(trace)
+        _publish_rag_progress(progress_callback, 'completion',
+            'success' if result.get('status') == 'ok' else 'attention',
+            '文档处理已完成。' if result.get('status') == 'ok' else '处理已结束，当前结果需要补充条件或证据。',
+            output={'status': result.get('status'), 'answer_mode': result.get('answer_mode'),
+                    'citation_count': len(result.get('citations') or [])},
+            latency_ms=(time.perf_counter() - completion_started) * 1000, executed=True)
         return result
 
-    def _answer_with_recovery(self, question: str, *, top_k=4, document_id=None, page_no=None) -> dict[str, Any]:
+    def _answer_with_recovery(self, question: str, *, top_k=4, document_id=None, page_no=None,
+                              audit_callback=None, progress_callback=None, image_attachments=None,
+                              retrieval_context=None, retrieval_query=None) -> dict[str, Any]:
         if not question.strip() or len(question) > 1000:
             raise ValueError('问题为空或超出长度上限')
         from .evidence_recovery import audit_boundary, recovery_eligible, plan_evidence_recovery
         client = getattr(self.generator, 'client', None)
         answer_audit_start = audit_boundary(client)
-        hits = self.search(question, top_k=top_k, **({'document_id': document_id} if document_id is not None else {}),
-                           **({'page_no': page_no} if page_no is not None else {}))
+        if retrieval_query is None:
+            question_analysis_started = time.perf_counter()
+            retrieval_query = question
+            if isinstance(retrieval_context, str) and retrieval_context.strip():
+                extra = retrieval_context.strip()
+                retrieval_query = (question + '\n' + extra[:max(0, 1000 - len(question) - 1)])[:1000]
+            _publish_rag_progress(progress_callback, 'question_analysis', 'success',
+                '检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。',
+                output={'question': question, 'retrieval_query': retrieval_query,
+                        'query_rewrite': 'none'},
+                latency_ms=(time.perf_counter() - question_analysis_started) * 1000, executed=True)
+        hits, retrieval_audit = self.search(retrieval_query, top_k=top_k,
+                           **({'document_id': document_id} if document_id is not None else {}),
+                           **({'page_no': page_no} if page_no is not None else {}), with_audit=True,
+                           progress_callback=progress_callback)
         hits, part_audit = self._question_part_hits(question, hits, top_k=top_k,
                                                    document_id=document_id, page_no=page_no)
-        result = self._answer_hits(question, hits, document_id=document_id, page_no=page_no)
+        if part_audit is not None:
+            retrieval_audit['question_part_navigation'] = part_audit
+            _publish_rag_progress(progress_callback, 'context_resolution', 'success',
+                f"问题拆分导航完成，追加 {len(part_audit.get('queries') or [])} 条检索查询。",
+                output={'question_parts': list(part_audit.get('queries') or []),
+                        'part_candidate_count': part_audit.get('candidate_count', 0),
+                        'part_selected_count': part_audit.get('selected_count', 0),
+                        'navigation_only': True}, executed=True)
+        if audit_callback is not None:
+            try:
+                audit_callback({'phase': 'retrieval_complete',
+                                'retrieval_audit': deepcopy(retrieval_audit)})
+            except Exception:
+                pass
+        evidence_started = time.perf_counter()
+        _publish_rag_progress(progress_callback, 'generation_evidence', 'running',
+            '正在整理选中片段、原文定位和关联图片。',
+            input={'selected_count': min(len(hits), MAX_EVIDENCE_ITEMS)})
+        model_evidence = [{
+            'title': hit.title,
+            'chunk_id': hit.metadata.get('chunk_id'),
+            'source_locator': hit.metadata.get('source_locator'),
+            'page_no': hit.metadata.get('page_no'),
+            'snippet': str(hit.snippet or '')[:320],
+            'image_count': len(hit.metadata.get('raysource_images') or []),
+        } for hit in hits[:MAX_EVIDENCE_ITEMS]]
+        _publish_rag_progress(progress_callback, 'generation_evidence', 'success',
+            f'已整理 {len(model_evidence)} 个入选片段，交由回答与来源核验流程处理。',
+            output={'evidence_count': len(model_evidence), 'evidence': model_evidence,
+                    'user_image_count': len(image_attachments or [])},
+            latency_ms=(time.perf_counter() - evidence_started) * 1000, executed=True)
+        generation_started = time.perf_counter()
+        _publish_rag_progress(progress_callback, 'answer_generation', 'running',
+            '正在依据入选证据生成或核验回答。',
+            input={'question': question, 'evidence_count': len(model_evidence)})
+        try:
+            result = self._answer_hits(question, hits, document_id=document_id, page_no=page_no,
+                                       image_attachments=image_attachments)
+        except Exception:
+            _publish_rag_progress(progress_callback, 'answer_generation', 'error',
+                '答案生成或来源核验执行失败。',
+                latency_ms=(time.perf_counter() - generation_started) * 1000, executed=False)
+            raise
+        generation_ok = result.get('status') == 'ok'
+        _publish_rag_progress(progress_callback, 'answer_generation',
+            'success' if generation_ok else 'attention',
+            ('已返回回答并完成来源核验。' if generation_ok else '回答处理完成，但当前证据不足或需要补充条件。'),
+            output={'status': result.get('status'), 'answer_mode': result.get('answer_mode'),
+                    'citation_count': len(result.get('citations') or [])},
+            latency_ms=(time.perf_counter() - generation_started) * 1000, executed=True)
         if part_audit is not None:
             result['trace'].insert(0, part_audit)
         if not recovery_eligible(result, client, answer_audit_start=answer_audit_start):
-            return result
+            return self._attach_retrieval_audit(result, retrieval_audit)
         navigation_sources = [{'metadata': hit.metadata} for hit in hits]
         self._verify_citation_sources(navigation_sources)
         self._verify_citation_sources(result['citations'])
@@ -512,7 +893,8 @@ class KnowledgeStore:
         if not queries:
             result['trace'].append(audit)
             self._verify_citation_sources(result['citations'])
-            return result
+            retrieval_audit['evidence_recovery_navigation'] = audit
+            return self._attach_retrieval_audit(result, retrieval_audit)
         scope = {**({'document_id': document_id} if document_id is not None else {}),
                  **({'page_no': page_no} if page_no is not None else {})}
         candidates = {hit.document_id: hit for hit in hits}
@@ -556,12 +938,61 @@ class KnowledgeStore:
             audit['status'] = 'no_new_source_evidence'
             result['trace'].append(audit)
             self._verify_citation_sources(result['citations'])
-            return result
+            retrieval_audit['evidence_recovery_navigation'] = audit
+            return self._attach_retrieval_audit(result, retrieval_audit)
         # Re-run once through the SAME source, numeric, scope, and independent
         # review checks. No recursive recovery, no reuse of old model facts.
         recovered = self._answer_hits(question, selection.hits,
-                                      document_id=document_id, page_no=page_no)
+                                      document_id=document_id, page_no=page_no,
+                                      image_attachments=image_attachments)
         audit['status'] = 'executed_once'
+        retrieval_audit['evidence_recovery_navigation'] = audit
+        candidate_by_id = {str(item.get('chunk_id')): item
+                           for item in retrieval_audit.get('candidates', [])}
+        for recovery_rank, hit in enumerate(selection.hits, 1):
+            metadata = hit.metadata
+            candidate = candidate_by_id.get(str(hit.document_id))
+            if candidate is None:
+                candidate = {
+                    'chunk_id': hit.document_id,
+                    'source_document_id': metadata.get('document_id'),
+                    'source_sha256': metadata.get('source_sha256'),
+                    'title': hit.title,
+                    'snippet': hit.snippet,
+                    'source_locator': metadata.get('source_locator'),
+                    'page_no': metadata.get('page_no'),
+                    'sheet_name': metadata.get('sheet_name'),
+                    'row_start': metadata.get('row_start'),
+                    'row_end': metadata.get('row_end'),
+                    'ranking_rank': None,
+                    'bm25_rank': metadata.get('bm25_rank'),
+                    'bm25_raw': metadata.get('bm25_raw'),
+                    'bm25_relative': metadata.get('bm25_relative'),
+                    'dense_rank': metadata.get('dense_rank'),
+                    'dense_cosine': metadata.get('dense_cosine'),
+                    'rrf_rank': metadata.get('rrf_rank'),
+                    'rrf_score': metadata.get('rrf_score'),
+                    'ranking_score': metadata.get('ranking_score'),
+                    'matched_terms': list(hit.matched_terms),
+                    'retrieval_channels': metadata.get('retrieval_channels',
+                        [metadata.get('retrieval_channel', 'unknown')]),
+                    'selected_in_initial_coverage': False,
+                    'selection_role': None,
+                    'selection_utility': None,
+                    'new_lexical_facets': [],
+                    'selection_note': 'selected_by_evidence_recovery_navigation',
+                    'evidence_status': 'retrieval_candidate_not_fact_verification',
+                }
+                retrieval_audit['candidates'].append(candidate)
+                candidate_by_id[str(hit.document_id)] = candidate
+            candidate['evidence_recovery_rank'] = recovery_rank
+            candidate['evidence_recovery_role'] = 'primary' if recovery_rank == 1 else 'supporting'
+        if audit_callback is not None:
+            try:
+                audit_callback({'phase': 'recovery_retrieval_complete',
+                                'retrieval_audit': deepcopy(retrieval_audit)})
+            except Exception:
+                pass
         recovered['evidence_recovery'] = {
             'original_question': question,
             'prior_status': result['status'], 'prior_answer_mode': result['answer_mode'],
@@ -570,29 +1001,35 @@ class KnowledgeStore:
             'navigation_audit': audit,
         }
         recovered['trace'].insert(0, audit)
+        self._attach_retrieval_audit(recovered, retrieval_audit)
         self._verify_citation_sources(result['citations'])
         self._verify_citation_sources(recovered['citations'])
         return recovered
 
-    def _answer_hits(self, question, hits, *, document_id=None, page_no=None):
+    def _answer_hits(self, question, hits, *, document_id=None, page_no=None, image_attachments=None):
         from .native_row_selection import route_native_row_selection
-        selection_result, selection_trace = route_native_row_selection(self, question, hits, document_id=document_id, page_no=page_no)
+        selection_result, selection_trace = ((None, {'stage': 'native_row_selection', 'status': 'not_applicable'})
+            if image_attachments else route_native_row_selection(self, question, hits, document_id=document_id, page_no=page_no))
         if selection_result is not None:
             return selection_result
         from .native_row_comparison import route_native_row_comparison
-        row_result, row_trace = route_native_row_comparison(self, question, hits, document_id=document_id, page_no=page_no)
+        row_result, row_trace = ((None, {'stage': 'native_row_comparison', 'status': 'not_applicable'})
+            if image_attachments else route_native_row_comparison(self, question, hits, document_id=document_id, page_no=page_no))
         if row_result is not None:
             return row_result
         from .visual_routing import route_visual_table_question
-        visual_result, visual_trace = route_visual_table_question(self, question, hits, document_id=document_id, page_no=page_no)
+        visual_result, visual_trace = ((None, {'stage': 'visual_table_routing', 'status': 'not_applicable'})
+            if image_attachments else route_visual_table_question(self, question, hits, document_id=document_id, page_no=page_no))
         if visual_result is not None:
             return visual_result
         from .visual_chart_routing import route_visual_chart_question
-        chart_result, chart_trace = route_visual_chart_question(self, question, hits, document_id=document_id, page_no=page_no)
+        chart_result, chart_trace = ((None, {'stage': 'visual_chart_routing', 'status': 'not_applicable'})
+            if image_attachments else route_visual_chart_question(self, question, hits, document_id=document_id, page_no=page_no))
         if chart_result is not None:
             return chart_result
         from .native_table_question import route_native_table_question
-        table_result, table_trace = route_native_table_question(self, question, hits, document_id=document_id, page_no=page_no)
+        table_result, table_trace = ((None, {'stage': 'native_table_question', 'status': 'not_applicable'})
+            if image_attachments else route_native_table_question(self, question, hits, document_id=document_id, page_no=page_no))
         if table_result is not None:
             if table_result['status'] != 'ok':
                 from .visual_source_answer import route_visual_source_fallback
@@ -606,14 +1043,15 @@ class KnowledgeStore:
             return table_result
         from .native_total_question import route as route_native_totals
         total_result, total_trace = (route_native_totals(self, question, hits, document_id=document_id, page_no=page_no)
-            if table_trace['status'] in {'not_applicable', 'no_native_aligned_tables',
+            if not image_attachments and table_trace['status'] in {'not_applicable', 'no_native_aligned_tables',
                 'no_related_literal_row_labels', 'native_table_whole_question_unsupported'}
             else (None, {'stage': 'native_total_routing', 'status': 'not_applicable'}))
         if total_result is not None:
             return total_result
         from .source_answer_dossier import route as route_native_dossier
-        dossier_result, dossier_trace = route_native_dossier(self, question, hits,
-            document_id=document_id, page_no=page_no)
+        dossier_result, dossier_trace = ((None, {'stage': 'source_answer_dossier', 'status': 'not_applicable'})
+            if image_attachments else route_native_dossier(self, question, hits,
+                document_id=document_id, page_no=page_no))
         if dossier_result is not None:
             return dossier_result
         query_terms = set(_tokenize(question))
@@ -662,7 +1100,7 @@ class KnowledgeStore:
             single_source_attempted = False
             early_client = self.generator.client
             from .source_span_answer import source_first_eligible, bind_source_span_answer, replay_source_span_proof
-            if source_first_eligible(question, early_client):
+            if not image_attachments and source_first_eligible(question, early_client):
                 single_source_attempted = True
                 try:
                     literal = bind_source_span_answer(question, generation_citations, early_client)
@@ -697,7 +1135,8 @@ class KnowledgeStore:
                 finally:
                     self._verify_citation_sources(result['citations'])
                     self._verify_generation_chunks(generation_citations)
-            if ((early_contract['multiple_requested_fields'] or early_contract['exhaustive_selection_required'])
+            if (not image_attachments
+                    and (early_contract['multiple_requested_fields'] or early_contract['exhaustive_selection_required'])
                     and getattr(early_client, 'model', None) == 'gpt-6-luna'
                     and getattr(early_client, 'reasoning', None) == 'medium'):
                 from .source_multi_span_answer import bind_multi_source_answer, replay_multi_source_proof
@@ -729,11 +1168,14 @@ class KnowledgeStore:
                     self._verify_citation_sources(result['citations'])
                     self._verify_generation_chunks(generation_citations)
             try:
-                generated = self.generator.answer(question, generation_citations)
+                generated = self.generator.answer(question, generation_citations,
+                    **({'image_attachments': image_attachments} if image_attachments else {}))
                 result.update(generated)
                 result['answer_mode'] = 'model_grounded'
                 result['trace'].append({'stage': 'grounded_generation', 'status': 'validated', 'model': self.generator.client.model})
             except GenerationError as exc:
+                if image_attachments:
+                    raise ValueError('图片内容未能完成分析，本次没有生成忽略图片的回答，请稍后重试。') from exc
                 result['answer_mode'] = 'extractive_fallback'
                 attempts = getattr(exc, 'generation_attempts', None)
                 if attempts:
@@ -755,7 +1197,8 @@ class KnowledgeStore:
             # Recover a literal answer from the source when fact generation
             # abstains or fails semantic validation. Provider failures are not
             # evidence failures and must never trigger further API requests.
-            if (result['answer_mode'] == 'extractive_fallback'
+            if not image_attachments and (
+                    result['answer_mode'] == 'extractive_fallback'
                     or result['answer_mode'] == 'model_grounded' and result.get('status') == 'insufficient_evidence'):
                 from .grounded_span_answer import GroundedSpanAnswer, _completed
                 from .source_span_answer import replay_source_span_proof

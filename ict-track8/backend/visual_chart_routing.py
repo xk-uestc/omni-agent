@@ -11,7 +11,7 @@ import re
 from copy import deepcopy
 import fitz
 
-from .responses_client import GenerationError, object_schema
+from .responses_client import GenerationError, object_schema, verified_response_audit
 from .visual_charts import extract_pdf_charts, query_chart_fact, compute_chart_annotations
 from .visual_table_reader import label_present
 from .visual_work_budget import visual_work_slot
@@ -34,10 +34,7 @@ PERCENTAGE_REVIEW = object_schema({k: {'type':'boolean'} for k in (
 
 def _verified_model(client):
     audit = client.audit
-    return (audit.get('status') == 'completed' and audit.get('model_verified') is True
-            and type(audit.get('http_status')) is int and 200 <= audit['http_status'] < 300
-            and audit.get('model') == 'gpt-6-luna' and audit.get('reasoning') == 'medium'
-            and re.fullmatch(r'gpt-6-luna(?:-\d{4}-\d{2}-\d{2})?', str(audit.get('response_model'))) is not None)
+    return verified_response_audit(audit) and audit.get('reasoning') == 'medium'
 
 
 def _percentage_display_policy(question):

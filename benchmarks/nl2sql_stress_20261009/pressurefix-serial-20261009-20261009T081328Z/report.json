@@ -1,0 +1,166 @@
+{
+  "run_id": "pressurefix-serial-20261009-20261009T081328Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8039",
+  "until_utc": "2026-10-09T08:20:00+00:00",
+  "started_utc": "2026-10-09T08:13:28.341103+00:00",
+  "source_case_count": 743,
+  "case_count_per_cycle": 743,
+  "task_count_per_cycle": 711,
+  "question_order": "difficulty_bands_preserving_dialogue_sessions",
+  "case_selection": "full-authored-plus-composition-challenges-serial-v2",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 79,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "compound_query": 13,
+    "challenge_grouped": 288,
+    "challenge_multi_metric": 20,
+    "challenge_literal_filter": 13,
+    "challenge_ranked": 8,
+    "safety_clarification": 9,
+    "safety_readonly": 1,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 178,
+    "3": 178,
+    "4": 318,
+    "5": 42
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "34d0bc701926407a74d7a65bbb26f93ccc87f0e8644ff58358a5d24df2207c05",
+  "catalog_sha256": "a0e0af6fc1d088d3298836e39950b5615f65fd895d9e1358d6ebaa367f03751c",
+  "scorer_sha256": "04b868cba82e16c410fe4983875d7d6790a0cc9f6329e1ee18091427f774deb3",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-09T08:20:20.588028+00:00",
+  "elapsed_seconds": 412.2,
+  "total_requests": 572,
+  "passed": 559,
+  "failed": 13,
+  "pass_rate": 0.977273,
+  "latency_ms": {
+    "p50": 226.11,
+    "p95": 748.69,
+    "p99": 18322.03,
+    "max": 40021.186
+  },
+  "health_checks": {
+    "passed": 12,
+    "failed": 0
+  },
+  "by_category": {
+    "legacy": {
+      "total": 31,
+      "passed": 31,
+      "pass_rate": 1.0,
+      "p50_ms": 197.24,
+      "p95_ms": 223.88
+    },
+    "history": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 778.63,
+      "p95_ms": 988.87
+    },
+    "catalog_alias": {
+      "total": 79,
+      "passed": 79,
+      "pass_rate": 1.0,
+      "p50_ms": 197.48,
+      "p95_ms": 213.2
+    },
+    "vocabulary_variant": {
+      "total": 108,
+      "passed": 108,
+      "pass_rate": 1.0,
+      "p50_ms": 202.91,
+      "p95_ms": 225.66
+    },
+    "domain_colloquial": {
+      "total": 25,
+      "passed": 25,
+      "pass_rate": 1.0,
+      "p50_ms": 199.75,
+      "p95_ms": 217.69
+    },
+    "grouping": {
+      "total": 72,
+      "passed": 72,
+      "pass_rate": 1.0,
+      "p50_ms": 314.62,
+      "p95_ms": 340.67
+    },
+    "topic_switch": {
+      "total": 8,
+      "passed": 8,
+      "pass_rate": 1.0,
+      "p50_ms": 540.23,
+      "p95_ms": 722.07
+    },
+    "slang": {
+      "total": 32,
+      "passed": 32,
+      "pass_rate": 1.0,
+      "p50_ms": 318.68,
+      "p95_ms": 341.42
+    },
+    "challenge_grouped": {
+      "total": 189,
+      "passed": 176,
+      "pass_rate": 0.931217,
+      "p50_ms": 325.45,
+      "p95_ms": 8087.71
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 572,
+      "passed": 559,
+      "pass_rate": 0.977273,
+      "p50_ms": 226.11,
+      "p95_ms": 748.69
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 27,
+      "passed": 27,
+      "pass_rate": 1.0,
+      "p50_ms": 197.24,
+      "p95_ms": 541.89
+    },
+    "3": {
+      "total": 178,
+      "passed": 178,
+      "pass_rate": 1.0,
+      "p50_ms": 315.18,
+      "p95_ms": 840.4
+    },
+    "2": {
+      "total": 178,
+      "passed": 178,
+      "pass_rate": 1.0,
+      "p50_ms": 199.25,
+      "p95_ms": 218.74
+    },
+    "4": {
+      "total": 189,
+      "passed": 176,
+      "pass_rate": 0.931217,
+      "p50_ms": 325.45,
+      "p95_ms": 8087.71
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\pressurefix-serial-20261009-20261009T081328Z\\results.jsonl"
+}

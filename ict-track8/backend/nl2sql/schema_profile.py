@@ -93,6 +93,7 @@ _TOKEN_ALIASES: dict[str, tuple[str, ...]] = {
     "status": ("状态",),
     "stock": ("库存",),
     "title": ("标题",),
+    "type": ("类型",),
     "total": ("总额", "总金额"),
     "unitprice": ("单价", "价格"),
     "price": ("价格",),
@@ -134,6 +135,7 @@ _MODIFIER_ALIASES = {
     "replacement": ("替换", "重置"), "shipping": ("配送",),
     "billing": ("账单",), "release": ("发行",), "return": ("归还",),
     "birth": ("出生",), "purchase": ("采购",), "unit": ("单位",),
+    "campaign": ("营销", "活动"), "marketing": ("营销",), "issue": ("问题",),
 }
 _NAMESPACE_TOKENS = {"dbo", "public", "dim", "fact", "tbl"}
 
@@ -275,7 +277,8 @@ def infer_rules(tables: Iterable[TableInfo], *, infer_entity_counts: bool = True
                 aliases.extend(_compound_aliases(tokens))
                 aliases.extend(_TOKEN_ALIASES.get(joined, ()))
                 for token in tokens:
-                    aliases.extend(_TOKEN_ALIASES.get(token, ()))
+                    if token != "type":
+                        aliases.extend(_TOKEN_ALIASES.get(token, ()))
             if not id_column and tokens[-1] in {"name", "title"}:
                 aliases.extend(table_context)
             if joined == "unitprice":

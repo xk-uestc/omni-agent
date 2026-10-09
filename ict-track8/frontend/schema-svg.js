@@ -6,8 +6,9 @@
   "use strict";
 
   const SVG_NS = "http://www.w3.org/2000/svg";
-  const ROLE_ORDER = ["metric", "filter", "dimension", "time", "operator", "join"];
+  const ROLE_ORDER = ["metric", "filter", "dimension", "time", "operator", "join", "used"];
   const ROLE_LABELS = {
+    used: "查询使用",
     metric: "指标",
     dimension: "维度",
     filter: "筛选",
@@ -15,6 +16,70 @@
     operator: "运算",
     join: "关联键",
   };
+  const TABLE_LABELS = {
+    customers: "客户档案", employees: "员工档案", inventory_snapshots: "库存快照",
+    marketing_campaigns: "营销活动", operating_expenses: "运营费用", payment_receipts: "回款记录",
+    payroll_records: "薪酬记录", products: "产品目录", purchase_orders: "采购订单",
+    regions: "地区信息", sales_orders: "销售订单", sales_reps: "销售人员",
+    sales_returns: "退货退款", sales_targets: "销售目标", shipment_records: "物流发货",
+    suppliers: "供应商档案", support_tickets: "售后工单", web_traffic_daily: "每日网站流量",
+  };
+  const COLUMN_LABELS = {
+    acquisition_channel: "获客渠道", annual_value: "年度客户价值", approval_status: "审批状态",
+    assigned_rep_id: "处理人员编号", attributed_sales: "归因销售额", base_salary: "基本工资",
+    bonus_amount: "奖金金额", brand: "品牌", budget: "预算金额", campaign_id: "活动编号", campaign_name: "活动名称",
+    campaign_type: "活动类型", carrier: "承运商", category: "类别", channel: "渠道", city: "城市",
+    clicks: "点击量", collected_amount: "实收金额", conversions: "转化量", created_date: "创建日期",
+    customer_id: "客户编号", customer_level: "客户等级", customer_name: "客户名称", delivery_days: "配送天数",
+    department: "部门", device_type: "设备类型", discount_amount: "优惠金额", employee_id: "员工编号",
+    employee_name: "员工姓名", employee_status: "员工状态", employment_type: "用工类型", end_date: "结束日期", expense_amount: "费用金额",
+    expense_category: "费用类别", expense_date: "费用日期", expense_id: "费用单号",
+    first_response_minutes: "首次响应时长（分钟）", gross_profit: "毛利", hire_date: "入职日期",
+    impressions: "曝光量", inbound_quantity: "在途库存量", industry: "所属行业", inventory_value: "库存金额",
+    issue_type: "问题类型", launch_date: "上市日期", late_days: "延误天数", lead_time_days: "采购周期（天）",
+    list_price: "标价", on_hand_quantity: "现有库存量", order_date: "下单日期", order_id: "订单编号",
+    order_status: "订单状态", overtime_hours: "加班时长", page_views: "页面浏览量", payment_date: "收款日期",
+    payment_method: "支付方式", payroll_date: "薪酬日期", payroll_id: "薪酬记录编号", position: "岗位",
+    priority: "优先级", product_category: "产品类别", product_id: "产品编号", product_name: "产品名称",
+    purchase_amount: "采购金额", purchase_date: "采购日期", purchase_id: "采购单号",
+    purchase_quantity: "采购数量", purchase_status: "采购状态", quantity: "销售数量", reason: "退货原因",
+    receipt_id: "回款单号", receipt_status: "回款状态", refund_amount: "退款金额", region: "地区",
+    region_id: "地区编号", region_name: "地区名称", resolution_hours: "处理时长（小时）",
+    return_date: "退货日期", return_id: "退货单号", safety_stock: "安全库存", sales_amount: "销售额",
+    sales_rep_id: "销售人员编号", sales_rep_name: "销售人员姓名", salary_amount: "薪酬金额",
+    satisfaction_score: "满意度评分", shipment_date: "发货日期", shipment_id: "发货单号",
+    shipment_status: "物流状态", shipping_cost: "运费", snapshot_month: "库存快照月份", start_date: "开始日期",
+    status: "状态", supplier_category: "供应商类别", supplier_id: "供应商编号", supplier_name: "供应商名称",
+    supplier_rating: "供应商评分", target_id: "目标记录编号", target_month: "目标月份", target_orders: "目标订单数",
+    target_sales: "目标销售额", team: "销售团队", ticket_id: "工单编号", traffic_id: "流量记录编号",
+    traffic_source: "流量来源", transit_days: "运输时长（天）", unit_cost: "单位成本", unit_price: "单价",
+    visit_date: "访问日期", visits: "访问次数", web_conversions: "网站转化数",
+  };
+  const TABLE_COLUMN_LABELS = {
+    marketing_campaigns: { channel: "营销渠道", budget: "活动预算" },
+    sales_orders: { channel: "销售渠道" },
+    support_tickets: { created_date: "工单创建日期", status: "工单状态" },
+    sales_returns: { status: "退货状态" },
+    products: { category: "产品类别" },
+  };
+  const DATA_TYPE_LABELS = {
+    BLOB: "二进制", BOOLEAN: "布尔值", DATE: "日期", DATETIME: "日期时间", DECIMAL: "小数",
+    INTEGER: "整数", NUMERIC: "数值", REAL: "实数", TEXT: "文本",
+  };
+
+  function tableLabel(name) {
+    return TABLE_LABELS[name] || name;
+  }
+
+  function columnLabel(table, column) {
+    return TABLE_COLUMN_LABELS[table]?.[column] || COLUMN_LABELS[column] || column;
+  }
+
+  function dataTypeLabel(type) {
+    const raw = String(type || "UNKNOWN").toUpperCase();
+    return DATA_TYPE_LABELS[raw] || raw;
+  }
+
   let diagramSequence = 0;
 
   function fieldKey(table, column) {
@@ -138,7 +203,7 @@
     let maxTableWidth = 300;
     for (const table of tables) {
       for (const column of columns.get(table.name)) {
-        const columnWidth = Array.from(column.name).length * 7.8 + Array.from(column.data_type || "").length * 6.6 + 112;
+        const columnWidth = Array.from(columnLabel(table.name, column.name)).length * 11.5 + 166;
         maxTableWidth = Math.max(maxTableWidth, columnWidth);
       }
     }
@@ -295,7 +360,7 @@
         class: `schema-edge${edge.active ? " is-active" : ""}`,
         d: `M${x1},${y1} C${curveX},${y1} ${curveX},${y2} ${x2},${y2}`,
         "marker-end": `url(#${id})`,
-        "aria-label": `${edge.fromTable}.${edge.fromColumn} 关联 ${edge.toTable}.${edge.toColumn}`,
+        "aria-label": `${tableLabel(edge.fromTable)}的${columnLabel(edge.fromTable, edge.fromColumn)}（${edge.fromTable}.${edge.fromColumn}）关联${tableLabel(edge.toTable)}的${columnLabel(edge.toTable, edge.toColumn)}（${edge.toTable}.${edge.toColumn}）`,
       }));
     });
     svg.append(edgeLayer);
@@ -309,7 +374,8 @@
       });
       group.append(svgElement("rect", { class: "schema-table-box", x: 0, y: 0, width: node.width, height: node.height }));
       group.append(svgElement("rect", { class: "schema-table-head", x: 1, y: 1, width: node.width - 2, height: model.headHeight - 1 }));
-      group.append(svgElement("text", { class: "schema-table-name", x: 12, y: 23 }, node.name));
+      group.append(svgElement("title", {}, `${tableLabel(node.name)}（${node.name}）`));
+      group.append(svgElement("text", { class: "schema-table-name", x: 12, y: 23 }, tableLabel(node.name)));
       group.append(svgElement("text", { class: "schema-table-count", x: node.width - 12, y: 23, "text-anchor": "end" }, `${node.columns.length} 字段${node.rowCount == null ? "" : ` · ${node.rowCount} 行`}`));
 
       node.columns.forEach((column) => {
@@ -323,18 +389,21 @@
           "data-field-key": column.key,
           "data-table": node.name,
           "data-column": column.name,
-          "aria-label": `${node.name}.${column.name}${column.primaryRole ? `，${ROLE_LABELS[column.primaryRole]}` : ""}`,
+          "aria-label": `${tableLabel(node.name)}的${columnLabel(node.name, column.name)}（${node.name}.${column.name}）${column.primaryRole ? `，${ROLE_LABELS[column.primaryRole]}` : ""}`,
         });
         const rowY = column.y - node.y;
-        row.append(svgElement("title", {}, `${node.name}.${column.name} · ${column.data_type || "UNKNOWN"}${column.primary_key ? " · 主键" : ""}${column.isForeignKey ? " · 外键" : ""}${column.nullable === false ? " · 非空" : ""}${column.roles.length ? ` · 本次涉及：${column.roles.map((role) => ROLE_LABELS[role]).join("、")}` : ""}`));
+        const typeLabel = dataTypeLabel(column.data_type);
+        const constraints = [column.primary_key ? "主键" : "", column.isForeignKey ? "外键" : "", column.nullable === false ? "非空" : "", column.isUnique && !column.primary_key ? "唯一" : ""]
+          .filter(Boolean);
+        row.append(svgElement("title", {}, `${tableLabel(node.name)}（${node.name}） · ${columnLabel(node.name, column.name)}（${column.name}） · 类型：${typeLabel}（${column.data_type || "UNKNOWN"}）${constraints.length ? ` · ${constraints.join(" · ")}` : ""}${column.roles.length ? ` · 本次涉及：${column.roles.map((role) => ROLE_LABELS[role]).join("、")}` : ""}`));
         row.append(svgElement("rect", { class: "schema-column-bg", x: 1, y: rowY, width: node.width - 2, height: model.rowHeight }));
         row.append(svgElement("rect", { class: "schema-column-bar", x: 1, y: rowY, width: 3, height: model.rowHeight }));
         row.append(svgElement("path", { class: "schema-focus-marker", d: `M8 ${rowY + 8} L15 ${rowY + 13} L8 ${rowY + 18} Z` }));
-        const keyLabels = [column.primary_key ? "PK" : "", column.isForeignKey ? "FK" : "", column.nullable === false ? "NN" : "", column.isUnique && !column.primary_key ? "UQ" : ""]
-          .filter(Boolean).join(" ");
+        const keyLabels = [column.primary_key ? "主键" : "", column.isForeignKey ? "外键" : "", column.nullable === false ? "非空" : "", column.isUnique && !column.primary_key ? "唯一" : ""]
+          .filter(Boolean).join(" · ");
         row.append(svgElement("text", { class: "schema-column-key", x: 20, y: rowY + 17 }, keyLabels));
-        row.append(svgElement("text", { class: "schema-column-name", x: 76, y: rowY + 17 }, column.name));
-        row.append(svgElement("text", { class: "schema-column-type", x: node.width - 10, y: rowY + 17, "text-anchor": "end" }, column.data_type || "UNKNOWN"));
+        row.append(svgElement("text", { class: "schema-column-name", x: 86, y: rowY + 17 }, columnLabel(node.name, column.name)));
+        row.append(svgElement("text", { class: "schema-column-type", x: node.width - 10, y: rowY + 17, "text-anchor": "end" }, typeLabel));
         group.append(row);
         fieldNodes.set(column.id, row);
       });
@@ -344,10 +413,10 @@
     return { svg, fieldNodes };
   }
 
-  function render(schema, plan, links) {
+  function render(schema, plan, links, options = {}) {
     const model = buildModel(schema, plan || {}, links || []);
     const section = document.createElement("section");
-    section.className = "schema-explorer";
+    section.className = `schema-explorer${options.minimal ? " is-minimal" : ""}`;
     const header = document.createElement("div");
     header.className = "schema-explorer-head";
     const heading = document.createElement("div");
@@ -356,7 +425,8 @@
     title.textContent = "数据库字段定位";
     const count = document.createElement("span");
     count.textContent = `${model.tables.length} 张表 · ${model.fieldCount} 个字段 · ${model.foreignKeyCount} 条外键`;
-    heading.append(title, count);
+    heading.append(title);
+    if (!options.hideCount) heading.append(count);
     const controls = document.createElement("div");
     controls.className = "schema-explorer-controls";
     const fit = document.createElement("button");
@@ -377,7 +447,7 @@
     jump.hidden = !model.focusTarget;
     controls.append(status, fit, zoomOut, zoomIn, jump);
     header.append(heading, controls);
-    section.append(header);
+    if (!options.minimal) section.append(header);
 
     const legend = document.createElement("div");
     legend.className = "schema-legend";
@@ -390,10 +460,12 @@
       item.append(swatch, label);
       legend.append(item);
     });
-    const primaryKeyNote = document.createElement("span");
-    primaryKeyNote.className = "schema-legend-note";
-    primaryKeyNote.textContent = "PK 主键 · FK 外键 · NN 非空 · UQ 唯一";
-    legend.append(primaryKeyNote);
+    if (!options.hideLegendNote) {
+      const primaryKeyNote = document.createElement("span");
+      primaryKeyNote.className = "schema-legend-note";
+      primaryKeyNote.textContent = "主键 · 外键 · 非空 · 唯一";
+      legend.append(primaryKeyNote);
+    }
     section.append(legend);
 
     const viewport = document.createElement("div");
@@ -413,8 +485,9 @@
       const highlighted = section.classList.toggle("is-query-focused");
       scopeToggle.setAttribute("aria-pressed", String(highlighted)); scopeToggle.textContent = highlighted ? "显示完整结构" : "突出查询字段";
     });
-    inspectorText.textContent = model.focusFieldCount ? `本次涉及 ${model.focusFieldCount} 个字段 · 点击字段查看类型与用途` : "点击字段查看类型与约束";
-    footer.append(inspectorText, scopeToggle); section.append(footer);
+    inspectorText.textContent = model.focusFieldCount ? `本次涉及 ${model.focusFieldCount} 个字段 · 点击查看中文说明、原字段名与类型` : "点击字段查看中文说明、原字段名与约束";
+    footer.append(inspectorText, scopeToggle);
+    if (!options.minimal) section.append(footer);
     if (!model.tables.length) {
       const empty = document.createElement("p");
       empty.className = "schema-empty";
@@ -438,12 +511,14 @@
       row.classList.add("is-target");
       const column = [...model.nodes.values()].flatMap((node) => node.columns).find((item) => item.id === fieldId);
       inspectorText.replaceChildren();
-      const name = document.createElement("code"); name.textContent = `${row.getAttribute("data-table")}.${row.getAttribute("data-column")}`;
-      const type = document.createElement("span"); type.className = "schema-inspector-type"; type.textContent = column?.data_type || "UNKNOWN";
+      const table = row.getAttribute("data-table"), field = row.getAttribute("data-column");
+      const label = document.createElement("strong"); label.className = "schema-inspector-label"; label.textContent = `${tableLabel(table)} · ${columnLabel(table, field)}`;
+      const name = document.createElement("code"); name.textContent = `${table}.${field}`;
+      const type = document.createElement("span"); type.className = "schema-inspector-type"; type.textContent = `类型：${dataTypeLabel(column?.data_type)}（${column?.data_type || "UNKNOWN"}）`;
       const description = document.createElement("span");
-      description.textContent = [column?.primary_key ? "主键" : null, column?.nullable === false ? "非空" : null, ...(column?.roles || []).map((role) => ROLE_LABELS[role])].filter(Boolean).join(" · ") || "本次未使用";
-      inspectorText.append(name, type, description);
-      status.textContent = `已定位：${row.getAttribute("data-table")}.${row.getAttribute("data-column")}`;
+      description.textContent = [column?.primary_key ? "主键" : null, column?.isForeignKey ? "外键" : null, column?.nullable === false ? "非空" : null, column?.isUnique && !column?.primary_key ? "唯一" : null, ...(column?.roles || []).map((role) => ROLE_LABELS[role])].filter(Boolean).join(" · ") || "本次未使用";
+      inspectorText.append(label, name, type, description);
+      status.textContent = `已定位：${tableLabel(table)} · ${columnLabel(table, field)}`;
       const bounds = row.getBoundingClientRect(), viewportBounds = viewport.getBoundingClientRect();
       viewport.scrollTo({
         left: Math.max(0, viewport.scrollLeft + bounds.left - viewportBounds.left + bounds.width / 2 - viewport.clientWidth / 2),
@@ -462,7 +537,7 @@
       fieldNodes.forEach((row) => row.classList.toggle("is-linked", keys.includes(`${row.getAttribute("data-table")}.${row.getAttribute("data-column")}`)));
       if (!keys.length) {
         fieldNodes.forEach((row) => row.classList.remove("is-target")); status.textContent = `本次涉及 ${model.focusFieldCount} 个字段`;
-        inspectorText.textContent = "点击字段查看类型与用途"; return;
+        inspectorText.textContent = "点击字段查看中文说明、原字段名与类型"; return;
       }
       const found = [...fieldNodes.entries()].find(([, row]) => event.detail?.table && event.detail?.column
         ? row.getAttribute("data-table") === event.detail.table && row.getAttribute("data-column") === event.detail.column
@@ -472,7 +547,7 @@
 
     if (model.focusTarget) {
       const target = model.focusTarget;
-      status.textContent = `本次命中：${target.table}.${target.column}`;
+      status.textContent = `本次命中：${tableLabel(target.table)} · ${columnLabel(target.table, target.column)}`;
       jump.addEventListener("click", () => focusField(target.id, true));
       requestAnimationFrame(() => focusField(target.id, false, false));
     } else {
@@ -493,5 +568,5 @@
     return section;
   }
 
-  return { buildModel, render };
+  return { buildModel, render, tableLabel, columnLabel };
 });

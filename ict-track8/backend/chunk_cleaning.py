@@ -26,6 +26,8 @@ _SPACE_RE = re.compile(r"[\t\f\v ]+")
 _CJK_RE = re.compile(r"[\u3400-\u9fff]")
 _REPEATED_LINE_MIN_PAGES = 2
 _DEFAULT_MAX_BYTES = 20 * 1024 * 1024
+_PDF_OCR_REPLACEMENT_RATE = 0.01
+_PDF_OCR_MIN_ACCEPTED_CONFIDENCE = 0.8
 
 
 @dataclass(frozen=True)
@@ -146,7 +148,11 @@ class DocumentChunker:
 
         page_ocr: dict[int, dict[str, Any]] = {}
         min_chars = self._positive_env_int("ICT8_PDF_MIN_TEXT_CHARS", 20)
-        ocr_pages = [index for index, text in enumerate(extracted, start=1) if len(re.sub(r"\s", "", text)) < min_chars]
+        ocr_page_triggers = {
+            page_no: self._pdf_ocr_trigger_reasons(text, min_chars, extraction_failed=page_no in failed_pages)
+            for page_no, text in enumerate(extracted, start=1)
+        }
+        ocr_pages = [page_no for page_no, reasons in ocr_page_triggers.items() if reasons]
         if len(ocr_pages) > self.max_pdf_ocr_pages:
             deferred_pages = ocr_pages[self.max_pdf_ocr_pages :]
             ocr_pages = ocr_pages[: self.max_pdf_ocr_pages]
@@ -179,17 +185,46 @@ class DocumentChunker:
                             )
                         result = ocr_pipeline.run(render_bytes, language=language)
                         payload = result.to_dict() if hasattr(result, "to_dict") else dict(result)
+                        payload["trigger_reasons"] = list(ocr_page_triggers[page_no])
                         payload["render_input_sha256"] = render_sha256
                         payload["render_size_px"] = render_size_px
                         payload["render_scale"] = round(render_scale, 6)
+                        ocr_page_warnings: list[str] = []
+                        text_value = str(payload.get("text") or "")
+                        if len(text_value) > 2_000_000:
+                            payload = {
+                                **payload,
+                                "status": "failed",
+                                "text": "",
+                                "confidence": None,
+                            }
+                            ocr_page_warnings.append("ocr_text_limit_exceeded")
+                        native_text = extracted[page_no - 1]
+                        confidence = self._bounded_quality(payload.get("confidence"))
+                        ocr_is_acceptable = payload.get("status") == "ok" and (
+                            confidence is None or confidence >= _PDF_OCR_MIN_ACCEPTED_CONFIDENCE
+                        )
+                        preserve_garbled_native = (
+                            "garbled_native_text" in ocr_page_triggers[page_no]
+                            and bool(native_text.strip())
+                            and (not ocr_is_acceptable or not str(payload.get("text") or "").strip())
+                        )
+                        payload["applied_to_page_text"] = not preserve_garbled_native
+                        if preserve_garbled_native:
+                            ocr_page_warnings.append("ocr_result_rejected_native_text_preserved")
                         from .image_geometry import bind_pdf_coordinates
                         payload['metadata'] = bind_pdf_coordinates(payload.get('metadata',{}),
                             page_layouts[page_no-1].get('geometry',{}) if page_no<=len(page_layouts) else {},render_sha256,render_size_px,
                             hashlib.sha256(pdf_bytes).hexdigest(),page_no)
                         page_ocr[page_no] = payload
-                        extracted[page_no - 1] = str(payload.get("text") or "")
-                        page_warnings[page_no] = list(payload.get("warnings") or [])
-                        page_warnings[page_no].append(f"ocr_status:{payload.get('status', 'unknown')}")
+                        if not preserve_garbled_native:
+                            extracted[page_no - 1] = str(payload.get("text") or "")
+                        page_warnings[page_no] = list(dict.fromkeys([
+                            *page_warnings.get(page_no, ()),
+                            *(payload.get("warnings") or []),
+                            f"ocr_status:{payload.get('status', 'unknown')}",
+                            *ocr_page_warnings,
+                        ]))
                     except Exception as exc:
                         page_ocr[page_no] = {
                             "status": "failed",
@@ -200,6 +235,8 @@ class DocumentChunker:
                             "render_input_sha256": render_sha256,
                             "render_size_px": render_size_px,
                             "render_scale": round(render_scale, 6) if render_scale is not None else None,
+                            "trigger_reasons": list(ocr_page_triggers[page_no]),
+                            "applied_to_page_text": False,
                         }
                         page_warnings.setdefault(page_no, []).append(f"pdf_page_ocr_failed:{type(exc).__name__}")
                 rendered_pdf.close()
@@ -271,6 +308,8 @@ class DocumentChunker:
                         "render_input_sha256": ocr_info.get("render_input_sha256"),
                         "render_size_px": ocr_info.get("render_size_px"),
                         "render_scale": ocr_info.get("render_scale"),
+                        "ocr_trigger_reasons": list(ocr_page_triggers.get(page_no, ())),
+                        "ocr_applied_to_page_text": bool(ocr_info.get("applied_to_page_text")),
                     }
                 )
                 if ocr_info.get("status") == "ok" and not block_warnings:
@@ -410,6 +449,16 @@ class DocumentChunker:
                 "document_quality_score": analysis.quality_score,
                 "ocr_succeeded_pages": [page_no for page_no, item in page_ocr.items() if item.get("status") == "ok"],
                 "ocr_failed_pages": [page_no for page_no, item in page_ocr.items() if item.get("status") != "ok"],
+                "pdf_ocr_page_triggers": [
+                    {
+                        "page_no": page_no,
+                        "reasons": list(reasons),
+                        "ocr_executed": page_no in page_ocr,
+                        "ocr_applied_to_page_text": bool(page_ocr.get(page_no, {}).get("applied_to_page_text")),
+                    }
+                    for page_no, reasons in ocr_page_triggers.items()
+                    if reasons
+                ],
                 "rotated_pages": [
                     page_no
                     for page_no, page_layout in enumerate(page_layouts, start=1)
@@ -418,6 +467,17 @@ class DocumentChunker:
                 "coordinate_evidence_version": "pdf-coordinate-chain-v1",
             },
         )
+
+    @staticmethod
+    def _pdf_ocr_trigger_reasons(text: str, min_chars: int, *, extraction_failed: bool = False) -> tuple[str, ...]:
+        reasons = []
+        if len(re.sub(r"\s", "", text)) < min_chars:
+            reasons.append("insufficient_native_text")
+        if text and text.count("\ufffd") / max(1, len(text)) > _PDF_OCR_REPLACEMENT_RATE:
+            reasons.append("garbled_native_text")
+        if extraction_failed:
+            reasons.append("native_text_extraction_failed")
+        return tuple(reasons)
 
     @staticmethod
     def _extract_pdf_pages(pdf_bytes: bytes, reader: Any) -> tuple[list[str], list[int], list[dict[str, Any]]]:

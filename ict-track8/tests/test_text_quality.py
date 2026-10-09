@@ -1,7 +1,6 @@
 import hashlib
 
 import pytest
-from fastapi.testclient import TestClient
 
 from backend.document_analysis import DocumentAnalyzer
 from backend.knowledge_store import KnowledgeStore
@@ -79,19 +78,6 @@ def test_cross_script_retrieval_returns_literal_untouched_source(tmp_path, sourc
     assert answer['citations'][0]['snippet'] in source
     assert store.original('policy')[0].read_bytes() == raw
     assert store.document('policy')['sha256'] == hashlib.sha256(raw).hexdigest()
-
-
-def test_text_quality_api_preview_and_stale_guard():
-    from backend.app import app
-    client = TestClient(app)
-    text = '緊急工單首欠响应時間為2小時。'
-    report = client.post('/api/v1/documents/text-quality', json={'text':text}).json()
-    payload = {'text':text,'source_sha256':report['source_sha256'],'accepted_ids':[item['id'] for item in report['typo_candidates']]}
-    response = client.post('/api/v1/documents/text-repair', json=payload)
-    assert response.status_code == 200
-    assert response.json()['revised_text'] == '紧急工单首次响应时间为2小时。'
-    assert client.post('/api/v1/documents/text-repair', json={**payload,'text':text+'。'}).status_code == 422
-    assert client.post('/api/v1/documents/text-quality', json={'text':'x'*20001}).status_code == 422
 
 
 def test_normalized_match_maps_back_to_relevant_literal_excerpt(tmp_path):

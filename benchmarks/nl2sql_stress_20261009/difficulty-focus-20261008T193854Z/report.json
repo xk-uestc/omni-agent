@@ -1,0 +1,256 @@
+{
+  "acceptance_classification": {
+    "attempt_outcomes": {
+      "correct_execution": 55,
+      "technical_failure": 1,
+      "incorrect_execution": 4,
+      "clarification_unanswered": 2
+    },
+    "first_attempt_unique_cases": 62,
+    "first_attempt_outcomes": {
+      "correct_execution": 55,
+      "technical_failure": 1,
+      "incorrect_execution": 4,
+      "clarification_unanswered": 2
+    },
+    "unique_cases_seen": 62,
+    "difficulty_order_by_cycle": {
+      "1": "invalid"
+    },
+    "difficulty_order_violations": [
+      {
+        "cycle": 1,
+        "case_id": "history-group-01",
+        "previous": 3,
+        "current": 1
+      },
+      {
+        "cycle": 1,
+        "case_id": "history-long-01",
+        "previous": 3,
+        "current": 1
+      },
+      {
+        "cycle": 1,
+        "case_id": "catalog-bonus_amount-00",
+        "previous": 3,
+        "current": 2
+      }
+    ],
+    "max_observed_concurrency": 1,
+    "repeated_failure_case_count": 7,
+    "top_repeated_failures": [
+      {
+        "case_id": "catalog-campaign_budget-00",
+        "question": "2025年营销预算",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "technical_failure": 1
+        },
+        "mean_ms": 40013.98,
+        "max_ms": 40013.981,
+        "clarification": null,
+        "last_error": "TimeoutError"
+      },
+      {
+        "case_id": "catalog-campaign_impressions-01",
+        "question": "2025年营销曝光量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 37188.6,
+        "max_ms": 37188.603,
+        "clarification": "存在多个同样可用的日期字段，请明确按哪个时间口径统计。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "catalog-campaign_budget-02",
+        "question": "2025年营销投入",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 29222.28,
+        "max_ms": 29222.28,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "catalog-campaign_impressions-00",
+        "question": "2025年广告曝光量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 28121.35,
+        "max_ms": 28121.352,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "catalog-campaign_budget-01",
+        "question": "2025年广告投入",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 20642.07,
+        "max_ms": 20642.073,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "catalog-campaign_clicks-01",
+        "question": "2025年营销点击量",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "incorrect_execution": 1
+        },
+        "mean_ms": 16793.4,
+        "max_ms": 16793.405,
+        "clarification": null,
+        "last_error": null
+      },
+      {
+        "case_id": "catalog-campaign_conversions-01",
+        "question": "2025年广告转化数",
+        "category": "catalog_alias",
+        "difficulty": 2,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 13198.37,
+        "max_ms": 13198.369,
+        "clarification": "存在多个同样可用的日期字段，请明确按哪个时间口径统计。",
+        "last_error": "missing_sql"
+      }
+    ],
+    "by_category": {
+      "legacy": {
+        "correct_execution": 24
+      },
+      "history": {
+        "correct_execution": 28
+      },
+      "catalog_alias": {
+        "correct_execution": 3,
+        "technical_failure": 1,
+        "incorrect_execution": 4,
+        "clarification_unanswered": 2
+      }
+    },
+    "by_difficulty": {
+      "1": {
+        "correct_execution": 27
+      },
+      "3": {
+        "correct_execution": 25
+      },
+      "2": {
+        "correct_execution": 3,
+        "technical_failure": 1,
+        "incorrect_execution": 4,
+        "clarification_unanswered": 2
+      }
+    },
+    "by_difficulty_latency_ms": {
+      "1": {
+        "p50": 199.62,
+        "p95": 321.28,
+        "p99": 337.79
+      },
+      "3": {
+        "p50": 792.44,
+        "p95": 962.4,
+        "p99": 1107.92
+      },
+      "2": {
+        "p50": 26550.46,
+        "p95": 40013.98,
+        "p99": 40013.98
+      }
+    },
+    "model_planning": {
+      "local_rule_calls": 53,
+      "by_model": {
+        "gpt-5.5": {
+          "calls": 5,
+          "p50_ms": 13067.0,
+          "p95_ms": 21356.51,
+          "winning_providers": {
+            "spacetimeai.cc": 5
+          }
+        },
+        "gpt-5.6-sol": {
+          "calls": 1,
+          "p50_ms": 18697.69,
+          "p95_ms": 18697.69,
+          "winning_providers": {
+            "code.conpera.ai": 1
+          }
+        }
+      },
+      "provider_attempts": {
+        "code.conpera.ai": {
+          "attempts": 11,
+          "p50_ms": 18697.48,
+          "p95_ms": 18697.48
+        },
+        "spacetimeai.cc": {
+          "attempts": 7,
+          "p50_ms": 10557.76,
+          "p95_ms": 21356.17
+        }
+      }
+    },
+    "by_load_stage": {
+      "difficulty_serial": {
+        "requests": 62,
+        "outcomes": {
+          "correct_execution": 55,
+          "technical_failure": 1,
+          "incorrect_execution": 4,
+          "clarification_unanswered": 2
+        },
+        "p50_ms": 733.72,
+        "p95_ms": 29222.28,
+        "p99_ms": 40013.98,
+        "max_ms": 40013.98
+      }
+    },
+    "process_resources": {
+      "sample_count": 18,
+      "sample_interval_seconds": 15,
+      "listener_pids": [
+        22856
+      ],
+      "cpu_seconds_delta": 26.453,
+      "average_cpu_cores_used": null,
+      "working_set_mb_max": 607.58,
+      "private_memory_mb_max": 3936.51,
+      "thread_count_max": 106,
+      "health_status_samples": {
+        "200": 18
+      }
+    },
+    "health_checks": {
+      "sample_count": 7,
+      "passed": 7,
+      "failed": 0
+    }
+  }
+}

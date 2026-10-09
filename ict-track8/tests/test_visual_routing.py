@@ -35,7 +35,7 @@ def test_main_answer_routes_once_and_preserves_citation_contract(tmp_path):
 
 def test_explicit_source_does_not_require_text_hit(tmp_path, monkeypatch):
     store, client, _ = store_with_grid(tmp_path)
-    monkeypatch.setattr(store, 'search', lambda *a, **kw: [])
+    monkeypatch.setattr(store, 'search', lambda *a, **kw: ([], {}) if kw.get('with_audit') else [])
     result = store.answer('West 2025 Actual', document_id='grid')
     assert result['status'] == 'ok' and len(client.calls) == 1
     assert result['trace'][0]['scope'] == 'explicit_document_all_pages'

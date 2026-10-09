@@ -5,7 +5,7 @@ import time
 from datetime import date
 
 from .model_contract import HttpModelPlanProvider, ModelPlanError
-from ..responses_client import StructuredResponses, GenerationError
+from ..responses_client import configured_responses_client, GenerationError
 
 
 def obj(properties):
@@ -80,6 +80,7 @@ having.mode=scalar_avg表示当前同一过滤范围内各分组聚合结果的�
 
 class ResponsesModelPlanProvider(HttpModelPlanProvider):
     supports_complex_queries = True
+    supports_verified_rule_fast_path = True
 
     def __init__(self, base_url, token, *, model, reasoning_effort="medium", metric_catalog=None, reference_date=None,
                  timeout=45.0, max_retries=1, session=None, http_headers=None):
@@ -90,9 +91,7 @@ class ResponsesModelPlanProvider(HttpModelPlanProvider):
         super().__init__(base_url.rstrip("/") + "/responses", token, timeout=timeout, max_retries=max_retries, session=session)
         self.model, self.reasoning_effort = model, reasoning_effort
         self.catalog, self.reference_date = metric_catalog, reference_date or date.today()
-        self.client = StructuredResponses(base_url, token, model=model, reasoning=reasoning_effort,
-                                          timeout=timeout, session=self.session, http_headers=http_headers,
-                                          transport_attempts=1)  # This adapter already owns its retry/audit loop.
+        self.client = configured_responses_client(timeout=timeout, transport_attempts=1)
 
     @property
     def audit(self):

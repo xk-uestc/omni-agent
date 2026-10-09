@@ -8,7 +8,7 @@ import os
 import threading
 from pathlib import Path
 
-from .cross_source import DocumentHit
+from .cross_source import DocumentHit, _retrieval_text
 from .text_quality import simplify_for_retrieval, NORMALIZATION_ID
 
 
@@ -58,15 +58,16 @@ class DenseIndex:
             connection.execute('CREATE TABLE IF NOT EXISTS vectors (cache_key TEXT PRIMARY KEY, payload TEXT NOT NULL)')
 
     def vectors(self, records):
-        keys = [hashlib.sha256((self.embedder.identity + '\0' + NORMALIZATION_ID + '\0' + record.title + '\0' + record.content).encode()).hexdigest() for record in records]
+        texts = [_retrieval_text(record) for record in records]
+        keys = [hashlib.sha256((self.embedder.identity + '\0' + NORMALIZATION_ID + '\0' + text).encode()).hexdigest() for text in texts]
         with self._lock:
             with self.store.connect() as connection:
                 cached = {row[0]: json.loads(row[1]) for row in connection.execute('SELECT cache_key,payload FROM vectors')}
             missing = list(dict.fromkeys(key for key in keys if key not in cached))
-            by_key = {key: record for key, record in zip(keys, records)}
+            by_key = dict(zip(keys, texts))
             for start in range(0, len(missing), 16):
                 batch = missing[start:start+16]
-                vectors = self.embedder.embed([by_key[key].title + '\n' + by_key[key].content for key in batch])
+                vectors = self.embedder.embed([by_key[key] for key in batch])
                 if len(vectors) != len(batch):
                     raise DenseRetrievalError('向量结果数量不匹配')
                 with self.store.connect() as connection:
@@ -88,6 +89,7 @@ class DenseIndex:
     def search(self, query, records, *, top_k=20):
         if not records:
             return []
+        query = simplify_for_retrieval(query)
         vector = self.embedder.embed([query], query=True)[0]
         query_norm = self.validate_vector(vector)
         ranked = []

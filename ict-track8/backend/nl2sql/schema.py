@@ -6,6 +6,8 @@ import json
 import re
 import sqlite3
 import unicodedata
+import threading
+from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
@@ -15,7 +17,7 @@ from .models import ColumnInfo, ForeignKeyInfo, LinkCandidate, TableInfo
 from .schema_profile import infer_rules
 from .date_semantics import GENERIC_TIME_ALIASES, is_date_column
 from .question_roles import (association_scope, field_owners, filter_only, group_fields,
-                             record_count_subject, alias_owner_prefix, alias_in_group,
+                             record_count_subject, alias_owner_prefix, _group_spans,
                              excluded_filter_scope)
 
 
@@ -40,6 +42,38 @@ class AliasRule:
 
 
 DEFAULT_ALIAS_RULES: tuple[AliasRule, ...] = (
+    AliasRule('suppliers','supplier_name',('供应商','供应商名称'),'dimension'),
+    AliasRule('suppliers','supplier_category',('供应商类型',),'dimension'),
+    AliasRule('suppliers','supplier_rating',('供应商评分','平均供应商评分'),'metric','AVG'),
+    AliasRule('purchase_orders','purchase_amount',('采购金额','采购额'),'metric','SUM'),
+    AliasRule('purchase_orders','purchase_quantity',('采购数量','采购件数'),'metric','SUM'),
+    AliasRule('purchase_orders','purchase_id',('采购单数',),'metric','COUNT'),
+    AliasRule('purchase_orders','lead_time_days',('平均采购周期','采购交期'),'metric','AVG'),
+    AliasRule('purchase_orders','purchase_status',('采购状态',),'dimension'),
+    AliasRule('shipment_records','shipping_cost',('运费','物流费用','运输费用'),'metric','SUM'),
+    AliasRule('shipment_records','shipment_id',('发货单数','物流单数'),'metric','COUNT'),
+    AliasRule('shipment_records','transit_days',('平均运输天数','平均配送时长'),'metric','AVG'),
+    AliasRule('shipment_records','carrier',('承运商','物流公司'),'dimension'),
+    AliasRule('shipment_records','shipment_status',('物流状态','配送状态'),'dimension'),
+    AliasRule('payment_receipts','collected_amount',('回款金额','实收金额','已收款金额'),'metric','SUM'),
+    AliasRule('payment_receipts','receipt_id',('回款笔数',),'metric','COUNT'),
+    AliasRule('payment_receipts','receipt_status',('回款状态',),'dimension'),
+    AliasRule('payment_receipts','payment_method',('支付方式','回款方式'),'dimension'),
+    AliasRule('operating_expenses','expense_amount',('费用金额','运营费用','报销金额'),'metric','SUM'),
+    AliasRule('operating_expenses','expense_category',('费用类别','费用类型'),'dimension'),
+    AliasRule('operating_expenses','approval_status',('审批状态',),'dimension'),
+    AliasRule('employees','employee_id',('员工数','员工人数'),'metric','COUNT'),
+    AliasRule('employees','employee_name',('员工姓名',),'dimension'),
+    AliasRule('employees','employment_type',('用工类型',),'dimension'),
+    AliasRule('employees','employee_status',('员工状态','在职状态'),'dimension'),
+    AliasRule('payroll_records','salary_amount',('薪酬总额','工资总额'),'metric','SUM'),
+    AliasRule('payroll_records','bonus_amount',('奖金总额','奖金金额'),'metric','SUM'),
+    AliasRule('payroll_records','overtime_hours',('加班时长','加班小时数'),'metric','SUM'),
+    AliasRule('web_traffic_daily','page_views',('网页浏览量','页面浏览量'),'metric','SUM'),
+    AliasRule('web_traffic_daily','visits',('网站访问量','访问次数'),'metric','SUM'),
+    AliasRule('web_traffic_daily','web_conversions',('网站转化数',),'metric','SUM'),
+    AliasRule('web_traffic_daily','traffic_source',('流量来源',),'dimension'),
+    AliasRule('web_traffic_daily','device_type',('设备类型',),'dimension'),
     AliasRule(
         "sales_orders",
         "sales_amount",
@@ -147,17 +181,56 @@ class SchemaLinker:
     def __init__(self, rules: Iterable[AliasRule] = DEFAULT_ALIAS_RULES, *, infer_entity_counts: bool = True):
         self._rules = tuple(rules)
         self.infer_entity_counts = bool(infer_entity_counts)
+        self._catalog_rules = ()
+        self._rules_cache = OrderedDict()
+        self._rules_lock = threading.RLock()
+        # Explicit business annotations can identify an opaque physical name
+        # as temporal; stored values are still verified by the date profiler.
+        self._annotated_dates = frozenset((rule.table, rule.column) for rule in self._rules
+            if rule.role == 'dimension' and any(is_date_column(alias)
+                or normalize_text(alias) in GENERIC_TIME_ALIASES for alias in rule.aliases))
+
+    def is_date_field(self, table: str, column: str, data_type: str = '') -> bool:
+        return is_date_column(column, data_type) or (table, column) in self._annotated_dates
+
+    def set_metric_catalog(self, catalog):
+        """Add only otherwise unknown source aliases; existing rules win."""
+        with self._rules_lock:
+            self._catalog_rules = tuple(AliasRule(metric.table, metric.column,
+                tuple(dict.fromkeys((metric.label, *catalog.aliases[metric_id],
+                                     catalog.query_aliases.get(metric_id, metric.label)))),
+                'metric', metric.function, 0.85)
+                for metric_id, metric in catalog.sources.items()) if catalog else ()
+            self._rules_cache.clear()
 
     def _effective_rules(self, tables: tuple[TableInfo, ...], *, include_profile_counts: bool = True) -> tuple[AliasRule, ...]:
         """将显式词典与运行时 Schema 画像合并，显式标注优先。"""
-
+        key = (id(tables), include_profile_counts)
+        with self._rules_lock:
+            cached = self._rules_cache.get(key)
+            if cached is not None and cached[0] is tables:
+                self._rules_cache.move_to_end(key)
+                return cached[1]
         pairs = {(rule.table, rule.column) for rule in self._rules}
         generated = (
             AliasRule(item.table, item.column, item.aliases, item.role, item.metric_function, item.confidence)
             for item in infer_rules(tables, infer_entity_counts=include_profile_counts and self.infer_entity_counts)
             if (item.table, item.column) not in pairs
         )
-        return (*self._rules, *generated)
+        base = (*self._rules, *generated)
+        known = {normalize_text(alias) for rule in base for alias in rule.aliases}
+        available = {(table.name, column.name) for table in tables for column in table.columns}
+        supplements = tuple(AliasRule(rule.table, rule.column,
+            tuple(alias for alias in rule.aliases if normalize_text(alias) not in known),
+            rule.role, rule.metric_function, rule.confidence)
+            for rule in self._catalog_rules if (rule.table, rule.column) in available
+            and any(normalize_text(alias) not in known for alias in rule.aliases))
+        result = (*base, *supplements)
+        with self._rules_lock:
+            self._rules_cache[key] = (tables, result)
+            while len(self._rules_cache) > 8:
+                self._rules_cache.popitem(last=False)
+        return result
 
     def rules_for(self, tables: Iterable[TableInfo]) -> tuple[AliasRule, ...]:
         return self._effective_rules(tuple(tables))
@@ -217,9 +290,14 @@ class SchemaLinker:
         normalized, _, _ = association_scope(question, tables)
         normalized, _ = excluded_filter_scope(normalized, tables)
         ownership = field_owners(normalized, tables)
-        explicit_groups = group_fields(normalized, tables)
         table_names = {table.name for table in tables}
         rules = self._effective_rules(tables)
+        explicit_groups = group_fields(normalized, tables, rules)
+        group_spans = _group_spans(normalized, rules)
+
+        def is_grouped_mention(start, end):
+            return any(a <= start and end <= b for a, b in group_spans)
+
         links: list[LinkCandidate] = []
         linked_pairs: set[tuple[str, str]] = set()
         prefix_cache = {}
@@ -250,7 +328,7 @@ class SchemaLinker:
                 prefix_start, owners = prefix_cache[prefix_key]
                 if len(owners) == 1 and rule.table not in owners:
                     continue
-                role = ('dimension' if alias_in_group(normalized, mention.start(), mention.end())
+                role = ('dimension' if is_grouped_mention(mention.start(), mention.end())
                         else rule.role)
                 matched = normalized[prefix_start:mention.end()] if len(owners) == 1 else alias
                 links.append(LinkCandidate(alias, rule.table, rule.column, role,
@@ -332,12 +410,28 @@ class SchemaLinker:
             return len(choices) == 1 and (link.table, link.column) not in choices
         def dominated(link, other):
             small, large = normalize_text(link.matched_alias), normalize_text(other.matched_alias)
-            if (other is link or other.table != link.table or other.role != link.role
+            if (other is link or other.role != link.role
                     or len(large) <= len(small) or small not in large):
                 return False
+            small_mentions = list(re.finditer(re.escape(small), normalized))
             larger_spans = [match.span() for match in re.finditer(re.escape(large), normalized)]
+            if link.role == "dimension":
+                grouped_mentions = [match for match in small_mentions
+                                    if is_grouped_mention(match.start(), match.end())]
+                # A generic suffix such as "状态" can fail the local grouping
+                # cue check even though its only occurrence belongs to an
+                # explicitly named compound dimension such as "采购状态".
+                # Treat those fully covered occurrences as part of the longer
+                # concept instead of reopening ambiguity across unrelated tables.
+                if not grouped_mentions and all(any(
+                        start <= match.start() and match.end() <= end
+                        for start, end in larger_spans) for match in small_mentions):
+                    return True
+                small_mentions = grouped_mentions
+                if not small_mentions:
+                    return False
             return all(any(start <= match.start() and match.end() <= end for start, end in larger_spans)
-                       for match in re.finditer(re.escape(small), normalized))
+                       for match in small_mentions)
         filtered_links = [
             link
             for link in links
@@ -370,6 +464,16 @@ class SchemaLinker:
             if len(keys) == 1 and not any(x.role == 'metric' and x.table == count_subject for x in filtered_links):
                 cue = next(m.group() for m in re.finditer(r'记录数|记录计数|共有多少条|一共有多少条|有多少条|几条记录', normalized))
                 filtered_links.append(LinkCandidate(cue, count_subject, keys[0].name, 'metric', .98, cue, 'COUNT'))
+        metric_tables = {link.table for link in filtered_links if link.role == 'metric'}
+        if len(metric_tables) == 1:
+            # A shared department field is scoped by an explicit fact metric.
+            # Keep unrelated/qualified dimensions and same-table ambiguity intact.
+            native = [link for link in filtered_links if link.role == 'dimension'
+                      and link.table in metric_tables and link.column == 'department']
+            if len(native) == 1:
+                filtered_links = [link for link in filtered_links if link.role != 'dimension'
+                    or link.column != 'department' or link.matched_alias != native[0].matched_alias
+                    or link.table in metric_tables]
         return sorted(filtered_links, key=lambda item: (-item.score, item.column))
 
     def _fuzzy_links(self, normalized: str, table_names: set[str], exact: list[LinkCandidate], rules: tuple[AliasRule, ...] | None = None) -> list[LinkCandidate]:

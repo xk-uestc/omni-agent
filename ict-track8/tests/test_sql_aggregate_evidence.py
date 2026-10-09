@@ -24,7 +24,7 @@ def test_formula_uses_schema_address_instead_of_display_or_formula_label(tmp_pat
     assert result['results']['result']['value']==pytest.approx(29584*1.1)
     cell = result['results']['result']['parameters']['基准金额']
     assert cell['source_uri'].startswith('sql://') and cell['locator']=='rows/0/销售额'
-    assert cell['unit']=='unknown'  # Legacy single-metric rules declare no currency.
+    assert cell['unit']=='CNY'  # The existing demo metric catalog declares CNY.
     assert {'from':'sql','to':'result'} in result['edges']
     proof = result['results']['formula']['parameter_contract_sources'][0]
     assert proof['quote'] == '参数绑定:基准金额 = SUM(sales_orders.sales_amount)'

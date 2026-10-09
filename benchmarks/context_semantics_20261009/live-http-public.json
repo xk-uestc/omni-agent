@@ -1,0 +1,1221 @@
+{
+  "scope": "live_synthetic_demo_http_not_public_benchmark",
+  "base_url": "https://raysource.cloud/demo",
+  "total": 32,
+  "passed": 31,
+  "cases": [
+    {
+      "round": 1,
+      "question": "2025年华东销售额",
+      "pass": true,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 4188944.0,
+      "actual": 4188944.0,
+      "wall_ms": 2715.113,
+      "status": "ok",
+      "effective_question": "2025年华东销售额",
+      "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 2,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 5039053.54,
+      "actual": 5039053.54,
+      "wall_ms": 3026.068,
+      "status": "ok",
+      "effective_question": "2025年华南销售额",
+      "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 3,
+      "question": "再给我订单数，其他条件不变",
+      "pass": true,
+      "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 304,
+      "actual": 304,
+      "wall_ms": 4031.768,
+      "status": "ok",
+      "effective_question": "2025年华南订单数",
+      "sql": "SELECT COUNT(*) AS \"订单数\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY COUNT(*) DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 4,
+      "question": "只看华北",
+      "pass": true,
+      "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华北"
+      ],
+      "expected": 301,
+      "actual": 301,
+      "wall_ms": 2835.612,
+      "status": "ok",
+      "effective_question": "2025年华北订单数",
+      "sql": "SELECT COUNT(*) AS \"订单数\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY COUNT(*) DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华北",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 5,
+      "question": "同样条件，换成2024年",
+      "pass": true,
+      "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华北"
+      ],
+      "expected": 301,
+      "actual": 301,
+      "wall_ms": 2568.507,
+      "status": "ok",
+      "effective_question": "2024年华北订单数",
+      "sql": "SELECT COUNT(*) AS \"订单数\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY COUNT(*) DESC LIMIT ?",
+      "parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华北",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 6,
+      "question": "销量也查一下",
+      "pass": true,
+      "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华北"
+      ],
+      "expected": 2101,
+      "actual": 2101,
+      "wall_ms": 3129.696,
+      "status": "ok",
+      "effective_question": "2024年华北销量",
+      "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+      "parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华北",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 7,
+      "question": "华东也查一下",
+      "pass": true,
+      "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华东"
+      ],
+      "expected": 1517,
+      "actual": 1517,
+      "wall_ms": 2937.059,
+      "status": "ok",
+      "effective_question": "2024年华东销量",
+      "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+      "parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 8,
+      "question": "换成毛利",
+      "pass": true,
+      "gold_sql": "SELECT SUM(gross_profit) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华东"
+      ],
+      "expected": 1382865.02,
+      "actual": 1382865.02,
+      "wall_ms": 2614.124,
+      "status": "ok",
+      "effective_question": "2024年华东毛利",
+      "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+      "parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 9,
+      "question": "那2025年呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(gross_profit) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 1379868.14,
+      "actual": 1379868.14,
+      "wall_ms": 3450.866,
+      "status": "ok",
+      "effective_question": "2025年华东毛利",
+      "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 10,
+      "question": "销售额也查一下",
+      "pass": true,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 4188944.0,
+      "actual": 4188944.0,
+      "wall_ms": 2643.145,
+      "status": "ok",
+      "effective_question": "2025年华东销售额",
+      "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 11,
+      "question": "同样条件，2024年，华南，订单数",
+      "pass": true,
+      "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华南"
+      ],
+      "expected": 301,
+      "actual": 301,
+      "wall_ms": 3087.691,
+      "status": "ok",
+      "effective_question": "2024年华南订单数",
+      "sql": "SELECT COUNT(*) AS \"订单数\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY COUNT(*) DESC LIMIT ?",
+      "parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 12,
+      "question": "那华北呢",
+      "pass": true,
+      "gold_sql": "SELECT COUNT(*) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华北"
+      ],
+      "expected": 301,
+      "actual": 301,
+      "wall_ms": 2667.47,
+      "status": "ok",
+      "effective_question": "2024年华北订单数",
+      "sql": "SELECT COUNT(*) AS \"订单数\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY COUNT(*) DESC LIMIT ?",
+      "parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华北",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 13,
+      "question": "2025年华东卖货赚了多少",
+      "pass": false,
+      "error_type": "HTTPError"
+    },
+    {
+      "round": 14,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(gross_profit) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 1720126.84,
+      "actual": 1720126.84,
+      "wall_ms": 3010.343,
+      "status": "ok",
+      "effective_question": "2025年华南毛利",
+      "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 15,
+      "question": "2025年华东卖出去多少件",
+      "pass": true,
+      "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 1515,
+      "actual": 1515,
+      "wall_ms": 2078.536,
+      "status": "ok",
+      "effective_question": "2025年华东销量",
+      "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东卖出去多少件",
+        "normalized_question": "2025年华东销量",
+        "rewrites": [
+          {
+            "source_text": "卖出去多少件",
+            "replacement": "销量",
+            "start": 7,
+            "end": 13,
+            "concept": "quantity",
+            "table": "sales_orders",
+            "column": "quantity",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "units",
+            "source_fields": [
+              "sales_orders.quantity"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 16,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 1818,
+      "actual": 1818,
+      "wall_ms": 2630.011,
+      "status": "ok",
+      "effective_question": "2025年华南销量",
+      "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 17,
+      "question": "2025年华东营业额",
+      "pass": true,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 4188944.0,
+      "actual": 4188944.0,
+      "wall_ms": 2184.772,
+      "status": "ok",
+      "effective_question": "2025年华东营业额",
+      "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 18,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>=? AND order_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 5039053.54,
+      "actual": 5039053.54,
+      "wall_ms": 2798.368,
+      "status": "ok",
+      "effective_question": "2025年华南营业额",
+      "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 19,
+      "question": "2025年华东采购花的钱",
+      "pass": true,
+      "gold_sql": "SELECT SUM(purchase_amount) FROM purchase_orders WHERE purchase_date>=? AND purchase_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 80456097.44,
+      "actual": 80456097.44,
+      "wall_ms": 2091.936,
+      "status": "ok",
+      "effective_question": "2025年华东采购金额",
+      "sql": "SELECT SUM(\"purchase_orders\".\"purchase_amount\") AS \"purchase_amount\" FROM \"purchase_orders\" WHERE \"purchase_orders\".\"purchase_date\" >= ? AND \"purchase_orders\".\"purchase_date\" < ? AND \"purchase_orders\".\"region\" = ? ORDER BY SUM(\"purchase_orders\".\"purchase_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东采购花的钱",
+        "normalized_question": "2025年华东采购金额",
+        "rewrites": [
+          {
+            "source_text": "采购花的钱",
+            "replacement": "采购金额",
+            "start": 7,
+            "end": 12,
+            "concept": "procurement_spend",
+            "table": "purchase_orders",
+            "column": "purchase_amount",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "purchase_amount",
+            "source_fields": [
+              "purchase_orders.purchase_amount"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 20,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(purchase_amount) FROM purchase_orders WHERE purchase_date>=? AND purchase_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 81542851.75,
+      "actual": 81542851.75,
+      "wall_ms": 2213.426,
+      "status": "ok",
+      "effective_question": "2025年华南采购金额",
+      "sql": "SELECT SUM(\"purchase_orders\".\"purchase_amount\") AS \"purchase_amount\" FROM \"purchase_orders\" WHERE \"purchase_orders\".\"purchase_date\" >= ? AND \"purchase_orders\".\"purchase_date\" < ? AND \"purchase_orders\".\"region\" = ? ORDER BY SUM(\"purchase_orders\".\"purchase_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 21,
+      "question": "2025年华东运货花的钱",
+      "pass": true,
+      "gold_sql": "SELECT SUM(shipping_cost) FROM shipment_records WHERE shipment_date>=? AND shipment_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 16588.0,
+      "actual": 16588.0,
+      "wall_ms": 1947.686,
+      "status": "ok",
+      "effective_question": "2025年华东运费",
+      "sql": "SELECT SUM(\"shipment_records\".\"shipping_cost\") AS \"shipping_cost\" FROM \"shipment_records\" WHERE \"shipment_records\".\"shipment_date\" >= ? AND \"shipment_records\".\"shipment_date\" < ? AND \"shipment_records\".\"region\" = ? ORDER BY SUM(\"shipment_records\".\"shipping_cost\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东运货花的钱",
+        "normalized_question": "2025年华东运费",
+        "rewrites": [
+          {
+            "source_text": "运货花的钱",
+            "replacement": "运费",
+            "start": 7,
+            "end": 12,
+            "concept": "shipping",
+            "table": "shipment_records",
+            "column": "shipping_cost",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "shipping_cost",
+            "source_fields": [
+              "shipment_records.shipping_cost"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 22,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(shipping_cost) FROM shipment_records WHERE shipment_date>=? AND shipment_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 15090.4,
+      "actual": 15090.4,
+      "wall_ms": 2947.246,
+      "status": "ok",
+      "effective_question": "2025年华南运费",
+      "sql": "SELECT SUM(\"shipment_records\".\"shipping_cost\") AS \"shipping_cost\" FROM \"shipment_records\" WHERE \"shipment_records\".\"shipment_date\" >= ? AND \"shipment_records\".\"shipment_date\" < ? AND \"shipment_records\".\"region\" = ? ORDER BY SUM(\"shipment_records\".\"shipping_cost\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 23,
+      "question": "2025年华东工资发了多少钱",
+      "pass": true,
+      "gold_sql": "SELECT SUM(salary_amount) FROM payroll_records WHERE payroll_date>=? AND payroll_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 5119260.96,
+      "actual": 5119260.96,
+      "wall_ms": 2562.205,
+      "status": "ok",
+      "effective_question": "2025年华东薪酬总额",
+      "sql": "SELECT SUM(\"payroll_records\".\"salary_amount\") AS \"salary_amount\" FROM \"payroll_records\" WHERE \"payroll_records\".\"payroll_date\" >= ? AND \"payroll_records\".\"payroll_date\" < ? AND \"payroll_records\".\"region\" = ? ORDER BY SUM(\"payroll_records\".\"salary_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东工资发了多少钱",
+        "normalized_question": "2025年华东薪酬总额",
+        "rewrites": [
+          {
+            "source_text": "工资发了多少钱",
+            "replacement": "薪酬总额",
+            "start": 7,
+            "end": 14,
+            "concept": "salary",
+            "table": "payroll_records",
+            "column": "salary_amount",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "salary_amount",
+            "source_fields": [
+              "payroll_records.salary_amount"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 24,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(salary_amount) FROM payroll_records WHERE payroll_date>=? AND payroll_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 5140426.08,
+      "actual": 5140426.08,
+      "wall_ms": 1891.776,
+      "status": "ok",
+      "effective_question": "2025年华南薪酬总额",
+      "sql": "SELECT SUM(\"payroll_records\".\"salary_amount\") AS \"salary_amount\" FROM \"payroll_records\" WHERE \"payroll_records\".\"payroll_date\" >= ? AND \"payroll_records\".\"payroll_date\" < ? AND \"payroll_records\".\"region\" = ? ORDER BY SUM(\"payroll_records\".\"salary_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 25,
+      "question": "2025年华东回款到账金额",
+      "pass": true,
+      "gold_sql": "SELECT SUM(collected_amount) FROM payment_receipts WHERE payment_date>=? AND payment_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 4280490.23,
+      "actual": 4280490.23,
+      "wall_ms": 2662.698,
+      "status": "ok",
+      "effective_question": "2025年华东回款金额",
+      "sql": "SELECT SUM(\"payment_receipts\".\"collected_amount\") AS \"collected_amount\" FROM \"payment_receipts\" WHERE \"payment_receipts\".\"payment_date\" >= ? AND \"payment_receipts\".\"payment_date\" < ? AND \"payment_receipts\".\"region\" = ? ORDER BY SUM(\"payment_receipts\".\"collected_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东回款到账金额",
+        "normalized_question": "2025年华东回款金额",
+        "rewrites": [
+          {
+            "source_text": "回款到账金额",
+            "replacement": "回款金额",
+            "start": 7,
+            "end": 13,
+            "concept": "collected",
+            "table": "payment_receipts",
+            "column": "collected_amount",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "collected_amount",
+            "source_fields": [
+              "payment_receipts.collected_amount"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 26,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(collected_amount) FROM payment_receipts WHERE payment_date>=? AND payment_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 4404776.8,
+      "actual": 4404776.8,
+      "wall_ms": 2803.306,
+      "status": "ok",
+      "effective_question": "2025年华南回款金额",
+      "sql": "SELECT SUM(\"payment_receipts\".\"collected_amount\") AS \"collected_amount\" FROM \"payment_receipts\" WHERE \"payment_receipts\".\"payment_date\" >= ? AND \"payment_receipts\".\"payment_date\" < ? AND \"payment_receipts\".\"region\" = ? ORDER BY SUM(\"payment_receipts\".\"collected_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 27,
+      "question": "2025年华东运营花了多少钱",
+      "pass": true,
+      "gold_sql": "SELECT SUM(expense_amount) FROM operating_expenses WHERE expense_date>=? AND expense_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 1746684.0,
+      "actual": 1746684.0,
+      "wall_ms": 2358.825,
+      "status": "ok",
+      "effective_question": "2025年华东费用金额",
+      "sql": "SELECT SUM(\"operating_expenses\".\"expense_amount\") AS \"expense_amount\" FROM \"operating_expenses\" WHERE \"operating_expenses\".\"expense_date\" >= ? AND \"operating_expenses\".\"expense_date\" < ? AND \"operating_expenses\".\"region\" = ? ORDER BY SUM(\"operating_expenses\".\"expense_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东运营花了多少钱",
+        "normalized_question": "2025年华东费用金额",
+        "rewrites": [
+          {
+            "source_text": "运营花了多少钱",
+            "replacement": "费用金额",
+            "start": 7,
+            "end": 14,
+            "concept": "expense",
+            "table": "operating_expenses",
+            "column": "expense_amount",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "expense_amount",
+            "source_fields": [
+              "operating_expenses.expense_amount"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 28,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(expense_amount) FROM operating_expenses WHERE expense_date>=? AND expense_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 1750716.0,
+      "actual": 1750716.0,
+      "wall_ms": 8014.454,
+      "status": "ok",
+      "effective_question": "2025年华南费用金额",
+      "sql": "SELECT SUM(\"operating_expenses\".\"expense_amount\") AS \"expense_amount\" FROM \"operating_expenses\" WHERE \"operating_expenses\".\"expense_date\" >= ? AND \"operating_expenses\".\"expense_date\" < ? AND \"operating_expenses\".\"region\" = ? ORDER BY SUM(\"operating_expenses\".\"expense_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 29,
+      "question": "2025年华东网页被看了几次",
+      "pass": true,
+      "gold_sql": "SELECT SUM(page_views) FROM web_traffic_daily WHERE visit_date>=? AND visit_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 6644935,
+      "actual": 6644935,
+      "wall_ms": 3056.497,
+      "status": "ok",
+      "effective_question": "2025年华东网页浏览量",
+      "sql": "SELECT SUM(\"web_traffic_daily\".\"page_views\") AS \"page_views\" FROM \"web_traffic_daily\" WHERE \"web_traffic_daily\".\"visit_date\" >= ? AND \"web_traffic_daily\".\"visit_date\" < ? AND \"web_traffic_daily\".\"region\" = ? ORDER BY SUM(\"web_traffic_daily\".\"page_views\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东网页被看了几次",
+        "normalized_question": "2025年华东网页浏览量",
+        "rewrites": [
+          {
+            "source_text": "网页被看了几次",
+            "replacement": "网页浏览量",
+            "start": 7,
+            "end": 14,
+            "concept": "page_views",
+            "table": "web_traffic_daily",
+            "column": "page_views",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "web_views",
+            "source_fields": [
+              "web_traffic_daily.page_views"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 30,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(page_views) FROM web_traffic_daily WHERE visit_date>=? AND visit_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 6737140,
+      "actual": 6737140,
+      "wall_ms": 2961.444,
+      "status": "ok",
+      "effective_question": "2025年华南网页浏览量",
+      "sql": "SELECT SUM(\"web_traffic_daily\".\"page_views\") AS \"page_views\" FROM \"web_traffic_daily\" WHERE \"web_traffic_daily\".\"visit_date\" >= ? AND \"web_traffic_daily\".\"visit_date\" < ? AND \"web_traffic_daily\".\"region\" = ? ORDER BY SUM(\"web_traffic_daily\".\"page_views\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    },
+    {
+      "round": 31,
+      "question": "2025年华东网站来了多少次访问",
+      "pass": true,
+      "gold_sql": "SELECT SUM(visits) FROM web_traffic_daily WHERE visit_date>=? AND visit_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东"
+      ],
+      "expected": 1656045,
+      "actual": 1656045,
+      "wall_ms": 2002.305,
+      "status": "ok",
+      "effective_question": "2025年华东网站访问量",
+      "sql": "SELECT SUM(\"web_traffic_daily\".\"visits\") AS \"visits\" FROM \"web_traffic_daily\" WHERE \"web_traffic_daily\".\"visit_date\" >= ? AND \"web_traffic_daily\".\"visit_date\" < ? AND \"web_traffic_daily\".\"region\" = ? ORDER BY SUM(\"web_traffic_daily\".\"visits\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": {
+        "original_question": "2025年华东网站来了多少次访问",
+        "normalized_question": "2025年华东网站访问量",
+        "rewrites": [
+          {
+            "source_text": "网站来了多少次访问",
+            "replacement": "网站访问量",
+            "start": 7,
+            "end": 16,
+            "concept": "visits",
+            "table": "web_traffic_daily",
+            "column": "visits",
+            "confidence": 0.95,
+            "reason": "真实 Schema 的业务概念与字段路径",
+            "metric_id": "web_visits",
+            "source_fields": [
+              "web_traffic_daily.visits"
+            ]
+          }
+        ],
+        "ambiguities": [],
+        "clarification": null,
+        "skipped_reason": null
+      },
+      "clarification": null
+    },
+    {
+      "round": 32,
+      "question": "那华南呢",
+      "pass": true,
+      "gold_sql": "SELECT SUM(visits) FROM web_traffic_daily WHERE visit_date>=? AND visit_date<? AND region=?",
+      "gold_parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南"
+      ],
+      "expected": 1679785,
+      "actual": 1679785,
+      "wall_ms": 7465.943,
+      "status": "ok",
+      "effective_question": "2025年华南网站访问量",
+      "sql": "SELECT SUM(\"web_traffic_daily\".\"visits\") AS \"visits\" FROM \"web_traffic_daily\" WHERE \"web_traffic_daily\".\"visit_date\" >= ? AND \"web_traffic_daily\".\"visit_date\" < ? AND \"web_traffic_daily\".\"region\" = ? ORDER BY SUM(\"web_traffic_daily\".\"visits\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "planner_audit": {
+        "candidate_source": "independent_rule_parser",
+        "final_source": "server_verified_fast_rules",
+        "decision": "accepted",
+        "fallback": false,
+        "model_called": false,
+        "verification": "complete_coverage_single_table_current_snapshot"
+      },
+      "language_normalization": null,
+      "clarification": null
+    }
+  ]
+}

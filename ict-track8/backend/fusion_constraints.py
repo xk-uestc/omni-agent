@@ -47,10 +47,10 @@ class VerifiedFormulaTarget:
 
 
 _DATABASE = re.compile(r'数据库|数据表|(?<![A-Za-z0-9_])SQL(?![A-Za-z0-9_])', re.I)
-_DOCUMENT = re.compile(r'文档|手册|知识库|资料|(?<![A-Za-z0-9_])(?:PDF|Excel|XLSX|DOCX)(?![A-Za-z0-9_])', re.I)
+_DOCUMENT = re.compile(r'《[^》]+》|文档|手册|知识库|资料|(?<![A-Za-z0-9_])(?:PDF|Excel|XLSX|DOCX)(?![A-Za-z0-9_])', re.I)
 _MODIFIER = re.compile(r'^(?:不含|不包括|不包含|排除|仅|只取|只考虑|限定|限于|除.+(?:之外|以外))')
 _EXCLUSION = re.compile(r'不含|不包括|不包含|排除|仅|只取|只考虑|限定|限于|除.+(?:之外|以外)')
-_PURPOSE = re.compile(r'(?:作为|用作)(?:历史|预测|计算)?(?:基准|基数|输入|参数)|'
+_PURPOSE = re.compile(r'(?:作为|用作|作)(?:历史|预测|计算)?(?:基准|基数|输入|参数)|'
                       r'(?:进行|用于)(?:核算|计算|预测)|(?<=计数)计算|(?<=合计)计算')
 _TEMPORAL = re.compile(r'(?<!\d)\d{4}(?:年|[-/]\d{1,2})')
 _TARGET_ROLE = re.compile(r'预测|目标|基准|基数|历史|未来|预计|预估|计划')
@@ -62,7 +62,7 @@ _OUTSIDE_STRUCTURE = re.compile(
     r'(?:先|再|然后)?(?:作为过滤条件)?(?:比较|对比|查询|查|读取|获取|统计)?(?:从|由|用|以|对|与|和|以及)?'
     r'(?:数据库|数据表|SQL)(?:中|内|里|的)?(?:取|取值|获取|查询|查|读取)?'
     r'|(?:先|再|然后)?(?:从|由|用|以|对|与|和)'
-    r'|作为(?:输入|参数|基准)'
+    r'|作为(?:历史|预测|计算)?(?:输入|参数|基准)'
     r'|(?:并|再|然后)?(?:作为(?:输入|参数|基准))?(?:进行|用于)?(?:核算|计算|比较|对比)'
     r'|(?:并|再|然后)?(?:保留|附上|给出|返回|展示|显示|输出)(?:原文)?(?:来源|引用|证据|结果|答案)'
     r'|(?:是多少|多少|多少钱|几个|几条|几笔|是否|吗|呢))\s*', re.I)
@@ -91,9 +91,9 @@ def _pieces(question):
     """Top-level punctuation, preserving brackets around source qualifiers."""
     start, depth = 0, 0
     for index, char in enumerate(question):
-        if char in '（([{':
+        if char in '（([{《':
             depth += 1
-        elif char in '）)]}':
+        elif char in '）)]}》':
             depth = max(0, depth - 1)
         elif not depth and char in '，,。；;？！?\n':
             if question[start:index].strip():
@@ -322,7 +322,7 @@ def _attach_postfix_formula_target(question, clauses, pieces, engine, proofs):
     A single explicit SQL source is the only supported antecedent. Temporal
     and exact entity prefixes qualify the calculation, never the SQL input.
     """
-    requests = [(left, right, re.match(r'\s*(?:再|然后)?(?:计算|核算|求|算)\s*', question[left:right]))
+    requests = [(left, right, re.match(r'\s*(?:再|然后)?(?:计算|核算|求|算出|算)\s*', question[left:right]))
                 for left, right in pieces
                 if left > max(clause.end for clause in clauses)
                 and not any(left <= clause.start < right for clause in clauses)]
@@ -336,7 +336,7 @@ def _attach_postfix_formula_target(question, clauses, pieces, engine, proofs):
     if left <= clause.end or clause.target_binding:
         raise SourceConstraintError('source_binding_ambiguous')
     target = question[left + action.end():right].strip()
-    year = re.match(r'(?P<year>\d{4})年(?:的)?', target)
+    year = re.match(r'(?P<year>\d{4})年?(?:的)?', target)
     target_year = int(year.group('year')) if year else None
     if year:
         target = target[year.end():]
@@ -353,6 +353,10 @@ def _attach_postfix_formula_target(question, clauses, pieces, engine, proofs):
         target = target[value.end:]
         suffix = re.match(r'(?:地区|区域)?(?:的)?', target)
         target = target[suffix.end():]
+        if target_year is None:
+            year=re.match(r'(?P<year>\d{4})年?(?:的)?',target)
+            if year:
+                target_year=int(year['year']);target=target[year.end():]
         source_values = {(item.table, item.column, item.value)
                          for item in engine.analyze_slots(clause.text).get('values', [])}
         if (value.table, value.column, value.value) not in source_values:
@@ -387,7 +391,23 @@ def extract_source_clauses(question, schema, *, engine=None, verified_formula_ta
         text = question[left:right]
         db = list(_DATABASE.finditer(text))
         table_hits = [hit for pattern in tables for hit in pattern.finditer(text)]
+        # Attribution is an output request, never another database read.
+        if re.fullmatch(r'(?:并)?(?:分别)?(?:标明|注明|展示|给出)(?:PDF|Excel|数据库|SQL|文档|[、和与\s])+来源',text,re.I):
+            continue
         if not db and not table_hits:
+            purpose=_PURPOSE.search(text)
+            read=re.match(r'\s*(?:请)?(?:先)?(?:查一下|查询|统计|查|读取|获取)',text)
+            if engine is None or purpose is None or read is None or _DOCUMENT.search(text):
+                continue
+            candidate=engine.extract_required_intent(text[read.end():purpose.start()])
+            if candidate.clarification or candidate.coverage.get('unresolved') or not _metrics(candidate):
+                continue
+            # A complete schema-verified business read with an explicit role
+            # can omit the literal word database. Keep its original ranges.
+            clauses.append(SourceClause(f'sql_scope_{len(clauses)+1}',left+read.end(),left+purpose.start(),
+                text[read.end():purpose.start()], 'baseline' if re.search(r'基准|基数',purpose.group()) else 'observation',
+                ((left,left+read.end()),(left+purpose.start(),right))))
+            consumed.add(number)
             continue
         if len(db) > 1:
             raise SourceConstraintError('source_binding_ambiguous')
@@ -444,6 +464,14 @@ def extract_source_clauses(question, schema, *, engine=None, verified_formula_ta
         clauses.append(SourceClause(f'sql_scope_{len(clauses)+1}', left, right,
                                     question[left:right], 'baseline' if purpose and re.search(r'基准|基数', purpose.group()) else 'observation'))
         consumed.add(number)
+    if (not clauses and engine is not None and len(pieces) == 2
+            and len(verified_document_search_ranges) == 1
+            and tuple(verified_document_search_ranges[0]) == pieces[1]
+            and not _DATABASE.search(question) and not _DOCUMENT.search(question[pieces[0][0]:pieces[0][1]])):
+        left, right = pieces[0]
+        intent = engine.extract_required_intent(question[left:right])
+        if not intent.clarification and not intent.coverage.get('unresolved') and _metrics(intent):
+            clauses = [SourceClause('sql_scope_1', left, right, question[left:right], 'observation')]
     if not clauses:
         raise SourceConstraintError('source_scope_unverified')
     clauses = _attach_reverse_target_scope(question, clauses, pieces, engine, verified_formula_targets)
@@ -664,6 +692,8 @@ def bind_source_constraints(question, tasks, engine, *, verified_formula_targets
     for start, end in _outside_ranges(question, clauses):
         outside = question[start:end].strip()
         if outside and not _DOCUMENT.search(outside):
+            if re.fullmatch(r'(?:并)?(?:分别)?(?:标明|注明|展示|给出)(?:PDF|Excel|数据库|SQL|文档|[、和与\s])+来源',outside,re.I):
+                continue
             if _known_prediction_target(outside, engine, clauses):
                 continue
             slots = engine.analyze_slots(outside)

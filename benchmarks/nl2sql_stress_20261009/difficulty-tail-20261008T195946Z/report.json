@@ -1,0 +1,514 @@
+{
+  "run_id": "difficulty-tail-20261008T195946Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8031",
+  "until_utc": "2026-10-08T20:20:00+00:00",
+  "started_utc": "2026-10-08T19:59:46.184065+00:00",
+  "source_case_count": 377,
+  "case_count_per_cycle": 74,
+  "task_count_per_cycle": 74,
+  "question_order": "ascending_difficulty",
+  "case_selection": "balanced-coverage-tail-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "history": 28,
+    "domain_colloquial": 6,
+    "grouping": 14,
+    "topic_switch": 8,
+    "slang": 6,
+    "vocabulary_variant": 4,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 3,
+    "3": 63,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "41ddca620eef0a17d2afaf52baefe9d4ce91595bdb66d707dcd33fea6422ebb6",
+  "catalog_sha256": "de5821fbd104c3c9cef7667e350820856e73e6c6ac2ae4eeeca771bbdc3f44e9",
+  "scorer_sha256": "f9290d0df717fcb89cb7171e49ee89a1122866beaef2fefeb9feb230bc0eb271",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-08T20:20:07.159940+00:00",
+  "elapsed_seconds": 1221.0,
+  "total_requests": 240,
+  "passed": 192,
+  "failed": 48,
+  "pass_rate": 0.8,
+  "latency_ms": {
+    "p50": 768.14,
+    "p95": 21254.03,
+    "p99": 29099.43,
+    "max": 33307.99
+  },
+  "health_checks": {
+    "passed": 33,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 87,
+      "passed": 87,
+      "pass_rate": 1.0,
+      "p50_ms": 773.85,
+      "p95_ms": 958.76
+    },
+    "domain_colloquial": {
+      "total": 24,
+      "passed": 24,
+      "pass_rate": 1.0,
+      "p50_ms": 195.8,
+      "p95_ms": 219.99
+    },
+    "grouping": {
+      "total": 51,
+      "passed": 6,
+      "pass_rate": 0.117647,
+      "p50_ms": 13923.0,
+      "p95_ms": 29099.43
+    },
+    "topic_switch": {
+      "total": 24,
+      "passed": 24,
+      "pass_rate": 1.0,
+      "p50_ms": 576.78,
+      "p95_ms": 763.93
+    },
+    "slang": {
+      "total": 18,
+      "passed": 18,
+      "pass_rate": 1.0,
+      "p50_ms": 18961.85,
+      "p95_ms": 28113.35
+    },
+    "vocabulary_variant": {
+      "total": 12,
+      "passed": 9,
+      "pass_rate": 0.75,
+      "p50_ms": 193.21,
+      "p95_ms": 218.7
+    },
+    "derived_metric": {
+      "total": 21,
+      "passed": 21,
+      "pass_rate": 1.0,
+      "p50_ms": 212.27,
+      "p95_ms": 228.24
+    },
+    "literal_value": {
+      "total": 3,
+      "passed": 3,
+      "pass_rate": 1.0,
+      "p50_ms": 10483.1,
+      "p95_ms": 10700.68
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 240,
+      "passed": 192,
+      "pass_rate": 0.8,
+      "p50_ms": 768.14,
+      "p95_ms": 21254.03
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 12,
+      "passed": 12,
+      "pass_rate": 1.0,
+      "p50_ms": 334.38,
+      "p95_ms": 430.93
+    },
+    "3": {
+      "total": 204,
+      "passed": 156,
+      "pass_rate": 0.764706,
+      "p50_ms": 827.14,
+      "p95_ms": 21463.2
+    },
+    "4": {
+      "total": 21,
+      "passed": 21,
+      "pass_rate": 1.0,
+      "p50_ms": 212.27,
+      "p95_ms": 228.24
+    },
+    "5": {
+      "total": 3,
+      "passed": 3,
+      "pass_rate": 1.0,
+      "p50_ms": 10483.1,
+      "p95_ms": 10700.68
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\difficulty-tail-20261008T195946Z\\results.jsonl",
+  "acceptance_classification": {
+    "attempt_outcomes": {
+      "correct_execution": 192,
+      "clarification_unanswered": 48
+    },
+    "first_attempt_unique_cases": 74,
+    "first_attempt_outcomes": {
+      "correct_execution": 62,
+      "clarification_unanswered": 12
+    },
+    "unique_cases_seen": 74,
+    "difficulty_order_by_cycle": {
+      "1": "valid",
+      "2": "valid",
+      "3": "valid",
+      "4": "valid"
+    },
+    "difficulty_order_violations": [],
+    "max_observed_concurrency": 1,
+    "failed_unique_case_count": 15,
+    "repeated_failure_case_count": 13,
+    "top_failed_cases": [
+      {
+        "case_id": "group-revenue-product_category",
+        "question": "2025年按产品类别分别统计销售额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 22097.67,
+        "max_ms": 33307.992,
+        "clarification": "“产品类别”可对应 sales_orders.product_category，也可对应 products.category。请确认按哪个字段分组；若按 products.category，还需确认是否通过 sales_orders.product_id 关联 products。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-shipping_cost-carrier",
+        "question": "2025年按承运商分别统计运费",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 15948.39,
+        "max_ms": 21044.744,
+        "clarification": "请确认 shipment_records.shipment_date 的存储格式（例如 YYYY-MM-DD 的 ISO 文本），以便按 2025 年准确筛选；确认后将按 shipment_records.carrier 分组，汇总 shipment_records.shipping_cost。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-campaign_budget-campaign_type",
+        "question": "2025年按营销类型分别统计营销预算",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 17311.97,
+        "max_ms": 20501.596,
+        "clarification": "“2025年”应按营销活动的哪个日期口径筛选：按开始日期 marketing_campaigns.start_date 落在2025年、按结束日期 marketing_campaigns.end_date 落在2025年，还是统计与2025年有任何重叠的营销活动（start_date < '2026-01-01' 且 end_date >= '2025-01-01'）？",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-purchase_amount-purchase_status",
+        "question": "2025年按采购状态分别统计采购金额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 16041.34,
+        "max_ms": 17382.512,
+        "clarification": "请确认 purchase_orders.purchase_date 的日期存储格式（例如 ISO 文本 YYYY-MM-DD 或包含时间的 ISO 文本），以便按 2025 年使用正确的全年半开区间进行过滤。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-expense_amount-expense_category",
+        "question": "2025年按费用类别分别统计费用金额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 11347.0,
+        "max_ms": 14860.923,
+        "clarification": "请确认 operating_expenses.expense_date 的存储格式是否为可按 SQLite 日期函数解析的 ISO 文本（例如 YYYY-MM-DD）。当前 schema 未提供已验证的日期存储格式，无法可靠限定 2025 年范围。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-expense_amount-department",
+        "question": "2025年按部门分别统计费用金额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 11362.14,
+        "max_ms": 13923.004,
+        "clarification": "请确认 operating_expenses.expense_date 的存储格式及时间口径。若为可按半开区间比较的 ISO 日期文本（如 YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS），将按 expense_date >= '2025-01-01' AND expense_date < '2026-01-01'，并按 operating_expenses.department 分组汇总 SUM(operating_expenses.expense_amount)。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-revenue-region",
+        "question": "2025年按地区分别统计销售额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 11184.94,
+        "max_ms": 13647.419,
+        "clarification": "请确认两点：1）“地区”按 sales_orders.region 分组，还是通过 sales_orders.region_id 关联 regions.region_id 后按 regions.region_name 分组；2）sales_orders.order_date 的实际存储格式及其是否可由 SQLite 日期函数解析。当前未提供日期存储格式验证，无法可靠限定 2025 年。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-shipping_cost-shipment_status",
+        "question": "2025年按物流状态分别统计运费",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 4,
+        "outcomes": {
+          "clarification_unanswered": 4
+        },
+        "mean_ms": 10655.46,
+        "max_ms": 12266.196,
+        "clarification": "请确认“2025年”按 shipment_records.shipment_date 统计，并说明该字段的实际存储格式（例如 YYYY-MM-DD、含时间的 ISO 文本或 Unix 时间戳）；当前未提供已验证的日期格式，无法可靠生成全年半开区间过滤。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-ticket_count-issue_type",
+        "question": "2025年按问题类型分别统计工单数",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 3,
+        "outcomes": {
+          "clarification_unanswered": 3
+        },
+        "mean_ms": 15965.25,
+        "max_ms": 18596.549,
+        "clarification": "请确认 support_tickets.created_date 的存储格式（例如 ISO 文本 YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS）。当前 schema 未提供已验证的日期格式，无法安全生成“2025年”的半开区间过滤条件。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-ticket_count-priority",
+        "question": "2025年按优先级分别统计工单数",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 3,
+        "outcomes": {
+          "clarification_unanswered": 3
+        },
+        "mean_ms": 12133.81,
+        "max_ms": 14881.342,
+        "clarification": "请确认 support_tickets.created_date 的日期存储格式（例如 ISO 文本 YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS），以便按 2025 年对该字段准确使用全年半开区间过滤。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-web_views-device_type",
+        "question": "2025年按设备类型分别统计网页浏览量",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 3,
+        "outcomes": {
+          "clarification_unanswered": 3
+        },
+        "mean_ms": 12818.38,
+        "max_ms": 13372.571,
+        "clarification": "请确认 web_traffic_daily.visit_date 的日期存储格式（例如 ISO 文本 YYYY-MM-DD 或带时间的 YYYY-MM-DD HH:MM:SS），以便按 2025-01-01（含）至 2026-01-01（不含）准确筛选。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "variant-history-topic-06-purchase_amount-02",
+        "question": "2025年华北买进花了多少",
+        "category": "vocabulary_variant",
+        "difficulty": 3,
+        "failed_attempts": 3,
+        "outcomes": {
+          "clarification_unanswered": 3
+        },
+        "mean_ms": 13.39,
+        "max_ms": 18.538,
+        "clarification": "“花了多少”的含义需要确认：同一个口语概念对应多个真实指标，请确认具体口径。可选字段：purchase_orders.purchase_amount（采购金额）、shipment_records.shipping_cost（运费）、operating_expenses.expense_amount（费用金额）、payroll_records.salary_amount（薪酬总额）、payroll_records.base_salary（薪资）、sales_orders.sales_amount（销售成本）。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-revenue-channel",
+        "question": "2025年按渠道分别统计销售额",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 2,
+        "outcomes": {
+          "clarification_unanswered": 2
+        },
+        "mean_ms": 13119.6,
+        "max_ms": 13615.475,
+        "clarification": "请确认 sales_orders.order_date 的日期存储格式（例如 ISO 文本 `YYYY-MM-DD`、带时间的 `YYYY-MM-DD HH:MM:SS` 等），以便按该字段准确筛选 2025 年全年（含 2025-01-01、不含 2026-01-01），并按 sales_orders.channel 分组汇总 sales_orders.sales_amount。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-ticket_count-status",
+        "question": "2025年按工单状态分别统计工单数",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 14001.72,
+        "max_ms": 14001.718,
+        "clarification": "请确认 support_tickets.created_date 的实际日期存储格式（例如 YYYY-MM-DD 文本）。当前 schema 未提供已验证的日期存储格式，无法安全生成“2025年”的时间范围过滤条件。",
+        "last_error": "missing_sql"
+      },
+      {
+        "case_id": "group-web_views-traffic_source",
+        "question": "2025年按流量来源分别统计网页浏览量",
+        "category": "grouping",
+        "difficulty": 3,
+        "failed_attempts": 1,
+        "outcomes": {
+          "clarification_unanswered": 1
+        },
+        "mean_ms": 10899.3,
+        "max_ms": 10899.303,
+        "clarification": "请确认 web_traffic_daily.visit_date 的实际日期存储格式（例如 ISO 文本 YYYY-MM-DD、含时间的 YYYY-MM-DD HH:MM:SS，或其他格式），以便准确筛选 2025 年全年记录。",
+        "last_error": "missing_sql"
+      }
+    ],
+    "by_category": {
+      "history": {
+        "correct_execution": 87
+      },
+      "domain_colloquial": {
+        "correct_execution": 24
+      },
+      "grouping": {
+        "clarification_unanswered": 45,
+        "correct_execution": 6
+      },
+      "topic_switch": {
+        "correct_execution": 24
+      },
+      "slang": {
+        "correct_execution": 18
+      },
+      "vocabulary_variant": {
+        "correct_execution": 9,
+        "clarification_unanswered": 3
+      },
+      "derived_metric": {
+        "correct_execution": 21
+      },
+      "literal_value": {
+        "correct_execution": 3
+      }
+    },
+    "by_difficulty": {
+      "1": {
+        "correct_execution": 12
+      },
+      "3": {
+        "correct_execution": 156,
+        "clarification_unanswered": 48
+      },
+      "4": {
+        "correct_execution": 21
+      },
+      "5": {
+        "correct_execution": 3
+      }
+    },
+    "by_difficulty_latency_ms": {
+      "1": {
+        "p50": 334.38,
+        "p95": 430.93,
+        "p99": 430.93
+      },
+      "3": {
+        "p50": 827.14,
+        "p95": 21463.2,
+        "p99": 29099.43
+      },
+      "4": {
+        "p50": 212.27,
+        "p95": 228.24,
+        "p99": 228.9
+      },
+      "5": {
+        "p50": 10483.1,
+        "p95": 10700.68,
+        "p99": 10700.68
+      }
+    },
+    "model_planning": {
+      "local_rule_calls": 165,
+      "by_model": {
+        "gpt-5.6-sol": {
+          "calls": 13,
+          "p50_ms": 12201.46,
+          "p95_ms": 20891.44,
+          "winning_providers": {
+            "code.conpera.ai": 13
+          }
+        },
+        "gpt-5.5": {
+          "calls": 14,
+          "p50_ms": 6653.96,
+          "p95_ms": 13589.76,
+          "winning_providers": {
+            "spacetimeai.cc": 14
+          }
+        }
+      },
+      "provider_attempts": {
+        "spacetimeai.cc": {
+          "attempts": 40,
+          "p50_ms": 5476.73,
+          "p95_ms": 13589.48
+        },
+        "code.conpera.ai": {
+          "attempts": 41,
+          "p50_ms": 9695.66,
+          "p95_ms": 18384.41
+        }
+      }
+    },
+    "by_load_stage": {
+      "difficulty_serial": {
+        "requests": 240,
+        "outcomes": {
+          "correct_execution": 192,
+          "clarification_unanswered": 48
+        },
+        "p50_ms": 768.14,
+        "p95_ms": 21254.03,
+        "p99_ms": 29099.43,
+        "max_ms": 33307.99
+      }
+    },
+    "process_resources": {
+      "sample_count": 79,
+      "sample_interval_seconds": 15,
+      "listener_pids": [
+        22856
+      ],
+      "cpu_seconds_delta": 119.329,
+      "average_cpu_cores_used": 0.0977,
+      "working_set_mb_max": 599.26,
+      "private_memory_mb_max": 3967.07,
+      "thread_count_max": 106,
+      "health_status_samples": {
+        "200": 79
+      }
+    },
+    "health_checks": {
+      "sample_count": 33,
+      "passed": 33,
+      "failed": 0
+    }
+  }
+}

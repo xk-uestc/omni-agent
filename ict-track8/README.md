@@ -73,42 +73,7 @@ curl.exe -X POST http://127.0.0.1:8020/api/v1/agent/query `
 和候选选项；前端选择后调用 `/api/v1/nl2sql/clarify`，服务端重新生成计划并再次
 经过只读安全门。
 
-文档质量与公式分析接口：
-
-```powershell
-curl.exe -X POST http://127.0.0.1:8020/api/v1/documents/analyze `
-  -H "Content-Type: application/json" `
-  -d '{"document_id":"manual-1","text":"第一章 总则\n销售额 = 120 * 3"}'
-```
-
-返回质量分、复杂度分、旋转/倾斜/模糊/OCR 置信度问题、恢复的目录层级和安全计算
-公式。公式只允许数字四则运算，任何函数调用、属性访问和超范围运算都会被拒绝。
-
-图片质量探针接口接受 Base64 图片，返回分辨率、亮度、对比度、边缘能量、EXIF 方向、
-质量分和增强建议：
-
-```text
-POST /api/v1/documents/image-quality
-{"image_base64":"..."}
-```
-
-`POST /api/v1/documents/image-enhance` 按白名单执行 EXIF 方向校正、旋转、裁剪、灰度
-归一化、自适应阈值、锐化和放大，返回标准 PNG 和实际执行的变换清单。它只生成 OCR
-输入，不执行 OCR；未知变换、越界裁剪和超大输入会被拒绝。
-
-`POST /api/v1/documents/pdf-analyze` 使用 `pypdf` 提取文本页；空文本页会被标记为
-`ocr_required_pages`，再进入同一质量、目录和公式分析流程。返回结果还包含页级
-`ocr_retry_plan`：按空文本、置信度、替换字符、旋转、倾斜和模糊信号给出增强顺序、
-最多 3 次尝试和外部 OCR 升级边界。它不会伪造或执行 OCR 结果，后续可把外部 OCR
-服务接在这个明确的边界上。
-
-`POST /api/v1/documents/ocr` 才是实际 OCR 执行入口。设置 `ICT8_OCR_URL` 后调用外部
-`/ocr`，或设置 `ICT8_OCR_ENGINE=tesseract` 使用本地 Tesseract；每次尝试都会记录
-预处理变换、文本长度、置信度和错误。两者都未配置时返回 503，不会把 OCR 计划伪装成
-识别结果。
-部署前可调用 `GET /api/v1/documents/ocr/health` 进行只读能力探针；非法 URL 会让 OCR
-明确禁用并在 `/health` 的配置告警中显示，不会导致整个服务导入失败。
-
+独立的文本、图片和 PDF 质量检查接口已下线。资料上传仍经知识库入库流程处理；OCR、切片及来源证据服务于检索问答，不提供单独的模拟评分页面。
 独立 Demo：
 
 ```powershell

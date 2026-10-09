@@ -1,0 +1,173 @@
+{
+  "run_id": "difficulty-serial-routefix-20261008T233006Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8036",
+  "until_utc": "2026-10-10T00:00:00+00:00",
+  "started_utc": "2026-10-08T23:30:06.270151+00:00",
+  "source_case_count": 391,
+  "case_count_per_cycle": 391,
+  "task_count_per_cycle": 391,
+  "question_order": "ascending_difficulty",
+  "case_selection": "full-authored-corpus-serial-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 79,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 178,
+    "3": 178,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "cbe4c65cfa1d5f8bd079c8a5359089ea7fb5642caba38e4bf45ddff610214af7",
+  "catalog_sha256": "a0e0af6fc1d088d3298836e39950b5615f65fd895d9e1358d6ebaa367f03751c",
+  "scorer_sha256": "c1d6964f451ce04be9bfe7a31c90670899443e29ecf1ecb3b25df5007a4bf7ce",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-08T23:32:20.042262+00:00",
+  "elapsed_seconds": 133.8,
+  "total_requests": 391,
+  "passed": 389,
+  "failed": 2,
+  "pass_rate": 0.994885,
+  "latency_ms": {
+    "p50": 203.59,
+    "p95": 724.57,
+    "p99": 919.75,
+    "max": 21985.466
+  },
+  "health_checks": {
+    "passed": 5,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 28,
+      "passed": 28,
+      "pass_rate": 1.0,
+      "p50_ms": 727.0,
+      "p95_ms": 906.79
+    },
+    "legacy": {
+      "total": 31,
+      "passed": 31,
+      "pass_rate": 1.0,
+      "p50_ms": 193.47,
+      "p95_ms": 221.24
+    },
+    "catalog_alias": {
+      "total": 79,
+      "passed": 79,
+      "pass_rate": 1.0,
+      "p50_ms": 192.78,
+      "p95_ms": 213.4
+    },
+    "vocabulary_variant": {
+      "total": 108,
+      "passed": 108,
+      "pass_rate": 1.0,
+      "p50_ms": 192.32,
+      "p95_ms": 215.99
+    },
+    "domain_colloquial": {
+      "total": 25,
+      "passed": 25,
+      "pass_rate": 1.0,
+      "p50_ms": 190.47,
+      "p95_ms": 203.78
+    },
+    "grouping": {
+      "total": 72,
+      "passed": 72,
+      "pass_rate": 1.0,
+      "p50_ms": 311.12,
+      "p95_ms": 328.15
+    },
+    "topic_switch": {
+      "total": 8,
+      "passed": 8,
+      "pass_rate": 1.0,
+      "p50_ms": 571.69,
+      "p95_ms": 751.72
+    },
+    "slang": {
+      "total": 32,
+      "passed": 30,
+      "pass_rate": 0.9375,
+      "p50_ms": 309.91,
+      "p95_ms": 327.46
+    },
+    "derived_metric": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 206.9,
+      "p95_ms": 224.81
+    },
+    "literal_value": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 21985.47,
+      "p95_ms": 21985.47
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 391,
+      "passed": 389,
+      "pass_rate": 0.994885,
+      "p50_ms": 203.59,
+      "p95_ms": 724.57
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 27,
+      "passed": 27,
+      "pass_rate": 1.0,
+      "p50_ms": 191.4,
+      "p95_ms": 569.96
+    },
+    "2": {
+      "total": 178,
+      "passed": 178,
+      "pass_rate": 1.0,
+      "p50_ms": 193.76,
+      "p95_ms": 221.22
+    },
+    "3": {
+      "total": 178,
+      "passed": 176,
+      "pass_rate": 0.988764,
+      "p50_ms": 309.62,
+      "p95_ms": 797.86
+    },
+    "4": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 206.9,
+      "p95_ms": 224.81
+    },
+    "5": {
+      "total": 1,
+      "passed": 1,
+      "pass_rate": 1.0,
+      "p50_ms": 21985.47,
+      "p95_ms": 21985.47
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\difficulty-serial-routefix-20261008T233006Z\\results.jsonl"
+}

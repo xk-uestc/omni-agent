@@ -15,7 +15,9 @@ QUESTION='2025年华东地区销售额'
 def agent_for(tmp_path, tasks, *, route='sql', effective=QUESTION):
     class Planner:
         audit={'status':'completed','http_status':200}
+        calls=0
         def generate(self,*args,**kwargs):
+            self.calls+=1
             return {'route':route,'effective_question':effective,'clarification':'',
                     'tasks_json':json.dumps(tasks,ensure_ascii=False)}
     return OmniAgent(Nl2SqlEngine(initialize_database(tmp_path/'db.sqlite')),
@@ -43,10 +45,20 @@ def test_changed_redundant_text_never_changes_original_execution(tmp_path,rewrit
 def test_followup_ignores_redundant_text_and_uses_server_verified_slots(tmp_path):
     agent=agent_for(tmp_path,[sql_task('2024年华北订单数，按交易日期分组')])
     agent.query(QUESTION,session_id='followup')
+    calls_before=agent.client.calls
     result=agent.query('那华南呢',session_id='followup')
-    assert result['planner_source']=='model_validated'
+    assert result['planner_source']=='rules_basic'
+    assert agent.client.calls==calls_before
     assert result['result']['rows']==[{'销售额':22992}]
-    assert 'server_verified_sql_followup_slots' in result['trace'][0]['normalizations']
+    assert result['context_resolution']['mode']=='server_verified_sql_followup'
+    assert result['effective_question']=='2025年华南地区销售额'
+    plan=result['result']['plan']
+    assert (plan['table'],plan['metric_column'],plan['metric_function'])==('sales_orders','sales_amount','SUM')
+    assert plan['dimensions']==[] and plan['having'] is None and plan['top_n'] is None
+    filters={item['column']:item for item in plan['filters']}
+    assert (filters['order_date']['operator'],tuple(filters['order_date']['value']))==('RANGE',('2025-01-01','2026-01-01'))
+    assert (filters['region']['operator'],filters['region']['value'])==('=','华南')
+    assert not any(event.get('task_id')=='unused' for event in result['trace'])
 
 
 @pytest.mark.parametrize('rewrite',['DROP TABLE sales_orders','SELECT * FROM sales_orders','DELETE FROM sales_orders',

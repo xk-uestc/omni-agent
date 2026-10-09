@@ -1,0 +1,368 @@
+{
+  "run_id": "difficulty-heavy-serial-20261008T233832Z",
+  "scope": "self_authored_live_demo_http_pressure_not_public_benchmark",
+  "base_url": "http://127.0.0.1:8037",
+  "until_utc": "2026-10-08T23:55:00+00:00",
+  "started_utc": "2026-10-08T23:38:32.598373+00:00",
+  "source_case_count": 391,
+  "case_count_per_cycle": 391,
+  "task_count_per_cycle": 391,
+  "question_order": "ascending_difficulty",
+  "case_selection": "full-authored-corpus-serial-v1",
+  "max_concurrency": 1,
+  "categories": {
+    "legacy": 31,
+    "domain_colloquial": 25,
+    "history": 28,
+    "topic_switch": 8,
+    "vocabulary_variant": 108,
+    "catalog_alias": 79,
+    "slang": 32,
+    "grouping": 72,
+    "derived_metric": 7,
+    "literal_value": 1
+  },
+  "difficulties": {
+    "1": 27,
+    "2": 178,
+    "3": 178,
+    "4": 7,
+    "5": 1
+  },
+  "frozen_cases_sha256": "9fbeca112d7ae5d3280e681c26f023c16b42cc3af9ad963551f05aecd3269afa",
+  "database_sha256": "434cdfe18882aaa1eb34371c9601fa8e165e007e6f5f9e75404dfb8671c1ef18",
+  "catalog_sha256": "a0e0af6fc1d088d3298836e39950b5615f65fd895d9e1358d6ebaa367f03751c",
+  "scorer_sha256": "c1d6964f451ce04be9bfe7a31c90670899443e29ecf1ecb3b25df5007a4bf7ce",
+  "gold_sql_sent_to_service": false,
+  "database_access_mode": "scorer read-only",
+  "finished_utc": "2026-10-08T23:55:00.202172+00:00",
+  "elapsed_seconds": 987.6,
+  "total_requests": 2933,
+  "passed": 2926,
+  "failed": 7,
+  "pass_rate": 0.997613,
+  "latency_ms": {
+    "p50": 199.39,
+    "p95": 717.11,
+    "p99": 938.45,
+    "max": 32051.92
+  },
+  "health_checks": {
+    "passed": 30,
+    "failed": 0
+  },
+  "by_category": {
+    "history": {
+      "total": 199,
+      "passed": 199,
+      "pass_rate": 1.0,
+      "p50_ms": 723.01,
+      "p95_ms": 893.67
+    },
+    "legacy": {
+      "total": 248,
+      "passed": 248,
+      "pass_rate": 1.0,
+      "p50_ms": 193.28,
+      "p95_ms": 210.83
+    },
+    "catalog_alias": {
+      "total": 632,
+      "passed": 632,
+      "pass_rate": 1.0,
+      "p50_ms": 188.65,
+      "p95_ms": 208.05
+    },
+    "vocabulary_variant": {
+      "total": 839,
+      "passed": 839,
+      "pass_rate": 1.0,
+      "p50_ms": 192.71,
+      "p95_ms": 213.49
+    },
+    "domain_colloquial": {
+      "total": 175,
+      "passed": 175,
+      "pass_rate": 1.0,
+      "p50_ms": 186.07,
+      "p95_ms": 203.22
+    },
+    "grouping": {
+      "total": 504,
+      "passed": 504,
+      "pass_rate": 1.0,
+      "p50_ms": 308.22,
+      "p95_ms": 324.35
+    },
+    "topic_switch": {
+      "total": 56,
+      "passed": 56,
+      "pass_rate": 1.0,
+      "p50_ms": 545.17,
+      "p95_ms": 754.76
+    },
+    "slang": {
+      "total": 224,
+      "passed": 217,
+      "pass_rate": 0.96875,
+      "p50_ms": 306.79,
+      "p95_ms": 328.85
+    },
+    "derived_metric": {
+      "total": 49,
+      "passed": 49,
+      "pass_rate": 1.0,
+      "p50_ms": 204.93,
+      "p95_ms": 219.09
+    },
+    "literal_value": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 20259.06,
+      "p95_ms": 32051.92
+    }
+  },
+  "by_load_stage": {
+    "difficulty_serial": {
+      "total": 2933,
+      "passed": 2926,
+      "pass_rate": 0.997613,
+      "p50_ms": 199.39,
+      "p95_ms": 717.11
+    }
+  },
+  "by_difficulty": {
+    "1": {
+      "total": 216,
+      "passed": 216,
+      "pass_rate": 1.0,
+      "p50_ms": 193.07,
+      "p95_ms": 328.33
+    },
+    "2": {
+      "total": 1415,
+      "passed": 1415,
+      "pass_rate": 1.0,
+      "p50_ms": 191.24,
+      "p95_ms": 212.83
+    },
+    "3": {
+      "total": 1246,
+      "passed": 1239,
+      "pass_rate": 0.994382,
+      "p50_ms": 306.29,
+      "p95_ms": 798.45
+    },
+    "4": {
+      "total": 49,
+      "passed": 49,
+      "pass_rate": 1.0,
+      "p50_ms": 204.93,
+      "p95_ms": 219.09
+    },
+    "5": {
+      "total": 7,
+      "passed": 7,
+      "pass_rate": 1.0,
+      "p50_ms": 20259.06,
+      "p95_ms": 32051.92
+    }
+  },
+  "results_jsonl": "D:\\ICT8-OmniAgent\\benchmarks\\nl2sql_stress_20261009\\difficulty-heavy-serial-20261008T233832Z\\results.jsonl",
+  "semantic_adjudication": {
+    "raw_scored_failures": 7,
+    "expected_clarifications": 7,
+    "ambiguous_case_id": "slang-satisfaction_score-00",
+    "semantically_acceptable_responses": 2933,
+    "incorrect_sql_results": 0,
+    "technical_failures": 0,
+    "explicit_average_case_passes": 7,
+    "explicit_average_case_total": 7,
+    "note": "原始评分器未将含糊的满意度总数题标记为预期澄清；系统选择追问统计口径，符合语义安全预期。"
+  },
+  "acceptance_classification": {
+    "attempt_outcomes": {
+      "correct_execution": 2926,
+      "clarification_unanswered": 7
+    },
+    "first_attempt_unique_cases": 391,
+    "first_attempt_outcomes": {
+      "correct_execution": 390,
+      "clarification_unanswered": 1
+    },
+    "unique_cases_seen": 391,
+    "difficulty_order_by_cycle": {
+      "1": "valid",
+      "2": "valid",
+      "3": "valid",
+      "4": "valid",
+      "5": "valid",
+      "6": "valid",
+      "7": "valid",
+      "8": "valid"
+    },
+    "difficulty_order_violations": [],
+    "max_observed_concurrency": 1,
+    "failed_unique_case_count": 1,
+    "repeated_failure_case_count": 1,
+    "top_failed_cases": [
+      {
+        "case_id": "slang-satisfaction_score-00",
+        "question": "麻烦查下2025年客户满意度，给个总数",
+        "category": "slang",
+        "difficulty": 3,
+        "failed_attempts": 7,
+        "outcomes": {
+          "clarification_unanswered": 7
+        },
+        "mean_ms": 302.29,
+        "max_ms": 324.476,
+        "clarification": "该指标按平均值定义，“给个总数”可能表示记录数或数值合计，请明确统计口径。",
+        "last_error": "missing_sql"
+      }
+    ],
+    "by_category": {
+      "history": {
+        "correct_execution": 199
+      },
+      "legacy": {
+        "correct_execution": 248
+      },
+      "catalog_alias": {
+        "correct_execution": 632
+      },
+      "vocabulary_variant": {
+        "correct_execution": 839
+      },
+      "domain_colloquial": {
+        "correct_execution": 175
+      },
+      "grouping": {
+        "correct_execution": 504
+      },
+      "topic_switch": {
+        "correct_execution": 56
+      },
+      "slang": {
+        "correct_execution": 217,
+        "clarification_unanswered": 7
+      },
+      "derived_metric": {
+        "correct_execution": 49
+      },
+      "literal_value": {
+        "correct_execution": 7
+      }
+    },
+    "by_difficulty": {
+      "1": {
+        "correct_execution": 216
+      },
+      "2": {
+        "correct_execution": 1415
+      },
+      "3": {
+        "correct_execution": 1239,
+        "clarification_unanswered": 7
+      },
+      "4": {
+        "correct_execution": 49
+      },
+      "5": {
+        "correct_execution": 7
+      }
+    },
+    "by_difficulty_latency_ms": {
+      "1": {
+        "p50": 193.07,
+        "p95": 328.33,
+        "p99": 352.9
+      },
+      "2": {
+        "p50": 191.24,
+        "p95": 212.83,
+        "p99": 2141.65
+      },
+      "3": {
+        "p50": 306.29,
+        "p95": 798.45,
+        "p99": 890.86
+      },
+      "4": {
+        "p50": 204.93,
+        "p95": 219.09,
+        "p99": 224.3
+      },
+      "5": {
+        "p50": 20259.06,
+        "p95": 32051.92,
+        "p99": 32051.92
+      }
+    },
+    "model_planning": {
+      "local_rule_calls": 2919,
+      "by_model": {
+        "gpt-6-luna": {
+          "calls": 4,
+          "p50_ms": 13689.1,
+          "p95_ms": 16936.06,
+          "winning_providers": {
+            "spacetimeai.cc": 4
+          }
+        },
+        "gpt-5.6-sol": {
+          "calls": 1,
+          "p50_ms": 27415.33,
+          "p95_ms": 27415.33,
+          "winning_providers": {
+            "code.conpera.ai": 1
+          }
+        },
+        "gpt-5.5": {
+          "calls": 2,
+          "p50_ms": 11680.12,
+          "p95_ms": 11868.46,
+          "winning_providers": {
+            "ai.yescode.cloud": 2
+          }
+        }
+      },
+      "provider_attempts": {
+        "spacetimeai.cc": {
+          "attempts": 9,
+          "p50_ms": 15810.29,
+          "p95_ms": 19045.39
+        },
+        "code.conpera.ai": {
+          "attempts": 3,
+          "p50_ms": 24904.98,
+          "p95_ms": 24904.98
+        },
+        "ai.yescode.cloud": {
+          "attempts": 10,
+          "p50_ms": 9176.79,
+          "p95_ms": 9353.7
+        }
+      }
+    },
+    "by_load_stage": {
+      "difficulty_serial": {
+        "requests": 2933,
+        "outcomes": {
+          "correct_execution": 2926,
+          "clarification_unanswered": 7
+        },
+        "p50_ms": 199.39,
+        "p95_ms": 717.11,
+        "p99_ms": 938.45,
+        "max_ms": 32051.92
+      }
+    },
+    "health_checks": {
+      "sample_count": 30,
+      "passed": 30,
+      "failed": 0
+    }
+  }
+}

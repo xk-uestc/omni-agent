@@ -54,7 +54,7 @@ def test_sql_running_precedes_actual_execution_and_success_contains_real_sql(loc
 
 
 def test_document_real_call_emits_attention_for_insufficient_evidence(local_agent, monkeypatch):
-    monkeypatch.setattr(local_agent.knowledge, 'answer', lambda question: {
+    monkeypatch.setattr(local_agent.knowledge, 'answer', lambda question, **kwargs: {
         'status': 'insufficient_evidence', 'answer': '没有充分证据', 'citations': [], 'trace': []})
     observed = []
     result = local_agent.query('保修期多久', trace_callback=observed.append)
