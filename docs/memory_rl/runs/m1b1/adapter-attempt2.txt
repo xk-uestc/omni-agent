@@ -1,0 +1,51 @@
+..F......F........................                                       [100%]
+=================================== FAILURES ===================================
+__________________ test_filter_binding_and_explicit_conflict ___________________
+
+setup = (<backend.omni_agent.OmniAgent object at 0x7721a240cfe0>, <backend.memory.adapter.MemoryAdapter object at 0x7721a240d2b0>, <function setup.<locals>.add at 0x7721a2404ea0>)
+
+    def test_filter_binding_and_explicit_conflict(setup):
+        a,_,_=setup
+>       assert value(a.query('2025年华东银杉额'))==100
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ict-track8/tests/test_memory_adapter.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = {'status': 'clarification', 'question': '2025年华东银杉额', 'effective_question': '2025年华东银杉额', 'route': 'clarify', ...}
+
+    def value(response):
+>       return next(iter(response['result']['rows'][0].values()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+ict-track8/tests/test_memory_adapter.py:46: IndexError
+_____________ test_concurrency_no_shared_binding_or_alias_mutation _____________
+
+setup = (<backend.omni_agent.OmniAgent object at 0x7721a22231d0>, <backend.memory.adapter.MemoryAdapter object at 0x7721a22234d0>, <function setup.<locals>.add at 0x7721a23f5bc0>)
+
+    def test_concurrency_no_shared_binding_or_alias_mutation(setup):
+        a,m,_=setup;before=repr(a.engine.planner.linker.__dict__)
+        # Warm linker caches, then check rule identity/content rather than cache counters.
+        rules_before=a.engine.planner.linker.rules_for(a.engine.introspector.introspect(sqlite3.connect(a.engine.database_path),include_row_count=False))
+        qs=['2025年华东晨光额','2025年华东银杉额','2024年华南晨光额','2025年华东销售额']*4
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            results=list(pool.map(lambda x:a.query(x[1],session_id='parallel-'+str(x[0])),enumerate(qs)))
+>       assert [value(r) for r in results]==[120,100,250,300]*4
+                ^^^^^^^^
+
+ict-track8/tests/test_memory_adapter.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = {'status': 'clarification', 'question': '2025年华东银杉额', 'effective_question': '2025年华东银杉额', 'route': 'clarify', ...}
+
+    def value(response):
+>       return next(iter(response['result']['rows'][0].values()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+ict-track8/tests/test_memory_adapter.py:46: IndexError
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_memory_adapter.py::test_filter_binding_and_explicit_conflict
+FAILED ict-track8/tests/test_memory_adapter.py::test_concurrency_no_shared_binding_or_alias_mutation
+2 failed, 32 passed in 0.81s

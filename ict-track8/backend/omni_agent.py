@@ -289,8 +289,9 @@ def _normalize_model_tasks(plan, tasks, engine, knowledge, question):
 
 
 class OmniAgent:
-    def __init__(self, engine, knowledge, conversations, client=None):
+    def __init__(self, engine, knowledge, conversations, client=None, *, memory=None):
         self.engine, self.knowledge, self.conversations, self.client = engine, knowledge, conversations, client
+        self.memory = memory
 
     def catalogue(self, question, *, trace_callback=None):
         """Build bounded, question-selected context, never a first-N corpus dump."""
@@ -442,6 +443,10 @@ class OmniAgent:
         return {'route': 'sql', 'effective_question': question, 'tasks_json': '[]', 'clarification': ''}
 
     def _remember(self, session_id, *, question, effective_question, state, pending_parent_id=None):
+        if self.memory is not None and self.memory.enabled:
+            receipts = self.memory.request_receipts.get()
+            if receipts:
+                state = {**state, 'memory_bindings': list(receipts)}
         state = dict(state)
         if state.get('route') == 'sql' and state.get('pending_question'):
             parent, _ = self.conversations.pending_tasks.resolve(session_id, pending_parent_id) if pending_parent_id else (None, None)
@@ -479,6 +484,16 @@ class OmniAgent:
 
     def query(self, question, *, session_id=None, reset_context=False, complete_results=False, _confirmed_comparison_scope=None,
               _confirmed_pending_turn_id=None, trace_callback=None, image_attachments=None):
+        options = dict(session_id=session_id, reset_context=reset_context, complete_results=complete_results,
+            _confirmed_comparison_scope=_confirmed_comparison_scope, _confirmed_pending_turn_id=_confirmed_pending_turn_id,
+            trace_callback=trace_callback, image_attachments=image_attachments)
+        if self.memory is not None and self.memory.enabled:
+            return self.memory.run(self, question, options)
+        return self._query_without_memory(question, **options)
+
+    def _query_without_memory(self, question, *, session_id=None, reset_context=False, complete_results=False, _confirmed_comparison_scope=None,
+              _confirmed_pending_turn_id=None, trace_callback=None, image_attachments=None,
+              _memory_original_question=None):
         if image_attachments and self.client is None:
             raise ValueError('当前未配置支持图片输入的模型，暂不能处理图片。')
         call_index = 0
@@ -596,7 +611,7 @@ class OmniAgent:
                                     complete_results=complete_results,_confirmed_comparison_scope=_confirmed_comparison_scope,
                                     _confirmed_pending_turn_id=_confirmed_pending_turn_id,
                                     image_attachments=image_attachments,
-                                    _remember_question=question if canonical != question else None,
+                                    _remember_question=_memory_original_question or (question if canonical != question else None),
                                     _trace_callback=publish if trace_callback else None)
                 if resolved_choice:
                     choices.clear(session_id)

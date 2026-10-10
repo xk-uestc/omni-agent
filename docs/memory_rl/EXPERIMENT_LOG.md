@@ -45,3 +45,21 @@ timeout 45s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_P
 ## M1-B1 检查点 1
 
 同一 /tmp/omni-m1a-venv（requirements-initial.txt）执行先写测试：`python -m pytest -q ict-track8/tests/test_memory_core.py`，初始未实现 collection error，记录 runs/m1b1/core-before.txt。核心第一次16/16，增加服务端配置/初始化降级后17/17，分别保留 core.xml/txt、core-final.xml/txt。不改变任何 M1-A 冻结文件。
+
+## M1-B1 检查点 2
+
+先写 Adapter 测试（adapter-before.txt：缺少模块），首次32通过/2失败（合法 channel 无显式 alias，被误判 invalid_filter），修正为当前物理值索引核验后34通过。attempt2 重复失败是 shell 无 `python` 命令导致编辑未执行；实际用 python3 修正，attempt3通过。扩展测试最初19通过/1失败：原 model contract 忽略额外 sql 字段并从合法 plan 构建 SELECT，不能把其误断为 rules_fallback；改为真实非法物理字段后验证原 fallback。旧失败证据全部保留。
+
+```bash
+/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_core.py ict-track8/tests/test_session.py ict-track8/tests/test_semantic_integration.py ict-track8/tests/test_dependency_agent.py --junitxml=docs/memory_rl/runs/m1b1/source-final.xml
+```
+
+实际 stdout：`114 passed in 4.40s`，包括37新增与77旧源码测试。包含重开SQLite、两个独立session、新术语/年份、16并发查询、来源/Schema变更、历史超过8轮仍保存来源收据、模型 SQL 验证和非法字段 fallback。模型为确定性测试 provider，不是远程模型成绩。
+
+API 首次 api-final.txt 为测试跨模块导入 collection error；修正包内相对导入后使用下面同配置重跑 api-final2。API 必须环境外执行（M1-A 已记录 sandbox TestClient 停滞）。
+
+```bash
+timeout 120s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_api.py ict-track8/tests/test_api_security.py ict-track8/tests/test_omni_query_stream.py --junitxml=docs/memory_rl/runs/m1b1/api-final2.xml
+```
+
+API 实际 stdout：`16 passed, 3 warnings in 2.23s`；客户端伪造 scope/memory_enabled 字段不能改变服务端作用域/开关，HTTP/SSE各一次recall/observe。新增 source_versions 与 observe_ms 仅补充事件审计/计时，后续统一复跑记录于检查点3。

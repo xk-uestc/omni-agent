@@ -1,0 +1,31 @@
+...................F                                                     [100%]
+=================================== FAILURES ===================================
+______ test_model_sql_receives_binding_and_existing_validator_runs[True] _______
+
+setup = (<backend.omni_agent.OmniAgent object at 0x754668916e70>, <backend.memory.adapter.MemoryAdapter object at 0x754668917fe0>, <function setup.<locals>.add at 0x754668af7ce0>)
+unsafe_model = True
+
+    @pytest.mark.parametrize('unsafe_model',[False,True])
+    def test_model_sql_receives_binding_and_existing_validator_runs(setup,unsafe_model):
+        a,m,_=setup;seen=[]
+        def model(q,tables):
+            seen.append(q)
+            return {'version':1,'table':'sales_orders','metric':{'table':'sales_orders','column':'cost_amount','function':'SUM','label':'销售成本'},
+                'dimensions':[],'filters':[{'table':'sales_orders','column':'order_date','operator':'RANGE','value':['2025-01-01','2026-01-01']},
+                    {'table':'sales_orders','column':'region','operator':'=','value':'华东'}],
+                'analysis_mode':'aggregate','limit':100,'confidence':.95,'rewritten_question':q,
+                **({'sql':'DELETE FROM sales_orders'} if unsafe_model else {})}
+        a.engine.model_plan_provider=model
+        r=a.query('2025年华东晨光额')
+        assert value(r)==120 and r['memory']['consumed']==['cost']
+        assert seen and all('销售成本' in q and '晨光额' not in q for q in seen)
+>       assert r['result']['plan']['planner_source']==('rules_fallback' if unsafe_model else 'model_validated')
+E       AssertionError: assert 'model_validated' == 'rules_fallback'
+E         
+E         - rules_fallback
+E         + model_validated
+
+ict-track8/tests/test_memory_adapter.py:176: AssertionError
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_memory_adapter.py::test_model_sql_receives_binding_and_existing_validator_runs[True]
+1 failed, 19 passed in 0.81s

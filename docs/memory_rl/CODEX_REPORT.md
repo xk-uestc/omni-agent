@@ -113,3 +113,7 @@ HTTP 测试在 sandbox 内停于 first health 请求，两次中断 exit130，�
 SQLite 业务条目与 query events 分表；可信离线 provisioning 才可 put，observe 只写最小 allowlist 事件、独立验证默认 false、绝不晋升。scope 从服务端部署/项目/数据源配置获得；默认关闭时不打开数据库。过滤状态、时态、来源、Schema、聚合与条件后检查全候选冲突，最后预算排序。存储故障回退有明确 degraded 记录。全扫描上限512，超限整次拒绝避免漏查冲突。
 
 `/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py --junitxml=docs/memory_rl/runs/m1b1/core-final.xml` → `17 passed`。覆盖重建Store、scope、失效/过期/撤销/未确认、冲突先于top1、字段/聚合/值、无关/字面量、配置与Store故障、observe幂等/不晋升。完整stdout保存；还没有A/B任务成绩。
+
+## M1-B1 检查点 2
+
+新增 memory/adapter.py，经当前规则 planner 校验 Schema 绑定后重用原 Omni 查询链；两种入口共享服务端 Core，默认关闭。114源码与16 HTTP/SSE用例通过。冻结开发题尚待新同源码 A/B，未提前宣布收益。

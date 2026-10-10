@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="34" time="2.190" timestamp="2026-10-10T17:42:29.039711+08:00" hostname="a100"><testcase classname="ict-track8.tests.test_memory_adapter" name="test_cross_session_actual_execution_and_original_question" time="0.176" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_reopen_and_disabled_restores_behavior" time="0.100" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_filter_binding_and_explicit_conflict" time="0.084"><failure message="IndexError: list index out of range">setup = (&lt;backend.omni_agent.OmniAgent object at 0x706a3b9e5460&gt;, &lt;backend.memory.adapter.MemoryAdapter object at 0x706a3bbe3b90&gt;, &lt;function setup.&lt;locals&gt;.add at 0x706a3baf2660&gt;)
+
+    def test_filter_binding_and_explicit_conflict(setup):
+        a,_,_=setup
+&gt;       assert value(a.query('2025年华东银杉额'))==100
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ict-track8/tests/test_memory_adapter.py:73: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = {'status': 'clarification', 'question': '2025年华东银杉额', 'effective_question': '2025年华东银杉额', 'route': 'clarify', ...}
+
+    def value(response):
+&gt;       return next(iter(response['result']['rows'][0].values()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+ict-track8/tests/test_memory_adapter.py:46: IndexError</failure></testcase><testcase classname="ict-track8.tests.test_memory_adapter" name="test_matching_invalid_memory_clarifies[change0-unverified]" time="0.092" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_matching_invalid_memory_clarifies[change1-expired]" time="0.090" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_matching_invalid_memory_clarifies[change2-invalid_metric]" time="0.093" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_document_and_schema_changes_rejected" time="0.112" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_conflict_and_foreign_scope" time="0.106" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_store_error_safe_fallback_and_unrelated_zero_consumption" time="0.103" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_concurrency_no_shared_binding_or_alias_mutation" time="0.253"><failure message="IndexError: list index out of range">setup = (&lt;backend.omni_agent.OmniAgent object at 0x706a3b83a270&gt;, &lt;backend.memory.adapter.MemoryAdapter object at 0x706a3b83a2d0&gt;, &lt;function setup.&lt;locals&gt;.add at 0x706a3b849b20&gt;)
+
+    def test_concurrency_no_shared_binding_or_alias_mutation(setup):
+        a,m,_=setup;before=repr(a.engine.planner.linker.__dict__)
+        # Warm linker caches, then check rule identity/content rather than cache counters.
+        rules_before=a.engine.planner.linker.rules_for(a.engine.introspector.introspect(sqlite3.connect(a.engine.database_path),include_row_count=False))
+        qs=['2025年华东晨光额','2025年华东银杉额','2024年华南晨光额','2025年华东销售额']*4
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            results=list(pool.map(lambda x:a.query(x[1],session_id='parallel-'+str(x[0])),enumerate(qs)))
+&gt;       assert [value(r) for r in results]==[120,100,250,300]*4
+                ^^^^^^^^
+
+ict-track8/tests/test_memory_adapter.py:124: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+response = {'status': 'clarification', 'question': '2025年华东银杉额', 'effective_question': '2025年华东银杉额', 'route': 'clarify', ...}
+
+    def value(response):
+&gt;       return next(iter(response['result']['rows'][0].values()))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       IndexError: list index out of range
+
+ict-track8/tests/test_memory_adapter.py:46: IndexError</failure></testcase><testcase classname="ict-track8.tests.test_memory_adapter" name="test_memory_does_not_rewrite_unsafe_request" time="0.085" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_observe_categories[response0-None-clarification]" time="0.000" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_observe_categories[response1-None-clarification]" time="0.000" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_observe_categories[response2-None-sql_safety_rejected]" time="0.000" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_observe_categories[response3-None-source_conflict]" time="0.000" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_observe_categories[response4-None-model_failure]" time="0.000" /><testcase classname="ict-track8.tests.test_memory_adapter" name="test_observe_categories[None-error5-tool_failure]" time="0.000" /><testcase classname="ict-track8.tests.test_memory_core" name="test_persistent_reopen_and_two_independent_contexts" time="0.032" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change0-unverified]" time="0.032" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change1-revoked]" time="0.032" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change2-expired]" time="0.076" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change3-not_yet_valid]" time="0.032" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change4-schema_changed]" time="0.032" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change5-source_changed]" time="0.032" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change6-invalid_metric]" time="0.032" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change7-invalid_metric]" time="0.033" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change8-invalid_filter]" time="0.033" /><testcase classname="ict-track8.tests.test_memory_core" name="test_invalid_candidates_rejected_before_selection[change9-missing_confirmation]" time="0.033" /><testcase classname="ict-track8.tests.test_memory_core" name="test_scope_filtered_without_disclosing_foreign_record" time="0.033" /><testcase classname="ict-track8.tests.test_memory_core" name="test_conflict_checked_before_top_one_budget" time="0.039" /><testcase classname="ict-track8.tests.test_memory_core" name="test_unrelated_and_quoted_terms_do_not_recall" time="0.034" /><testcase classname="ict-track8.tests.test_memory_core" name="test_disabled_no_store_access_and_missing_scope_fails_closed" time="0.033" /><testcase classname="ict-track8.tests.test_memory_core" name="test_store_failure_falls_back_and_events_idempotent" time="0.039" /><testcase classname="ict-track8.tests.test_memory_core" name="test_server_configuration_required_and_default_off" time="0.027" /></testsuite></testsuites>

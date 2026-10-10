@@ -15,3 +15,10 @@
 ## 2026-10-10 M1-B1 用户正式授权
 
 本轮附件明确授权最小 Core/Adapter、确定性跨会话业务语义、候选 observe、A/B 和 16/185 回归。单项目服务端配置作用域；不实施多租户、自动晋升、跨源经验自动提取或训练。原始冻结数据/评分器/历史报告保持原字节。safe-09 仅诊断，修复建议另列。
+
+## M1-B1 Adapter 决定
+
+- `OmniAgent.query` 外层一次 recall；仅可信业务绑定转成当前 linker 已有 alias + 物理条件，经 `extract_required_intent` 精确核验后进入原查询链。绑定不写入共享 aliases/catalog；SQL 构建器、安全检查器未变。
+- request-local 元组与 ContextVar 保存来源收据，finally 重置；会话 `_remember` 保存收据用于后续版本复验，session_id 不参与 scope。
+- 缺失配置禁止启用；Store 故障回到旧路径。若历史本身依赖无法核验的记忆则澄清，避免从历史绕过失效检查。
+- 首版只接 `/api/v1/omni/query` 与 `/api/v1/omni/query/stream`，低层 NL2SQL、workbench 等接口不承诺记忆能力。无客户端确认/写入 API，候选仅离线可信配置。
