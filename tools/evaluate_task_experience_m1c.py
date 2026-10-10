@@ -154,7 +154,10 @@ def main():
         dump(out/f'{r["task"]["id"]}-{r["arm"]}.json',r)
     summary={'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'source_hashes_before':backend_before,'source_hashes_after':source_hashes(),
         'db_before':before,'db_after':digest(engine.database_path),'manifest_sha256':digest(BENCH/'manifest.json'),'runner_sha256':digest(Path(__file__)),
-        'model':client.model,'temperature':0,'records':[],'arm_metrics':{}}
+        'model':client.model,'temperature':0,'thinking':'disabled',
+        'model_run_config_sha256':digest(BENCH/'model_run_v2.json'),
+        'transport_sha256':digest(Path(__file__).with_name('m1c_model_client.py')),
+        'python':sys.version,'records':[],'arm_metrics':{}}
     for arm in ['A','B','C','D']:
         rows=[r for r in all_records if r['arm']==arm]
         summary['arm_metrics'][arm]={'passed':sum(r['score']['task_success'] for r in rows),'total':len(rows),'splits':{s:sum(r['score']['task_success'] for r in rows if r['task']['split']==s) for s in ['development','heldout']},

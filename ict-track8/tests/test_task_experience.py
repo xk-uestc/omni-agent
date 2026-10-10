@@ -175,3 +175,10 @@ def test_request_context_does_not_leak_between_calls(env):
     agent=OmniAgent(adapter.engine,adapter.knowledge,ConversationStore(),Planner(),experience=ExperienceSelector(adapter))
     agent.query(QUESTION);agent.query('请解释资料中的其他方法')
     assert 'task_experience' in calls[0] and 'task_experience' not in calls[-1]
+
+
+def test_non_posix_import_is_safe_and_review_fails_closed(env,monkeypatch):
+    import os
+    adapter,authority=env
+    monkeypatch.delattr(os,'geteuid')
+    with pytest.raises(PermissionError,match='POSIX'):LocalReviewContext.from_config('unused')

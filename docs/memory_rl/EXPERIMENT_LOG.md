@@ -197,3 +197,7 @@ M1-C类型契约测试命令：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-t
 新增typed formula_labels适用条件，避免“公式”泛相似就选择不同指标方法；agent_execution形成要求真实模型名称核验与原问题/实际图digest收据，继承独立执行重验与本地审核。选择不含最终值/历史SQL。
 
 种子独立预检初次A/B被评分器误拒：in-memory RANGE值是tuple而JSON是list，评分器冻结前规范化为list；保留precheck.txt，尚未正式评测。修正后A/B完整独立核验通过；客单价developer图仍source_scope_unverified，保留为未形成种子，不放松原来源规则。种子及目标采用已测试文档公式语法，全部在冻结前定义。目标Gold只在所有执行完成后读取。16题开发/保留各8；正式运行后不根据保留集改输入/Gold/scorer。
+
+首次正式label `m1c-formal-20261010`在开发阶段中止，已完成d01–d03共12条，保留全部原始输出与INTERRUPTED.json，不计算正式总成绩。原因：显式deepseek-flash默认thinking enabled，temperature=0实际上不生效；一次JSONDecodeError，原transport未保存无法解析的assistant正文，仅有usage/error_type，因此不能事后推断该内容。官方API参数说明已核对。主动停止自己的进程，累计ledger22次（含预检5、种子2、开发及修复请求），其中在途终止可能计费、Token未知，不能填0。
+
+随后明确请求thinking.disabled，增加有界assistant_content失败证据、audit解码字段；新model_run_v2.json独立补充固定运行配置，原输入/Gold/scorer/manifest均不变，不覆盖原运行。顺带发现experience新import会使默认服务在非POSIX因pwd导入失败：将pwd延迟到本地管理员入口，非POSIX审批明确fail closed，默认服务模块可导入；不宣称Windows全栈已验证。修复后机制/预算/独立评分17项通过（transport-fixed-tests.txt）。正式重跑仍受累计144额度约束，不重置ledger。

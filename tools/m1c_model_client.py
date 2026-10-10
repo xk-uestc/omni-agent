@@ -35,10 +35,10 @@ class BudgetedPlanner:
             if count>=self.max_calls:raise GenerationError('approved model call budget exhausted')
             f.write(json.dumps({'call':count+1,'operation':name,'reserved_at':time.time()})+'\n');f.flush();os.fsync(f.fileno())
         started=time.perf_counter();audit={'provider':'deepseek_chat_completions','model':self.model,'operation':name,
-            'call_number':count+1,'status':'failed','http_status':None,'temperature':0,'max_output_tokens':min(max_tokens,5000),
+            'call_number':count+1,'status':'failed','http_status':None,'temperature':0,'thinking':'disabled','max_output_tokens':min(max_tokens,5000),
             'input_tokens':None,'output_tokens':None,'transport_attempts':1}
         self.audit=audit
-        body={'model':self.model,'temperature':0,'max_tokens':min(max_tokens,5000),'stream':False,'response_format':{'type':'json_object'},
+        body={'model':self.model,'temperature':0,'thinking':{'type':'disabled'},'max_tokens':min(max_tokens,5000),'stream':False,'response_format':{'type':'json_object'},
             'messages':[{'role':'system','content':instructions+'\nReturn one JSON object matching this schema:\n'+json.dumps(schema,ensure_ascii=False)},
                         {'role':'user','content':json.dumps(context,ensure_ascii=False)}]}
         call={'context':context,'request_schema':schema,'audit':audit}
@@ -49,7 +49,9 @@ class BudgetedPlanner:
             data=response.json();usage=data.get('usage',{})
             audit.update(input_tokens=usage.get('prompt_tokens'),output_tokens=usage.get('completion_tokens'),usage=usage,
                          response_model=data.get('model'),finish_reason=data['choices'][0].get('finish_reason'))
-            output=json.loads(data['choices'][0]['message']['content']);call['output']=output
+            content=data['choices'][0]['message']['content']
+            call['assistant_content']=content[:24000] if isinstance(content,str) else None
+            output=json.loads(content);call['output']=output
             if not isinstance(output,dict) or set(output)!=set(schema['required']):raise GenerationError('structured plan keys invalid')
             for key,spec in schema['properties'].items():
                 if spec.get('type')=='string' and not isinstance(output[key],str):raise GenerationError('structured plan value type invalid')

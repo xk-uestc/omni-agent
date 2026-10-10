@@ -4,7 +4,6 @@ from dataclasses import asdict, dataclass, replace
 import json
 import os
 from pathlib import Path
-import pwd
 import socket
 import stat
 import unicodedata
@@ -23,6 +22,8 @@ class LocalReviewContext:
 
     @classmethod
     def from_config(cls,path):
+        if not hasattr(os,'geteuid'):raise PermissionError('local review requires a POSIX OS owner context')
+        import pwd
         path=Path(path)
         info=path.lstat()
         if path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_uid!=os.geteuid() or info.st_mode & 0o022:

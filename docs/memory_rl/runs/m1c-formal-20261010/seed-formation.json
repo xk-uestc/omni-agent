@@ -1,0 +1,426 @@
+[
+  {
+    "index": 0,
+    "formed": true,
+    "candidate": {
+      "memory_type": "task_experience",
+      "term": "experience_formula_sql",
+      "definition": "Source-bound method; replan from current request.",
+      "binding": {},
+      "experience": {
+        "version": 1,
+        "workflow": "formula_sql",
+        "steps": [
+          {
+            "role": "step_0",
+            "tool": "document_formula",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_1",
+            "tool": "document_cell",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_2",
+            "tool": "sql",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_3",
+            "tool": "calculate",
+            "depends_on": [
+              "step_0",
+              "step_1",
+              "step_2"
+            ],
+            "argument_sources": [
+              "current_question_or_current_source",
+              "step_0.verified_output",
+              "step_1.verified_output",
+              "step_2.verified_output"
+            ]
+          }
+        ],
+        "documents": [
+          "policy",
+          "targets"
+        ],
+        "formula_labels": [
+          "目标销售额"
+        ],
+        "rebinding": [
+          "current_request_time_region_metric_and_all_explicit_operations",
+          "fresh_read_only_sql_results",
+          "current_document_formula_and_typed_cells",
+          "verified_output_references_no_literal_historical_values"
+        ],
+        "on_missing_or_ambiguous": "clarify",
+        "execution_authority": "none"
+      },
+      "scope": {
+        "deployment": "m1c",
+        "project": "competition-demo",
+        "data_sources": [
+          "alt_policy",
+          "database",
+          "methods",
+          "next_targets",
+          "policy",
+          "revised",
+          "targets"
+        ]
+      },
+      "evidence": {
+        "event_id": "trace-9d989ad7429dd335b2b75fdfd52b2181364b13722f5cfcfb85b6e81af82442ea",
+        "trace_sha256": "9d989ad7429dd335b2b75fdfd52b2181364b13722f5cfcfb85b6e81af82442ea",
+        "verifier_sha256": "c180c255c8393da9e1da7f830c1d3508fef4559fec349c4180b18a4cb5a5b9a5"
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "7e10c0649a956e74cf39cfd6d8238085e491f7dbcfe519fbdcbafd0ed34986d3",
+          "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+          "targets": "e2d3083e1cff16fb41e38d9ae70a63d3b35e14505a61ee385957592142287692"
+        }
+      },
+      "valid_from": "2026-10-10T12:00:00+00:00",
+      "valid_to": null,
+      "supersedes": null,
+      "reason": "agent_execution",
+      "digest": "4013d3951fa6bb134215777f1dab53814bbcfaea8ee1d29a690057dcde8bbf9f",
+      "candidate_id": "cand-4013d3951fa6bb134215777f1dab5381",
+      "created_at": "2026-10-10T12:00:00+00:00",
+      "source_event_id": "trace-9d989ad7429dd335b2b75fdfd52b2181364b13722f5cfcfb85b6e81af82442ea",
+      "verification_state": "candidate"
+    },
+    "cli": [
+      {
+        "command": [
+          "/tmp/omni-m1a-venv/bin/python",
+          "-m",
+          "backend.memory.admin",
+          "--config",
+          "/home/viva/omni-agent/runtime/m1c-formal-20261010/admin.json",
+          "--type",
+          "task_experience",
+          "validate",
+          "--candidate",
+          "cand-4013d3951fa6bb134215777f1dab5381",
+          "--digest",
+          "4013d3951fa6bb134215777f1dab53814bbcfaea8ee1d29a690057dcde8bbf9f"
+        ],
+        "exit": 0,
+        "stdout": "{\"valid\": true, \"checked_at\": \"2026-10-10T12:00:00+00:00\", \"candidate_digest\": \"4013d3951fa6bb134215777f1dab53814bbcfaea8ee1d29a690057dcde8bbf9f\", \"checks\": \"typed_experience+immutable_verified_trace+shared_context_validity\", \"reasons\": []}\n"
+      },
+      {
+        "command": [
+          "/tmp/omni-m1a-venv/bin/python",
+          "-m",
+          "backend.memory.admin",
+          "--config",
+          "/home/viva/omni-agent/runtime/m1c-formal-20261010/admin.json",
+          "--type",
+          "task_experience",
+          "review",
+          "--candidate",
+          "cand-4013d3951fa6bb134215777f1dab5381",
+          "--digest",
+          "4013d3951fa6bb134215777f1dab53814bbcfaea8ee1d29a690057dcde8bbf9f",
+          "--decision",
+          "confirm",
+          "--request-id",
+          "seed-review-0",
+          "--reason",
+          "Independent whole-task fixture verification"
+        ],
+        "exit": 0,
+        "stdout": "{\"candidate_id\": \"cand-4013d3951fa6bb134215777f1dab5381\", \"digest\": \"4013d3951fa6bb134215777f1dab53814bbcfaea8ee1d29a690057dcde8bbf9f\", \"request_id\": \"seed-review-0\", \"decision\": \"confirm\", \"reason\": \"Independent whole-task fixture verification\", \"reviewer\": {\"uid\": 1001, \"account\": \"viva\", \"host\": \"a100\", \"configuration_sha256\": \"21bd479c5d0582302282f5dcba47f5a6a2fec4f31bb27ff1539ba79c9251b1ce\", \"memory_path\": \"/home/viva/omni-agent/runtime/m1c-formal-20261010/seed-memory.sqlite\", \"scope_key\": \"{\\\"data_sources\\\":[\\\"alt_policy\\\",\\\"database\\\",\\\"methods\\\",\\\"next_targets\\\",\\\"policy\\\",\\\"revised\\\",\\\"targets\\\"],\\\"deployment\\\":\\\"m1c\\\",\\\"project\\\":\\\"competition-demo\\\"}\"}, \"supersedes\": null, \"reviewed_at\": \"2026-10-10T12:00:00+00:00\", \"validation\": {\"candidate_digest\": \"4013d3951fa6bb134215777f1dab53814bbcfaea8ee1d29a690057dcde8bbf9f\", \"checked_at\": \"2026-10-10T12:00:00+00:00\", \"checks\": \"typed_experience+immutable_verified_trace+shared_context_validity\", \"reasons\": [], \"valid\": true}, \"source_version\": {\"schema\": \"2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e\", \"sources\": {\"database\": \"7e10c0649a956e74cf39cfd6d8238085e491f7dbcfe519fbdcbafd0ed34986d3\", \"policy\": \"74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6\", \"targets\": \"e2d3083e1cff16fb41e38d9ae70a63d3b35e14505a61ee385957592142287692\"}}, \"memory_id\": \"mem-4013d3951fa6bb134215777f1dab5381\"}\n"
+      }
+    ]
+  },
+  {
+    "index": "alternative_order",
+    "formed": true,
+    "candidate": {
+      "memory_type": "task_experience",
+      "term": "experience_formula_sql",
+      "definition": "Source-bound method; replan from current request.",
+      "binding": {},
+      "experience": {
+        "version": 1,
+        "workflow": "formula_sql",
+        "steps": [
+          {
+            "role": "step_0",
+            "tool": "sql",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_1",
+            "tool": "document_formula",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_2",
+            "tool": "document_cell",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_3",
+            "tool": "calculate",
+            "depends_on": [
+              "step_0",
+              "step_1",
+              "step_2"
+            ],
+            "argument_sources": [
+              "current_question_or_current_source",
+              "step_0.verified_output",
+              "step_1.verified_output",
+              "step_2.verified_output"
+            ]
+          }
+        ],
+        "documents": [
+          "policy",
+          "targets"
+        ],
+        "formula_labels": [
+          "目标销售额"
+        ],
+        "rebinding": [
+          "current_request_time_region_metric_and_all_explicit_operations",
+          "fresh_read_only_sql_results",
+          "current_document_formula_and_typed_cells",
+          "verified_output_references_no_literal_historical_values"
+        ],
+        "on_missing_or_ambiguous": "clarify",
+        "execution_authority": "none"
+      },
+      "scope": {
+        "deployment": "m1c",
+        "project": "competition-demo",
+        "data_sources": [
+          "alt_policy",
+          "database",
+          "methods",
+          "next_targets",
+          "policy",
+          "revised",
+          "targets"
+        ]
+      },
+      "evidence": {
+        "event_id": "trace-c183d2b02f360e317df6572aa3439dc1e8810836012c4b259d2d0ad998d660b1",
+        "trace_sha256": "c183d2b02f360e317df6572aa3439dc1e8810836012c4b259d2d0ad998d660b1",
+        "verifier_sha256": "c180c255c8393da9e1da7f830c1d3508fef4559fec349c4180b18a4cb5a5b9a5"
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "7e10c0649a956e74cf39cfd6d8238085e491f7dbcfe519fbdcbafd0ed34986d3",
+          "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+          "targets": "e2d3083e1cff16fb41e38d9ae70a63d3b35e14505a61ee385957592142287692"
+        }
+      },
+      "valid_from": "2026-10-10T12:00:00+00:00",
+      "valid_to": null,
+      "supersedes": null,
+      "reason": "developer_verified_seed",
+      "digest": "39bf158c2f5f2ef1c8f3177eb68dbdb225f82dba9940f0dab569638fa6c6184b",
+      "candidate_id": "cand-39bf158c2f5f2ef1c8f3177eb68dbdb2",
+      "created_at": "2026-10-10T12:00:00+00:00",
+      "source_event_id": "trace-c183d2b02f360e317df6572aa3439dc1e8810836012c4b259d2d0ad998d660b1",
+      "verification_state": "candidate"
+    },
+    "review": {
+      "candidate_id": "cand-39bf158c2f5f2ef1c8f3177eb68dbdb2",
+      "digest": "39bf158c2f5f2ef1c8f3177eb68dbdb225f82dba9940f0dab569638fa6c6184b",
+      "request_id": "alternative-seed",
+      "decision": "confirm",
+      "reason": "Verified alternate independent read ordering",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "21bd479c5d0582302282f5dcba47f5a6a2fec4f31bb27ff1539ba79c9251b1ce",
+        "memory_path": "/home/viva/omni-agent/runtime/m1c-formal-20261010/seed-memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"alt_policy\",\"database\",\"methods\",\"next_targets\",\"policy\",\"revised\",\"targets\"],\"deployment\":\"m1c\",\"project\":\"competition-demo\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+00:00",
+      "validation": {
+        "candidate_digest": "39bf158c2f5f2ef1c8f3177eb68dbdb225f82dba9940f0dab569638fa6c6184b",
+        "checked_at": "2026-10-10T12:00:00+00:00",
+        "checks": "typed_experience+immutable_verified_trace+shared_context_validity",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "7e10c0649a956e74cf39cfd6d8238085e491f7dbcfe519fbdcbafd0ed34986d3",
+          "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+          "targets": "e2d3083e1cff16fb41e38d9ae70a63d3b35e14505a61ee385957592142287692"
+        }
+      },
+      "memory_id": "mem-39bf158c2f5f2ef1c8f3177eb68dbdb2"
+    }
+  },
+  {
+    "index": 1,
+    "formed": true,
+    "candidate": {
+      "memory_type": "task_experience",
+      "term": "experience_sql_document",
+      "definition": "Source-bound method; replan from current request.",
+      "binding": {},
+      "experience": {
+        "version": 1,
+        "workflow": "sql_document",
+        "steps": [
+          {
+            "role": "step_0",
+            "tool": "sql",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_1",
+            "tool": "search",
+            "depends_on": [
+              "step_0"
+            ],
+            "argument_sources": [
+              "current_question_or_current_source",
+              "step_0.verified_output"
+            ]
+          }
+        ],
+        "documents": [
+          "methods"
+        ],
+        "formula_labels": [],
+        "rebinding": [
+          "current_request_time_region_metric_and_all_explicit_operations",
+          "fresh_read_only_sql_results",
+          "current_document_formula_and_typed_cells",
+          "verified_output_references_no_literal_historical_values"
+        ],
+        "on_missing_or_ambiguous": "clarify",
+        "execution_authority": "none"
+      },
+      "scope": {
+        "deployment": "m1c",
+        "project": "competition-demo",
+        "data_sources": [
+          "alt_policy",
+          "database",
+          "methods",
+          "next_targets",
+          "policy",
+          "revised",
+          "targets"
+        ]
+      },
+      "evidence": {
+        "event_id": "trace-7430bfdfc921aacfdcac337ab5dd71f47207f2685246de5a420cf0c831213024",
+        "trace_sha256": "7430bfdfc921aacfdcac337ab5dd71f47207f2685246de5a420cf0c831213024",
+        "verifier_sha256": "c180c255c8393da9e1da7f830c1d3508fef4559fec349c4180b18a4cb5a5b9a5"
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "7e10c0649a956e74cf39cfd6d8238085e491f7dbcfe519fbdcbafd0ed34986d3",
+          "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+        }
+      },
+      "valid_from": "2026-10-10T12:00:00+00:00",
+      "valid_to": null,
+      "supersedes": null,
+      "reason": "agent_execution",
+      "digest": "42979f9c898440c04b9faadfffe8187170b24a7dad4b8543ba802d6327e2d9fb",
+      "candidate_id": "cand-42979f9c898440c04b9faadfffe81871",
+      "created_at": "2026-10-10T12:00:00+00:00",
+      "source_event_id": "trace-7430bfdfc921aacfdcac337ab5dd71f47207f2685246de5a420cf0c831213024",
+      "verification_state": "candidate"
+    },
+    "cli": [
+      {
+        "command": [
+          "/tmp/omni-m1a-venv/bin/python",
+          "-m",
+          "backend.memory.admin",
+          "--config",
+          "/home/viva/omni-agent/runtime/m1c-formal-20261010/admin.json",
+          "--type",
+          "task_experience",
+          "validate",
+          "--candidate",
+          "cand-42979f9c898440c04b9faadfffe81871",
+          "--digest",
+          "42979f9c898440c04b9faadfffe8187170b24a7dad4b8543ba802d6327e2d9fb"
+        ],
+        "exit": 0,
+        "stdout": "{\"valid\": true, \"checked_at\": \"2026-10-10T12:00:00+00:00\", \"candidate_digest\": \"42979f9c898440c04b9faadfffe8187170b24a7dad4b8543ba802d6327e2d9fb\", \"checks\": \"typed_experience+immutable_verified_trace+shared_context_validity\", \"reasons\": []}\n"
+      },
+      {
+        "command": [
+          "/tmp/omni-m1a-venv/bin/python",
+          "-m",
+          "backend.memory.admin",
+          "--config",
+          "/home/viva/omni-agent/runtime/m1c-formal-20261010/admin.json",
+          "--type",
+          "task_experience",
+          "review",
+          "--candidate",
+          "cand-42979f9c898440c04b9faadfffe81871",
+          "--digest",
+          "42979f9c898440c04b9faadfffe8187170b24a7dad4b8543ba802d6327e2d9fb",
+          "--decision",
+          "confirm",
+          "--request-id",
+          "seed-review-1",
+          "--reason",
+          "Independent whole-task fixture verification"
+        ],
+        "exit": 0,
+        "stdout": "{\"candidate_id\": \"cand-42979f9c898440c04b9faadfffe81871\", \"digest\": \"42979f9c898440c04b9faadfffe8187170b24a7dad4b8543ba802d6327e2d9fb\", \"request_id\": \"seed-review-1\", \"decision\": \"confirm\", \"reason\": \"Independent whole-task fixture verification\", \"reviewer\": {\"uid\": 1001, \"account\": \"viva\", \"host\": \"a100\", \"configuration_sha256\": \"21bd479c5d0582302282f5dcba47f5a6a2fec4f31bb27ff1539ba79c9251b1ce\", \"memory_path\": \"/home/viva/omni-agent/runtime/m1c-formal-20261010/seed-memory.sqlite\", \"scope_key\": \"{\\\"data_sources\\\":[\\\"alt_policy\\\",\\\"database\\\",\\\"methods\\\",\\\"next_targets\\\",\\\"policy\\\",\\\"revised\\\",\\\"targets\\\"],\\\"deployment\\\":\\\"m1c\\\",\\\"project\\\":\\\"competition-demo\\\"}\"}, \"supersedes\": null, \"reviewed_at\": \"2026-10-10T12:00:00+00:00\", \"validation\": {\"candidate_digest\": \"42979f9c898440c04b9faadfffe8187170b24a7dad4b8543ba802d6327e2d9fb\", \"checked_at\": \"2026-10-10T12:00:00+00:00\", \"checks\": \"typed_experience+immutable_verified_trace+shared_context_validity\", \"reasons\": [], \"valid\": true}, \"source_version\": {\"schema\": \"2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e\", \"sources\": {\"database\": \"7e10c0649a956e74cf39cfd6d8238085e491f7dbcfe519fbdcbafd0ed34986d3\", \"methods\": \"fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8\"}}, \"memory_id\": \"mem-42979f9c898440c04b9faadfffe81871\"}\n"
+      }
+    ]
+  },
+  {
+    "index": 2,
+    "formed": false,
+    "reason": "developer_graph_failed_full_scope",
+    "score": {
+      "task_success": false,
+      "operation_coverage": false,
+      "result_correct": false,
+      "source_correct": false,
+      "clarification_correct": null
+    }
+  }
+]

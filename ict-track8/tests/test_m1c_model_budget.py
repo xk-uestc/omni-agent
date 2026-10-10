@@ -24,4 +24,5 @@ def test_persisted_budget_and_secret_free_audit(tmp_path):
     assert len(transport.sent)==1 and 'secret-fixture' not in json.dumps(client.calls)
     assert client.audit['input_tokens']==10
     assert transport.sent[0]['allow_redirects'] is False
+    assert transport.sent[0]['json']['thinking']=={'type':'disabled'}
     with pytest.raises(ValueError):BudgetedPlanner(config,ledger,max_calls=2)
