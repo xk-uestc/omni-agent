@@ -245,3 +245,9 @@ timeout 180s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_
 `env ICT8_DB_PATH=/tmp/f1-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_knowledge_store.py ict-track8/tests/test_dense_retrieval.py ict-track8/tests/test_evidence_coverage.py ict-track8/tests/test_dependency_agent.py ict-track8/tests/test_sql_document_binding.py ict-track8/tests/test_fusion_history.py ict-track8/tests/test_omni_agent.py > docs/foundation/runs/baseline-tests.txt 2>&1`
 
 153通过5失败；2项不存在夹具数据库的测试环境错误、3项已有失败。100文档真实BM25性能见foundation/runs/storage-baseline.json；不计模型耗时。
+
+F1分层开发输入冻结：`/tmp/omni-m1a-venv/bin/python tools/freeze_foundation_rag.py`；manifest冻结输入、协议、生成器、评分脚本SHA。`/tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_rag.py --output docs/foundation/runs/rag-A-dev-before.json`：24题源与必要证据Recall1，21/21 annotation complete，无关来源.645833，生成模型not_run。保留8题尚未用来优化。
+
+修正测试夹具：通过initialize_database('/tmp/f1-api.sqlite')建立隔离样本后，原定向命令重跑，日志baseline-tests-configured.txt；原环境失败日志保留。
+
+`/tmp/omni-m1a-venv/bin/python tools/fetch_foundation_bge.py`（允许网络提升权限）：7项资产核验，下载95,827,648 bytes固定权重。沙箱首次网络socket拒绝后同命令提升成功；无凭据输出。`HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 USE_TF=0 /tmp/f1-bge-venv/bin/python tools/evaluate_foundation_rag.py --dense --output docs/foundation/runs/rag-B-dev-before.json > docs/foundation/runs/rag-B-dev-before-stdout.txt 2>&1`：BGE本地真实执行6/24，英文18项跳过，不生成答案。
