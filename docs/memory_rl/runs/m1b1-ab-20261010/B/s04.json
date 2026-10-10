@@ -1,0 +1,1181 @@
+{
+  "response": {
+    "status": "ok",
+    "question": "2025年华南紫竹额是多少",
+    "effective_question": "2025年华南毛利",
+    "route": "sql",
+    "planner_source": "rules_basic",
+    "session_id": "s04-target",
+    "context_turns": 0,
+    "state": {
+      "route": "sql",
+      "metrics": [],
+      "filters": [
+        {
+          "column": "order_date",
+          "operator": "RANGE",
+          "value": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "source_text": "2025年",
+          "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+          "table": "sales_orders"
+        },
+        {
+          "column": "region",
+          "operator": "=",
+          "value": "华南",
+          "source_text": "华南",
+          "explanation": "限定 region ∈ {华南}",
+          "table": "sales_orders"
+        }
+      ],
+      "dimensions": [],
+      "clarification_code": null,
+      "pending_question": null,
+      "executed_sql_context": {
+        "payload": {
+          "question": "2025年华南毛利",
+          "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "华南",
+            100
+          ],
+          "source_revision": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b"
+        },
+        "sha256": "dfa7c918a9f056e800a7f58553b710ede6098044d68540f37f447b147743023b"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "result_state": "rows",
+      "notices": [],
+      "question": "2025年华南紫竹额是多少",
+      "rewritten_question": "2025年华南毛利",
+      "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "columns": [
+        "gross_profit"
+      ],
+      "rows": [
+        {
+          "gross_profit": 2705.08
+        }
+      ],
+      "plan": {
+        "table": "sales_orders",
+        "metric_table": "sales_orders",
+        "metric_column": "gross_profit",
+        "metric_function": "SUM",
+        "metric_label": "gross_profit",
+        "analysis_mode": "aggregate",
+        "dimensions": [],
+        "dimension_tables": {},
+        "dimension_transforms": {},
+        "dimension_labels": {},
+        "filters": [
+          {
+            "column": "order_date",
+            "operator": "RANGE",
+            "value": [
+              "2025-01-01",
+              "2026-01-01"
+            ],
+            "source_text": "2025年",
+            "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+            "table": "sales_orders"
+          },
+          {
+            "column": "region",
+            "operator": "=",
+            "value": "华南",
+            "source_text": "华南",
+            "explanation": "限定 region ∈ {华南}",
+            "table": "sales_orders"
+          }
+        ],
+        "having": null,
+        "links": [
+          {
+            "source_text": "毛利",
+            "table": "sales_orders",
+            "column": "gross_profit",
+            "role": "metric",
+            "score": 0.74,
+            "matched_alias": "毛利",
+            "metric_function": "SUM"
+          }
+        ],
+        "join_tables": [],
+        "join_conditions": [],
+        "join_path": [],
+        "join_alternatives": [],
+        "order_desc": true,
+        "limit": 100,
+        "complete_results": false,
+        "semantic_row_limit": null,
+        "preview_row_limit": null,
+        "confidence": 0.58,
+        "rewritten_question": "2025年华南毛利",
+        "comparison_mode": "none",
+        "comparison_period": {},
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": [],
+        "assumptions": [
+          "日期参数格式：iso_text",
+          "使用表 sales_orders 的只读聚合查询"
+        ],
+        "planner_source": "rules",
+        "top_n": null,
+        "fan_out": false,
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华南",
+            "毛利"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "intent_audit": {
+          "question": "2025年华南毛利",
+          "metric": {
+            "table": "sales_orders",
+            "column": "gross_profit",
+            "function": "SUM",
+            "label": "gross_profit"
+          },
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华南",
+              "source_text": "华南",
+              "explanation": "限定 region ∈ {华南}",
+              "table": "sales_orders"
+            }
+          ],
+          "time_range": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "group_by": [],
+          "comparison": "none",
+          "comparison_window": null,
+          "top_n": null,
+          "confidence": 0.58,
+          "unresolved": [],
+          "execution_allowed": true,
+          "planner_source": "rules",
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "grain_audit": {},
+          "semantic_audit": {
+            "date_storage_formats": {
+              "sales_orders.order_date": "iso_text"
+            }
+          }
+        },
+        "planner_audit": {},
+        "model_plan_diagnostics": {},
+        "metrics": [],
+        "derived_metrics": [],
+        "order_metric": null,
+        "grain_audit": {},
+        "semantic_audit": {
+          "date_storage_formats": {
+            "sales_orders.order_date": "iso_text"
+          },
+          "language_normalization": {
+            "original_question": "2025年华南毛利是多少",
+            "normalized_question": "2025年华南毛利",
+            "rewrites": [
+              {
+                "source_text": "毛利是多少",
+                "replacement": "毛利",
+                "start": 7,
+                "end": 12,
+                "concept": "gross_profit",
+                "table": "sales_orders",
+                "column": "gross_profit",
+                "confidence": 0.95,
+                "reason": "真实 Schema 的业务概念与字段路径",
+                "metric_id": null,
+                "source_fields": [
+                  "sales_orders.gross_profit"
+                ]
+              }
+            ],
+            "ambiguities": [],
+            "clarification": null,
+            "skipped_reason": null
+          }
+        },
+        "output_metrics": []
+      },
+      "explanation": [
+        "识别指标：gross_profit（SUM）",
+        "查询表：sales_orders",
+        "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+        "限定 region ∈ {华南}",
+        "日期参数格式：iso_text",
+        "使用表 sales_orders 的只读聚合查询",
+        "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+      ],
+      "provenance": {
+        "source_type": "structured_database",
+        "database": "mixed.sqlite",
+        "table": "sales_orders",
+        "row_count": 1,
+        "row_limit": 100,
+        "result_completeness": "within_return_limit",
+        "query_hash": "95ea7866a5749846",
+        "field_links": [
+          {
+            "source_text": "毛利",
+            "table": "sales_orders",
+            "column": "gross_profit",
+            "role": "metric",
+            "score": 0.74,
+            "matched_alias": "毛利",
+            "metric_function": "SUM"
+          }
+        ],
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华南",
+            "毛利"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "consistency": "sqlite_read_transaction",
+        "source_revision": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+        "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+        "grain_audit": {},
+        "result_cells": [
+          {
+            "row": 0,
+            "column": "gross_profit",
+            "query_hash": "95ea7866a5749846",
+            "locator": {
+              "type": "sql_result",
+              "row": 0,
+              "column": "gross_profit"
+            }
+          }
+        ],
+        "output_cardinality": {
+          "status": "verified",
+          "maximum_output_rows": 1,
+          "method": "executed_select_scope_cardinality",
+          "verified_singleton_scopes": 1,
+          "aggregate_functions": [
+            "SUM"
+          ],
+          "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+        }
+      },
+      "clarification": null,
+      "clarification_code": null,
+      "clarification_options": [],
+      "source_tables": {
+        "database": "mixed.sqlite",
+        "source_revision": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+        "query_hash": "95ea7866a5749846",
+        "source_question": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华南",
+          100
+        ],
+        "reused_result": false,
+        "tables": [
+          {
+            "name": "sales_orders",
+            "used_columns": [
+              "gross_profit",
+              "order_date",
+              "region"
+            ]
+          }
+        ],
+        "basis": "executed_sql_ast_physical_sources"
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "sql",
+        "latency_ms": 1.681,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      }
+    ],
+    "audit_id": "fae653b8e48877ce2c1bb224",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华南毛利是多少"
+    },
+    "language_normalization": {
+      "original_question": "2025年华南毛利是多少",
+      "normalized_question": "2025年华南毛利",
+      "rewrites": [
+        {
+          "source_text": "毛利是多少",
+          "replacement": "毛利",
+          "start": 7,
+          "end": 12,
+          "concept": "gross_profit",
+          "table": "sales_orders",
+          "column": "gross_profit",
+          "confidence": 0.95,
+          "reason": "真实 Schema 的业务概念与字段路径",
+          "metric_id": null,
+          "source_fields": [
+            "sales_orders.gross_profit"
+          ]
+        }
+      ],
+      "ambiguities": [],
+      "clarification": null,
+      "skipped_reason": null
+    },
+    "routing": {
+      "selected_route": "sql",
+      "label": "数据库问数",
+      "strategy": "source_query",
+      "reason": "查询所需指标和数据。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "query_reference_id": "q_a46ccdc4538f4062b9b19cf30b20fa17",
+    "memory": {
+      "recall_count": 1,
+      "selected": [
+        "margin"
+      ],
+      "consumed": [
+        "margin"
+      ],
+      "decisions": [
+        {
+          "memory_id": "margin",
+          "term": "紫竹额",
+          "reason": "selected"
+        }
+      ],
+      "degraded": false,
+      "bindings": [
+        {
+          "memory_id": "margin",
+          "term": "紫竹额",
+          "binding": {
+            "column": "gross_profit",
+            "function": "SUM",
+            "table": "sales_orders"
+          },
+          "source_version": {
+            "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+            "sources": {
+              "mixed": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+              "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+            }
+          },
+          "provenance": {
+            "authority": "server-authored development fixture; not authenticated real user confirmation",
+            "confirmation_id": "fixture-confirm-margin",
+            "evidence_id": "fixture-confirm-margin",
+            "verification_id": "frozen-fixture-contract-not-real-user"
+          }
+        }
+      ],
+      "recall_ms": 1.3,
+      "canonical_question": "2025年华南毛利是多少",
+      "trace_id": "f0c7f009a814473a93d68ce43d22c7b7",
+      "observe_ms": 5.396,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result"
+      }
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 16.943,
+  "trace": [
+    {
+      "stage": "memory",
+      "tool": "memory.recall",
+      "status": "success",
+      "executed": true,
+      "call_id": "f0c7f009a814473a93d68ce43d22c7b7:memory.recall",
+      "trace_id": "f0c7f009a814473a93d68ce43d22c7b7",
+      "output": {
+        "recall_count": 1,
+        "selected": [
+          "margin"
+        ],
+        "consumed": [],
+        "decisions": [
+          {
+            "memory_id": "margin",
+            "term": "紫竹额",
+            "reason": "selected"
+          }
+        ],
+        "degraded": false,
+        "bindings": [
+          {
+            "memory_id": "margin",
+            "term": "紫竹额",
+            "binding": {
+              "column": "gross_profit",
+              "function": "SUM",
+              "table": "sales_orders"
+            },
+            "source_version": {
+              "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+              "sources": {
+                "mixed": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+                "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+              }
+            },
+            "provenance": {
+              "authority": "server-authored development fixture; not authenticated real user confirmation",
+              "confirmation_id": "fixture-confirm-margin",
+              "evidence_id": "fixture-confirm-margin",
+              "verification_id": "frozen-fixture-contract-not-real-user"
+            }
+          }
+        ],
+        "recall_ms": 1.3,
+        "canonical_question": "2025年华南毛利是多少",
+        "trace_id": "f0c7f009a814473a93d68ce43d22c7b7"
+      }
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "running",
+      "input": {
+        "question": "2025年华南毛利"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华南",
+          100
+        ],
+        "columns": [
+          "gross_profit"
+        ],
+        "result_state": "rows",
+        "row_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "memory",
+      "tool": "memory.observe",
+      "status": "success",
+      "executed": true,
+      "call_id": "f0c7f009a814473a93d68ce43d22c7b7:memory.observe",
+      "trace_id": "f0c7f009a814473a93d68ce43d22c7b7",
+      "output": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result"
+      }
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "sql"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-3"
+    }
+  ],
+  "memory": {
+    "recall_count": 1,
+    "selected": [
+      "margin"
+    ],
+    "consumed": [
+      "margin"
+    ],
+    "decisions": [
+      {
+        "memory_id": "margin",
+        "term": "紫竹额",
+        "reason": "selected"
+      }
+    ],
+    "degraded": false,
+    "bindings": [
+      {
+        "memory_id": "margin",
+        "term": "紫竹额",
+        "binding": {
+          "column": "gross_profit",
+          "function": "SUM",
+          "table": "sales_orders"
+        },
+        "source_version": {
+          "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+          "sources": {
+            "mixed": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+            "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+          }
+        },
+        "provenance": {
+          "authority": "server-authored development fixture; not authenticated real user confirmation",
+          "confirmation_id": "fixture-confirm-margin",
+          "evidence_id": "fixture-confirm-margin",
+          "verification_id": "frozen-fixture-contract-not-real-user"
+        }
+      }
+    ],
+    "recall_ms": 1.3,
+    "canonical_question": "2025年华南毛利是多少",
+    "trace_id": "f0c7f009a814473a93d68ce43d22c7b7",
+    "observe_ms": 5.396,
+    "observe": {
+      "stored": true,
+      "promotion": "none",
+      "category": "verified_result"
+    }
+  },
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 2,
+  "memory_operations": 2,
+  "id": "s04",
+  "category": "benefit_semantics",
+  "score": {
+    "status": "ok",
+    "field_pass": true,
+    "dimension_pass": true,
+    "result_pass": true,
+    "source_filter_population_pass": true,
+    "gold_source_table": "sales_orders",
+    "gold_contributing_records": 8,
+    "actual_source_table": "sales_orders",
+    "actual_contributing_records": 8,
+    "actual_rows": [
+      [
+        2705.08
+      ]
+    ],
+    "gold_rows_scoring_only": [
+      [
+        2705.08
+      ]
+    ],
+    "replay_rows": [
+      [
+        2705.08
+      ]
+    ],
+    "metric_fields_actual": [
+      "gross_profit"
+    ],
+    "version_evidence_pass": true
+  },
+  "target_history_before": 0,
+  "target_session": "s04-target",
+  "preparation_session": "s04-preparation",
+  "preparation": [
+    {
+      "response": {
+        "status": "ok",
+        "question": "2024年华东毛利",
+        "effective_question": "2024年华东毛利",
+        "route": "sql",
+        "planner_source": "rules_basic",
+        "session_id": "s04-preparation",
+        "context_turns": 0,
+        "state": {
+          "route": "sql",
+          "metrics": [],
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2024-01-01",
+                "2025-01-01"
+              ],
+              "source_text": "2024年",
+              "explanation": "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华东",
+              "source_text": "华东",
+              "explanation": "限定 region ∈ {华东}",
+              "table": "sales_orders"
+            }
+          ],
+          "dimensions": [],
+          "clarification_code": null,
+          "pending_question": null,
+          "executed_sql_context": {
+            "payload": {
+              "question": "2024年华东毛利",
+              "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+              "parameters": [
+                "2024-01-01",
+                "2025-01-01",
+                "华东",
+                100
+              ],
+              "source_revision": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b"
+            },
+            "sha256": "f3d80e5c4011f28d54a13a37bd565f9466ae301d62a8a9ea3e417a1e92fb342e"
+          }
+        },
+        "result": {
+          "status": "ok",
+          "result_state": "rows",
+          "notices": [],
+          "question": "2024年华东毛利",
+          "rewritten_question": "2024年华东毛利",
+          "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+          "parameters": [
+            "2024-01-01",
+            "2025-01-01",
+            "华东",
+            100
+          ],
+          "columns": [
+            "gross_profit"
+          ],
+          "rows": [
+            {
+              "gross_profit": 2080.76
+            }
+          ],
+          "plan": {
+            "table": "sales_orders",
+            "metric_table": "sales_orders",
+            "metric_column": "gross_profit",
+            "metric_function": "SUM",
+            "metric_label": "gross_profit",
+            "analysis_mode": "aggregate",
+            "dimensions": [],
+            "dimension_tables": {},
+            "dimension_transforms": {},
+            "dimension_labels": {},
+            "filters": [
+              {
+                "column": "order_date",
+                "operator": "RANGE",
+                "value": [
+                  "2024-01-01",
+                  "2025-01-01"
+                ],
+                "source_text": "2024年",
+                "explanation": "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+                "table": "sales_orders"
+              },
+              {
+                "column": "region",
+                "operator": "=",
+                "value": "华东",
+                "source_text": "华东",
+                "explanation": "限定 region ∈ {华东}",
+                "table": "sales_orders"
+              }
+            ],
+            "having": null,
+            "links": [
+              {
+                "source_text": "毛利",
+                "table": "sales_orders",
+                "column": "gross_profit",
+                "role": "metric",
+                "score": 0.74,
+                "matched_alias": "毛利",
+                "metric_function": "SUM"
+              }
+            ],
+            "join_tables": [],
+            "join_conditions": [],
+            "join_path": [],
+            "join_alternatives": [],
+            "order_desc": true,
+            "limit": 100,
+            "complete_results": false,
+            "semantic_row_limit": null,
+            "preview_row_limit": null,
+            "confidence": 0.58,
+            "rewritten_question": "2024年华东毛利",
+            "comparison_mode": "none",
+            "comparison_period": {},
+            "clarification": null,
+            "clarification_code": null,
+            "clarification_options": [],
+            "assumptions": [
+              "日期参数格式：iso_text",
+              "使用表 sales_orders 的只读聚合查询"
+            ],
+            "planner_source": "rules",
+            "top_n": null,
+            "fan_out": false,
+            "coverage": {
+              "consumed": [
+                "2024年",
+                "华东",
+                "毛利"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "intent_audit": {
+              "question": "2024年华东毛利",
+              "metric": {
+                "table": "sales_orders",
+                "column": "gross_profit",
+                "function": "SUM",
+                "label": "gross_profit"
+              },
+              "filters": [
+                {
+                  "column": "order_date",
+                  "operator": "RANGE",
+                  "value": [
+                    "2024-01-01",
+                    "2025-01-01"
+                  ],
+                  "source_text": "2024年",
+                  "explanation": "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+                  "table": "sales_orders"
+                },
+                {
+                  "column": "region",
+                  "operator": "=",
+                  "value": "华东",
+                  "source_text": "华东",
+                  "explanation": "限定 region ∈ {华东}",
+                  "table": "sales_orders"
+                }
+              ],
+              "time_range": [
+                "2024-01-01",
+                "2025-01-01"
+              ],
+              "group_by": [],
+              "comparison": "none",
+              "comparison_window": null,
+              "top_n": null,
+              "confidence": 0.58,
+              "unresolved": [],
+              "execution_allowed": true,
+              "planner_source": "rules",
+              "planner_audit": {},
+              "metrics": [],
+              "derived_metrics": [],
+              "grain_audit": {},
+              "semantic_audit": {
+                "date_storage_formats": {
+                  "sales_orders.order_date": "iso_text"
+                }
+              }
+            },
+            "planner_audit": {},
+            "model_plan_diagnostics": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "order_metric": null,
+            "grain_audit": {},
+            "semantic_audit": {
+              "date_storage_formats": {
+                "sales_orders.order_date": "iso_text"
+              }
+            },
+            "output_metrics": []
+          },
+          "explanation": [
+            "识别指标：gross_profit（SUM）",
+            "查询表：sales_orders",
+            "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+            "限定 region ∈ {华东}",
+            "日期参数格式：iso_text",
+            "使用表 sales_orders 的只读聚合查询",
+            "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+          ],
+          "provenance": {
+            "source_type": "structured_database",
+            "database": "mixed.sqlite",
+            "table": "sales_orders",
+            "row_count": 1,
+            "row_limit": 100,
+            "result_completeness": "within_return_limit",
+            "query_hash": "1b8cf0ddb47a3dfb",
+            "field_links": [
+              {
+                "source_text": "毛利",
+                "table": "sales_orders",
+                "column": "gross_profit",
+                "role": "metric",
+                "score": 0.74,
+                "matched_alias": "毛利",
+                "metric_function": "SUM"
+              }
+            ],
+            "coverage": {
+              "consumed": [
+                "2024年",
+                "华东",
+                "毛利"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "consistency": "sqlite_read_transaction",
+            "source_revision": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+            "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+            "grain_audit": {},
+            "result_cells": [
+              {
+                "row": 0,
+                "column": "gross_profit",
+                "query_hash": "1b8cf0ddb47a3dfb",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "gross_profit"
+                }
+              }
+            ],
+            "output_cardinality": {
+              "status": "verified",
+              "maximum_output_rows": 1,
+              "method": "executed_select_scope_cardinality",
+              "verified_singleton_scopes": 1,
+              "aggregate_functions": [
+                "SUM"
+              ],
+              "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+            }
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "source_tables": {
+            "database": "mixed.sqlite",
+            "source_revision": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+            "query_hash": "1b8cf0ddb47a3dfb",
+            "source_question": null,
+            "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+            "parameters": [
+              "2024-01-01",
+              "2025-01-01",
+              "华东",
+              100
+            ],
+            "reused_result": false,
+            "tables": [
+              {
+                "name": "sales_orders",
+                "used_columns": [
+                  "gross_profit",
+                  "order_date",
+                  "region"
+                ]
+              }
+            ],
+            "basis": "executed_sql_ast_physical_sources"
+          }
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "rules_basic",
+            "route": "sql",
+            "latency_ms": 1.668,
+            "error": null,
+            "rejection_code": null,
+            "normalizations": [],
+            "attempts": []
+          }
+        ],
+        "audit_id": "16eaf00a9f69907b1f8be972",
+        "context_resolution": {
+          "mode": "independent",
+          "actual_question": "2024年华东毛利"
+        },
+        "routing": {
+          "selected_route": "sql",
+          "label": "数据库问数",
+          "strategy": "source_query",
+          "reason": "查询所需指标和数据。",
+          "context_mode": "independent",
+          "model_enabled": false
+        },
+        "query_reference_id": "q_5b0d7d7dce6e4b80ad4e756c90d8652b",
+        "memory": {
+          "recall_count": 1,
+          "selected": [],
+          "consumed": [],
+          "decisions": [],
+          "degraded": false,
+          "bindings": [],
+          "recall_ms": 1.77,
+          "trace_id": "e94cac46336940d39cb4cf1b15d01563",
+          "observe_ms": 5.541,
+          "observe": {
+            "stored": true,
+            "promotion": "none",
+            "category": "verified_result"
+          }
+        }
+      },
+      "error": null,
+      "execution_status": "executed",
+      "wall_ms": 15.016,
+      "trace": [
+        {
+          "stage": "memory",
+          "tool": "memory.recall",
+          "status": "success",
+          "executed": true,
+          "call_id": "e94cac46336940d39cb4cf1b15d01563:memory.recall",
+          "trace_id": "e94cac46336940d39cb4cf1b15d01563",
+          "output": {
+            "recall_count": 1,
+            "selected": [],
+            "consumed": [],
+            "decisions": [],
+            "degraded": false,
+            "bindings": [],
+            "recall_ms": 1.77,
+            "trace_id": "e94cac46336940d39cb4cf1b15d01563"
+          }
+        },
+        {
+          "stage": "tool_call",
+          "tool": "context.resolve",
+          "status": "running",
+          "input": null,
+          "executed": false,
+          "call_id": "omni-call-1"
+        },
+        {
+          "stage": "tool_call",
+          "tool": "context.resolve",
+          "status": "success",
+          "output": {
+            "status": null
+          },
+          "executed": true,
+          "summary": "调用完成",
+          "call_id": "omni-call-1"
+        },
+        {
+          "stage": "tool_call",
+          "tool": "nl2sql",
+          "status": "running",
+          "input": {
+            "question": "2024年华东毛利"
+          },
+          "executed": false,
+          "call_id": "omni-call-2"
+        },
+        {
+          "stage": "tool_call",
+          "tool": "nl2sql",
+          "status": "success",
+          "output": {
+            "status": "ok",
+            "sql": "SELECT SUM(\"sales_orders\".\"gross_profit\") AS \"gross_profit\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"gross_profit\") DESC LIMIT ?",
+            "parameters": [
+              "2024-01-01",
+              "2025-01-01",
+              "华东",
+              100
+            ],
+            "columns": [
+              "gross_profit"
+            ],
+            "result_state": "rows",
+            "row_count": 1
+          },
+          "executed": true,
+          "summary": "调用完成",
+          "call_id": "omni-call-2"
+        },
+        {
+          "stage": "memory",
+          "tool": "memory.observe",
+          "status": "success",
+          "executed": true,
+          "call_id": "e94cac46336940d39cb4cf1b15d01563:memory.observe",
+          "trace_id": "e94cac46336940d39cb4cf1b15d01563",
+          "output": {
+            "stored": true,
+            "promotion": "none",
+            "category": "verified_result"
+          }
+        },
+        {
+          "stage": "query_complete",
+          "tool": "query.complete",
+          "status": "success",
+          "executed": false,
+          "output": {
+            "status": "ok",
+            "route": "sql"
+          },
+          "summary": "回答已返回",
+          "call_id": "omni-call-3"
+        }
+      ],
+      "memory": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 1.77,
+        "trace_id": "e94cac46336940d39cb4cf1b15d01563",
+        "observe_ms": 5.541,
+        "observe": {
+          "stored": true,
+          "promotion": "none",
+          "category": "verified_result"
+        }
+      },
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "tokens_basis": "no model instantiated",
+      "business_tool_calls": 2,
+      "memory_operations": 2
+    }
+  ],
+  "candidate_ids": [
+    "margin"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "08effccc09e0412f68e5f8af8be8a109511b7747258790ef69122490e764193d",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": true,
+  "memory_store_bytes_before": 24576,
+  "memory_store_bytes_after": 24576,
+  "archived_events": [
+    {
+      "category": "verified_result",
+      "consumed": [],
+      "event_id": "e94cac46336940d39cb4cf1b15d01563",
+      "promotion": "none",
+      "question_sha256": "b3a4045969b4ca4eb64422bbb8cbe6a52fc93cdfef89b80eba9df39f4968563e",
+      "rejected": [],
+      "selected": [],
+      "source_versions": {},
+      "verification": {
+        "execution_verified": true,
+        "independent_task_verified": false
+      }
+    },
+    {
+      "category": "verified_result",
+      "consumed": [
+        "margin"
+      ],
+      "event_id": "f0c7f009a814473a93d68ce43d22c7b7",
+      "promotion": "none",
+      "question_sha256": "3feadeb88eed6861c368ebe3c5c889b535ae61fbf2d84371181eecfd9e71d3e5",
+      "rejected": [],
+      "selected": [
+        "margin"
+      ],
+      "source_versions": {
+        "margin": {
+          "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+          "sources": {
+            "mixed": "07f1611469316c13729940d1fc4edd9b6c080c9b9f72aec95c943ba39a2a461b",
+            "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+          }
+        }
+      },
+      "verification": {
+        "execution_verified": true,
+        "independent_task_verified": false
+      }
+    }
+  ],
+  "pass": true
+}

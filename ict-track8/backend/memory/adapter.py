@@ -107,6 +107,18 @@ class MemoryAdapter:
         if not requested<=sources.keys():raise ValueError('provisioning source not available or authorized')
         return {'schema':schema,'sources':{k:sources[k] for k in sorted(requested)}}
 
+    def _filter_conflict(self, question, records, rules):
+        if not records:return False
+        slots=self.engine.analyze_slots(question,preferred_tables=tuple({r.binding['table'] for r in records}))
+        for r in records:
+            b=r.binding
+            for f in b.get('filters',[]):
+                explicit=[v for v in slots['values'] if (v.table,v.column)==(b['table'],f['column'])]
+                labels={f['column'],*(a for rule in rules if (rule.table,rule.column)==(b['table'],f['column']) for a in rule.aliases)}
+                removes=any(re.search(r'(?:不限|全部|所有|删除|移除|取消).{0,8}'+re.escape(a),question) for a in labels)
+                if removes or any(v.negated or v.value!=f['value'] for v in explicit):return True
+        return False
+
     def prepare(self, question, *, skip=False, inherited=()):
         started=time.perf_counter()
         audit={'recall_count':1,'selected':[],'consumed':[],'decisions':[],'degraded':False,'bindings':[]}
@@ -139,17 +151,29 @@ class MemoryAdapter:
         if inherited:
             try:
                 stored={r.memory_id:r for r in self.core.store.scan(self.core.scope)[0]}
+                inherited_records=[]
                 for receipt in inherited:
                     r=stored.get(receipt['memory_id'])
                     reason=self.core.invalid_reason(r,context,self.core.scope) if r else 'memory_removed'
                     if reason or r.source_version!=receipt['source_version'] or r.binding!=receipt['binding']:
                         audit['decisions'].append({'reason':'history_memory_source_changed'})
                         return question,(),audit,'source_changed'
+                    inherited_records.append(r)
+                    if any(other.term==r.term and self.core.invalid_reason(other,context,self.core.scope) is None
+                           and encoded(other.binding)!=encoded(r.binding) for other in stored.values()):
+                        audit['decisions'].append({'memory_id':r.memory_id,'reason':'history_memory_conflict'})
+                        return question,(),audit,'conflict'
+                if self._filter_conflict(question,inherited_records,rules):
+                    audit['decisions'].append({'reason':'explicit_condition_conflict'})
+                    return question,(),audit,'explicit_condition_conflict'
             except (OSError,sqlite3.Error,ValueError,KeyError,TypeError):
                 audit['degraded']=True
                 # A history bound to uncheckable memory must not execute silently.
                 return question,(),audit,'source_changed'
         if not records:return question,(),audit,None
+        if self._filter_conflict(question,records,rules):
+            audit['decisions'].append({'reason':'explicit_condition_conflict'})
+            return question,(),audit,'explicit_condition_conflict'
         aliases=[];prefixes=[]
         slots=self.engine.analyze_slots(question,preferred_tables=tuple({r.binding['table'] for r in records}))
         for r in records:
@@ -160,11 +184,6 @@ class MemoryAdapter:
             aliases.append(choices)
             for f in b.get('filters',[]):
                 explicit=[v for v in slots['values'] if (v.table,v.column)==(b['table'],f['column'])]
-                dim_aliases={a for rule in rules if (rule.table,rule.column)==(b['table'],f['column']) for a in rule.aliases}
-                removes=any(re.search(r'(?:不限|全部|所有|删除|移除|取消).{0,8}'+re.escape(a),question) for a in dim_aliases)
-                if removes or any(v.negated or v.value!=f['value'] for v in explicit):
-                    audit['decisions'].append({'memory_id':r.memory_id,'reason':'explicit_condition_conflict'})
-                    return question,(),audit,'explicit_condition_conflict'
                 if not explicit:
                     if not isinstance(f['value'],str) or not re.fullmatch(r'[\w\u3400-\u9fff]{1,80}',f['value']):return question,(),audit,'unsupported_filter_literal'
                     prefixes.append(f['value'])
@@ -245,14 +264,16 @@ class MemoryAdapter:
                 raise
             finally:
                 category=classify_outcome(response,error)
+                final_plan=((response or {}).get('result') or {}).get('plan') or {}
+                model_failed=(response or {}).get('planner_source')=='rules_fallback' or final_plan.get('planner_source')=='rules_fallback'
                 event={'event_id':trace_id,'question_sha256':hashlib.sha256(str(question).encode()).hexdigest(),
-                    'category':category,'selected':audit['selected'],'consumed':audit['consumed'],
+                    'category':category,'model_planning_failed':model_failed,'selected':audit['selected'],'consumed':audit['consumed'],
                     'source_versions':{b['memory_id']:b['source_version'] for b in audit.get('bindings',[])},
                     'rejected':[{'memory_id':d.get('memory_id'),'reason':d['reason']} for d in audit['decisions'] if d['reason']!='selected']}
                 observe_started=time.perf_counter()
                 observed=self.core.observe(event,{'execution_verified':category=='verified_result','independent_task_verified':False})
                 audit['observe_ms']=round((time.perf_counter()-observe_started)*1000,3)
-                audit['observe']={**observed,'category':category}
+                audit['observe']={**observed,'category':category,'model_planning_failed':model_failed}
                 emit('memory.observe',audit['observe'])
                 if callback:
                     if response is not None and (not held or response.get('status')!='ok'):

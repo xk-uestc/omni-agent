@@ -177,3 +177,31 @@ def test_model_sql_receives_binding_and_existing_validator_runs(setup,unsafe_mod
     assert seen and all('销售成本' in q and '晨光额' not in q for q in seen)
     assert r['result']['plan']['planner_source']==('rules_fallback' if unsafe_model else 'model_validated')
     with sqlite3.connect(a.engine.database_path) as db:assert db.execute('SELECT COUNT(*) FROM sales_orders').fetchone()[0]==4
+
+
+def test_followup_conflict_cannot_bypass_semantic_filter(setup):
+    a,m,_=setup
+    assert value(a.query('2025年华东银杉额',session_id='filter-history'))==100
+    r=a.query('那门店呢',session_id='filter-history')
+    assert r['status']=='clarification' and not r['result'].get('sql')
+
+
+def test_new_conflict_cannot_bypass_through_history(setup):
+    a,m,add=setup
+    assert value(a.query('2025年华东晨光额',session_id='new-conflict'))==120
+    add(field='sales_amount',ident='conflicting-confirmation')
+    r=a.query('那华南呢',session_id='new-conflict')
+    assert r['status']=='clarification' and not r['result'].get('sql')
+
+
+def test_actual_model_failure_is_archived_despite_successful_fallback(setup):
+    from backend.responses_client import GenerationError
+    a,m,_=setup
+    class Broken:
+        def generate(self,*args,**kwargs):raise GenerationError('provider unavailable')
+    a.client=Broken()
+    r=a.query('2025年华东晨光额')
+    assert value(r)==120
+    event=m.core.store.events()[-1]
+    assert event['model_planning_failed'] is True
+    assert event['verification']['execution_verified'] is True

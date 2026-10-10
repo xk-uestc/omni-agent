@@ -63,3 +63,23 @@ timeout 120s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_
 ```
 
 API 实际 stdout：`16 passed, 3 warnings in 2.23s`；客户端伪造 scope/memory_enabled 字段不能改变服务端作用域/开关，HTTP/SSE各一次recall/observe。新增 source_versions 与 observe_ms 仅补充事件审计/计时，后续统一复跑记录于检查点3。
+
+## M1-B1 历史约束加固（检查点 2 后发现并修复）
+
+第一轮同源码 A/B (`730370052af66b69ac4ff9f04945f29cd1f48ab4`) 命令：
+
+```bash
+/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_m1b1.py --label m1b1-ab-20261010
+```
+
+stdout 保存在 `runs/m1b1/ab-stdout.txt`；完整产物 `runs/m1b1-ab-20261010/`。16题 A10/B14、语义A0/B4；185题 A177/B177，源码和数据库前后一致。此时新增独立历史反例3项失败，见 `history-adversarial-before.txt`，因此不能把第一轮视作最终交付版本。
+
+实际失败：已消费记忆后追问修改渠道可沿历史改变定义；新增同名冲突候选未在不含术语的追问中再检查；顶层模型失败被原规则成功回退后，事件未记录模型失败事实。修复：沿收据重新检查同名合法候选冲突和当前明确条件；独立 `model_planning_failed` 标记保留成功执行状态，两者不混淆；SQLite Store 连接用 finally 显式关闭。
+
+```bash
+/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_adapter.py --junitxml=docs/memory_rl/runs/m1b1/history-adversarial-after.xml
+```
+
+实际输出：`40 passed in 3.48s`。原3项失败转通过。第一轮所有记录保留，后续更换label执行最终完整A/B，不覆盖证据。
+
+补充 Git 环境诊断：第二检查点首次 commit 因缺少 author identity 退出128；沿用此前 `Codex <codex@openai.com>`，使用命令局部 `git -c user.name=Codex -c user.email=codex@openai.com commit ...` 完成，未改全局配置。

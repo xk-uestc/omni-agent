@@ -22,3 +22,6 @@
 - request-local 元组与 ContextVar 保存来源收据，finally 重置；会话 `_remember` 保存收据用于后续版本复验，session_id 不参与 scope。
 - 缺失配置禁止启用；Store 故障回到旧路径。若历史本身依赖无法核验的记忆则澄清，避免从历史绕过失效检查。
 - 首版只接 `/api/v1/omni/query` 与 `/api/v1/omni/query/stream`，低层 NL2SQL、workbench 等接口不承诺记忆能力。无客户端确认/写入 API，候选仅离线可信配置。
+
+- 历史追问也必须检查原记忆全部条件与新出现的合法同名冲突；不能仅校验来源SHA。新增反例先失败后修复。
+- observe 的最终执行分类与 `model_planning_failed` 分开记录：模型失败但规则回退真实执行成功时，保留两项事实，仍然 `promotion=none`。

@@ -6,6 +6,7 @@ and never become confirmed business knowledge automatically.
 """
 from __future__ import annotations
 from dataclasses import asdict, dataclass, field
+from contextlib import contextmanager
 from datetime import datetime
 import hashlib
 import json
@@ -107,8 +108,14 @@ class MemoryStore:
             if db.execute('SELECT version FROM memory_metadata').fetchall() != [(1,)]:
                 raise ValueError('unsupported memory store version')
 
+    @contextmanager
     def connect(self):
-        return sqlite3.connect(self.path, timeout=0.25)
+        connection = sqlite3.connect(self.path, timeout=0.25)
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
 
     def put(self, record: MemoryRecord):
         """Trusted offline provisioning only; never called by observe/query.
@@ -250,7 +257,7 @@ class MemoryCore:
         if not self.enabled: return {'stored':False,'reason':'disabled'}
         if self.store is None: return {'stored':False,'reason':'event_store_unavailable','promotion':'none'}
         # Deliberate allowlist: no raw prompts, model text, credentials or rows.
-        clean = {k:event[k] for k in ('event_id','question_sha256','category','selected','consumed','rejected','source_versions') if k in event}
+        clean = {k:event[k] for k in ('event_id','question_sha256','category','model_planning_failed','selected','consumed','rejected','source_versions') if k in event}
         clean['verification'] = {k:bool(verified_outcome.get(k)) for k in ('execution_verified','independent_task_verified')}
         clean['promotion'] = 'none'
         try:
