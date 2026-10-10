@@ -237,3 +237,11 @@ timeout 180s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_
 三项相同失败在起点0.78s原样复现，非本轮新增；保留输出。主模型计时期间没有并行跑本Agent测试/回归；旧回归期间有一次起点三失败诊断，不将旧回归wall作为本轮性能因果证据。
 
 补充真实model-formed B条目的治理测试无付费调用：当前可选1条→methods原件改变拒用、显式本地撤销拒用、换project拒用，3/3；记录在最终verification.json。d08/h08正式公式控制因没有形成公式种子而是空池控制，不能冒充真实撤销成功。h07冻结评分仅证明未发布无依据数值，实际泛化澄清没有正确解释缺原件原因。C检索字段只计第二次选择pass，第一次oracle候选扫描耗时未单独保存，故只可报告该阶段下界；完整wall包括两次。D为审计运行相同检索扫描但不向模型提供经验，实际输入Token并非严格相等。
+
+## F1 起点审计（2026-10-10）
+
+`git fetch origin memory` 沙箱只读.git失败，授权提升权限后成功，remote=94a9926de2cee14c014a9c6e93c63112407d7760。M1-C未提交报告保留后独立归档16c5d28729acfb0ebba7b8930426b2a3241bf427。仅历史JSON/hash审计，0模型请求。
+
+`env ICT8_DB_PATH=/tmp/f1-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_knowledge_store.py ict-track8/tests/test_dense_retrieval.py ict-track8/tests/test_evidence_coverage.py ict-track8/tests/test_dependency_agent.py ict-track8/tests/test_sql_document_binding.py ict-track8/tests/test_fusion_history.py ict-track8/tests/test_omni_agent.py > docs/foundation/runs/baseline-tests.txt 2>&1`
+
+153通过5失败；2项不存在夹具数据库的测试环境错误、3项已有失败。100文档真实BM25性能见foundation/runs/storage-baseline.json；不计模型耗时。
