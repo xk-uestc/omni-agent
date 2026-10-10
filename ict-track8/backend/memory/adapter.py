@@ -126,7 +126,10 @@ class MemoryAdapter:
         try:
             schema,sources,metrics,values,rules,index=self._snapshot()
             protected=[m.span() for m in re.finditer(r'"[^"\n]*"|\x27[^\x27\n]*\x27|“[^”]*”|‘[^’]*’|`[^`]*`',question)]
-            protected += [m.span() for entry in index.entries if entry.value for m in re.finditer(re.escape(str(entry.value)),question)]
+            # An absent literal cannot have a regex match. Filter before compiling
+            # thousands of value patterns; retain identical spans, no new cache.
+            protected += [m.span() for entry in index.entries if entry.value and str(entry.value) in question
+                          for m in re.finditer(re.escape(str(entry.value)),question)]
             from ..nl2sql.planner import _strip_unsafe_instruction_noise
             from ..unified_routing import term_definition_request
             unsafe=bool(_strip_unsafe_instruction_noise(question)[1] or re.search(r'\b(?:DELETE|DROP|INSERT|UPDATE|ALTER|TRUNCATE)\b',question,re.I))

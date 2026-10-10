@@ -135,3 +135,11 @@ C的MemoryStore.put在父评测进程被禁止；管理员验证/审核由实际
 发现每请求无命中也扫描20原件（SHA约3ms），命中两次快照40次；Store128条扫描约3ms；主要成本仍为规则/canonical规划，命中规划合计约214ms。prepare中另外约9ms用于1069个value逐个编译/匹配正则。补充7次微测5个问题：literal substring预筛与原span完全相同，约9.2→0.05–0.07ms。该微测与测试有重叠，仅定位算法热点，不做稳定总耗时主张。
 
 计划仅局部优化该等价预筛；不缓存跨请求候选、不跳过来源检查、不动SQL安全逻辑。性能修复独立提交，再做相同脚本100样本Profile及同源码ABC/16/185完整重跑。
+
+## 局部性能修复检查点
+
+仅改变`MemoryAdapter.prepare`保护实体值span的等价预筛：先判断字面值是否出现在question，再编译/匹配正则。没有新增缓存，没有减少SHA/Schema/时态检查。优化前100样本Profile和1069个值的7次微测已记录。
+
+`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_extraction.py ict-track8/tests/test_memory_formation.py`，stdout保存profile-fix-tests.txt；54项通过。将该性能修复单独提交，随后同脚本Profile和新旧全集对照在新源码SHA上重跑。
+
+上一检查点完整测试命令使用M1-B1相同env与API环境外方式，选定原8个测试文件加test_memory_extraction.py、test_memory_formation.py、test_memory_formation_api.py，输出`148 passed, 3 warnings in 3.67s`，见full-before-profile-fix.txt/xml。最终完整确切命令将在最终验证节记录。
