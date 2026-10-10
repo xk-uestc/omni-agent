@@ -191,3 +191,9 @@ M1-C类型契约测试命令：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-t
 用户随后明确批准本轮累计最多144次请求，包含已用5次，temperature=0、每次输出≤5000。本地配置改为明确deepseek-flash，持久ledger不重置；正式任务计划为开发/保留各8题×四组，至多一次计划修复，余量仅接入预检。未使用预算不消耗。
 
 接入测试首次105项中1失败：Replay test使用json.dumps默认ASCII转义后替换中文，地区未变，原约束正确拒绝；不是系统新错误。保留planner-integration-tests.txt、failure-detail。修正测试序列化ensure_ascii=False后105 passed in 3.57s；追加事件观察与模型预算测试后15 passed in 1.24s（experience-integration-final.txt）。mock结果只证明机制，不作为模型成绩。
+
+## M1-C 冻结前机制核验
+
+新增typed formula_labels适用条件，避免“公式”泛相似就选择不同指标方法；agent_execution形成要求真实模型名称核验与原问题/实际图digest收据，继承独立执行重验与本地审核。选择不含最终值/历史SQL。
+
+种子独立预检初次A/B被评分器误拒：in-memory RANGE值是tuple而JSON是list，评分器冻结前规范化为list；保留precheck.txt，尚未正式评测。修正后A/B完整独立核验通过；客单价developer图仍source_scope_unverified，保留为未形成种子，不放松原来源规则。种子及目标采用已测试文档公式语法，全部在冻结前定义。目标Gold只在所有执行完成后读取。16题开发/保留各8；正式运行后不根据保留集改输入/Gold/scorer。

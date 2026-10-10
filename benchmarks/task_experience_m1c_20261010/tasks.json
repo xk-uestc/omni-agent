@@ -1,0 +1,114 @@
+[
+  {
+    "id": "d01",
+    "split": "development",
+    "workflow": "A",
+    "question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华南目标增长率，以及数据库2024年华南销售额，计算2026年目标销售额。",
+    "variant": "normal"
+  },
+  {
+    "id": "d02",
+    "split": "development",
+    "workflow": "A",
+    "question": "2025年华东客单价，计算公式用文档，销售额和订单数从数据库取值。",
+    "variant": "normal"
+  },
+  {
+    "id": "d03",
+    "split": "development",
+    "workflow": "B",
+    "question": "先从数据库查2024年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+    "variant": "normal"
+  },
+  {
+    "id": "d04",
+    "split": "development",
+    "workflow": "B",
+    "question": "先从数据库查2025年销量排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+    "variant": "normal"
+  },
+  {
+    "id": "d05",
+    "split": "development",
+    "workflow": "C",
+    "question": "从区域计划Excel中定位2026年目标增长率为0.12的地区，作为过滤条件查询数据库中该地区2025年的销售额合计。",
+    "variant": "normal"
+  },
+  {
+    "id": "d06",
+    "split": "development",
+    "workflow": "D",
+    "question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+    "variant": "normal"
+  },
+  {
+    "id": "d07",
+    "split": "development",
+    "workflow": "SQL",
+    "question": "2025年华东销售额",
+    "variant": "normal"
+  },
+  {
+    "id": "d08",
+    "split": "development",
+    "workflow": "A",
+    "question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华南目标增长率，以及数据库2025年华南销售额，计算2026年目标销售额。",
+    "variant": "stale_policy"
+  },
+  {
+    "id": "h01",
+    "split": "heldout",
+    "workflow": "A",
+    "question": "根据《年度预算公式》目标销售额公式和《下一期计划》2027年华北目标增长率，以及数据库2025年华北销售额，计算2027年目标销售额。",
+    "variant": "normal"
+  },
+  {
+    "id": "h02",
+    "split": "heldout",
+    "workflow": "A",
+    "question": "2024年华南客单价，计算公式用文档，销售额和订单数从数据库取值。",
+    "variant": "normal"
+  },
+  {
+    "id": "h03",
+    "split": "heldout",
+    "workflow": "B",
+    "question": "先从数据库查2024年销量排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+    "variant": "normal"
+  },
+  {
+    "id": "h04",
+    "split": "heldout",
+    "workflow": "B",
+    "question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索团队的复核流程，保留来源。",
+    "variant": "normal"
+  },
+  {
+    "id": "h05",
+    "split": "heldout",
+    "workflow": "C",
+    "question": "从修订计划Excel中定位2026年目标增长率为0.18的地区，作为过滤条件查询数据库中该地区2024年的销售额合计。",
+    "variant": "normal"
+  },
+  {
+    "id": "h06",
+    "split": "heldout",
+    "workflow": "D",
+    "question": "比较《区域计划》和《修订计划》中2026年华南目标增长率是否相同，并查询数据库2025年华南销售额。",
+    "variant": "normal"
+  },
+  {
+    "id": "h07",
+    "split": "heldout",
+    "workflow": "A",
+    "question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华东目标增长率，以及数据库2025年华东销售额，计算2026年目标销售额。",
+    "variant": "missing_targets"
+  },
+  {
+    "id": "h08",
+    "split": "heldout",
+    "workflow": "A",
+    "question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华东目标增长率，以及数据库2024年华东销售额，计算2026年目标销售额。",
+    "variant": "revoked_forecast"
+  }
+]

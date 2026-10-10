@@ -49,6 +49,7 @@ def abstract_trace(tasks, result, workflow):
                           [ids[r]+'.verified_output' for r in refs]))})
     docs=sorted(result['source_validation']['documents'])
     return {'version':1,'workflow':workflow,'steps':steps,'documents':docs,
+            'formula_labels':sorted({result['results'][t['id']]['label'] for t in tasks if t['tool']=='document_formula'}),
             'rebinding':['current_request_time_region_metric_and_all_explicit_operations',
                          'fresh_read_only_sql_results','current_document_formula_and_typed_cells',
                          'verified_output_references_no_literal_historical_values'],
@@ -58,7 +59,7 @@ def abstract_trace(tasks, result, workflow):
 class ExperienceFormation(MemoryFormation):
     memory_type = 'task_experience'
 
-    def capture_verified_run(self, question, tasks, *, verifier, verifier_id, origin='developer_verified_seed'):
+    def capture_verified_run(self, question, tasks, *, verifier, verifier_id, origin='developer_verified_seed', planner_receipt=None):
         """Actually execute the graph with the ORIGINAL question, then score.
 
         The verifier receives real results and must independently check the whole
@@ -67,6 +68,10 @@ class ExperienceFormation(MemoryFormation):
         """
         if origin not in {'developer_verified_seed','agent_execution'}:raise ValueError('explicit trace origin required')
         if not re.fullmatch(r'[a-f0-9]{64}',verifier_id):raise ValueError('independent verifier code SHA256 required')
+        if origin=='agent_execution':
+            if (not isinstance(planner_receipt,dict) or planner_receipt.get('model_verified') is not True
+                or planner_receipt.get('plan_sha256')!=digest(tasks) or planner_receipt.get('question_sha256')!=digest(question)):
+                raise ValueError('verified real planner receipt required')
         executor=DependencyAgent(self.adapter.engine,self.adapter.knowledge)
         executor.validate(tasks)
         if completion_errors(requested_operations(question),'fusion',tasks):raise ValueError('required operations missing')
@@ -82,7 +87,7 @@ class ExperienceFormation(MemoryFormation):
             raise ValueError('execution source version changed')
         event={'kind':'independently_verified_task_execution','origin':origin,'question':question,
                'tasks':tasks,'result':result,'feedback':feedback,'verifier_sha256':verifier_id,
-               'source_version':version}
+               'source_version':version,'planner_receipt':planner_receipt}
         event_id='trace-'+digest(event)
         content={'memory_type':self.memory_type,'term':'experience_'+workflow,'definition':'Source-bound method; replan from current request.',
                  'binding':{},'experience':asset,'scope':asdict(self.scope),
@@ -172,6 +177,8 @@ class ExperienceSelector:
                 if record.memory_type!='task_experience':continue
                 reason=self.formation.record_reason(record,context)
                 if not reason and record.experience['workflow']!=features['workflow']:reason='task_not_applicable'
+                if not reason and record.experience['formula_labels'] and not all(label in question for label in record.experience['formula_labels']):
+                    reason='formula_target_not_applicable'
                 # Explicit documents in current task must be covered by this experience.
                 explicit={d['document_id'] for d in self.adapter.knowledge.list_documents()
                     if d['document_id'] in question or d['title'] in question}
