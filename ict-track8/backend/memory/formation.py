@@ -34,6 +34,7 @@ class LocalReviewContext:
 
 
 class MemoryFormation:
+    memory_type = 'business_semantics'
     def __init__(self,adapter):
         self.adapter=adapter
         self.store=adapter.core.store
@@ -42,7 +43,7 @@ class MemoryFormation:
     def candidates(self):
         with self.store.connect() as db:
             rows=db.execute('SELECT payload,state,receipt FROM memory_candidates WHERE scope=? ORDER BY candidate_id',(self.scope.key,)).fetchall()
-        return [{**json.loads(p),'verification_state':s,'validation':json.loads(v)} for p,s,v in rows]
+        return [{**json.loads(p),'verification_state':s,'validation':json.loads(v)} for p,s,v in rows if json.loads(p).get('memory_type') == self.memory_type]
 
     def candidate(self,ident):
         matches=[c for c in self.candidates() if c['candidate_id']==ident]
@@ -146,7 +147,7 @@ class MemoryFormation:
         c=self.candidate(ident)
         if c['digest']!=expected_digest:raise ValueError('candidate digest changed')
         if c['verification_state'] in {'rejected','revoked','superseded','confirmed'}:raise ValueError('terminal candidate needs new source version')
-        receipt={'valid':False,'checked_at':self.adapter.clock(),'candidate_digest':expected_digest,'checks':'source_contract+M1B1_invalid_reason+scope_conflicts'}
+        receipt={'valid':False,'checked_at':self.adapter.clock(),'candidate_digest':expected_digest,'checks':'source_contract+M1B1_invalid_reason+scope_conflicts' if self.memory_type=='business_semantics' else 'typed_experience+immutable_verified_trace+shared_context_validity'}
         receipt['reasons']=self._check(c);receipt['valid']=not receipt['reasons']
         with self.store.connect() as db:
             db.execute('UPDATE memory_candidates SET state=?,receipt=? WHERE scope=? AND candidate_id=? AND digest=? AND state IN (\'candidate\',\'validated\')',

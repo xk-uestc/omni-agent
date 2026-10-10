@@ -60,6 +60,7 @@ class MemoryRecord:
     created_at: str
     updated_at: str
     task_trace_id: str | None = None
+    experience: dict | None = None
 
 
 @dataclass(frozen=True)
@@ -212,11 +213,10 @@ class MemoryCore:
         return cls(store, scope=scope, enabled=True)
 
     @staticmethod
-    def invalid_reason(record, context, scope):
+    def invalid_context_reason(record, context, scope):
         if record.scope != scope: return 'foreign_scope'
         if record.verification_state == 'revoked': return 'revoked'
         if record.verification_state != 'confirmed': return 'unverified'
-        if record.memory_type != 'business_semantics': return 'unsupported_type'
         if not all(record.provenance.get(k) for k in ('authority','confirmation_id','evidence_id','verification_id')):
             return 'missing_confirmation'
         at = timestamp(context.now)
@@ -227,6 +227,13 @@ class MemoryCore:
         if not sources: return 'source_unverified'
         if not set(sources) <= set(scope.data_sources): return 'source_unauthorized'
         if any(context.sources.get(k) != v or not v for k, v in sources.items()): return 'source_changed'
+        return None
+
+    @staticmethod
+    def invalid_reason(record, context, scope):
+        if record.memory_type != 'business_semantics': return 'unsupported_type'
+        reason = MemoryCore.invalid_context_reason(record, context, scope)
+        if reason: return reason
         b = record.binding
         if set(b) - {'table','column','function','filters','unit'}: return 'invalid_binding'
         if (b.get('table'),b.get('column'),b.get('function')) not in context.metrics: return 'invalid_metric'

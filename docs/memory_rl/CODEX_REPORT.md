@@ -163,3 +163,5 @@ Profile前后各100样本，保留0/16/128规模、冷热/命中及阶段时间�
 ## M1-C 检查点1
 
 M1-B2获批准后进入M1-C。新增tools/diagnose_memory_m1c.py、M1_C_EXPERIENCE_DESIGN.md及四类原始探针。明确发现：A/B是规则Planner缺失，C/D还存在完整用户范围的绑定拒绝；原M1-B2手工执行未传original_question，不能外推完整Agent成绩。模型入口待用户提供，先提交独立诊断再实现。首次runner目录写入错误及修复后完整输出均保留。
+
+M1-C检查点2：experience.py新增真实执行+独立核验后的候选提取、仅方法抽象、原审核生命周期复用及逐次版本验证。core/formation/extraction/admin支持明确类型，business binding不承载经验。11新增/54原记忆测试通过。研究内部verifier由可信流程提供，未新增客户端确认权限。

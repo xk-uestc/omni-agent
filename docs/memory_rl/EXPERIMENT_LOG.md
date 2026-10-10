@@ -181,3 +181,5 @@ final2为最终22题记录，之前first/final全部保留。生产源码/输入
 
 fetch核验HEAD/origin memory=5a5f14f8c5aeab0aa9ce331da8b628bcd98933e0，main未变。只有未跟踪Qimem/，保留。
 实际命令：`/tmp/omni-m1a-venv/bin/python tools/diagnose_memory_m1c.py > docs/memory_rl/runs/m1c/diagnosis.txt 2>&1`。四类执行完成，但runner忘建输出目录，FileNotFoundError退出1；保留stdout。修正输出目录后以新label执行：`/tmp/omni-m1a-venv/bin/python tools/diagnose_memory_m1c.py --label m1c-diagnosis-complete-20261010 > docs/memory_rl/runs/m1c/diagnosis-complete.txt 2>&1`，退出0。原问题完整约束下A/B ok、C incomplete/source_dynamic_binding_unverified、D clarification/source_scope_unverified；四类无模型Agent均clarification。真实模型not_run，等待用户免费本地部署入口及预算，不发付费请求。
+
+M1-C类型契约测试命令：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_task_experience.py > docs/memory_rl/runs/m1c/experience-tests-first.txt 2>&1` → 11 passed in 0.93s。共享治理回归：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_formation.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_extraction.py > docs/memory_rl/runs/m1c/shared-governance-tests.txt 2>&1` → 54 passed in 1.55s。

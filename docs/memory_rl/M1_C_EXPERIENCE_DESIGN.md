@@ -31,3 +31,13 @@
 用户选择免费本地模型，尚未提供入口/模型/上限，正在询问硬件；建议Qwen3-8B起步或资源充足的14B。官方资料：https://qwen.readthedocs.io/en/stable/deployment/vllm.html 。建议先4题至多8请求（含一次修复），尚未视作预算批准。当前真实模型对照not_run、calls/tokens=0，不称规则失败为经验增益。
 
 后续契约：独立task_experience类型；共享Store候选、验证、审核、撤销和历史，内容只含工具角色/依赖/参数来源，旧参数/SQL/答案留在本地审计轨迹而不进规划提示；从已独立验证的实际执行轨迹形成。研究者合法图种子须标记developer_verified_seed，不称自主学习。非法候选先过滤；确定性选择与Oracle使用同一合法池；来源变更严格拒用。
+
+## 检查点2：类型与形成契约
+
+新增`memory/experience.py`：ExperienceFormation继承原MemoryFormation的候选状态、事务审核、重放幂等、撤销、superseded和历史。MemoryRecord新增可选experience字段；business_semantics继续走原binding逻辑，task_experience.binding必须为空，不作为别名消费。共享`MemoryCore.invalid_context_reason`保留scope/确认/时间/Schema/来源检查，类型独立验证。无SQLite表结构变动；旧JSON无experience字段仍可读取。
+
+capture_verified_run内部API实际调用DependencyAgent.run(original_question=...)；完成后调用可信本地提供的独立整题scorer，四项task_success/operation_coverage/result_correct/source_correct必须全部true。原问题、图、真实结果、scorer SHA与反馈形成不可变source event，审核时检查digest。工具ok而整题错误不能生成候选。开发种子标为developer_verified_seed，不称自动学习。
+
+确定性抽象只保留工具角色、依赖顺序、参数来源类别和重新绑定义务；删除原SQL、年份、地区、增长率及答案。原具体值只留审计事件，不进入模型建议。版本钉住原资料和当前Schema/DB，变更拒用而非默默跨版本迁移。独立scorer是服务器/研究流程的信任边界，不接受HTTP传来的成功布尔值。
+
+CLI沿用`python -m backend.memory.admin --config ... --type task_experience list|validate|review|revoke`。未增公网形成/审批入口。默认共享core仍拒绝task_experience作为业务别名。类型测试实跑11通过；原54项记忆测试全部通过，尚不等于真实Agent经验收益。

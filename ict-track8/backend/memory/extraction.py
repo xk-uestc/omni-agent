@@ -46,4 +46,5 @@ def extract_candidate(source_event, source_evidence, current_schema, scope, now)
 
 def candidate_digest(candidate):
     return digest({k:candidate[k] for k in ('memory_type','term','definition','binding','scope','evidence',
-        'source_version','valid_from','valid_to','supersedes','reason')})
+        'source_version','valid_from','valid_to','supersedes','reason')} |
+        ({'experience':candidate['experience']} if candidate.get('memory_type')=='task_experience' else {}))
