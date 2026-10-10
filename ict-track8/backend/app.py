@@ -429,12 +429,14 @@ def omni_query_stream(request: OmniRequest):
             events.put(('done', response))
         except SourceIntegrityError:
             events.put(('error', {'detail': {'code': 'evidence_integrity_failed',
+                                             'failure_category': 'source_binding',
                                              'message': '来源已变化或原件完整性检查失败'}}))
         except ValueError as exc:
             message = str(exc)[:200] if image_attachments else '请求或查询条件未通过检查'
             events.put(('error', {'detail': {'code': 'invalid_query', 'message': message}}))
         except Exception:
-            events.put(('error', {'detail': {'code': 'query_failed', 'message': '查询执行失败'}}))
+            events.put(('error', {'detail': {'code': 'query_failed', 'failure_category': 'executor',
+                                            'message': '查询执行失败'}}))
         finally:
             STREAM_SLOTS.release()
     try:
@@ -448,7 +450,9 @@ def omni_query_stream(request: OmniRequest):
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 yield 'event: error\ndata: ' + json.dumps(
-                    {'detail': {'code': 'timeout', 'message': '查询超时，后台执行可能仍在继续'}}, ensure_ascii=False) + '\n\n'
+                    {'detail': {'code': 'timeout', 'failure_category': 'provider_transport',
+                                'phase': 'transport', 'worker_cancelled': False,
+                                'message': '查询超时，后台执行可能仍在继续'}}, ensure_ascii=False) + '\n\n'
                 return
             try:
                 kind, payload = events.get(timeout=min(10.0, remaining))

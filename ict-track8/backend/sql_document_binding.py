@@ -49,7 +49,17 @@ def _output_bindings(plan):
             metric = metrics[key]
             identity = (('metric', metric.table, metric.column, metric.function)
                         if isinstance(metric, MetricSpec) else ('derived', json.dumps(metric.expression, sort_keys=True)))
-            outputs.append((identity, metric.label))
+            label = metric.label
+            # The compiler retains legacy single-metric physical slots alongside
+            # metrics[]. A display alias may change the legacy label only.
+            # Accept it only when both representations name the SAME sole
+            # physical aggregate; all values still face canonical SQL replay.
+            legacy = ('metric', plan.metric_table or plan.table, plan.metric_column, plan.metric_function)
+            if (len(plan.metrics) == 1 and not plan.derived_metrics
+                    and len(plan.output_metrics or list(metrics)) == 1
+                    and identity == legacy and plan.metric_label):
+                label = plan.metric_label
+            outputs.append((identity, label))
     else:
         outputs.append((('metric', plan.metric_table or plan.table, plan.metric_column, plan.metric_function),
                         plan.metric_label or plan.metric_column))

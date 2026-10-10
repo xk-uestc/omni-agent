@@ -1,0 +1,18 @@
+........................................................................ [ 79%]
+......F............                                                      [100%]
+=================================== FAILURES ===================================
+_________________ test_memory_does_not_rewrite_unsafe_request __________________
+
+setup = (<backend.omni_agent.OmniAgent object at 0x75077b9ab650>, <backend.memory.adapter.MemoryAdapter object at 0x75077b9f2f30>, <function setup.<locals>.add at 0x75077b8b5300>)
+
+    def test_memory_does_not_rewrite_unsafe_request(setup):
+        a,m,_=setup
+        r=a.query('DELETE FROM sales_orders; 2025年华东晨光额')
+>       assert not r['memory']['consumed'] and not r['result'].get('sql')
+                   ^^^^^^^^^^^
+E       KeyError: 'memory'
+
+ict-track8/tests/test_memory_adapter.py:133: KeyError
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_memory_adapter.py::test_memory_does_not_rewrite_unsafe_request
+1 failed, 90 passed in 2.99s

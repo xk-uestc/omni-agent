@@ -267,10 +267,14 @@ class MemoryAdapter:
                 error=exc
                 raise
             finally:
+                if response is not None:
+                    from ..failure_trace import attach
+                    attach(response)
                 category=classify_outcome(response,error)
                 final_plan=((response or {}).get('result') or {}).get('plan') or {}
                 model_failed=(response or {}).get('planner_source')=='rules_fallback' or final_plan.get('planner_source')=='rules_fallback'
                 event={'event_id':trace_id,'question_sha256':hashlib.sha256(str(question).encode()).hexdigest(),
+                    'failure_trace': (response or {}).get('failure_trace', []),
                     'category':category,'model_planning_failed':model_failed,'selected':audit['selected'],'consumed':audit['consumed'],
                     'source_versions':{b['memory_id']:b['source_version'] for b in audit.get('bindings',[])},
                     'rejected':[{'memory_id':d.get('memory_id'),'reason':d['reason']} for d in audit['decisions'] if d['reason']!='selected']}

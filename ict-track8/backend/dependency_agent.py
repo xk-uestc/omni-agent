@@ -23,7 +23,9 @@ from .fusion_constraints import SourceConstraintError, VerifiedFormulaTarget, bi
 
 
 class DependencyPlanError(ValueError):
-    pass
+    def __init__(self, message, *, code='tool_contract_failed'):
+        super().__init__(message)
+        self.code = code
 
 
 class DependencyAgent:
@@ -94,7 +96,7 @@ class DependencyAgent:
                         raise KeyError(key)
                 return current
             except (KeyError, IndexError, TypeError) as exc:
-                raise DependencyPlanError('引用位置无可用结果') from exc
+                raise DependencyPlanError('引用位置无可用结果', code='parameter_binding_failed') from exc
         if isinstance(value, dict):
             return {key: DependencyAgent.resolve(v, results) for key, v in value.items()}
         if isinstance(value, list):
@@ -124,10 +126,18 @@ class DependencyAgent:
             if on_event:
                 on_event(dict(event))
             return {'status': 'clarification', 'results': {}, 'trace': [event],
+                    'trace_id': hashlib.sha256(json.dumps(tasks, sort_keys=True).encode()).hexdigest()[:20],
                     'clarification': '整条请求包含写入或绕过规则意图，未执行任何子任务。',
                     'clarification_code': 'read_only_query_required', 'error_code': 'read_only_query_required',
                     'skipped_tasks': [t.get('id') for t in tasks if isinstance(t, dict)], 'edges': []}
-        ordered, dependencies = self.validate(tasks)
+        try:
+            ordered, dependencies = self.validate(tasks)
+        except DependencyPlanError:
+            if on_event:
+                from .failure_trace import failure
+                on_event({'stage': 'planning', 'status': 'failed', 'executed': False,
+                          'failure': failure('planner', 'planning', 'dependency_plan_invalid')})
+            raise
         read_scope = getattr(self.sql_engine, 'consistent_reads', None)
         with read_scope() if read_scope else nullcontext():
             audit, initial_versions, formula_results = [], {}, {}
@@ -161,7 +171,12 @@ class DependencyAgent:
                     formula_consumption = {}
             except SourceConstraintError as exc:
                 trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
-                return {'status': 'clarification', 'trace_id': trace_id, 'results': {}, 'trace': [],
+                from .failure_trace import for_code
+                event = {'stage': 'source_binding', 'status': 'failed', 'executed': False,
+                         'failure': for_code(exc.code, phase='source_binding')}
+                if on_event:
+                    on_event(dict(event))
+                return {'status': 'clarification', 'trace_id': trace_id, 'results': {}, 'trace': [event],
                         'clarification': str(exc), 'clarification_code': exc.code, 'error_code': exc.code,
                         'skipped_tasks': [task['id'] for task in ordered], 'edges': [],
                         'user_constraint_validation': {'status': 'unverified', 'error_code': exc.code}}
@@ -308,9 +323,11 @@ class DependencyAgent:
                 if on_event:
                     on_event(dict(event))
             except (ValueError, KeyError, TypeError, SyntaxError, OverflowError, OSError, sqlite3.DatabaseError) as exc:
-                code = 'source_constraint_mismatch' if isinstance(exc,SourceConstraintError) else 'evidence_revision_changed' if isinstance(exc,SourceRevisionError) else 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else 'tool_contract_failed'
+                code = 'source_constraint_mismatch' if isinstance(exc,SourceConstraintError) else 'evidence_revision_changed' if isinstance(exc,SourceRevisionError) else 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else getattr(exc, 'code', 'tool_contract_failed')
                 message = '数据源暂不可读取，请恢复文件或解除数据库锁后重新执行。' if code=='storage_unavailable' else str(exc)[:200]
                 event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'failed', 'error': message, 'error_code':code, 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
+                from .failure_trace import for_code
+                event['failure'] = for_code(code, task_id=task['id'])
                 if isinstance(exc, SourceConstraintError):
                     event['source_constraint_code'] = exc.code
                     event['constraint_error_codes'] = list(getattr(exc, 'constraint_error_codes', ()))
@@ -410,7 +427,7 @@ class DependencyAgent:
             except SearchScopeError as exc:
                 raise DependencyPlanError(str(exc)) from exc
             if not hits:
-                raise DependencyPlanError('没有文档证据')
+                raise DependencyPlanError('没有文档证据', code='evidence_missing')
             return {'hits': [hit.to_dict() for hit in hits], 'search_scope': scope}
         if tool == 'search_fact':
             from .evidence_fact import extract_search_fact
@@ -422,7 +439,10 @@ class DependencyAgent:
             return extract_search_fact(self.knowledge_store, args['evidence'],
                                        scope=args['scope'], label=args['label'], unit=args['unit'])
         if tool in {'document_formula', 'document_cell', 'document_fact'}:
-            document = self.knowledge_store.document(args['document_id'])
+            try:
+                document = self.knowledge_store.document(args['document_id'])
+            except KeyError as exc:
+                raise DependencyPlanError('所需原始资料尚未入库或已移除', code='source_missing') from exc
             if tool == 'document_formula':
                 if set(args) != {'document_id', 'label'}:
                     raise DependencyPlanError('公式定位参数非法')

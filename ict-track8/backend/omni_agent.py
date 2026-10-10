@@ -493,13 +493,19 @@ class OmniAgent:
                      'failure_category': 'safety', 'summary': '整条请求包含写入或绕过规则意图，未执行。'}
             if trace_callback is not None:
                 trace_callback(dict(event))
-            return {'status': 'clarification', 'route': 'sql', 'question': question,
+            response = {'status': 'clarification', 'route': 'sql', 'question': question,
                     'effective_question': question, 'session_id': session_id,
                     'context_turns': len(self.conversations.context(session_id)) if session_id else 0,
                     'result': refused, 'state': {'route': 'sql', 'context_preserved': True},
                     'context_resolution': {'mode': 'write_request_rejected',
                                            'context_preserved': True, 'executed': False},
                     'trace': [event]}
+            if self.memory is not None and self.memory.enabled:
+                response['memory'] = {'enabled': True, 'selected': [], 'consumed': [],
+                    'decisions': [], 'reason': 'unsafe_request',
+                    'observe': {'stored': False, 'reason': 'rejected_before_memory'}}
+            from .failure_trace import attach
+            return attach(response)
         options = dict(session_id=session_id, reset_context=reset_context, complete_results=complete_results,
             _confirmed_comparison_scope=_confirmed_comparison_scope, _confirmed_pending_turn_id=_confirmed_pending_turn_id,
             trace_callback=trace_callback, image_attachments=image_attachments)
@@ -647,6 +653,12 @@ class OmniAgent:
                     if semantic is not None and isinstance(result.get('plan'), dict):
                         result['plan'].setdefault('semantic_audit', {})['language_normalization'] = semantic.to_dict()
             response['routing'] = routing_receipt(response, model_enabled=self.client is not None)
+            from .failure_trace import attach
+            attach(response)
+            if response['failure_trace'] and trace_callback:
+                publish({'stage': 'failure_classification', 'tool': 'query.failure',
+                         'status': 'attention', 'executed': False,
+                         'output': {'failures': response['failure_trace']}})
             from .source_provenance import attach_sql_sources
             attach_sql_sources(response, self.engine)
             after=self.conversations.context(session_id) if session_id else ()
@@ -1354,9 +1366,10 @@ class OmniAgent:
                 verify_inherited_document_tasks(tasks, inherited)
                 def task_event(event):
                     if _trace_callback:
-                        _trace_callback({'stage': 'fusion_task', 'tool': event['tool'],
-                            'task_id': event['task_id'], 'status': 'success' if event['status'] == 'complete' else 'error',
+                        _trace_callback({'stage': event.get('stage', 'fusion_task'), 'tool': event.get('tool', 'fusion.validation'),
+                            'task_id': event.get('task_id'), 'status': 'success' if event['status'] == 'complete' else 'error',
                             'executed': event['status'] == 'complete',
+                            'failure': event.get('failure'),
                             'output': {'status': event['status'], 'latency_ms': event.get('latency_ms')}})
                 result = self._tool_call(_trace_callback, 'fusion.execute',
                     lambda: DependencyAgent(self.engine, self.knowledge).run(tasks,
