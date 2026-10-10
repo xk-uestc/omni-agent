@@ -1,6 +1,6 @@
 # Memory RL 状态
 
-- M1-B2已完成本轮实现、实验与报告，停止等待ChatGPT审核；不启动M2 PPO、M3 SFT/GRPO，不合并main。
+- M1-B2已获用户批准；当前执行M1-C检查点1，四类跨源诊断已完成。A/B手工完整链可执行，C/D来源绑定拒绝。免费本地模型等待入口/预算，真实模型对照not_run。不启动M2/M3，不合并main。
 - 唯一分支memory；起点fetch核验4e339b6983b13af6891d14a53e51fa9c46b47e2a。QiMem原包保留未提交，旧冻结输入/评分器/master与历史报告未改。
 - 最终生产源码：0a8f97d64d6760e179e3720e309c461d26580fc1（独立性能提交）。后续最终交付commit仅文档、工具与证据，完整远程HEAD以最终反馈为准。
 - 实际形成：Omni文档引用→结构化候选→复用核心验证→可信本地CLI审批→持久化→新Store/新session/新进程实际SQL。未审批candidate不进入recall；有审核/撤销/superseded及v1→v2迁移历史。

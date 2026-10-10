@@ -159,3 +159,7 @@ SQLite 业务条目与 query events 分表；可信离线 provisioning 才可 pu
 Profile前后各100样本，保留0/16/128规模、冷热/命中及阶段时间、机器负载、连接/文档SHA次数。局部优化未减少来源验证，prepare观察到约8ms节省；不将总时延波动全部归因于修复，不宣称稳定倍数提升。其余成本/风险与POSIX本地边界见M1_B2_RESULTS.md、M1_B2_IMPLEMENTATION.md。
 
 本轮至少四检查点（实际5次：提取冻结、生命周期、形成/Profile基线、独立性能、最终证据），均完成后立即push。最终报告后停止，等待ChatGPT审核；main及全部原始冻结文件未改，Qimem/未提交。
+
+## M1-C 检查点1
+
+M1-B2获批准后进入M1-C。新增tools/diagnose_memory_m1c.py、M1_C_EXPERIENCE_DESIGN.md及四类原始探针。明确发现：A/B是规则Planner缺失，C/D还存在完整用户范围的绑定拒绝；原M1-B2手工执行未传original_question，不能外推完整Agent成绩。模型入口待用户提供，先提交独立诊断再实现。首次runner目录写入错误及修复后完整输出均保留。

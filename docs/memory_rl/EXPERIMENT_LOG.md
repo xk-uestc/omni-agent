@@ -176,3 +176,8 @@ final2为最终22题记录，之前first/final全部保留。生产源码/输入
 模型/token调用0；真实远程模型not_run，无已批准配置/预算。本轮没有训练、skill演化或跨源经验Adapter实现。失败/边界：新A的13题（12未知术语+n10）仍失败；3个非法/不完整候选验证拒绝；旧8例与f01/f02仍失败；POSIX本地管理员边界、结构化TXT提取、同步存储/重复规划成本、保留策略和外部负载限制均明确保留。
 
 最终交付核验：artifact-sha256.json列出的274个产物/工具Hash全部匹配；新旧冻结manifest无差异；已评测0a8f97d后的backend无改动。提交前再次fetch：origin/memory仍为0a8f97d64d6760e179e3720e309c461d26580fc1，origin/main仍为ac69d6e2f7a4a0fe7707e6dee9bab91a52078f7a。暂存`git diff --cached --check`报告final-tests.txt中6处pytest弃用warning原文的尾随空白；保留原始stdout及其Hash，不将该检查声称为无告警。其余非运行产物的diff检查通过，暂存文件不含QiMem原始资产、SQLite运行库或.env。
+
+## M1-C 检查点1（2026-10-10）
+
+fetch核验HEAD/origin memory=5a5f14f8c5aeab0aa9ce331da8b628bcd98933e0，main未变。只有未跟踪Qimem/，保留。
+实际命令：`/tmp/omni-m1a-venv/bin/python tools/diagnose_memory_m1c.py > docs/memory_rl/runs/m1c/diagnosis.txt 2>&1`。四类执行完成，但runner忘建输出目录，FileNotFoundError退出1；保留stdout。修正输出目录后以新label执行：`/tmp/omni-m1a-venv/bin/python tools/diagnose_memory_m1c.py --label m1c-diagnosis-complete-20261010 > docs/memory_rl/runs/m1c/diagnosis-complete.txt 2>&1`，退出0。原问题完整约束下A/B ok、C incomplete/source_dynamic_binding_unverified、D clarification/source_scope_unverified；四类无模型Agent均clarification。真实模型not_run，等待用户免费本地部署入口及预算，不发付费请求。
