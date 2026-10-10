@@ -185,6 +185,8 @@ memory_core = MemoryCore.from_env()
 memory_adapter = MemoryAdapter(memory_core, engine, knowledge_store,
     database_source=os.getenv('ICT8_MEMORY_DATABASE_SOURCE', 'database'),
     formation_enabled=os.getenv('ICT8_MEMORY_FORMATION_ENABLED','0')=='1') if memory_core.enabled else None
+from .memory.experience import ExperienceSelector
+experience_selector = ExperienceSelector(memory_adapter) if memory_adapter is not None and os.getenv('ICT8_TASK_EXPERIENCE_ENABLED','0')=='1' else None
 clarification_resolver = ClarificationResolver()
 app = FastAPI(title="ICT Track 8 Structured QA", version="0.1.0")
 
@@ -392,7 +394,7 @@ def omni_query(request: OmniRequest):
     from .multimodal_input import decode_chat_images
     try:
         image_attachments = decode_chat_images(request.images)
-        return OmniAgent(engine, knowledge_store, conversation_store, generation_client, memory=memory_adapter).query(
+        return OmniAgent(engine, knowledge_store, conversation_store, generation_client, memory=memory_adapter, experience=experience_selector).query(
             request.question, session_id=request.session_id, reset_context=request.reset_context,
             complete_results=request.complete_results, image_attachments=image_attachments or None)
     except SourceIntegrityError as exc:
@@ -419,7 +421,7 @@ def omni_query_stream(request: OmniRequest):
     events = queue.Queue()
     def worker():
         try:
-            response = OmniAgent(engine, knowledge_store, conversation_store, generation_client, memory=memory_adapter).query(
+            response = OmniAgent(engine, knowledge_store, conversation_store, generation_client, memory=memory_adapter, experience=experience_selector).query(
                 request.question, session_id=request.session_id, reset_context=request.reset_context,
                 complete_results=request.complete_results,
                 image_attachments=image_attachments or None,

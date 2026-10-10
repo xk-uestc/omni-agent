@@ -9,6 +9,7 @@ import json
 import re
 import sqlite3
 import time
+import uuid
 from .core import MemoryRecord, RecallContext, encoded
 from .extraction import candidate_digest, digest
 from .formation import MemoryFormation
@@ -191,3 +192,16 @@ class ExperienceSelector:
         except (OSError,ValueError,KeyError,TypeError,sqlite3.Error):state['failure']='experience_unavailable'
         decision['retrieval_ms']=round((time.perf_counter()-started)*1000,3)
         return decision
+
+    def observe(self,decision,response):
+        """Execution feedback is not an independent task score or promotion."""
+        event={'event_id':'experience-'+uuid.uuid4().hex,'kind':'task_experience_decision',
+               'state':decision['state'],'action':decision['action'],'legal_actions':decision['legal_actions'],
+               'feedback':{'execution_status':response.get('status'),'planner_source':response.get('planner_source'),
+                           'independent_task_verified':False,'retrieval_ms':decision['retrieval_ms'],
+                           'tool_calls':len(response.get('result',{}).get('trace',[])),
+                           'failure_reason':response.get('result',{}).get('error_code')},'promotion':'none'}
+        try:
+            self.adapter.core.store.append_event(self.adapter.core.scope,event)
+            return {'event_id':event['event_id'],'stored':True}
+        except (OSError,ValueError,TypeError,sqlite3.Error):return {'stored':False}

@@ -125,3 +125,53 @@ def test_local_review_required_and_stale_validation_not_approval(env):
     with pytest.raises(PermissionError):f.review(c['candidate_id'],c['digest'],context='admin',request_id='x',decision='confirm',reason='yes')
     path,_=adapter.knowledge.original('policy');path.write_text('changed')
     with pytest.raises(ValueError,match='promotion refused'):f.review(c['candidate_id'],c['digest'],context=authority,request_id='x',decision='confirm',reason='yes')
+
+
+def test_planner_receives_request_local_advice_and_generates_new_parameters(env):
+    from copy import deepcopy
+    from backend.omni_agent import OmniAgent
+    from backend.session import ConversationStore
+    adapter,authority=env;confirm(adapter,authority)
+    calls=[]
+    class Planner:
+        audit={'status':'completed','http_status':200}
+        def generate(self,instructions,context,schema,**kwargs):
+            calls.append(deepcopy(context))
+            tasks=json.loads(json.dumps(TASKS,ensure_ascii=False).replace('华东','华南').replace('2025','2024'))
+            return {'route':'fusion','effective_question':context['question'],'tasks_json':json.dumps(tasks,ensure_ascii=False),'clarification':''}
+    agent=OmniAgent(adapter.engine,adapter.knowledge,ConversationStore(),Planner(),experience=ExperienceSelector(adapter))
+    result=agent.query(QUESTION.replace('华东','华南').replace('2025','2024'),session_id='new')
+    assert result['context_turns']==0 and result['status']=='ok', result
+    assert calls[0]['task_experience']['kind']=='advisory_task_experience'
+    assert result['result']['results']['s']['parameters']!=['2025','华东']
+    assert '华南' in result['result']['results']['s']['parameters']
+    assert not agent.conversations.context('unrelated')
+    assert not hasattr(adapter.engine,'task_experience')
+
+
+def test_advice_does_not_bypass_planner_or_authorize_wrong_plan(env):
+    from backend.omni_agent import OmniAgent
+    from backend.session import ConversationStore
+    adapter,authority=env;confirm(adapter,authority)
+    no_model=OmniAgent(adapter.engine,adapter.knowledge,ConversationStore(),experience=ExperienceSelector(adapter)).query(QUESTION)
+    assert no_model['status']=='clarification'
+    class BadPlanner:
+        audit={'status':'completed','http_status':200}
+        def generate(self,instructions,context,schema,**kwargs):
+            return {'route':'fusion','effective_question':context['question'],'tasks_json':json.dumps(TASKS),'clarification':''}
+    response=OmniAgent(adapter.engine,adapter.knowledge,ConversationStore(),BadPlanner(),experience=ExperienceSelector(adapter)).query(QUESTION.replace('华东','华南'))
+    assert response['status']!='ok'
+
+
+def test_request_context_does_not_leak_between_calls(env):
+    from backend.omni_agent import OmniAgent
+    from backend.session import ConversationStore
+    adapter,authority=env;confirm(adapter,authority);calls=[]
+    class Planner:
+        audit={'status':'completed','http_status':200}
+        def generate(self,instructions,context,schema,**kwargs):
+            calls.append(context)
+            return {'route':'clarify','effective_question':context['question'],'tasks_json':'[]','clarification':'test'}
+    agent=OmniAgent(adapter.engine,adapter.knowledge,ConversationStore(),Planner(),experience=ExperienceSelector(adapter))
+    agent.query(QUESTION);agent.query('请解释资料中的其他方法')
+    assert 'task_experience' in calls[0] and 'task_experience' not in calls[-1]

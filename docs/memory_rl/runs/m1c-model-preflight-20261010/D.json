@@ -1,0 +1,605 @@
+{
+  "workflow": "D",
+  "question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+  "response": {
+    "status": "clarification",
+    "question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+    "effective_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+    "route": "fusion",
+    "planner_source": "model_validated",
+    "session_id": "fresh",
+    "context_turns": 0,
+    "state": {
+      "route": "fusion",
+      "trace_id": "1009c61ad31ebe3f78d4"
+    },
+    "result": {
+      "status": "clarification",
+      "trace_id": "1009c61ad31ebe3f78d4",
+      "results": {},
+      "trace": [],
+      "clarification": "跨源查询的来源范围尚未核验，请明确各数据库取数的表、指标、时间和包含/排除条件。",
+      "clarification_code": "source_scope_unverified",
+      "error_code": "source_scope_unverified",
+      "skipped_tasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "edges": [],
+      "user_constraint_validation": {
+        "status": "unverified",
+        "error_code": "source_scope_unverified"
+      },
+      "execution_plan": [
+        {
+          "id": "t1",
+          "tool": "document_cell",
+          "args": {
+            "document_id": "targets",
+            "where": {
+              "地区": "华东",
+              "年份": 2026
+            },
+            "column": "目标增长率"
+          }
+        },
+        {
+          "id": "t2",
+          "tool": "document_cell",
+          "args": {
+            "document_id": "revised",
+            "where": {
+              "地区": "华东",
+              "年份": 2026
+            },
+            "column": "目标增长率"
+          }
+        },
+        {
+          "id": "t3",
+          "tool": "compare",
+          "args": {
+            "left": {
+              "ref": "t1",
+              "path": []
+            },
+            "right": {
+              "ref": "t2",
+              "path": []
+            },
+            "operator": "eq"
+          }
+        },
+        {
+          "id": "t4",
+          "tool": "sql",
+          "args": {
+            "question": "2025年华东地区销售额"
+          }
+        }
+      ]
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "model_validated",
+        "route": "fusion",
+        "latency_ms": 1329.279,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "validation": "complete",
+            "errors": [],
+            "api_audit": {
+              "provider": "deepseek_chat_completions",
+              "model": "deepseek-chat",
+              "operation": "omni_plan",
+              "call_number": 5,
+              "status": "completed",
+              "http_status": 200,
+              "temperature": 0,
+              "max_output_tokens": 5000,
+              "input_tokens": 4054,
+              "output_tokens": 245,
+              "transport_attempts": 1,
+              "usage": {
+                "prompt_tokens": 4054,
+                "completion_tokens": 245,
+                "total_tokens": 4299,
+                "prompt_tokens_details": {
+                  "cached_tokens": 1792
+                },
+                "prompt_cache_hit_tokens": 1792,
+                "prompt_cache_miss_tokens": 2262
+              },
+              "response_model": "deepseek-flash",
+              "finish_reason": "stop",
+              "model_verified": false,
+              "wall_ms": 1319.359
+            }
+          }
+        ]
+      }
+    ],
+    "audit_id": "74faf603b576b55d7594406a",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。"
+    },
+    "routing": {
+      "selected_route": "fusion",
+      "label": "数据与资料联合查询",
+      "strategy": "dependency_workflow",
+      "reason": "按依赖顺序查询数据、读取资料并核对结果。",
+      "context_mode": "independent",
+      "model_enabled": true
+    }
+  },
+  "calls": [
+    {
+      "context": {
+        "question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "actual_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "server_context_resolution": {
+          "mode": "independent",
+          "actual_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。"
+        },
+        "history": [],
+        "source_intent_hint": "fusion",
+        "reference_date": "2026-10-09",
+        "required_operations": {
+          "version_comparison_dates": []
+        },
+        "database_schema": {
+          "tables": [
+            {
+              "name": "finance_loans",
+              "columns": [
+                {
+                  "name": "loan_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "loan_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "loan_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "interest_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "loan_id"
+                ]
+              ]
+            },
+            {
+              "name": "sales_orders",
+              "columns": [
+                {
+                  "name": "order_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "order_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "channel",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "quantity",
+                  "data_type": "INTEGER",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "sales_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "cost_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "gross_profit",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "product_name",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "order_id"
+                ]
+              ]
+            }
+          ],
+          "source": "sqlite_read_only"
+        },
+        "documents": [
+          {
+            "id": "policy",
+            "title": "指标与计划",
+            "modality": "txt",
+            "text": "目标销售额 = 基准销售额 * (1 + 目标增长率)\n统计说明:基准按指定年度和地区重新查询数据库。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 51,
+                "locator": "lines:1-2",
+                "chunk_id": "2fabc52be30442d7fe0a3de0"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "revised",
+            "title": "修订计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.18\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.16",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 55,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "afca8074299a9415492b3974"
+              },
+              {
+                "text_start": 56,
+                "text_end": 91,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "ab4704c757495b0e832c9558"
+              },
+              {
+                "text_start": 92,
+                "text_end": 147,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "d6e177f80da1cee88fd2b256"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.18
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.16
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "9fff9a66b9b1a784ed02fd6b176ca6582639902dfdee199d927e78abb2e5656c",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "targets",
+            "title": "区域计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.12\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.1",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 55,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "642778e1449c2aa3a27ea027"
+              },
+              {
+                "text_start": 56,
+                "text_end": 91,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "b6ff553c802374af9a8965ff"
+              },
+              {
+                "text_start": 92,
+                "text_end": 146,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "9c9f6cb8555b2b92238d6434"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.12
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.1
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "967da55c5295f7fc9a10e8e2b426b78c743008f6550e17ed262b1e791ca1f1ad",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "terms",
+            "title": "业务术语确认卡",
+            "modality": "txt",
+            "text": "蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 50,
+                "locator": "lines:1-3",
+                "chunk_id": "8a8b3b74b1be65213da4ca1c"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "methods",
+            "title": "区域团队方法",
+            "modality": "txt",
+            "text": "华东冠军团队的方法:每日核验库存,按客户需求安排补货。\n华南冠军团队的方法:每周复核渠道订单。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 47,
+                "locator": "lines:1-2",
+                "chunk_id": "6be05cca913386905dd598cc"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          }
+        ]
+      },
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string",
+            "enum": [
+              "sql",
+              "document",
+              "fusion",
+              "clarify"
+            ]
+          },
+          "effective_question": {
+            "type": "string"
+          },
+          "clarification": {
+            "type": "string"
+          },
+          "tasks_json": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "route",
+          "effective_question",
+          "clarification",
+          "tasks_json"
+        ],
+        "additionalProperties": false
+      },
+      "audit": {
+        "provider": "deepseek_chat_completions",
+        "model": "deepseek-chat",
+        "operation": "omni_plan",
+        "call_number": 5,
+        "status": "completed",
+        "http_status": 200,
+        "temperature": 0,
+        "max_output_tokens": 5000,
+        "input_tokens": 4054,
+        "output_tokens": 245,
+        "transport_attempts": 1,
+        "usage": {
+          "prompt_tokens": 4054,
+          "completion_tokens": 245,
+          "total_tokens": 4299,
+          "prompt_tokens_details": {
+            "cached_tokens": 1792
+          },
+          "prompt_cache_hit_tokens": 1792,
+          "prompt_cache_miss_tokens": 2262
+        },
+        "response_model": "deepseek-flash",
+        "finish_reason": "stop",
+        "model_verified": false,
+        "wall_ms": 1319.359
+      },
+      "output": {
+        "route": "fusion",
+        "effective_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "clarification": "",
+        "tasks_json": "[{\"id\":\"t1\",\"tool\":\"document_cell\",\"args\":{\"document_id\":\"targets\",\"where\":{\"地区\":\"华东\",\"年份\":2026},\"column\":\"目标增长率\"}},{\"id\":\"t2\",\"tool\":\"document_cell\",\"args\":{\"document_id\":\"revised\",\"where\":{\"地区\":\"华东\",\"年份\":2026},\"column\":\"目标增长率\"}},{\"id\":\"t3\",\"tool\":\"compare\",\"args\":{\"left\":{\"ref\":\"t1\",\"path\":[]},\"right\":{\"ref\":\"t2\",\"path\":[]},\"operator\":\"eq\"}},{\"id\":\"t4\",\"tool\":\"sql\",\"args\":{\"question\":\"2025年华东地区销售额\"}}]"
+      }
+    }
+  ],
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "running",
+      "input": {
+        "query": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "top_k": 20
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "fusion.execute",
+      "status": "running",
+      "input": {
+        "task_count": 4
+      },
+      "executed": false,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "fusion.execute",
+      "status": "attention",
+      "output": {
+        "status": "clarification"
+      },
+      "executed": false,
+      "summary": "需要补充条件或证据",
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "clarification",
+        "route": "fusion"
+      },
+      "summary": "需要补充条件或证据",
+      "call_id": "omni-call-5"
+    }
+  ]
+}

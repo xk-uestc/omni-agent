@@ -289,9 +289,10 @@ def _normalize_model_tasks(plan, tasks, engine, knowledge, question):
 
 
 class OmniAgent:
-    def __init__(self, engine, knowledge, conversations, client=None, *, memory=None):
+    def __init__(self, engine, knowledge, conversations, client=None, *, memory=None, experience=None):
         self.engine, self.knowledge, self.conversations, self.client = engine, knowledge, conversations, client
         self.memory = memory
+        self.experience = experience
 
     def catalogue(self, question, *, trace_callback=None):
         """Build bounded, question-selected context, never a first-N corpus dump."""
@@ -1053,6 +1054,7 @@ class OmniAgent:
         source, error = 'rules_basic', None
         planning_notes = []
         planning_attempts = []
+        experience_decision = None
         rejection_code = None
         direct_sql = (self._verified_sql_route(scope_question) if not image_attachments and not history_error
             and inherited is None and scope_question == question
@@ -1112,6 +1114,10 @@ class OmniAgent:
                     'required_operations': requirements,
                     'database_schema': self.engine.schema(include_row_count=False),
                     'documents': self.catalogue(context_question, trace_callback=_trace_callback)}
+                if self.experience is not None and not image_attachments:
+                    experience_decision = self.experience.select(scope_question)
+                    if experience_decision.get('advice'):
+                        context['task_experience'] = experience_decision['advice']
                 if image_attachments:
                     context['attached_image_count'] = len(image_attachments)
                 image_generate_options = {'image_attachments': image_attachments} if image_attachments else {}
@@ -1265,6 +1271,8 @@ class OmniAgent:
                   'latency_ms': round((time.perf_counter()-started)*1000, 3), 'error': error,
                   'rejection_code': rejection_code,
                   'normalizations': planning_notes, 'attempts': planning_attempts}]
+        if experience_decision is not None:
+            trace[0]['task_experience'] = experience_decision
         if route == 'sql':
             try:
                 required = self.engine.extract_required_intent(effective)
@@ -1380,6 +1388,8 @@ class OmniAgent:
         response = {'status': result['status'], 'question': question, 'effective_question': effective, 'route': route,
                     'planner_source': source, 'session_id': session_id, 'context_turns': len(history),
                     'state': {key:value for key,value in state.items() if key not in {'comparison_snapshot','ranked_result_snapshot','sql_result_snapshot'}}, 'result': result, 'trace': trace, 'audit_id': audit_id}
+        if experience_decision is not None and hasattr(self.experience, 'observe'):
+            trace[0]['task_experience_observation'] = self.experience.observe(experience_decision,response)
         response['context_resolution'] = fusion_history_audit
         if session_id:
             pending_parent = (history[-1].turn_id if history and

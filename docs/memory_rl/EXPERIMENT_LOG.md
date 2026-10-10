@@ -183,3 +183,11 @@ fetch核验HEAD/origin memory=5a5f14f8c5aeab0aa9ce331da8b628bcd98933e0，main未
 实际命令：`/tmp/omni-m1a-venv/bin/python tools/diagnose_memory_m1c.py > docs/memory_rl/runs/m1c/diagnosis.txt 2>&1`。四类执行完成，但runner忘建输出目录，FileNotFoundError退出1；保留stdout。修正输出目录后以新label执行：`/tmp/omni-m1a-venv/bin/python tools/diagnose_memory_m1c.py --label m1c-diagnosis-complete-20261010 > docs/memory_rl/runs/m1c/diagnosis-complete.txt 2>&1`，退出0。原问题完整约束下A/B ok、C incomplete/source_dynamic_binding_unverified、D clarification/source_scope_unverified；四类无模型Agent均clarification。真实模型not_run，等待用户免费本地部署入口及预算，不发付费请求。
 
 M1-C类型契约测试命令：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_task_experience.py > docs/memory_rl/runs/m1c/experience-tests-first.txt 2>&1` → 11 passed in 0.93s。共享治理回归：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_formation.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_extraction.py > docs/memory_rl/runs/m1c/shared-governance-tests.txt 2>&1` → 54 passed in 1.55s。
+
+## M1-C 真实模型预检与接入
+
+用户提供本地私密配置并先授权8次DeepSeek请求。实际命令：`/tmp/omni-m1a-venv/bin/python tools/probe_memory_m1c_model.py --config runtime/private/m1c-model.env --max-calls 8 --label m1c-model-preflight-20261010 > docs/memory_rl/runs/m1c/model-preflight.txt 2>&1`。5次请求（B含一次修复），HTTP均200；A/B工具执行ok，C/D来源绑定失败。B最终答案缺华北方法证据，不能称整题成功。请求deepseek-chat，实际返回deepseek-flash，audit.model_verified=false如实保留；正式评测将显式固定deepseek-flash。输入20429、输出955 tokens（精确usage在逐调用JSON），零传输重试。secret文件600、runtime被ignore，原始请求不含Authorization。
+
+用户随后明确批准本轮累计最多144次请求，包含已用5次，temperature=0、每次输出≤5000。本地配置改为明确deepseek-flash，持久ledger不重置；正式任务计划为开发/保留各8题×四组，至多一次计划修复，余量仅接入预检。未使用预算不消耗。
+
+接入测试首次105项中1失败：Replay test使用json.dumps默认ASCII转义后替换中文，地区未变，原约束正确拒绝；不是系统新错误。保留planner-integration-tests.txt、failure-detail。修正测试序列化ensure_ascii=False后105 passed in 3.57s；追加事件观察与模型预算测试后15 passed in 1.24s（experience-integration-final.txt）。mock结果只证明机制，不作为模型成绩。

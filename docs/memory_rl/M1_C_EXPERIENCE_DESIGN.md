@@ -41,3 +41,11 @@ capture_verified_run内部API实际调用DependencyAgent.run(original_question=.
 确定性抽象只保留工具角色、依赖顺序、参数来源类别和重新绑定义务；删除原SQL、年份、地区、增长率及答案。原具体值只留审计事件，不进入模型建议。版本钉住原资料和当前Schema/DB，变更拒用而非默默跨版本迁移。独立scorer是服务器/研究流程的信任边界，不接受HTTP传来的成功布尔值。
 
 CLI沿用`python -m backend.memory.admin --config ... --type task_experience list|validate|review|revoke`。未增公网形成/审批入口。默认共享core仍拒绝task_experience作为业务别名。类型测试实跑11通过；原54项记忆测试全部通过，尚不等于真实Agent经验收益。
+
+## 检查点3：请求级Planner接入
+
+`OmniAgent(...,experience=selector)`只在原client.generate分支建立request-local context后调用选择器；有界建议放在context.task_experience数据字段，原INSTRUCTIONS、用户历史、engine/catalog不变。原Planner必须生成新tasks_json；normalize/完整原问题来源约束继续生效。无模型不执行记忆中的图，mock错误地区图仍被拒绝。HTTP/SSE共享`ICT8_TASK_EXPERIENCE_ENABLED=1`，还要求原MemoryCore可信scope配置；默认关闭。
+
+策略记录候选及拒绝原因、当前来源/工具/任务特征/预算、合法动作、实际选择和执行反馈；audit存入原memory_events，独立整题正确性由评测器另加。在线ok不自动晋升。选取非法ID被拦截；请求局部隔离已测。
+
+新真实模型预检发现B的status=ok掩盖方法证据缺失：选出华北，但诊断资料只有华东/华南，最终答案明确无法回答。这一轨迹不得晋升。后续开发资料显式补充各地区方法，以研究任务依赖而非无资料猜测；缺失来源控制另保留。A预检有当前SQL、公式/单元格及计算答案，最终仍由独立scorer核验。
