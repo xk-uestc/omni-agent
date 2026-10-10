@@ -1,6 +1,6 @@
 # Memory RL 状态
 
-- M1-B1已完成本轮实现与验证，等待ChatGPT审核；停止继续开发，不自行启动自动提取、经验记忆、M2/PPO/GRPO。
+- M1-B2已由新附件授权启动。检查点1：确定性候选提取器与22题新开发集/scorer已冻结；3个提取合同测试通过，晋升与端到端尚待实现。未启动M2/M3。
 - 仅开发并推送 `memory`。起点重新fetch确认 `666551fefcff75dfa6adc7c985dddb4f796b64b1`，本地未跟踪`Qimem/`保留未提交；main未修改。
 - 最终生产实现SHA：`84979a643cc4db7a7a993c80272036219b476192`；最后交付提交只增加文档、核验工具与结果，Git完整HEAD以最终反馈为准。
 - SQLite Core默认关闭，服务端单项目scope；每Omni请求一次recall、Schema绑定、来源/冲突/显式条件核验；HTTP/SSE与observe，事件不会自动晋升。

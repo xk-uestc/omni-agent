@@ -1,0 +1,242 @@
+{
+  "tasks": {
+    "p01": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(\"sales_amount\") FROM \"sales_orders\" WHERE \"order_date\">='2025-01-01' AND \"order_date\"<'2026-01-01' AND \"region\"='华东'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "p02": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(\"sales_amount\") FROM \"sales_orders\" WHERE \"order_date\">='2024-01-01' AND \"order_date\"<'2025-01-01' AND \"region\"='华南'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "p03": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(\"quantity\") FROM \"sales_orders\" WHERE \"order_date\">='2025-01-01' AND \"order_date\"<'2026-01-01' AND \"region\"='华东'",
+      "metric_fields": [
+        "quantity"
+      ],
+      "dimension_fields": []
+    },
+    "p04": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(\"quantity\") FROM \"sales_orders\" WHERE \"order_date\">='2024-01-01' AND \"order_date\"<'2025-01-01' AND \"region\"='华南'",
+      "metric_fields": [
+        "quantity"
+      ],
+      "dimension_fields": []
+    },
+    "p05": {
+      "kind": "sql",
+      "gold_sql": "SELECT AVG(\"unit_price\") FROM \"sales_orders\" WHERE \"order_date\">='2025-01-01' AND \"order_date\"<'2026-01-01' AND \"region\"='华东'",
+      "metric_fields": [
+        "unit_price"
+      ],
+      "dimension_fields": []
+    },
+    "p06": {
+      "kind": "sql",
+      "gold_sql": "SELECT AVG(\"unit_price\") FROM \"sales_orders\" WHERE \"order_date\">='2024-01-01' AND \"order_date\"<'2025-01-01' AND \"region\"='华南'",
+      "metric_fields": [
+        "unit_price"
+      ],
+      "dimension_fields": []
+    },
+    "p07": {
+      "kind": "sql",
+      "gold_sql": "SELECT COUNT(\"order_id\") FROM \"sales_orders\" WHERE \"order_date\">='2025-01-01' AND \"order_date\"<'2026-01-01' AND \"region\"='华东'",
+      "metric_fields": [
+        "order_id"
+      ],
+      "dimension_fields": []
+    },
+    "p08": {
+      "kind": "sql",
+      "gold_sql": "SELECT COUNT(\"order_id\") FROM \"sales_orders\" WHERE \"order_date\">='2024-01-01' AND \"order_date\"<'2025-01-01' AND \"region\"='华南'",
+      "metric_fields": [
+        "order_id"
+      ],
+      "dimension_fields": []
+    },
+    "p09": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(\"sales_amount\") FROM \"sales_orders\" WHERE \"order_date\">='2025-01-01' AND \"order_date\"<'2026-01-01' AND \"region\"='华东' AND \"channel\"='线上'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "p10": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(\"sales_amount\") FROM \"sales_orders\" WHERE \"order_date\">='2024-01-01' AND \"order_date\"<'2025-01-01' AND \"region\"='华南' AND \"channel\"='线上'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "p11": {
+      "kind": "sql",
+      "gold_sql": "SELECT AVG(\"lead_time_days\") FROM \"purchase_orders\" WHERE \"purchase_date\">='2025-01-01' AND \"purchase_date\"<'2026-01-01' AND \"region\"='华东'",
+      "metric_fields": [
+        "lead_time_days"
+      ],
+      "dimension_fields": []
+    },
+    "p12": {
+      "kind": "sql",
+      "gold_sql": "SELECT AVG(\"lead_time_days\") FROM \"purchase_orders\" WHERE \"purchase_date\">='2024-01-01' AND \"purchase_date\"<'2025-01-01' AND \"region\"='华南'",
+      "metric_fields": [
+        "lead_time_days"
+      ],
+      "dimension_fields": []
+    },
+    "n01": {
+      "kind": "no_sql"
+    },
+    "n02": {
+      "kind": "no_sql"
+    },
+    "n03": {
+      "kind": "no_sql"
+    },
+    "n04": {
+      "kind": "no_sql"
+    },
+    "n05": {
+      "kind": "no_sql"
+    },
+    "n06": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "n07": {
+      "kind": "no_sql"
+    },
+    "n08": {
+      "kind": "no_sql"
+    },
+    "n09": {
+      "kind": "no_sql"
+    },
+    "n10": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华南'",
+      "metric_fields": [
+        "quantity"
+      ],
+      "dimension_fields": []
+    }
+  },
+  "formation": {
+    "revenue": {
+      "term": "玄武额",
+      "binding": {
+        "table": "sales_orders",
+        "column": "sales_amount",
+        "function": "SUM",
+        "filters": []
+      },
+      "promotion_allowed": true
+    },
+    "quantity": {
+      "term": "赤羽量",
+      "binding": {
+        "table": "sales_orders",
+        "column": "quantity",
+        "function": "SUM",
+        "filters": []
+      },
+      "promotion_allowed": true
+    },
+    "price": {
+      "term": "银杏价",
+      "binding": {
+        "table": "sales_orders",
+        "column": "unit_price",
+        "function": "AVG",
+        "filters": []
+      },
+      "promotion_allowed": true
+    },
+    "orders": {
+      "term": "锦鲤笔",
+      "binding": {
+        "table": "sales_orders",
+        "column": "order_id",
+        "function": "COUNT",
+        "filters": []
+      },
+      "promotion_allowed": true
+    },
+    "online": {
+      "term": "青禾额",
+      "binding": {
+        "table": "sales_orders",
+        "column": "sales_amount",
+        "function": "SUM",
+        "filters": [
+          {
+            "column": "channel",
+            "value": "线上"
+          }
+        ]
+      },
+      "promotion_allowed": true
+    },
+    "lead": {
+      "term": "白鹭期",
+      "binding": {
+        "table": "purchase_orders",
+        "column": "lead_time_days",
+        "function": "AVG",
+        "filters": []
+      },
+      "promotion_allowed": true
+    },
+    "missing": {
+      "term": "迷雾额",
+      "binding": null,
+      "promotion_allowed": false
+    },
+    "conflict1": {
+      "term": "霜桥额",
+      "binding": {
+        "table": "sales_orders",
+        "column": "sales_amount",
+        "function": "SUM",
+        "filters": []
+      },
+      "promotion_allowed": false
+    },
+    "conflict2": {
+      "term": "霜桥额",
+      "binding": {
+        "table": "sales_orders",
+        "column": "quantity",
+        "function": "SUM",
+        "filters": []
+      },
+      "promotion_allowed": false
+    },
+    "unapproved": {
+      "term": "未批额",
+      "binding": {
+        "table": "sales_orders",
+        "column": "sales_amount",
+        "function": "SUM",
+        "filters": []
+      },
+      "promotion_allowed": true
+    }
+  }
+}

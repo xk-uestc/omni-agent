@@ -1,0 +1,174 @@
+{
+  "origin": "self_authored_exposed_development_fixture_not_enterprise_or_official",
+  "sources": {
+    "revenue": {
+      "document_id": "formation-revenue",
+      "title": "玄武额业务定义",
+      "text": "玄武额的业务定义如下。此文件为自建开发资料，不代表真实企业确认。\n业务口径：{\"term\":\"玄武额\",\"definition\":\"销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "contract": {
+        "term": "玄武额",
+        "definition": "销售额合计",
+        "binding": {
+          "table": "sales_orders",
+          "column": "sales_amount",
+          "function": "SUM",
+          "filters": []
+        },
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00"
+      }
+    },
+    "quantity": {
+      "document_id": "formation-quantity",
+      "title": "赤羽量业务定义",
+      "text": "赤羽量的业务定义如下。此文件为自建开发资料，不代表真实企业确认。\n业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "contract": {
+        "term": "赤羽量",
+        "definition": "销售数量合计",
+        "binding": {
+          "table": "sales_orders",
+          "column": "quantity",
+          "function": "SUM",
+          "filters": []
+        },
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00"
+      }
+    },
+    "price": {
+      "document_id": "formation-price",
+      "title": "银杏价业务定义",
+      "text": "银杏价的业务定义如下。此文件为自建开发资料，不代表真实企业确认。\n业务口径：{\"term\":\"银杏价\",\"definition\":\"订单单价算术平均值\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"unit_price\",\"function\":\"AVG\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "contract": {
+        "term": "银杏价",
+        "definition": "订单单价算术平均值",
+        "binding": {
+          "table": "sales_orders",
+          "column": "unit_price",
+          "function": "AVG",
+          "filters": []
+        },
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00"
+      }
+    },
+    "orders": {
+      "document_id": "formation-orders",
+      "title": "锦鲤笔业务定义",
+      "text": "锦鲤笔的业务定义如下。此文件为自建开发资料，不代表真实企业确认。\n业务口径：{\"term\":\"锦鲤笔\",\"definition\":\"订单记录数\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"order_id\",\"function\":\"COUNT\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "contract": {
+        "term": "锦鲤笔",
+        "definition": "订单记录数",
+        "binding": {
+          "table": "sales_orders",
+          "column": "order_id",
+          "function": "COUNT",
+          "filters": []
+        },
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00"
+      }
+    },
+    "online": {
+      "document_id": "formation-online",
+      "title": "青禾额业务定义",
+      "text": "青禾额的业务定义如下。此文件为自建开发资料，不代表真实企业确认。\n业务口径：{\"term\":\"青禾额\",\"definition\":\"线上渠道销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[{\"column\":\"channel\",\"value\":\"线上\"}]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "contract": {
+        "term": "青禾额",
+        "definition": "线上渠道销售额合计",
+        "binding": {
+          "table": "sales_orders",
+          "column": "sales_amount",
+          "function": "SUM",
+          "filters": [
+            {
+              "column": "channel",
+              "value": "线上"
+            }
+          ]
+        },
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00"
+      }
+    },
+    "lead": {
+      "document_id": "formation-lead",
+      "title": "白鹭期业务定义",
+      "text": "白鹭期的业务定义如下。此文件为自建开发资料，不代表真实企业确认。\n业务口径：{\"term\":\"白鹭期\",\"definition\":\"采购交期天数算术平均值\",\"binding\":{\"table\":\"purchase_orders\",\"column\":\"lead_time_days\",\"function\":\"AVG\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "contract": {
+        "term": "白鹭期",
+        "definition": "采购交期天数算术平均值",
+        "binding": {
+          "table": "purchase_orders",
+          "column": "lead_time_days",
+          "function": "AVG",
+          "filters": []
+        },
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00"
+      }
+    },
+    "missing": {
+      "document_id": "formation-missing",
+      "title": "迷雾额业务定义",
+      "text": "迷雾额的业务定义如下。自建开发资料。\n业务口径：{\"term\":\"迷雾额\",\"definition\":\"经营贡献，未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "contract": {
+        "term": "迷雾额",
+        "definition": "经营贡献，未指定物理口径",
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00"
+      }
+    },
+    "conflict1": {
+      "document_id": "formation-conflict1",
+      "title": "霜桥额业务定义",
+      "text": "霜桥额的业务定义如下。自建开发资料。\n业务口径：{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+      "contract": {
+        "term": "霜桥额",
+        "definition": "销售额合计",
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00",
+        "binding": {
+          "table": "sales_orders",
+          "column": "sales_amount",
+          "function": "SUM",
+          "filters": []
+        }
+      }
+    },
+    "conflict2": {
+      "document_id": "formation-conflict2",
+      "title": "霜桥额业务定义",
+      "text": "霜桥额的业务定义如下。自建开发资料。\n业务口径：{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+      "contract": {
+        "term": "霜桥额",
+        "definition": "销售数量合计",
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00",
+        "binding": {
+          "table": "sales_orders",
+          "column": "quantity",
+          "function": "SUM",
+          "filters": []
+        }
+      }
+    },
+    "unapproved": {
+      "document_id": "formation-unapproved",
+      "title": "未批额业务定义",
+      "text": "未批额的业务定义如下。自建开发资料。\n业务口径：{\"term\":\"未批额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+      "contract": {
+        "term": "未批额",
+        "definition": "销售额合计",
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00",
+        "binding": {
+          "table": "sales_orders",
+          "column": "sales_amount",
+          "function": "SUM",
+          "filters": []
+        }
+      }
+    }
+  }
+}

@@ -133,3 +133,7 @@ SQLite 业务条目与 query events 分表；可信离线 provisioning 才可 pu
 原冻结manifest/scorer/Gold与master未改；DB前后及与M1-A hash一致。XLSX与M1-A只有属性时间XML不同，worksheet一致，最终A/B文件相同；该旧生成器局限已明确记录。C无有效独立选择意义、远程模型无配置，均not_run。
 
 本轮收益为人工确认fixture业务语义的跨会话复用；不是大模型学习、PPO或官方成绩，也不证明多用户隔离。f01/f02、safe-09和另外7项原失败未修；最小闭环可提交审核，不宣称M1全部完成。停止等待ChatGPT决定后续授权。
+
+## M1-B2 检查点1
+
+起点4e339b6经fetch确认；新增extraction.py、3项合同测试、22题形成开发集与独立scorer，先冻结hash再实验。此检查点尚无形成收益成绩。
