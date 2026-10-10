@@ -251,3 +251,7 @@ F1分层开发输入冻结：`/tmp/omni-m1a-venv/bin/python tools/freeze_foundat
 修正测试夹具：通过initialize_database('/tmp/f1-api.sqlite')建立隔离样本后，原定向命令重跑，日志baseline-tests-configured.txt；原环境失败日志保留。
 
 `/tmp/omni-m1a-venv/bin/python tools/fetch_foundation_bge.py`（允许网络提升权限）：7项资产核验，下载95,827,648 bytes固定权重。沙箱首次网络socket拒绝后同命令提升成功；无凭据输出。`HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 USE_TF=0 /tmp/f1-bge-venv/bin/python tools/evaluate_foundation_rag.py --dense --output docs/foundation/runs/rag-B-dev-before.json > docs/foundation/runs/rag-B-dev-before-stdout.txt 2>&1`：BGE本地真实执行6/24，英文18项跳过，不生成答案。
+
+F1检查点3：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_foundation_retrieval.py ict-track8/tests/test_dense_retrieval.py > docs/foundation/runs/retrieval-final-tests.txt 2>&1`；`/tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_navigation.py --strategy hierarchical --output docs/foundation/runs/rag-C-prototype-dev.json`。未采纳C生产架构，原型保留。原草案C/BGE开发实验均保留json/stdout；相同候选预算。
+
+`/tmp/omni-m1a-venv/bin/python tools/measure_foundation_storage.py --output docs/foundation/runs/storage-after.json`：100doc/300chunk同规格热请求约4.00→1.87ms，实际SQL下推3chunk，非模型问答。FastAPI TestClient在沙箱socket限制下挂起，允许本机socket、外部provider显式为空后跑baseline-tests-configured-network.txt，保留所有失败日志。

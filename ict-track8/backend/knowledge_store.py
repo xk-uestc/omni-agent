@@ -263,6 +263,22 @@ class KnowledgeStore:
         with self.connect() as connection:
             return [json.loads(row[0]) for row in connection.execute('SELECT payload FROM documents ORDER BY document_id')]
 
+    def delete(self, document_id, *, expected_sha256):
+        """Remove a pinned logical revision atomically; keep immutable originals.
+
+        This internal store operation introduces no public deletion endpoint.
+        Old handles fail source validation; shared content-addressed assets and
+        audit evidence are never removed by logical deletion.
+        """
+        self.validate_id(document_id)
+        if not isinstance(expected_sha256, str) or not re.fullmatch(r'[a-f0-9]{64}', expected_sha256):
+            raise ValueError('删除资料必须指定当前来源SHA256')
+        with self.connect() as connection:
+            cursor = connection.execute('DELETE FROM documents WHERE document_id=? AND sha256=?',
+                                        (document_id, expected_sha256))
+            if cursor.rowcount != 1:
+                raise SourceRevisionError('资料已移除或版本变化，未删除当前版本。')
+
     def document(self, document_id):
         self.validate_id(document_id)
         with self.connect() as connection:
@@ -346,9 +362,16 @@ class KnowledgeStore:
         result['original_uri'] = asset.manifest['original_uri']
         return result
 
-    def records(self):
+    def records(self, document_id=None):
+        if document_id is not None:
+            self.validate_id(document_id)
         with self.connect() as connection:
-            rows = connection.execute('SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id) ORDER BY c.rowid').fetchall()
+            query = 'SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id)'
+            params = ()
+            if document_id is not None:
+                query += ' WHERE c.document_id=?'
+                params = (document_id,)
+            rows = connection.execute(query + ' ORDER BY c.rowid', params).fetchall()
         records = []
         from .answer_contract import substantive_numbered_heading
         from .raysource_media import image_refs_for_chunk
@@ -376,10 +399,9 @@ class KnowledgeStore:
         def finish(hits, audit):
             return (hits, audit) if with_audit else hits
 
-        records = self.records()
+        records = self.records(document_id)
         if document_id is not None:
             document = self.document(document_id)
-            records = [record for record in records if record.metadata['document_id'] == document_id]
             if page_no is not None:
                 if document['modality'] != 'pdf' or type(page_no) is not int or not 1 <= page_no <= int(document['stats'].get('page_count') or 1):
                     raise ValueError('指定PDF页码超出资料范围')

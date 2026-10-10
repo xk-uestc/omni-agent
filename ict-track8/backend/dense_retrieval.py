@@ -62,7 +62,21 @@ class DenseIndex:
         keys = [hashlib.sha256((self.embedder.identity + '\0' + NORMALIZATION_ID + '\0' + text).encode()).hexdigest() for text in texts]
         with self._lock:
             with self.store.connect() as connection:
-                cached = {row[0]: json.loads(row[1]) for row in connection.execute('SELECT cache_key,payload FROM vectors')}
+                # A scoped request must not deserialize every historical model
+                # and source revision. Keep keys content/model/normalization bound.
+                cached = {}
+                wanted = list(dict.fromkeys(keys))
+                for start in range(0, len(wanted), 500):
+                    batch = wanted[start:start+500]
+                    placeholders = ','.join('?' for _ in batch)
+                    for key, payload in connection.execute(
+                            f'SELECT cache_key,payload FROM vectors WHERE cache_key IN ({placeholders})', batch):
+                        try:
+                            vector = json.loads(payload)
+                            self.validate_vector(vector)
+                        except (ValueError, TypeError) as exc:
+                            raise DenseRetrievalError('缓存向量损坏，请重建受影响的索引') from exc
+                        cached[key] = vector
             missing = list(dict.fromkeys(key for key in keys if key not in cached))
             by_key = dict(zip(keys, texts))
             for start in range(0, len(missing), 16):
