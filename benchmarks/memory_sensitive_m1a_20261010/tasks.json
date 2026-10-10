@@ -1,0 +1,406 @@
+{
+  "version": "m1a-dev-v1",
+  "scope": "self_authored_exposed_development_not_official_or_blind",
+  "reference_date": "2026-10-09",
+  "reference_time": "2026-10-10T12:00:00+08:00",
+  "model": "none",
+  "planner": "rules_basic",
+  "ICT8_FAST_SQL": "0",
+  "external_api_calls": false,
+  "tasks": [
+    {
+      "id": "s01",
+      "question": "2025年华东蓝星额是多少",
+      "category": "benefit_semantics",
+      "target_session": "s01-target",
+      "preparation_session": "s01-preparation",
+      "preparation_questions": [
+        "2024年华东销售成本"
+      ],
+      "candidate_ids": [
+        "cost"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "s02",
+      "question": "2024年华南蓝星额是多少",
+      "category": "benefit_semantics",
+      "target_session": "s02-target",
+      "preparation_session": "s02-preparation",
+      "preparation_questions": [
+        "2025年华东销售成本"
+      ],
+      "candidate_ids": [
+        "cost"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "s03",
+      "question": "2025年华东清泉额是多少",
+      "category": "benefit_semantics",
+      "target_session": "s03-target",
+      "preparation_session": "s03-preparation",
+      "preparation_questions": [
+        "2024年华东线上销售额"
+      ],
+      "candidate_ids": [
+        "online"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "s04",
+      "question": "2025年华南紫竹额是多少",
+      "category": "benefit_semantics",
+      "target_session": "s04-target",
+      "preparation_session": "s04-preparation",
+      "preparation_questions": [
+        "2024年华东毛利"
+      ],
+      "candidate_ids": [
+        "margin"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "f01",
+      "question": "根据《指标与计划》和《区域计划》，给出2026年华东目标销售额，基准为2025年华东销售额",
+      "category": "benefit_method",
+      "target_session": "f01-target",
+      "preparation_session": "f01-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "method"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "f02",
+      "question": "根据《指标与计划》和《区域计划》，给出2026年华南目标销售额，基准为2025年华南销售额",
+      "category": "benefit_method",
+      "target_session": "f02-target",
+      "preparation_session": "f02-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "method"
+      ],
+      "source_variant": "targets_changed",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "g01",
+      "question": "2025年华东青松额是多少",
+      "category": "expired_guard",
+      "target_session": "g01-target",
+      "preparation_session": "g01-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "expired"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "g02",
+      "question": "2025年华东青松额是多少",
+      "category": "source_change_guard",
+      "target_session": "g02-target",
+      "preparation_session": "g02-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "changed"
+      ],
+      "source_variant": "terms_changed",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "g03",
+      "question": "2025年华东青松额是多少",
+      "category": "conflict_guard",
+      "target_session": "g03-target",
+      "preparation_session": "g03-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "conflict-sales",
+        "conflict-cost"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "g04",
+      "question": "2025年华东青松额是多少",
+      "category": "scope_guard",
+      "target_session": "g04-target",
+      "preparation_session": "g04-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "foreign"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "g05",
+      "question": "2025年华东青松额是多少",
+      "category": "unverified_guard",
+      "target_session": "g05-target",
+      "preparation_session": "g05-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "unverified"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "u01",
+      "question": "2025年华南销量",
+      "category": "irrelevant_control",
+      "target_session": "u01-target",
+      "preparation_session": "u01-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "cost",
+        "margin",
+        "online",
+        "method"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "u02",
+      "question": "2024年华东销售额",
+      "category": "irrelevant_control",
+      "target_session": "u02-target",
+      "preparation_session": "u02-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [
+        "online"
+      ],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "c01",
+      "question": "2025年华东销售成本",
+      "category": "canonical_control",
+      "target_session": "c01-target",
+      "preparation_session": "c01-preparation",
+      "preparation_questions": [],
+      "candidate_ids": [],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "h01",
+      "question": "那华南呢",
+      "category": "history_control",
+      "target_session": "h01-preparation",
+      "preparation_session": "h01-preparation",
+      "preparation_questions": [
+        "2025年华东销售额"
+      ],
+      "candidate_ids": [],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": true,
+      "transport": "OmniAgent.query"
+    },
+    {
+      "id": "h02",
+      "question": "那华南呢",
+      "category": "missing_history_control",
+      "target_session": "h02-target",
+      "preparation_session": "h02-preparation",
+      "preparation_questions": [
+        "2025年华东销售额"
+      ],
+      "candidate_ids": [],
+      "source_variant": "original",
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "same_session_control": false,
+      "transport": "OmniAgent.query"
+    }
+  ]
+}

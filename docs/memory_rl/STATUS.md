@@ -1,9 +1,12 @@
 # Memory RL 状态
 
-- 日期：2026-10-10（Asia/Shanghai）。阶段仅 M1-A；M1-B/PPO/GRPO 未授权、未实施。
-- 审计基准 SHA：`a4ed8bb83fa09fcc4a3375709a02ff34d62f1d7f`；唯一开发/推送分支 `memory`。
-- 最新交付 SHA：本文件所在提交（使用 `git rev-parse origin/memory` 核对，避免在提交中自引用 SHA）。
-- 已完成：八个指定源码调用链、HTTP/SSE、共享 token 身份边界、QiMem 五文件实物与耦合审计。
-- 进行中：冻结 memory-sensitive 开发输入/独立评分器并运行 No Memory；185 回合仅作为无退化回归。
-- 环境：系统 python3 无 pip；已创建 /tmp 独立 venv，正在安装本地基线依赖。当前没有实验通过声明。
-- 后续：本阶段提交基线事实后停止，等待 ChatGPT 审核接入点/作用域与开发集。Fixed/Oracle 未运行。
+- 日期：2026-10-10（Asia/Shanghai）；本轮 M1-A 已交付，停止等待 ChatGPT 审核。M1-B/PPO/GRPO 未实施。
+- 源码基准：`a4ed8bb83fa09fcc4a3375709a02ff34d62f1d7f`。
+- 已推送独立审计：`f5dba53602b806acf27ebbdcf810bd7d919ad0d1`。
+- 最新基线提交：本文件所在提交；完整 SHA 由 `git rev-parse origin/memory` 及最终反馈给出（避免提交内容自引用 SHA）。唯一开发/推送分支 `memory`。
+- 已完成：八个指定源码及现有测试审计、QiMem 五文件只读复用分析、16 个开发任务/独立评分冻结、实际 A 基线/逐题证据、依赖探针、HTTP/SSE 入口验证。
+- A 新开发集 10/16，其中业务术语/跨源方法要求 0/6，控制题 10/10；B/C `not_run`，没有 Adapter。
+- 原 185 回合重跑 177/185，8 个与历史满分不一致。当前与历史报告有 21 个源码 hash 不同；恢复仓库记录的三项依赖版本后 14 个有限探针复现全部 8 失败。不更改原题/生产源码来补分。
+- 已有源码回归 77/77；生产鉴权/Omni SSE 回归 14/14（授权 sandbox 外、本地 TestClient）。sandbox 内 HTTP 测试阻塞首个请求，退出 130，原日志保留；实际传输 checks 的可执行性已由相同命令环境外证据确认。
+- 未覆盖/未完成：真实远程模型基线 `not_run`，可信跨用户 scope、记忆持久化/隔离/召回指标不存在；不声称全部赛题验收或记忆收益。
+- 待决策：审查前置 request-local 语义候选接入和单项目可信 scope；先确认是否另行修复旧 8 例回归，再授权 M1-B。至多两方案见架构审计结尾。

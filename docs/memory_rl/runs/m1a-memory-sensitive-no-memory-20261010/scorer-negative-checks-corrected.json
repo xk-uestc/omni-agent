@@ -1,0 +1,115 @@
+{
+  "method": "scorer mutation probes; inputs and scorer unchanged",
+  "checks": [
+    {
+      "probe": "actual independently verified method",
+      "score_pass": true,
+      "expected": true,
+      "contract_met": true,
+      "detail": {
+        "status": "ok",
+        "value_pass": true,
+        "documents_pass": true,
+        "baseline_sql_pass": true,
+        "parameter_provenance_pass": true,
+        "graph_pass": true,
+        "expected_scorer_only": 4583.040000000001,
+        "actual_terminal_values": [
+          4583.040000000001
+        ]
+      }
+    },
+    {
+      "probe": "corrupt final value",
+      "score_pass": false,
+      "expected": false,
+      "contract_met": true,
+      "detail": {
+        "status": "ok",
+        "value_pass": false,
+        "documents_pass": true,
+        "baseline_sql_pass": true,
+        "parameter_provenance_pass": true,
+        "graph_pass": true,
+        "expected_scorer_only": 4583.040000000001,
+        "actual_terminal_values": [
+          4584.040000000001
+        ]
+      }
+    },
+    {
+      "probe": "corrupt document version",
+      "score_pass": false,
+      "expected": false,
+      "contract_met": true,
+      "detail": {
+        "status": "ok",
+        "value_pass": true,
+        "documents_pass": false,
+        "baseline_sql_pass": true,
+        "parameter_provenance_pass": true,
+        "graph_pass": true,
+        "expected_scorer_only": 4583.040000000001,
+        "actual_terminal_values": [
+          4583.040000000001
+        ]
+      }
+    },
+    {
+      "probe": "wrong source row",
+      "score_pass": false,
+      "expected": false,
+      "contract_met": true,
+      "detail": {
+        "status": "ok",
+        "value_pass": true,
+        "documents_pass": true,
+        "baseline_sql_pass": true,
+        "parameter_provenance_pass": false,
+        "graph_pass": true,
+        "expected_scorer_only": 4583.040000000001,
+        "actual_terminal_values": [
+          4583.040000000001
+        ]
+      }
+    },
+    {
+      "probe": "wrong baseline input population",
+      "score_pass": false,
+      "expected": false,
+      "contract_met": true,
+      "detail": {
+        "status": "ok",
+        "value_pass": true,
+        "documents_pass": true,
+        "baseline_sql_pass": false,
+        "parameter_provenance_pass": true,
+        "graph_pass": true,
+        "expected_scorer_only": 4583.040000000001,
+        "actual_terminal_values": [
+          4583.040000000001
+        ]
+      }
+    },
+    {
+      "probe": "missing necessary formula evidence",
+      "score_pass": false,
+      "expected": false,
+      "contract_met": true,
+      "detail": {
+        "status": "ok",
+        "value_pass": true,
+        "documents_pass": true,
+        "baseline_sql_pass": true,
+        "parameter_provenance_pass": true,
+        "graph_pass": false,
+        "expected_scorer_only": 4583.040000000001,
+        "actual_terminal_values": [
+          4583.040000000001
+        ]
+      }
+    }
+  ],
+  "passed": 6,
+  "total": 6
+}

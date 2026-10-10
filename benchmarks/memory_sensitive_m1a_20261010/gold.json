@@ -1,0 +1,121 @@
+{
+  "scorer_only": true,
+  "tasks": {
+    "s01": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    "s02": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    "s03": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东' AND channel='线上'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "s04": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(gross_profit) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华南'",
+      "metric_fields": [
+        "gross_profit"
+      ],
+      "dimension_fields": []
+    },
+    "f01": {
+      "kind": "fusion",
+      "baseline_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "region": "华东",
+      "year": 2026,
+      "rate": 0.12,
+      "documents": [
+        "policy",
+        "targets"
+      ]
+    },
+    "f02": {
+      "kind": "fusion",
+      "baseline_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华南'",
+      "region": "华南",
+      "year": 2026,
+      "rate": 0.18,
+      "documents": [
+        "policy",
+        "targets"
+      ]
+    },
+    "g01": {
+      "kind": "abstain",
+      "reason": "expired_guard",
+      "forbid_numeric_or_sql_answer": true
+    },
+    "g02": {
+      "kind": "abstain",
+      "reason": "source_change_guard",
+      "forbid_numeric_or_sql_answer": true
+    },
+    "g03": {
+      "kind": "abstain",
+      "reason": "conflict_guard",
+      "forbid_numeric_or_sql_answer": true
+    },
+    "g04": {
+      "kind": "abstain",
+      "reason": "scope_guard",
+      "forbid_numeric_or_sql_answer": true
+    },
+    "g05": {
+      "kind": "abstain",
+      "reason": "unverified_guard",
+      "forbid_numeric_or_sql_answer": true
+    },
+    "u01": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(quantity) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华南'",
+      "metric_fields": [
+        "quantity"
+      ],
+      "dimension_fields": []
+    },
+    "u02": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华东'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "c01": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(cost_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+      "metric_fields": [
+        "cost_amount"
+      ],
+      "dimension_fields": []
+    },
+    "h01": {
+      "kind": "sql",
+      "gold_sql": "SELECT SUM(sales_amount) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华南'",
+      "metric_fields": [
+        "sales_amount"
+      ],
+      "dimension_fields": []
+    },
+    "h02": {
+      "kind": "abstain",
+      "reason": "missing_history_control",
+      "forbid_numeric_or_sql_answer": true
+    }
+  }
+}

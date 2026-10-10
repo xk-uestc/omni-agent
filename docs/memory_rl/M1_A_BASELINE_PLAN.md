@@ -24,3 +24,17 @@
 - B/C 目前 `not_run`：Memory Adapter 尚未实现；不产生对照成绩。
 
 计量包括任务成功、来源覆盖、误用、澄清、模型调用/token（无模型为 0）、工具 trace 次数、wall time。模型配置如无 provider 必须标明 rules-only；工具 trace 不是低层 SQLite execute 次数。异常和未运行保留真实原因。正式 HTTP/SSE 可信 scope、跨用户隔离、重启记忆尚未实现，不作为通过项。
+
+## 已冻结并实际执行的 v1（2026-10-10）
+
+资产与复跑：`benchmarks/memory_sensitive_m1a_20261010/README.md`。16 个 task ID；前置数据与 gold 严格分离，库/原件都从公开合成 fixture 生成。`manifest.json` 在执行前记录 8 文件 SHA256；SHA 为 `0b81fde89bd91604e4c5e970c35af7d9f5560723436506bc17c275f8a2c1c4e6`。任务输入 SHA `bdd733464b254d5239983709d5a9fc8de11141ed6e47e719e490ec99a628f725`，scorer SHA `3e2c8558ad6ac5acf1f71d528dbcc21f9e425fcbe4f0d6a6c5a2251f69b46cbc`。执行前冻结与执行中 hash 一致。
+
+A 的六项收益/完整性要求 0/6，其中 f02 为来源更新压力题：旧经验依赖已经不合法，不预设合法 Oracle 可提高它。其余 10 个控制任务满足响应契约，包括 h01 有 1 轮同会话历史、其余 target 0 轮历史。s01–s04 使用原知识库检索可取得术语定义，但没有计算所问值；这是语义接入与资料问答的区别。
+
+当前 DB SHA `bf0fb0e1308062b8840810bf0ce26d1c8efff67e61c127576718f410ae3fe6e2`；aliases SHA `cf7601df26007f56b169390f225f8e337c532e6bbc9bd06c11cb810ca63d3dcb`；原件所有版本在运行 summary.json。原目标 Excel SHA `b58186f6894e0dfd730e1d9e9242f5b2ce146a7719801f2e64aebb85b79cf4d1`，新版本 `aec45342585faaea195011bf40f5e6a77cc3888b1d7e8e2bdfae355ac9f0eea8`。XLSX ZIP 时间归一化，避免重跑时仅 ZIP 元数据改变。
+
+配置：Python 3.12.3 / SQLite（summary 中精确版本），rules_basic、无 client/model_plan_provider/generator/embedder、FAST_SQL=0、reference_date=2026-10-09；候选时态 reference_time=2026-10-10T12:00:00+08:00；max_rows=100、max_steps=50000000、max_seconds=5。生成固定无随机采样，无外部 API、token=0。初次 34 个包完整 lock 在 runs/requirements-initial.txt。后续 B/C 使用相同锁与预算，新增 provider 会改变实验条件，需单独版本而非混称本次结果。
+
+独立评分验证最终 6/6：正确前置方法通过，错误终值、文档 SHA、参数行、SQL 输入集合、缺失公式证据均拒绝。最初反例脚本试图替换参数化 SQL 中不存在的年份，实际没有改变 SQL，得到 5/6；保留 scorer-negative-checks.json，修正测试为改变 parameters 后为 6/6。没有修改冻结 scorer/gold 来补分。
+
+原 185 回合实际 177/185（不是本轮 185/185），独立探针与原因见 runs/context-diagnostic.json 及 CODEX_REPORT；数据库和源码不变。No Memory 的检索误用率/跨用户记忆隔离 **not_measurable_without_adapter**，控制题通过不能据此声明治理系统通过。
