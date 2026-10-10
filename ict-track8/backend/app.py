@@ -183,7 +183,8 @@ from .memory.core import MemoryCore
 from .memory.adapter import MemoryAdapter
 memory_core = MemoryCore.from_env()
 memory_adapter = MemoryAdapter(memory_core, engine, knowledge_store,
-    database_source=os.getenv('ICT8_MEMORY_DATABASE_SOURCE', 'database')) if memory_core.enabled else None
+    database_source=os.getenv('ICT8_MEMORY_DATABASE_SOURCE', 'database'),
+    formation_enabled=os.getenv('ICT8_MEMORY_FORMATION_ENABLED','0')=='1') if memory_core.enabled else None
 clarification_resolver = ClarificationResolver()
 app = FastAPI(title="ICT Track 8 Structured QA", version="0.1.0")
 

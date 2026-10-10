@@ -109,3 +109,11 @@ API测试命令环境外执行（与M1-A一致），实际`133 passed, 3 warning
 fetch实测远程memory=`4e339b6983b13af6891d14a53e51fa9c46b47e2a`，main=`ac69d6e2f7a4a0fe7707e6dee9bab91a52078f7a`。本地仅`?? Qimem/`，保留`Qimem/源代码.zip`。
 
 `/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_extraction.py` → `3 passed in 0.04s`（runs/m1b2/extraction.txt）。先实现纯提取器与22题冻结输入；尚未晋升/消费，不宣称形成收益。原rich数据库探针确认SUM销售额、AVG单价/采购周期、COUNT订单规则可执行；不变更原planner。
+
+## M1-B2 检查点2：生命周期
+
+```bash
+/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_formation.py ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_extraction.py --junitxml=docs/memory_rl/runs/m1b2/lifecycle.xml
+```
+
+实际52 passed in 1.49s（lifecycle.txt）。初始26 passed in 0.65s也保留formation-attempt1.txt。加入候选digest复算、来源新版本重审、superseded关联、冲突和旧Schema测试后通过。此处端到端为单测证据，完整冻结ABC与进程级CLI评测尚未执行。

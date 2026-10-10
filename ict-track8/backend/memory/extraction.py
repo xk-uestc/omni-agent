@@ -42,3 +42,8 @@ def extract_candidate(source_event, source_evidence, current_schema, scope, now)
     version=digest(content)
     return {**content,'candidate_id':'cand-'+version[:32],'digest':version,'created_at':now,
         'source_event_id':source_event['event_id'],'verification_state':'candidate'}
+
+
+def candidate_digest(candidate):
+    return digest({k:candidate[k] for k in ('memory_type','term','definition','binding','scope','evidence',
+        'source_version','valid_from','valid_to','supersedes','reason')})

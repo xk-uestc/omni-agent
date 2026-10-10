@@ -137,3 +137,7 @@ SQLite 业务条目与 query events 分表；可信离线 provisioning 才可 pu
 ## M1-B2 检查点1
 
 起点4e339b6经fetch确认；新增extraction.py、3项合同测试、22题形成开发集与独立scorer，先冻结hash再实验。此检查点尚无形成收益成绩。
+
+### M1-B2 检查点2
+
+新增formation/admin、本地OS审核边界、v1安全迁移与版本历史；实际Omni引用生成candidate，validated仍不进入recall。52测试通过，详见M1_B2_IMPLEMENTATION.md。下一项工作是独立CLI子进程审核与22题ABC，不预报成功率。

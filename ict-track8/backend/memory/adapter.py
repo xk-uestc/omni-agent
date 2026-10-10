@@ -61,13 +61,14 @@ def classify_outcome(response, error=None):
 
 
 class MemoryAdapter:
-    def __init__(self, core, engine, knowledge, *, database_source='database', clock=None, budget=Budget()):
+    def __init__(self, core, engine, knowledge, *, database_source='database', clock=None, budget=Budget(), formation_enabled=False):
         if core.enabled and database_source not in core.scope.data_sources:
             raise ValueError('database source not in trusted server scope')
         self.core,self.engine,self.knowledge=core,engine,knowledge
         self.database_source=database_source
         self.clock=clock or (lambda:datetime.now(timezone.utc).isoformat())
         self.budget=budget
+        self.formation_enabled=bool(formation_enabled)
         self.request_receipts=ContextVar("memory_request_receipts",default=())
 
     @property
@@ -274,6 +275,12 @@ class MemoryAdapter:
                 observed=self.core.observe(event,{'execution_verified':category=='verified_result','independent_task_verified':False})
                 audit['observe_ms']=round((time.perf_counter()-observe_started)*1000,3)
                 audit['observe']={**observed,'category':category,'model_planning_failed':model_failed}
+                if self.formation_enabled and response is not None and observed.get('stored'):
+                    try:
+                        from .formation import MemoryFormation
+                        audit['formation']={'candidate_ids':MemoryFormation(self).capture(response,trace_id),'promotion':'none'}
+                    except (OSError,sqlite3.Error,ValueError,KeyError,TypeError):
+                        audit['formation']={'candidate_ids':[],'promotion':'none','error':'source_capture_unavailable'}
                 emit('memory.observe',audit['observe'])
                 if callback:
                     if response is not None and (not held or response.get('status')!='ok'):

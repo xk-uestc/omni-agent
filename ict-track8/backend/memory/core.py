@@ -95,18 +95,24 @@ class MemoryStore:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as db:
-            db.executescript('''
-                CREATE TABLE IF NOT EXISTS memory_metadata(version INTEGER NOT NULL);
-                INSERT INTO memory_metadata SELECT 1 WHERE NOT EXISTS(SELECT 1 FROM memory_metadata);
-                CREATE TABLE IF NOT EXISTS memories(
-                    scope TEXT NOT NULL, memory_id TEXT NOT NULL, payload TEXT NOT NULL,
-                    PRIMARY KEY(scope,memory_id));
-                CREATE TABLE IF NOT EXISTS memory_events(
-                    scope TEXT NOT NULL, event_id TEXT NOT NULL, payload TEXT NOT NULL,
-                    payload_sha256 TEXT NOT NULL, PRIMARY KEY(scope,event_id));
-            ''')
-            if db.execute('SELECT version FROM memory_metadata').fetchall() != [(1,)]:
-                raise ValueError('unsupported memory store version')
+            db.execute('BEGIN IMMEDIATE')
+            db.execute('CREATE TABLE IF NOT EXISTS memory_metadata(version INTEGER NOT NULL)')
+            versions=db.execute('SELECT version FROM memory_metadata').fetchall()
+            if versions not in ([],[(1,)],[(2,)]):raise ValueError('unsupported memory store version')
+            if not versions:db.execute('INSERT INTO memory_metadata VALUES(1)')
+            for statement in (
+                'CREATE TABLE IF NOT EXISTS memories(scope TEXT NOT NULL,memory_id TEXT NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,memory_id))',
+                'CREATE TABLE IF NOT EXISTS memory_events(scope TEXT NOT NULL,event_id TEXT NOT NULL,payload TEXT NOT NULL,payload_sha256 TEXT NOT NULL,PRIMARY KEY(scope,event_id))',
+                'CREATE TABLE IF NOT EXISTS memory_candidates(scope TEXT NOT NULL,candidate_id TEXT NOT NULL,digest TEXT NOT NULL,payload TEXT NOT NULL,state TEXT NOT NULL,receipt TEXT NOT NULL,PRIMARY KEY(scope,candidate_id))',
+                'CREATE TABLE IF NOT EXISTS memory_candidate_events(scope TEXT NOT NULL,candidate_id TEXT NOT NULL,event_id TEXT NOT NULL,PRIMARY KEY(scope,candidate_id,event_id))',
+                'CREATE TABLE IF NOT EXISTS memory_source_events(scope TEXT NOT NULL,event_id TEXT NOT NULL,document_id TEXT NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,event_id,document_id))',
+                'CREATE TABLE IF NOT EXISTS memory_reviews(scope TEXT NOT NULL,request_id TEXT NOT NULL,request_digest TEXT NOT NULL,payload TEXT NOT NULL,PRIMARY KEY(scope,request_id))',
+                'CREATE TABLE IF NOT EXISTS memory_history(scope TEXT NOT NULL,memory_id TEXT NOT NULL,digest TEXT NOT NULL,payload TEXT NOT NULL,operation TEXT NOT NULL,PRIMARY KEY(scope,memory_id,digest,operation))'):
+                db.execute(statement)
+            for scope,ident,payload in db.execute('SELECT scope,memory_id,payload FROM memories').fetchall():
+                db.execute('INSERT OR IGNORE INTO memory_history VALUES(?,?,?,?,?)',
+                    (scope,ident,hashlib.sha256(payload.encode()).hexdigest(),payload,'migration_or_open_snapshot'))
+            db.execute('UPDATE memory_metadata SET version=2')
 
     @contextmanager
     def connect(self):
@@ -133,8 +139,18 @@ class MemoryStore:
         if record.valid_to and timestamp(record.valid_to) <= timestamp(record.valid_from):
             raise ValueError('invalid validity interval')
         with self.connect() as db:
-            db.execute('INSERT INTO memories VALUES(?,?,?) ON CONFLICT(scope,memory_id) DO UPDATE SET payload=excluded.payload',
-                       (record.scope.key, record.memory_id, encoded(asdict(record))))
+            db.execute('BEGIN IMMEDIATE')
+            self.write_record(db,record,'trusted_offline_put')
+
+    @staticmethod
+    def write_record(db,record,operation):
+        payload=encoded(asdict(record));key=record.scope.key
+        old=db.execute('SELECT payload FROM memories WHERE scope=? AND memory_id=?',(key,record.memory_id)).fetchone()
+        for body,action in ([(old[0],'before_'+operation)] if old else [])+[(payload,operation)]:
+            db.execute('INSERT OR IGNORE INTO memory_history VALUES(?,?,?,?,?)',
+                (key,record.memory_id,hashlib.sha256(body.encode()).hexdigest(),body,action))
+        db.execute('INSERT INTO memories VALUES(?,?,?) ON CONFLICT(scope,memory_id) DO UPDATE SET payload=excluded.payload',
+            (key,record.memory_id,payload))
 
     def scan(self, scope):
         with self.connect() as db:
