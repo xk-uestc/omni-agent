@@ -1,0 +1,2282 @@
+[
+  {
+    "task": "p01",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售额合计",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "evidence": {
+        "chunk_id": "e88415df54520945797157c3",
+        "document_id": "formation-revenue",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"玄武额\",\"definition\":\"销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-revenue",
+        "source_sha256": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "5ff011d911404b9ab3dd2c04313c1bfb",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "supersedes": null,
+      "term": "玄武额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "request_id": "review-cand-04cda725f46440285996ffdcfa36f586",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "f219895a09b8edd75474ab3ae01b4051f64f8b14b469c965651757b996fc3581",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p01/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "memory_id": "mem-04cda725f46440285996ffdcfa36f586"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p02",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售额合计",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "evidence": {
+        "chunk_id": "e88415df54520945797157c3",
+        "document_id": "formation-revenue",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"玄武额\",\"definition\":\"销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-revenue",
+        "source_sha256": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "02ff85fa63b24045bb2dd682503b1a26",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "supersedes": null,
+      "term": "玄武额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "request_id": "review-cand-04cda725f46440285996ffdcfa36f586",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "1aec241f31caf29ffb501aa7fd0ac5bff5600238dd1317d54af619886f021406",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p02/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "memory_id": "mem-04cda725f46440285996ffdcfa36f586"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p03",
+    "candidate": {
+      "binding": {
+        "column": "quantity",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-40be94c43086ff7b1fbc7fa698634a14",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售数量合计",
+      "digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "evidence": {
+        "chunk_id": "daddb9b91be8b809b1bff8c9",
+        "document_id": "formation-quantity",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-quantity",
+        "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "2472d3c9144a40c396630f0b17b266c5",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        }
+      },
+      "supersedes": null,
+      "term": "赤羽量",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-40be94c43086ff7b1fbc7fa698634a14",
+      "digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "request_id": "review-cand-40be94c43086ff7b1fbc7fa698634a14",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "ea169900e341ce19fb12d13bf93ffd3924e2dd5c88f8d5827a5c7652d9b2023e",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p03/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        }
+      },
+      "memory_id": "mem-40be94c43086ff7b1fbc7fa698634a14"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p04",
+    "candidate": {
+      "binding": {
+        "column": "quantity",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-40be94c43086ff7b1fbc7fa698634a14",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售数量合计",
+      "digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "evidence": {
+        "chunk_id": "daddb9b91be8b809b1bff8c9",
+        "document_id": "formation-quantity",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-quantity",
+        "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "5eedf56eb3db4710865f4f1f720cd68c",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        }
+      },
+      "supersedes": null,
+      "term": "赤羽量",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-40be94c43086ff7b1fbc7fa698634a14",
+      "digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "request_id": "review-cand-40be94c43086ff7b1fbc7fa698634a14",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "3830c730e1b5f26b2b58fe1537e550d19e56be4ad772f71c3f0c939b9bd10ea0",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p04/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        }
+      },
+      "memory_id": "mem-40be94c43086ff7b1fbc7fa698634a14"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p05",
+    "candidate": {
+      "binding": {
+        "column": "unit_price",
+        "filters": [],
+        "function": "AVG",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-f89b7901b489c74f4d88ff67c5f69972",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "订单单价算术平均值",
+      "digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+      "evidence": {
+        "chunk_id": "8bcb266d1092ff94743c22f9",
+        "document_id": "formation-price",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"银杏价\",\"definition\":\"订单单价算术平均值\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"unit_price\",\"function\":\"AVG\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-price",
+        "source_sha256": "c953d0a461b5e1f331d87d99e8414fc3e928e44b2f9422997e90987a93dcac53"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "845e963f701a44a28892d21a90d32456",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-price": "c953d0a461b5e1f331d87d99e8414fc3e928e44b2f9422997e90987a93dcac53"
+        }
+      },
+      "supersedes": null,
+      "term": "银杏价",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-f89b7901b489c74f4d88ff67c5f69972",
+      "digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+      "request_id": "review-cand-f89b7901b489c74f4d88ff67c5f69972",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "cee680d7e37ae7f90764006becd9d31929c446822776226a400563bcfa8ca4db",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p05/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-price": "c953d0a461b5e1f331d87d99e8414fc3e928e44b2f9422997e90987a93dcac53"
+        }
+      },
+      "memory_id": "mem-f89b7901b489c74f4d88ff67c5f69972"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p06",
+    "candidate": {
+      "binding": {
+        "column": "unit_price",
+        "filters": [],
+        "function": "AVG",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-f89b7901b489c74f4d88ff67c5f69972",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "订单单价算术平均值",
+      "digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+      "evidence": {
+        "chunk_id": "8bcb266d1092ff94743c22f9",
+        "document_id": "formation-price",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"银杏价\",\"definition\":\"订单单价算术平均值\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"unit_price\",\"function\":\"AVG\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-price",
+        "source_sha256": "c953d0a461b5e1f331d87d99e8414fc3e928e44b2f9422997e90987a93dcac53"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "7b851aa0c9554bbdba4e18a60280a8aa",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-price": "c953d0a461b5e1f331d87d99e8414fc3e928e44b2f9422997e90987a93dcac53"
+        }
+      },
+      "supersedes": null,
+      "term": "银杏价",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-f89b7901b489c74f4d88ff67c5f69972",
+      "digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+      "request_id": "review-cand-f89b7901b489c74f4d88ff67c5f69972",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "56d0e25f10b2c7087548a6592812a2a113e765268e8aefa8a8e1130bd916d18f",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p06/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "f89b7901b489c74f4d88ff67c5f699723b0cff8039417bb8fba8549ade84a960",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-price": "c953d0a461b5e1f331d87d99e8414fc3e928e44b2f9422997e90987a93dcac53"
+        }
+      },
+      "memory_id": "mem-f89b7901b489c74f4d88ff67c5f69972"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p07",
+    "candidate": {
+      "binding": {
+        "column": "order_id",
+        "filters": [],
+        "function": "COUNT",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-a5fc5583f73ac2376345c1b51824b09d",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "订单记录数",
+      "digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+      "evidence": {
+        "chunk_id": "93723821b7d84b516d616c56",
+        "document_id": "formation-orders",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"锦鲤笔\",\"definition\":\"订单记录数\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"order_id\",\"function\":\"COUNT\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-orders",
+        "source_sha256": "fee5226602f356c5da0c8183f42d58c70c6982d33756955e0ad3c1d109c2930c"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "8ad20485a6de41efa5ab517419629796",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-orders": "fee5226602f356c5da0c8183f42d58c70c6982d33756955e0ad3c1d109c2930c"
+        }
+      },
+      "supersedes": null,
+      "term": "锦鲤笔",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-a5fc5583f73ac2376345c1b51824b09d",
+      "digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+      "request_id": "review-cand-a5fc5583f73ac2376345c1b51824b09d",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "26569e1b211c7a98de0d6da5e68c7e8249264854645ae4d2e5afa057de348d79",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p07/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-orders": "fee5226602f356c5da0c8183f42d58c70c6982d33756955e0ad3c1d109c2930c"
+        }
+      },
+      "memory_id": "mem-a5fc5583f73ac2376345c1b51824b09d"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p08",
+    "candidate": {
+      "binding": {
+        "column": "order_id",
+        "filters": [],
+        "function": "COUNT",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-a5fc5583f73ac2376345c1b51824b09d",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "订单记录数",
+      "digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+      "evidence": {
+        "chunk_id": "93723821b7d84b516d616c56",
+        "document_id": "formation-orders",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"锦鲤笔\",\"definition\":\"订单记录数\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"order_id\",\"function\":\"COUNT\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-orders",
+        "source_sha256": "fee5226602f356c5da0c8183f42d58c70c6982d33756955e0ad3c1d109c2930c"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "e37b0bf3eeeb41c49ca1a2cc3ac8379e",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-orders": "fee5226602f356c5da0c8183f42d58c70c6982d33756955e0ad3c1d109c2930c"
+        }
+      },
+      "supersedes": null,
+      "term": "锦鲤笔",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-a5fc5583f73ac2376345c1b51824b09d",
+      "digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+      "request_id": "review-cand-a5fc5583f73ac2376345c1b51824b09d",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "672c1b7c0674a2fd6935abf90d269d928fcdc0fc9309aecbb35a83fa9f40a5c4",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p08/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "a5fc5583f73ac2376345c1b51824b09d28691c72c0915d3cd4cfc71c70f37ea7",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-orders": "fee5226602f356c5da0c8183f42d58c70c6982d33756955e0ad3c1d109c2930c"
+        }
+      },
+      "memory_id": "mem-a5fc5583f73ac2376345c1b51824b09d"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p09",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [
+          {
+            "column": "channel",
+            "value": "线上"
+          }
+        ],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "线上渠道销售额合计",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "evidence": {
+        "chunk_id": "53b2cc59d8e4f58171e51b73",
+        "document_id": "formation-online",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"青禾额\",\"definition\":\"线上渠道销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[{\"column\":\"channel\",\"value\":\"线上\"}]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-online",
+        "source_sha256": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "bd505704fda54f63aca28f3e99443586",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "supersedes": null,
+      "term": "青禾额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "request_id": "review-cand-ea118f458b3391a1d81d537dec95d3cf",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "a45ea30ac560b0fc75c128f763469ecbfbfca63c240bd04f5aba1daff789399b",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p09/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "memory_id": "mem-ea118f458b3391a1d81d537dec95d3cf"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p10",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [
+          {
+            "column": "channel",
+            "value": "线上"
+          }
+        ],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "线上渠道销售额合计",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "evidence": {
+        "chunk_id": "53b2cc59d8e4f58171e51b73",
+        "document_id": "formation-online",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"青禾额\",\"definition\":\"线上渠道销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[{\"column\":\"channel\",\"value\":\"线上\"}]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-online",
+        "source_sha256": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "fb8592c4d3c94d97920ca1d28ce350af",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "supersedes": null,
+      "term": "青禾额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "request_id": "review-cand-ea118f458b3391a1d81d537dec95d3cf",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "9a0a0ebc8b54454db73fb031c81c1096721e5d11c6fe386d0aab50b02accd06d",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p10/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "memory_id": "mem-ea118f458b3391a1d81d537dec95d3cf"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p11",
+    "candidate": {
+      "binding": {
+        "column": "lead_time_days",
+        "filters": [],
+        "function": "AVG",
+        "table": "purchase_orders"
+      },
+      "candidate_id": "cand-a35582d8fce05a668172721237ffb17b",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "采购交期天数算术平均值",
+      "digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+      "evidence": {
+        "chunk_id": "cb116506820a403956a21492",
+        "document_id": "formation-lead",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"白鹭期\",\"definition\":\"采购交期天数算术平均值\",\"binding\":{\"table\":\"purchase_orders\",\"column\":\"lead_time_days\",\"function\":\"AVG\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-lead",
+        "source_sha256": "b792549aed9e74d1d93189c5dd8b735e5d10addcac86d86830d559ffa5bc5eff"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "03ed1aa6f3c642f5823f6c3494272da7",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-lead": "b792549aed9e74d1d93189c5dd8b735e5d10addcac86d86830d559ffa5bc5eff"
+        }
+      },
+      "supersedes": null,
+      "term": "白鹭期",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-a35582d8fce05a668172721237ffb17b",
+      "digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+      "request_id": "review-cand-a35582d8fce05a668172721237ffb17b",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "f985e0ccb2258f691259c002b3f7e071dc260437a85f84c274aed5759f9ac626",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p11/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-lead": "b792549aed9e74d1d93189c5dd8b735e5d10addcac86d86830d559ffa5bc5eff"
+        }
+      },
+      "memory_id": "mem-a35582d8fce05a668172721237ffb17b"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "p12",
+    "candidate": {
+      "binding": {
+        "column": "lead_time_days",
+        "filters": [],
+        "function": "AVG",
+        "table": "purchase_orders"
+      },
+      "candidate_id": "cand-a35582d8fce05a668172721237ffb17b",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "采购交期天数算术平均值",
+      "digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+      "evidence": {
+        "chunk_id": "cb116506820a403956a21492",
+        "document_id": "formation-lead",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"白鹭期\",\"definition\":\"采购交期天数算术平均值\",\"binding\":{\"table\":\"purchase_orders\",\"column\":\"lead_time_days\",\"function\":\"AVG\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-lead",
+        "source_sha256": "b792549aed9e74d1d93189c5dd8b735e5d10addcac86d86830d559ffa5bc5eff"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "e95fa7fb098d4a8982374a77b2521f89",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-lead": "b792549aed9e74d1d93189c5dd8b735e5d10addcac86d86830d559ffa5bc5eff"
+        }
+      },
+      "supersedes": null,
+      "term": "白鹭期",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-a35582d8fce05a668172721237ffb17b",
+      "digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+      "request_id": "review-cand-a35582d8fce05a668172721237ffb17b",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "8f6f86ce15ca637434c602e260ab99944f7eed14d50a6144bbbd1d735d7154ea",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p12/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "a35582d8fce05a668172721237ffb17bdc8a395a85d850e3671620dd8a58e6cf",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-lead": "b792549aed9e74d1d93189c5dd8b735e5d10addcac86d86830d559ffa5bc5eff"
+        }
+      },
+      "memory_id": "mem-a35582d8fce05a668172721237ffb17b"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n01",
+    "candidate": {
+      "binding": null,
+      "candidate_id": "cand-ff6151be215cb309688b517962a0bb22",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "经营贡献，未指定物理口径",
+      "digest": "ff6151be215cb309688b517962a0bb2208adbc737c2ac68bf9ac58bcccba81ed",
+      "evidence": {
+        "chunk_id": "fbfc0882a93e2eccf49a14f8",
+        "document_id": "formation-missing",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"迷雾额\",\"definition\":\"经营贡献，未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-missing",
+        "source_sha256": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "797e630ccf5845c8afe4080d84b0e3ca",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-missing": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536"
+        }
+      },
+      "supersedes": null,
+      "term": "迷雾额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": false,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "ff6151be215cb309688b517962a0bb2208adbc737c2ac68bf9ac58bcccba81ed",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": [
+        "missing_explicit_binding"
+      ]
+    },
+    "review": {
+      "status": "rejected",
+      "reason": "validation required before confirmation"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": false,
+      "promoted": false,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n02",
+    "candidate": {
+      "binding": {
+        "column": "quantity",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-4e4c161bc71182a10924cc73057a42a0",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售数量合计",
+      "digest": "4e4c161bc71182a10924cc73057a42a0f2e75e693bb5c2c16153ebcc40487c80",
+      "evidence": {
+        "chunk_id": "c527f56677e45668f5d0f38f",
+        "document_id": "formation-conflict2",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+        "source_id": "formation-conflict2",
+        "source_sha256": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "d5e5c7a20ff247558f7cf568087b8080",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-conflict2": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0"
+        }
+      },
+      "supersedes": null,
+      "term": "霜桥额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": false,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "4e4c161bc71182a10924cc73057a42a0f2e75e693bb5c2c16153ebcc40487c80",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": [
+        "candidate_conflict"
+      ]
+    },
+    "review": {
+      "status": "rejected",
+      "reason": "validation required before confirmation"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": false,
+      "promoted": false,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n02",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-b7814f52a3ef1707449fc21b42cf0c64",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售额合计",
+      "digest": "b7814f52a3ef1707449fc21b42cf0c64dda78fb180ea0e557007b11673c5a9e5",
+      "evidence": {
+        "chunk_id": "bfab2c009f411350b0655eb2",
+        "document_id": "formation-conflict1",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+        "source_id": "formation-conflict1",
+        "source_sha256": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "d5e5c7a20ff247558f7cf568087b8080",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-conflict1": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f"
+        }
+      },
+      "supersedes": null,
+      "term": "霜桥额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": false,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "b7814f52a3ef1707449fc21b42cf0c64dda78fb180ea0e557007b11673c5a9e5",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": [
+        "candidate_conflict"
+      ]
+    },
+    "review": {
+      "status": "rejected",
+      "reason": "validation required before confirmation"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": false,
+      "promoted": false,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n03",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-b7e05e40e3a323745f04c9494afb1c8f",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售额合计",
+      "digest": "b7e05e40e3a323745f04c9494afb1c8f103fce62fb3c3e3a2812f01722291281",
+      "evidence": {
+        "chunk_id": "cd1d76537834b08392b325f2",
+        "document_id": "formation-unapproved",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"未批额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+        "source_id": "formation-unapproved",
+        "source_sha256": "513ae50a462a23483fcc74dc7fa43bdedb46ac4731724fe813169a9bfae1d088"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "a69bb4a19bc841cfbeb91a6428dde286",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-unapproved": "513ae50a462a23483fcc74dc7fa43bdedb46ac4731724fe813169a9bfae1d088"
+        }
+      },
+      "supersedes": null,
+      "term": "未批额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "b7e05e40e3a323745f04c9494afb1c8f103fce62fb3c3e3a2812f01722291281",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": null,
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": false,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n04",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售额合计",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "evidence": {
+        "chunk_id": "e88415df54520945797157c3",
+        "document_id": "formation-revenue",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"玄武额\",\"definition\":\"销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-revenue",
+        "source_sha256": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "0798ee82ac634057a35655c487d50402",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "supersedes": null,
+      "term": "玄武额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "request_id": "review-cand-04cda725f46440285996ffdcfa36f586",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "6ff758df6f43356a268ec1c0794b0795afe15dcaa3daff5c7c4ffc5d8182f901",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/n04/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "memory_id": "mem-04cda725f46440285996ffdcfa36f586"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n05",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售额合计",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "evidence": {
+        "chunk_id": "e88415df54520945797157c3",
+        "document_id": "formation-revenue",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"玄武额\",\"definition\":\"销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-revenue",
+        "source_sha256": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "bd2a7dbd0fae45f7a422be4cfc2c1e56",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "supersedes": null,
+      "term": "玄武额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "request_id": "review-cand-04cda725f46440285996ffdcfa36f586",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "504fad044c72108c74b0212d7337641ec5d2a430cbe5cb9419851a51e8acdc2a",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/n05/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "memory_id": "mem-04cda725f46440285996ffdcfa36f586"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n06",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [
+          {
+            "column": "channel",
+            "value": "线上"
+          }
+        ],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "线上渠道销售额合计",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "evidence": {
+        "chunk_id": "53b2cc59d8e4f58171e51b73",
+        "document_id": "formation-online",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"青禾额\",\"definition\":\"线上渠道销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[{\"column\":\"channel\",\"value\":\"线上\"}]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-online",
+        "source_sha256": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "d23a07f567054c1ba40b8550390d9215",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "supersedes": null,
+      "term": "青禾额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "request_id": "review-cand-ea118f458b3391a1d81d537dec95d3cf",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "81b0f83943ce53f0f1a76ebc5e3abbc94f19ab81ce1260bb8ac8b1283a64c8da",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/n06/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "memory_id": "mem-ea118f458b3391a1d81d537dec95d3cf"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n07",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [
+          {
+            "column": "channel",
+            "value": "线上"
+          }
+        ],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "线上渠道销售额合计",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "evidence": {
+        "chunk_id": "53b2cc59d8e4f58171e51b73",
+        "document_id": "formation-online",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"青禾额\",\"definition\":\"线上渠道销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[{\"column\":\"channel\",\"value\":\"线上\"}]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-online",
+        "source_sha256": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "ceb1195f9f4e42c3b87fa08dab0e1985",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "supersedes": null,
+      "term": "青禾额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "request_id": "review-cand-ea118f458b3391a1d81d537dec95d3cf",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "a331a417fa22def5bed8898cac6c4f3eff329a9b3a2f97066ebb77fc3cd8ddf4",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/n07/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "memory_id": "mem-ea118f458b3391a1d81d537dec95d3cf"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n08",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [
+          {
+            "column": "channel",
+            "value": "线上"
+          }
+        ],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "线上渠道销售额合计",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "evidence": {
+        "chunk_id": "53b2cc59d8e4f58171e51b73",
+        "document_id": "formation-online",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"青禾额\",\"definition\":\"线上渠道销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[{\"column\":\"channel\",\"value\":\"线上\"}]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-online",
+        "source_sha256": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "82ca2e137d414fd3aba6d06a6d0e354a",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "supersedes": null,
+      "term": "青禾额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-ea118f458b3391a1d81d537dec95d3cf",
+      "digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+      "request_id": "review-cand-ea118f458b3391a1d81d537dec95d3cf",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "ae48c6523247839867739a347b032a96de962c39713644809da33713e429c2b6",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/n08/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "ea118f458b3391a1d81d537dec95d3cffae4ea61861d452f577b72fd450a6bed",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-online": "5479e6674692d3ffc540cb7da8056477f6407cb3248f261000fe84d894bcbe9f"
+        }
+      },
+      "memory_id": "mem-ea118f458b3391a1d81d537dec95d3cf"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n09",
+    "candidate": {
+      "binding": {
+        "column": "sales_amount",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售额合计",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "evidence": {
+        "chunk_id": "e88415df54520945797157c3",
+        "document_id": "formation-revenue",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"玄武额\",\"definition\":\"销售额合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-revenue",
+        "source_sha256": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "0b86c933d9eb40389798e7022da030b9",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "supersedes": null,
+      "term": "玄武额",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-04cda725f46440285996ffdcfa36f586",
+      "digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+      "request_id": "review-cand-04cda725f46440285996ffdcfa36f586",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "e9f9b4a2f8e6fe6cb64fbe9fce89dfb438c4704904f710f08b1b37f58c91b23c",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/n09/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "04cda725f46440285996ffdcfa36f5869397554cc89ff2f7694a077b84dc325f",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-revenue": "b1e5fa6fe75dba67690993d0522439d4b91efad4777fbb6e6e62586ad6476f0f"
+        }
+      },
+      "memory_id": "mem-04cda725f46440285996ffdcfa36f586"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  },
+  {
+    "task": "n10",
+    "candidate": {
+      "binding": {
+        "column": "quantity",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "candidate_id": "cand-40be94c43086ff7b1fbc7fa698634a14",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "definition": "销售数量合计",
+      "digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "evidence": {
+        "chunk_id": "daddb9b91be8b809b1bff8c9",
+        "document_id": "formation-quantity",
+        "locator": {
+          "line": 2
+        },
+        "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "source_id": "formation-quantity",
+        "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+      },
+      "memory_type": "business_semantics",
+      "reason": "explicit_structured_source_contract_not_business_confirmation",
+      "scope": {
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ],
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev"
+      },
+      "source_event_id": "aca218e3f6e1486dae13dd0a3bd8e86e",
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        }
+      },
+      "supersedes": null,
+      "term": "赤羽量",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "candidate",
+      "validation": {}
+    },
+    "validation": {
+      "valid": true,
+      "checked_at": "2026-10-10T12:00:00+08:00",
+      "candidate_digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+      "reasons": []
+    },
+    "review": {
+      "candidate_id": "cand-40be94c43086ff7b1fbc7fa698634a14",
+      "digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+      "request_id": "review-cand-40be94c43086ff7b1fbc7fa698634a14",
+      "decision": "confirm",
+      "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+      "reviewer": {
+        "uid": 1001,
+        "account": "viva",
+        "host": "a100",
+        "configuration_sha256": "509d36492cbeb31eeb9d5f0b137617dd967b6dd5047b6d6811af366cc926b5ca",
+        "memory_path": "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/n10/memory.sqlite",
+        "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+      },
+      "supersedes": null,
+      "reviewed_at": "2026-10-10T12:00:00+08:00",
+      "validation": {
+        "candidate_digest": "40be94c43086ff7b1fbc7fa698634a1464a0637060f1f2c2f968101881c7dc80",
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": [],
+        "valid": true
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "56f8bf262d11e21b5200800f5781892c9bcdff005e92fe1f2fc40e02849ded70",
+          "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        }
+      },
+      "memory_id": "mem-40be94c43086ff7b1fbc7fa698634a14"
+    },
+    "score": {
+      "candidate_accurate": true,
+      "validation_passed": true,
+      "promoted": true,
+      "wrong_promotion": false
+    }
+  }
+]

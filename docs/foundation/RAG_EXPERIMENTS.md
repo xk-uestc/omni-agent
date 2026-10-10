@@ -19,3 +19,7 @@ C开发对照（6来源、同20候选/4输出）：必要证据召回仍1.0，�
 dossier现在在读取前拒绝旧检索hit与新原件SHA混用，并在读取每个原件后重验逻辑来源。原生表行compiler提前验证同一声明链的全部row ID与来源版本，foreign-source row不能借同名字段混入；answer_scope包含所有受检行和匹配行，明确只对supplied chain完整而非全语料。保留原独立review与原件重放。
 
 开发召回没有增加（已经21/21），本轮改善主要是完整性可审计与错来源拒绝。生成答案指标not_run。新增证据scope与已有原页、原行、页索引、coverage、检索生命周期相关检查见evidence-scope-tests-final.txt；初次测试辅助import失败日志也保留。
+
+固定源码a37c072最终开发与保留：A/B开发必要证据21/21，保留7/7，源/证据Recall/MRR/NDCG都1。64个逐题成对观测（dev24+retained8，A/B各一次）全部内容评分、来源/locator正确性无变化，未观察到召回改善/退化；完整candidate ID与评分差异见final-verification.json。保留A/B无关来源比例.645833，B实际Dense2/8（6英文跳过）。C保留必要证据7/7但无关来源.708333、NDCG .975982，延续开发负结果；没有因为保留结果调整导航。继续不采纳C生产架构。
+
+RAG最终EM、端到端正确性、忠实度与回答引用正确率not_run；检索SHA/locator不是回答引用正确率。32题的证据已标注开发集合相对容易，需要新的更困难独立开发任务（而非改本轮输入）才能研究来源排序收益。多行/cross-page证明使用原生PDF机制与明确scope，真实扫描OCR、多语encoder及多来源语义归属仍有限。

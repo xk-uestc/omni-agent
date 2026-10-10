@@ -267,3 +267,16 @@ F1可靠性：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_
 恢复测试两项失败在起点源码复现：`git archive 94a9926de2cee14c014a9c6e93c63112407d7760 ict-track8/backend ict-track8/tests ict-track8/data | tar -x -C /tmp/f1-start-snapshot`；`/tmp/omni-m1a-venv/bin/python -m pytest -q /tmp/f1-start-snapshot/ict-track8/tests/test_evidence_recovery_round5.py::test_real_source_retrieval_recovery_answers_original_question_once /tmp/f1-start-snapshot/ict-track8/tests/test_evidence_recovery_round5.py::test_navigation_sees_original_condition_beyond_retrieval_preview > docs/foundation/runs/recovery-failures-start-reproduced.txt 2>&1`。2failed，原样错误。未改生产去适配错误旧插桩/不含条件的snippet假设。
 
 原M1-C测试+新安全/Trace：首次memory-mechanism-tests.txt 439passed/7failed，5项为未执行工具Trace空契约。修正为独立failure_trace后相同命令输出memory-mechanism-tests-final.txt及xml：444passed/2历史failed，旧断言不变。源码版本固定后才复跑16/185/22与最终性能；安全拒绝结果的新基线不混作Memory增益。
+
+F1检查点6固定源码a37c0728deacf1bc01a6e1458ac3826a2d570e2e：
+
+- `/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_m1b1.py --label f1-memory-final-20261010 > docs/foundation/runs/memory-16-185-stdout.txt 2>&1`：16题10/14；185题178/178，旧177/177仅整体拒绝1题改善，无退步；源码/DB稳定。
+- `/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_formation_m1b2.py --label f1-formation-final-20261010 > docs/foundation/runs/memory-22-stdout.txt 2>&1`；`tools/verify_memory_formation_m1b2.py --label f1-formation-final-20261010`：22题9/22、22/22、22/22、0错误晋升，独立CLI治理有效。
+- `tools/verify_memory_m1b1_evidence.py --label f1-memory-final-20261010`：退出1，原“必须与M1A逐题完全不变”断言因授权安全改善不成立；文件/score不改。`/tmp/omni-m1a-venv/bin/python tools/verify_foundation_final.py > docs/foundation/runs/final-verification-stdout.txt 2>&1`独立验证冻结输入/scorer、整条危险请求拒绝、原成功0退步、开关SQL/rows/status一致，退出0。
+- `/tmp/omni-m1a-venv/bin/python tools/measure_foundation_performance.py --output docs/foundation/runs/performance-final.json > docs/foundation/runs/performance-final-stdout.txt 2>&1`：10/100/500页、1k/10k/100k行、4并发、重启、增量、来源改变/锁/缺索引/损坏数据库/模型fake503。正常请求失败0；锁15秒明确失败。无模型生成。
+- 最终开发A/B与保留A/B各使用`tools/evaluate_foundation_rag.py --split dev|retained [--dense] --output ...`；B环境HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 USE_TF=0 /tmp/f1-bge-venv/bin/python。保留旧版用`tools/evaluate_foundation_snapshot.py --snapshot-root /tmp/f1-start-snapshot --source-commit 94a9926de2cee14c014a9c6e93c63112407d7760 --split retained [--dense] --output ...`；C用`tools/evaluate_foundation_navigation.py --strategy hierarchical --split retained --output ...`，仅原型。stdout与json逐次新文件保留。
+- 最终相关集合（全部改动+旧NL2SQL/恢复/来源/native、HTTP/SSE）533passed/7failed/12subtests，见foundation-final-tests.txt/xml；所有7项根因分类见SAFETY_AND_RELIABILITY.md。新的AVG/SUM旧失败以起点snapshot原样复现，日志dynamic-failure-start-reproduced.txt。未改旧断言。
+
+最终SSE超时fault：`env ICT8_DB_PATH=/tmp/f1-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= timeout 30s /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_foundation_stream_fault.py > docs/foundation/runs/stream-fault-test.txt 2>&1`：1passed，3既有warnings；真实TestClient stream，超时后台仍活跃且占用semaphore，测试随后释放并回收thread。不冒充取消实现。
+
+最后核对发现独立验证JSON的before/after_chunk_ids曾错误命名为document ID；保留原final-verification.json作为初次审计，更正字段含义并分别记录document/chunk ID，输出final-verification-v2.json与stdout。指标不变，64成对0变化，冻结Hash/源码/DB稳定、Memory0退步。legal-scope-edit.json另保存实际“删除地区限制”进入合法澄清而非危险请求拒绝的本地输出。

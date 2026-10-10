@@ -1,0 +1,19 @@
+...F.                                                                    [100%]
+=================================== FAILURES ===================================
+_ test_engine_cannot_omit_overwrite_or_expand_scope[2025\u5e74\u534e\u4e1c\u5730\u533a\u5e73\u5747\u9500\u552e\u989d] _
+
+context = (<backend.dependency_agent.DependencyAgent object at 0x720cae1121b0>, QueryPlan(table='sales_orders', metric_table='sa...al_question': '该地区2025年的销售额', 'expanded_question': '该地区2025年的销售额', 'source_alias': '销售额'}, output_metrics=['revenue']))
+query = '2025年华东地区平均销售额'
+
+    @pytest.mark.parametrize('query', ['2025年华南地区销售额', '2025年地区销售额', '2026年华东地区销售额',
+                                      '2025年华东地区平均销售额', '2025年华东地区手机销售额'])
+    def test_engine_cannot_omit_overwrite_or_expand_scope(context, query):
+        agent, _ = context
+        result = agent.sql_engine.answer(query, required_intent=bind(context)).to_dict()
+>       assert result['status'] != 'ok' and result['rows'] == []
+E       AssertionError: assert ('ok' != 'ok')
+
+/tmp/f1-start-snapshot/ict-track8/tests/test_dynamic_source_binding.py:73: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../tmp/f1-start-snapshot/ict-track8/tests/test_dynamic_source_binding.py::test_engine_cannot_omit_overwrite_or_expand_scope[2025\u5e74\u534e\u4e1c\u5730\u533a\u5e73\u5747\u9500\u552e\u989d]
+1 failed, 4 passed in 0.51s

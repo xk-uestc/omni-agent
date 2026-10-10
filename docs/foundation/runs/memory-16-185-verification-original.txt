@@ -1,0 +1,9 @@
+{"frozen_inputs_and_scorers_unchanged": true, "backend_matches_evaluated_hashes": true, "source_commit": "a37c0728deacf1bc01a6e1458ac3826a2d570e2e", "source_stable_during_run": true, "database_read_only": true, "database_matches_m1a": true, "A_pass_vector_matches_m1a": true, "context_pass_vectors_match_m1a": false, "context_off_on_sql_rows_status_equal": true, "storage": {"A": {"files": 21, "sqlite_file_bytes": 1404928, "event_count": 0, "event_payload_bytes": 0, "candidate_payload_bytes": 33572}, "B": {"files": 21, "sqlite_file_bytes": 1540096, "event_count": 202, "event_payload_bytes": 72067, "candidate_payload_bytes": 33572}}, "storage_note": "A also pre-provisioned test candidates for fair availability. Default-off production creates no memory DB. Sizes include SQLite page allocation; zero file growth does not imply zero persisted event bytes."}
+Traceback (most recent call last):
+  File "/home/viva/omni-agent/tools/verify_memory_m1b1_evidence.py", line 74, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/home/viva/omni-agent/tools/verify_memory_m1b1_evidence.py", line 71, in main
+    assert frozen and source_stable and report['context_pass_vectors_match_m1a']
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
