@@ -13,6 +13,7 @@ import sys
 import time
 from evaluate_memory_m1b1 import ROOT,digest,dump,source_hashes,timed_query,stats
 from score_memory_formation_m1b2 import score,formation_score
+from evaluate_context_semantics_20261009 import percentile
 from backend.memory.core import MemoryCore,MemoryStore,MemoryRecord,TrustedScope,RecallContext
 from backend.memory.adapter import MemoryAdapter
 from backend.memory.formation import MemoryFormation
@@ -69,6 +70,7 @@ def main():
     records={a:[] for a in 'ABC'};formation_records=[]
     for task in payload['tasks']:
         for arm in 'ABC':
+            lifecycle_started=time.perf_counter()
             taskroot=runtime/arm/task['id'];taskroot.mkdir(parents=True)
             knowledge=KnowledgeStore(taskroot/'knowledge');selected=[sources[k] for k in task['sources']]
             for src in selected:knowledge.ingest(src['text'].encode(),document_id=src['document_id'],title=src['title'],modality='txt',filename='definition.txt')
@@ -122,7 +124,7 @@ def main():
                     r=json.loads(process.stdout.strip().splitlines()[-1]);r['process_command']=command;r['process_stderr']=process.stderr
                     r['process_wall_ms']=round((time.perf_counter()-worker_start)*1000,3)
                 else:r=timed_query(agent,task['question'],session_id=target_session)
-                r.update(id=task['id'],category=task['category'],formation_ms=formation_ms,preparation=prep,duplicate_preparation=duplicate,
+                r.update(id=task['id'],category=task['category'],end_to_end_ms=round((time.perf_counter()-lifecycle_started)*1000,3),formation_ms=formation_ms,preparation=prep,duplicate_preparation=duplicate,
                     history_preparation=history_prep,target_history_before=prior,candidates=candidate_rows,admin_commands=commands,
                     source_versions={d['document_id']:d['sha256'] for d in adapter.knowledge.list_documents()},
                     confirmed_records=[asdict(x) for x in adapter.core.store.scan(scope)[0]],
@@ -149,7 +151,10 @@ def main():
     for arm,rows in records.items():
         summaries[arm].update(positive_passed=sum(r['pass'] for r in rows if r['category']=='cross_session'),positive_total=12,
             positive_consumed=sum(bool(r['memory'].get('consumed')) for r in rows if r['category']=='cross_session'),
-            formation_ms_total=round(sum(r['formation_ms'] for r in rows),3))
+            formation_ms_total=round(sum(r['formation_ms'] for r in rows),3),
+            end_to_end_ms_total=round(sum(r['end_to_end_ms'] for r in rows),3),
+            end_to_end_p50_ms=percentile([r['end_to_end_ms'] for r in rows],.5),
+            end_to_end_p95_ms=percentile([r['end_to_end_ms'] for r in rows],.95))
     comparisons=[{'id':a['id'],'A':a['pass'],'B':b['pass'],'C':c['pass'],'C_consumed':c['memory'].get('consumed',[]),
         'BC_binding_equal':[r['binding'] for r in b['confirmed_records']]==[r['binding'] for r in c['confirmed_records']],
         'BC_rows_equal':(b['response'] or {}).get('result',{}).get('rows')==(c['response'] or {}).get('result',{}).get('rows'),
@@ -164,7 +169,8 @@ def main():
         'configuration':{'model':None,'model_calls':0,'tokens':0,'reference_time':payload['reference_time'],'reference_date':payload['reference_date'],
             'max_items':3,'max_characters':1800,'formation':'deterministic explicit source contract; trusted local OS CLI; no parameters trained'},
         'limitations':['Exposed synthetic development fixture, not real enterprise/official data.','Static B is allowed offline provisioning; C refuses put and promotes only through child CLI.',
-            'Candidate exact-source precision includes correctly retained missing bindings; it is not independent enterprise truth.','Formation time includes automatic local CLI decisions under frozen fixture policy, not real human waiting time.']}
+            'Candidate exact-source precision includes correctly retained missing bindings; it is not independent enterprise truth.','Formation time includes automatic local CLI decisions under frozen fixture policy, not real human waiting time.',
+            'End-to-end starts before per-task document ingestion and ends on target return, including local review subprocesses and Store rebuild; excludes shared DB seeding, scorer, artifact serialization and human waiting.']}
     dump(out/'summary.json',report);print(json.dumps({'arms':summaries,'formation':report['formation_metrics'],'source_stable':report['source_stable']},ensure_ascii=False))
 
 

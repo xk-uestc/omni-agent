@@ -143,3 +143,36 @@ C的MemoryStore.put在父评测进程被禁止；管理员验证/审核由实际
 `/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_extraction.py ict-track8/tests/test_memory_formation.py`，stdout保存profile-fix-tests.txt；54项通过。将该性能修复单独提交，随后同脚本Profile和新旧全集对照在新源码SHA上重跑。
 
 上一检查点完整测试命令使用M1-B1相同env与API环境外方式，选定原8个测试文件加test_memory_extraction.py、test_memory_formation.py、test_memory_formation_api.py，输出`148 passed, 3 warnings in 3.67s`，见full-before-profile-fix.txt/xml。最终完整确切命令将在最终验证节记录。
+
+## M1-B2 最终源码与全部实际命令
+
+生产源码固定`0a8f97d64d6760e179e3720e309c461d26580fc1`；之后只更改文档、核验工具和harness计时字段。正式输入/scorer保持首次冻结hash。以下命令实际执行，输出重定向原样保留：
+
+```bash
+/tmp/omni-m1a-venv/bin/python tools/profile_memory_m1b2.py --label m1b2-profile-after-20261010 --repeats 5 > docs/memory_rl/runs/m1b2/profile-after.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_formation_m1b2.py --label m1b2-formation-final-20261010 > docs/memory_rl/runs/m1b2/abc-final.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_m1b1.py --label m1b2-legacy-final-20261010 > docs/memory_rl/runs/m1b2/legacy-final.txt 2>&1
+
+timeout 120s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_api.py ict-track8/tests/test_memory_extraction.py ict-track8/tests/test_memory_formation.py ict-track8/tests/test_memory_formation_api.py ict-track8/tests/test_session.py ict-track8/tests/test_semantic_integration.py ict-track8/tests/test_dependency_agent.py ict-track8/tests/test_api_security.py ict-track8/tests/test_omni_query_stream.py --junitxml=docs/memory_rl/runs/m1b2/final-tests.xml > docs/memory_rl/runs/m1b2/final-tests.txt 2>&1
+
+/tmp/omni-m1a-venv/bin/python tools/diagnose_memory_experience_m1b2.py > docs/memory_rl/runs/m1b2/cross-source-probe.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/verify_memory_m1b1_evidence.py --label m1b2-legacy-final-20261010 > docs/memory_rl/runs/m1b2/legacy-verification.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/verify_memory_formation_m1b2.py --label m1b2-formation-final-20261010 > docs/memory_rl/runs/m1b2/formation-verification.txt 2>&1
+```
+
+实际结果：148 passed, 3 warnings in 14.32s（API用require_escalated运行，与已知sandbox限制保持一致）；原16 A10/B14，185 A177/B177，源码/数据库前后相同；跨源probe `baseline_statuses=[clarification,clarification,clarification], legal_plan_passed=3,total=3,database_unchanged=true`。原回归独立核验所有hash、pass向量、A/B SQL/rows/status检查true。
+
+Profile前后各100个样本串行；期间未并行运行任何agent评测/测试。机器/CPU数/负载与源码hash在profile.json；脚本及分位数定义不变。5样本/条件的lower经验P95不能当稳定尾延迟估计。source SHA调用次数前后一致；没有通过跳过校验换取时延下降。
+
+补全harness的真实end_to_end_ms（资料入库前→目标返回，含CLI/Store重建）后再次执行：
+
+```bash
+/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_formation_m1b2.py --label m1b2-formation-final2-20261010 > docs/memory_rl/runs/m1b2/abc-final2.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/verify_memory_formation_m1b2.py --label m1b2-formation-final2-20261010 > docs/memory_rl/runs/m1b2/formation-verification2.txt 2>&1
+```
+
+final2为最终22题记录，之前first/final全部保留。生产源码/输入/Gold/独立scorer均未变；runner版本hash各自记录，不回写旧report。最终A9/B22/C22、正向0/12/12、验证20/23、晋升19、错误晋升0；候选精度独立定义20/23、字面保真23/23。C全链总19079.328ms、P50 891.911ms、P95 1066.351ms；目标问答总6289.418ms。6个scorer/消费正反例全部符合预期；12条正向形成链路的event/candidate/CLI/source/SQL/consume证据核验全部true。BC知识binding/rows、原16/185与M1-B1逐题核验true。
+
+模型/token调用0；真实远程模型not_run，无已批准配置/预算。本轮没有训练、skill演化或跨源经验Adapter实现。失败/边界：新A的13题（12未知术语+n10）仍失败；3个非法/不完整候选验证拒绝；旧8例与f01/f02仍失败；POSIX本地管理员边界、结构化TXT提取、同步存储/重复规划成本、保留策略和外部负载限制均明确保留。
+
+最终交付核验：artifact-sha256.json列出的274个产物/工具Hash全部匹配；新旧冻结manifest无差异；已评测0a8f97d后的backend无改动。提交前再次fetch：origin/memory仍为0a8f97d64d6760e179e3720e309c461d26580fc1，origin/main仍为ac69d6e2f7a4a0fe7707e6dee9bab91a52078f7a。暂存`git diff --cached --check`报告final-tests.txt中6处pytest弃用warning原文的尾随空白；保留原始stdout及其Hash，不将该检查声称为无告警。其余非运行产物的diff检查通过，暂存文件不含QiMem原始资产、SQLite运行库或.env。

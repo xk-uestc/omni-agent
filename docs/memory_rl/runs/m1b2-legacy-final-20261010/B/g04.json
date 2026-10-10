@@ -1,0 +1,781 @@
+{
+  "response": {
+    "status": "insufficient_evidence",
+    "question": "2025年华东青松额是多少",
+    "effective_question": "2025年华东青松额是多少",
+    "route": "document",
+    "planner_source": "rules_basic",
+    "session_id": "g04-target",
+    "context_turns": 0,
+    "state": {
+      "route": "document",
+      "sources": []
+    },
+    "result": {
+      "status": "insufficient_evidence",
+      "question": "2025年华东青松额是多少",
+      "answer_mode": "attributed_extracts",
+      "answer": "没有足够的文档证据，暂不能回答。",
+      "citations": [],
+      "retrieval": {
+        "mode": "bm25",
+        "embedding_model": null,
+        "dense_answer_threshold": null
+      },
+      "trace": [
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 1
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 0,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "retrieval_audit": {
+        "version": "ict8-rag-audit-v1",
+        "query": "2025年华东青松额是多少",
+        "scope": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "query_language": "zh_or_mixed",
+        "dense_status": "not_configured",
+        "channels": [
+          "bm25"
+        ],
+        "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+        "candidate_pool_limit": 20,
+        "candidate_count": 1,
+        "selection_budget": 4,
+        "selected_count": 1,
+        "selection": {
+          "method": "query_body_lexical_coverage_navigation_only",
+          "semantic_sufficiency": "not_evaluated",
+          "top_k": 4,
+          "candidate_count": 1,
+          "unique_body_count": 1,
+          "query_facets": {
+            "华东": 1.0,
+            "年华": 1.0,
+            "是多": 1.0,
+            "2025": 2.0,
+            "额是": 1.0,
+            "东青": 1.0,
+            "青松": 1.0,
+            "松额": 1.0
+          },
+          "covered_lexical_facets": [
+            "华东"
+          ],
+          "uncovered_lexical_facets": [
+            "2025",
+            "东青",
+            "年华",
+            "是多",
+            "松额",
+            "青松",
+            "额是"
+          ],
+          "available_but_unselected_facets": [],
+          "selection_budget_exhausted": false,
+          "source_counts": {
+            "targets": 1
+          },
+          "steps": [
+            {
+              "chunk_id": "642778e1449c2aa3a27ea027",
+              "source_id": "targets",
+              "ranking_score": 2.1564999117584813,
+              "utility": 0.788889,
+              "new_lexical_facets": [
+                "华东"
+              ],
+              "body_sha256": "0ac12f0afc6eb6ec2fcb5a0f8fedfdb542bcc6a422ef0952f20a84711bde24ec"
+            }
+          ],
+          "skipped": []
+        },
+        "candidates": [
+          {
+            "chunk_id": "642778e1449c2aa3a27ea027",
+            "source_document_id": "targets",
+            "source_sha256": "ce728e3b42f762213023ab1fca826409fe920939558883e4b7519ec11f2784dd",
+            "title": "区域计划",
+            "snippet": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.12",
+            "source_locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+            "page_no": null,
+            "sheet_name": "Sheet",
+            "row_start": 2,
+            "row_end": 2,
+            "ranking_rank": 1,
+            "bm25_rank": 1,
+            "bm25_raw": 2.035333,
+            "bm25_relative": 1.0,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.1564999117584813,
+            "body_query_term_coverage": 0.03968782561493421,
+            "matched_terms": [
+              "华东"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "primary",
+            "selection_utility": 0.788889,
+            "new_lexical_facets": [
+              "华东"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          }
+        ]
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "document",
+        "latency_ms": 1.716,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      },
+      {
+        "stage": "document_retrieval",
+        "channel": "bm25",
+        "candidate_count": 1
+      },
+      {
+        "stage": "evidence_selection",
+        "selected_count": 0,
+        "generation": "extractive"
+      },
+      {
+        "stage": "visual_page_routing",
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+        "candidate_document_ids": [],
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 4000,
+          "source_bytes": 41943040,
+          "pages_per_source": 1000,
+          "source_bytes_per_source": 20971520,
+          "index_build_seconds_per_source": 60,
+          "index_bytes_per_source": 16777216,
+          "cache_bytes": 134217728,
+          "cache_entries": 128
+        }
+      },
+      {
+        "stage": "visual_chart_routing",
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 1000,
+          "total_bytes": 41943040,
+          "source_bytes": 20971520,
+          "seconds": 60
+        },
+        "candidate_document_ids": [],
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+      },
+      {
+        "stage": "native_aligned_table_routing",
+        "status": "not_applicable",
+        "model_requests_attempted": 0,
+        "model_audits": []
+      },
+      {
+        "stage": "native_total_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_page_answer_dossier",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_comparison_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_selection_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      }
+    ],
+    "audit_id": "a4be0720448cac1add943724",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华东青松额是多少"
+    },
+    "routing": {
+      "selected_route": "document",
+      "label": "资料问答",
+      "strategy": "source_query",
+      "reason": "检索原文并核对来源。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "reason": "foreign_scope",
+          "count": 1
+        }
+      ],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 1.682,
+      "trace_id": "871c2c2692ef4688a59dbf5f80a27ff7",
+      "observe_ms": 1.072,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "clarification",
+        "model_planning_failed": false
+      }
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 6.214,
+  "trace": [
+    {
+      "stage": "memory",
+      "tool": "memory.recall",
+      "status": "success",
+      "executed": true,
+      "call_id": "871c2c2692ef4688a59dbf5f80a27ff7:memory.recall",
+      "trace_id": "871c2c2692ef4688a59dbf5f80a27ff7",
+      "output": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [
+          {
+            "reason": "foreign_scope",
+            "count": 1
+          }
+        ],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 1.682,
+        "trace_id": "871c2c2692ef4688a59dbf5f80a27ff7"
+      }
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "running",
+      "input": {
+        "question": "2025年华东青松额是多少"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "running",
+      "summary": "正在整理本轮问题与检索目标。",
+      "input": {
+        "question": "2025年华东青松额是多少"
+      },
+      "output": {},
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "success",
+      "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+      "input": {},
+      "output": {
+        "question": "2025年华东青松额是多少",
+        "retrieval_query": "2025年华东青松额是多少",
+        "query_rewrite": "none"
+      },
+      "latency_ms": 0.003,
+      "executed": true,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "running",
+      "summary": "正在核对多轮上下文、指代和附加输入。",
+      "input": {
+        "mode": "independent_question"
+      },
+      "output": {},
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "success",
+      "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+      "input": {},
+      "output": {
+        "mode": "independent_question",
+        "actual_question": "2025年华东青松额是多少",
+        "effective_question": "2025年华东青松额是多少",
+        "context_turns": 0,
+        "image_count": 0,
+        "retrieval_context_attached": false
+      },
+      "latency_ms": 0.004,
+      "executed": true,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "running",
+      "summary": "正在应用资料范围和页码限制。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "scope": "all_sources"
+      },
+      "output": {},
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "success",
+      "summary": "已限定到 3 份资料、5 个可检索片段。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "exact_identifiers": []
+      },
+      "output": {
+        "document_count": 3,
+        "eligible_chunk_count": 5,
+        "scope": "all_sources"
+      },
+      "latency_ms": 0.219,
+      "executed": true,
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "running",
+      "summary": "正在按词项相关度查找手册片段。",
+      "input": {
+        "query": "2025年华东青松额是多少",
+        "candidate_limit": 100
+      },
+      "output": {},
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "success",
+      "summary": "关键词召回得到 1 个候选片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 1
+      },
+      "latency_ms": 0.042,
+      "executed": true,
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.dense_retrieval",
+      "rag_step": "dense_retrieval",
+      "status": "skipped",
+      "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured"
+      },
+      "executed": false,
+      "call_id": "omni-call-7"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "running",
+      "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+      "input": {
+        "dense_status": "not_configured"
+      },
+      "output": {},
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "success",
+      "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured",
+        "rrf_executed": false,
+        "ranking_method": "bm25_then_page_scope_and_body_affinity"
+      },
+      "latency_ms": 0.015,
+      "executed": true,
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "running",
+      "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+      "input": {
+        "candidate_count": 1,
+        "selection_limit": 4
+      },
+      "output": {},
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "success",
+      "summary": "从 1 个排序候选中选出 1 个证据片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 1,
+        "selected_count": 1,
+        "selection_method": "query_body_lexical_coverage_navigation_only",
+        "selected_evidence": [
+          {
+            "title": "区域计划",
+            "chunk_id": "642778e1449c2aa3a27ea027",
+            "source_locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+            "page_no": null,
+            "snippet": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.12",
+            "image_count": 0
+          }
+        ]
+      },
+      "latency_ms": 0.076,
+      "executed": true,
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "running",
+      "summary": "正在整理选中片段、原文定位和关联图片。",
+      "input": {
+        "selected_count": 1
+      },
+      "output": {},
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "success",
+      "summary": "已整理 1 个入选片段，交由回答与来源核验流程处理。",
+      "input": {},
+      "output": {
+        "evidence_count": 1,
+        "evidence": [
+          {
+            "title": "区域计划",
+            "chunk_id": "642778e1449c2aa3a27ea027",
+            "source_locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+            "page_no": null,
+            "snippet": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.12",
+            "image_count": 0
+          }
+        ],
+        "user_image_count": 0
+      },
+      "latency_ms": 0.005,
+      "executed": true,
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "running",
+      "summary": "正在依据入选证据生成或核验回答。",
+      "input": {
+        "question": "2025年华东青松额是多少",
+        "evidence_count": 1
+      },
+      "output": {},
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "attention",
+      "summary": "回答处理完成，但当前证据不足或需要补充条件。",
+      "input": {},
+      "output": {
+        "status": "insufficient_evidence",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 0
+      },
+      "latency_ms": 0.337,
+      "executed": true,
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "running",
+      "summary": "正在整理最终回答与来源信息。",
+      "input": {},
+      "output": {},
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "attention",
+      "summary": "处理已结束，当前结果需要补充条件或证据。",
+      "input": {},
+      "output": {
+        "status": "insufficient_evidence",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 0
+      },
+      "latency_ms": 0.015,
+      "executed": true,
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "attention",
+      "output": {
+        "status": "insufficient_evidence",
+        "citation_count": 0
+      },
+      "executed": false,
+      "summary": "需要补充条件或证据",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "memory",
+      "tool": "memory.observe",
+      "status": "success",
+      "executed": true,
+      "call_id": "871c2c2692ef4688a59dbf5f80a27ff7:memory.observe",
+      "trace_id": "871c2c2692ef4688a59dbf5f80a27ff7",
+      "output": {
+        "stored": true,
+        "promotion": "none",
+        "category": "clarification",
+        "model_planning_failed": false
+      }
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "insufficient_evidence",
+        "route": "document"
+      }
+    }
+  ],
+  "memory": {
+    "recall_count": 1,
+    "selected": [],
+    "consumed": [],
+    "decisions": [
+      {
+        "reason": "foreign_scope",
+        "count": 1
+      }
+    ],
+    "degraded": false,
+    "bindings": [],
+    "recall_ms": 1.682,
+    "trace_id": "871c2c2692ef4688a59dbf5f80a27ff7",
+    "observe_ms": 1.072,
+    "observe": {
+      "stored": true,
+      "promotion": "none",
+      "category": "clarification",
+      "model_planning_failed": false
+    }
+  },
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 11,
+  "memory_operations": 2,
+  "id": "g04",
+  "category": "scope_guard",
+  "score": {
+    "safe_abstention": true,
+    "executed_sql": false,
+    "answer_rows_present": false,
+    "status": "insufficient_evidence",
+    "limitation": "Checks output abstention only; recall/write isolation cannot be measured without adapter instrumentation."
+  },
+  "target_history_before": 0,
+  "target_session": "g04-target",
+  "preparation_session": "g04-preparation",
+  "preparation": [],
+  "candidate_ids": [
+    "foreign"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "ce728e3b42f762213023ab1fca826409fe920939558883e4b7519ec11f2784dd",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": null,
+  "memory_store_bytes_before": 65536,
+  "memory_store_bytes_after": 65536,
+  "archived_events": [
+    {
+      "category": "clarification",
+      "consumed": [],
+      "event_id": "871c2c2692ef4688a59dbf5f80a27ff7",
+      "model_planning_failed": false,
+      "promotion": "none",
+      "question_sha256": "29694b66ae9a04924ed7e119c12a7c461ab6422224c9c0083ef355d74f299f0c",
+      "rejected": [
+        {
+          "memory_id": null,
+          "reason": "foreign_scope"
+        }
+      ],
+      "selected": [],
+      "source_versions": {},
+      "verification": {
+        "execution_verified": false,
+        "independent_task_verified": false
+      }
+    }
+  ],
+  "pass": true
+}

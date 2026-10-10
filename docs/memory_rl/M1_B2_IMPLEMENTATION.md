@@ -20,4 +20,6 @@ PYTHONPATH=ict-track8 /tmp/omni-m1a-venv/bin/python -m backend.memory.admin --co
 
 `revoke`要求当前memory内容digest；`review --supersedes`将新确认与旧条目关联，旧条目标为superseded，保留全部历史。外部原件与SQLite审核事务不能跨系统原子提交；临写前重查，且Recall仍按保存版本fail closed，来源之后改变不会使旧定义变成有效。
 
-此检查点已通过52项记忆测试，含真实Omni读取→形成→审核→新session、Store重建、来源更新、旧digest、撤销后历史追问、冲突、替代版本、Schema变化及v1升级。完整ABC/回归/Profile尚待运行，不以单测声称最终验收完成。
+生命周期检查点先通过52项记忆测试；最终148项选定测试、完整22题ABC、16/185回归和各100样本前后Profile均执行，实际结果见M1_B2_RESULTS.md。涵盖真实Omni读取→形成→审核→新session、Store/进程重建、来源更新、旧digest、撤销后历史追问、冲突、替代版本、Schema变化及v1升级。
+
+实现边界：当前本地审核使用POSIX uid/pwd/文件权限，未验证Windows管理员边界；不是多租户身份方案。memory_db必须与业务数据库分离。事件/版本无自动清理策略；普通SQL安全执行器和semantic规则未修改。性能修复仅为实体字面值不存在时不编译无意义regex，SHA/Schema/时态检查次数不变。
