@@ -280,3 +280,5 @@ F1检查点6固定源码a37c0728deacf1bc01a6e1458ac3826a2d570e2e：
 最终SSE超时fault：`env ICT8_DB_PATH=/tmp/f1-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= timeout 30s /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_foundation_stream_fault.py > docs/foundation/runs/stream-fault-test.txt 2>&1`：1passed，3既有warnings；真实TestClient stream，超时后台仍活跃且占用semaphore，测试随后释放并回收thread。不冒充取消实现。
 
 最后核对发现独立验证JSON的before/after_chunk_ids曾错误命名为document ID；保留原final-verification.json作为初次审计，更正字段含义并分别记录document/chunk ID，输出final-verification-v2.json与stdout。指标不变，64成对0变化，冻结Hash/源码/DB稳定、Memory0退步。legal-scope-edit.json另保存实际“删除地区限制”进入合法澄清而非危险请求拒绝的本地输出。
+
+检查点6 commit+push完成：e1a815c2cc57bdfc3789d0282da8bd255dde97c2。git whitespace检查排除pytest原始txt/xml产物（原始输出自带空白不清洗），其余源码/报告通过。检查点7最终报告/STATUS/DECISIONS/CODEX_REPORT/ACCEPTANCE只写当前证据和限制，最终资产manifest对全部本轮产物和冻结输入逐文件SHA256核验，不含私有目录、密钥或权重二进制。

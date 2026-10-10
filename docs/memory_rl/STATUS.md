@@ -1,5 +1,18 @@
 # Memory RL 状态
 
+## 当前：F1基础设施完成，等待审核
+
+- 2026-10-10 F1检查点1–7可执行工作完成；仅memory，未训练、未合并main、付费模型调用0。
+- 最终评测后端固定a37c0728deacf1bc01a6e1458ac3826a2d570e2e；检查点6证据提交e1a815c2cc57bdfc3789d0282da8bd255dde97c2，最终远端文档提交SHA见交付反馈。
+- BGE固定权重已下载/校验并实际离线运行。A/B开发与保留64成对内容评分0变化；来源导航C增加噪声，不进生产；生成答案指标not_run。
+- 存储单来源SQL下推、Dense按key读取；声明页/行scope与来源版本拒用；整体危险请求拒绝、单指标alias与结构化失败Trace已验证。
+- 新源码16题A10/B14保持，185题A/B各178/185（历史177，仅safe-09整体拒绝改善，原成功0退步）；22题9/22、22/22、22/22保持，0错误晋升。安全变化不是Memory收益。
+- 综合相关回归533passed/7failed/12subtests；另SSE故障1passed。失败及旧源码复现保留，不宣称全绿。AVG/SUM语义、协议/来源规划、全库BM25成本、SSE后台取消仍有限。
+- 历史M1-C真实模型7/7/8/9只审计未重跑；经验池仍不足以证明Fixed/Oracle选择增益。PPO Readiness未成立，停止等待ChatGPT审核。
+- 详见docs/foundation/FOUNDATION_FINAL_REVIEW.md、RUN_COMMANDS.md、runs/FINAL_ARTIFACT_MANIFEST.json。M1–M4目标不改。
+
+## 以下为M1-C及更早阶段历史状态（F1新结果以上方为准）
+
 - M1-C本轮实现、真实实验、回归和报告已完成；固定经验收益未成立，停止等待ChatGPT审核，不进入M2/M3、不合并main。
 - 唯一分支memory，起点5a5f14f8c5aeab0aa9ce331da8b628bcd98933e0；最终生产源码91d7633a23956b27710599c933913ac79c6022de；完整结果检查点94a9926de2cee14c014a9c6e93c63112407d7760。最终文档提交完整SHA见交付反馈。
 - task_experience独立类型，实际成功工具轨迹+独立整题反馈形成，复用候选/本地审核/撤销/版本历史；当前方法重新供给原Omni Planner，未复放历史图。HTTP/SSE共用默认关闭开关。

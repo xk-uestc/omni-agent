@@ -23,3 +23,5 @@ dossier现在在读取前拒绝旧检索hit与新原件SHA混用，并在读取�
 固定源码a37c072最终开发与保留：A/B开发必要证据21/21，保留7/7，源/证据Recall/MRR/NDCG都1。64个逐题成对观测（dev24+retained8，A/B各一次）全部内容评分、来源/locator正确性无变化，未观察到召回改善/退化；完整candidate ID与评分差异见final-verification.json。保留A/B无关来源比例.645833，B实际Dense2/8（6英文跳过）。C保留必要证据7/7但无关来源.708333、NDCG .975982，延续开发负结果；没有因为保留结果调整导航。继续不采纳C生产架构。
 
 RAG最终EM、端到端正确性、忠实度与回答引用正确率not_run；检索SHA/locator不是回答引用正确率。32题的证据已标注开发集合相对容易，需要新的更困难独立开发任务（而非改本轮输入）才能研究来源排序收益。多行/cross-page证明使用原生PDF机制与明确scope，真实扫描OCR、多语encoder及多来源语义归属仍有限。
+
+最终逐题ID对照请以final-verification-v2.json为准；初版final-verification.json中命名为chunk_ids的字段实际是document_id，已分别补充正确的document_ids与metadata.chunk_id，原文件不覆盖，评分无变化。

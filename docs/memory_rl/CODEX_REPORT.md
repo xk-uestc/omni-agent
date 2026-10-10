@@ -173,3 +173,13 @@ M1-C检查点3：原Omni Planner请求级有界经验context、HTTP/SSE开关、
 同源码91d7633真实16题四组：7/7/8/9；固定经验没有整题收益，Oracle与Fixed请求/选项相同，差异不是策略效果。模型协议非法JSON/DSML、客单价和C/D来源绑定拒绝仍是瓶颈。正式池只有真实Agent形成的SQL→文档经验1项；不能称已证明多候选选择上限。64次目标均独立新session，SQL/资料当前执行；无训练。
 
 费用96次预留≤144，95次有audit、1次中止在途Token未知；只报告已知usage，不猜账单。旧16/185及B2 22回归无新增退化。扩大测试412通过3失败；三失败起点快照同样复现。HTTP/SSE真实入口fake-planner测试通过，仅证明接入，不充作远程模型HTTP成绩。补测实际已确认B记忆的source/revoke/scope拒用3/3，正式轮空池控制和缺来源澄清说明不足明确披露。下一项为最终证据核验/PPO Readiness，禁止训练。
+
+## F1最终交付（2026-10-10）
+
+连续完成授权检查点1–7，逐阶段commit/push到memory。检查点/完整SHA/主要代码/命令/Hash/前后逐题对照见[FOUNDATION_FINAL_REVIEW.md](../foundation/FOUNDATION_FINAL_REVIEW.md)与[RUN_COMMANDS.md](../foundation/RUN_COMMANDS.md)。最终评测源码a37c0728deacf1bc01a6e1458ac3826a2d570e2e，证据提交e1a815c2cc57bdfc3789d0282da8bd255dde97c2；最终文档远端SHA见交付反馈。
+
+已下载固定BGE权重并核验7项公共资产；中文实际Dense、英文明确跳过。开发/保留64成对观测无召回增量或退步；C来源导航增加噪声，移出生产保留原型。真实收益为单来源读取300→3chunk、约4.00→1.87ms热中位（8次非独占观测），有界页/行Scope与混合来源拒用，危险请求整体拒绝，单指标alias修复、失败Trace保存。500页全库热检索仍约700ms，4并发P95约4.18秒；没有生成模型耗时/正确率成绩。
+
+16题A10/B14保持；185两组177→178仅safe-09安全改善、0原成功退步；22题9/22、22/22、22/22、0错误晋升。综合相关533passed/7failed/12subtests，额外SSE故障1passed；完整失败/旧版本复现保存，旧Gold/断言不改。原验证器向量不变断言失败被保留，新的独立通用行为核验与冻结Hash验证通过。
+
+M1-C7/7/8/9仅历史独立审计，不复跑付费模型；生成层指标not_run。协议、复杂来源绑定、AVG/SUM、全库重建与SSE取消仍有限；候选池与Reward差异不足，PPO未就绪。没有训练或合并main、0付费请求，停止等待ChatGPT审核。
