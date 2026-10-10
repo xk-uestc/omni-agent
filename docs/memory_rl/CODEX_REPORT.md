@@ -105,3 +105,11 @@ HTTP 测试在 sandbox 内停于 first health 请求，两次中断 exit130，�
 - `docs/memory_rl/runs/source-regression.xml`
 
 提交前校验：所有冻结 SHA、JSON、四个工具语法与两份完整 XML 校验通过。git diff --cached --check 在原始 pytest stdout 报告 7 处工具输出自带尾空格；保留原始日志字节，源码/文档校验排除 runs 后无错误。未因此改写实验证据。
+
+## M1-B1 检查点 1：Core
+
+2026-10-10 重新 fetch 确认远程仍为 666551fefcff75dfa6adc7c985dddb4f796b64b1。本地无已跟踪改动，Qimem/ 原样保留。先写 test_memory_core.py，未实现时 collection error（core-before.txt），随后实现独立模块 backend/memory/core.py，不复制 QiMem 源码。
+
+SQLite 业务条目与 query events 分表；可信离线 provisioning 才可 put，observe 只写最小 allowlist 事件、独立验证默认 false、绝不晋升。scope 从服务端部署/项目/数据源配置获得；默认关闭时不打开数据库。过滤状态、时态、来源、Schema、聚合与条件后检查全候选冲突，最后预算排序。存储故障回退有明确 degraded 记录。全扫描上限512，超限整次拒绝避免漏查冲突。
+
+`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py --junitxml=docs/memory_rl/runs/m1b1/core-final.xml` → `17 passed`。覆盖重建Store、scope、失效/过期/撤销/未确认、冲突先于top1、字段/聚合/值、无关/字面量、配置与Store故障、observe幂等/不晋升。完整stdout保存；还没有A/B任务成绩。

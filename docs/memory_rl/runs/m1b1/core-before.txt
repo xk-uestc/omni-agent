@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+____________ ERROR collecting ict-track8/tests/test_memory_core.py _____________
+ImportError while importing test module '/home/viva/omni-agent/ict-track8/tests/test_memory_core.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ict-track8/tests/test_memory_core.py:6: in <module>
+    from backend.memory.core import MemoryCore, MemoryStore, MemoryRecord, TrustedScope, RecallContext, Budget
+E   ModuleNotFoundError: No module named 'backend.memory.core'
+=========================== short test summary info ============================
+ERROR ict-track8/tests/test_memory_core.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.08s
