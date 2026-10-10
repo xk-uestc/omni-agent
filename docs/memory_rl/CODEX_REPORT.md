@@ -141,3 +141,7 @@ SQLite 业务条目与 query events 分表；可信离线 provisioning 才可 pu
 ### M1-B2 检查点2
 
 新增formation/admin、本地OS审核边界、v1安全迁移与版本历史；实际Omni引用生成candidate，validated仍不进入recall。52测试通过，详见M1_B2_IMPLEMENTATION.md。下一项工作是独立CLI子进程审核与22题ABC，不预报成功率。
+
+### M1-B2 检查点3：形成闭环真实执行
+
+首轮22题ABC实测9/22、22/22、22/22；12独立跨会话目标C全部真实SQL正确，B/C绑定与结果行一致。独立CLI审核和p01新进程消费均留命令/原始输出。23候选、20验证、19审核晋升、0错误晋升；尚待完整原16/185回归与专项Profile，不能提前宣称本轮验收全部完成。

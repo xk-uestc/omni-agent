@@ -1,0 +1,4086 @@
+{
+  "source_commit": "e87c156ed887856db1229e6958311ee18d1021d9",
+  "source_hashes": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/amount_cell_review.py": "79f23d04f7b29ccc3ee7c112b3f9ddbaefab17f8186bc0cfa310e9ad6e524b9c",
+    "ict-track8/backend/answer_contract.py": "1ace63ef88f6bb2bdda8ed4c1240c0aa9cee4150fdef1eaa164192d5985cdd38",
+    "ict-track8/backend/app.py": "245571e7cba8622bbc239b05914111383b8688ea4e9e19f2e6dc8f75ff8a3988",
+    "ict-track8/backend/blank_cell_review.py": "9e0c17118c7af8bce75823bf1695bb9d0fb6cdb328f38229af234fae24133d63",
+    "ict-track8/backend/cell_crop_quality.py": "5904e3aa7c15c527d35f81f070c5bba73b4a18773900e6e43f96292f8c2b1899",
+    "ict-track8/backend/chunk_cleaning.py": "a395c2951cf09ece5d1d867a4dec504918060c49013c3b359148195aa12884dd",
+    "ict-track8/backend/clarification.py": "e919e59572505ef1ebd242bd6eafc86a705d698808ac536714e1ad21328bcbf2",
+    "ict-track8/backend/clarification_continuation.py": "895228f875220e3c2c0f71b87ee49b960f870e13f7c59df8e1ccfc1f44a38031",
+    "ict-track8/backend/comparison_batch_edit.py": "84b521e46244d270f320ad2c845ee1faef61d8764920fe5e672b5ca91359e3d7",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/conversation_comparison.py": "590d04f52950d7f5202accbd938dd1883fa6dffa76d86db0c7f4601d545577a0",
+    "ict-track8/backend/conversation_sources.py": "956e6afeb65f4888e8bf8975224dc60183e928e7c42f4c15ee2325d5e7aebaf1",
+    "ict-track8/backend/conversational_sql_edit.py": "a5c2e32fce7d1066939749a636fa34eb1a9ad46cadb1273c45a0b713e35b5a3a",
+    "ict-track8/backend/cross_source.py": "c7c00594355f38a8d30d22274fb5a38f11b3f90d3ac7e41f86e2f37006560134",
+    "ict-track8/backend/dense_retrieval.py": "bb25f07dbe660e2cbb3b526eb35023a9134fe194cec8e5efde34157f5c748886",
+    "ict-track8/backend/dependency_agent.py": "29a890e1e70cd4accd41ff000b57456c7c07d769391d41b89a31e57385f0dce4",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/document_dialogue.py": "b5fa28038a6b1acd880299b874669485fc9dd0745fd114d76bde8e6a4ba6b797",
+    "ict-track8/backend/document_parts_answer.py": "491e03a166d718d8ae581736e756ccaa5849afceb25e97d3accbe43ad6d7922e",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d6b2b921496a0df1743e37c31e9cb494aa9a2e435531c6040cc279a9a6821596",
+    "ict-track8/backend/excel_layout.py": "15e67b8f90777f0f5b9561148a1c5eedb77464c32fd4b482509e1564befc47a0",
+    "ict-track8/backend/executed_scope_edit.py": "956efa3fb8a7df4b051b383a3a032c20811a585130765542d6556c9c4e55abff",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "dd9573c757dbbfe1d758ab9d5277a7df731ea25fbc614975fc9dc3d6aed48050",
+    "ict-track8/backend/fusion_constraints.py": "27d53ea2d4492c2b4bdbc360d10ef38c87d81f6a9fa1f188150e251fb1c9e179",
+    "ict-track8/backend/fusion_formula_planner.py": "f79f40863ecb87d21504d2b025769bc4308628b1f116a292432216a42ccbd089",
+    "ict-track8/backend/fusion_history.py": "c363ecd847f99d74d2d9d36a3022ae4283ee70d0ee0d72e09c22200fdfa7a31b",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/fusion_parameter_followup.py": "93fbc3c9d5834ce789268e30252631140d7e053ad5e6ff369cb23401e724159c",
+    "ict-track8/backend/fusion_result_answer.py": "7ada3a145159f87e950b55d92e5ca5fcc2de5c19e03ff9f545f20f30ed2e209b",
+    "ict-track8/backend/grounded_generation.py": "65ce265392e685c6b0831e08a50d308b6ea89fcfe8723736938ee196b1afad9e",
+    "ict-track8/backend/grounded_span_answer.py": "6d0634e88e2e81cbca072259d941600cf762839b10668fcb631a740b95534aa7",
+    "ict-track8/backend/history_reference.py": "2bd41a9add5e440233033e0b763aa14a66e014517214dd9dab2546cc5d3a2e62",
+    "ict-track8/backend/image_geometry.py": "548d66430f34631fb1cee0172dccf0ce56e485e541cc672ae9847f34f402ce1f",
+    "ict-track8/backend/image_quality.py": "c4ac8d492966d597689b300c0ae31880bfe2278ac6889c75a79c7a508ce3f514",
+    "ict-track8/backend/knowledge_store.py": "4d01982543d2e533b983c5c76c99237ab56caadf189289c84da0e9645f7b4f53",
+    "ict-track8/backend/memory/__init__.py": "d228f7bda5aa927ee56d48f200d82d5727351ca3e87b9286e6e34dd765e149d9",
+    "ict-track8/backend/memory/adapter.py": "a8507cdf51e5406d9bdef1dd41058420e2b6d48361c9ef4ad16e3df6a8234298",
+    "ict-track8/backend/memory/admin.py": "4564acfe7adef15989b8c8fcf1d2823d5a1f00ad6dcda07639e9510a94a3d355",
+    "ict-track8/backend/memory/core.py": "bb2d0d3a36f9ea2ceaafd9225647ef294b3520760044a6305c142b7297730579",
+    "ict-track8/backend/memory/extraction.py": "681b776655509fbd33579554d43cb9f4095833aa2ec7113d948760489257d6dc",
+    "ict-track8/backend/memory/formation.py": "44a66510107cca236b0c6a1f7713d384ce1a070091c82079a053decbd61e0cbe",
+    "ict-track8/backend/multimodal_input.py": "e45ef075b1796a5633ef98e3a1facee4dc03fefc142823afd2975c2e064c2769",
+    "ict-track8/backend/native_amount_annotations.py": "d1cde2be5a590d7d5eaa9715b0aa6dea49ad3fedf8b932c8049ab1a6865a90ee",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_financial_tables.py": "2fef01f2fcb74c6007df8387eb2dd16b72a00914a430c26ac4d4f95dfb78e656",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_fraction.py": "58e9bb44c864cb3024924d189a806098b75ac803195ff1bd62f3f9a8bbedeb81",
+    "ict-track8/backend/native_label_amounts.py": "f05d65953cc5a07e26f2dfaf8ee9d44fdc8471c8aa914ee5dad0e2c5be987133",
+    "ict-track8/backend/native_row_comparison.py": "b1596c32915ca3f2e3b793bc9594770e0e745ac196eac5075057fcc29d186f65",
+    "ict-track8/backend/native_row_registry.py": "6e6ed439e5038b429d576838cb4b31d85418580c903ec7e2834885c017147be9",
+    "ict-track8/backend/native_row_selection.py": "7b16683a58a3fa96137eea376e0265df854e23b966c13ada5dbd51cca54fce6d",
+    "ict-track8/backend/native_table_chain.py": "6763e5b28c75c7b7cf6bbbe2973d5200572614437e11ec0ca5d2d35f4aeab214",
+    "ict-track8/backend/native_table_question.py": "d4644f73791dcbf887d969ed90bc1486cb53aee3223c42aa521bfcddce0e4fcd",
+    "ict-track8/backend/native_text_tables.py": "85ebe2f07c495e453249d3758907b65b3e2f8052df0ad4e270ca7fbf3e1f4ad0",
+    "ict-track8/backend/native_total_question.py": "1b4d52cafc32a0439a4d4912ce1bcdd6ff323c81db71aabef0ae69fc24f31338",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "edcb071fba84cd09ab5b7d8b268b41bf4e5bf671ab748b38e9692e6d60bb1259",
+    "ict-track8/backend/nl2sql/date_profile.py": "17bb0f0760598b11d6c87f2c8bff49230212d8e28222180bd2e2f257e565b6bc",
+    "ict-track8/backend/nl2sql/date_semantics.py": "fadabe473170b649f344222d607099b1f6d3a54187314ac8a90b733e5771a86d",
+    "ict-track8/backend/nl2sql/engine.py": "ce4bd933d6958c82fb73bcb9c6ebd484d034ded388fde8c523e9d691aebdbf38",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "3deb55d9f764e06406d583dcb03581f5ae9c27058a39e069bc37c6b0a51fe5ed",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "c147cb0135f1991bb157f0aa5f90cf241c60273634a33e168f29341f527b79bc",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "59e2774de7b294d82d09519291927affd4af90fa315e359e358c089422a028a4",
+    "ict-track8/backend/nl2sql/operations_seed.py": "43b86672b6c52800a4ba112e0114eb207da1764f0d4f33b8812ee6730abc1c57",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "410a77f53eacbbc574666846f184b0ce203b5087034dfa1185b97c13f24ab690",
+    "ict-track8/backend/nl2sql/question_roles.py": "d46718c1ff236f7ebeee46912fbc84e962aaa6cf1a6713de936c3faf0f56f82b",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "42d9942edb34bd32de45460197dca3fcb275e6f817bb6deb911474863508cf18",
+    "ict-track8/backend/nl2sql/result_artifact.py": "1edbaa4a1edde4a4986163c81303f04204c60edd0133a8bd1e828d1cfa17d43a",
+    "ict-track8/backend/nl2sql/result_scope.py": "e5ed17397664ceb3b204e74a455717f56cc3592fba1bcd195c75bb4596ebf6cf",
+    "ict-track8/backend/nl2sql/schema.py": "2d077fcbe1cb0c6f4ce42bf38fc0dcbbee0d1d14d18b473d186f0f571e0c3456",
+    "ict-track8/backend/nl2sql/schema_profile.py": "27b04ce92d186762553436b97f2b2fea00594d6d51918e71d521fc686eed04ae",
+    "ict-track8/backend/nl2sql/security.py": "ed7e476aaa39ca66d347f217d60be18597da4444fe990f717bf73bd1551a273b",
+    "ict-track8/backend/nl2sql/seed.py": "707dc7b401de9fda53f6b139e1bb9d2da05f14e33ee4f1c3e47fa9f422ddcd67",
+    "ict-track8/backend/nl2sql/semantic_graph.py": "f4fb8c9776a0c9b1b171b2f58cd2a8d19e8b0dbc05f0da52d60d335962572fd7",
+    "ict-track8/backend/nl2sql/semantics.py": "793fd2c2b0dc0a4b9ffd8f957b76066409c04c83e42e747e54b98f2c9f3d1753",
+    "ict-track8/backend/nl2sql/t2s.py": "3c5e5666b65da6e146da87458c6c4f651f97f587a06508e6bf1140d67442a59a",
+    "ict-track8/backend/nl2sql/value_index.py": "9fe51698229ad843f4c1e8b8e642ba0955b9d70d6568f130e504d82580765f12",
+    "ict-track8/backend/ocr.py": "7f4199cb56a890968f0930906645db51111f2283974cfb3c6b10ee5d2050a8a4",
+    "ict-track8/backend/ocr_evidence_selection.py": "0f27eedc6667add900e4964715119515782046da9d792594db6ba576d3dc48aa",
+    "ict-track8/backend/ocr_fast_fusion.py": "21c3162565a996df9f57ac66ffa81cc940b0b16d858529adebc9d31308cc27da",
+    "ict-track8/backend/ocr_gap_fusion.py": "e8a80f101ab8235daaf6ce1e1cc30ea14e83b36c28a2af89cde3dc01a7482668",
+    "ict-track8/backend/ocr_pairing.py": "b37c1382184147a2843897d602ff9ed5010e328ab48549537cd9ef527d0c881b",
+    "ict-track8/backend/ocr_region_fusion.py": "1d689a63a3dd32aad794caf1054198c98ddaf90623103aa1eb1c22d3a729c5bb",
+    "ict-track8/backend/ocr_table_fusion.py": "fe87d2352324ded1f7fadaad3de63f2ca43c5c7c5edceed22b40450a3927ae2e",
+    "ict-track8/backend/omni_agent.py": "478a3ed530f586ef2b823040bd7013047af6a999d445b9b93685b63b0d26ccd8",
+    "ict-track8/backend/orientation_quality.py": "dc1fa8de4f1b67b7dc230628ce5b58a15f39555708bf02a96fcc891a2bf474d0",
+    "ict-track8/backend/pdf_amount_verification.py": "f6cb41333e916d2ee2b1a09cf6c90b35d5bdd8305ef5be53a650aa2df8bb54ab",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "2fb1825c5adad87bf582032d926a98f99df5f339a9e7f3f2aa0b76d41d4a1b92",
+    "ict-track8/backend/pdf_page_index.py": "045fb9ecb3571d77ede9fc6aaae0ac2ff24517854b051caa70d1c2200fc59fd2",
+    "ict-track8/backend/pdf_table_continuity.py": "4db0e648b18826b0738abf1b9e041e1d179959dea1f8fd8b75c7f9fa95a18ddf",
+    "ict-track8/backend/pdf_table_preview.py": "194e7a04be35f82773951a19fb5200035901246d2f842aaec031387bf0dec9c5",
+    "ict-track8/backend/pending_comparison_resume.py": "0ef6e94f3e66740d8359e9e5cbc841a5bc5abd8cb96c1660a991371c0e8a0c21",
+    "ict-track8/backend/pending_filter_edit.py": "f5f416fdbe55e7767d7ab070b9733e92aa91ae1b2f3d45aff22e791cf275ac47",
+    "ict-track8/backend/pending_scope_edit.py": "797fa7d658258248e876452c1ea1ee8fd863ee70892aad9a4d99cdcc5d3ac4ca",
+    "ict-track8/backend/pending_source_validation.py": "469cf499e261a831878ebd9dfbd3361cc07e90b3dba58b7485ae2094ed4f5e9c",
+    "ict-track8/backend/pending_task_catalog.py": "8b27285383744c18aa2717f89ea0b7307400236754c424d20d81e0f7842d75a3",
+    "ict-track8/backend/pending_task_resume.py": "82cc83fe6f6edea7ebdd26af24eca28d45cff0a9e03211e7b0f28560570e0b09",
+    "ict-track8/backend/pending_task_store.py": "0df1d168cd790941397345673f8c12ddefeb2e0da24b45f292fd673d44b7b2eb",
+    "ict-track8/backend/perspective.py": "f92be7397a689af508b96a9a9d0f158af73d625b7bb955df97db2e8eba992d5c",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/ranked_result_followup.py": "bf10bccea106ac7b171199b15e412e26e92ad1f05ef68066ec0014a4d19ddf1b",
+    "ict-track8/backend/raysource_media.py": "b7f1c8a2e6c328f57a77e7e5bdf1d6f84082512592a752539dd9851cba921be5",
+    "ict-track8/backend/relational_scope_edit.py": "2fba5d364e38c2fc944c1271a53ddb0500fd40f6155deb385341b044d8cd58d2",
+    "ict-track8/backend/responses_client.py": "6acfd535d2b9071b093e06e24a5035125dfdace5de80e1f1a6322269fe35e15f",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/round13_document_scope_prototype.py": "5fe5693351a4e790394055ec9589b5107a5b20a4eafe2661da89217aabec023c",
+    "ict-track8/backend/scanned_grid_selection.py": "2533127e8f0448ff015110b08266a3e71719fd39eb4ee740246ceae99b01061a",
+    "ict-track8/backend/scanned_table_layout.py": "648e56820d2f0e0527a6df2bff3526461ccfe41bdf4ebe5fc5b5b11bec48ee91",
+    "ict-track8/backend/scanned_table_structure.py": "9de373f77d1d5b2a9279ac2704fe9a6c169835521ef7f102b577efe483937385",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/semantic_pending.py": "7641eb48c915586ce2e70c3f8ab15af90c3f6792a7e283b22c94d1338142c666",
+    "ict-track8/backend/session.py": "b9aac070ab8437c0a942d06e6347c830f1e9358958bd25aba310f420ddfb76cb",
+    "ict-track8/backend/source_answer_dossier.py": "a34301483390393c57dbc33eb806ef590fcd86e265d6031073d8eaa63f0068cb",
+    "ict-track8/backend/source_multi_span_answer.py": "0092e5283af289d63a00712858d66d757660ec055840613f60b59acd97e710fc",
+    "ict-track8/backend/source_provenance.py": "677ffad3e15d13832960a000a611bde1ec21d5df07afc38f44cee5240ce46bf9",
+    "ict-track8/backend/source_span_answer.py": "67277684700bb6e98246440a2b561fc03f06abd8e7e7cfa4d0747bf5c58041ae",
+    "ict-track8/backend/sql_document_binding.py": "fb166bd7b026e19eb796127708cac2ffeefe10aafc3a97a87c26725e86898504",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "93511b107c988c85d5184c8adf3d20a3269f24cecd6b306e50a43a774cc6c6cd",
+    "ict-track8/backend/table_arithmetic.py": "34cd34f0081269f44397df4707a7bfca5c7d008b9aaca609ead693fe0df4f8d8",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "51e808fa3ba119e4b747ea1f2a66fa38e2dd66996b1304cd748615afeccab567",
+    "ict-track8/backend/text_structure.py": "fdf5242f65283cf8c06644d9b05197c81c709fe2e7693bf6656646be941c37c2",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unified_context.py": "76a070fbd125452cd292353306371225dcf8efeb8ef9bd718b67b3d2c018c59c",
+    "ict-track8/backend/unified_routing.py": "53171d999ad00da28eff8114c355e09415eb857dd48bfcadbc4c58b3807e4920",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "9be3033ead43d8c3177e388bdd9a3ef2f7baf7c8fef212941c80af538cbb8973",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "source_stable": true,
+  "database_unchanged": true,
+  "database_sha256": "dcdc383eb2bc15b28a202fb5b87cce6876812de82b08b6ae8233e63198888fea",
+  "runner_sha256": "22424f60aae478bcf5bb2184a8d45439ef2a90d0a9e2e247b1cafe97d681c6c8",
+  "machine": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+  "cpu_count": 32,
+  "load_before": [
+    3.611328125,
+    3.60302734375,
+    3.63037109375
+  ],
+  "load_after": [
+    3.9814453125,
+    3.701171875,
+    3.662109375
+  ],
+  "elapsed_s": 40.974,
+  "groups": [
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 221.955,
+      "p95_ms": 222.936,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 70.109,
+        "engine_snapshot": 19.503,
+        "original_query_chain": 226.96
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "engine_snapshot": 5,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 258.792,
+      "p95_ms": 259.767,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 70.778,
+        "core_recall": 0.272,
+        "document_inventory": 0.406,
+        "document_sha": 3.041,
+        "engine_snapshot": 21.145,
+        "memory_snapshot": 27.93,
+        "observe": 6.688,
+        "original_query_chain": 217.4,
+        "prepare": 38.63,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.262
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "core_recall": 1,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "engine_snapshot": 7,
+        "memory_snapshot": 1,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 195.312,
+      "p95_ms": 195.377,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 66.704,
+        "engine_snapshot": 0.346,
+        "original_query_chain": 194.897
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "engine_snapshot": 5,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 231.977,
+      "p95_ms": 234.78,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 66.168,
+        "core_recall": 0.247,
+        "document_inventory": 0.414,
+        "document_sha": 3.443,
+        "engine_snapshot": 0.112,
+        "memory_snapshot": 5.867,
+        "observe": 12.635,
+        "original_query_chain": 209.645,
+        "prepare": 17.025,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.238
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "core_recall": 1,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "engine_snapshot": 7,
+        "memory_snapshot": 1,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 116.004,
+      "p95_ms": 116.082,
+      "phase_mean_ms": {
+        "document_inventory": 0.733,
+        "engine_snapshot": 19.553,
+        "original_query_chain": 120.361
+      },
+      "mean_calls": {
+        "document_inventory": 2,
+        "engine_snapshot": 2,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 516.447,
+      "p95_ms": 517.553,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 220.383,
+        "core_recall": 0.879,
+        "document_inventory": 0.841,
+        "document_sha": 6.118,
+        "engine_snapshot": 19.571,
+        "memory_snapshot": 31.497,
+        "observe": 6.777,
+        "original_query_chain": 271.912,
+        "prepare": 232.785,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.623
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 2,
+        "core_recall": 1,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "engine_snapshot": 14,
+        "memory_snapshot": 2,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 94.827,
+      "p95_ms": 95.695,
+      "phase_mean_ms": {
+        "document_inventory": 0.699,
+        "engine_snapshot": 0.166,
+        "original_query_chain": 95.111
+      },
+      "mean_calls": {
+        "document_inventory": 2,
+        "engine_snapshot": 2,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 491.309,
+      "p95_ms": 496.521,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 213.995,
+        "core_recall": 0.893,
+        "document_inventory": 0.822,
+        "document_sha": 6.069,
+        "engine_snapshot": 0.115,
+        "memory_snapshot": 10.717,
+        "observe": 7.384,
+        "original_query_chain": 273.108,
+        "prepare": 207.813,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.639
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 2,
+        "core_recall": 1,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "engine_snapshot": 14,
+        "memory_snapshot": 2,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 219.168,
+      "p95_ms": 219.404,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 71.83,
+        "engine_snapshot": 22.979,
+        "original_query_chain": 227.343
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "engine_snapshot": 5,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 257.509,
+      "p95_ms": 258.616,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 69.087,
+        "core_recall": 0.881,
+        "document_inventory": 0.413,
+        "document_sha": 3.115,
+        "engine_snapshot": 19.275,
+        "memory_snapshot": 26.264,
+        "observe": 6.845,
+        "original_query_chain": 212.882,
+        "prepare": 37.613,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.663
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "core_recall": 1,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "engine_snapshot": 7,
+        "memory_snapshot": 1,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 194.305,
+      "p95_ms": 194.694,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 66.781,
+        "engine_snapshot": 0.353,
+        "original_query_chain": 194.727
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "engine_snapshot": 5,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 234.435,
+      "p95_ms": 235.662,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 66.464,
+        "core_recall": 0.823,
+        "document_inventory": 0.374,
+        "document_sha": 3.071,
+        "engine_snapshot": 0.098,
+        "memory_snapshot": 5.363,
+        "observe": 7.036,
+        "original_query_chain": 210.05,
+        "prepare": 16.575,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.608
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "core_recall": 1,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "engine_snapshot": 7,
+        "memory_snapshot": 1,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 107.353,
+      "p95_ms": 116.083,
+      "phase_mean_ms": {
+        "document_inventory": 0.712,
+        "engine_snapshot": 20.164,
+        "original_query_chain": 108.406
+      },
+      "mean_calls": {
+        "document_inventory": 2,
+        "engine_snapshot": 2,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 522.471,
+      "p95_ms": 522.842,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 220.025,
+        "core_recall": 4.621,
+        "document_inventory": 0.85,
+        "document_sha": 6.23,
+        "engine_snapshot": 24.963,
+        "memory_snapshot": 37.23,
+        "observe": 4.706,
+        "original_query_chain": 272.386,
+        "prepare": 241.833,
+        "store_connect_factory": 0.005,
+        "store_scan": 3.131
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 2,
+        "core_recall": 1,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "engine_snapshot": 14,
+        "memory_snapshot": 2,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 95.188,
+      "p95_ms": 95.252,
+      "phase_mean_ms": {
+        "document_inventory": 0.694,
+        "engine_snapshot": 0.176,
+        "original_query_chain": 95.121
+      },
+      "mean_calls": {
+        "document_inventory": 2,
+        "engine_snapshot": 2,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 490.859,
+      "p95_ms": 490.986,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 214.205,
+        "core_recall": 4.428,
+        "document_inventory": 0.795,
+        "document_sha": 6.365,
+        "engine_snapshot": 0.108,
+        "memory_snapshot": 10.706,
+        "observe": 3.858,
+        "original_query_chain": 272.484,
+        "prepare": 209.535,
+        "store_connect_factory": 0.004,
+        "store_scan": 2.937
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 2,
+        "core_recall": 1,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "engine_snapshot": 14,
+        "memory_snapshot": 2,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 219.772,
+      "p95_ms": 221.897,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 69.786,
+        "engine_snapshot": 19.691,
+        "original_query_chain": 220.595
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "engine_snapshot": 5,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 261.213,
+      "p95_ms": 261.268,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 68.992,
+        "core_recall": 4.394,
+        "document_inventory": 0.414,
+        "document_sha": 3.069,
+        "engine_snapshot": 19.315,
+        "memory_snapshot": 26.129,
+        "observe": 6.667,
+        "original_query_chain": 213.14,
+        "prepare": 41.059,
+        "store_connect_factory": 0.006,
+        "store_scan": 2.939
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "core_recall": 1,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "engine_snapshot": 7,
+        "memory_snapshot": 1,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "enabled": false,
+      "samples": 5,
+      "p50_ms": 195.325,
+      "p95_ms": 196.202,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 66.759,
+        "engine_snapshot": 0.351,
+        "original_query_chain": 195.264
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "engine_snapshot": 5,
+        "original_query_chain": 1
+      }
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "enabled": true,
+      "samples": 5,
+      "p50_ms": 234.98,
+      "p95_ms": 238.605,
+      "phase_mean_ms": {
+        "canonical_and_rule_plan": 68.279,
+        "core_recall": 4.407,
+        "document_inventory": 0.382,
+        "document_sha": 3.019,
+        "engine_snapshot": 0.091,
+        "memory_snapshot": 5.382,
+        "observe": 5.62,
+        "original_query_chain": 213.161,
+        "prepare": 20.247,
+        "store_connect_factory": 0.006,
+        "store_scan": 2.946
+      },
+      "mean_calls": {
+        "canonical_and_rule_plan": 1,
+        "core_recall": 1,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "engine_snapshot": 7,
+        "memory_snapshot": 1,
+        "observe": 1,
+        "original_query_chain": 1,
+        "prepare": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1
+      }
+    }
+  ],
+  "samples": [
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 250.549,
+      "cpu_ms": 250.533,
+      "phase_ms": {
+        "engine_snapshot": 19.1,
+        "canonical_and_rule_plan": 71.244,
+        "original_query_chain": 250.54
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 259.767,
+      "cpu_ms": 253.867,
+      "phase_ms": {
+        "engine_snapshot": 19.461,
+        "document_inventory": 0.421,
+        "document_sha": 3.058,
+        "memory_snapshot": 26.186,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.322,
+        "core_recall": 0.335,
+        "prepare": 36.886,
+        "canonical_and_rule_plan": 72.524,
+        "original_query_chain": 216.319,
+        "observe": 6.288
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 285.046,
+      "cpu_ms": 276.153,
+      "phase_ms": {
+        "engine_snapshot": 28.555,
+        "document_inventory": 0.408,
+        "document_sha": 3.012,
+        "memory_snapshot": 35.243,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.213,
+        "core_recall": 0.223,
+        "prepare": 45.711,
+        "canonical_and_rule_plan": 70.403,
+        "original_query_chain": 229.684,
+        "observe": 9.337
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 219.137,
+      "cpu_ms": 219.105,
+      "phase_ms": {
+        "engine_snapshot": 19.882,
+        "canonical_and_rule_plan": 69.788,
+        "original_query_chain": 219.116
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 221.955,
+      "cpu_ms": 221.91,
+      "phase_ms": {
+        "engine_snapshot": 19.499,
+        "canonical_and_rule_plan": 69.575,
+        "original_query_chain": 221.939
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 252.632,
+      "cpu_ms": 247.111,
+      "phase_ms": {
+        "engine_snapshot": 18.935,
+        "document_inventory": 0.363,
+        "document_sha": 3.002,
+        "memory_snapshot": 25.436,
+        "store_connect_factory": 0.004,
+        "store_scan": 0.199,
+        "core_recall": 0.206,
+        "prepare": 36.031,
+        "canonical_and_rule_plan": 68.571,
+        "original_query_chain": 210.422,
+        "observe": 5.939
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 258.792,
+      "cpu_ms": 253.2,
+      "phase_ms": {
+        "engine_snapshot": 19.607,
+        "document_inventory": 0.403,
+        "document_sha": 3.032,
+        "memory_snapshot": 26.72,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.302,
+        "core_recall": 0.311,
+        "prepare": 37.573,
+        "canonical_and_rule_plan": 69.935,
+        "original_query_chain": 214.819,
+        "observe": 6.049
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 222.936,
+      "cpu_ms": 222.929,
+      "phase_ms": {
+        "engine_snapshot": 19.657,
+        "canonical_and_rule_plan": 69.983,
+        "original_query_chain": 222.911
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 220.308,
+      "cpu_ms": 220.301,
+      "phase_ms": {
+        "engine_snapshot": 19.377,
+        "canonical_and_rule_plan": 69.954,
+        "original_query_chain": 220.293
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 258.744,
+      "cpu_ms": 253.356,
+      "phase_ms": {
+        "engine_snapshot": 19.168,
+        "document_inventory": 0.434,
+        "document_sha": 3.103,
+        "memory_snapshot": 26.067,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.273,
+        "core_recall": 0.283,
+        "prepare": 36.949,
+        "canonical_and_rule_plan": 72.455,
+        "original_query_chain": 215.754,
+        "observe": 5.826
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 193.645,
+      "cpu_ms": 193.63,
+      "phase_ms": {
+        "engine_snapshot": 0.331,
+        "canonical_and_rule_plan": 66.77,
+        "original_query_chain": 193.63
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 231.232,
+      "cpu_ms": 225.699,
+      "phase_ms": {
+        "engine_snapshot": 0.087,
+        "document_inventory": 0.365,
+        "document_sha": 3.005,
+        "memory_snapshot": 5.179,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.271,
+        "core_recall": 0.283,
+        "prepare": 15.823,
+        "canonical_and_rule_plan": 66.014,
+        "original_query_chain": 209.171,
+        "observe": 6.015
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 231.977,
+      "cpu_ms": 226.451,
+      "phase_ms": {
+        "engine_snapshot": 0.088,
+        "document_inventory": 0.368,
+        "document_sha": 3.023,
+        "memory_snapshot": 5.211,
+        "store_connect_factory": 0.004,
+        "store_scan": 0.202,
+        "core_recall": 0.209,
+        "prepare": 15.666,
+        "canonical_and_rule_plan": 66.293,
+        "original_query_chain": 210.186,
+        "observe": 5.939
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 195.377,
+      "cpu_ms": 195.363,
+      "phase_ms": {
+        "engine_snapshot": 0.326,
+        "canonical_and_rule_plan": 66.568,
+        "original_query_chain": 195.363
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 195.312,
+      "cpu_ms": 195.305,
+      "phase_ms": {
+        "engine_snapshot": 0.365,
+        "canonical_and_rule_plan": 66.584,
+        "original_query_chain": 195.294
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 234.78,
+      "cpu_ms": 227.843,
+      "phase_ms": {
+        "engine_snapshot": 0.149,
+        "document_inventory": 0.409,
+        "document_sha": 3.058,
+        "memory_snapshot": 5.538,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.247,
+        "core_recall": 0.256,
+        "prepare": 16.499,
+        "canonical_and_rule_plan": 66.485,
+        "original_query_chain": 210.573,
+        "observe": 7.456
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 269.117,
+      "cpu_ms": 232.156,
+      "phase_ms": {
+        "engine_snapshot": 0.147,
+        "document_inventory": 0.553,
+        "document_sha": 5.167,
+        "memory_snapshot": 8.155,
+        "store_connect_factory": 0.004,
+        "store_scan": 0.219,
+        "core_recall": 0.226,
+        "prepare": 21.247,
+        "canonical_and_rule_plan": 66.673,
+        "original_query_chain": 210.233,
+        "observe": 37.333
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 196.618,
+      "cpu_ms": 196.599,
+      "phase_ms": {
+        "engine_snapshot": 0.352,
+        "canonical_and_rule_plan": 67.273,
+        "original_query_chain": 196.6
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 193.613,
+      "cpu_ms": 193.602,
+      "phase_ms": {
+        "engine_snapshot": 0.357,
+        "canonical_and_rule_plan": 66.326,
+        "original_query_chain": 193.596
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 0,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 230.589,
+      "cpu_ms": 224.586,
+      "phase_ms": {
+        "engine_snapshot": 0.091,
+        "document_inventory": 0.375,
+        "document_sha": 2.962,
+        "memory_snapshot": 5.253,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.253,
+        "core_recall": 0.261,
+        "prepare": 15.891,
+        "canonical_and_rule_plan": 65.375,
+        "original_query_chain": 208.062,
+        "observe": 6.431
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 261.227,
+      "cpu_ms": 260.847,
+      "phase_ms": {
+        "engine_snapshot": 35.589,
+        "canonical_and_rule_plan": 81.627,
+        "original_query_chain": 261.206
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 258.809,
+      "cpu_ms": 253.164,
+      "phase_ms": {
+        "engine_snapshot": 19.176,
+        "document_inventory": 0.388,
+        "document_sha": 3.285,
+        "memory_snapshot": 26.408,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.646,
+        "core_recall": 0.872,
+        "prepare": 37.764,
+        "canonical_and_rule_plan": 69.662,
+        "original_query_chain": 214.737,
+        "observe": 6.066
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 258.616,
+      "cpu_ms": 253.274,
+      "phase_ms": {
+        "engine_snapshot": 19.364,
+        "document_inventory": 0.419,
+        "document_sha": 3.127,
+        "memory_snapshot": 26.253,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.668,
+        "core_recall": 0.885,
+        "prepare": 37.643,
+        "canonical_and_rule_plan": 69.548,
+        "original_query_chain": 214.897,
+        "observe": 5.795
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 218.387,
+      "cpu_ms": 218.373,
+      "phase_ms": {
+        "engine_snapshot": 19.722,
+        "canonical_and_rule_plan": 69.362,
+        "original_query_chain": 218.371
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 219.168,
+      "cpu_ms": 219.156,
+      "phase_ms": {
+        "engine_snapshot": 20.077,
+        "canonical_and_rule_plan": 69.336,
+        "original_query_chain": 219.153
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 257.509,
+      "cpu_ms": 249.765,
+      "phase_ms": {
+        "engine_snapshot": 19.264,
+        "document_inventory": 0.419,
+        "document_sha": 3.114,
+        "memory_snapshot": 26.087,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.674,
+        "core_recall": 0.891,
+        "prepare": 37.379,
+        "canonical_and_rule_plan": 68.701,
+        "original_query_chain": 211.598,
+        "observe": 8.255
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 255.821,
+      "cpu_ms": 250.593,
+      "phase_ms": {
+        "engine_snapshot": 19.22,
+        "document_inventory": 0.44,
+        "document_sha": 2.991,
+        "memory_snapshot": 26.479,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.642,
+        "core_recall": 0.855,
+        "prepare": 37.977,
+        "canonical_and_rule_plan": 68.791,
+        "original_query_chain": 211.912,
+        "observe": 5.67
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 219.404,
+      "cpu_ms": 219.398,
+      "phase_ms": {
+        "engine_snapshot": 19.825,
+        "canonical_and_rule_plan": 69.817,
+        "original_query_chain": 219.386
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 218.618,
+      "cpu_ms": 218.611,
+      "phase_ms": {
+        "engine_snapshot": 19.68,
+        "canonical_and_rule_plan": 69.009,
+        "original_query_chain": 218.599
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 257.482,
+      "cpu_ms": 249.68,
+      "phase_ms": {
+        "engine_snapshot": 19.351,
+        "document_inventory": 0.4,
+        "document_sha": 3.058,
+        "memory_snapshot": 26.092,
+        "store_connect_factory": 0.007,
+        "store_scan": 0.687,
+        "core_recall": 0.903,
+        "prepare": 37.304,
+        "canonical_and_rule_plan": 68.731,
+        "original_query_chain": 211.268,
+        "observe": 8.441
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 194.079,
+      "cpu_ms": 194.067,
+      "phase_ms": {
+        "engine_snapshot": 0.348,
+        "canonical_and_rule_plan": 66.564,
+        "original_query_chain": 194.062
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 231.71,
+      "cpu_ms": 226.374,
+      "phase_ms": {
+        "engine_snapshot": 0.094,
+        "document_inventory": 0.389,
+        "document_sha": 3.058,
+        "memory_snapshot": 5.403,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.595,
+        "core_recall": 0.812,
+        "prepare": 16.839,
+        "canonical_and_rule_plan": 65.968,
+        "original_query_chain": 208.914,
+        "observe": 5.741
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 237.329,
+      "cpu_ms": 232.01,
+      "phase_ms": {
+        "engine_snapshot": 0.135,
+        "document_inventory": 0.383,
+        "document_sha": 3.292,
+        "memory_snapshot": 5.827,
+        "store_connect_factory": 0.007,
+        "store_scan": 0.65,
+        "core_recall": 0.87,
+        "prepare": 17.251,
+        "canonical_and_rule_plan": 67.837,
+        "original_query_chain": 214.084,
+        "observe": 5.731
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 197.088,
+      "cpu_ms": 197.065,
+      "phase_ms": {
+        "engine_snapshot": 0.35,
+        "canonical_and_rule_plan": 68.595,
+        "original_query_chain": 197.07
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 193.561,
+      "cpu_ms": 193.551,
+      "phase_ms": {
+        "engine_snapshot": 0.343,
+        "canonical_and_rule_plan": 66.127,
+        "original_query_chain": 193.542
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 235.662,
+      "cpu_ms": 227.58,
+      "phase_ms": {
+        "engine_snapshot": 0.089,
+        "document_inventory": 0.375,
+        "document_sha": 3.026,
+        "memory_snapshot": 5.242,
+        "store_connect_factory": 0.006,
+        "store_scan": 0.655,
+        "core_recall": 0.87,
+        "prepare": 16.516,
+        "canonical_and_rule_plan": 66.442,
+        "original_query_chain": 210.334,
+        "observe": 8.603
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 234.435,
+      "cpu_ms": 225.997,
+      "phase_ms": {
+        "engine_snapshot": 0.088,
+        "document_inventory": 0.368,
+        "document_sha": 3.031,
+        "memory_snapshot": 5.236,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.579,
+        "core_recall": 0.799,
+        "prepare": 16.23,
+        "canonical_and_rule_plan": 66.141,
+        "original_query_chain": 209.017,
+        "observe": 8.943
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 194.305,
+      "cpu_ms": 194.298,
+      "phase_ms": {
+        "engine_snapshot": 0.354,
+        "canonical_and_rule_plan": 66.248,
+        "original_query_chain": 194.285
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 194.694,
+      "cpu_ms": 194.687,
+      "phase_ms": {
+        "engine_snapshot": 0.369,
+        "canonical_and_rule_plan": 66.372,
+        "original_query_chain": 194.676
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 230.326,
+      "cpu_ms": 224.613,
+      "phase_ms": {
+        "engine_snapshot": 0.084,
+        "document_inventory": 0.357,
+        "document_sha": 2.95,
+        "memory_snapshot": 5.109,
+        "store_connect_factory": 0.004,
+        "store_scan": 0.559,
+        "core_recall": 0.762,
+        "prepare": 16.038,
+        "canonical_and_rule_plan": 65.933,
+        "original_query_chain": 207.899,
+        "observe": 6.162
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 168.548,
+      "cpu_ms": 168.543,
+      "phase_ms": {
+        "engine_snapshot": 19.878,
+        "document_inventory": 0.925,
+        "original_query_chain": 168.528
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 517.553,
+      "cpu_ms": 510.702,
+      "phase_ms": {
+        "engine_snapshot": 20.123,
+        "document_inventory": 0.818,
+        "document_sha": 6.069,
+        "memory_snapshot": 32.023,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.641,
+        "core_recall": 0.917,
+        "canonical_and_rule_plan": 219.673,
+        "prepare": 233.45,
+        "original_query_chain": 271.375,
+        "observe": 7.319
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 516.397,
+      "cpu_ms": 510.802,
+      "phase_ms": {
+        "engine_snapshot": 19.241,
+        "document_inventory": 0.826,
+        "document_sha": 6.065,
+        "memory_snapshot": 31.047,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.636,
+        "core_recall": 0.891,
+        "canonical_and_rule_plan": 221.084,
+        "prepare": 232.287,
+        "original_query_chain": 272.857,
+        "observe": 5.986
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 100.188,
+      "cpu_ms": 100.182,
+      "phase_ms": {
+        "engine_snapshot": 19.401,
+        "document_inventory": 0.675,
+        "original_query_chain": 100.17
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 116.004,
+      "cpu_ms": 115.973,
+      "phase_ms": {
+        "engine_snapshot": 19.248,
+        "document_inventory": 0.679,
+        "original_query_chain": 115.992
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 516.447,
+      "cpu_ms": 510.706,
+      "phase_ms": {
+        "engine_snapshot": 19.528,
+        "document_inventory": 0.84,
+        "document_sha": 6.136,
+        "memory_snapshot": 31.398,
+        "store_connect_factory": 0.004,
+        "store_scan": 0.6,
+        "core_recall": 0.847,
+        "canonical_and_rule_plan": 220.881,
+        "prepare": 232.926,
+        "original_query_chain": 272.042,
+        "observe": 6.131
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 517.661,
+      "cpu_ms": 510.114,
+      "phase_ms": {
+        "engine_snapshot": 19.676,
+        "document_inventory": 0.864,
+        "document_sha": 6.07,
+        "memory_snapshot": 31.631,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.619,
+        "core_recall": 0.866,
+        "canonical_and_rule_plan": 219.294,
+        "prepare": 232.34,
+        "original_query_chain": 271.636,
+        "observe": 8.148
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 101.065,
+      "cpu_ms": 101.062,
+      "phase_ms": {
+        "engine_snapshot": 19.968,
+        "document_inventory": 0.669,
+        "original_query_chain": 101.048
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 116.082,
+      "cpu_ms": 116.079,
+      "phase_ms": {
+        "engine_snapshot": 19.268,
+        "document_inventory": 0.718,
+        "original_query_chain": 116.069
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 516.352,
+      "cpu_ms": 510.463,
+      "phase_ms": {
+        "engine_snapshot": 19.285,
+        "document_inventory": 0.859,
+        "document_sha": 6.251,
+        "memory_snapshot": 31.386,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.619,
+        "core_recall": 0.876,
+        "canonical_and_rule_plan": 220.985,
+        "prepare": 232.922,
+        "original_query_chain": 271.65,
+        "observe": 6.302
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 95.695,
+      "cpu_ms": 95.693,
+      "phase_ms": {
+        "engine_snapshot": 0.173,
+        "document_inventory": 0.705,
+        "original_query_chain": 95.676
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 489.105,
+      "cpu_ms": 482.262,
+      "phase_ms": {
+        "engine_snapshot": 0.092,
+        "document_inventory": 0.76,
+        "document_sha": 5.985,
+        "memory_snapshot": 10.145,
+        "store_connect_factory": 0.004,
+        "store_scan": 0.555,
+        "core_recall": 0.803,
+        "canonical_and_rule_plan": 213.001,
+        "prepare": 203.35,
+        "original_query_chain": 273.11,
+        "observe": 7.275
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 491.309,
+      "cpu_ms": 484.2,
+      "phase_ms": {
+        "engine_snapshot": 0.171,
+        "document_inventory": 0.878,
+        "document_sha": 6.099,
+        "memory_snapshot": 11.337,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.629,
+        "core_recall": 0.878,
+        "canonical_and_rule_plan": 214.306,
+        "prepare": 206.17,
+        "original_query_chain": 272.307,
+        "observe": 7.512
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 94.242,
+      "cpu_ms": 94.236,
+      "phase_ms": {
+        "engine_snapshot": 0.164,
+        "document_inventory": 0.716,
+        "original_query_chain": 94.221
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 94.616,
+      "cpu_ms": 94.612,
+      "phase_ms": {
+        "engine_snapshot": 0.166,
+        "document_inventory": 0.722,
+        "original_query_chain": 94.604
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 496.521,
+      "cpu_ms": 488.005,
+      "phase_ms": {
+        "engine_snapshot": 0.108,
+        "document_inventory": 0.82,
+        "document_sha": 6.019,
+        "memory_snapshot": 10.692,
+        "store_connect_factory": 0.004,
+        "store_scan": 0.661,
+        "core_recall": 0.917,
+        "canonical_and_rule_plan": 215.412,
+        "prepare": 207.858,
+        "original_query_chain": 274.357,
+        "observe": 8.904
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 501.813,
+      "cpu_ms": 494.835,
+      "phase_ms": {
+        "engine_snapshot": 0.102,
+        "document_inventory": 0.828,
+        "document_sha": 6.223,
+        "memory_snapshot": 10.911,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.653,
+        "core_recall": 0.914,
+        "canonical_and_rule_plan": 213.509,
+        "prepare": 216.264,
+        "original_query_chain": 272.774,
+        "observe": 7.32
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 96.259,
+      "cpu_ms": 96.255,
+      "phase_ms": {
+        "engine_snapshot": 0.168,
+        "document_inventory": 0.66,
+        "original_query_chain": 96.24
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 94.827,
+      "cpu_ms": 94.82,
+      "phase_ms": {
+        "engine_snapshot": 0.161,
+        "document_inventory": 0.693,
+        "original_query_chain": 94.815
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 16,
+      "match": "hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 489.981,
+      "cpu_ms": 484.519,
+      "phase_ms": {
+        "engine_snapshot": 0.1,
+        "document_inventory": 0.822,
+        "document_sha": 6.018,
+        "memory_snapshot": 10.499,
+        "store_connect_factory": 0.005,
+        "store_scan": 0.695,
+        "core_recall": 0.953,
+        "canonical_and_rule_plan": 213.747,
+        "prepare": 205.424,
+        "original_query_chain": 272.99,
+        "observe": 5.911
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 221.897,
+      "cpu_ms": 221.889,
+      "phase_ms": {
+        "engine_snapshot": 19.779,
+        "canonical_and_rule_plan": 69.972,
+        "original_query_chain": 221.878
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 260.854,
+      "cpu_ms": 254.887,
+      "phase_ms": {
+        "engine_snapshot": 19.287,
+        "document_inventory": 0.43,
+        "document_sha": 3.061,
+        "memory_snapshot": 26.169,
+        "store_connect_factory": 0.006,
+        "store_scan": 2.946,
+        "core_recall": 4.417,
+        "prepare": 41.071,
+        "canonical_and_rule_plan": 69.136,
+        "original_query_chain": 213.182,
+        "observe": 6.378
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 261.213,
+      "cpu_ms": 255.083,
+      "phase_ms": {
+        "engine_snapshot": 19.558,
+        "document_inventory": 0.424,
+        "document_sha": 3.052,
+        "memory_snapshot": 26.386,
+        "store_connect_factory": 0.005,
+        "store_scan": 2.892,
+        "core_recall": 4.34,
+        "prepare": 41.148,
+        "canonical_and_rule_plan": 68.747,
+        "original_query_chain": 213.263,
+        "observe": 6.568
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 218.852,
+      "cpu_ms": 218.841,
+      "phase_ms": {
+        "engine_snapshot": 19.372,
+        "canonical_and_rule_plan": 69.509,
+        "original_query_chain": 218.836
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 219.63,
+      "cpu_ms": 219.619,
+      "phase_ms": {
+        "engine_snapshot": 19.642,
+        "canonical_and_rule_plan": 69.873,
+        "original_query_chain": 219.611
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 261.268,
+      "cpu_ms": 255.087,
+      "phase_ms": {
+        "engine_snapshot": 19.384,
+        "document_inventory": 0.401,
+        "document_sha": 3.039,
+        "memory_snapshot": 26.103,
+        "store_connect_factory": 0.006,
+        "store_scan": 2.987,
+        "core_recall": 4.476,
+        "prepare": 41.346,
+        "canonical_and_rule_plan": 69.091,
+        "original_query_chain": 213.019,
+        "observe": 6.65
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 260.211,
+      "cpu_ms": 254.242,
+      "phase_ms": {
+        "engine_snapshot": 19.323,
+        "document_inventory": 0.43,
+        "document_sha": 3.11,
+        "memory_snapshot": 26.222,
+        "store_connect_factory": 0.006,
+        "store_scan": 2.91,
+        "core_recall": 4.351,
+        "prepare": 41.248,
+        "canonical_and_rule_plan": 68.987,
+        "original_query_chain": 212.314,
+        "observe": 6.413
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 219.772,
+      "cpu_ms": 219.765,
+      "phase_ms": {
+        "engine_snapshot": 19.763,
+        "canonical_and_rule_plan": 69.77,
+        "original_query_chain": 219.755
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 222.913,
+      "cpu_ms": 222.877,
+      "phase_ms": {
+        "engine_snapshot": 19.898,
+        "canonical_and_rule_plan": 69.808,
+        "original_query_chain": 222.896
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 262.042,
+      "cpu_ms": 255.187,
+      "phase_ms": {
+        "engine_snapshot": 19.025,
+        "document_inventory": 0.386,
+        "document_sha": 3.084,
+        "memory_snapshot": 25.764,
+        "store_connect_factory": 0.005,
+        "store_scan": 2.962,
+        "core_recall": 4.387,
+        "prepare": 40.48,
+        "canonical_and_rule_plan": 68.997,
+        "original_query_chain": 213.922,
+        "observe": 7.328
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 193.78,
+      "cpu_ms": 193.773,
+      "phase_ms": {
+        "engine_snapshot": 0.349,
+        "canonical_and_rule_plan": 66.151,
+        "original_query_chain": 193.76
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 238.605,
+      "cpu_ms": 231.743,
+      "phase_ms": {
+        "engine_snapshot": 0.097,
+        "document_inventory": 0.389,
+        "document_sha": 2.996,
+        "memory_snapshot": 5.368,
+        "store_connect_factory": 0.005,
+        "store_scan": 2.773,
+        "core_recall": 4.195,
+        "prepare": 20.11,
+        "canonical_and_rule_plan": 67.054,
+        "original_query_chain": 210.948,
+        "observe": 7.285
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 256.592,
+      "cpu_ms": 247.043,
+      "phase_ms": {
+        "engine_snapshot": 0.091,
+        "document_inventory": 0.382,
+        "document_sha": 3.127,
+        "memory_snapshot": 5.651,
+        "store_connect_factory": 0.006,
+        "store_scan": 2.923,
+        "core_recall": 4.434,
+        "prepare": 20.48,
+        "canonical_and_rule_plan": 75.795,
+        "original_query_chain": 225.759,
+        "observe": 10.033
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 196.548,
+      "cpu_ms": 196.541,
+      "phase_ms": {
+        "engine_snapshot": 0.366,
+        "canonical_and_rule_plan": 67.034,
+        "original_query_chain": 196.53
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 196.202,
+      "cpu_ms": 196.198,
+      "phase_ms": {
+        "engine_snapshot": 0.351,
+        "canonical_and_rule_plan": 67.361,
+        "original_query_chain": 196.182
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 231.834,
+      "cpu_ms": 230.546,
+      "phase_ms": {
+        "engine_snapshot": 0.088,
+        "document_inventory": 0.38,
+        "document_sha": 2.985,
+        "memory_snapshot": 5.291,
+        "store_connect_factory": 0.005,
+        "store_scan": 2.97,
+        "core_recall": 4.378,
+        "prepare": 20.135,
+        "canonical_and_rule_plan": 66.144,
+        "original_query_chain": 209.753,
+        "observe": 1.747
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 234.485,
+      "cpu_ms": 230.457,
+      "phase_ms": {
+        "engine_snapshot": 0.089,
+        "document_inventory": 0.376,
+        "document_sha": 2.976,
+        "memory_snapshot": 5.257,
+        "store_connect_factory": 0.007,
+        "store_scan": 3.064,
+        "core_recall": 4.573,
+        "prepare": 20.221,
+        "canonical_and_rule_plan": 66.196,
+        "original_query_chain": 209.477,
+        "observe": 4.515
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 195.325,
+      "cpu_ms": 195.318,
+      "phase_ms": {
+        "engine_snapshot": 0.347,
+        "canonical_and_rule_plan": 66.721,
+        "original_query_chain": 195.301
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 194.57,
+      "cpu_ms": 194.564,
+      "phase_ms": {
+        "engine_snapshot": 0.342,
+        "canonical_and_rule_plan": 66.527,
+        "original_query_chain": 194.549
+      },
+      "calls": {
+        "engine_snapshot": 5,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "no_hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 234.98,
+      "cpu_ms": 230.968,
+      "phase_ms": {
+        "engine_snapshot": 0.09,
+        "document_inventory": 0.385,
+        "document_sha": 3.012,
+        "memory_snapshot": 5.343,
+        "store_connect_factory": 0.006,
+        "store_scan": 2.998,
+        "core_recall": 4.457,
+        "prepare": 20.29,
+        "canonical_and_rule_plan": 66.204,
+        "original_query_chain": 209.868,
+        "observe": 4.522
+      },
+      "calls": {
+        "engine_snapshot": 7,
+        "document_inventory": 1,
+        "document_sha": 20,
+        "memory_snapshot": 1,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "prepare": 1,
+        "canonical_and_rule_plan": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 107.353,
+      "cpu_ms": 107.333,
+      "phase_ms": {
+        "engine_snapshot": 22.78,
+        "document_inventory": 0.731,
+        "original_query_chain": 107.328
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 522.842,
+      "cpu_ms": 518.322,
+      "phase_ms": {
+        "engine_snapshot": 19.694,
+        "document_inventory": 0.929,
+        "document_sha": 6.726,
+        "memory_snapshot": 32.943,
+        "store_connect_factory": 0.005,
+        "store_scan": 3.005,
+        "core_recall": 4.462,
+        "canonical_and_rule_plan": 220.314,
+        "prepare": 236.38,
+        "original_query_chain": 274.73,
+        "observe": 4.955
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 516.715,
+      "cpu_ms": 512.58,
+      "phase_ms": {
+        "engine_snapshot": 19.175,
+        "document_inventory": 0.811,
+        "document_sha": 6.132,
+        "memory_snapshot": 31.228,
+        "store_connect_factory": 0.005,
+        "store_scan": 3.261,
+        "core_recall": 4.721,
+        "canonical_and_rule_plan": 219.701,
+        "prepare": 234.735,
+        "original_query_chain": 271.843,
+        "observe": 4.516
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 101.304,
+      "cpu_ms": 101.286,
+      "phase_ms": {
+        "engine_snapshot": 19.773,
+        "document_inventory": 0.692,
+        "original_query_chain": 101.282
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 116.829,
+      "cpu_ms": 116.826,
+      "phase_ms": {
+        "engine_snapshot": 19.693,
+        "document_inventory": 0.698,
+        "original_query_chain": 116.817
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 522.471,
+      "cpu_ms": 517.918,
+      "phase_ms": {
+        "engine_snapshot": 20.736,
+        "document_inventory": 0.826,
+        "document_sha": 6.08,
+        "memory_snapshot": 32.797,
+        "store_connect_factory": 0.007,
+        "store_scan": 3.125,
+        "core_recall": 4.655,
+        "canonical_and_rule_plan": 221.731,
+        "prepare": 238.553,
+        "original_query_chain": 273.172,
+        "observe": 5.054
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 521.23,
+      "cpu_ms": 517.051,
+      "phase_ms": {
+        "engine_snapshot": 19.876,
+        "document_inventory": 0.811,
+        "document_sha": 6.179,
+        "memory_snapshot": 32.03,
+        "store_connect_factory": 0.005,
+        "store_scan": 3.381,
+        "core_recall": 4.848,
+        "canonical_and_rule_plan": 219.458,
+        "prepare": 239.58,
+        "original_query_chain": 271.481,
+        "observe": 4.533
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 100.55,
+      "cpu_ms": 100.527,
+      "phase_ms": {
+        "engine_snapshot": 19.223,
+        "document_inventory": 0.741,
+        "original_query_chain": 100.529
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 116.083,
+      "cpu_ms": 116.059,
+      "phase_ms": {
+        "engine_snapshot": 19.35,
+        "document_inventory": 0.698,
+        "original_query_chain": 116.072
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": false,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 540.736,
+      "cpu_ms": 536.652,
+      "phase_ms": {
+        "engine_snapshot": 45.335,
+        "document_inventory": 0.874,
+        "document_sha": 6.035,
+        "memory_snapshot": 57.15,
+        "store_connect_factory": 0.005,
+        "store_scan": 2.882,
+        "core_recall": 4.42,
+        "canonical_and_rule_plan": 218.923,
+        "prepare": 259.919,
+        "original_query_chain": 270.706,
+        "observe": 4.473
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": false,
+      "wall_ms": 94.602,
+      "cpu_ms": 94.598,
+      "phase_ms": {
+        "engine_snapshot": 0.177,
+        "document_inventory": 0.723,
+        "original_query_chain": 94.58
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 0,
+      "enabled": true,
+      "wall_ms": 490.859,
+      "cpu_ms": 486.602,
+      "phase_ms": {
+        "engine_snapshot": 0.097,
+        "document_inventory": 0.786,
+        "document_sha": 5.994,
+        "memory_snapshot": 10.312,
+        "store_connect_factory": 0.005,
+        "store_scan": 2.941,
+        "core_recall": 4.47,
+        "canonical_and_rule_plan": 213.145,
+        "prepare": 208.451,
+        "original_query_chain": 272.131,
+        "observe": 4.694
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": true,
+      "wall_ms": 490.986,
+      "cpu_ms": 486.146,
+      "phase_ms": {
+        "engine_snapshot": 0.093,
+        "document_inventory": 0.757,
+        "document_sha": 5.991,
+        "memory_snapshot": 10.282,
+        "store_connect_factory": 0.004,
+        "store_scan": 2.792,
+        "core_recall": 4.245,
+        "canonical_and_rule_plan": 213.193,
+        "prepare": 207.417,
+        "original_query_chain": 272.673,
+        "observe": 5.324
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 1,
+      "enabled": false,
+      "wall_ms": 95.188,
+      "cpu_ms": 95.185,
+      "phase_ms": {
+        "engine_snapshot": 0.17,
+        "document_inventory": 0.682,
+        "original_query_chain": 95.166
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": false,
+      "wall_ms": 95.659,
+      "cpu_ms": 95.656,
+      "phase_ms": {
+        "engine_snapshot": 0.17,
+        "document_inventory": 0.725,
+        "original_query_chain": 95.648
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 2,
+      "enabled": true,
+      "wall_ms": 490.277,
+      "cpu_ms": 486.057,
+      "phase_ms": {
+        "engine_snapshot": 0.1,
+        "document_inventory": 0.747,
+        "document_sha": 5.981,
+        "memory_snapshot": 10.136,
+        "store_connect_factory": 0.004,
+        "store_scan": 3.165,
+        "core_recall": 4.621,
+        "canonical_and_rule_plan": 213.147,
+        "prepare": 207.663,
+        "original_query_chain": 272.431,
+        "observe": 4.636
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": true,
+      "wall_ms": 490.822,
+      "cpu_ms": 488.344,
+      "phase_ms": {
+        "engine_snapshot": 0.152,
+        "document_inventory": 0.908,
+        "document_sha": 7.866,
+        "memory_snapshot": 12.526,
+        "store_connect_factory": 0.005,
+        "store_scan": 2.933,
+        "core_recall": 4.464,
+        "canonical_and_rule_plan": 212.949,
+        "prepare": 211.054,
+        "original_query_chain": 271.615,
+        "observe": 2.828
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 3,
+      "enabled": false,
+      "wall_ms": 94.993,
+      "cpu_ms": 94.99,
+      "phase_ms": {
+        "engine_snapshot": 0.181,
+        "document_inventory": 0.658,
+        "original_query_chain": 94.971
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": false,
+      "wall_ms": 95.252,
+      "cpu_ms": 95.245,
+      "phase_ms": {
+        "engine_snapshot": 0.183,
+        "document_inventory": 0.68,
+        "original_query_chain": 95.24
+      },
+      "calls": {
+        "engine_snapshot": 2,
+        "document_inventory": 2,
+        "original_query_chain": 1
+      },
+      "status": "insufficient_evidence",
+      "consumed": [],
+      "rows": null
+    },
+    {
+      "size": 128,
+      "match": "hit",
+      "warm": true,
+      "repeat": 4,
+      "enabled": true,
+      "wall_ms": 493.871,
+      "cpu_ms": 492.445,
+      "phase_ms": {
+        "engine_snapshot": 0.099,
+        "document_inventory": 0.779,
+        "document_sha": 5.993,
+        "memory_snapshot": 10.272,
+        "store_connect_factory": 0.004,
+        "store_scan": 2.855,
+        "core_recall": 4.338,
+        "canonical_and_rule_plan": 218.59,
+        "prepare": 213.09,
+        "original_query_chain": 273.569,
+        "observe": 1.808
+      },
+      "calls": {
+        "engine_snapshot": 14,
+        "document_inventory": 2,
+        "document_sha": 40,
+        "memory_snapshot": 2,
+        "store_connect_factory": 2,
+        "store_scan": 1,
+        "core_recall": 1,
+        "canonical_and_rule_plan": 2,
+        "prepare": 1,
+        "original_query_chain": 1,
+        "observe": 1
+      },
+      "status": "ok",
+      "consumed": [
+        "profile-0"
+      ],
+      "rows": [
+        {
+          "销售额": 4188944.0
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "No other agent evaluation/test job runs concurrently; unrelated host workload is not controllable.",
+    "Five samples per condition; descriptive quantiles, no statistical speedup claim.",
+    "Cold means fresh engine caches, not cleared OS page cache.",
+    "Stage wrappers measure inclusive time. connect factory counts constructions, not connection opening/commit latency; observe/scan contain actual I/O.",
+    "No-hit off/on perform same business SQL; hit off cannot answer unknown term, so hit latency is not equal-work speed comparison."
+  ]
+}

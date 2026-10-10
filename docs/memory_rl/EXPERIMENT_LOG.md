@@ -117,3 +117,21 @@ fetch实测远程memory=`4e339b6983b13af6891d14a53e51fa9c46b47e2a`，main=`ac69d
 ```
 
 实际52 passed in 1.49s（lifecycle.txt）。初始26 passed in 0.65s也保留formation-attempt1.txt。加入候选digest复算、来源新版本重审、superseded关联、冲突和旧Schema测试后通过。此处端到端为单测证据，完整冻结ABC与进程级CLI评测尚未执行。
+
+## M1-B2 首轮真实形成与独立进程复用
+
+`/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_formation_m1b2.py --label m1b2-formation-first-20261010`，完整stdout=`runs/m1b2/abc-first.txt`。源码e87c156ed887856db1229e6958311ee18d1021d9，正式执行前检查冻结manifest。
+
+实测A9/22、B22/22、C22/22；跨会话目标A0/12、B/C12/12，全部消费且目标历史0。n08单独历史失效控制有1轮先置，未混作跨会话收益。B/C实际binding与rows逐题一致。23候选全部精确对应来源契约（含正确保留的缺失字段），验证20/23，晋升19，错误晋升0；2冲突+1缺binding被拒，1valid候选按任务未审批。n10重复处理同来源保持单候选、多事件关系。
+
+C的MemoryStore.put在父评测进程被禁止；管理员验证/审核由实际`python -m backend.memory.admin`子进程执行，每条命令/exit/stdout/耗时保存在逐题JSON。p01目标另起真实Python进程，其他题重建Store/Engine/ConversationStore。模型与Token调用均0。该“Learned-from-Experience”仅指实际事件形成，不是参数训练。
+
+首轮是实现形成链路的检查点证据。Profile开始后不并行运行测试/评测；若后续优化生产代码，最终状态重跑ABC及16/185。
+
+## M1-B2 专项Profile（优化前）
+
+`/tmp/omni-m1a-venv/bin/python tools/profile_memory_m1b2.py --label m1b2-profile-before-20261010 --repeats 5`，串行100样本：0/16/128条记忆、冷/暖、新术语命中/无命中，每组5次交替off/on配对；20份授权文档。Profile期间无其他agent评测/测试作业；主机外部负载无法控制，load约3.61→3.98。完整分阶段耗时与调用次数在profile.json；阶段为inclusive，不可相加。
+
+发现每请求无命中也扫描20原件（SHA约3ms），命中两次快照40次；Store128条扫描约3ms；主要成本仍为规则/canonical规划，命中规划合计约214ms。prepare中另外约9ms用于1069个value逐个编译/匹配正则。补充7次微测5个问题：literal substring预筛与原span完全相同，约9.2→0.05–0.07ms。该微测与测试有重叠，仅定位算法热点，不做稳定总耗时主张。
+
+计划仅局部优化该等价预筛；不缓存跨请求候选、不跳过来源检查、不动SQL安全逻辑。性能修复独立提交，再做相同脚本100样本Profile及同源码ABC/16/185完整重跑。

@@ -127,3 +127,23 @@ def test_conflicting_valid_candidates_rejected(flow):
     capture(flow)
     assert len(f.candidates())==2
     for c in f.candidates():assert 'candidate_conflict' in f.validate(c['candidate_id'],c['digest'])['reasons']
+
+
+def test_local_config_permissions_and_terminal_decision(flow,tmp_path):
+    a,m,f,ctx,_=flow;c=capture(flow)
+    unsafe=tmp_path/'unsafe-admin.json';unsafe.write_text(json.dumps({'scope':asdict(m.core.scope),'memory_db':str(m.core.store.path)}));unsafe.chmod(0o666)
+    with pytest.raises(PermissionError):LocalReviewContext.from_config(unsafe)
+    rejected=f.review(c['candidate_id'],c['digest'],context=ctx,request_id='reject',decision='reject',reason='not business approved')
+    assert rejected['decision']=='reject'
+    with pytest.raises(ValueError,match='terminal'):f.validate(c['candidate_id'],c['digest'])
+    assert not any(r.provenance.get('candidate_id')==c['candidate_id'] for r in m.core.store.scan(m.core.scope)[0])
+
+
+def test_approval_idempotent_replay_does_not_undo_revocation(flow):
+    c,r=promote(flow);a,m,f,ctx,_=flow
+    memory=next(x for x in m.core.store.scan(m.core.scope)[0] if x.memory_id==r['memory_id'])
+    f.revoke(memory.memory_id,digest(asdict(memory)),context=ctx,request_id='revoke-x',reason='withdrawn')
+    replay=f.review(c['candidate_id'],c['digest'],context=ctx,request_id='approve-1',decision='confirm',reason='local fixture review')
+    assert replay==r
+    assert next(x for x in m.core.store.scan(m.core.scope)[0] if x.memory_id==r['memory_id']).verification_state=='revoked'
+    with pytest.raises(ValueError,match='reused'):f.review(c['candidate_id'],c['digest'],context=ctx,request_id='approve-1',decision='confirm',reason='changed review')
