@@ -1,0 +1,164 @@
+...............................F............................ [ 37%]
+.......................................F..........F..................... [ 83%]
+................F.........                                               [100%]
+=================================== FAILURES ===================================
+__________ test_store_selects_third_same_source_and_verifies_original __________
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-35/test_store_selects_third_same_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x78015f782f60>
+
+    def test_store_selects_third_same_source_and_verifies_original(tmp_path, monkeypatch):
+        from backend.knowledge_store import KnowledgeStore
+        from backend.cross_source import DocumentRecord, DocumentHit, JsonDocumentRetriever
+        store = KnowledgeStore(tmp_path)
+        store.ingest(b'Period budget formula diapers.', document_id='report', title='Report', modality='txt', filename='report.txt')
+        store.ingest(b'Period distractor.', document_id='other', title='Other', modality='txt', filename='other.txt')
+        rows = [('a', 'report', 10, 'Period.'), ('b', 'report', 9, 'Budget.'),
+                ('c', 'report', 8, 'Formula diapers.'), ('d', 'other', 8.5, 'Period.')]
+        records = [DocumentRecord(chunk, source, body, 'document://' + source,
+                   {'document_id': source, 'source_sha256': store.document(source)['sha256']})
+                   for chunk, source, score, body in rows]
+        hits = [DocumentHit(record.document_id, record.title, score, (), record.content, record.source_uri,
+                {**record.metadata, 'bm25_raw': score}) for record, (_, _, score, _) in zip(records, rows)]
+        monkeypatch.setattr(store, 'records', lambda: records)
+        monkeypatch.setattr(JsonDocumentRetriever, 'search', lambda *args, **kwargs: hits)
+>       selected = store.search('period budget formula diapers', top_k=3)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ict-track8/tests/test_evidence_coverage.py:187: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <backend.knowledge_store.KnowledgeStore object at 0x78015f781b80>
+query = 'period budget formula diapers', top_k = 3, document_id = None
+page_no = None, with_audit = False, progress_callback = None
+
+    def search(self, query: str, *, top_k: int = 4, document_id=None, page_no=None,
+               with_audit: bool = False, progress_callback=None) -> list[DocumentHit] | tuple[list[DocumentHit], dict[str, Any]]:
+        if not isinstance(query, str) or not query.strip() or len(query) > 1000 or not 1 <= top_k <= 20:
+            raise ValueError('问题或检索数量超出限制')
+        binding_started = time.perf_counter()
+        def finish(hits, audit):
+            return (hits, audit) if with_audit else hits
+    
+>       records = self.records(document_id)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: test_store_selects_third_same_source_and_verifies_original.<locals>.<lambda>() takes 0 positional arguments but 1 was given
+
+ict-track8/backend/knowledge_store.py:402: TypeError
+___________ test_metric_display_alias_is_bound_to_same_physical_sum ____________
+
+engine = <backend.nl2sql.engine.Nl2SqlEngine object at 0x780168166750>
+
+    def test_metric_display_alias_is_bound_to_same_physical_sum(engine):
+        tasks, bundle, results = prepared(engine)
+        result = results['winner']
+        replace_self_consistent_sql_result(engine, result,
+            'SELECT region, "销售额" AS "总销售额", "排名" FROM (' + result['sql'] + ')', result['parameters'])
+        result['plan']['metric_label'] = '总销售额'
+>       assert validate(engine, tasks, bundle, results)['status'] == 'verified'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+ict-track8/tests/test_sql_document_binding.py:388: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+ict-track8/tests/test_sql_document_binding.py:41: in validate
+    return validate_sql_document_search(bundle, task=tasks[1], tasks=tasks, results=results, engine=engine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ict-track8/backend/sql_document_binding.py:280: in validate_sql_document_search
+    != _physical_rows(rows, result.get('columns', []), actual_bindings)):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ict-track8/backend/sql_document_binding.py:79: in _physical_rows
+    _reject()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'sql_document_scope_unverified'
+
+    def _reject(code='sql_document_scope_unverified'):
+>       raise SourceConstraintError(code)
+E       backend.fusion_constraints.SourceConstraintError: 跨源查询的来源范围尚未核验，请明确各数据库取数的表、指标、时间和包含/排除条件。
+
+ict-track8/backend/sql_document_binding.py:15: SourceConstraintError
+_______________ test_new_topic_and_reset_do_not_inherit_sources ________________
+
+agent = <backend.omni_agent.OmniAgent object at 0x78015e6c0fe0>
+
+    def test_new_topic_and_reset_do_not_inherit_sources(agent):
+        assert agent.query(FIRST, session_id='topic')['status'] == 'ok'
+        result = agent.query('换个主题：2024年华北地区销售额', session_id='topic')
+        assert result['context_resolution']['mode'] == 'independent'
+        result = agent.query('那华南呢', session_id='topic', reset_context=True)
+        assert result['context_turns'] == 0
+>       assert result['context_resolution']['mode'] == 'independent'
+E       AssertionError: assert 'missing_followup_context' == 'independent'
+E         
+E         - independent
+E         + missing_followup_context
+
+ict-track8/tests/test_fusion_history.py:129: AssertionError
+_ test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification _
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-35/test_model_sees_verified_sql_f0')
+
+    def test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification(tmp_path):
+        engine = Nl2SqlEngine(initialize_database(tmp_path / 'sales.sqlite'))
+        agent = OmniAgent(engine, KnowledgeStore(tmp_path / 'knowledge'), ConversationStore())
+        first = agent.query('2024年华南地区销售额', session_id='known')
+        assert first['status'] == 'ok'
+        class Planner:
+            audit = {'status': 'completed', 'http_status': 200}
+            def __init__(self):
+                self.contexts = []
+            def generate(self, instructions, context, schema, **kwargs):
+                self.contexts.append(context)
+                assert '2024年' in context['question'] and '华南' in context['question'] and '订单数' in context['question']
+                assert context['actual_question'] == '那订单数呢'
+                return {'route': 'clarify' if len(self.contexts) == 1 else 'sql',
+                        'effective_question': context['question'], 'clarification': '请提供年份地区', 'tasks_json': '[]'}
+        planner = Planner()
+        agent.client = planner
+        result = agent.query('那订单数呢', session_id='known')
+        assert result['status'] == 'ok' and result['route'] == 'sql'
+>       assert result['planner_source'] == 'model_validated' and len(planner.contexts) == 2
+E       AssertionError: assert ('rules_basic' == 'model_validated'
+E         
+E         - model_validated
+E         + rules_basic)
+
+ict-track8/tests/test_omni_agent.py:99: AssertionError
+=============================== warnings summary ===============================
+../../../tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+ict-track8/tests/test_knowledge_store.py::test_image_without_ocr_is_not_answer_evidence
+  /home/viva/omni-agent/ict-track8/backend/image_quality.py:243: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    pixels = list(image.resize((min(256, width), min(256, height))).getdata())
+
+ict-track8/tests/test_knowledge_store.py::test_image_without_ocr_is_not_answer_evidence
+  /home/viva/omni-agent/ict-track8/backend/image_quality.py:300: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    pixels = list(sample.getdata())
+
+ict-track8/tests/test_knowledge_store.py::test_api_ingest_query_and_original_roundtrip
+  /home/viva/omni-agent/ict-track8/backend/app.py:194: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+ict-track8/tests/test_knowledge_store.py::test_api_ingest_query_and_original_roundtrip
+  /tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/applications.py:4745: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_evidence_coverage.py::test_store_selects_third_same_source_and_verifies_original
+FAILED ict-track8/tests/test_sql_document_binding.py::test_metric_display_alias_is_bound_to_same_physical_sum
+FAILED ict-track8/tests/test_fusion_history.py::test_new_topic_and_reset_do_not_inherit_sources
+FAILED ict-track8/tests/test_omni_agent.py::test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification
+4 failed, 154 passed, 5 warnings, 12 subtests passed in 7.15s

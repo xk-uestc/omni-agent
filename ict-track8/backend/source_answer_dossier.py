@@ -57,12 +57,21 @@ def build_dossier(store, question, hits, *, document_id=None, page_no=None):
     ids = [document_id] if document_id is not None else list(dict.fromkeys(
         h.metadata.get('document_id') for h in hits))[:4]
     pages, ledger, scanned = [], [], 0
+    scanned_inventory, declared_sources = [], []
     for did in ids:
         if did not in documents:
             continue
         d = documents[did]
+        pinned = {h.metadata.get('source_sha256') for h in hits
+                  if h.metadata.get('document_id') == did and h.metadata.get('source_sha256')}
+        if pinned and pinned != {d['sha256']}:
+            from .knowledge_store import SourceRevisionError
+            raise SourceRevisionError('检索来源版本已变化，未混合新旧原页。')
         raw = store.verify_source(did, expected_sha256=d['sha256']).read_bytes()
         with fitz.open(stream=raw, filetype='pdf') as pdf:
+            declared_sources.append({'document_id': did, 'source_sha256': d['sha256'],
+                'pages': [page_no] if page_no is not None else list(range(1, len(pdf)+1)),
+                'scope_kind': 'explicit_page' if page_no is not None else 'nominated_whole_source'})
             if page_no is not None:
                 if document_id is None or type(page_no) is not int or not 1 <= page_no <= len(pdf):
                     raise ValueError('dossier_explicit_page_invalid')
@@ -78,6 +87,7 @@ def build_dossier(store, question, hits, *, document_id=None, page_no=None):
                     ledger.append({'document_id': did, 'page_no': number, 'reason': 'scan_budget'})
                     continue
                 scanned += 1
+                scanned_inventory.append({'document_id': did, 'source_sha256': d['sha256'], 'page_no': number})
                 p = native_page(d, pdf[number-1], number, len(pdf))
                 text = p['text']
                 if not 40 <= len(text) <= 12000:
@@ -85,6 +95,7 @@ def build_dossier(store, question, hits, *, document_id=None, page_no=None):
                         'reason': 'no_native_text_or_complete_page_over_budget'})
                     continue
                 pages.append(p)
+        store.verify_source(did, expected_sha256=d['sha256'])
     terms = _terms(question)
     frequencies = Counter(t for p in pages for t in _terms(p['text']) if t in terms)
     weights = {t: math.log(1+(len(pages)+.5)/(frequencies[t]+.5)) for t in terms}
@@ -112,7 +123,11 @@ def build_dossier(store, question, hits, *, document_id=None, page_no=None):
         'included_pages': sorted(p['page_no'] for p in selected if p['document_id'] == did),
         'whole_document_included': len([p for p in selected if p['document_id'] == did]) ==
             int(documents[did]['stats'].get('page_count') or 1)} for did in ids if did in documents]
+    from .evidence_scope import page_scope
+    bounded_scope = page_scope(declared_sources, scanned_inventory, selected, omitted=ledger,
+        required_conditions=('whole_question', 'entity_roles_exclusions', 'units_dates_qualifiers', 'record_inventory'))
     return selected, {'scanned_pages': scanned, 'included_pages': len(selected),
+        'evidence_scope': bounded_scope,
         'native_chars': size, 'coverage': coverage, 'omitted': ledger,
         'ranking_is_navigation_only': True, 'scope': 'selected_complete_native_pages_not_unseen_document_closure'}
 

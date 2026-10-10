@@ -13,3 +13,9 @@ C开发对照（6来源、同20候选/4输出）：必要证据召回仍1.0，�
 存储改进：records(document_id)下推SQL WHERE，Dense仅SELECT请求key、每批≤500，并校验读取向量；逻辑删除仅内部API、强制expected SHA、事务级删除chunk、保留共享不可变原件与历史资产。7项最终测试通过（初8项含已移出生产的导航试验）。并发检索/替换输出单版chunk、重启/删除旧句柄拒用、请求向量损坏拒绝、无关损坏缓存不加载、单来源不反序列化别的损坏chunk已实跑。
 
 100文档/300chunk同规格单来源热查询：旧中位约4.00ms，新约1.87ms；新仅3chunk被反序列化。8次非独占环境观测，不能外推稳定全库提速或模型响应改善。完整数值与源码Hash见storage-after.json。
+
+检查点4选择两类：多行完整枚举，以及跨页/多文档来源范围。沿用native_row_selection typed比较/枚举，无生成猜测或OHR Gold特判。新增page_scope记录声明来源SHA、原件页集合、已扫描/已供给/未扫描/未供给页、必要条件审核状态、预算与五类状态。40页只扫检索页±1时明确37页未检查；8页短文扫描全部但只供给6页时budget_exhausted，绝不因扫描/候选用完宣布complete。原页范围的语义条件默认仍未验证，原件页完整不替代整题充分性。
+
+dossier现在在读取前拒绝旧检索hit与新原件SHA混用，并在读取每个原件后重验逻辑来源。原生表行compiler提前验证同一声明链的全部row ID与来源版本，foreign-source row不能借同名字段混入；answer_scope包含所有受检行和匹配行，明确只对supplied chain完整而非全语料。保留原独立review与原件重放。
+
+开发召回没有增加（已经21/21），本轮改善主要是完整性可审计与错来源拒绝。生成答案指标not_run。新增证据scope与已有原页、原行、页索引、coverage、检索生命周期相关检查见evidence-scope-tests-final.txt；初次测试辅助import失败日志也保留。

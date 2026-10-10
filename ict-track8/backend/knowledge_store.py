@@ -399,7 +399,7 @@ class KnowledgeStore:
         def finish(hits, audit):
             return (hits, audit) if with_audit else hits
 
-        records = self.records(document_id)
+        records = self.records(document_id) if document_id is not None else self.records()
         if document_id is not None:
             document = self.document(document_id)
             if page_no is not None:

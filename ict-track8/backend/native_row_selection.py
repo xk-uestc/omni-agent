@@ -80,6 +80,10 @@ def bind_selection(question, plan, registries):
     domain = [r for r in registry['records'] if r['chain_index'] == plan['chain_index']]
     if not domain:
         raise ValueError('native_select_chain_empty')
+    from .evidence_scope import row_scope
+    # Duplicate identifiers can otherwise collapse an inventory dictionary and
+    # silently bind a projection onto a different source row.
+    row_scope(registry, domain, [])
     headers = [f['header'] for f in domain[0]['fields']]
     if any([f['header'] for f in row['fields']] != headers for row in domain):
         raise ValueError('native_select_headers_changed')
@@ -178,7 +182,10 @@ def replay_selection(store, result):
 
 
 def _scope(registry, rows, plan):
+    from .evidence_scope import row_scope
+    domain = [r for r in registry['records'] if r['chain_index'] == plan['chain_index']]
     return {'document_id': registry['document_id'], 'chain_index': plan['chain_index'],
+        'evidence_scope': row_scope(registry, domain, rows),
         'matching_row_count': len(rows), 'projection_columns': deepcopy(plan['column_indices']),
         'pages': sorted({r['page_no'] for r in rows}),
         'coverage': 'independently_reviewed_supplied_original_table_chain_not_global_corpus',
