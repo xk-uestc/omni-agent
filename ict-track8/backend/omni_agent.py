@@ -485,6 +485,21 @@ class OmniAgent:
 
     def query(self, question, *, session_id=None, reset_context=False, complete_results=False, _confirmed_comparison_scope=None,
               _confirmed_pending_turn_id=None, trace_callback=None, image_attachments=None):
+        from .nl2sql.security import unsafe_request_reason
+        if unsafe_request_reason(question):
+            refused = self.engine.answer(question).to_dict()
+            event = {'stage': 'request_safety', 'tool': 'request.safety', 'status': 'rejected',
+                     'executed': False, 'error_code': 'read_only_query_required',
+                     'failure_category': 'safety', 'summary': '整条请求包含写入或绕过规则意图，未执行。'}
+            if trace_callback is not None:
+                trace_callback(dict(event))
+            return {'status': 'clarification', 'route': 'sql', 'question': question,
+                    'effective_question': question, 'session_id': session_id,
+                    'context_turns': len(self.conversations.context(session_id)) if session_id else 0,
+                    'result': refused, 'state': {'route': 'sql', 'context_preserved': True},
+                    'context_resolution': {'mode': 'write_request_rejected',
+                                           'context_preserved': True, 'executed': False},
+                    'trace': [event]}
         options = dict(session_id=session_id, reset_context=reset_context, complete_results=complete_results,
             _confirmed_comparison_scope=_confirmed_comparison_scope, _confirmed_pending_turn_id=_confirmed_pending_turn_id,
             trace_callback=trace_callback, image_attachments=image_attachments)

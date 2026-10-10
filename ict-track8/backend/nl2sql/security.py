@@ -16,6 +16,45 @@ class SqlSafetyError(ValueError):
     """SQL 未通过只读安全策略。"""
 
 
+def unsafe_request_reason(question: str) -> str | None:
+    """Reject a whole mixed request before normalization, memory or planning.
+
+    Quoted values and query-scope edits are data, not database mutations.
+    This intent guard complements (never replaces) AST/SQLite read-only guards.
+    """
+    if not isinstance(question, str):
+        return None
+    text = re.sub(r"'(?:''|[^'])*'|\"(?:\"\"|[^\"])*\"|`[^`]*`|“[^”]*”|‘[^’]*’",
+                  ' quoted_value ', question)
+    if (re.search(r'(?:忽略|无视|跳过|绕过|不要遵守).{0,24}?(?:安全|权限|规则|指令|只读限制)', text)
+            or re.search(r'\b(?:ignore|bypass|disable|override|skip)\b.{0,30}'
+                         r'\b(?:safety|security|permissions?|read.only|system\s+(?:rules|instructions)|all\s+rules)\b', text, re.I)):
+        return 'rule_bypass_intent'
+    if re.search(r'\b(?:DELETE\s+FROM|DROP\s+(?:TABLE|DATABASE)|INSERT\s+INTO|'
+                 r'ALTER\s+TABLE|CREATE\s+(?:TABLE|DATABASE)|TRUNCATE\s+TABLE|'
+                 r'UPDATE\s+\S+\s+SET)\b', text, re.I):
+        return 'database_write_intent'
+    if re.search(r'(?:把|将)[^，,。；;]{0,16}(?:成本|金额|价格|销售额|记录|数据)'
+                 r'[^，,。；;]{0,12}(?:改为|改成|设为|调整为)\s*(?:零|[+-]?\d+(?:\.\d+)?)'
+                 r'(?:元|万|亿)?(?:$|[，,。；;])', text):
+        return 'database_write_intent'
+    # Remove only whole, plainly scoped editing clauses. Never erase a
+    # dangerous suffix just because an earlier phrase names a filter.
+    clauses = re.split(r'[，,。；;]', text)
+    scope_edit = re.compile(r'\s*(?:请|帮我)?(?:把)?(?:删除|移除|去掉|取消|清除)'
+        r'.{0,24}?(?:查询筛选条件|筛选条件|过滤条件|查询条件|地区限制|年份限制|时间限制|'
+        r'地区筛选|时间筛选|查询过滤器|查询筛选器)\s*[。!?！？]?\s*$')
+    for clause in clauses:
+        if scope_edit.fullmatch(clause):
+            continue
+        if (re.search(r'(?:删除|清空|销毁|擦除|修改|更新|插入|新增|创建).{0,24}?'
+                      r'(?:数据库|数据表|表中|记录|订单数据|订单|客户数据|全部数据|所有数据)', clause)
+                or re.search(r'\b(?:delete|erase|wipe|clear|modify|update|insert|create)\b.{0,24}'
+                             r'\b(?:database|tables?|records?|rows?)\b', clause, re.I)):
+            return 'database_write_intent'
+    return None
+
+
 _FORBIDDEN = re.compile(
     r"\b(?:attach|detach|pragma|vacuum|reindex|analyze|create|drop|alter|insert|update|delete|replace|"
     r"truncate|grant|revoke|load_extension)\b",

@@ -114,6 +114,19 @@ class DependencyAgent:
     def run(self, tasks, *, on_event=None, original_question=None, source_constraints=None):
         # Server-bound reference normalization never mutates the caller graph.
         tasks = deepcopy(tasks)
+        from .nl2sql.security import unsafe_request_reason
+        questions = [original_question] if original_question is not None else []
+        questions.extend(t.get('args', {}).get('question') for t in tasks
+                         if isinstance(t, dict) and t.get('tool') == 'sql' and isinstance(t.get('args'), dict))
+        if any(unsafe_request_reason(q) for q in questions):
+            event = {'stage': 'request_safety', 'status': 'rejected', 'executed': False,
+                     'failure_category': 'safety', 'error_code': 'read_only_query_required'}
+            if on_event:
+                on_event(dict(event))
+            return {'status': 'clarification', 'results': {}, 'trace': [event],
+                    'clarification': '整条请求包含写入或绕过规则意图，未执行任何子任务。',
+                    'clarification_code': 'read_only_query_required', 'error_code': 'read_only_query_required',
+                    'skipped_tasks': [t.get('id') for t in tasks if isinstance(t, dict)], 'edges': []}
         ordered, dependencies = self.validate(tasks)
         read_scope = getattr(self.sql_engine, 'consistent_reads', None)
         with read_scope() if read_scope else nullcontext():

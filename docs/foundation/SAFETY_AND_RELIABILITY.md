@@ -1,0 +1,9 @@
+# F1 安全与稳定性
+
+safe-09本轮采用冻结整体拒绝契约。共享unsafe_request_reason在原问题进入Memory、归一化、历史改写、模型规划前执行，Nl2SqlEngine与旧CrossSource、DAG低层同样拒绝；不会删除危险片段后继续只读SQL。AST、SQLite authorizer和执行预算保留。自然语言删除查询筛选条件、取消地区限制以及引号内的数据字符串不当作SQL DELETE。拒绝不清空既有会话scope，也不访问模型/记忆/检索。
+
+实际Python、HTTP、SSE、SQL混合语句、旧CrossSource与DAG：26项通过，临时数据库前后SHA一致。原失败日志safety-tests.txt是本轮新测试初次使用错误HTTP路径（404）；修正路径后safety-tests-final.txt通过，原日志保留。模型/外部检索provider均为空，TestClient需要本机socket权限；无付费调用。
+
+两个旧测试明确断言危险混合请求应部分执行，分别是test_nl2sql_v2.py::test_unsafe_natural_language_directive_is_ignored_but_read_only_intent_survives和test_nl2sql_pressure_regressions.py::test_unsafe_write_instruction_is_stripped_or_rejected_without_model。本轮授权契约与该历史断言冲突。保留断言及所有冻结Gold，不通过删除/改Gold取得绿色；最终回归会逐项列出。safe-09冻结评测应由整题scorer记录新的整体拒绝结果，而不改其期望。
+
+M1-C三项旧失败的处理：显示别名物理SUM待进一步证明；reset后缺追问上下文和完全验证SQL快捷路由的旧预期，不为凑测试恢复不必要模型调用或猜测旧scope。Provider失败、协议拒绝、source revision和中间工具未完成会在独立可靠性修改中加入统一Trace归因。

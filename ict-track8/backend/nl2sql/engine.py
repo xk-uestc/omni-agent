@@ -1155,15 +1155,16 @@ class Nl2SqlEngine:
         # grounding and execution. The display always retains the user's text.
         if not isinstance(question, str) or not question.strip():
             raise ValueError("question 不能为空")
-        sanitized_question, ignored_instructions = _strip_unsafe_instruction_noise(question)
-        if ignored_instructions and not sanitized_question.strip():
+        from .security import unsafe_request_reason
+        unsafe_reason = unsafe_request_reason(question)
+        if unsafe_reason:
             message = "问数只支持只读查询，无法执行删除或修改操作。请改成查询问题。"
             plan = QueryPlan(rewritten_question=question, clarification=message,
                 clarification_code="read_only_query_required", planner_source="read_only_guard",
                 coverage={"consumed": [], "unresolved": [],
-                          "ignored_instruction_spans": ignored_instructions},
+                          "rejected_original_request": True},
                 planner_audit={"decision": "rejected", "model_called": False,
-                               "reason": "write_intent_without_read_query"})
+                               "reason": unsafe_reason})
             return QueryResult(status="clarification", question=question,
                 rewritten_question=question, sql=None, parameters=(), columns=(), rows=(),
                 plan=plan.to_dict(), explanation=(message,), clarification=message,
