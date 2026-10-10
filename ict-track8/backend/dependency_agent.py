@@ -176,7 +176,8 @@ class DependencyAgent:
                          'failure': for_code(exc.code, phase='source_binding')}
                 if on_event:
                     on_event(dict(event))
-                return {'status': 'clarification', 'trace_id': trace_id, 'results': {}, 'trace': [event],
+                return {'status': 'clarification', 'trace_id': trace_id, 'results': {}, 'trace': [],
+                        'failure_trace': [event['failure']],
                         'clarification': str(exc), 'clarification_code': exc.code, 'error_code': exc.code,
                         'skipped_tasks': [task['id'] for task in ordered], 'edges': [],
                         'user_constraint_validation': {'status': 'unverified', 'error_code': exc.code}}

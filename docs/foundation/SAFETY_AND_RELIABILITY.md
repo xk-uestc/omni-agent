@@ -15,3 +15,5 @@ M1-C三项旧失败的处理：显示别名物理SUM待进一步证明；reset�
 底层模型输出协议和C/D绑定没有本轮真实模型复跑或证明已解决。统一分类不等于新增恢复动作；provider失败不自动增加补证调用。本轮不重写planner。
 
 运行结果：reliability-tests-final.txt 136passed（别名旧断言现在通过）；独立Trace13passed。API/恢复扩大检查121passed、2failed，两个失败在F1起点94a9926的只读git archive快照原样复现（recovery-failures-start-reproduced.txt）：旧测试插桩忘记传with_audit却要求二元返回，以及snippet新定位已含条件但测试要求不含。保留失败，不为测试减损检索或放宽接口。F1原M1-C415机制及新检查会单独记录最终结果。
+
+更广机制检查发现5项新增仅Trace兼容问题：原tools trace=[]表示尚无任何工具执行，预绑定失败事件曾放入其中。已将预绑定失败保存在独立failure_trace并保持callback有诊断、工具trace仍空，不删除旧断言；原7failed日志保留。修正后446项中444passed、2failed，仅为原reset/SQL快捷路由预期；显示alias失败已实际修复。

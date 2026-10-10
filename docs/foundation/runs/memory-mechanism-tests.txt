@@ -1,0 +1,213 @@
+........................................................................ [ 16%]
+........................................................................ [ 32%]
+........................................................................ [ 48%]
+........................................................................ [ 64%]
+.FFFFF.................................................................. [ 80%]
+.......F.....................................F.......................... [ 96%]
+..............                                                           [100%]
+=================================== FAILURES ===================================
+_ test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u8bf7\u6392\u9664\u5317\u5cad\uff1b\u4f9d\u636e\u6587\u6863\u6838\u7b97\u7ed3\u679c\u516c\u5f0f\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002] _
+
+environment = (<backend.nl2sql.engine.Nl2SqlEngine object at 0x7c6962b0f7a0>, <backend.knowledge_store.KnowledgeStore object at 0x7c6962b0fe00>)
+question = '请排除北岭；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。'
+
+    @pytest.mark.parametrize('question', [
+        '请排除北岭；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '仅北岭地区；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '针对北岭区域；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '按文档公式核算2025年的费用，费用金额从数据库取值。',
+        '按文档公式核算，用数据库中2025年包裹台账未知口径费用金额合计作为输入。',
+    ])
+    def test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools(environment, question):
+        result = run(environment, question, tasks())
+        assert result['status'] == 'clarification', result
+        assert result['result']['error_code'] == 'source_scope_unverified'
+>       assert result['result']['results'] == {} and result['result']['trace'] == []
+E       AssertionError: assert ({} == {}
+E         
+E         Use -v to get more diff and [{'stage': 's...ified', ...}}] == []
+E         
+E         Left contains one more item: {'stage': 'source_binding', 'status': 'failed', 'executed': False, 'failure': {'version': 'foundation-failure-v1', 'category': 'source_binding', 'phase': 'source_binding', 'code': 'source_scope_unverified', ...}}
+E         Use -v to get more diff)
+
+ict-track8/tests/test_fusion_source_constraints.py:129: AssertionError
+_ test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u4ec5\u5317\u5cad\u5730\u533a\uff1b\u4f9d\u636e\u6587\u6863\u6838\u7b97\u7ed3\u679c\u516c\u5f0f\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002] _
+
+environment = (<backend.nl2sql.engine.Nl2SqlEngine object at 0x7c6962b0d580>, <backend.knowledge_store.KnowledgeStore object at 0x7c6962b0f4d0>)
+question = '仅北岭地区；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。'
+
+    @pytest.mark.parametrize('question', [
+        '请排除北岭；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '仅北岭地区；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '针对北岭区域；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '按文档公式核算2025年的费用，费用金额从数据库取值。',
+        '按文档公式核算，用数据库中2025年包裹台账未知口径费用金额合计作为输入。',
+    ])
+    def test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools(environment, question):
+        result = run(environment, question, tasks())
+        assert result['status'] == 'clarification', result
+        assert result['result']['error_code'] == 'source_scope_unverified'
+>       assert result['result']['results'] == {} and result['result']['trace'] == []
+E       AssertionError: assert ({} == {}
+E         
+E         Use -v to get more diff and [{'stage': 's...ified', ...}}] == []
+E         
+E         Left contains one more item: {'stage': 'source_binding', 'status': 'failed', 'executed': False, 'failure': {'version': 'foundation-failure-v1', 'category': 'source_binding', 'phase': 'source_binding', 'code': 'source_scope_unverified', ...}}
+E         Use -v to get more diff)
+
+ict-track8/tests/test_fusion_source_constraints.py:129: AssertionError
+_ test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u9488\u5bf9\u5317\u5cad\u533a\u57df\uff1b\u4f9d\u636e\u6587\u6863\u6838\u7b97\u7ed3\u679c\u516c\u5f0f\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002] _
+
+environment = (<backend.nl2sql.engine.Nl2SqlEngine object at 0x7c6962b0d130>, <backend.knowledge_store.KnowledgeStore object at 0x7c6962b0cc20>)
+question = '针对北岭区域；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。'
+
+    @pytest.mark.parametrize('question', [
+        '请排除北岭；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '仅北岭地区；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '针对北岭区域；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '按文档公式核算2025年的费用，费用金额从数据库取值。',
+        '按文档公式核算，用数据库中2025年包裹台账未知口径费用金额合计作为输入。',
+    ])
+    def test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools(environment, question):
+        result = run(environment, question, tasks())
+        assert result['status'] == 'clarification', result
+        assert result['result']['error_code'] == 'source_scope_unverified'
+>       assert result['result']['results'] == {} and result['result']['trace'] == []
+E       AssertionError: assert ({} == {}
+E         
+E         Use -v to get more diff and [{'stage': 's...ified', ...}}] == []
+E         
+E         Left contains one more item: {'stage': 'source_binding', 'status': 'failed', 'executed': False, 'failure': {'version': 'foundation-failure-v1', 'category': 'source_binding', 'phase': 'source_binding', 'code': 'source_scope_unverified', ...}}
+E         Use -v to get more diff)
+
+ict-track8/tests/test_fusion_source_constraints.py:129: AssertionError
+_ test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u6309\u6587\u6863\u516c\u5f0f\u6838\u7b972025\u5e74\u7684\u8d39\u7528\uff0c\u8d39\u7528\u91d1\u989d\u4ece\u6570\u636e\u5e93\u53d6\u503c\u3002] _
+
+environment = (<backend.nl2sql.engine.Nl2SqlEngine object at 0x7c6962bcc110>, <backend.knowledge_store.KnowledgeStore object at 0x7c6962b0e1b0>)
+question = '按文档公式核算2025年的费用，费用金额从数据库取值。'
+
+    @pytest.mark.parametrize('question', [
+        '请排除北岭；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '仅北岭地区；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '针对北岭区域；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '按文档公式核算2025年的费用，费用金额从数据库取值。',
+        '按文档公式核算，用数据库中2025年包裹台账未知口径费用金额合计作为输入。',
+    ])
+    def test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools(environment, question):
+        result = run(environment, question, tasks())
+        assert result['status'] == 'clarification', result
+        assert result['result']['error_code'] == 'source_scope_unverified'
+>       assert result['result']['results'] == {} and result['result']['trace'] == []
+E       AssertionError: assert ({} == {}
+E         
+E         Use -v to get more diff and [{'stage': 's...ified', ...}}] == []
+E         
+E         Left contains one more item: {'stage': 'source_binding', 'status': 'failed', 'executed': False, 'failure': {'version': 'foundation-failure-v1', 'category': 'source_binding', 'phase': 'source_binding', 'code': 'source_scope_unverified', ...}}
+E         Use -v to get more diff)
+
+ict-track8/tests/test_fusion_source_constraints.py:129: AssertionError
+_ test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u6309\u6587\u6863\u516c\u5f0f\u6838\u7b97\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u672a\u77e5\u53e3\u5f84\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002] _
+
+environment = (<backend.nl2sql.engine.Nl2SqlEngine object at 0x7c696171cf80>, <backend.knowledge_store.KnowledgeStore object at 0x7c696171cf20>)
+question = '按文档公式核算，用数据库中2025年包裹台账未知口径费用金额合计作为输入。'
+
+    @pytest.mark.parametrize('question', [
+        '请排除北岭；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '仅北岭地区；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '针对北岭区域；依据文档核算结果公式，用数据库中2025年包裹台账费用金额合计作为输入。',
+        '按文档公式核算2025年的费用，费用金额从数据库取值。',
+        '按文档公式核算，用数据库中2025年包裹台账未知口径费用金额合计作为输入。',
+    ])
+    def test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools(environment, question):
+        result = run(environment, question, tasks())
+        assert result['status'] == 'clarification', result
+        assert result['result']['error_code'] == 'source_scope_unverified'
+>       assert result['result']['results'] == {} and result['result']['trace'] == []
+E       AssertionError: assert ({} == {}
+E         
+E         Use -v to get more diff and [{'stage': 's...ified', ...}}] == []
+E         
+E         Left contains one more item: {'stage': 'source_binding', 'status': 'failed', 'executed': False, 'failure': {'version': 'foundation-failure-v1', 'category': 'source_binding', 'phase': 'source_binding', 'code': 'source_scope_unverified', ...}}
+E         Use -v to get more diff)
+
+ict-track8/tests/test_fusion_source_constraints.py:129: AssertionError
+_______________ test_new_topic_and_reset_do_not_inherit_sources ________________
+
+agent = <backend.omni_agent.OmniAgent object at 0x7c6962bf0620>
+
+    def test_new_topic_and_reset_do_not_inherit_sources(agent):
+        assert agent.query(FIRST, session_id='topic')['status'] == 'ok'
+        result = agent.query('换个主题：2024年华北地区销售额', session_id='topic')
+        assert result['context_resolution']['mode'] == 'independent'
+        result = agent.query('那华南呢', session_id='topic', reset_context=True)
+        assert result['context_turns'] == 0
+>       assert result['context_resolution']['mode'] == 'independent'
+E       AssertionError: assert 'missing_followup_context' == 'independent'
+E         
+E         - independent
+E         + missing_followup_context
+
+ict-track8/tests/test_fusion_history.py:129: AssertionError
+_ test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification _
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-44/test_model_sees_verified_sql_f0')
+
+    def test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification(tmp_path):
+        engine = Nl2SqlEngine(initialize_database(tmp_path / 'sales.sqlite'))
+        agent = OmniAgent(engine, KnowledgeStore(tmp_path / 'knowledge'), ConversationStore())
+        first = agent.query('2024年华南地区销售额', session_id='known')
+        assert first['status'] == 'ok'
+        class Planner:
+            audit = {'status': 'completed', 'http_status': 200}
+            def __init__(self):
+                self.contexts = []
+            def generate(self, instructions, context, schema, **kwargs):
+                self.contexts.append(context)
+                assert '2024年' in context['question'] and '华南' in context['question'] and '订单数' in context['question']
+                assert context['actual_question'] == '那订单数呢'
+                return {'route': 'clarify' if len(self.contexts) == 1 else 'sql',
+                        'effective_question': context['question'], 'clarification': '请提供年份地区', 'tasks_json': '[]'}
+        planner = Planner()
+        agent.client = planner
+        result = agent.query('那订单数呢', session_id='known')
+        assert result['status'] == 'ok' and result['route'] == 'sql'
+>       assert result['planner_source'] == 'model_validated' and len(planner.contexts) == 2
+E       AssertionError: assert ('rules_basic' == 'model_validated'
+E         
+E         - model_validated
+E         + rules_basic)
+
+ict-track8/tests/test_omni_agent.py:99: AssertionError
+=============================== warnings summary ===============================
+../../../tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+ict-track8/backend/app.py:194
+  /home/viva/omni-agent/ict-track8/backend/app.py:194: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../../tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/applications.py:4745
+  /tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/applications.py:4745: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_fusion_source_constraints.py::test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u8bf7\u6392\u9664\u5317\u5cad\uff1b\u4f9d\u636e\u6587\u6863\u6838\u7b97\u7ed3\u679c\u516c\u5f0f\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002]
+FAILED ict-track8/tests/test_fusion_source_constraints.py::test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u4ec5\u5317\u5cad\u5730\u533a\uff1b\u4f9d\u636e\u6587\u6863\u6838\u7b97\u7ed3\u679c\u516c\u5f0f\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002]
+FAILED ict-track8/tests/test_fusion_source_constraints.py::test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u9488\u5bf9\u5317\u5cad\u533a\u57df\uff1b\u4f9d\u636e\u6587\u6863\u6838\u7b97\u7ed3\u679c\u516c\u5f0f\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002]
+FAILED ict-track8/tests/test_fusion_source_constraints.py::test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u6309\u6587\u6863\u516c\u5f0f\u6838\u7b972025\u5e74\u7684\u8d39\u7528\uff0c\u8d39\u7528\u91d1\u989d\u4ece\u6570\u636e\u5e93\u53d6\u503c\u3002]
+FAILED ict-track8/tests/test_fusion_source_constraints.py::test_ambiguous_or_unconsumed_source_requirements_clarify_without_tools[\u6309\u6587\u6863\u516c\u5f0f\u6838\u7b97\uff0c\u7528\u6570\u636e\u5e93\u4e2d2025\u5e74\u5305\u88f9\u53f0\u8d26\u672a\u77e5\u53e3\u5f84\u8d39\u7528\u91d1\u989d\u5408\u8ba1\u4f5c\u4e3a\u8f93\u5165\u3002]
+FAILED ict-track8/tests/test_fusion_history.py::test_new_topic_and_reset_do_not_inherit_sources
+FAILED ict-track8/tests/test_omni_agent.py::test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification
+7 failed, 439 passed, 3 warnings in 17.97s

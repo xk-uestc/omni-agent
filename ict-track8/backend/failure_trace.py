@@ -36,6 +36,7 @@ def attach(response):
         if event.get('status') in {'provider_unavailable', 'dossier_provider_failed', 'multi_provider_failed'}:
             rows.append(for_code('model_provider_failed', phase='generation'))
     result = response.get('result') or {}
+    rows.extend(row for row in result.get('failure_trace', []) if isinstance(row, dict))
     if response.get('status') != 'ok':
         code = result.get('error_code') or result.get('clarification_code')
         if code:
