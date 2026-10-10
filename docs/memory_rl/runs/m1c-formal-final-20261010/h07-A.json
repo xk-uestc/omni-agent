@@ -1,0 +1,271 @@
+{
+  "task": {
+    "id": "h07",
+    "split": "heldout",
+    "workflow": "A",
+    "question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华东目标增长率，以及数据库2025年华东销售额，计算2026年目标销售额。",
+    "variant": "missing_targets"
+  },
+  "arm": "A",
+  "response": {
+    "status": "clarification",
+    "question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华东目标增长率，以及数据库2025年华东销售额，计算2026年目标销售额。",
+    "effective_question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华东目标增长率，以及数据库2025年华东销售额，计算2026年目标销售额。",
+    "route": "clarify",
+    "planner_source": "rules_fallback",
+    "session_id": "new-h07",
+    "context_turns": 0,
+    "state": {
+      "route": "clarify",
+      "pending": "该问题需要联合查询数据库和资料；模型规划当前不可用，请稍后重试。"
+    },
+    "result": {
+      "status": "clarification",
+      "clarification": "该问题需要联合查询数据库和资料；模型规划当前不可用，请稍后重试。"
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_fallback",
+        "route": "clarify",
+        "latency_ms": 9.041,
+        "error": "SourceIntegrityError",
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      }
+    ],
+    "audit_id": "b6dd4403d87bc3e072ad4c1c",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "根据《指标与计划》目标销售额公式和《区域计划》2026年华东目标增长率，以及数据库2025年华东销售额，计算2026年目标销售额。"
+    },
+    "routing": {
+      "selected_route": "clarify",
+      "label": "补充条件",
+      "strategy": "source_query",
+      "reason": "确认来源及查询范围后继续。",
+      "context_mode": "independent",
+      "model_enabled": true
+    }
+  },
+  "model_calls": [],
+  "decision": {
+    "selected": [],
+    "action": {
+      "type": "no_experience"
+    },
+    "state": {
+      "candidates": []
+    }
+  },
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "running",
+      "input": {
+        "query": "根据《指标与计划》目标销售额公式和《区域计划》2026年华东目标增长率，以及数据库2025年华东销售额，计算2026年目标销售额。",
+        "top_k": 20
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "error",
+      "summary": "工具执行失败",
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "clarification",
+        "route": "clarify"
+      },
+      "summary": "需要补充条件或证据",
+      "call_id": "omni-call-3"
+    }
+  ],
+  "wall_ms": 9.703,
+  "source_versions": {
+    "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+    "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+    "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+    "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+    "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+    "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+  },
+  "model_call_count": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tool_calls": 2,
+  "pool": [
+    {
+      "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+      "memory_type": "task_experience",
+      "term": "experience_sql_document",
+      "content": "Source-bound method; replan from current request.",
+      "binding": {},
+      "scope": {
+        "deployment": "m1c",
+        "project": "competition-demo",
+        "data_sources": [
+          "alt_policy",
+          "database",
+          "methods",
+          "next_targets",
+          "policy",
+          "revised",
+          "targets"
+        ]
+      },
+      "provenance": {
+        "authority": "trusted_local_review",
+        "candidate_digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+        "candidate_id": "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+        "confirmation_id": "seed-review-1",
+        "evidence": {
+          "event_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+          "trace_sha256": "578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+          "verifier_sha256": "c180c255c8393da9e1da7f830c1d3508fef4559fec349c4180b18a4cb5a5b9a5"
+        },
+        "evidence_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+        "origin": "agent_execution",
+        "review": {
+          "candidate_id": "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "decision": "confirm",
+          "digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "reason": "Independent whole-task fixture verification",
+          "request_id": "seed-review-1",
+          "reviewed_at": "2026-10-10T12:00:00+00:00",
+          "reviewer": {
+            "account": "viva",
+            "configuration_sha256": "d4c76babc2aeb15726a1ae89f9354bf9bfde1eeb354fdf7155720bc131285187",
+            "host": "a100",
+            "memory_path": "/home/viva/omni-agent/runtime/m1c-formal-final-20261010/seed-memory.sqlite",
+            "scope_key": "{\"data_sources\":[\"alt_policy\",\"database\",\"methods\",\"next_targets\",\"policy\",\"revised\",\"targets\"],\"deployment\":\"m1c\",\"project\":\"competition-demo\"}",
+            "uid": 1001
+          },
+          "source_version": {
+            "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+            "sources": {
+              "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+              "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+            }
+          },
+          "supersedes": null,
+          "validation": {
+            "candidate_digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+            "checked_at": "2026-10-10T12:00:00+00:00",
+            "checks": "typed_experience+immutable_verified_trace+shared_context_validity",
+            "reasons": [],
+            "valid": true
+          }
+        },
+        "verification_id": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea"
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+          "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+        }
+      },
+      "valid_from": "2026-10-10T12:00:00+00:00",
+      "valid_to": null,
+      "verification_state": "confirmed",
+      "created_at": "2026-10-10T12:00:00+00:00",
+      "updated_at": "2026-10-10T12:00:00+00:00",
+      "task_trace_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+      "experience": {
+        "documents": [
+          "methods"
+        ],
+        "execution_authority": "none",
+        "formula_labels": [],
+        "on_missing_or_ambiguous": "clarify",
+        "rebinding": [
+          "current_request_time_region_metric_and_all_explicit_operations",
+          "fresh_read_only_sql_results",
+          "current_document_formula_and_typed_cells",
+          "verified_output_references_no_literal_historical_values"
+        ],
+        "steps": [
+          {
+            "argument_sources": [
+              "current_question_or_current_source"
+            ],
+            "depends_on": [],
+            "role": "step_0",
+            "tool": "sql"
+          },
+          {
+            "argument_sources": [
+              "current_question_or_current_source",
+              "step_0.verified_output"
+            ],
+            "depends_on": [
+              "step_0"
+            ],
+            "role": "step_1",
+            "tool": "search"
+          }
+        ],
+        "version": 1,
+        "workflow": "sql_document"
+      }
+    }
+  ],
+  "events": [],
+  "score": {
+    "task_success": true,
+    "operation_coverage": true,
+    "result_correct": true,
+    "source_correct": true,
+    "clarification_correct": true
+  },
+  "selection_correct": null,
+  "stale_or_wrong_use": false,
+  "controller_feedback": {
+    "task_success": true,
+    "operation_coverage": true,
+    "result_correct": true,
+    "source_correct": true,
+    "clarification_correct": true,
+    "cost": {
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "tool_calls": 2,
+      "wall_ms": 9.703
+    },
+    "failure_reason": null,
+    "trained_policy": false
+  }
+}

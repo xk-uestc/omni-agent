@@ -167,3 +167,9 @@ M1-B2获批准后进入M1-C。新增tools/diagnose_memory_m1c.py、M1_C_EXPERIEN
 M1-C检查点2：experience.py新增真实执行+独立核验后的候选提取、仅方法抽象、原审核生命周期复用及逐次版本验证。core/formation/extraction/admin支持明确类型，business binding不承载经验。11新增/54原记忆测试通过。研究内部verifier由可信流程提供，未新增客户端确认权限。
 
 M1-C检查点3：原Omni Planner请求级有界经验context、HTTP/SSE开关、决策审计接入，未复放历史图。105集成测试通过，新增预算测试及15经验/传输测试通过。真实DeepSeek预检5请求已保存；A执行完整，B最终缺来源，C/D仍原约束拒绝。用户批准后续累计144请求，正式固定服务端实际名称deepseek-flash。工具成功/最终正确继续分开。
+
+## M1-C 检查点4：真实结果与未达成项
+
+同源码91d7633真实16题四组：7/7/8/9；固定经验没有整题收益，Oracle与Fixed请求/选项相同，差异不是策略效果。模型协议非法JSON/DSML、客单价和C/D来源绑定拒绝仍是瓶颈。正式池只有真实Agent形成的SQL→文档经验1项；不能称已证明多候选选择上限。64次目标均独立新session，SQL/资料当前执行；无训练。
+
+费用96次预留≤144，95次有audit、1次中止在途Token未知；只报告已知usage，不猜账单。旧16/185及B2 22回归无新增退化。扩大测试412通过3失败；三失败起点快照同样复现。HTTP/SSE真实入口fake-planner测试通过，仅证明接入，不充作远程模型HTTP成绩。补测实际已确认B记忆的source/revoke/scope拒用3/3，正式轮空池控制和缺来源澄清说明不足明确披露。下一项为最终证据核验/PPO Readiness，禁止训练。

@@ -1,0 +1,2839 @@
+{
+  "response": {
+    "status": "ok",
+    "question": "2025年华南赤羽量是多少",
+    "effective_question": "2025年华南销售件数是多少",
+    "route": "sql",
+    "planner_source": "rules_basic",
+    "session_id": "target-B-n10",
+    "context_turns": 0,
+    "state": {
+      "route": "sql",
+      "metrics": [
+        {
+          "id": "units",
+          "table": "sales_orders",
+          "column": "quantity",
+          "function": "SUM",
+          "label": "销量",
+          "unit": "item",
+          "currency": null,
+          "missing": "null",
+          "filters": []
+        }
+      ],
+      "filters": [
+        {
+          "column": "order_date",
+          "operator": "RANGE",
+          "value": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "source_text": "2025年",
+          "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+          "table": "sales_orders"
+        },
+        {
+          "column": "region",
+          "operator": "=",
+          "value": "华南",
+          "source_text": "华南",
+          "explanation": "限定 region ∈ {华南}",
+          "table": "sales_orders"
+        }
+      ],
+      "dimensions": [],
+      "clarification_code": null,
+      "pending_question": null,
+      "executed_sql_context": {
+        "payload": {
+          "question": "2025年华南销售件数是多少",
+          "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"quantity\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销量\" FROM \"__m0\") SELECT \"销量\" FROM \"__combined\" ORDER BY \"销量\" DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "华南",
+            100
+          ],
+          "source_revision": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617"
+        },
+        "sha256": "ba8872dc5d4ee4cc601862d269bf58361d43a02ffa989ceee5e2dc674e99ef91"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "result_state": "rows",
+      "notices": [],
+      "question": "2025年华南赤羽量是多少",
+      "rewritten_question": "2025年华南销售件数是多少",
+      "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"quantity\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销量\" FROM \"__m0\") SELECT \"销量\" FROM \"__combined\" ORDER BY \"销量\" DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "columns": [
+        "销量"
+      ],
+      "rows": [
+        {
+          "销量": 1818
+        }
+      ],
+      "plan": {
+        "table": "sales_orders",
+        "metric_table": "sales_orders",
+        "metric_column": "quantity",
+        "metric_function": "SUM",
+        "metric_label": "销量",
+        "analysis_mode": "aggregate",
+        "dimensions": [],
+        "dimension_tables": {},
+        "dimension_transforms": {},
+        "dimension_labels": {},
+        "filters": [
+          {
+            "column": "order_date",
+            "operator": "RANGE",
+            "value": [
+              "2025-01-01",
+              "2026-01-01"
+            ],
+            "source_text": "2025年",
+            "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+            "table": "sales_orders"
+          },
+          {
+            "column": "region",
+            "operator": "=",
+            "value": "华南",
+            "source_text": "华南",
+            "explanation": "限定 region ∈ {华南}",
+            "table": "sales_orders"
+          }
+        ],
+        "having": null,
+        "links": [
+          {
+            "source_text": "销售件数",
+            "table": "sales_orders",
+            "column": "quantity",
+            "role": "metric",
+            "score": 1.0,
+            "matched_alias": "销售件数",
+            "metric_function": "SUM"
+          }
+        ],
+        "join_tables": [],
+        "join_conditions": [],
+        "join_path": [],
+        "join_alternatives": [],
+        "order_desc": true,
+        "limit": 100,
+        "complete_results": false,
+        "semantic_row_limit": null,
+        "preview_row_limit": null,
+        "confidence": 0.58,
+        "rewritten_question": "2025年华南销售件数是多少",
+        "comparison_mode": "none",
+        "comparison_period": {},
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": [],
+        "assumptions": [
+          "根据指标目录默认时间口径使用 sales_orders.order_date",
+          "日期参数格式：iso_text",
+          "使用表 sales_orders 的只读聚合查询",
+          "业务口径版本 demo-enterprise-2026-10-09-business-semantics-v2；派生指标使用配置公式，除数为零返回未知"
+        ],
+        "planner_source": "rules",
+        "top_n": null,
+        "fan_out": false,
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华南",
+            "销售件数"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "intent_audit": {
+          "question": "2025年华南销售件数是多少",
+          "metric": {
+            "table": "sales_orders",
+            "column": "quantity",
+            "function": "SUM",
+            "label": "销量"
+          },
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华南",
+              "source_text": "华南",
+              "explanation": "限定 region ∈ {华南}",
+              "table": "sales_orders"
+            }
+          ],
+          "time_range": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "group_by": [],
+          "comparison": "none",
+          "comparison_window": null,
+          "top_n": null,
+          "confidence": 0.58,
+          "unresolved": [],
+          "execution_allowed": true,
+          "planner_source": "rules",
+          "planner_audit": {},
+          "metrics": [
+            {
+              "id": "units",
+              "table": "sales_orders",
+              "column": "quantity",
+              "function": "SUM",
+              "label": "销量",
+              "unit": "item",
+              "currency": null,
+              "missing": "null",
+              "filters": []
+            }
+          ],
+          "derived_metrics": [],
+          "grain_audit": {
+            "strategy": "aggregate_each_fact_then_join",
+            "metrics": [
+              {
+                "metric_id": "units",
+                "table": "sales_orders",
+                "column": "quantity",
+                "function": "SUM",
+                "native_grain": [
+                  "order_id"
+                ],
+                "unit": "item",
+                "currency": null,
+                "missing": "null",
+                "filter_strategy": "many_to_one",
+                "dimension_path": [],
+                "filter_path": []
+              }
+            ],
+            "formulas": [],
+            "null_group_alignment": "IS",
+            "order_metric": "units",
+            "ordering": "metric"
+          },
+          "semantic_audit": {
+            "date_storage_formats": {
+              "sales_orders.order_date": "iso_text"
+            },
+            "catalog_version": "demo-enterprise-2026-10-09-business-semantics-v2",
+            "catalog_sha256": "4fd481e1b36ccb8379be7e55ef7030ce9c51af44c61ff2d796c73e75fc2f0b2f",
+            "sources": [
+              "units"
+            ],
+            "calculations": [],
+            "outputs": [
+              "units"
+            ],
+            "original_question": "2025年华南销售件数是多少",
+            "expanded_question": "2025年华南销售件数是多少",
+            "source_alias": "销售件数"
+          }
+        },
+        "planner_audit": {},
+        "model_plan_diagnostics": {},
+        "metrics": [
+          {
+            "id": "units",
+            "table": "sales_orders",
+            "column": "quantity",
+            "function": "SUM",
+            "label": "销量",
+            "unit": "item",
+            "currency": null,
+            "missing": "null",
+            "filters": []
+          }
+        ],
+        "derived_metrics": [],
+        "order_metric": null,
+        "grain_audit": {
+          "strategy": "aggregate_each_fact_then_join",
+          "metrics": [
+            {
+              "metric_id": "units",
+              "table": "sales_orders",
+              "column": "quantity",
+              "function": "SUM",
+              "native_grain": [
+                "order_id"
+              ],
+              "unit": "item",
+              "currency": null,
+              "missing": "null",
+              "filter_strategy": "many_to_one",
+              "dimension_path": [],
+              "filter_path": []
+            }
+          ],
+          "formulas": [],
+          "null_group_alignment": "IS",
+          "order_metric": "units",
+          "ordering": "metric"
+        },
+        "semantic_audit": {
+          "date_storage_formats": {
+            "sales_orders.order_date": "iso_text"
+          },
+          "catalog_version": "demo-enterprise-2026-10-09-business-semantics-v2",
+          "catalog_sha256": "4fd481e1b36ccb8379be7e55ef7030ce9c51af44c61ff2d796c73e75fc2f0b2f",
+          "sources": [
+            "units"
+          ],
+          "calculations": [],
+          "outputs": [
+            "units"
+          ],
+          "original_question": "2025年华南销售件数是多少",
+          "expanded_question": "2025年华南销售件数是多少",
+          "source_alias": "销售件数"
+        },
+        "output_metrics": [
+          "units"
+        ]
+      },
+      "explanation": [
+        "识别指标：销量（SUM）",
+        "查询表：sales_orders",
+        "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+        "限定 region ∈ {华南}",
+        "根据指标目录默认时间口径使用 sales_orders.order_date",
+        "日期参数格式：iso_text",
+        "使用表 sales_orders 的只读聚合查询",
+        "业务口径版本 demo-enterprise-2026-10-09-business-semantics-v2；派生指标使用配置公式，除数为零返回未知",
+        "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+      ],
+      "provenance": {
+        "source_type": "structured_database",
+        "database": "rich.sqlite",
+        "table": "sales_orders",
+        "row_count": 1,
+        "row_limit": 100,
+        "result_completeness": "within_return_limit",
+        "query_hash": "0a9ffa003e264abb",
+        "field_links": [
+          {
+            "source_text": "销售件数",
+            "table": "sales_orders",
+            "column": "quantity",
+            "role": "metric",
+            "score": 1.0,
+            "matched_alias": "销售件数",
+            "metric_function": "SUM"
+          }
+        ],
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华南",
+            "销售件数"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "consistency": "sqlite_read_transaction",
+        "source_revision": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+        "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+        "grain_audit": {
+          "strategy": "aggregate_each_fact_then_join",
+          "metrics": [
+            {
+              "metric_id": "units",
+              "table": "sales_orders",
+              "column": "quantity",
+              "function": "SUM",
+              "native_grain": [
+                "order_id"
+              ],
+              "unit": "item",
+              "currency": null,
+              "missing": "null",
+              "filter_strategy": "many_to_one",
+              "dimension_path": [],
+              "filter_path": []
+            }
+          ],
+          "formulas": [],
+          "null_group_alignment": "IS",
+          "order_metric": "units",
+          "ordering": "metric"
+        },
+        "result_cells": [
+          {
+            "row": 0,
+            "column": "销量",
+            "query_hash": "0a9ffa003e264abb",
+            "locator": {
+              "type": "sql_result",
+              "row": 0,
+              "column": "销量"
+            }
+          }
+        ],
+        "output_cardinality": {
+          "status": "verified",
+          "maximum_output_rows": 1,
+          "method": "executed_select_scope_cardinality",
+          "verified_singleton_scopes": 3,
+          "aggregate_functions": [
+            "SUM"
+          ],
+          "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+        }
+      },
+      "clarification": null,
+      "clarification_code": null,
+      "clarification_options": [],
+      "source_tables": {
+        "database": "rich.sqlite",
+        "source_revision": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+        "query_hash": "0a9ffa003e264abb",
+        "source_question": null,
+        "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"quantity\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销量\" FROM \"__m0\") SELECT \"销量\" FROM \"__combined\" ORDER BY \"销量\" DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华南",
+          100
+        ],
+        "reused_result": false,
+        "tables": [
+          {
+            "name": "sales_orders",
+            "used_columns": [
+              "order_date",
+              "quantity",
+              "region"
+            ]
+          }
+        ],
+        "basis": "executed_sql_ast_physical_sources"
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "sql",
+        "latency_ms": 68.536,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      }
+    ],
+    "audit_id": "c6c15362a0e6000875e9055f",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华南销售件数是多少"
+    },
+    "routing": {
+      "selected_route": "sql",
+      "label": "数据库问数",
+      "strategy": "source_query",
+      "reason": "查询所需指标和数据。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "query_reference_id": "q_feee02705bd34125a3d6207a563a177d",
+    "memory": {
+      "recall_count": 1,
+      "selected": [
+        "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+      ],
+      "consumed": [
+        "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+      ],
+      "decisions": [
+        {
+          "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+          "term": "赤羽量",
+          "reason": "selected"
+        }
+      ],
+      "degraded": false,
+      "bindings": [
+        {
+          "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+          "term": "赤羽量",
+          "binding": {
+            "column": "quantity",
+            "filters": [],
+            "function": "SUM",
+            "table": "sales_orders"
+          },
+          "source_version": {
+            "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+            "sources": {
+              "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+              "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+            }
+          },
+          "provenance": {
+            "authority": "trusted_local_review",
+            "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+            "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+            "confirmation_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+            "evidence": {
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "document_id": "formation-quantity",
+              "locator": {
+                "line": 2
+              },
+              "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "source_id": "formation-quantity",
+              "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+            },
+            "evidence_id": "daddb9b91be8b809b1bff8c9",
+            "review": {
+              "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+              "decision": "confirm",
+              "digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+              "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+              "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+              "request_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+              "reviewed_at": "2026-10-10T12:00:00+08:00",
+              "reviewer": {
+                "account": "viva",
+                "configuration_sha256": "9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb",
+                "host": "a100",
+                "memory_path": "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite",
+                "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+                "uid": 1001
+              },
+              "source_version": {
+                "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+                "sources": {
+                  "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+                  "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+                }
+              },
+              "supersedes": null,
+              "validation": {
+                "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+                "checked_at": "2026-10-10T12:00:00+08:00",
+                "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+                "reasons": [],
+                "valid": true
+              }
+            },
+            "verification_id": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6"
+          }
+        }
+      ],
+      "recall_ms": 23.701,
+      "canonical_question": "2025年华南销售件数是多少",
+      "trace_id": "b44c23a3baf14c74ae63d3cb75278107",
+      "observe_ms": 4.361,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result",
+        "model_planning_failed": false
+      }
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 363.955,
+  "trace": [
+    {
+      "stage": "memory",
+      "tool": "memory.recall",
+      "status": "success",
+      "executed": true,
+      "call_id": "b44c23a3baf14c74ae63d3cb75278107:memory.recall",
+      "trace_id": "b44c23a3baf14c74ae63d3cb75278107",
+      "output": {
+        "recall_count": 1,
+        "selected": [
+          "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+        ],
+        "consumed": [],
+        "decisions": [
+          {
+            "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+            "term": "赤羽量",
+            "reason": "selected"
+          }
+        ],
+        "degraded": false,
+        "bindings": [
+          {
+            "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+            "term": "赤羽量",
+            "binding": {
+              "column": "quantity",
+              "filters": [],
+              "function": "SUM",
+              "table": "sales_orders"
+            },
+            "source_version": {
+              "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+              "sources": {
+                "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+                "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+              }
+            },
+            "provenance": {
+              "authority": "trusted_local_review",
+              "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+              "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+              "confirmation_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+              "evidence": {
+                "chunk_id": "daddb9b91be8b809b1bff8c9",
+                "document_id": "formation-quantity",
+                "locator": {
+                  "line": 2
+                },
+                "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+                "source_id": "formation-quantity",
+                "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+              },
+              "evidence_id": "daddb9b91be8b809b1bff8c9",
+              "review": {
+                "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+                "decision": "confirm",
+                "digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+                "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+                "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+                "request_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+                "reviewed_at": "2026-10-10T12:00:00+08:00",
+                "reviewer": {
+                  "account": "viva",
+                  "configuration_sha256": "9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb",
+                  "host": "a100",
+                  "memory_path": "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite",
+                  "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+                  "uid": 1001
+                },
+                "source_version": {
+                  "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+                  "sources": {
+                    "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+                    "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+                  }
+                },
+                "supersedes": null,
+                "validation": {
+                  "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+                  "checked_at": "2026-10-10T12:00:00+08:00",
+                  "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+                  "reasons": [],
+                  "valid": true
+                }
+              },
+              "verification_id": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6"
+            }
+          }
+        ],
+        "recall_ms": 23.701,
+        "canonical_question": "2025年华南销售件数是多少",
+        "trace_id": "b44c23a3baf14c74ae63d3cb75278107"
+      }
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "running",
+      "input": {
+        "question": "2025年华南销售件数是多少"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "sql": "WITH \"__m0\" AS (SELECT SUM(\"sales_orders\".\"quantity\") AS \"__value\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ?), \"__combined\" AS (SELECT \"__m0\".\"__value\" AS \"销量\" FROM \"__m0\") SELECT \"销量\" FROM \"__combined\" ORDER BY \"销量\" DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华南",
+          100
+        ],
+        "columns": [
+          "销量"
+        ],
+        "result_state": "rows",
+        "row_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "memory",
+      "tool": "memory.observe",
+      "status": "success",
+      "executed": true,
+      "call_id": "b44c23a3baf14c74ae63d3cb75278107:memory.observe",
+      "trace_id": "b44c23a3baf14c74ae63d3cb75278107",
+      "output": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result",
+        "model_planning_failed": false
+      }
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "sql"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-3"
+    }
+  ],
+  "memory": {
+    "recall_count": 1,
+    "selected": [
+      "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+    ],
+    "consumed": [
+      "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+    ],
+    "decisions": [
+      {
+        "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "term": "赤羽量",
+        "reason": "selected"
+      }
+    ],
+    "degraded": false,
+    "bindings": [
+      {
+        "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "term": "赤羽量",
+        "binding": {
+          "column": "quantity",
+          "filters": [],
+          "function": "SUM",
+          "table": "sales_orders"
+        },
+        "source_version": {
+          "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+          "sources": {
+            "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+            "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+          }
+        },
+        "provenance": {
+          "authority": "trusted_local_review",
+          "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+          "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+          "confirmation_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+          "evidence": {
+            "chunk_id": "daddb9b91be8b809b1bff8c9",
+            "document_id": "formation-quantity",
+            "locator": {
+              "line": 2
+            },
+            "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+            "source_id": "formation-quantity",
+            "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+          },
+          "evidence_id": "daddb9b91be8b809b1bff8c9",
+          "review": {
+            "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+            "decision": "confirm",
+            "digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+            "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+            "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+            "request_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+            "reviewed_at": "2026-10-10T12:00:00+08:00",
+            "reviewer": {
+              "account": "viva",
+              "configuration_sha256": "9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb",
+              "host": "a100",
+              "memory_path": "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite",
+              "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+              "uid": 1001
+            },
+            "source_version": {
+              "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+              "sources": {
+                "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+                "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+              }
+            },
+            "supersedes": null,
+            "validation": {
+              "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+              "checked_at": "2026-10-10T12:00:00+08:00",
+              "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+              "reasons": [],
+              "valid": true
+            }
+          },
+          "verification_id": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6"
+        }
+      }
+    ],
+    "recall_ms": 23.701,
+    "canonical_question": "2025年华南销售件数是多少",
+    "trace_id": "b44c23a3baf14c74ae63d3cb75278107",
+    "observe_ms": 4.361,
+    "observe": {
+      "stored": true,
+      "promotion": "none",
+      "category": "verified_result",
+      "model_planning_failed": false
+    }
+  },
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 2,
+  "memory_operations": 2,
+  "id": "n10",
+  "category": "duplicate",
+  "end_to_end_ms": 888.924,
+  "formation_ms": 511.287,
+  "preparation": {
+    "response": {
+      "status": "ok",
+      "question": "赤羽量是什么",
+      "effective_question": "赤羽量是什么",
+      "route": "document",
+      "planner_source": "server_verified_term_definition_route",
+      "session_id": "formation-A-n10",
+      "context_turns": 0,
+      "state": {
+        "route": "document",
+        "sources": [
+          "formation-quantity"
+        ],
+        "document_context": {
+          "payload": {
+            "question": "赤羽量是什么",
+            "documents": {
+              "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+            }
+          },
+          "sha256": "62dfb1b41e91969390f71a9a015a8363162a2e91e2054a2357b55616364dfc1c"
+        }
+      },
+      "result": {
+        "status": "ok",
+        "question": "赤羽量是什么",
+        "answer_mode": "attributed_extracts",
+        "answer": "[1] 赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "daddb9b91be8b809b1bff8c9",
+            "title": "赤羽量业务定义",
+            "score": 0.7146,
+            "matched_terms": [
+              "赤羽量",
+              "羽量",
+              "赤羽"
+            ],
+            "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+            "source_uri": "/api/v1/knowledge/documents/formation-quantity/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 2,
+              "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849",
+              "original_document_id": "formation-quantity",
+              "document_id": "formation-quantity",
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "raysource_images": [],
+              "bm25_raw": 2.503782,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "bm25_rank": 1,
+              "ranking_score": 3.3704757692307696,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "body_query_term_coverage": 0.23076923076923075,
+              "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "羽量",
+                  "赤羽"
+                ],
+                "body_sha256": "50117b5e3d324d9a9dd7c625677a6f4f40414e642cadbfa5d527f3c6f9f17f48",
+                "utility": 1.1,
+                "uncovered_lexical_facets": [
+                  "是什",
+                  "量是"
+                ],
+                "selection_budget_exhausted": false
+              }
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 1
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 1,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "native_total_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_page_answer_dossier",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_comparison_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_selection_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          }
+        ],
+        "retrieval_audit": {
+          "version": "ict8-rag-audit-v1",
+          "query": "赤羽量是什么",
+          "scope": {
+            "document_id": null,
+            "page_no": null,
+            "exact_identifiers": []
+          },
+          "retrieval": {
+            "mode": "bm25",
+            "embedding_model": null,
+            "dense_answer_threshold": null
+          },
+          "query_language": "zh_or_mixed",
+          "dense_status": "not_configured",
+          "channels": [
+            "bm25"
+          ],
+          "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+          "candidate_pool_limit": 20,
+          "candidate_count": 1,
+          "selection_budget": 4,
+          "selected_count": 1,
+          "selection": {
+            "method": "query_body_lexical_coverage_navigation_only",
+            "semantic_sufficiency": "not_evaluated",
+            "top_k": 4,
+            "candidate_count": 1,
+            "unique_body_count": 1,
+            "query_facets": {
+              "羽量": 1.0,
+              "量是": 1.0,
+              "赤羽": 1.0,
+              "是什": 1.0
+            },
+            "covered_lexical_facets": [
+              "羽量",
+              "赤羽"
+            ],
+            "uncovered_lexical_facets": [
+              "是什",
+              "量是"
+            ],
+            "available_but_unselected_facets": [],
+            "selection_budget_exhausted": false,
+            "source_counts": {
+              "formation-quantity": 1
+            },
+            "steps": [
+              {
+                "chunk_id": "daddb9b91be8b809b1bff8c9",
+                "source_id": "formation-quantity",
+                "ranking_score": 3.3704757692307696,
+                "utility": 1.1,
+                "new_lexical_facets": [
+                  "羽量",
+                  "赤羽"
+                ],
+                "body_sha256": "50117b5e3d324d9a9dd7c625677a6f4f40414e642cadbfa5d527f3c6f9f17f48"
+              }
+            ],
+            "skipped": []
+          },
+          "candidates": [
+            {
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_document_id": "formation-quantity",
+              "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849",
+              "title": "赤羽量业务定义",
+              "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "ranking_rank": 1,
+              "bm25_rank": 1,
+              "bm25_raw": 2.503782,
+              "bm25_relative": 1.0,
+              "dense_rank": null,
+              "dense_cosine": null,
+              "rrf_rank": null,
+              "rrf_score": null,
+              "ranking_score": 3.3704757692307696,
+              "body_query_term_coverage": 0.23076923076923075,
+              "matched_terms": [
+                "赤羽量",
+                "羽量",
+                "赤羽"
+              ],
+              "retrieval_channels": [
+                "bm25"
+              ],
+              "selected_in_initial_coverage": true,
+              "selection_role": "primary",
+              "selection_utility": 1.1,
+              "new_lexical_facets": [
+                "羽量",
+                "赤羽"
+              ],
+              "selection_note": "coverage_selector_selected",
+              "evidence_status": "retrieval_candidate_not_fact_verification",
+              "final_citation_ids": [
+                1
+              ]
+            }
+          ]
+        }
+      },
+      "trace": [
+        {
+          "stage": "intent_planning",
+          "source": "server_verified_term_definition_route",
+          "route": "document",
+          "latency_ms": 0.012,
+          "error": null,
+          "rejection_code": null,
+          "normalizations": [],
+          "attempts": []
+        },
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 1
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 1,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "audit_id": "9c5fe26a8e9bd1164903e8e9",
+      "context_resolution": {
+        "mode": "independent",
+        "actual_question": "赤羽量是什么"
+      },
+      "routing": {
+        "selected_route": "document",
+        "label": "资料问答",
+        "strategy": "source_query",
+        "reason": "检索原文并核对来源。",
+        "context_mode": "independent",
+        "model_enabled": false
+      },
+      "document_reference_id": "q_1aa05772248d4397a18d205c5a495efb",
+      "memory": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 24.016,
+        "trace_id": "82508acc170341138c870e7b20bb08df",
+        "observe_ms": 1.453,
+        "observe": {
+          "stored": true,
+          "promotion": "none",
+          "category": "verified_result",
+          "model_planning_failed": false
+        },
+        "formation": {
+          "candidate_ids": [
+            "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+          ],
+          "promotion": "none"
+        }
+      }
+    },
+    "error": null,
+    "execution_status": "executed",
+    "wall_ms": 39.055,
+    "trace": [
+      {
+        "stage": "memory",
+        "tool": "memory.recall",
+        "status": "success",
+        "executed": true,
+        "call_id": "82508acc170341138c870e7b20bb08df:memory.recall",
+        "trace_id": "82508acc170341138c870e7b20bb08df",
+        "output": {
+          "recall_count": 1,
+          "selected": [],
+          "consumed": [],
+          "decisions": [],
+          "degraded": false,
+          "bindings": [],
+          "recall_ms": 24.016,
+          "trace_id": "82508acc170341138c870e7b20bb08df"
+        }
+      },
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "running",
+        "input": null,
+        "executed": false,
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "success",
+        "output": {
+          "status": null
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "running",
+        "input": {
+          "question": "赤羽量是什么"
+        },
+        "executed": false,
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "running",
+        "summary": "正在整理本轮问题与检索目标。",
+        "input": {
+          "question": "赤羽量是什么"
+        },
+        "output": {},
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "success",
+        "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+        "input": {},
+        "output": {
+          "question": "赤羽量是什么",
+          "retrieval_query": "赤羽量是什么",
+          "query_rewrite": "none"
+        },
+        "latency_ms": 0.003,
+        "executed": true,
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "running",
+        "summary": "正在核对多轮上下文、指代和附加输入。",
+        "input": {
+          "mode": "independent_question"
+        },
+        "output": {},
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "success",
+        "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+        "input": {},
+        "output": {
+          "mode": "independent_question",
+          "actual_question": "赤羽量是什么",
+          "effective_question": "赤羽量是什么",
+          "context_turns": 0,
+          "image_count": 0,
+          "retrieval_context_attached": false
+        },
+        "latency_ms": 0.004,
+        "executed": true,
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "running",
+        "summary": "正在应用资料范围和页码限制。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "scope": "all_sources"
+        },
+        "output": {},
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "success",
+        "summary": "已限定到 1 份资料、1 个可检索片段。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "output": {
+          "document_count": 1,
+          "eligible_chunk_count": 1,
+          "scope": "all_sources"
+        },
+        "latency_ms": 0.257,
+        "executed": true,
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "running",
+        "summary": "正在按词项相关度查找手册片段。",
+        "input": {
+          "query": "赤羽量是什么",
+          "candidate_limit": 100
+        },
+        "output": {},
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "success",
+        "summary": "关键词召回得到 1 个候选片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 1
+        },
+        "latency_ms": 0.045,
+        "executed": true,
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.dense_retrieval",
+        "rag_step": "dense_retrieval",
+        "status": "skipped",
+        "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured"
+        },
+        "executed": false,
+        "call_id": "omni-call-7"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "running",
+        "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+        "input": {
+          "dense_status": "not_configured"
+        },
+        "output": {},
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "success",
+        "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured",
+          "rrf_executed": false,
+          "ranking_method": "bm25_then_page_scope_and_body_affinity"
+        },
+        "latency_ms": 0.019,
+        "executed": true,
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "running",
+        "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+        "input": {
+          "candidate_count": 1,
+          "selection_limit": 4
+        },
+        "output": {},
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "success",
+        "summary": "从 1 个排序候选中选出 1 个证据片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 1,
+          "selected_count": 1,
+          "selection_method": "query_body_lexical_coverage_navigation_only",
+          "selected_evidence": [
+            {
+              "title": "赤羽量业务定义",
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "image_count": 0
+            }
+          ]
+        },
+        "latency_ms": 0.68,
+        "executed": true,
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "running",
+        "summary": "正在整理选中片段、原文定位和关联图片。",
+        "input": {
+          "selected_count": 1
+        },
+        "output": {},
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "success",
+        "summary": "已整理 1 个入选片段，交由回答与来源核验流程处理。",
+        "input": {},
+        "output": {
+          "evidence_count": 1,
+          "evidence": [
+            {
+              "title": "赤羽量业务定义",
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "image_count": 0
+            }
+          ],
+          "user_image_count": 0
+        },
+        "latency_ms": 0.006,
+        "executed": true,
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "running",
+        "summary": "正在依据入选证据生成或核验回答。",
+        "input": {
+          "question": "赤羽量是什么",
+          "evidence_count": 1
+        },
+        "output": {},
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "success",
+        "summary": "已返回回答并完成来源核验。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 1
+        },
+        "latency_ms": 0.313,
+        "executed": true,
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "running",
+        "summary": "正在整理最终回答与来源信息。",
+        "input": {},
+        "output": {},
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "success",
+        "summary": "文档处理已完成。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 1
+        },
+        "latency_ms": 0.017,
+        "executed": true,
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "success",
+        "output": {
+          "status": "ok",
+          "citation_count": 1
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "memory",
+        "tool": "memory.observe",
+        "status": "success",
+        "executed": true,
+        "call_id": "82508acc170341138c870e7b20bb08df:memory.observe",
+        "trace_id": "82508acc170341138c870e7b20bb08df",
+        "output": {
+          "stored": true,
+          "promotion": "none",
+          "category": "verified_result",
+          "model_planning_failed": false
+        }
+      },
+      {
+        "stage": "query_complete",
+        "tool": "query.complete",
+        "status": "success",
+        "executed": false,
+        "output": {
+          "status": "ok",
+          "route": "document"
+        },
+        "summary": "回答已返回",
+        "call_id": "omni-call-13"
+      }
+    ],
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 24.016,
+      "trace_id": "82508acc170341138c870e7b20bb08df",
+      "observe_ms": 1.453,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result",
+        "model_planning_failed": false
+      },
+      "formation": {
+        "candidate_ids": [
+          "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+        ],
+        "promotion": "none"
+      }
+    },
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "tokens_basis": "no model instantiated",
+    "business_tool_calls": 11,
+    "memory_operations": 2
+  },
+  "duplicate_preparation": {
+    "response": {
+      "status": "ok",
+      "question": "赤羽量是什么",
+      "effective_question": "赤羽量是什么",
+      "route": "document",
+      "planner_source": "server_verified_term_definition_route",
+      "session_id": "formation-duplicate",
+      "context_turns": 0,
+      "state": {
+        "route": "document",
+        "sources": [
+          "formation-quantity"
+        ],
+        "document_context": {
+          "payload": {
+            "question": "赤羽量是什么",
+            "documents": {
+              "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+            }
+          },
+          "sha256": "62dfb1b41e91969390f71a9a015a8363162a2e91e2054a2357b55616364dfc1c"
+        }
+      },
+      "result": {
+        "status": "ok",
+        "question": "赤羽量是什么",
+        "answer_mode": "attributed_extracts",
+        "answer": "[1] 赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "daddb9b91be8b809b1bff8c9",
+            "title": "赤羽量业务定义",
+            "score": 0.7146,
+            "matched_terms": [
+              "赤羽量",
+              "羽量",
+              "赤羽"
+            ],
+            "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+            "source_uri": "/api/v1/knowledge/documents/formation-quantity/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 2,
+              "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849",
+              "original_document_id": "formation-quantity",
+              "document_id": "formation-quantity",
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "raysource_images": [],
+              "bm25_raw": 2.503782,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "bm25_rank": 1,
+              "ranking_score": 3.3704757692307696,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "body_query_term_coverage": 0.23076923076923075,
+              "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "羽量",
+                  "赤羽"
+                ],
+                "body_sha256": "50117b5e3d324d9a9dd7c625677a6f4f40414e642cadbfa5d527f3c6f9f17f48",
+                "utility": 1.1,
+                "uncovered_lexical_facets": [
+                  "是什",
+                  "量是"
+                ],
+                "selection_budget_exhausted": false
+              }
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 1
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 1,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "native_total_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_page_answer_dossier",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_comparison_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_selection_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          }
+        ],
+        "retrieval_audit": {
+          "version": "ict8-rag-audit-v1",
+          "query": "赤羽量是什么",
+          "scope": {
+            "document_id": null,
+            "page_no": null,
+            "exact_identifiers": []
+          },
+          "retrieval": {
+            "mode": "bm25",
+            "embedding_model": null,
+            "dense_answer_threshold": null
+          },
+          "query_language": "zh_or_mixed",
+          "dense_status": "not_configured",
+          "channels": [
+            "bm25"
+          ],
+          "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+          "candidate_pool_limit": 20,
+          "candidate_count": 1,
+          "selection_budget": 4,
+          "selected_count": 1,
+          "selection": {
+            "method": "query_body_lexical_coverage_navigation_only",
+            "semantic_sufficiency": "not_evaluated",
+            "top_k": 4,
+            "candidate_count": 1,
+            "unique_body_count": 1,
+            "query_facets": {
+              "羽量": 1.0,
+              "量是": 1.0,
+              "赤羽": 1.0,
+              "是什": 1.0
+            },
+            "covered_lexical_facets": [
+              "羽量",
+              "赤羽"
+            ],
+            "uncovered_lexical_facets": [
+              "是什",
+              "量是"
+            ],
+            "available_but_unselected_facets": [],
+            "selection_budget_exhausted": false,
+            "source_counts": {
+              "formation-quantity": 1
+            },
+            "steps": [
+              {
+                "chunk_id": "daddb9b91be8b809b1bff8c9",
+                "source_id": "formation-quantity",
+                "ranking_score": 3.3704757692307696,
+                "utility": 1.1,
+                "new_lexical_facets": [
+                  "羽量",
+                  "赤羽"
+                ],
+                "body_sha256": "50117b5e3d324d9a9dd7c625677a6f4f40414e642cadbfa5d527f3c6f9f17f48"
+              }
+            ],
+            "skipped": []
+          },
+          "candidates": [
+            {
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_document_id": "formation-quantity",
+              "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849",
+              "title": "赤羽量业务定义",
+              "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "ranking_rank": 1,
+              "bm25_rank": 1,
+              "bm25_raw": 2.503782,
+              "bm25_relative": 1.0,
+              "dense_rank": null,
+              "dense_cosine": null,
+              "rrf_rank": null,
+              "rrf_score": null,
+              "ranking_score": 3.3704757692307696,
+              "body_query_term_coverage": 0.23076923076923075,
+              "matched_terms": [
+                "赤羽量",
+                "羽量",
+                "赤羽"
+              ],
+              "retrieval_channels": [
+                "bm25"
+              ],
+              "selected_in_initial_coverage": true,
+              "selection_role": "primary",
+              "selection_utility": 1.1,
+              "new_lexical_facets": [
+                "羽量",
+                "赤羽"
+              ],
+              "selection_note": "coverage_selector_selected",
+              "evidence_status": "retrieval_candidate_not_fact_verification",
+              "final_citation_ids": [
+                1
+              ]
+            }
+          ]
+        }
+      },
+      "trace": [
+        {
+          "stage": "intent_planning",
+          "source": "server_verified_term_definition_route",
+          "route": "document",
+          "latency_ms": 0.01,
+          "error": null,
+          "rejection_code": null,
+          "normalizations": [],
+          "attempts": []
+        },
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 1
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 1,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "audit_id": "9c5fe26a8e9bd1164903e8e9",
+      "context_resolution": {
+        "mode": "independent",
+        "actual_question": "赤羽量是什么"
+      },
+      "routing": {
+        "selected_route": "document",
+        "label": "资料问答",
+        "strategy": "source_query",
+        "reason": "检索原文并核对来源。",
+        "context_mode": "independent",
+        "model_enabled": false
+      },
+      "document_reference_id": "q_ed4c5dcf65db429082d246579f36ca3f",
+      "memory": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 2.304,
+        "trace_id": "640de4ced3a842749da102e5e5bc0074",
+        "observe_ms": 1.067,
+        "observe": {
+          "stored": true,
+          "promotion": "none",
+          "category": "verified_result",
+          "model_planning_failed": false
+        },
+        "formation": {
+          "candidate_ids": [
+            "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+          ],
+          "promotion": "none"
+        }
+      }
+    },
+    "error": null,
+    "execution_status": "executed",
+    "wall_ms": 8.62,
+    "trace": [
+      {
+        "stage": "memory",
+        "tool": "memory.recall",
+        "status": "success",
+        "executed": true,
+        "call_id": "640de4ced3a842749da102e5e5bc0074:memory.recall",
+        "trace_id": "640de4ced3a842749da102e5e5bc0074",
+        "output": {
+          "recall_count": 1,
+          "selected": [],
+          "consumed": [],
+          "decisions": [],
+          "degraded": false,
+          "bindings": [],
+          "recall_ms": 2.304,
+          "trace_id": "640de4ced3a842749da102e5e5bc0074"
+        }
+      },
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "running",
+        "input": null,
+        "executed": false,
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "success",
+        "output": {
+          "status": null
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "running",
+        "input": {
+          "question": "赤羽量是什么"
+        },
+        "executed": false,
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "running",
+        "summary": "正在整理本轮问题与检索目标。",
+        "input": {
+          "question": "赤羽量是什么"
+        },
+        "output": {},
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "success",
+        "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+        "input": {},
+        "output": {
+          "question": "赤羽量是什么",
+          "retrieval_query": "赤羽量是什么",
+          "query_rewrite": "none"
+        },
+        "latency_ms": 0.002,
+        "executed": true,
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "running",
+        "summary": "正在核对多轮上下文、指代和附加输入。",
+        "input": {
+          "mode": "independent_question"
+        },
+        "output": {},
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "success",
+        "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+        "input": {},
+        "output": {
+          "mode": "independent_question",
+          "actual_question": "赤羽量是什么",
+          "effective_question": "赤羽量是什么",
+          "context_turns": 0,
+          "image_count": 0,
+          "retrieval_context_attached": false
+        },
+        "latency_ms": 0.004,
+        "executed": true,
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "running",
+        "summary": "正在应用资料范围和页码限制。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "scope": "all_sources"
+        },
+        "output": {},
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "success",
+        "summary": "已限定到 1 份资料、1 个可检索片段。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "output": {
+          "document_count": 1,
+          "eligible_chunk_count": 1,
+          "scope": "all_sources"
+        },
+        "latency_ms": 0.132,
+        "executed": true,
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "running",
+        "summary": "正在按词项相关度查找手册片段。",
+        "input": {
+          "query": "赤羽量是什么",
+          "candidate_limit": 100
+        },
+        "output": {},
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "success",
+        "summary": "关键词召回得到 1 个候选片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 1
+        },
+        "latency_ms": 0.042,
+        "executed": true,
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.dense_retrieval",
+        "rag_step": "dense_retrieval",
+        "status": "skipped",
+        "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured"
+        },
+        "executed": false,
+        "call_id": "omni-call-7"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "running",
+        "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+        "input": {
+          "dense_status": "not_configured"
+        },
+        "output": {},
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "success",
+        "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured",
+          "rrf_executed": false,
+          "ranking_method": "bm25_then_page_scope_and_body_affinity"
+        },
+        "latency_ms": 0.017,
+        "executed": true,
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "running",
+        "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+        "input": {
+          "candidate_count": 1,
+          "selection_limit": 4
+        },
+        "output": {},
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "success",
+        "summary": "从 1 个排序候选中选出 1 个证据片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 1,
+          "selected_count": 1,
+          "selection_method": "query_body_lexical_coverage_navigation_only",
+          "selected_evidence": [
+            {
+              "title": "赤羽量业务定义",
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "image_count": 0
+            }
+          ]
+        },
+        "latency_ms": 0.092,
+        "executed": true,
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "running",
+        "summary": "正在整理选中片段、原文定位和关联图片。",
+        "input": {
+          "selected_count": 1
+        },
+        "output": {},
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "success",
+        "summary": "已整理 1 个入选片段，交由回答与来源核验流程处理。",
+        "input": {},
+        "output": {
+          "evidence_count": 1,
+          "evidence": [
+            {
+              "title": "赤羽量业务定义",
+              "chunk_id": "daddb9b91be8b809b1bff8c9",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "赤羽量的业务定义如下。此文件为自建开发资料,不代表真实企业确认。\n业务口径:{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "image_count": 0
+            }
+          ],
+          "user_image_count": 0
+        },
+        "latency_ms": 0.005,
+        "executed": true,
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "running",
+        "summary": "正在依据入选证据生成或核验回答。",
+        "input": {
+          "question": "赤羽量是什么",
+          "evidence_count": 1
+        },
+        "output": {},
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "success",
+        "summary": "已返回回答并完成来源核验。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 1
+        },
+        "latency_ms": 0.263,
+        "executed": true,
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "running",
+        "summary": "正在整理最终回答与来源信息。",
+        "input": {},
+        "output": {},
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "success",
+        "summary": "文档处理已完成。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 1
+        },
+        "latency_ms": 0.015,
+        "executed": true,
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "success",
+        "output": {
+          "status": "ok",
+          "citation_count": 1
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "memory",
+        "tool": "memory.observe",
+        "status": "success",
+        "executed": true,
+        "call_id": "640de4ced3a842749da102e5e5bc0074:memory.observe",
+        "trace_id": "640de4ced3a842749da102e5e5bc0074",
+        "output": {
+          "stored": true,
+          "promotion": "none",
+          "category": "verified_result",
+          "model_planning_failed": false
+        }
+      },
+      {
+        "stage": "query_complete",
+        "tool": "query.complete",
+        "status": "success",
+        "executed": false,
+        "output": {
+          "status": "ok",
+          "route": "document"
+        },
+        "summary": "回答已返回",
+        "call_id": "omni-call-13"
+      }
+    ],
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 2.304,
+      "trace_id": "640de4ced3a842749da102e5e5bc0074",
+      "observe_ms": 1.067,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result",
+        "model_planning_failed": false
+      },
+      "formation": {
+        "candidate_ids": [
+          "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+        ],
+        "promotion": "none"
+      }
+    },
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "tokens_basis": "no model instantiated",
+    "business_tool_calls": 11,
+    "memory_operations": 2
+  },
+  "history_preparation": null,
+  "target_history_before": 0,
+  "candidates": [
+    {
+      "task": "n10",
+      "candidate": {
+        "binding": {
+          "column": "quantity",
+          "filters": [],
+          "function": "SUM",
+          "table": "sales_orders"
+        },
+        "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "created_at": "2026-10-10T12:00:00+08:00",
+        "definition": "销售数量合计",
+        "digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+        "evidence": {
+          "chunk_id": "daddb9b91be8b809b1bff8c9",
+          "document_id": "formation-quantity",
+          "locator": {
+            "line": 2
+          },
+          "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+          "source_id": "formation-quantity",
+          "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        },
+        "memory_type": "business_semantics",
+        "reason": "explicit_structured_source_contract_not_business_confirmation",
+        "scope": {
+          "data_sources": [
+            "db",
+            "formation-conflict1",
+            "formation-conflict2",
+            "formation-lead",
+            "formation-missing",
+            "formation-online",
+            "formation-orders",
+            "formation-price",
+            "formation-quantity",
+            "formation-revenue",
+            "formation-unapproved"
+          ],
+          "deployment": "synthetic-m1b2",
+          "project": "formation-dev"
+        },
+        "source_event_id": "82508acc170341138c870e7b20bb08df",
+        "source_version": {
+          "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+          "sources": {
+            "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+            "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+          }
+        },
+        "supersedes": null,
+        "term": "赤羽量",
+        "valid_from": "2026-10-01T00:00:00+08:00",
+        "valid_to": "2026-11-01T00:00:00+08:00",
+        "verification_state": "candidate",
+        "validation": {}
+      },
+      "validation": {
+        "valid": true,
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": []
+      },
+      "review": {
+        "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+        "request_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "decision": "confirm",
+        "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+        "reviewer": {
+          "uid": 1001,
+          "account": "viva",
+          "host": "a100",
+          "configuration_sha256": "9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb",
+          "memory_path": "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite",
+          "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+        },
+        "supersedes": null,
+        "reviewed_at": "2026-10-10T12:00:00+08:00",
+        "validation": {
+          "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+          "checked_at": "2026-10-10T12:00:00+08:00",
+          "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+          "reasons": [],
+          "valid": true
+        },
+        "source_version": {
+          "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+          "sources": {
+            "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+            "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+          }
+        },
+        "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+      }
+    }
+  ],
+  "admin_commands": [
+    {
+      "command": [
+        "/tmp/omni-m1a-venv/bin/python",
+        "-m",
+        "backend.memory.admin",
+        "--config",
+        "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/admin.json",
+        "validate",
+        "--candidate",
+        "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "--digest",
+        "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6"
+      ],
+      "returncode": 0,
+      "stdout": "{\"valid\": true, \"checked_at\": \"2026-10-10T12:00:00+08:00\", \"candidate_digest\": \"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\", \"checks\": \"source_contract+M1B1_invalid_reason+scope_conflicts\", \"reasons\": []}\n",
+      "stderr": "",
+      "result": {
+        "valid": true,
+        "checked_at": "2026-10-10T12:00:00+08:00",
+        "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+        "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+        "reasons": []
+      },
+      "wall_ms": 229.542
+    },
+    {
+      "command": [
+        "/tmp/omni-m1a-venv/bin/python",
+        "-m",
+        "backend.memory.admin",
+        "--config",
+        "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/admin.json",
+        "review",
+        "--candidate",
+        "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "--digest",
+        "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+        "--decision",
+        "confirm",
+        "--request-id",
+        "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "--reason",
+        "Trusted local fixture review of explicit source contract; not authenticated enterprise approval"
+      ],
+      "returncode": 0,
+      "stdout": "{\"candidate_id\": \"cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\", \"digest\": \"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\", \"request_id\": \"review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\", \"decision\": \"confirm\", \"reason\": \"Trusted local fixture review of explicit source contract; not authenticated enterprise approval\", \"reviewer\": {\"uid\": 1001, \"account\": \"viva\", \"host\": \"a100\", \"configuration_sha256\": \"9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb\", \"memory_path\": \"/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite\", \"scope_key\": \"{\\\"data_sources\\\":[\\\"db\\\",\\\"formation-conflict1\\\",\\\"formation-conflict2\\\",\\\"formation-lead\\\",\\\"formation-missing\\\",\\\"formation-online\\\",\\\"formation-orders\\\",\\\"formation-price\\\",\\\"formation-quantity\\\",\\\"formation-revenue\\\",\\\"formation-unapproved\\\"],\\\"deployment\\\":\\\"synthetic-m1b2\\\",\\\"project\\\":\\\"formation-dev\\\"}\"}, \"supersedes\": null, \"reviewed_at\": \"2026-10-10T12:00:00+08:00\", \"validation\": {\"candidate_digest\": \"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\", \"checked_at\": \"2026-10-10T12:00:00+08:00\", \"checks\": \"source_contract+M1B1_invalid_reason+scope_conflicts\", \"reasons\": [], \"valid\": true}, \"source_version\": {\"schema\": \"d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2\", \"sources\": {\"db\": \"aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617\", \"formation-quantity\": \"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}}, \"memory_id\": \"mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7\"}\n",
+      "stderr": "",
+      "result": {
+        "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+        "request_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "decision": "confirm",
+        "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+        "reviewer": {
+          "uid": 1001,
+          "account": "viva",
+          "host": "a100",
+          "configuration_sha256": "9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb",
+          "memory_path": "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite",
+          "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}"
+        },
+        "supersedes": null,
+        "reviewed_at": "2026-10-10T12:00:00+08:00",
+        "validation": {
+          "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+          "checked_at": "2026-10-10T12:00:00+08:00",
+          "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+          "reasons": [],
+          "valid": true
+        },
+        "source_version": {
+          "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+          "sources": {
+            "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+            "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+          }
+        },
+        "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+      },
+      "wall_ms": 233.28
+    }
+  ],
+  "source_versions": {
+    "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+  },
+  "confirmed_records": [
+    {
+      "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+      "memory_type": "business_semantics",
+      "term": "赤羽量",
+      "content": "销售数量合计",
+      "binding": {
+        "column": "quantity",
+        "filters": [],
+        "function": "SUM",
+        "table": "sales_orders"
+      },
+      "scope": {
+        "deployment": "synthetic-m1b2",
+        "project": "formation-dev",
+        "data_sources": [
+          "db",
+          "formation-conflict1",
+          "formation-conflict2",
+          "formation-lead",
+          "formation-missing",
+          "formation-online",
+          "formation-orders",
+          "formation-price",
+          "formation-quantity",
+          "formation-revenue",
+          "formation-unapproved"
+        ]
+      },
+      "provenance": {
+        "authority": "trusted_local_review",
+        "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+        "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "confirmation_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "evidence": {
+          "chunk_id": "daddb9b91be8b809b1bff8c9",
+          "document_id": "formation-quantity",
+          "locator": {
+            "line": 2
+          },
+          "quote": "业务口径：{\"term\":\"赤羽量\",\"definition\":\"销售数量合计\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]},\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+          "source_id": "formation-quantity",
+          "source_sha256": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        },
+        "evidence_id": "daddb9b91be8b809b1bff8c9",
+        "review": {
+          "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+          "decision": "confirm",
+          "digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+          "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+          "reason": "Trusted local fixture review of explicit source contract; not authenticated enterprise approval",
+          "request_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+          "reviewed_at": "2026-10-10T12:00:00+08:00",
+          "reviewer": {
+            "account": "viva",
+            "configuration_sha256": "9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb",
+            "host": "a100",
+            "memory_path": "/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite",
+            "scope_key": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+            "uid": 1001
+          },
+          "source_version": {
+            "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+            "sources": {
+              "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+              "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+            }
+          },
+          "supersedes": null,
+          "validation": {
+            "candidate_digest": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6",
+            "checked_at": "2026-10-10T12:00:00+08:00",
+            "checks": "source_contract+M1B1_invalid_reason+scope_conflicts",
+            "reasons": [],
+            "valid": true
+          }
+        },
+        "verification_id": "32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6"
+      },
+      "source_version": {
+        "schema": "d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2",
+        "sources": {
+          "db": "aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617",
+          "formation-quantity": "96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849"
+        }
+      },
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "verification_state": "confirmed",
+      "created_at": "2026-10-10T12:00:00+08:00",
+      "updated_at": "2026-10-10T12:00:00+08:00",
+      "task_trace_id": "82508acc170341138c870e7b20bb08df",
+      "experience": null
+    }
+  ],
+  "C_no_put_enforced": true,
+  "store_bytes": 73728,
+  "audit": {
+    "memory_reviews": [
+      {
+        "scope": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+        "request_id": "review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "request_digest": "ac99556ba45f07101478dfae833658974b49352e8137266895d8fddac9ed4f31",
+        "payload": "{\"candidate_id\":\"cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"decision\":\"confirm\",\"digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"memory_id\":\"mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"reason\":\"Trusted local fixture review of explicit source contract; not authenticated enterprise approval\",\"request_id\":\"review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"reviewed_at\":\"2026-10-10T12:00:00+08:00\",\"reviewer\":{\"account\":\"viva\",\"configuration_sha256\":\"9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb\",\"host\":\"a100\",\"memory_path\":\"/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite\",\"scope_key\":\"{\\\"data_sources\\\":[\\\"db\\\",\\\"formation-conflict1\\\",\\\"formation-conflict2\\\",\\\"formation-lead\\\",\\\"formation-missing\\\",\\\"formation-online\\\",\\\"formation-orders\\\",\\\"formation-price\\\",\\\"formation-quantity\\\",\\\"formation-revenue\\\",\\\"formation-unapproved\\\"],\\\"deployment\\\":\\\"synthetic-m1b2\\\",\\\"project\\\":\\\"formation-dev\\\"}\",\"uid\":1001},\"source_version\":{\"schema\":\"d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2\",\"sources\":{\"db\":\"aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617\",\"formation-quantity\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}},\"supersedes\":null,\"validation\":{\"candidate_digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"checked_at\":\"2026-10-10T12:00:00+08:00\",\"checks\":\"source_contract+M1B1_invalid_reason+scope_conflicts\",\"reasons\":[],\"valid\":true}}"
+      }
+    ],
+    "memory_source_events": [
+      {
+        "scope": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+        "event_id": "82508acc170341138c870e7b20bb08df",
+        "document_id": "formation-quantity",
+        "payload": "{\"chunk_ids\":[\"daddb9b91be8b809b1bff8c9\"],\"document_id\":\"formation-quantity\",\"event_id\":\"82508acc170341138c870e7b20bb08df\",\"kind\":\"verified_document_read\",\"observed_at\":\"2026-10-10T12:00:00+08:00\",\"source_sha256\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}"
+      },
+      {
+        "scope": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+        "event_id": "640de4ced3a842749da102e5e5bc0074",
+        "document_id": "formation-quantity",
+        "payload": "{\"chunk_ids\":[\"daddb9b91be8b809b1bff8c9\"],\"document_id\":\"formation-quantity\",\"event_id\":\"640de4ced3a842749da102e5e5bc0074\",\"kind\":\"verified_document_read\",\"observed_at\":\"2026-10-10T12:00:00+08:00\",\"source_sha256\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}"
+      }
+    ],
+    "memory_candidate_events": [
+      {
+        "scope": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+        "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "event_id": "82508acc170341138c870e7b20bb08df"
+      },
+      {
+        "scope": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+        "candidate_id": "cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "event_id": "640de4ced3a842749da102e5e5bc0074"
+      }
+    ],
+    "memory_history": [
+      {
+        "scope": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+        "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "digest": "3863ebcb22dd205a52f51f8c20d035115814937afeb2c91bf6e045d50f5c97e4",
+        "payload": "{\"binding\":{\"column\":\"quantity\",\"filters\":[],\"function\":\"SUM\",\"table\":\"sales_orders\"},\"content\":\"销售数量合计\",\"created_at\":\"2026-10-10T12:00:00+08:00\",\"experience\":null,\"memory_id\":\"mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"memory_type\":\"business_semantics\",\"provenance\":{\"authority\":\"trusted_local_review\",\"candidate_digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"candidate_id\":\"cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"confirmation_id\":\"review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"evidence\":{\"chunk_id\":\"daddb9b91be8b809b1bff8c9\",\"document_id\":\"formation-quantity\",\"locator\":{\"line\":2},\"quote\":\"业务口径：{\\\"term\\\":\\\"赤羽量\\\",\\\"definition\\\":\\\"销售数量合计\\\",\\\"binding\\\":{\\\"table\\\":\\\"sales_orders\\\",\\\"column\\\":\\\"quantity\\\",\\\"function\\\":\\\"SUM\\\",\\\"filters\\\":[]},\\\"valid_from\\\":\\\"2026-10-01T00:00:00+08:00\\\",\\\"valid_to\\\":\\\"2026-11-01T00:00:00+08:00\\\"}\",\"source_id\":\"formation-quantity\",\"source_sha256\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"},\"evidence_id\":\"daddb9b91be8b809b1bff8c9\",\"review\":{\"candidate_id\":\"cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"decision\":\"confirm\",\"digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"memory_id\":\"mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"reason\":\"Trusted local fixture review of explicit source contract; not authenticated enterprise approval\",\"request_id\":\"review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"reviewed_at\":\"2026-10-10T12:00:00+08:00\",\"reviewer\":{\"account\":\"viva\",\"configuration_sha256\":\"9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb\",\"host\":\"a100\",\"memory_path\":\"/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite\",\"scope_key\":\"{\\\"data_sources\\\":[\\\"db\\\",\\\"formation-conflict1\\\",\\\"formation-conflict2\\\",\\\"formation-lead\\\",\\\"formation-missing\\\",\\\"formation-online\\\",\\\"formation-orders\\\",\\\"formation-price\\\",\\\"formation-quantity\\\",\\\"formation-revenue\\\",\\\"formation-unapproved\\\"],\\\"deployment\\\":\\\"synthetic-m1b2\\\",\\\"project\\\":\\\"formation-dev\\\"}\",\"uid\":1001},\"source_version\":{\"schema\":\"d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2\",\"sources\":{\"db\":\"aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617\",\"formation-quantity\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}},\"supersedes\":null,\"validation\":{\"candidate_digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"checked_at\":\"2026-10-10T12:00:00+08:00\",\"checks\":\"source_contract+M1B1_invalid_reason+scope_conflicts\",\"reasons\":[],\"valid\":true}},\"verification_id\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\"},\"scope\":{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"},\"source_version\":{\"schema\":\"d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2\",\"sources\":{\"db\":\"aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617\",\"formation-quantity\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}},\"task_trace_id\":\"82508acc170341138c870e7b20bb08df\",\"term\":\"赤羽量\",\"updated_at\":\"2026-10-10T12:00:00+08:00\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"verification_state\":\"confirmed\"}",
+        "operation": "promoted:review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7"
+      },
+      {
+        "scope": "{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"}",
+        "memory_id": "mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7",
+        "digest": "3863ebcb22dd205a52f51f8c20d035115814937afeb2c91bf6e045d50f5c97e4",
+        "payload": "{\"binding\":{\"column\":\"quantity\",\"filters\":[],\"function\":\"SUM\",\"table\":\"sales_orders\"},\"content\":\"销售数量合计\",\"created_at\":\"2026-10-10T12:00:00+08:00\",\"experience\":null,\"memory_id\":\"mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"memory_type\":\"business_semantics\",\"provenance\":{\"authority\":\"trusted_local_review\",\"candidate_digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"candidate_id\":\"cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"confirmation_id\":\"review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"evidence\":{\"chunk_id\":\"daddb9b91be8b809b1bff8c9\",\"document_id\":\"formation-quantity\",\"locator\":{\"line\":2},\"quote\":\"业务口径：{\\\"term\\\":\\\"赤羽量\\\",\\\"definition\\\":\\\"销售数量合计\\\",\\\"binding\\\":{\\\"table\\\":\\\"sales_orders\\\",\\\"column\\\":\\\"quantity\\\",\\\"function\\\":\\\"SUM\\\",\\\"filters\\\":[]},\\\"valid_from\\\":\\\"2026-10-01T00:00:00+08:00\\\",\\\"valid_to\\\":\\\"2026-11-01T00:00:00+08:00\\\"}\",\"source_id\":\"formation-quantity\",\"source_sha256\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"},\"evidence_id\":\"daddb9b91be8b809b1bff8c9\",\"review\":{\"candidate_id\":\"cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"decision\":\"confirm\",\"digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"memory_id\":\"mem-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"reason\":\"Trusted local fixture review of explicit source contract; not authenticated enterprise approval\",\"request_id\":\"review-cand-32ab86b5a6f2e2f1f8f5b4a32ab742c7\",\"reviewed_at\":\"2026-10-10T12:00:00+08:00\",\"reviewer\":{\"account\":\"viva\",\"configuration_sha256\":\"9caadcdf8dd3b1b9236c71234a81fc3c8698805231e0a8e8f091f4720fe189fb\",\"host\":\"a100\",\"memory_path\":\"/home/viva/omni-agent/runtime/m1c-formation-regression-20261010/C/n10/memory.sqlite\",\"scope_key\":\"{\\\"data_sources\\\":[\\\"db\\\",\\\"formation-conflict1\\\",\\\"formation-conflict2\\\",\\\"formation-lead\\\",\\\"formation-missing\\\",\\\"formation-online\\\",\\\"formation-orders\\\",\\\"formation-price\\\",\\\"formation-quantity\\\",\\\"formation-revenue\\\",\\\"formation-unapproved\\\"],\\\"deployment\\\":\\\"synthetic-m1b2\\\",\\\"project\\\":\\\"formation-dev\\\"}\",\"uid\":1001},\"source_version\":{\"schema\":\"d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2\",\"sources\":{\"db\":\"aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617\",\"formation-quantity\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}},\"supersedes\":null,\"validation\":{\"candidate_digest\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\",\"checked_at\":\"2026-10-10T12:00:00+08:00\",\"checks\":\"source_contract+M1B1_invalid_reason+scope_conflicts\",\"reasons\":[],\"valid\":true}},\"verification_id\":\"32ab86b5a6f2e2f1f8f5b4a32ab742c73f1c53bb7dfd260320ed01dd7baf56d6\"},\"scope\":{\"data_sources\":[\"db\",\"formation-conflict1\",\"formation-conflict2\",\"formation-lead\",\"formation-missing\",\"formation-online\",\"formation-orders\",\"formation-price\",\"formation-quantity\",\"formation-revenue\",\"formation-unapproved\"],\"deployment\":\"synthetic-m1b2\",\"project\":\"formation-dev\"},\"source_version\":{\"schema\":\"d530fe9d27a91726a119cf5e05538464e0df2dbafa6b8c40d0912307133dc8b2\",\"sources\":{\"db\":\"aca81cc454bb7113af222c193375fbc6cdb00a4579a36f61c9cca87b47c76617\",\"formation-quantity\":\"96fcf29e3634b6197ac80a26b2e70d4dd73a7c074f3db77ac0ec085e97f9a849\"}},\"task_trace_id\":\"82508acc170341138c870e7b20bb08df\",\"term\":\"赤羽量\",\"updated_at\":\"2026-10-10T12:00:00+08:00\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"verification_state\":\"confirmed\"}",
+        "operation": "migration_or_open_snapshot"
+      }
+    ]
+  },
+  "pass": true,
+  "score": {
+    "status": "ok",
+    "field_pass": true,
+    "dimension_pass": true,
+    "result_pass": true,
+    "source_filter_population_pass": true,
+    "gold_source_table": "sales_orders",
+    "gold_contributing_records": 304,
+    "actual_source_table": "sales_orders",
+    "actual_contributing_records": 304,
+    "actual_rows": [
+      [
+        1818
+      ]
+    ],
+    "gold_rows_scoring_only": [
+      [
+        1818
+      ]
+    ],
+    "replay_rows": [
+      [
+        1818
+      ]
+    ],
+    "metric_fields_actual": [
+      "quantity"
+    ],
+    "version_evidence_pass": true
+  }
+}

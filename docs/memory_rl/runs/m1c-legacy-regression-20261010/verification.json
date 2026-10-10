@@ -1,0 +1,382 @@
+{
+  "frozen_inputs_and_scorers_unchanged": true,
+  "backend_matches_evaluated_hashes": true,
+  "source_commit": "91d7633a23956b27710599c933913ac79c6022de",
+  "source_stable_during_run": true,
+  "database_read_only": true,
+  "database_matches_m1a": true,
+  "A_pass_vector_matches_m1a": true,
+  "context_pass_vectors_match_m1a": true,
+  "context_off_on_sql_rows_status_equal": true,
+  "adversarial_scorer_checks": [
+    {
+      "name": "original_actual_s03",
+      "frozen_scorer_pass": true,
+      "consumed": true,
+      "combined_pass": true,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": true,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_year",
+      "frozen_scorer_pass": false,
+      "consumed": true,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": false,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            2012.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_channel",
+      "frozen_scorer_pass": false,
+      "consumed": true,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": false,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            2468.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_region",
+      "frozen_scorer_pass": false,
+      "consumed": true,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": false,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            2684.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_physical_field",
+      "frozen_scorer_pass": false,
+      "consumed": true,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            1172.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_aggregation",
+      "frozen_scorer_pass": false,
+      "consumed": true,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            600.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "no_sql_execution_receipt",
+      "frozen_scorer_pass": false,
+      "consumed": true,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": false,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": null,
+        "actual_contributing_records": null,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "no_source_version",
+      "frozen_scorer_pass": false,
+      "consumed": true,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": true,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": false
+      }
+    },
+    {
+      "name": "no_memory_consumption",
+      "frozen_scorer_pass": true,
+      "consumed": false,
+      "combined_pass": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": true,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 4,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 4,
+        "actual_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            2400.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            2400.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    }
+  ],
+  "xlsx_serialization_diagnostic": {
+    "original": {
+      "m1a_sha256": "b58186f6894e0dfd730e1d9e9242f5b2ce146a7719801f2e64aebb85b79cf4d1",
+      "new_sha256": "1b418e16f5151012c5b49c04e1d95ea27ced4665cfd3b47cab68ccf4e1dc08f5",
+      "different_members": [
+        "docProps/core.xml"
+      ],
+      "worksheet_members_equal": true,
+      "old_core_xml": "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">openpyxl</dc:creator><dcterms:created xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T09:15:11Z</dcterms:created><dcterms:modified xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T09:15:11Z</dcterms:modified></cp:coreProperties>",
+      "new_core_xml": "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">openpyxl</dc:creator><dcterms:created xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T14:03:50Z</dcterms:created><dcterms:modified xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T14:03:50Z</dcterms:modified></cp:coreProperties>"
+    },
+    "terms_changed": {
+      "m1a_sha256": "b58186f6894e0dfd730e1d9e9242f5b2ce146a7719801f2e64aebb85b79cf4d1",
+      "new_sha256": "1b418e16f5151012c5b49c04e1d95ea27ced4665cfd3b47cab68ccf4e1dc08f5",
+      "different_members": [
+        "docProps/core.xml"
+      ],
+      "worksheet_members_equal": true,
+      "old_core_xml": "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">openpyxl</dc:creator><dcterms:created xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T09:15:11Z</dcterms:created><dcterms:modified xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T09:15:11Z</dcterms:modified></cp:coreProperties>",
+      "new_core_xml": "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">openpyxl</dc:creator><dcterms:created xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T14:03:50Z</dcterms:created><dcterms:modified xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T14:03:50Z</dcterms:modified></cp:coreProperties>"
+    },
+    "targets_changed": {
+      "m1a_sha256": "aec45342585faaea195011bf40f5e6a77cc3888b1d7e8e2bdfae355ac9f0eea8",
+      "new_sha256": "a349442a03231e438b4b92b7a86a59462d03f0d84ec531e8d8f0ee27c6eb5db2",
+      "different_members": [
+        "docProps/core.xml"
+      ],
+      "worksheet_members_equal": true,
+      "old_core_xml": "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">openpyxl</dc:creator><dcterms:created xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T09:15:11Z</dcterms:created><dcterms:modified xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T09:15:11Z</dcterms:modified></cp:coreProperties>",
+      "new_core_xml": "<cp:coreProperties xmlns:cp=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:creator xmlns:dc=\"http://purl.org/dc/elements/1.1/\">openpyxl</dc:creator><dcterms:created xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T14:03:50Z</dcterms:created><dcterms:modified xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"dcterms:W3CDTF\">2026-10-10T14:03:50Z</dcterms:modified></cp:coreProperties>"
+    }
+  },
+  "storage": {
+    "A": {
+      "files": 21,
+      "sqlite_file_bytes": 1404928,
+      "event_count": 0,
+      "event_payload_bytes": 0,
+      "candidate_payload_bytes": 33572
+    },
+    "B": {
+      "files": 21,
+      "sqlite_file_bytes": 1544192,
+      "event_count": 207,
+      "event_payload_bytes": 74127,
+      "candidate_payload_bytes": 33572
+    }
+  },
+  "storage_note": "A also pre-provisioned test candidates for fair availability. Default-off production creates no memory DB. Sizes include SQLite page allocation; zero file growth does not imply zero persisted event bytes."
+}

@@ -201,3 +201,39 @@ M1-C类型契约测试命令：`/tmp/omni-m1a-venv/bin/python -m pytest -q ict-t
 首次正式label `m1c-formal-20261010`在开发阶段中止，已完成d01–d03共12条，保留全部原始输出与INTERRUPTED.json，不计算正式总成绩。原因：显式deepseek-flash默认thinking enabled，temperature=0实际上不生效；一次JSONDecodeError，原transport未保存无法解析的assistant正文，仅有usage/error_type，因此不能事后推断该内容。官方API参数说明已核对。主动停止自己的进程，累计ledger22次（含预检5、种子2、开发及修复请求），其中在途终止可能计费、Token未知，不能填0。
 
 随后明确请求thinking.disabled，增加有界assistant_content失败证据、audit解码字段；新model_run_v2.json独立补充固定运行配置，原输入/Gold/scorer/manifest均不变，不覆盖原运行。顺带发现experience新import会使默认服务在非POSIX因pwd导入失败：将pwd延迟到本地管理员入口，非POSIX审批明确fail closed，默认服务模块可导入；不宣称Windows全栈已验证。修复后机制/预算/独立评分17项通过（transport-fixed-tests.txt）。正式重跑仍受累计144额度约束，不重置ledger。
+
+## M1-C 最终同源码真实四组与回归
+
+生产源码`91d7633a23956b27710599c933913ac79c6022de`。正式命令（无自动付费重试）：
+
+```bash
+/tmp/omni-m1a-venv/bin/python tools/evaluate_task_experience_m1c.py --config runtime/private/m1c-model.env --max-calls 144 --label m1c-formal-final-20261010 > docs/memory_rl/runs/m1c/formal-final.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/verify_task_experience_m1c.py > docs/memory_rl/runs/m1c/verification.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_m1b1.py --label m1c-legacy-regression-20261010 > docs/memory_rl/runs/m1c/legacy-regression.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_formation_m1b2.py --label m1c-formation-regression-20261010 > docs/memory_rl/runs/m1c/formation-regression.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/verify_memory_m1b1_evidence.py --label m1c-legacy-regression-20261010 > docs/memory_rl/runs/m1c/legacy-verification.txt 2>&1
+/tmp/omni-m1a-venv/bin/python tools/verify_memory_formation_m1b2.py --label m1c-formation-regression-20261010 > docs/memory_rl/runs/m1c/formation-verification.txt 2>&1
+```
+
+四组16题结果：A7/B7/C8/D9；开发4/5/4/5，保留3/2/4/4。固定经验无成功率增益。B/C所有16对首请求context及选择相同，不能将1题差异解释为Oracle策略收益。正式种子A在JSON协议解析失败，不确认；B真实Agent→独立重执行/整题核验→本地CLI审批成功，正式池仅1项；客单价种子来源范围失败。B/C只在d03/d04/h03/h04选择同一B经验。直接保留模型非法JSON/DSML输出，未写宽松解析绕过协议。
+
+最终64任务均新会话history=0，源码/DB前后Hash相同。输入manifest保持ed8972c1e24cc691ade7bb7b54f7f8492d4e72104576c361f5f166190b821992。正式目标请求71次，种子3次；累计ledger96（含预检与中止轮），上限144。95次有返回audit；中止时第22次在途响应未知，可能计费，Token不能填0。已知输入432293、输出35477；金额未独立核对，实际账单为准。剩余额度48未使用。
+
+业务回归原16 A10/B14、185 A177/B177，逐题pass和SQL/rows/status匹配原记录；B2 22题9/22、22/22、22/22，正向0/12/12、候选23验证20晋升19，源码/DB稳定。两项独立核验工具均退出0。
+
+选定完整测试确切命令：
+
+```bash
+timeout 180s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_api.py ict-track8/tests/test_memory_extraction.py ict-track8/tests/test_memory_formation.py ict-track8/tests/test_memory_formation_api.py ict-track8/tests/test_task_experience.py ict-track8/tests/test_task_experience_api.py ict-track8/tests/test_m1c_model_budget.py ict-track8/tests/test_m1c_scorer.py ict-track8/tests/test_session.py ict-track8/tests/test_semantic_integration.py ict-track8/tests/test_dependency_agent.py ict-track8/tests/test_api_security.py ict-track8/tests/test_omni_query_stream.py ict-track8/tests/test_fusion_literal_protocol_round4.py ict-track8/tests/test_sql_document_binding.py ict-track8/tests/test_omni_plan_recovery_round4.py ict-track8/tests/test_fusion_source_constraints.py ict-track8/tests/test_fusion_history.py ict-track8/tests/test_omni_agent.py --junitxml=docs/memory_rl/runs/m1c/final-tests.xml > docs/memory_rl/runs/m1c/final-tests.txt 2>&1
+```
+
+实际412 passed、3 failed、3 warnings，15.79s，不写全绿。三项失败test_metric_display_alias_is_bound_to_same_physical_sum、test_new_topic_and_reset_do_not_inherit_sources、test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification。
+用`git archive 5a5f14f8c5aeab0aa9ce331da8b628bcd98933e0 ict-track8/backend ict-track8/tests ict-track8/data`导出起点源码到/tmp/omni-m1c-start-snapshot（不切换/修改任何分支）。最初指定不存在的ict-track8/config导致archive退出128，移除不存在路径后成功。
+
+```bash
+/tmp/omni-m1a-venv/bin/python -m pytest -q /tmp/omni-m1c-start-snapshot/ict-track8/tests/test_sql_document_binding.py::test_metric_display_alias_is_bound_to_same_physical_sum /tmp/omni-m1c-start-snapshot/ict-track8/tests/test_fusion_history.py::test_new_topic_and_reset_do_not_inherit_sources /tmp/omni-m1c-start-snapshot/ict-track8/tests/test_omni_agent.py::test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification > docs/memory_rl/runs/m1c/start-snapshot-failure-check.txt 2>&1
+```
+
+三项相同失败在起点0.78s原样复现，非本轮新增；保留输出。主模型计时期间没有并行跑本Agent测试/回归；旧回归期间有一次起点三失败诊断，不将旧回归wall作为本轮性能因果证据。
+
+补充真实model-formed B条目的治理测试无付费调用：当前可选1条→methods原件改变拒用、显式本地撤销拒用、换project拒用，3/3；记录在最终verification.json。d08/h08正式公式控制因没有形成公式种子而是空池控制，不能冒充真实撤销成功。h07冻结评分仅证明未发布无依据数值，实际泛化澄清没有正确解释缺原件原因。C检索字段只计第二次选择pass，第一次oracle候选扫描耗时未单独保存，故只可报告该阶段下界；完整wall包括两次。D为审计运行相同检索扫描但不向模型提供经验，实际输入Token并非严格相等。

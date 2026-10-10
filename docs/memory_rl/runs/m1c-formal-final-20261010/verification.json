@@ -1,0 +1,869 @@
+{
+  "frozen_hashes_match": true,
+  "source_stable": true,
+  "db_stable": true,
+  "heldout_seen_only_in_formal_final": true,
+  "target_count": 64,
+  "new_session_history_zero": true,
+  "arms": {
+    "A": {
+      "passed": 7,
+      "total": 16,
+      "splits": {
+        "development": 4,
+        "heldout": 3
+      },
+      "model_calls": 18,
+      "input_tokens": 80966,
+      "output_tokens": 3335,
+      "wall_ms": 29324.103,
+      "selection_correct": 0,
+      "stale_or_wrong_use": 0,
+      "normalized_model_plan_valid": 12,
+      "actual_required_operation_coverage": 7,
+      "result_correct": 7,
+      "source_attribution_correct": 7,
+      "tool_calls": 62,
+      "wall_p50_ms": 1666.0635000000002,
+      "wall_p95_ms": 3138.265,
+      "retrieval_total_ms": 0,
+      "selected_tasks": [],
+      "model_json_failures": 2
+    },
+    "B": {
+      "passed": 7,
+      "total": 16,
+      "splits": {
+        "development": 5,
+        "heldout": 2
+      },
+      "model_calls": 17,
+      "input_tokens": 77918,
+      "output_tokens": 3333,
+      "wall_ms": 29443.054,
+      "selection_correct": 15,
+      "stale_or_wrong_use": 0,
+      "normalized_model_plan_valid": 10,
+      "actual_required_operation_coverage": 7,
+      "result_correct": 7,
+      "source_attribution_correct": 7,
+      "tool_calls": 59,
+      "wall_p50_ms": 1866.745,
+      "wall_p95_ms": 2658.758,
+      "retrieval_total_ms": 71.405,
+      "selected_tasks": [
+        "d03",
+        "d04",
+        "h03",
+        "h04"
+      ],
+      "model_json_failures": 4
+    },
+    "C": {
+      "passed": 8,
+      "total": 16,
+      "splits": {
+        "development": 4,
+        "heldout": 4
+      },
+      "model_calls": 17,
+      "input_tokens": 77736,
+      "output_tokens": 3219,
+      "wall_ms": 27737.323,
+      "selection_correct": 15,
+      "stale_or_wrong_use": 0,
+      "normalized_model_plan_valid": 12,
+      "actual_required_operation_coverage": 8,
+      "result_correct": 8,
+      "source_attribution_correct": 8,
+      "tool_calls": 61,
+      "wall_p50_ms": 1785.2255,
+      "wall_p95_ms": 2556.084,
+      "retrieval_total_ms": 69.358,
+      "selected_tasks": [
+        "d03",
+        "d04",
+        "h03",
+        "h04"
+      ],
+      "model_json_failures": 3
+    },
+    "D": {
+      "passed": 9,
+      "total": 16,
+      "splits": {
+        "development": 5,
+        "heldout": 4
+      },
+      "model_calls": 19,
+      "input_tokens": 87332,
+      "output_tokens": 3620,
+      "wall_ms": 32215.457,
+      "selection_correct": 0,
+      "stale_or_wrong_use": 0,
+      "normalized_model_plan_valid": 11,
+      "actual_required_operation_coverage": 9,
+      "result_correct": 9,
+      "source_attribution_correct": 9,
+      "tool_calls": 62,
+      "wall_p50_ms": 2078.266,
+      "wall_p95_ms": 3120.626,
+      "retrieval_total_ms": 73.284,
+      "selected_tasks": [],
+      "model_json_failures": 3
+    }
+  },
+  "B_C_pairs": [
+    {
+      "id": "d01",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": true,
+      "C_pass": false
+    },
+    {
+      "id": "d02",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": false
+    },
+    {
+      "id": "d03",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": true,
+      "C_pass": true
+    },
+    {
+      "id": "d04",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": true,
+      "C_pass": true
+    },
+    {
+      "id": "d05",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": false
+    },
+    {
+      "id": "d06",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": false
+    },
+    {
+      "id": "d07",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": true,
+      "C_pass": true
+    },
+    {
+      "id": "d08",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": true,
+      "C_pass": true
+    },
+    {
+      "id": "h01",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": false
+    },
+    {
+      "id": "h02",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": false
+    },
+    {
+      "id": "h03",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": true,
+      "C_pass": true
+    },
+    {
+      "id": "h04",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": true
+    },
+    {
+      "id": "h05",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": false
+    },
+    {
+      "id": "h06",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": false
+    },
+    {
+      "id": "h07",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": true,
+      "C_pass": true
+    },
+    {
+      "id": "h08",
+      "same_selected": true,
+      "same_initial_model_context": true,
+      "B_pass": false,
+      "C_pass": true
+    }
+  ],
+  "cumulative_cost": {
+    "reserved_calls": 96,
+    "recorded_call_audits": 95,
+    "missing_response_audit_numbers": [
+      22
+    ],
+    "known_input_tokens": 432293,
+    "known_output_tokens": 35477,
+    "unknown_tokens_not_zero": true,
+    "cap": 144,
+    "within_approved_budget": true,
+    "currency_cost": "not independently verified; billing dashboard authoritative"
+  },
+  "supplemental_governance": [
+    {
+      "mode": "stale",
+      "before": {
+        "state": {
+          "task_features": {
+            "workflow": "sql_document",
+            "years": [
+              "2024"
+            ],
+            "required_operations": {
+              "version_comparison_dates": []
+            }
+          },
+          "available_tools": [
+            "calculate",
+            "compare",
+            "document_cell",
+            "document_fact",
+            "document_formula",
+            "policy_select",
+            "search",
+            "search_fact",
+            "sql"
+          ],
+          "candidates": [
+            {
+              "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+              "reason": "eligible",
+              "experience": {
+                "documents": [
+                  "methods"
+                ],
+                "execution_authority": "none",
+                "formula_labels": [],
+                "on_missing_or_ambiguous": "clarify",
+                "rebinding": [
+                  "current_request_time_region_metric_and_all_explicit_operations",
+                  "fresh_read_only_sql_results",
+                  "current_document_formula_and_typed_cells",
+                  "verified_output_references_no_literal_historical_values"
+                ],
+                "steps": [
+                  {
+                    "argument_sources": [
+                      "current_question_or_current_source"
+                    ],
+                    "depends_on": [],
+                    "role": "step_0",
+                    "tool": "sql"
+                  },
+                  {
+                    "argument_sources": [
+                      "current_question_or_current_source",
+                      "step_0.verified_output"
+                    ],
+                    "depends_on": [
+                      "step_0"
+                    ],
+                    "role": "step_1",
+                    "tool": "search"
+                  }
+                ],
+                "version": 1,
+                "workflow": "sql_document"
+              }
+            }
+          ],
+          "completed_steps": [],
+          "budget": {
+            "max_items": 1,
+            "max_characters": 3000
+          },
+          "failure": null,
+          "source_versions": {
+            "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+            "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+            "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+            "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+          }
+        },
+        "action": {
+          "type": "select_experience",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+        },
+        "legal_actions": [
+          {
+            "type": "no_experience"
+          },
+          {
+            "type": "request_clarification"
+          },
+          {
+            "type": "select_experience",
+            "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+          }
+        ],
+        "selected": [
+          "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+        ],
+        "advice": {
+          "kind": "advisory_task_experience",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "method": {
+            "documents": [
+              "methods"
+            ],
+            "execution_authority": "none",
+            "formula_labels": [],
+            "on_missing_or_ambiguous": "clarify",
+            "rebinding": [
+              "current_request_time_region_metric_and_all_explicit_operations",
+              "fresh_read_only_sql_results",
+              "current_document_formula_and_typed_cells",
+              "verified_output_references_no_literal_historical_values"
+            ],
+            "steps": [
+              {
+                "argument_sources": [
+                  "current_question_or_current_source"
+                ],
+                "depends_on": [],
+                "role": "step_0",
+                "tool": "sql"
+              },
+              {
+                "argument_sources": [
+                  "current_question_or_current_source",
+                  "step_0.verified_output"
+                ],
+                "depends_on": [
+                  "step_0"
+                ],
+                "role": "step_1",
+                "tool": "search"
+              }
+            ],
+            "version": 1,
+            "workflow": "sql_document"
+          },
+          "trust": "planning_data_only_generate_new_plan_and_preserve_all_current_user_constraints"
+        },
+        "retrieval_ms": 6.0
+      },
+      "after": {
+        "state": {
+          "task_features": {
+            "workflow": "sql_document",
+            "years": [
+              "2024"
+            ],
+            "required_operations": {
+              "version_comparison_dates": []
+            }
+          },
+          "available_tools": [
+            "calculate",
+            "compare",
+            "document_cell",
+            "document_fact",
+            "document_formula",
+            "policy_select",
+            "search",
+            "search_fact",
+            "sql"
+          ],
+          "candidates": [
+            {
+              "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+              "reason": "source_changed",
+              "experience": null
+            }
+          ],
+          "completed_steps": [],
+          "budget": {
+            "max_items": 1,
+            "max_characters": 3000
+          },
+          "failure": null,
+          "source_versions": {
+            "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+            "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+            "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+          }
+        },
+        "action": {
+          "type": "no_experience"
+        },
+        "legal_actions": [
+          {
+            "type": "no_experience"
+          },
+          {
+            "type": "request_clarification"
+          }
+        ],
+        "selected": [],
+        "advice": null,
+        "retrieval_ms": 1.995
+      },
+      "rejected": true
+    },
+    {
+      "mode": "revoked",
+      "before": {
+        "state": {
+          "task_features": {
+            "workflow": "sql_document",
+            "years": [
+              "2024"
+            ],
+            "required_operations": {
+              "version_comparison_dates": []
+            }
+          },
+          "available_tools": [
+            "calculate",
+            "compare",
+            "document_cell",
+            "document_fact",
+            "document_formula",
+            "policy_select",
+            "search",
+            "search_fact",
+            "sql"
+          ],
+          "candidates": [
+            {
+              "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+              "reason": "eligible",
+              "experience": {
+                "documents": [
+                  "methods"
+                ],
+                "execution_authority": "none",
+                "formula_labels": [],
+                "on_missing_or_ambiguous": "clarify",
+                "rebinding": [
+                  "current_request_time_region_metric_and_all_explicit_operations",
+                  "fresh_read_only_sql_results",
+                  "current_document_formula_and_typed_cells",
+                  "verified_output_references_no_literal_historical_values"
+                ],
+                "steps": [
+                  {
+                    "argument_sources": [
+                      "current_question_or_current_source"
+                    ],
+                    "depends_on": [],
+                    "role": "step_0",
+                    "tool": "sql"
+                  },
+                  {
+                    "argument_sources": [
+                      "current_question_or_current_source",
+                      "step_0.verified_output"
+                    ],
+                    "depends_on": [
+                      "step_0"
+                    ],
+                    "role": "step_1",
+                    "tool": "search"
+                  }
+                ],
+                "version": 1,
+                "workflow": "sql_document"
+              }
+            }
+          ],
+          "completed_steps": [],
+          "budget": {
+            "max_items": 1,
+            "max_characters": 3000
+          },
+          "failure": null,
+          "source_versions": {
+            "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+            "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+            "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+            "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+          }
+        },
+        "action": {
+          "type": "select_experience",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+        },
+        "legal_actions": [
+          {
+            "type": "no_experience"
+          },
+          {
+            "type": "request_clarification"
+          },
+          {
+            "type": "select_experience",
+            "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+          }
+        ],
+        "selected": [
+          "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+        ],
+        "advice": {
+          "kind": "advisory_task_experience",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "method": {
+            "documents": [
+              "methods"
+            ],
+            "execution_authority": "none",
+            "formula_labels": [],
+            "on_missing_or_ambiguous": "clarify",
+            "rebinding": [
+              "current_request_time_region_metric_and_all_explicit_operations",
+              "fresh_read_only_sql_results",
+              "current_document_formula_and_typed_cells",
+              "verified_output_references_no_literal_historical_values"
+            ],
+            "steps": [
+              {
+                "argument_sources": [
+                  "current_question_or_current_source"
+                ],
+                "depends_on": [],
+                "role": "step_0",
+                "tool": "sql"
+              },
+              {
+                "argument_sources": [
+                  "current_question_or_current_source",
+                  "step_0.verified_output"
+                ],
+                "depends_on": [
+                  "step_0"
+                ],
+                "role": "step_1",
+                "tool": "search"
+              }
+            ],
+            "version": 1,
+            "workflow": "sql_document"
+          },
+          "trust": "planning_data_only_generate_new_plan_and_preserve_all_current_user_constraints"
+        },
+        "retrieval_ms": 4.485
+      },
+      "after": {
+        "state": {
+          "task_features": {
+            "workflow": "sql_document",
+            "years": [
+              "2024"
+            ],
+            "required_operations": {
+              "version_comparison_dates": []
+            }
+          },
+          "available_tools": [
+            "calculate",
+            "compare",
+            "document_cell",
+            "document_fact",
+            "document_formula",
+            "policy_select",
+            "search",
+            "search_fact",
+            "sql"
+          ],
+          "candidates": [
+            {
+              "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+              "reason": "revoked",
+              "experience": null
+            }
+          ],
+          "completed_steps": [],
+          "budget": {
+            "max_items": 1,
+            "max_characters": 3000
+          },
+          "failure": null,
+          "source_versions": {
+            "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+            "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+            "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+            "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+          }
+        },
+        "action": {
+          "type": "no_experience"
+        },
+        "legal_actions": [
+          {
+            "type": "no_experience"
+          },
+          {
+            "type": "request_clarification"
+          }
+        ],
+        "selected": [],
+        "advice": null,
+        "retrieval_ms": 2.069
+      },
+      "rejected": true
+    },
+    {
+      "mode": "scope",
+      "before": {
+        "state": {
+          "task_features": {
+            "workflow": "sql_document",
+            "years": [
+              "2024"
+            ],
+            "required_operations": {
+              "version_comparison_dates": []
+            }
+          },
+          "available_tools": [
+            "calculate",
+            "compare",
+            "document_cell",
+            "document_fact",
+            "document_formula",
+            "policy_select",
+            "search",
+            "search_fact",
+            "sql"
+          ],
+          "candidates": [
+            {
+              "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+              "reason": "eligible",
+              "experience": {
+                "documents": [
+                  "methods"
+                ],
+                "execution_authority": "none",
+                "formula_labels": [],
+                "on_missing_or_ambiguous": "clarify",
+                "rebinding": [
+                  "current_request_time_region_metric_and_all_explicit_operations",
+                  "fresh_read_only_sql_results",
+                  "current_document_formula_and_typed_cells",
+                  "verified_output_references_no_literal_historical_values"
+                ],
+                "steps": [
+                  {
+                    "argument_sources": [
+                      "current_question_or_current_source"
+                    ],
+                    "depends_on": [],
+                    "role": "step_0",
+                    "tool": "sql"
+                  },
+                  {
+                    "argument_sources": [
+                      "current_question_or_current_source",
+                      "step_0.verified_output"
+                    ],
+                    "depends_on": [
+                      "step_0"
+                    ],
+                    "role": "step_1",
+                    "tool": "search"
+                  }
+                ],
+                "version": 1,
+                "workflow": "sql_document"
+              }
+            }
+          ],
+          "completed_steps": [],
+          "budget": {
+            "max_items": 1,
+            "max_characters": 3000
+          },
+          "failure": null,
+          "source_versions": {
+            "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+            "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+            "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+            "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+          }
+        },
+        "action": {
+          "type": "select_experience",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+        },
+        "legal_actions": [
+          {
+            "type": "no_experience"
+          },
+          {
+            "type": "request_clarification"
+          },
+          {
+            "type": "select_experience",
+            "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+          }
+        ],
+        "selected": [
+          "mem-cc04a9272f81093c82a8a1ef87e2f0bb"
+        ],
+        "advice": {
+          "kind": "advisory_task_experience",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "method": {
+            "documents": [
+              "methods"
+            ],
+            "execution_authority": "none",
+            "formula_labels": [],
+            "on_missing_or_ambiguous": "clarify",
+            "rebinding": [
+              "current_request_time_region_metric_and_all_explicit_operations",
+              "fresh_read_only_sql_results",
+              "current_document_formula_and_typed_cells",
+              "verified_output_references_no_literal_historical_values"
+            ],
+            "steps": [
+              {
+                "argument_sources": [
+                  "current_question_or_current_source"
+                ],
+                "depends_on": [],
+                "role": "step_0",
+                "tool": "sql"
+              },
+              {
+                "argument_sources": [
+                  "current_question_or_current_source",
+                  "step_0.verified_output"
+                ],
+                "depends_on": [
+                  "step_0"
+                ],
+                "role": "step_1",
+                "tool": "search"
+              }
+            ],
+            "version": 1,
+            "workflow": "sql_document"
+          },
+          "trust": "planning_data_only_generate_new_plan_and_preserve_all_current_user_constraints"
+        },
+        "retrieval_ms": 4.478
+      },
+      "after": {
+        "state": {
+          "task_features": {
+            "workflow": "sql_document",
+            "years": [
+              "2024"
+            ],
+            "required_operations": {
+              "version_comparison_dates": []
+            }
+          },
+          "available_tools": [
+            "calculate",
+            "compare",
+            "document_cell",
+            "document_fact",
+            "document_formula",
+            "policy_select",
+            "search",
+            "search_fact",
+            "sql"
+          ],
+          "candidates": [],
+          "completed_steps": [],
+          "budget": {
+            "max_items": 1,
+            "max_characters": 3000
+          },
+          "failure": null,
+          "source_versions": {
+            "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+            "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+            "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+            "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+          }
+        },
+        "action": {
+          "type": "no_experience"
+        },
+        "legal_actions": [
+          {
+            "type": "no_experience"
+          },
+          {
+            "type": "request_clarification"
+          }
+        ],
+        "selected": [],
+        "advice": null,
+        "retrieval_ms": 1.689
+      },
+      "rejected": true
+    }
+  ],
+  "limitations": [
+    "h07 frozen scorer checks safe non-answer, not accuracy of clarification explanation; generic model-unavailable message is not a correct missing-source diagnosis.",
+    "d08/h08 main-run forecast lifecycle controls are vacuous because forecast seed failed; supplemental B checks and lifecycle unit tests provide nonvacuous evidence.",
+    "Oracle and Fixed selected the same single candidate; paired outcome differences are not selection-policy gains.",
+    "D matches maximum context/output budget, not actual input token count.",
+    "Formal results are single runs and cannot establish statistical gains."
+  ]
+}
