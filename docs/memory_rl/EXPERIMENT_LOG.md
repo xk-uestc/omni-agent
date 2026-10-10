@@ -83,3 +83,23 @@ stdout 保存在 `runs/m1b1/ab-stdout.txt`；完整产物 `runs/m1b1-ab-20261010
 实际输出：`40 passed in 3.48s`。原3项失败转通过。第一轮所有记录保留，后续更换label执行最终完整A/B，不覆盖证据。
 
 补充 Git 环境诊断：第二检查点首次 commit 因缺少 author identity 退出128；沿用此前 `Codex <codex@openai.com>`，使用命令局部 `git -c user.name=Codex -c user.email=codex@openai.com commit ...` 完成，未改全局配置。
+
+## M1-B1 最终版本：同源码完整重跑
+
+源码 `84979a643cc4db7a7a993c80272036219b476192`（历史约束修复后）。依赖继续使用M1-A `/tmp/omni-m1a-venv`，完整版本锁在最终metadata；rules-only、外部模型/Token=0。确切命令：
+
+```bash
+/tmp/omni-m1a-venv/bin/python tools/evaluate_memory_m1b1.py --label m1b1-ab-final-20261010 > docs/memory_rl/runs/m1b1/ab-final-stdout.txt 2>&1
+
+timeout 120s env ICT8_DB_PATH=/tmp/omni-m1a-api.sqlite ICT8_PLAN_URL= ICT8_PLAN_PROVIDER= ICT8_GENERATION_PROVIDER= ICT8_MANUAL_RETRIEVER_URL= ICT8_DENSE_MODEL_PATH= /tmp/omni-m1a-venv/bin/python -m pytest -q ict-track8/tests/test_memory_core.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_api.py ict-track8/tests/test_session.py ict-track8/tests/test_semantic_integration.py ict-track8/tests/test_dependency_agent.py ict-track8/tests/test_api_security.py ict-track8/tests/test_omni_query_stream.py --junitxml=docs/memory_rl/runs/m1b1/regression-hardened.xml > docs/memory_rl/runs/m1b1/regression-hardened.txt 2>&1
+
+/tmp/omni-m1a-venv/bin/python tools/verify_memory_m1b1_evidence.py --label m1b1-ab-final-20261010 > docs/memory_rl/runs/m1b1/verification-stdout.txt 2>&1
+```
+
+API测试命令环境外执行（与M1-A一致），实际`133 passed, 3 warnings in 10.70s`。评测stdout逐题/每25回合记录进度，最终输出16题A10/B14、185题A177/B177、stable=true、read_only=true。详见原样stdout，未把未运行项写成通过。
+
+验证工具实际输出以下全部true：frozen_inputs_and_scorers_unchanged、backend_matches_evaluated_hashes、source_stable_during_run、database_read_only、database_matches_m1a、A_pass_vector_matches_m1a、context_pass_vectors_match_m1a、context_off_on_sql_rows_status_equal。9项scorer+消费正反例符合预期。
+
+最终输入manifest SHA256仍为`0b81fde89bd91604e4c5e970c35af7d9f5560723436506bc17c275f8a2c1c4e6`。XLSX跨轮SHA不相同：真实zip逐成员诊断仅docProps/core.xml时间不同，工作表完全相同；最终A/B共享文档实例，无该差异。未修改原冻结文件。诊断XML/hash与存储字节实测在`verification.json`。
+
+主要结果、逐题表、开销、失败边界与not_run原因集中在`M1_B1_RESULTS.md`。保留首轮和最终两套记录，未改任何M1-A历史记录；只更新本目录持续状态文档。最后提交仅文档/核验工具/产物，不改变已评测backend。

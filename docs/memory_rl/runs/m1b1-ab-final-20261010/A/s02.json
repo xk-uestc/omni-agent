@@ -1,0 +1,1260 @@
+{
+  "response": {
+    "status": "ok",
+    "question": "2024年华南蓝星额是多少",
+    "effective_question": "2024年华南蓝星额是多少",
+    "route": "document",
+    "planner_source": "rules_basic",
+    "session_id": "s02-target",
+    "context_turns": 0,
+    "state": {
+      "route": "document",
+      "sources": [
+        "terms"
+      ],
+      "document_context": {
+        "payload": {
+          "question": "2024年华南蓝星额是多少",
+          "documents": {
+            "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+          }
+        },
+        "sha256": "12452102f64271ef726ceee3a3f442a4027f9ba6ff0e2075d6e82d6fce62c1e4"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "question": "2024年华南蓝星额是多少",
+      "answer_mode": "attributed_extracts",
+      "answer": "[1] 蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+      "citations": [
+        {
+          "citation_id": 1,
+          "document_id": "8a8b3b74b1be65213da4ca1c",
+          "title": "业务术语确认卡",
+          "score": 0.7987,
+          "matched_terms": [
+            "蓝星额",
+            "星额",
+            "蓝星"
+          ],
+          "snippet": "蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+          "source_uri": "/api/v1/knowledge/documents/terms/original",
+          "metadata": {
+            "line_start": 1,
+            "line_end": 3,
+            "source_sha256": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375",
+            "original_document_id": "terms",
+            "document_id": "terms",
+            "chunk_id": "8a8b3b74b1be65213da4ca1c",
+            "source_locator": "lines:1-3",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 3.967646,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 1.0,
+            "bm25_rank": 1,
+            "ranking_score": 4.73204923084198,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.12843942072822367,
+            "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "primary",
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [
+                "星额",
+                "蓝星"
+              ],
+              "body_sha256": "1f089a6d616ff49cbe5664f85a9dfb975ad00f0b90ff4dd26f2672e96bb9b09e",
+              "utility": 0.877778,
+              "uncovered_lexical_facets": [
+                "2024",
+                "南蓝",
+                "年华",
+                "是多",
+                "额是"
+              ],
+              "selection_budget_exhausted": false
+            }
+          }
+        }
+      ],
+      "retrieval": {
+        "mode": "bm25",
+        "embedding_model": null,
+        "dense_answer_threshold": null
+      },
+      "trace": [
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 2
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 1,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "retrieval_audit": {
+        "version": "ict8-rag-audit-v1",
+        "query": "2024年华南蓝星额是多少",
+        "scope": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "query_language": "zh_or_mixed",
+        "dense_status": "not_configured",
+        "channels": [
+          "bm25"
+        ],
+        "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+        "candidate_pool_limit": 20,
+        "candidate_count": 2,
+        "selection_budget": 4,
+        "selected_count": 2,
+        "selection": {
+          "method": "query_body_lexical_coverage_navigation_only",
+          "semantic_sufficiency": "not_evaluated",
+          "top_k": 4,
+          "candidate_count": 2,
+          "unique_body_count": 2,
+          "query_facets": {
+            "南蓝": 1.0,
+            "星额": 1.0,
+            "额是": 1.0,
+            "是多": 1.0,
+            "2024": 2.0,
+            "年华": 1.0,
+            "华南": 1.0,
+            "蓝星": 1.0
+          },
+          "covered_lexical_facets": [
+            "华南",
+            "星额",
+            "蓝星"
+          ],
+          "uncovered_lexical_facets": [
+            "2024",
+            "南蓝",
+            "年华",
+            "是多",
+            "额是"
+          ],
+          "available_but_unselected_facets": [],
+          "selection_budget_exhausted": false,
+          "source_counts": {
+            "terms": 1,
+            "targets": 1
+          },
+          "steps": [
+            {
+              "chunk_id": "8a8b3b74b1be65213da4ca1c",
+              "source_id": "terms",
+              "ranking_score": 4.73204923084198,
+              "utility": 0.877778,
+              "new_lexical_facets": [
+                "星额",
+                "蓝星"
+              ],
+              "body_sha256": "1f089a6d616ff49cbe5664f85a9dfb975ad00f0b90ff4dd26f2672e96bb9b09e"
+            },
+            {
+              "chunk_id": "9c9f6cb8555b2b92238d6434",
+              "source_id": "targets",
+              "ranking_score": 2.1660414957545187,
+              "utility": 0.409306,
+              "new_lexical_facets": [
+                "华南"
+              ],
+              "body_sha256": "6d4220a4358c237e6c62e66777bd9536bf76a3cdbd5920585eaae350946ef927"
+            }
+          ],
+          "skipped": []
+        },
+        "candidates": [
+          {
+            "chunk_id": "8a8b3b74b1be65213da4ca1c",
+            "source_document_id": "terms",
+            "source_sha256": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375",
+            "title": "业务术语确认卡",
+            "snippet": "蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+            "source_locator": "lines:1-3",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 1,
+            "bm25_rank": 1,
+            "bm25_raw": 3.967646,
+            "bm25_relative": 1.0,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 4.73204923084198,
+            "body_query_term_coverage": 0.12843942072822367,
+            "matched_terms": [
+              "蓝星额",
+              "星额",
+              "蓝星"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "primary",
+            "selection_utility": 0.877778,
+            "new_lexical_facets": [
+              "星额",
+              "蓝星"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              1
+            ]
+          },
+          {
+            "chunk_id": "9c9f6cb8555b2b92238d6434",
+            "source_document_id": "targets",
+            "source_sha256": "ed153ef13663c87981cf72a3ecac3bf3e5c8f64a4257faf2774d8ab8c582a5a2",
+            "title": "区域计划",
+            "snippet": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.1",
+            "source_locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+            "page_no": null,
+            "sheet_name": "Sheet",
+            "row_start": 3,
+            "row_end": 3,
+            "ranking_rank": 2,
+            "bm25_rank": 2,
+            "bm25_raw": 2.035333,
+            "bm25_relative": 0.513,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.1660414957545187,
+            "body_query_term_coverage": 0.04281314024274122,
+            "matched_terms": [
+              "华南"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.409306,
+            "new_lexical_facets": [
+              "华南"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          }
+        ]
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "document",
+        "latency_ms": 2.084,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      },
+      {
+        "stage": "document_retrieval",
+        "channel": "bm25",
+        "candidate_count": 2
+      },
+      {
+        "stage": "evidence_selection",
+        "selected_count": 1,
+        "generation": "extractive"
+      },
+      {
+        "stage": "visual_page_routing",
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+        "candidate_document_ids": [],
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 4000,
+          "source_bytes": 41943040,
+          "pages_per_source": 1000,
+          "source_bytes_per_source": 20971520,
+          "index_build_seconds_per_source": 60,
+          "index_bytes_per_source": 16777216,
+          "cache_bytes": 134217728,
+          "cache_entries": 128
+        }
+      },
+      {
+        "stage": "visual_chart_routing",
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 1000,
+          "total_bytes": 41943040,
+          "source_bytes": 20971520,
+          "seconds": 60
+        },
+        "candidate_document_ids": [],
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+      },
+      {
+        "stage": "native_aligned_table_routing",
+        "status": "not_applicable",
+        "model_requests_attempted": 0,
+        "model_audits": []
+      },
+      {
+        "stage": "native_total_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_page_answer_dossier",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_comparison_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_selection_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      }
+    ],
+    "audit_id": "629b835bbc1364f6e13f1a91",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2024年华南蓝星额是多少"
+    },
+    "routing": {
+      "selected_route": "document",
+      "label": "资料问答",
+      "strategy": "source_query",
+      "reason": "检索原文并核对来源。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "document_reference_id": "q_e1e4c53944db4b3abfdc0856818fee5c"
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 4.589,
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "running",
+      "input": {
+        "question": "2024年华南蓝星额是多少"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "running",
+      "summary": "正在整理本轮问题与检索目标。",
+      "input": {
+        "question": "2024年华南蓝星额是多少"
+      },
+      "output": {},
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "success",
+      "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+      "input": {},
+      "output": {
+        "question": "2024年华南蓝星额是多少",
+        "retrieval_query": "2024年华南蓝星额是多少",
+        "query_rewrite": "none"
+      },
+      "latency_ms": 0.003,
+      "executed": true,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "running",
+      "summary": "正在核对多轮上下文、指代和附加输入。",
+      "input": {
+        "mode": "independent_question"
+      },
+      "output": {},
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "success",
+      "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+      "input": {},
+      "output": {
+        "mode": "independent_question",
+        "actual_question": "2024年华南蓝星额是多少",
+        "effective_question": "2024年华南蓝星额是多少",
+        "context_turns": 0,
+        "image_count": 0,
+        "retrieval_context_attached": false
+      },
+      "latency_ms": 0.005,
+      "executed": true,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "running",
+      "summary": "正在应用资料范围和页码限制。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "scope": "all_sources"
+      },
+      "output": {},
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "success",
+      "summary": "已限定到 3 份资料、5 个可检索片段。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "exact_identifiers": []
+      },
+      "output": {
+        "document_count": 3,
+        "eligible_chunk_count": 5,
+        "scope": "all_sources"
+      },
+      "latency_ms": 0.235,
+      "executed": true,
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "running",
+      "summary": "正在按词项相关度查找手册片段。",
+      "input": {
+        "query": "2024年华南蓝星额是多少",
+        "candidate_limit": 100
+      },
+      "output": {},
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "success",
+      "summary": "关键词召回得到 2 个候选片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 2
+      },
+      "latency_ms": 0.125,
+      "executed": true,
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.dense_retrieval",
+      "rag_step": "dense_retrieval",
+      "status": "skipped",
+      "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured"
+      },
+      "executed": false,
+      "call_id": "omni-call-7"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "running",
+      "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+      "input": {
+        "dense_status": "not_configured"
+      },
+      "output": {},
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "success",
+      "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured",
+        "rrf_executed": false,
+        "ranking_method": "bm25_then_page_scope_and_body_affinity"
+      },
+      "latency_ms": 0.08,
+      "executed": true,
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "running",
+      "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+      "input": {
+        "candidate_count": 2,
+        "selection_limit": 4
+      },
+      "output": {},
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "success",
+      "summary": "从 2 个排序候选中选出 2 个证据片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 2,
+        "selected_count": 2,
+        "selection_method": "query_body_lexical_coverage_navigation_only",
+        "selected_evidence": [
+          {
+            "title": "业务术语确认卡",
+            "chunk_id": "8a8b3b74b1be65213da4ca1c",
+            "source_locator": "lines:1-3",
+            "page_no": null,
+            "snippet": "蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+            "image_count": 0
+          },
+          {
+            "title": "区域计划",
+            "chunk_id": "9c9f6cb8555b2b92238d6434",
+            "source_locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+            "page_no": null,
+            "snippet": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.1",
+            "image_count": 0
+          }
+        ]
+      },
+      "latency_ms": 0.214,
+      "executed": true,
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "running",
+      "summary": "正在整理选中片段、原文定位和关联图片。",
+      "input": {
+        "selected_count": 2
+      },
+      "output": {},
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "success",
+      "summary": "已整理 2 个入选片段，交由回答与来源核验流程处理。",
+      "input": {},
+      "output": {
+        "evidence_count": 2,
+        "evidence": [
+          {
+            "title": "业务术语确认卡",
+            "chunk_id": "8a8b3b74b1be65213da4ca1c",
+            "source_locator": "lines:1-3",
+            "page_no": null,
+            "snippet": "蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+            "image_count": 0
+          },
+          {
+            "title": "区域计划",
+            "chunk_id": "9c9f6cb8555b2b92238d6434",
+            "source_locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+            "page_no": null,
+            "snippet": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.1",
+            "image_count": 0
+          }
+        ],
+        "user_image_count": 0
+      },
+      "latency_ms": 0.006,
+      "executed": true,
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "running",
+      "summary": "正在依据入选证据生成或核验回答。",
+      "input": {
+        "question": "2024年华南蓝星额是多少",
+        "evidence_count": 2
+      },
+      "output": {},
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "success",
+      "summary": "已返回回答并完成来源核验。",
+      "input": {},
+      "output": {
+        "status": "ok",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 1
+      },
+      "latency_ms": 0.383,
+      "executed": true,
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "running",
+      "summary": "正在整理最终回答与来源信息。",
+      "input": {},
+      "output": {},
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "success",
+      "summary": "文档处理已完成。",
+      "input": {},
+      "output": {
+        "status": "ok",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 1
+      },
+      "latency_ms": 0.017,
+      "executed": true,
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "citation_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "document"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-13"
+    }
+  ],
+  "memory": {},
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 11,
+  "memory_operations": 0,
+  "id": "s02",
+  "category": "benefit_semantics",
+  "score": {
+    "status": "ok",
+    "field_pass": false,
+    "dimension_pass": true,
+    "result_pass": false,
+    "source_filter_population_pass": false,
+    "gold_source_table": "sales_orders",
+    "gold_contributing_records": 8,
+    "actual_source_table": null,
+    "actual_contributing_records": null,
+    "actual_rows": [],
+    "gold_rows_scoring_only": [
+      [
+        2366.2
+      ]
+    ],
+    "replay_rows": [],
+    "metric_fields_actual": [],
+    "version_evidence_pass": false
+  },
+  "target_history_before": 0,
+  "target_session": "s02-target",
+  "preparation_session": "s02-preparation",
+  "preparation": [
+    {
+      "response": {
+        "status": "ok",
+        "question": "2025年华东销售成本",
+        "effective_question": "2025年华东销售成本",
+        "route": "sql",
+        "planner_source": "rules_basic",
+        "session_id": "s02-preparation",
+        "context_turns": 0,
+        "state": {
+          "route": "sql",
+          "metrics": [],
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华东",
+              "source_text": "华东",
+              "explanation": "限定 region ∈ {华东}",
+              "table": "sales_orders"
+            }
+          ],
+          "dimensions": [],
+          "clarification_code": null,
+          "pending_question": null,
+          "executed_sql_context": {
+            "payload": {
+              "question": "2025年华东销售成本",
+              "sql": "SELECT SUM(\"sales_orders\".\"cost_amount\") AS \"cost_amount\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"cost_amount\") DESC LIMIT ?",
+              "parameters": [
+                "2025-01-01",
+                "2026-01-01",
+                "华东",
+                100
+              ],
+              "source_revision": "540b7cb6902438e25353344797b8d63c1ed080d1fe736c370a37b91c77bdbe5b"
+            },
+            "sha256": "29d5d4f7af69313739d78723e30923ce1c86b57bb064840f714dd4db216cae79"
+          }
+        },
+        "result": {
+          "status": "ok",
+          "result_state": "rows",
+          "notices": [],
+          "question": "2025年华东销售成本",
+          "rewritten_question": "2025年华东销售成本",
+          "sql": "SELECT SUM(\"sales_orders\".\"cost_amount\") AS \"cost_amount\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"cost_amount\") DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "华东",
+            100
+          ],
+          "columns": [
+            "cost_amount"
+          ],
+          "rows": [
+            {
+              "cost_amount": 2375.96
+            }
+          ],
+          "plan": {
+            "table": "sales_orders",
+            "metric_table": "sales_orders",
+            "metric_column": "cost_amount",
+            "metric_function": "SUM",
+            "metric_label": "cost_amount",
+            "analysis_mode": "aggregate",
+            "dimensions": [],
+            "dimension_tables": {},
+            "dimension_transforms": {},
+            "dimension_labels": {},
+            "filters": [
+              {
+                "column": "order_date",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+                "table": "sales_orders"
+              },
+              {
+                "column": "region",
+                "operator": "=",
+                "value": "华东",
+                "source_text": "华东",
+                "explanation": "限定 region ∈ {华东}",
+                "table": "sales_orders"
+              }
+            ],
+            "having": null,
+            "links": [
+              {
+                "source_text": "销售成本",
+                "table": "sales_orders",
+                "column": "cost_amount",
+                "role": "metric",
+                "score": 0.9,
+                "matched_alias": "销售成本",
+                "metric_function": "SUM"
+              }
+            ],
+            "join_tables": [],
+            "join_conditions": [],
+            "join_path": [],
+            "join_alternatives": [],
+            "order_desc": true,
+            "limit": 100,
+            "complete_results": false,
+            "semantic_row_limit": null,
+            "preview_row_limit": null,
+            "confidence": 0.58,
+            "rewritten_question": "2025年华东销售成本",
+            "comparison_mode": "none",
+            "comparison_period": {},
+            "clarification": null,
+            "clarification_code": null,
+            "clarification_options": [],
+            "assumptions": [
+              "日期参数格式：iso_text",
+              "使用表 sales_orders 的只读聚合查询"
+            ],
+            "planner_source": "rules",
+            "top_n": null,
+            "fan_out": false,
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "华东",
+                "成本",
+                "销售成本"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "intent_audit": {
+              "question": "2025年华东销售成本",
+              "metric": {
+                "table": "sales_orders",
+                "column": "cost_amount",
+                "function": "SUM",
+                "label": "cost_amount"
+              },
+              "filters": [
+                {
+                  "column": "order_date",
+                  "operator": "RANGE",
+                  "value": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_text": "2025年",
+                  "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+                  "table": "sales_orders"
+                },
+                {
+                  "column": "region",
+                  "operator": "=",
+                  "value": "华东",
+                  "source_text": "华东",
+                  "explanation": "限定 region ∈ {华东}",
+                  "table": "sales_orders"
+                }
+              ],
+              "time_range": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "group_by": [],
+              "comparison": "none",
+              "comparison_window": null,
+              "top_n": null,
+              "confidence": 0.58,
+              "unresolved": [],
+              "execution_allowed": true,
+              "planner_source": "rules",
+              "planner_audit": {},
+              "metrics": [],
+              "derived_metrics": [],
+              "grain_audit": {},
+              "semantic_audit": {
+                "date_storage_formats": {
+                  "sales_orders.order_date": "iso_text"
+                }
+              }
+            },
+            "planner_audit": {},
+            "model_plan_diagnostics": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "order_metric": null,
+            "grain_audit": {},
+            "semantic_audit": {
+              "date_storage_formats": {
+                "sales_orders.order_date": "iso_text"
+              }
+            },
+            "output_metrics": []
+          },
+          "explanation": [
+            "识别指标：cost_amount（SUM）",
+            "查询表：sales_orders",
+            "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+            "限定 region ∈ {华东}",
+            "日期参数格式：iso_text",
+            "使用表 sales_orders 的只读聚合查询",
+            "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+          ],
+          "provenance": {
+            "source_type": "structured_database",
+            "database": "mixed.sqlite",
+            "table": "sales_orders",
+            "row_count": 1,
+            "row_limit": 100,
+            "result_completeness": "within_return_limit",
+            "query_hash": "85fd20fd6e44cbfd",
+            "field_links": [
+              {
+                "source_text": "销售成本",
+                "table": "sales_orders",
+                "column": "cost_amount",
+                "role": "metric",
+                "score": 0.9,
+                "matched_alias": "销售成本",
+                "metric_function": "SUM"
+              }
+            ],
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "华东",
+                "成本",
+                "销售成本"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "consistency": "sqlite_read_transaction",
+            "source_revision": "540b7cb6902438e25353344797b8d63c1ed080d1fe736c370a37b91c77bdbe5b",
+            "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+            "grain_audit": {},
+            "result_cells": [
+              {
+                "row": 0,
+                "column": "cost_amount",
+                "query_hash": "85fd20fd6e44cbfd",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "cost_amount"
+                }
+              }
+            ],
+            "output_cardinality": {
+              "status": "verified",
+              "maximum_output_rows": 1,
+              "method": "executed_select_scope_cardinality",
+              "verified_singleton_scopes": 1,
+              "aggregate_functions": [
+                "SUM"
+              ],
+              "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+            }
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "source_tables": {
+            "database": "mixed.sqlite",
+            "source_revision": "540b7cb6902438e25353344797b8d63c1ed080d1fe736c370a37b91c77bdbe5b",
+            "query_hash": "85fd20fd6e44cbfd",
+            "source_question": null,
+            "sql": "SELECT SUM(\"sales_orders\".\"cost_amount\") AS \"cost_amount\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"cost_amount\") DESC LIMIT ?",
+            "parameters": [
+              "2025-01-01",
+              "2026-01-01",
+              "华东",
+              100
+            ],
+            "reused_result": false,
+            "tables": [
+              {
+                "name": "sales_orders",
+                "used_columns": [
+                  "cost_amount",
+                  "order_date",
+                  "region"
+                ]
+              }
+            ],
+            "basis": "executed_sql_ast_physical_sources"
+          }
+        },
+        "trace": [
+          {
+            "stage": "intent_planning",
+            "source": "rules_basic",
+            "route": "sql",
+            "latency_ms": 1.633,
+            "error": null,
+            "rejection_code": null,
+            "normalizations": [],
+            "attempts": []
+          }
+        ],
+        "audit_id": "81994a1b987cbfaf706126e7",
+        "context_resolution": {
+          "mode": "independent",
+          "actual_question": "2025年华东销售成本"
+        },
+        "routing": {
+          "selected_route": "sql",
+          "label": "数据库问数",
+          "strategy": "source_query",
+          "reason": "查询所需指标和数据。",
+          "context_mode": "independent",
+          "model_enabled": false
+        },
+        "query_reference_id": "q_d7b899c117184f92afd253cd6b2161fd"
+      },
+      "error": null,
+      "execution_status": "executed",
+      "wall_ms": 7.901,
+      "trace": [
+        {
+          "stage": "tool_call",
+          "tool": "context.resolve",
+          "status": "running",
+          "input": null,
+          "executed": false,
+          "call_id": "omni-call-1"
+        },
+        {
+          "stage": "tool_call",
+          "tool": "context.resolve",
+          "status": "success",
+          "output": {
+            "status": null
+          },
+          "executed": true,
+          "summary": "调用完成",
+          "call_id": "omni-call-1"
+        },
+        {
+          "stage": "tool_call",
+          "tool": "nl2sql",
+          "status": "running",
+          "input": {
+            "question": "2025年华东销售成本"
+          },
+          "executed": false,
+          "call_id": "omni-call-2"
+        },
+        {
+          "stage": "tool_call",
+          "tool": "nl2sql",
+          "status": "success",
+          "output": {
+            "status": "ok",
+            "sql": "SELECT SUM(\"sales_orders\".\"cost_amount\") AS \"cost_amount\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"cost_amount\") DESC LIMIT ?",
+            "parameters": [
+              "2025-01-01",
+              "2026-01-01",
+              "华东",
+              100
+            ],
+            "columns": [
+              "cost_amount"
+            ],
+            "result_state": "rows",
+            "row_count": 1
+          },
+          "executed": true,
+          "summary": "调用完成",
+          "call_id": "omni-call-2"
+        },
+        {
+          "stage": "query_complete",
+          "tool": "query.complete",
+          "status": "success",
+          "executed": false,
+          "output": {
+            "status": "ok",
+            "route": "sql"
+          },
+          "summary": "回答已返回",
+          "call_id": "omni-call-3"
+        }
+      ],
+      "memory": {},
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "tokens_basis": "no model instantiated",
+      "business_tool_calls": 2,
+      "memory_operations": 0
+    }
+  ],
+  "candidate_ids": [
+    "cost"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "ed153ef13663c87981cf72a3ecac3bf3e5c8f64a4257faf2774d8ab8c582a5a2",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": false,
+  "memory_store_bytes_before": 24576,
+  "memory_store_bytes_after": 24576,
+  "archived_events": [],
+  "pass": false
+}
