@@ -130,7 +130,7 @@ def _verified_pdf_row(chunk):
 
 class KnowledgeStore:
     def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None,
-                 use_persistent_bm25: bool = True):
+                 use_persistent_bm25: bool = True, pdf_backend=None):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.assets = self.root / 'assets'
@@ -139,6 +139,7 @@ class KnowledgeStore:
         self.chunker = DocumentChunker()
         self.ocr_pipeline = ocr_pipeline
         self.generator = generator
+        self.pdf_backend = pdf_backend
         self.use_persistent_bm25 = bool(use_persistent_bm25)
         with self.connect() as connection:
             connection.executescript('''
@@ -151,6 +152,11 @@ class KnowledgeStore:
                     payload TEXT NOT NULL,
                     FOREIGN KEY(document_id) REFERENCES documents(document_id) ON DELETE CASCADE);
                 CREATE INDEX IF NOT EXISTS chunks_document ON chunks(document_id);
+                CREATE TABLE IF NOT EXISTS document_elements (
+                    document_id TEXT NOT NULL, element_id TEXT NOT NULL,
+                    kind TEXT NOT NULL, payload TEXT NOT NULL,
+                    PRIMARY KEY(document_id, element_id),
+                    FOREIGN KEY(document_id) REFERENCES documents(document_id) ON DELETE CASCADE);
                 CREATE TABLE IF NOT EXISTS retrieval_catalog_revision (
                     singleton INTEGER PRIMARY KEY CHECK(singleton=1), revision INTEGER NOT NULL);
                 INSERT OR IGNORE INTO retrieval_catalog_revision VALUES(1,0);
@@ -218,12 +224,24 @@ class KnowledgeStore:
         filename = Path(filename.replace('\\', '/')).name
         if not filename or len(filename) > 200:
             raise ValueError('无效文件名')
+        structure = None
         if modality in {'txt', 'md'}:
             text = raw.decode('utf-8-sig')
             from .text_structure import chunk_text
             parsed = chunk_text(self.chunker, text, document_id=document_id, modality=modality)
         elif modality == 'pdf':
             parsed = self.chunker.parse_pdf(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
+            if self.pdf_backend is not None:
+                from .structured_document import chunks_from_structure
+                structure = self.pdf_backend.parse(raw)
+                observed = chunks_from_structure(structure, document_id, self.chunker)
+                # Keep the native text path. Add only layout/formula/table
+                # observations, so recognizing a table never deletes prose.
+                observed = [c for c in observed if c['content_type'] in {'formula', 'table_row'}]
+                parsed['chunks'].extend(observed)
+                parsed['stats']['structured_elements'] = len(structure['elements'])
+                parsed['stats']['structured_backend_cost'] = structure['cost']
+                parsed['warnings'].append('structured_recognition_requires_review')
         elif modality == 'docx':
             parsed = self.chunker.parse_docx(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
         elif modality == 'xlsx':
@@ -264,6 +282,11 @@ class KnowledgeStore:
                 else:
                     resplit.append(chunk)
             parsed['chunks'] = resplit
+        if structure is not None:
+            # Native analyzer can accidentally accept a partial PDF equation.
+            # A structure-enabled document uses independently reviewed records.
+            for formula in analysis['formulas']:
+                formula['status'] = 'requires_visual_review'
         record = {'document_id': document_id, 'title': title, 'modality': modality,
                   'filename': filename, 'sha256': digest, 'asset': asset.name,
                   'chunk_count': len(parsed['chunks']), 'warnings': parsed['warnings'], 'stats': parsed['stats'],
@@ -274,17 +297,96 @@ class KnowledgeStore:
                               'review_required': analysis['quality_score']<0.6 or bool(parsed['warnings']) or
                                   bool(analysis['metrics']['text_quality']['typo_candidate_count']) or
                                   'unrecognized_character' in analysis['metrics']['text_quality']['warnings']}}
+        if structure is not None:
+            record['structured_document'] = {k:v for k,v in structure.items() if k != 'elements'}
+            record['routing']['formula_tool'] = False
         with self.connect() as connection:
             connection.execute('DELETE FROM documents WHERE document_id=?', (document_id,))
             connection.execute('INSERT INTO documents VALUES(?,?,?,?,?,?)', (document_id, title, modality, filename, digest, json.dumps(record, ensure_ascii=False)))
             for chunk in parsed['chunks']:
                 chunk['metadata'].update({'source_sha256': digest, 'original_document_id': document_id})
                 connection.execute('INSERT INTO chunks VALUES(?,?,?)', (chunk['chunk_id'], document_id, json.dumps(chunk, ensure_ascii=False)))
+            for element in structure['elements'] if structure is not None else []:
+                element['document_id'] = document_id
+                element['source_uri'] = f'/api/v1/knowledge/documents/{document_id}/original'
+                element['source_locator'] = f'page:{element["page_no"]}/element:{element["element_id"]}'
+                connection.execute('INSERT INTO document_elements VALUES(?,?,?,?)',
+                    (document_id, element['element_id'], element['kind'], json.dumps(element, ensure_ascii=False)))
         return record
 
     def list_documents(self):
         with self.connect() as connection:
             return [json.loads(row[0]) for row in connection.execute('SELECT payload FROM documents ORDER BY document_id')]
+
+    def formula_records(self, document_id, *, expected_sha256):
+        from .structured_document import observation_digest
+        self.verify_source(document_id, expected_sha256=expected_sha256)
+        document = self.document(document_id)
+        elements = document.get('elements', [])
+        for element in elements:
+            if (element['source_sha256'] != expected_sha256 or
+                    observation_digest(element) != element['observation_sha256']):
+                raise SourceIntegrityError('结构化观察记录发生变化')
+        return [e for e in elements if e['kind'] == 'formula']
+
+    def review_formula(self, document_id, element_id, *, receipt_path):
+        """Trusted local human review only; deliberately absent from HTTP/tools.
+
+        A private owner-only receipt pins the original, recognition and rendered
+        region. AST validation is an additional safety check, not visual review.
+        Formula text/chunks stay unverified observations for generation.
+        """
+        import os
+        import stat
+        from .document_analysis import SafeFormulaEvaluator
+        path = Path(receipt_path)
+        info = path.lstat()
+        if (path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                or info.st_mode & 0o077 or info.st_size > 16000):
+            raise PermissionError('公式审核回执必须是当前用户私有的本地文件')
+        receipt = json.loads(path.read_text())
+        required = {'document_id','element_id','source_sha256','observation_sha256','region_png_sha256',
+                    'visually_verified','reviewer','label','expression','parameter_descriptions'}
+        if set(receipt) != required or receipt['document_id'] != document_id or receipt['element_id'] != element_id:
+            raise ValueError('invalid_formula_review_receipt')
+        if receipt['visually_verified'] is not True or not isinstance(receipt['reviewer'], str) or not receipt['reviewer'].strip():
+            raise ValueError('visual_formula_review_required')
+        formulas = self.formula_records(document_id, expected_sha256=receipt['source_sha256'])
+        element = next((e for e in formulas if e['element_id'] == element_id), None)
+        if element is None or receipt['observation_sha256'] != element['observation_sha256']:
+            raise SourceRevisionError('审核对象或识别结果已变化')
+        if not isinstance(receipt['label'],str) or not re.fullmatch(r'[A-Za-z\u3400-\u9fff][\w\u3400-\u9fff]{0,48}', receipt['label']):
+            raise ValueError('invalid_reviewed_formula_label')
+        params = SafeFormulaEvaluator().parameters(receipt['expression'])
+        descriptions = receipt['parameter_descriptions']
+        if not isinstance(descriptions, dict) or set(descriptions) != set(params):
+            raise ValueError('reviewed_formula_parameter_descriptions_incomplete')
+        document = self.document(document_id)
+        by_id = {e['element_id']: e for e in document.get('elements', [])}
+        for name, link in descriptions.items():
+            if not isinstance(link,dict) or set(link) != {'element_id','quote'}:
+                raise ValueError('invalid_parameter_description')
+            context = by_id.get(link['element_id'])
+            if (not context or context['page_no'] != element['page_no'] or context['kind'] != 'text'
+                    or not isinstance(link['quote'],str) or not link['quote'].strip()
+                    or link['quote'] not in context['text']):
+                raise ValueError('parameter_description_source_mismatch')
+        asset = self.visual_asset(document_id, page_no=element['page_no'],
+            expected_source_sha256=receipt['source_sha256'], crop_display_pt=element['bbox'])
+        if receipt['region_png_sha256'] != hashlib.sha256(asset.png_bytes).hexdigest():
+            raise ValueError('formula_review_visual_region_mismatch')
+        review = {**receipt, 'parameters': list(params), 'review_kind':'local_human_visual_confirmation',
+                  'receipt_sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
+        element.update(review_status='verified', calculator_input_eligible=True, formula_review=review)
+        self.verify_source(document_id, expected_sha256=receipt['source_sha256'])
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute('SELECT sha256 FROM documents WHERE document_id=?',(document_id,)).fetchone()
+            if row is None or row[0] != receipt['source_sha256']:
+                raise SourceRevisionError('审核期间来源版本变化')
+            db.execute('UPDATE document_elements SET payload=? WHERE document_id=? AND element_id=?',
+                       (json.dumps(element,ensure_ascii=False),document_id,element_id))
+        return element
 
     def delete(self, document_id, *, expected_sha256):
         """Remove a pinned logical revision atomically; keep immutable originals.
@@ -310,6 +412,9 @@ class KnowledgeStore:
                 raise KeyError(document_id)
             result = json.loads(row[0])
             result['chunks'] = [json.loads(item[0]) for item in connection.execute('SELECT payload FROM chunks WHERE document_id=? ORDER BY rowid', (document_id,))]
+            if 'structured_document' in result:
+                result['elements'] = [json.loads(item[0]) for item in connection.execute(
+                    'SELECT payload FROM document_elements WHERE document_id=? ORDER BY element_id', (document_id,))]
         self._verified_asset(result)
         return result
 
@@ -1547,7 +1652,9 @@ class KnowledgeStore:
                                    and (chunk['content_type'] == 'paragraph'
                                        or chunk['content_type'] == 'heading' and substantive_numbered_heading(chunk['text']))
                                    and not chunk['metadata'].get('ocr_status'))
-                if (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
+                if chunk['metadata'].get('structured_element_id') and chunk['metadata'].get('review_status') != 'verified':
+                    reason = 'structured_recognition_not_reviewed'
+                elif (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
                         and not _verified_pdf_row(chunk)):
                     reason = 'pdf_table_layout_not_verified'
                 elif len(selected) >= MAX_EVIDENCE_ITEMS:

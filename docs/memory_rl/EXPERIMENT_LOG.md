@@ -1,5 +1,7 @@
 # M1-A 实验记录（2026-10-10）
 
+2026-10-11 真实PDF升级：fetch确认02741bc起点；数据恢复/冻结15422888。按相同原件实跑native+RapidOCR、MinerU4 CPU ONNX、Docling2.137 CPU；开发集证明结构补充的生产RAG LCS收益 .2836→.3545（18题、Top4、3改善0退步），HTTP真实论文取得2表115cell3独立公式，未审核计算拒绝。定向67通过，全部生成模型指标not_run。命令：`tools/run_pdf_parser_trial.py --backend native|mineru|docling`、`tools/evaluate_pdf_parser_trial.py`、`tools/evaluate_real_document_retrieval.py --native-ocr --structured-backend mineru`、`tools/verify_structured_pdf_integration.py`。原始资产/预测/runtime日志不入Git，逐题与SHA收据 `docs/foundation/runs/real_document/`；实现与代价见两份REAL_DOCUMENT文档。保留集及最终回归尚未运行，PPO/GRPO/main/QiMem不变。
+
 所有实验使用源码基准 a4ed8bb…，运行时 HEAD 为审计提交 `f5dba53602b806acf27ebbdcf810bd7d919ad0d1`；新 evaluator/input 尚未提交但执行前 SHA 冻结，随本次结果提交一起提供。不使用生产数据/QiMem 数据库/外部模型，不改变 backend。日期使用 Asia/Shanghai。
 
 | 实验 | 实际结果 | 原始记录 |

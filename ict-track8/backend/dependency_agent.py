@@ -447,6 +447,17 @@ class DependencyAgent:
             if tool == 'document_formula':
                 if set(args) != {'document_id', 'label'}:
                     raise DependencyPlanError('公式定位参数非法')
+                if 'structured_document' in document:
+                    records = self.knowledge_store.formula_records(document['document_id'], expected_sha256=document['sha256'])
+                    reviewed = [e for e in records if e.get('review_status') == 'verified'
+                                and e.get('calculator_input_eligible') is True and e['formula_review']['label'] == args['label']]
+                    if len(reviewed) != 1:
+                        raise DependencyPlanError('公式缺失、审核不完整或存在歧义，不能自动计算', code='formula_review_required')
+                    item = reviewed[0]
+                    return {'expression':item['formula_review']['expression'], 'parameters':item['formula_review']['parameters'],
+                            'label':args['label'], 'source_uri':item['source_uri'], 'locator':item['source_locator'],
+                            'chunk_id':None, 'sha256':document['sha256'], 'document_id':document['document_id'],
+                            'formula_review':item['formula_review'], 'structured_element_id':item['element_id']}
                 candidates = []
                 for chunk in document['chunks']:
                     formulas = DocumentAnalyzer().analyze(chunk['text']).formulas

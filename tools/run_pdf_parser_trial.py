@@ -37,6 +37,7 @@ def main():
     p.add_argument('--page-limit', type=int, default=40)
     p.add_argument('--timeout', type=int, default=300)
     p.add_argument('--native-ocr', action='store_true')
+    p.add_argument('--skip-formula-enrichment', action='store_true')
     args = p.parse_args()
     if args.split == 'retained' and not args.allow_retained:
         p.error('Retained evaluation only after candidate freeze')
@@ -97,22 +98,26 @@ def main():
                     raise ValueError('mineru_no_structured_output')
             else:
                 if converter is None:
+                    import torch
+                    torch.set_num_threads(4)
                     from docling.datamodel.base_models import InputFormat
                     from docling.datamodel.pipeline_options import PdfPipelineOptions, RapidOcrOptions
                     from docling.datamodel.accelerator_options import AcceleratorOptions, AcceleratorDevice
                     from docling.document_converter import DocumentConverter, PdfFormatOption
                     options = PdfPipelineOptions(artifacts_path=Path('/tmp/omni-docling-models'),
-                        do_ocr=True, do_table_structure=True, do_formula_enrichment=True,
+                        document_timeout=args.timeout,
+                        do_ocr=True, do_table_structure=True, do_formula_enrichment=not args.skip_formula_enrichment,
                         enable_remote_services=False,
                         accelerator_options=AcceleratorOptions(num_threads=4, device=AcceleratorDevice.CPU),
                         ocr_options=RapidOcrOptions())
                     converter = DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=options)})
                 converted = converter.convert(source, page_range=(1, args.page_limit), raises_on_error=False)
                 result['conversion_status'] = str(converted.status)
+                result['formula_enrichment'] = not args.skip_formula_enrichment
                 converted.document.save_as_json(out/'docling.json')
                 result['raw_files'] = [str((out/'docling.json').relative_to(args.output))]
                 result['errors'] = [str(e) for e in converted.errors]
-                if 'success' not in str(converted.status).lower():
+                if converted.status.value != 'success':
                     raise RuntimeError('docling_partial_or_failed')
             result['status'] = 'ok'
         except Exception:
@@ -122,6 +127,7 @@ def main():
         result['children_peak_rss_mb'] = round(resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss/1024, 2)
         records.append(result)
         (args.output/'run.json').write_text(json.dumps({'backend': args.backend, 'versions': versions,
+            'planned_input_count':len(docs),'finished':len(records)==len(docs),
             'split': args.split, 'gold_isolation': 'input_manifest_and_original_bytes_only', 'records': records},
             ensure_ascii=False, indent=2))
         print(json.dumps({k: result[k] for k in ('backend', 'status', 'seconds', 'process_peak_rss_mb', 'children_peak_rss_mb')}, ensure_ascii=False), flush=True)

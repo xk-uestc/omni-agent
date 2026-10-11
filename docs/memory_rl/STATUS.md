@@ -1,6 +1,9 @@
 # Memory RL 状态
 
-## 当前：F3生产实现与冻结评测完成，停止等待ChatGPT审核
+## 当前：真实PDF与RAG升级执行中，未启动训练
+
+- 起点及远端02741bc；Linux已合法恢复原PDF并冻结新OHR/OmniDocBench原件与隔离参考。新增可选MinerU4结构后端实际接入HTTP ingest、KnowledgeStore独立结构记录与检索，保留native正文；未审核公式不进计算/生成/Memory。
+- OHR新开发18题固定Top4：已有OCR对照LCS .2836→结构补充 .3545，3改善/0退步；ODB开发12页公式区域11/13、LaTeX严格1/13，表格单元格+跨度 .2627；复杂旋转宽表仍失败。实际生成答案not_run。详情 `docs/foundation/REAL_DOCUMENT_IMPLEMENTATION.md` / `REAL_DOCUMENT_RESULTS.md`；正在冻结后保留集与旧功能回归，不能宣布项目全部完成。
 
 - F3本轮单Agent完成正文条件绑定、明确来源内对象关联与受限pipe原生表bundle生产接入，源码冻结/远端SHA `67c4d3963d7078edeb9c1d5f7c58981caa072ffd`。Top-K开发/保留Recall .5754/.5595、完整均10/21、错绑0/3；Top-K+bundle完整16/13，实际answer证据完整15/12，生成答案not_run。保留3题机构语法拒用、3错绑仍在，无证据污染各3/3；不根据保留分数改算法。
 - 最终相关934通过/6既有失败/12子测试，F1旧32指标逐题保持，16/185/22记忆结果保持F2、SQL rows/status一致、task_experience16项通过；不是全项目全绿或RL ready。热P50/P95 23.79/103.39→75.15/159.82ms，最大Python查询分配峰值约+3.81MiB。详见 `docs/foundation/F3_IMPLEMENTATION.md`、`F3_RESULTS.md`，PPO/GRPO未启动，main未改。

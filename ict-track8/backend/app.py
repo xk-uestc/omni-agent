@@ -174,7 +174,8 @@ generator = None
 if generation_client:
     from .grounded_generation import GroundedGenerator
     generator = GroundedGenerator(generation_client)
-knowledge_store = KnowledgeStore(os.getenv("ICT8_KNOWLEDGE_ROOT", str(ROOT / "runtime/knowledge")), ocr_pipeline=ocr_pipeline, embedder=embedder, generator=generator)
+from .pdf_backend import configured_pdf_backend
+knowledge_store = KnowledgeStore(os.getenv("ICT8_KNOWLEDGE_ROOT", str(ROOT / "runtime/knowledge")), ocr_pipeline=ocr_pipeline, embedder=embedder, generator=generator, pdf_backend=configured_pdf_backend())
 if os.getenv("ICT8_KNOWLEDGE_ROOT", "").strip():
     document_retriever = knowledge_store
     document_source = "independent_corpus"

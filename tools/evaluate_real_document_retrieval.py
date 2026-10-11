@@ -22,6 +22,7 @@ def main():
     p.add_argument('--split', choices=('dev', 'retained'), default='dev')
     p.add_argument('--allow-retained', action='store_true')
     p.add_argument('--native-ocr', action='store_true')
+    p.add_argument('--structured-backend', choices=('native','mineru'), default='native')
     args = p.parse_args()
     if args.split=='retained' and not args.allow_retained:
         p.error('Retained evaluation requires frozen implementation')
@@ -35,7 +36,11 @@ def main():
     if args.native_ocr:
         from backend.ocr import OcrPipeline, RapidOcrExecutor
         pipeline = OcrPipeline(RapidOcrExecutor())
-    store = KnowledgeStore(args.output/'knowledge', ocr_pipeline=pipeline, generator=None)
+    backend = None
+    if args.structured_backend == 'mineru':
+        from backend.pdf_backend import LocalMinerUPdfBackend
+        backend = LocalMinerUPdfBackend('/tmp/omni-mineru-venv/bin/mineru-kit','/tmp/omni-mineru-models')
+    store = KnowledgeStore(args.output/'knowledge', ocr_pipeline=pipeline, generator=None, pdf_backend=backend)
     ingests = []
     for d in docs:
         raw = (args.root/d['pdf_path']).read_bytes()
@@ -73,7 +78,7 @@ def main():
     n = len(predictions)
     summary = {k:sum(float(r['scores'][k]) for r in predictions)/n for k in
                ('document_hit','any_evidence_page_hit','all_evidence_pages_hit','evidence_text_lcs_recall','gold_answer_lexically_present')}
-    report = {'split':args.split, 'native_ocr':args.native_ocr,'documents':ingests, 'cases':predictions,
+    report = {'split':args.split, 'native_ocr':args.native_ocr,'structured_backend':args.structured_backend,'documents':ingests, 'cases':predictions,
               'summary':summary, 'top_k':4, 'generation_answer_accuracy':'not_run',
               'gold_used_as_corpus_or_parser_input':False, 'scope':'new_frozen_resource_bounded_OHR_subset_not_leaderboard'}
     (args.output/'results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
