@@ -1,0 +1,12 @@
+warning: The `fitz` API is deprecated and will be removed in future. Use `import pymupdf` instead.
+Traceback (most recent call last):
+  File "/home/viva/omni-agent/tools/evaluate_foundation_rag.py", line 118, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "/home/viva/omni-agent/tools/evaluate_foundation_rag.py", line 106, in main
+    records, metrics = evaluate(store, tasks, args.strategy)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/viva/omni-agent/tools/evaluate_foundation_rag.py", line 44, in evaluate
+    hits, audit = store.search(task['query'], top_k=task['top_k'], with_audit=True, **options)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: KnowledgeStore.search() got an unexpected keyword argument 'strategy'

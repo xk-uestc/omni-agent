@@ -1,5 +1,9 @@
 # Codex M1-A 执行报告
 
+## 2026-10-11 F3 production delivery
+
+Production freeze `67c4d3963d7078edeb9c1d5f7c58981caa072ffd` implements body condition binding, bounded explicit object relationships and the F2 original table inventory in `answer/prepare_evidence/dossier`. Dev/retained Top-K recall .5754/.5595 and complete10/21 each; wrong bindings0/3. Separate Top-K+bundle complete16/13, actual answer-prepared evidence15/12. No generation/model accuracy claim. Final934 passed/6 unchanged failures; F1 and memory16/185/22 vectors unchanged. Restricted institution grammar fails three heldout organization tasks; no heldout tuning. Costs and raw logs in `docs/foundation/F3_RESULTS.md`; stopped for ChatGPT review, no PPO/GRPO/main changes.
+
 ## 2026-10-11 F3 checkpoint 1: retrieval loss attribution
 
 Added `tools/diagnose_foundation_f2.py` and `docs/foundation/F3_FAILURE_ATTRIBUTION.md`, with split-specific machine-readable traces. It replays the F2 path through BM25 candidates, deterministic reranking, top-4 ranking, EvidenceCoverage, native-page dossier, and existing dev-only bounded table chain. Frozen exact scorer parity is asserted for dev `.4325` and retained `.4167`; a separate known-field-label normalization reveals that most parser table values remain present despite changed pipe/label layout. This separates format-sensitive literal mismatch from actual source-field loss.

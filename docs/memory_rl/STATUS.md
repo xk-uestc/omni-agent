@@ -1,6 +1,9 @@
 # Memory RL 状态
 
-## 当前：F3检查点2已完成，进行检查点3
+## 当前：F3生产实现与冻结评测完成，停止等待ChatGPT审核
+
+- F3本轮单Agent完成正文条件绑定、明确来源内对象关联与受限pipe原生表bundle生产接入，源码冻结/远端SHA `67c4d3963d7078edeb9c1d5f7c58981caa072ffd`。Top-K开发/保留Recall .5754/.5595、完整均10/21、错绑0/3；Top-K+bundle完整16/13，实际answer证据完整15/12，生成答案not_run。保留3题机构语法拒用、3错绑仍在，无证据污染各3/3；不根据保留分数改算法。
+- 最终相关934通过/6既有失败/12子测试，F1旧32指标逐题保持，16/185/22记忆结果保持F2、SQL rows/status一致、task_experience16项通过；不是全项目全绿或RL ready。热P50/P95 23.79/103.39→75.15/159.82ms，最大Python查询分配峰值约+3.81MiB。详见 `docs/foundation/F3_IMPLEMENTATION.md`、`F3_RESULTS.md`，PPO/GRPO未启动，main未改。
 
 - 2026-10-11 用户授权F2六检查点；远端fetch与本地均为F1提交1003a19344e3570a229f71e290d6d987101258d9，memory分支。既有未跟踪Qimem/原样保留。
 - 检查点1困难集和No Change A基线完成并单独推送；48题/30文档，开发/保留按来源族隔离。baseline Dev Evidence Recall .4325，Retained .4167，二者各6/21可答题完整；不使用保留分数调参。
