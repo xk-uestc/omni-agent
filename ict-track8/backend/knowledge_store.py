@@ -447,6 +447,8 @@ class KnowledgeStore:
                 records = [record for record in records if record.metadata.get('page_no') == page_no]
         elif page_no is not None:
             raise ValueError('指定页码时必须选择PDF资料')
+        from .source_binding import bind_sources
+        records, source_binding = bind_sources(query, records)
         # Exact entity identifiers are mandatory scope constraints, not soft synonyms.
         # Dense similarity can confuse contracts differing only in a serial number.
         normalized_query = unicodedata.normalize('NFKC', query)
@@ -454,7 +456,7 @@ class KnowledgeStore:
             r'(?<![A-Za-z0-9_])(?=[A-Za-z0-9_-]*[A-Za-z])(?=[A-Za-z0-9_-]*\d)[A-Za-z][A-Za-z0-9_-]{2,63}(?![A-Za-z0-9_])', normalized_query)))
         if identifiers:
             def eligible(record):
-                text = unicodedata.normalize('NFKC', record.title + '\n' + record.content)
+                text = unicodedata.normalize('NFKC', record.content)
                 return all(re.search(r'(?<![A-Za-z0-9_])' + re.escape(identifier) + r'(?![A-Za-z0-9_])', text, re.I)
                            for identifier in identifiers)
             records = [record for record in records if eligible(record)]
@@ -478,6 +480,7 @@ class KnowledgeStore:
                 'scope': {'document_id': document_id, 'page_no': page_no,
                           'exact_identifiers': list(identifiers)},
                 'retrieval': self.retrieval_health(), 'candidate_count': 0,
+                'source_binding': source_binding,
                 'dense_status': 'not_run_no_exact_identifier_match',
                 'channels': [], 'selected_count': 0, 'candidates': [],
                 'termination': 'exact_identifier_scope_had_no_matching_chunks'})
@@ -616,6 +619,7 @@ class KnowledgeStore:
         retrieval_audit = {
             'version': 'ict8-rag-audit-v1',
             'query': query,
+            'source_binding': source_binding,
             'scope': {'document_id': document_id, 'page_no': page_no,
                       'exact_identifiers': list(identifiers)},
             'retrieval': self.retrieval_health(),

@@ -316,3 +316,7 @@ F2检查点6：生产源码freeze=`6608785ac364d4188948e1e4167cfb21c9da5b3d`；�
 在冻结困难集开发split上运行当前BM25、有界查询分解与本地BGE尝试。BM25逐题基准复核CP1：候选必要证据Recall@20 .5595，最终Recall@4 .4325，完整6/21，错绑6/24，无证据题污染3/3。分解最多扩展到2个短子句，并保留显式标识/年份，每题最多3次查询。14题chunk集合变化，但必要证据Recall、完整数、错误绑定和污染无改善，P50/P95由22.52/61.89升到43.84/120.84ms。没有部署。
 
 更正前述环境说明：`/tmp/omni-m1a-venv`是M1-A/F2轻量复测环境，没有Torch；F1既有命令明确把Dense评测放在`/tmp/f1-bge-venv`。本轮按该流程离线实际运行BGE，并将BM25、分解在相同venv重跑。实际依赖为Torch 2.14.1+cu130、Transformers 5.19.0、safetensors 0.8.0；Transformers超出项目`<5`范围，须标注验证限制。BGE dev结果来源Recall@4 .8571、字段证据Recall@4 .4405、候选证据Recall@20 .5595、完整6/21、错绑6/24、污染3/3、P50/P95 41.77/1396.91ms。增益不足以修复完整证据或来源错误，不上线。没有联网下载、模型API调用或训练。详情：`docs/foundation/F3_RETRIEVAL_RESULTS.md`及`docs/foundation/runs/f3-cp2-*.json`。
+
+## F3 来源条件绑定（2026-10-11）
+
+fetch 确认 memory 本地/远端 `bd666d5efdcedd5167c65136e190136114553a1b`，与指定起点相比仅评测和文档新增。先写5反例4失败，再修改生产 search 和 source_binding。冻结开发集 Recall@4 .4325→.5040，完整6→7/21，错误来源6→0/24，无证据污染3/3保持。详见 `docs/foundation/F3_IMPLEMENTATION.md` / `F3_RESULTS.md` 及逐题原始运行；无付费模型/训练，非公开基准。来源内关联和表链接入继续执行。
