@@ -24,9 +24,10 @@ class Client:
     model='gpt-6-luna'
     reasoning='medium'
     def __init__(self,approved=True):
-        self.audit=deepcopy(AUDIT);self.calls=[];self.approved=approved
+        self.audit=deepcopy(AUDIT);self.calls=[];self.instructions=[];self.approved=approved
     def generate(self,instructions,context,schema,**options):
         self.calls.append(options['name'])
+        self.instructions.append(instructions)
         images=options['image_attachments']
         assert images and 'native_words' not in str(context)
         if options['name']=='visual_source_literal_selection':
@@ -60,6 +61,13 @@ def test_single_currency_lookup_projects_value_while_retaining_label_citations()
     assert _display_answer('What is the total amount allocated for Highways & Streets?',
         [{'quote':'Highways & Streets'},{'quote':'198,687,347'}])=='198,687,347'
     assert _display_answer('Which elements and which methods are shown?',parts)=='Sales/Use Tax\n$ 343,215,345'
+
+
+def test_printed_total_column_is_direct_lookup_not_model_arithmetic(tmp_path):
+    store,client,hits=setup(tmp_path)
+    route_visual_source_fallback(store,'What is the total amount for 2025?',hits,document_id='source')
+    assert 'as a literal lookup; do not add the yearly cells' in client.instructions[0]
+    assert 'If no such total cell is printed, reject' in client.instructions[1]
 
 
 def test_rejected_partial_visual_answer_does_not_replace_text_result(tmp_path):

@@ -31,7 +31,7 @@ The runs used 29 calls under a 30-call cap. They consumed 113,138 input tokens a
 
 ## Focused verification
 
-`python -m pytest ict-track8/tests/test_m1c_model_budget.py ict-track8/tests/test_visual_source_fallback.py -q` completed with **11 passed** after the final numeric projection extension. `py_compile` passed for the changed client and visual-answer module. Formula safety's existing targeted suite previously completed with 70 passed before this visual change. No full regression suite was run in this round.
+`python -m pytest ict-track8/tests/test_m1c_model_budget.py ict-track8/tests/test_visual_source_fallback.py -q` completed with **12 passed** after the numeric projection and printed-Total prompt update. `py_compile` passed for the changed client and visual-answer module. The Total-column clarification has not had another live model run because 29/30 authorized calls were already used. Formula safety's existing targeted suite previously completed with 70 passed before this visual change. No full regression suite was run in this round.
 
 ## Open work
 

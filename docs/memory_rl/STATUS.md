@@ -6,7 +6,7 @@
 - 新增DeepSeek视觉输入适配到已存在的KnowledgeStore原页回退路径，原件SHA、渲染SHA、坐标/图像预算和双阶段独立视觉复核仍启用。扫描财务PDF三道冻结开发题：Sales/Use Tax一条完整Agent链路EM/F1 1/1、同题复试及Events Center债务题安全回退；Highways & Streets CIP行/数值经视觉复核，服务器只投影唯一已审核数值并保留行引用，saved-proof重放EM/F1 1/1。原页直接复放3区域、8项复核全部通过；报告 `docs/foundation/REAL_DOCUMENT_CAPABILITY_RESULTS.md` / `REAL_DOCUMENT_END_TO_END.md`。
 - 视觉独立复核有拒绝波动；只将成功单题和保存证据投影分开呈现，不报为公开基准或保留集成绩。完整拒答和兜底均保留。
 - A100宿主终端可见（40GB，驱动580.178.04）；容器无GPU设备节点，MinerU ONNX为CPU provider，本轮解析走CPU、答案生成使用授权API。没有完成真实公式参数绑定与计算、三类真实跨源、多页表格、正式保留集或全套回归；赛题总体仍未验收完成。
-- 新增测试：`test_m1c_model_budget.py` + `test_visual_source_fallback.py` 11 passed；另先前公式审核生命周期定向70 passed。未运行全量回归。工作分支保持 `memory`，不改 `main`，Qimem未触碰。
+- 新增测试：`test_m1c_model_budget.py` + `test_visual_source_fallback.py` 12 passed；另先前公式审核生命周期定向70 passed。最后新增的“印刷Total列是字面查询”指令只做了离线检查，API预算29/30，尚未真实模型复测。未运行全量回归。工作分支保持 `memory`，不改 `main`，Qimem未触碰。
 
 ## 当前：真实PDF与RAG升级执行中，未启动训练
 

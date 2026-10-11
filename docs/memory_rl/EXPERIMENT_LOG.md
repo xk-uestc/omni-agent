@@ -337,3 +337,4 @@ F3 最终冻结复核：生产及远端 `67c4d3963d7078edeb9c1d5f7c58981caa072ff
 - 原页路径单独再跑通过；原PDF SHA、渲染SHA、问题SHA及三个PDF区域回放相符，八项review均true。产物：`docs/foundation/runs/real_document/real-agent-finance-20261011-*.json`。
 - 本轮共29次DeepSeek API调用，113138 input / 3455 output tokens；峰价估算约$0.038，限30次/200000 UTF-8字节文本上下文/每次1000输出tokens；只发送公开OHR页与问题、检索内容。无训练和私有文档外传。A100宿主可见但当前解析容器无GPU设备节点；MinerU CPU，答案生成远程API。
 - 改后专项`python -m pytest ict-track8/tests/test_m1c_model_budget.py ict-track8/tests/test_visual_source_fallback.py -q`：11 passed；代码`py_compile`通过。既有公式安全修复相关70项先前通过；本次未跑完整回归。未完成公式计算、三类语义对齐的真实跨源、保留集和总赛题验收。详见`docs/foundation/REAL_DOCUMENT_END_TO_END.md`。
+- 根据Events Center拒答增加提示约束：可直接读取原页中明确覆盖用户期间的打印Total格，但禁止从年度格自行求和；没有匹配Total格则拒答。提示选择/复核有离线回归，专项更新为12 passed。由于授权额度29/30已基本耗尽，未做新API模型验证，不将该提示变更报告为线上收益。
