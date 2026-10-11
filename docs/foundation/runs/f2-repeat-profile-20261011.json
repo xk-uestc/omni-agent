@@ -1,0 +1,78 @@
+{
+  "scope": "cProfile of 72 warmed dev KnowledgeStore.search calls with persistent BM25; not used for reported latency",
+  "split": "dev",
+  "queries": 24,
+  "measured_calls": 72,
+  "corpus_documents": 15,
+  "chunks": 189,
+  "ingest_and_parse_ms": 452.349,
+  "warmed_total_search_ms": {
+    "p50": 33.105,
+    "p95": 130.683
+  },
+  "profile_top_functions": [
+    {
+      "function": "search",
+      "file": "knowledge_store.py",
+      "calls": 72,
+      "self_seconds": 0.031647,
+      "cumulative_seconds": 4.105805
+    },
+    {
+      "function": "_tokenize",
+      "file": "cross_source.py",
+      "calls": 15336,
+      "self_seconds": 0.643037,
+      "cumulative_seconds": 1.834612
+    },
+    {
+      "function": "_page_scope_coverage",
+      "file": "knowledge_store.py",
+      "calls": 72,
+      "self_seconds": 0.014182,
+      "cumulative_seconds": 1.096896
+    },
+    {
+      "function": "search",
+      "file": "retrieval_index.py",
+      "calls": 72,
+      "self_seconds": 0.001405,
+      "cumulative_seconds": 0.346302
+    },
+    {
+      "function": "select_coverage_hits",
+      "file": "evidence_coverage.py",
+      "calls": 72,
+      "self_seconds": 0.013496,
+      "cumulative_seconds": 0.2621
+    },
+    {
+      "function": "_search_connection",
+      "file": "retrieval_index.py",
+      "calls": 72,
+      "self_seconds": 0.069676,
+      "cumulative_seconds": 0.224676
+    },
+    {
+      "function": "search",
+      "file": "__init__.py",
+      "calls": 43137,
+      "self_seconds": 0.011944,
+      "cumulative_seconds": 0.199142
+    },
+    {
+      "function": "<method 'search' of 're.Pattern' objects>",
+      "file": "~",
+      "calls": 49473,
+      "self_seconds": 0.175811,
+      "cumulative_seconds": 0.175811
+    },
+    {
+      "function": "ranking",
+      "file": "knowledge_store.py",
+      "calls": 6048,
+      "self_seconds": 0.010688,
+      "cumulative_seconds": 0.108075
+    }
+  ]
+}

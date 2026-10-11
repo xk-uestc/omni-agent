@@ -283,6 +283,14 @@ F1检查点6固定源码a37c0728deacf1bc01a6e1458ac3826a2d570e2e：
 
 检查点6 commit+push完成：e1a815c2cc57bdfc3789d0282da8bd255dde97c2。git whitespace检查排除pytest原始txt/xml产物（原始输出自带空白不清洗），其余源码/报告通过。检查点7最终报告/STATUS/DECISIONS/CODEX_REPORT/ACCEPTANCE只写当前证据和限制，最终资产manifest对全部本轮产物和冻结输入逐文件SHA256核验，不含私有目录、密钥或权重二进制。
 
+## F2 follow-up：manifest重验、困难集A/B复跑与索引profile（2026-10-11）
+
+执行SHA为`d96a2faa79315318dbeed8ccb070cd56b0ed4f5b`，manifest声明生产源码冻结`6608785ac364d4188948e1e4167cfb21c9da5b3d`。manifest的189项文件均匹配SHA256与长度，manifest自身SHA为`cdd391b11df936533ffbaf26435f5687fe17a5a2ebef30692d7d40e8bf5fcf80`。复跑命令和结果见`docs/foundation/F2_FOLLOWUP_REPRO_20261011.md`。
+
+动态BM25与持久BM25在dev/retained的来源Recall、证据Recall、MRR/NDCG、完整必要证据、错误绑定与无证据污染均一致；完整证据仍只有6/21，污染3/3。小语料重复P50约23ms、持久索引约1.73/1.75MB，未见可靠提速。10/100/500/1000页native PDF持久索引热P50为4.89/30.30/525.92/1087.46ms，动态为4.50/106.68/710.71/1452.26ms；建索引为4.97/67.50/342.07/702.90ms。profile 72次暖查询显示tokenizer和page-scope累计时间较高；没有据单次样本改排序/tokenizer。
+
+跨源SQL/目录绑定/编译器/对话修改/round9-round10 fixture回归315 passed。困难RAG集自身是文档QA，不含SQL gold与数据库；答案EM、忠实度、引用正确性仍not_run。这里的A/B是dynamic与persistent BM25实现对照，不是固定记忆与动态记忆的因果对照；证据检索完整度仍不足，因此F2不证明Memory收益，也不启动M2训练。
+
 
 F2检查点1：`/tmp/omni-m1a-venv/bin/python tools/freeze_foundation_f2.py`冻结48题；`/tmp/omni-m1a-venv/bin/python tools/validate_foundation_f2.py`验证48题Gold literal、来源族隔离及全部文件SHA；`/tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2.py --split dev --output docs/foundation/runs/f2-A-dev-before.json`与retained对应命令生成No Change输出。开发探索结果另存`f2-dev-exploration.json`。两split同源码Python3.12.3/SQLite3.45.1、动态BM25、top4，没使用Dense或生成模型。保留baseline是在任何索引方案改变前执行；随后不可用于选参数。
 

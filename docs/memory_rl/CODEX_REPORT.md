@@ -1,5 +1,11 @@
 # Codex M1-A 执行报告
 
+## 2026-10-11 F2 follow-up reproduction
+
+At `d96a2faa79315318dbeed8ccb070cd56b0ed4f5b`, the published F2 manifest's 189 files all matched their SHA-256 and byte lengths; its own SHA-256 is `cdd391b11df936533ffbaf26435f5687fe17a5a2ebef30692d7d40e8bf5fcf80`. Re-ran dynamic BM25 and persistent BM25 on both frozen difficult-RAG splits. Retrieval metrics were identical; small-corpus hot latency remained about 23 ms P50, while synthetic 100/500/1000-page native-PDF runs retained lower persistent-index P50 and recorded cold-build cost. A warmed 72-query profile points to repeated tokenization and page-scope coverage as follow-up investigation areas; no ranking/tokenizer change was made from one profile.
+
+Cross-source/SQL semantic fixture regression: 315 passed. F2's 48 questions are document QA with no SQL gold/database; answer accuracy, fidelity, and citation correctness remain not run. This A/B is dynamic versus persistent BM25, not static versus dynamic memory. Full evidence and raw outputs: `docs/foundation/F2_FOLLOWUP_REPRO_20261011.md` and `docs/foundation/runs/f2-repeat-*-20261011.json`. RL readiness remains unestablished.
+
 ## 2026-10-11 F2检查点2
 
 实现带schema/tokenizer/normalization/corpus fingerprint与SQLite source revision校验的BM25持久倒排缓存；不改变原始打分/排序，失败回动态BM25。冻结开发集指标逐项一致；10/100/500/1000页原生PDF的热查询P50动态/索引为4.55/4.94、107.41/30.79、715.83/529.24、1461.08/1102.45ms。FTS5中文探针召回退化故不采用。索引规模证据是本机合成PDF工程测量，不是公开benchmark。56个相关测试通过；对话继续检查点3–6。

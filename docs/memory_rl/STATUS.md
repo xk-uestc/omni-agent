@@ -7,6 +7,7 @@
 - 检查点2持久化BM25完成并单独提交：原排序逐题指标保持一致；10/100/500/1000页热查询P50由动态4.55/107.41/715.83/1461.08ms降至4.94/30.79/529.24/1102.45ms。10页略慢；1000页仍约1.1秒。SQLite FTS5探针中文召回不足，不部署。
 - 检查点3开发集证据范围对照已单独推送：6题Top-K/现有dossier/受限表链完整证据0/6、4/6、6/6；表链用3–4页完成30行唯一性与必要条件核验，Source SHA绑定并对重复行/来源更新/页预算失败关闭。C多做机构→编号绑定和精确检索，局部时间有增加，未接入生产路由。
 - 检查点4显式聚合覆盖目录默认值的AVG/SUM语义修复已推送（7f7d4ba），217项相关测试通过。检查点5协议失败审计与SSE超时资源状态已推送（6608785），离线相关回归50通过/2个FastAPI既有弃用警告。检查点6最终集、16/185/22本地基线及终审记录已完成，950通过/6既有失败/12子测试/25警告；F2整体不是赛题完成或RL ready。已固定production source SHA 6608785ac364d4188948e1e4167cfb21c9da5b3d；停止等待ChatGPT审核。
+- 后续独立复核：`d96a2fa`下manifest 189/189 SHA与字节长度匹配；困难集dynamic/persistent BM25 dev与retained指标一致，SQL/跨源fixture回归315 passed。profile提示tokenize/page-scope耗时，未据单次profile改变检索语义；详见`docs/foundation/F2_FOLLOWUP_REPRO_20261011.md`及`docs/foundation/runs/f2-repeat-*-20261011.json`。困难RAG集没有SQL gold或静态/动态记忆因果证据，仍不进入M2。
 - F1旧结论仍有效：不得训练；PPO readiness未成立；旧测试7失败及本轮新增失败要逐项披露。
 
 ## F1基础设施最终审核记录
