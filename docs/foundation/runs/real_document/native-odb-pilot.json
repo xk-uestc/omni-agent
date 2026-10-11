@@ -1,0 +1,129 @@
+{
+  "backend": "native",
+  "versions": {
+    "python": "3.12.3"
+  },
+  "split": "dev",
+  "gold_isolation": "input_manifest_and_original_bytes_only",
+  "records": [
+    {
+      "source": {
+        "split": "dev",
+        "image_name": "docstructbench_llm-raw-scihub-o.O-s00128-008-9367-z.pdf_4.jpg",
+        "group": "docstructbench_llm-raw-scihub-o.O-s00128-008-9367-z",
+        "source": "academic_literature",
+        "target_category": "equation_isolated",
+        "attributes": {
+          "data_source": "academic_literature",
+          "language": "english",
+          "layout": "1andmore_column",
+          "special_issue": [
+            "table_fewer_line",
+            "table_horizontal",
+            "table_span",
+            "table_with_formula"
+          ]
+        },
+        "dataset": "OmniDocBench-v1.0",
+        "pdf_path": "inputs/odb/docstructbench_llm-raw-scihub-o.O-s00128-008-9367-z.pdf_4.pdf",
+        "pdf_sha256": "5e10c44675e83f7e93e2eae1dbd82b021dafd75a41a455173d32b7b6b166b899",
+        "pdf_bytes": 97809,
+        "url": "https://huggingface.co/datasets/opendatalab/OmniDocBench/resolve/f5f559bddf50e36f7f9899d842d0006f13ce8afc/ori_pdfs/docstructbench_llm-raw-scihub-o.O-s00128-008-9367-z.pdf_4.pdf"
+      },
+      "backend": "native",
+      "versions": {
+        "python": "3.12.3"
+      },
+      "status": "ok",
+      "scope": "whole_document_native",
+      "page_limit": 40,
+      "gold_loaded_by_parser": false,
+      "generation": "not_run",
+      "page_count": 1,
+      "chunk_count": 37,
+      "native_ocr": true,
+      "seconds": 0.2386,
+      "process_peak_rss_mb": 90.04,
+      "children_peak_rss_mb": 0.0
+    },
+    {
+      "source": {
+        "split": "dev",
+        "image_name": "docstructbench_llm-raw-scihub-o.O-s00374-003-0589-2.pdf_6.jpg",
+        "group": "docstructbench_llm-raw-scihub-o.O-s00374-003-0589-2",
+        "source": "academic_literature",
+        "target_category": "table",
+        "attributes": {
+          "data_source": "academic_literature",
+          "language": "english",
+          "layout": "other_layout",
+          "special_issue": [
+            "table_fewer_line",
+            "table_horizontal",
+            "table_span",
+            "table_with_formula"
+          ]
+        },
+        "dataset": "OmniDocBench-v1.0",
+        "pdf_path": "inputs/odb/docstructbench_llm-raw-scihub-o.O-s00374-003-0589-2.pdf_6.pdf",
+        "pdf_sha256": "356e14955171e2a15057ee17d791adaa6878ede8af2257c3c46da1ec4cac9694",
+        "pdf_bytes": 101781,
+        "url": "https://huggingface.co/datasets/opendatalab/OmniDocBench/resolve/f5f559bddf50e36f7f9899d842d0006f13ce8afc/ori_pdfs/docstructbench_llm-raw-scihub-o.O-s00374-003-0589-2.pdf_6.pdf"
+      },
+      "backend": "native",
+      "versions": {
+        "python": "3.12.3"
+      },
+      "status": "ok",
+      "scope": "whole_document_native",
+      "page_limit": 40,
+      "gold_loaded_by_parser": false,
+      "generation": "not_run",
+      "page_count": 1,
+      "chunk_count": 13,
+      "native_ocr": true,
+      "seconds": 0.0785,
+      "process_peak_rss_mb": 107.54,
+      "children_peak_rss_mb": 0.0
+    },
+    {
+      "source": {
+        "split": "dev",
+        "image_name": "yanbaor2_1492d25d79af850815ea449254ea62418c3c7fd582792b5191e1879671ba1219.pdf_88.jpg",
+        "group": "yanbaor2_1492d25d79af850815ea449254ea62418c3c7fd582792b5191e1879671ba1219",
+        "source": "research_report",
+        "target_category": "equation_isolated",
+        "attributes": {
+          "data_source": "research_report",
+          "language": "simplified_chinese",
+          "layout": "single_column",
+          "special_issue": [
+            "table_veritical",
+            "colorful_backgroud",
+            "table_omission_line"
+          ]
+        },
+        "dataset": "OmniDocBench-v1.0",
+        "pdf_path": "inputs/odb/yanbaor2_1492d25d79af850815ea449254ea62418c3c7fd582792b5191e1879671ba1219.pdf_88.pdf",
+        "pdf_sha256": "37065219bda254fa100a6e6ba05cc520aaad2440ef59005472182dce73aacfea",
+        "pdf_bytes": 512154,
+        "url": "https://huggingface.co/datasets/opendatalab/OmniDocBench/resolve/f5f559bddf50e36f7f9899d842d0006f13ce8afc/ori_pdfs/yanbaor2_1492d25d79af850815ea449254ea62418c3c7fd582792b5191e1879671ba1219.pdf_88.pdf"
+      },
+      "backend": "native",
+      "versions": {
+        "python": "3.12.3"
+      },
+      "status": "ok",
+      "scope": "whole_document_native",
+      "page_limit": 40,
+      "gold_loaded_by_parser": false,
+      "generation": "not_run",
+      "page_count": 1,
+      "chunk_count": 35,
+      "native_ocr": true,
+      "seconds": 0.0558,
+      "process_peak_rss_mb": 107.54,
+      "children_peak_rss_mb": 0.0
+    }
+  ]
+}
