@@ -285,3 +285,5 @@ F1检查点6固定源码a37c0728deacf1bc01a6e1458ac3826a2d570e2e：
 
 
 F2检查点1：`/tmp/omni-m1a-venv/bin/python tools/freeze_foundation_f2.py`冻结48题；`/tmp/omni-m1a-venv/bin/python tools/validate_foundation_f2.py`验证48题Gold literal、来源族隔离及全部文件SHA；`/tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2.py --split dev --output docs/foundation/runs/f2-A-dev-before.json`与retained对应命令生成No Change输出。开发探索结果另存`f2-dev-exploration.json`。两split同源码Python3.12.3/SQLite3.45.1、动态BM25、top4，没使用Dense或生成模型。保留baseline是在任何索引方案改变前执行；随后不可用于选参数。
+
+F2检查点2：`ICT8_DB_PATH=/tmp/f2-api.sqlite`等空模型配置，本地pytest `tests/test_retrieval_index.py tests/test_knowledge_store.py tests/test_dense_retrieval.py tests/test_foundation_retrieval.py tests/test_dynamic_source_binding.py`为56 passed、5 warnings。API测试库先以`initialize_database('/tmp/f2-api.sqlite')`建立。索引准确性开发集输出为`f2-B2-dev-after.json`，与No Change相关指标一致；FTS5候选为`f2-C2-fts5-dev-after.json`，Source Recall .6190、Evidence Recall .4286，P50/P95 42.19/92.29ms。Native PDF规模输出`f2-index-scale-after2.json`，10/100/500/1000页动态/索引P50=4.55/4.94、107.41/30.79、715.83/529.24、1461.08/1102.45ms；构建3.65/67.28/343.12/705.61ms；规模控制与索引命中SHA/locator相同。工具不覆盖旧输出、无模型调用。

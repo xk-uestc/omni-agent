@@ -129,7 +129,8 @@ def _verified_pdf_row(chunk):
 
 
 class KnowledgeStore:
-    def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None):
+    def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None,
+                 use_persistent_bm25: bool = True):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.assets = self.root / 'assets'
@@ -138,6 +139,7 @@ class KnowledgeStore:
         self.chunker = DocumentChunker()
         self.ocr_pipeline = ocr_pipeline
         self.generator = generator
+        self.use_persistent_bm25 = bool(use_persistent_bm25)
         with self.connect() as connection:
             connection.executescript('''
                 CREATE TABLE IF NOT EXISTS documents (
@@ -149,7 +151,24 @@ class KnowledgeStore:
                     payload TEXT NOT NULL,
                     FOREIGN KEY(document_id) REFERENCES documents(document_id) ON DELETE CASCADE);
                 CREATE INDEX IF NOT EXISTS chunks_document ON chunks(document_id);
+                CREATE TABLE IF NOT EXISTS retrieval_catalog_revision (
+                    singleton INTEGER PRIMARY KEY CHECK(singleton=1), revision INTEGER NOT NULL);
+                INSERT OR IGNORE INTO retrieval_catalog_revision VALUES(1,0);
+                CREATE TRIGGER IF NOT EXISTS retrieval_documents_insert AFTER INSERT ON documents BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_documents_update AFTER UPDATE ON documents BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_documents_delete AFTER DELETE ON documents BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_chunks_insert AFTER INSERT ON chunks BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_chunks_update AFTER UPDATE ON chunks BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_chunks_delete AFTER DELETE ON chunks BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
             ''')
+        from .retrieval_index import PersistentBM25Index
+        self.persistent_bm25 = PersistentBM25Index(self.root/'retrieval-index.sqlite')
         self.dense_index = None
         if embedder is not None:
             from .dense_retrieval import DenseIndex
@@ -159,6 +178,10 @@ class KnowledgeStore:
         return {'mode': 'bm25_dense_rrf' if self.dense_index else 'bm25',
                 'embedding_model': self.dense_index.embedder.identity if self.dense_index else None,
                 'dense_answer_threshold': 0.6 if self.dense_index else None}
+
+    def _retrieval_revision(self):
+        with self.connect() as connection:
+            return connection.execute('SELECT revision FROM retrieval_catalog_revision WHERE singleton=1').fetchone()[0]
 
     def warm_dense_index(self):
         if self.dense_index is None:
@@ -392,14 +415,30 @@ class KnowledgeStore:
         return records
 
     def search(self, query: str, *, top_k: int = 4, document_id=None, page_no=None,
-               with_audit: bool = False, progress_callback=None) -> list[DocumentHit] | tuple[list[DocumentHit], dict[str, Any]]:
+               with_audit: bool = False, progress_callback=None, _revision_retry: int = 2) -> list[DocumentHit] | tuple[list[DocumentHit], dict[str, Any]]:
         if not isinstance(query, str) or not query.strip() or len(query) > 1000 or not 1 <= top_k <= 20:
             raise ValueError('问题或检索数量超出限制')
         binding_started = time.perf_counter()
+        revision_before = self._retrieval_revision()
+        bm25_status = 'not_started'
         def finish(hits, audit):
+            if self._retrieval_revision() != revision_after:
+                if _revision_retry > 0 and progress_callback is None:
+                    return self.search(query,top_k=top_k,document_id=document_id,page_no=page_no,
+                        with_audit=with_audit,progress_callback=progress_callback,_revision_retry=_revision_retry-1)
+                raise SourceRevisionError('检索期间语料来源发生变化，请使用当前版本重新检索。')
+            audit['index'] = {'strategy':'persistent_versioned_bm25',
+                'status':bm25_status,
+                'tokenizer_version':'ict8-tokenize-cjk-2-3-latin-v1'}
             return (hits, audit) if with_audit else hits
 
         records = self.records(document_id) if document_id is not None else self.records()
+        revision_after = self._retrieval_revision()
+        if revision_before != revision_after:
+            if _revision_retry > 0 and progress_callback is None:
+                return self.search(query,top_k=top_k,document_id=document_id,page_no=page_no,
+                    with_audit=with_audit,progress_callback=progress_callback,_revision_retry=_revision_retry-1)
+            raise SourceRevisionError('检索开始时语料来源发生变化，请重新检索。')
         if document_id is not None:
             document = self.document(document_id)
             if page_no is not None:
@@ -455,13 +494,29 @@ class KnowledgeStore:
                 # authorize a continuation; native source replay owns that.
                 navigation_contents[record.document_id] = previous.content + '\n' + record.content
         page_coverage = _page_scope_coverage(records, query)
-        retriever = JsonDocumentRetriever(records)
+        if self.use_persistent_bm25:
+            retriever = JsonDocumentRetriever.__new__(JsonDocumentRetriever)
+            retriever.documents = tuple(records)
+            try:
+                statistics = self.persistent_bm25.statistics(records)
+                retriever._document_frequency = statistics['document_frequency']
+                retriever._average_document_length = statistics['average_length']
+            except (sqlite3.DatabaseError, OSError, ValueError) as exc:
+                retriever = JsonDocumentRetriever(records)
+                bm25_status = 'dynamic_fallback:' + type(exc).__name__
+        else:
+            retriever=JsonDocumentRetriever(records)
+            bm25_status='dynamic_control'
         query_term_weights, query_term_weight_total = _query_term_weights(retriever, query)
         bm25_started = time.perf_counter()
         _publish_rag_progress(progress_callback, 'bm25_retrieval', 'running',
             '正在按词项相关度查找手册片段。', input={'query': query, 'candidate_limit': 100})
         try:
-            bm25_hits = retriever.search(query, top_k=max(20, top_k * 5), candidate_limit=100)
+            if not self.use_persistent_bm25 or bm25_status.startswith('dynamic_fallback:'):
+                bm25_hits = retriever.search(query, top_k=max(20, top_k * 5), candidate_limit=100)
+            else:
+                bm25_hits, bm25_status = self.persistent_bm25.search(
+                    query, records, top_k=max(20, top_k * 5), candidate_limit=100)
         except Exception:
             _publish_rag_progress(progress_callback, 'bm25_retrieval', 'error',
                 '关键词召回执行失败。', latency_ms=(time.perf_counter() - bm25_started) * 1000,
@@ -564,6 +619,8 @@ class KnowledgeStore:
             'scope': {'document_id': document_id, 'page_no': page_no,
                       'exact_identifiers': list(identifiers)},
             'retrieval': self.retrieval_health(),
+            'index': {'strategy':'persistent_versioned_bm25','status':bm25_status,
+                      'tokenizer_version':'ict8-tokenize-cjk-2-3-latin-v1'},
             'query_language': query_language,
             'dense_status': dense_status,
             'channels': ['bm25', 'dense', 'rrf'] if dense_status == 'enabled' else ['bm25'],

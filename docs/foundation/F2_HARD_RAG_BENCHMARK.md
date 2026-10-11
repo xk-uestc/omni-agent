@@ -8,7 +8,7 @@
 
 ## 冻结集 No Change 基线
 
-固定无Dense动态BM25，top_k=4，同一评分器、解析器和字段；Python 3.12.3、SQLite 3.45.1，未调用模型。当前只有A组No Change，不存在B组优化结果。
+固定无Dense动态BM25，top_k=4，同一评分器、解析器和字段；Python 3.12.3、SQLite 3.45.1，未调用模型。A组原始结果保留为No Change对照。
 
 | Split | 可答题 | Source Recall@4 | 必要证据 Recall@4 | 完整证据题数 | MRR | NDCG | 错误来源绑定题数 | 无证据污染题数 | P50/P95 (ms) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -17,6 +17,14 @@
 
 所有48题命中引用SHA/locator均可与入库原件核对。开发探索结果为24题/15来源/189chunk；冻结正式开发为同一批题与解析，原始两份分数一致（计时因系统调度有小幅浮动）。此集合已明确区分F1中过易的基线；困难来自同名同标题绑定、长文分散条件、枚举空间和多页表格，不以自然语言题目改写冒充跨源独立样本。No Change逐题和环境证据见 `docs/foundation/runs/f2-{dev,retained}-before.json` 及对应txt；exploration为 `f2-dev-exploration.json`。输入Gold与scorer Hash见benchmark manifest，F1输入与Gold未修改。
 
+## 检索索引原型（只在开发集选择）
+
+实现了带schema/tokenizer/normalization/corpus fingerprint版本的SQLite倒排BM25缓存，posting绑定chunk ID、document ID及原件SHA；内容变更由SQLite revision触发器检测，查询前后校验revision；坏索引或不兼容索引回退动态BM25。原排序函数/权重和top-k不变。开发集冻结评分器逐项与No Change一致：Source Recall .8095、Evidence Recall .4325、完整证据6/21、错误来源绑定6、无证据污染3、SHA/locator均正确；P50/P95为22.15/75.46ms，索引1.73MB。相比小集动态基线14.17/36.56ms，该原型较慢，不将小集延迟宣称为收益。
+
+另以KnowledgeStore原生PDF入库、同一查询重复12次测规模热查询。动态/持久倒排P50分别为：10页4.55/4.94ms，100页107.41/30.79ms，500页715.83/529.24ms，1000页1461.08/1102.45ms；对应索引构建3.65、67.28、343.12、705.61ms，索引体积0.20、1.69、8.34、16.76MB。重启后命中一致，来源SHA定位通过，源码输入哈希前后相同。该本机合成扩展实验支持大语料可降低热查询耗时，但1000页仍约1.1秒，冷构建和来源读取仍昂贵，未解决全库性能目标。证据及环境见 `runs/f2-index-scale-after2.json`。
+
+SQLite FTS5 `unicode61` 原型不作为替代：标准中文分词行为不匹配；开发集探针及其局限保存于 `runs/f2-C2-fts5-dev-after.json`。没有据保留集调整排序或索引参数。评分器继续声明Answer EM、忠实度、引用正确率为not_run。
+
 复现：
 
 ```bash
@@ -24,6 +32,9 @@
 /tmp/omni-m1a-venv/bin/python tools/validate_foundation_f2.py
 /tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2.py --split dev --output docs/foundation/runs/f2-A-dev-before.json
 /tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2.py --split retained --output docs/foundation/runs/f2-A-retained-before.json
+# 持久BM25开发集候选对照；不可覆盖已有输出
+PYTHONPATH=ict-track8:tools /tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2_index.py --strategy persistent --split dev --output docs/foundation/runs/f2-B2-dev-after.json
+PYTHONPATH=ict-track8:tools /tmp/omni-m1a-venv/bin/python tools/measure_f2_index_scale.py --output docs/foundation/runs/f2-index-scale-after2.json
 ```
 
 输出路径须不存在。冻结后没有修改文档、题目或评分器来追求分数。本节和保留集成绩只用于最终一次对照，不据此选排序超参。

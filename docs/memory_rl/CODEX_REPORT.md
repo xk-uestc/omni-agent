@@ -1,5 +1,9 @@
 # Codex M1-A 执行报告
 
+## 2026-10-11 F2检查点2
+
+实现带schema/tokenizer/normalization/corpus fingerprint与SQLite source revision校验的BM25持久倒排缓存；不改变原始打分/排序，失败回动态BM25。冻结开发集指标逐项一致；10/100/500/1000页原生PDF的热查询P50动态/索引为4.55/4.94、107.41/30.79、715.83/529.24、1461.08/1102.45ms。FTS5中文探针召回退化故不采用。索引规模证据是本机合成PDF工程测量，不是公开benchmark。56个相关测试通过；对话继续检查点3–6。
+
 ## 2026-10-10 架构审计
 
 开始状态 `main...origin/main`，唯一未跟踪项 `Qimem/`；源码包原样保留、不提交。sandbox 的 .git 只读且 shell 代理不可连接：普通 `git fetch origin memory` 返回 `cannot open '.git/FETCH_HEAD': Read-only file system`；普通 ls-remote 返回无法连接 127.0.0.1:7897。经授权范围内的 sandbox escalation 后 fetch 成功：
