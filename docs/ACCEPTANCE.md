@@ -494,3 +494,5 @@ Round24完整回归已结束：`LOCAL_REGRESSION_ROUND24_NATIVE_ROWS_20261006.js
 2026-10-11 F2检查点1冻结困难RAG评测：48个合成任务/30份实际PDF/TXT解析来源，dev/retained各24题并按source family分离，Gold literal、manifest与无泄漏验证可复现。无Dense动态BM25基线dev/retained必要证据召回.4325/.4167，完整6/21、6/21，source recall同为.8095，wrong-source命中各6题、unsupported检索污染各3题，答案生成not_run。属于困难合成诊断而非公开基准。见foundation/F2_HARD_RAG_BENCHMARK.md与runs/f2-*-before.json。
 
 2026-10-11 F2检查点2检索索引：版本化SQLite精确词项倒排BM25保持冻结开发集Source/Evidence Recall、MRR/NDCG、完整证据数、错误来源、无证据污染、SHA/locator逐项一致。Native PDF 10/100/500/1000页热P50动态→索引4.55→4.94、107.41→30.79、715.83→529.24、1461.08→1102.45ms；小语料略慢，1k页仍约1.1秒。FTS5中文候选Source Recall .6190且更慢，不采用。相关pytest 56 passed/5 warnings。以上是本地合成与工程性能证据，不是公开基准或端到端答案质量，不标记整体完成。AVG/SUM、证据补全、Agent/SSE及最终整合验证仍待处理；详见`foundation/F2_HARD_RAG_BENCHMARK.md`及`runs/f2-index-scale-after2.json`。
+
+2026-10-11 F2检查点3复杂证据范围：冻结dev 6个多页表任务，Top-K/现有F1 dossier/受限表链必要证据完整0/6、4/6、6/6。表链策略复用page_scope/row_scope，验证来源→对象代码→表源链、30个唯一原生行ID、重复表头/单位、过滤字段/排除脚注与SHA；最多6页，实际读取3–4页。预算、重复ID、检索后来源替换均关闭失败。C在部分题更慢，不宣称端到端答案正确或生产收益；不涉及retained调参。见`foundation/F2_EVIDENCE_COMPLETENESS.md`及`runs/f2-evidence-scope-dev-final-v10.json`。

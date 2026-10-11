@@ -25,6 +25,8 @@
 
 SQLite FTS5 `unicode61` 原型不作为替代：标准中文分词行为不匹配；开发集探针及其局限保存于 `runs/f2-C2-fts5-dev-after.json`。没有据保留集调整排序或索引参数。评分器继续声明Answer EM、忠实度、引用正确率为not_run。
 
+表格题A/B/C证据范围对照及不确定边界见 [`F2_EVIDENCE_COMPLETENESS.md`](F2_EVIDENCE_COMPLETENESS.md)，只运行dev的6个表任务，未使用retained。
+
 复现：
 
 ```bash

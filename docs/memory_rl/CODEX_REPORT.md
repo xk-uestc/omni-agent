@@ -4,6 +4,10 @@
 
 实现带schema/tokenizer/normalization/corpus fingerprint与SQLite source revision校验的BM25持久倒排缓存；不改变原始打分/排序，失败回动态BM25。冻结开发集指标逐项一致；10/100/500/1000页原生PDF的热查询P50动态/索引为4.55/4.94、107.41/30.79、715.83/529.24、1461.08/1102.45ms。FTS5中文探针召回退化故不采用。索引规模证据是本机合成PDF工程测量，不是公开benchmark。56个相关测试通过；对话继续检查点3–6。
 
+## 2026-10-11 F2检查点3
+
+在6个冻结开发表格任务上用同一Top-K候选对照F1页级dossier与受限实体→编号→表格续接：必要证据完整0/6→4/6→6/6。C沿用已有page_scope和row_scope，核验完整30行身份、跨页表头/单位、筛选列、排除脚注、source SHA与检索后重传拒用，最多6页且实际扫描3–4页。C仅用于离线机制试验；精确复查增加单次检索和部分任务时延，没有进入生产，也没有证明整题答案正确。
+
 ## 2026-10-10 架构审计
 
 开始状态 `main...origin/main`，唯一未跟踪项 `Qimem/`；源码包原样保留、不提交。sandbox 的 .git 只读且 shell 代理不可连接：普通 `git fetch origin memory` 返回 `cannot open '.git/FETCH_HEAD': Read-only file system`；普通 ls-remote 返回无法连接 127.0.0.1:7897。经授权范围内的 sandbox escalation 后 fetch 成功：
