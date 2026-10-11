@@ -1,5 +1,13 @@
 # Codex M1-A 执行报告
 
+## 2026-10-11 F3 checkpoint 1: retrieval loss attribution
+
+Added `tools/diagnose_foundation_f2.py` and `docs/foundation/F3_FAILURE_ATTRIBUTION.md`, with split-specific machine-readable traces. It replays the F2 path through BM25 candidates, deterministic reranking, top-4 ranking, EvidenceCoverage, native-page dossier, and existing dev-only bounded table chain. Frozen exact scorer parity is asserted for dev `.4325` and retained `.4167`; a separate known-field-label normalization reveals that most parser table values remain present despite changed pipe/label layout. This separates format-sensitive literal mismatch from actual source-field loss.
+
+Normalized macro stage recall: BM25 Top-20 `.7024/.6865`, ranked Top-4 `.4714/.4595`, Coverage-selected Top-4 `.4754/.4595`, Top-K plus dossier `.6984/.6825` (dev/retained). Coverage adds only `.004` dev and zero retained; candidate recall and the Top-4 budget are the stronger measured gap. On six dev table tasks, source-bound normalized recall is `.1639` at Top-K, `.6667` with dossier, and `1.0` with F2's bounded chain; complete tasks `0/6`, `4/6`, `6/6`. No answerer was invoked.
+
+The existing F2 table A metric `.0417` concatenated sources before exact literal comparison. Source-bound re-score is `.0139` exact macro: one of three apparent unit hits is from the required table and two are only present in neighboring-family tables. Kept the historical result intact and documented the source-bound audit. Wrong bindings remain 6/24 on both splits (same-title prior-year report; same-name neighboring organization); unsupported contamination remains 3/3. F2 validator passed all 48 tasks/30 sources and `test_foundation_f2_evidence.py` passed 4/4.
+
 ## 2026-10-11 F2 follow-up reproduction
 
 At `d96a2faa79315318dbeed8ccb070cd56b0ed4f5b`, the published F2 manifest's 189 files all matched their SHA-256 and byte lengths; its own SHA-256 is `cdd391b11df936533ffbaf26435f5687fe17a5a2ebef30692d7d40e8bf5fcf80`. Re-ran dynamic BM25 and persistent BM25 on both frozen difficult-RAG splits. Retrieval metrics were identical; small-corpus hot latency remained about 23 ms P50, while synthetic 100/500/1000-page native-PDF runs retained lower persistent-index P50 and recorded cold-build cost. A warmed 72-query profile points to repeated tokenization and page-scope coverage as follow-up investigation areas; no ranking/tokenizer change was made from one profile.

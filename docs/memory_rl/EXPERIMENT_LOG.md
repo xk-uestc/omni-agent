@@ -291,6 +291,14 @@ F1检查点6固定源码a37c0728deacf1bc01a6e1458ac3826a2d570e2e：
 
 跨源SQL/目录绑定/编译器/对话修改/round9-round10 fixture回归315 passed。困难RAG集自身是文档QA，不含SQL gold与数据库；答案EM、忠实度、引用正确性仍not_run。这里的A/B是dynamic与persistent BM25实现对照，不是固定记忆与动态记忆的因果对照；证据检索完整度仍不足，因此F2不证明Memory收益，也不启动M2训练。
 
+## F3 检查点1：冻结困难集逐阶段损失归因（2026-10-11）
+
+起点`d61ce23dfa32fcb2be01d6b71235f3e48e693aed`。新工具`tools/diagnose_foundation_f2.py`在读取Gold前运行相同KnowledgeStore解析、BM25 Top-20/排序/Top-4、EvidenceCoverage、native dossier；仅dev的六道表格题继续重放F2 bounded table chain。对必要Gold literals分别记录raw/source、parsed、候选、重排Top-4、最终selector、Dossier及表链页面SHA/locator，并报告first-loss、wrong-binding和unsupported污染。exact scorer parity断言对照冻结F2两split，Gold只作事后诊断。
+
+运行`validate_foundation_f2.py`：48题、30文档、literal Gold及输入hash通过、来源族无泄漏；`test_foundation_f2_evidence.py` 4 passed；诊断工具dev/retained均退出0。每split 99 required literals。exact Top-K宏Recall与冻结结果相同dev`.4325`/retained`.4167`。表格行解析把pipe row转为带标签字段；只按已知字段标签与分隔符做规范化后，dev解析99/99、retained 98/99仍可恢复，exact文本解析Recall为`.7381/.7222`。规范化BM25 Top20宏Recall`.7024/.6865`，重排Top4`.4714/.4595`，EvidenceCoverage最终`.4754/.4595`；selector提升dev`.0040`、retained`0`。TopK+dossier是诊断context`.6984/.6825`（完整12/21、11/21），非答案正确率。first loss literal counts、SQL指标notrun及Gold次序说明见`F3_FAILURE_ATTRIBUTION.md`与`runs/f3-cp1-stage-loss-{dev,retained}-20261011.json`。
+
+F2表任务旧A`.0417`分数从不同来源拼接hit文本后计算。逐题按所需source重算exact宏均值`.0139`：仅一个单位表头来自正确source，另两个单位命中是邻近family表。归档历史值并报告source-bound复核；未改F2 scorer/Gold。six dev table任务field-normalized source-bound evidence A Top-K`.1639`完整0/6、dossier`.6667`完整4/6、bounded chain `1.0`完整6/6。错误来源绑定仍6/24，典型是2025 vs 2026同标题公报与同名异机构林青；unsupported污染3/3。答案器未调用。
+
 
 F2检查点1：`/tmp/omni-m1a-venv/bin/python tools/freeze_foundation_f2.py`冻结48题；`/tmp/omni-m1a-venv/bin/python tools/validate_foundation_f2.py`验证48题Gold literal、来源族隔离及全部文件SHA；`/tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2.py --split dev --output docs/foundation/runs/f2-A-dev-before.json`与retained对应命令生成No Change输出。开发探索结果另存`f2-dev-exploration.json`。两split同源码Python3.12.3/SQLite3.45.1、动态BM25、top4，没使用Dense或生成模型。保留baseline是在任何索引方案改变前执行；随后不可用于选参数。
 
