@@ -489,3 +489,6 @@ Round24完整回归已结束：`LOCAL_REGRESSION_ROUND24_NATIVE_ROWS_20261006.js
 
 
 2026-10-10 F1基础设施验收：仅memory分支、固定后端a37c0728deacf1bc01a6e1458ac3826a2d570e2e，10/100/500原生页、1千/1万/10万SQL行本地真实路径与4并发实验、来源生命周期/锁/坏库/fake503/SSE超时证据已归档。单来源读取300→3chunk、8次热中位约4.00→1.87ms；500页全库约700ms仍是瓶颈。BGE权重实际下载/核验/离线Dense，32题冻结合成RAG集A/B前后召回评分无变化，C导航增加噪声不部署；生成层not_run。新增有界页/行证据Scope、混用版本拒用、危险混合请求整体拒绝、单指标alias/失败Trace。原16/185/22无原成功退步，185两组177→178仅安全修复；综合相关533passed/7failed/12subtests、单独SSE1passed，7失败及起点复现均披露，未宣称全绿。M1-C历史7/7/8/9未重跑、PPO未就绪、未训练、未合并main、0付费调用。此为本地合成及机制证据，不计公开/官方问答成绩，不标记整体赛题完成。详见foundation/FOUNDATION_FINAL_REVIEW.md和runs/FINAL_ARTIFACT_MANIFEST.json。
+
+
+2026-10-11 F2检查点1冻结困难RAG评测：48个合成任务/30份实际PDF/TXT解析来源，dev/retained各24题并按source family分离，Gold literal、manifest与无泄漏验证可复现。无Dense动态BM25基线dev/retained必要证据召回.4325/.4167，完整6/21、6/21，source recall同为.8095，wrong-source命中各6题、unsupported检索污染各3题，答案生成not_run。属于困难合成诊断而非公开基准。见foundation/F2_HARD_RAG_BENCHMARK.md与runs/f2-*-before.json；后续索引改变尚未验收。

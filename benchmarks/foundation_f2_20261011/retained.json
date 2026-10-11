@@ -1,0 +1,398 @@
+[
+  {
+    "id": "retained-summit-01",
+    "source_family": "summit",
+    "kind": "same_title_time",
+    "query": "峰顶 研究站2026年公报中，代码S-58的预算多少？租赁费是否包含？",
+    "required": {
+      "f2-summit-policy-2026": [
+        "1242元",
+        "不含设备租赁费",
+        "S-58"
+      ]
+    },
+    "wrong_binding_sources": [
+      "f2-summit-policy-2025"
+    ],
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-summit-02",
+    "source_family": "summit",
+    "kind": "long_distributed_conditions",
+    "query": "南谷中心代码S-58校准周期几天？计算时停机日和维修等待时间如何处理？",
+    "required": {
+      "f2-summit-long": [
+        "29天",
+        "停机日不计入周期",
+        "不得将维修等待时间纳入"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-summit-03",
+    "source_family": "summit",
+    "kind": "complete_table_enumeration",
+    "query": "请完整列出峰顶代码S-58批次中北区且结论合格的所有编号，并带上读数和日期。",
+    "required": {
+      "f2-summit-table": [
+        "S-58-02 | 北区 | 合格 | 12.5 | 2026-04-03",
+        "S-58-04 | 北区 | 合格 | 14.5 | 2026-04-05",
+        "S-58-08 | 北区 | 合格 | 18.5 | 2026-04-09",
+        "S-58-10 | 北区 | 合格 | 20.5 | 2026-04-11",
+        "S-58-14 | 北区 | 合格 | 24.5 | 2026-04-15",
+        "S-58-16 | 北区 | 合格 | 26.5 | 2026-04-17",
+        "S-58-20 | 北区 | 合格 | 30.5 | 2026-04-21",
+        "S-58-22 | 北区 | 合格 | 32.5 | 2026-04-23",
+        "S-58-26 | 北区 | 合格 | 36.5 | 2026-04-27",
+        "S-58-28 | 北区 | 合格 | 38.5 | 2026-04-01"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-summit-04",
+    "source_family": "summit",
+    "kind": "cross_page_header_unit",
+    "query": "南谷中心批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
+    "required": {
+      "f2-summit-table": [
+        "S-58-02 | 北区 | 合格 | 12.5 | 2026-04-03",
+        "S-58-04 | 北区 | 合格 | 14.5 | 2026-04-05",
+        "S-58-08 | 北区 | 合格 | 18.5 | 2026-04-09",
+        "S-58-10 | 北区 | 合格 | 20.5 | 2026-04-11",
+        "S-58-14 | 北区 | 合格 | 24.5 | 2026-04-15",
+        "S-58-16 | 北区 | 合格 | 26.5 | 2026-04-17",
+        "S-58-20 | 北区 | 合格 | 30.5 | 2026-04-21",
+        "S-58-22 | 北区 | 合格 | 32.5 | 2026-04-23",
+        "S-58-26 | 北区 | 合格 | 36.5 | 2026-04-27",
+        "S-58-28 | 北区 | 合格 | 38.5 | 2026-04-01",
+        "读数(毫克/升)",
+        "隔离记录不纳入合格样本统计"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-summit-05",
+    "source_family": "summit",
+    "kind": "same_name_org_binding",
+    "query": "南谷中心的林青在2026公报中担任什么职务？",
+    "required": {
+      "f2-summit-policy-2026": [
+        "林青”在南谷中心任采样负责人"
+      ]
+    },
+    "wrong_binding_sources": [
+      "f2-summit-other-org"
+    ],
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-summit-06",
+    "source_family": "summit",
+    "kind": "negation_date_scope",
+    "query": "只看S-58的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
+    "required": {
+      "f2-summit-policy-2026": [
+        "不含设备租赁费",
+        "不得把隔离状态记录计入合格记录"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-summit-07",
+    "source_family": "summit",
+    "kind": "chinese_alias_evidence",
+    "query": "峰顶那边林青的岗位是什么？预算是多少钱（口语问法）？",
+    "required": {
+      "f2-summit-policy-2026": [
+        "林青”在南谷中心任采样负责人",
+        "1242元"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-summit-08",
+    "source_family": "summit",
+    "kind": "unsupported_abstention",
+    "query": "南谷中心S-58在2026年授权的月球站点密码是什么？",
+    "required": {},
+    "expected_abstain": true,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-01",
+    "source_family": "island",
+    "kind": "same_title_time",
+    "query": "岛屿 研究站2026年公报中，代码I-64的预算多少？租赁费是否包含？",
+    "required": {
+      "f2-island-policy-2026": [
+        "1242元",
+        "不含设备租赁费",
+        "I-64"
+      ]
+    },
+    "wrong_binding_sources": [
+      "f2-island-policy-2025"
+    ],
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-02",
+    "source_family": "island",
+    "kind": "long_distributed_conditions",
+    "query": "青屿研究所代码I-64校准周期几天？计算时停机日和维修等待时间如何处理？",
+    "required": {
+      "f2-island-long": [
+        "29天",
+        "停机日不计入周期",
+        "不得将维修等待时间纳入"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-03",
+    "source_family": "island",
+    "kind": "complete_table_enumeration",
+    "query": "请完整列出岛屿代码I-64批次中北区且结论合格的所有编号，并带上读数和日期。",
+    "required": {
+      "f2-island-table": [
+        "I-64-02 | 北区 | 合格 | 12.5 | 2026-04-03",
+        "I-64-04 | 北区 | 合格 | 14.5 | 2026-04-05",
+        "I-64-08 | 北区 | 合格 | 18.5 | 2026-04-09",
+        "I-64-10 | 北区 | 合格 | 20.5 | 2026-04-11",
+        "I-64-14 | 北区 | 合格 | 24.5 | 2026-04-15",
+        "I-64-16 | 北区 | 合格 | 26.5 | 2026-04-17",
+        "I-64-20 | 北区 | 合格 | 30.5 | 2026-04-21",
+        "I-64-22 | 北区 | 合格 | 32.5 | 2026-04-23",
+        "I-64-26 | 北区 | 合格 | 36.5 | 2026-04-27",
+        "I-64-28 | 北区 | 合格 | 38.5 | 2026-04-01"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-04",
+    "source_family": "island",
+    "kind": "cross_page_header_unit",
+    "query": "青屿研究所批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
+    "required": {
+      "f2-island-table": [
+        "I-64-02 | 北区 | 合格 | 12.5 | 2026-04-03",
+        "I-64-04 | 北区 | 合格 | 14.5 | 2026-04-05",
+        "I-64-08 | 北区 | 合格 | 18.5 | 2026-04-09",
+        "I-64-10 | 北区 | 合格 | 20.5 | 2026-04-11",
+        "I-64-14 | 北区 | 合格 | 24.5 | 2026-04-15",
+        "I-64-16 | 北区 | 合格 | 26.5 | 2026-04-17",
+        "I-64-20 | 北区 | 合格 | 30.5 | 2026-04-21",
+        "I-64-22 | 北区 | 合格 | 32.5 | 2026-04-23",
+        "I-64-26 | 北区 | 合格 | 36.5 | 2026-04-27",
+        "I-64-28 | 北区 | 合格 | 38.5 | 2026-04-01",
+        "读数(毫克/升)",
+        "隔离记录不纳入合格样本统计"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-05",
+    "source_family": "island",
+    "kind": "same_name_org_binding",
+    "query": "青屿研究所的林青在2026公报中担任什么职务？",
+    "required": {
+      "f2-island-policy-2026": [
+        "林青”在青屿研究所任采样负责人"
+      ]
+    },
+    "wrong_binding_sources": [
+      "f2-island-other-org"
+    ],
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-06",
+    "source_family": "island",
+    "kind": "negation_date_scope",
+    "query": "只看I-64的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
+    "required": {
+      "f2-island-policy-2026": [
+        "不含设备租赁费",
+        "不得把隔离状态记录计入合格记录"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-07",
+    "source_family": "island",
+    "kind": "chinese_alias_evidence",
+    "query": "岛屿那边林青的岗位是什么？预算是多少钱（口语问法）？",
+    "required": {
+      "f2-island-policy-2026": [
+        "林青”在青屿研究所任采样负责人",
+        "1242元"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-island-08",
+    "source_family": "island",
+    "kind": "unsupported_abstention",
+    "query": "青屿研究所I-64在2026年授权的月球站点密码是什么？",
+    "required": {},
+    "expected_abstain": true,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-01",
+    "source_family": "orchard",
+    "kind": "same_title_time",
+    "query": "果园 研究站2026年公报中，代码O-82的预算多少？租赁费是否包含？",
+    "required": {
+      "f2-orchard-policy-2026": [
+        "1249元",
+        "不含设备租赁费",
+        "O-82"
+      ]
+    },
+    "wrong_binding_sources": [
+      "f2-orchard-policy-2025"
+    ],
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-02",
+    "source_family": "orchard",
+    "kind": "long_distributed_conditions",
+    "query": "云田监测局代码O-82校准周期几天？计算时停机日和维修等待时间如何处理？",
+    "required": {
+      "f2-orchard-long": [
+        "30天",
+        "停机日不计入周期",
+        "不得将维修等待时间纳入"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-03",
+    "source_family": "orchard",
+    "kind": "complete_table_enumeration",
+    "query": "请完整列出果园代码O-82批次中北区且结论合格的所有编号，并带上读数和日期。",
+    "required": {
+      "f2-orchard-table": [
+        "O-82-02 | 北区 | 合格 | 12.5 | 2026-04-03",
+        "O-82-04 | 北区 | 合格 | 14.5 | 2026-04-05",
+        "O-82-08 | 北区 | 合格 | 18.5 | 2026-04-09",
+        "O-82-10 | 北区 | 合格 | 20.5 | 2026-04-11",
+        "O-82-14 | 北区 | 合格 | 24.5 | 2026-04-15",
+        "O-82-16 | 北区 | 合格 | 26.5 | 2026-04-17",
+        "O-82-20 | 北区 | 合格 | 30.5 | 2026-04-21",
+        "O-82-22 | 北区 | 合格 | 32.5 | 2026-04-23",
+        "O-82-26 | 北区 | 合格 | 36.5 | 2026-04-27",
+        "O-82-28 | 北区 | 合格 | 38.5 | 2026-04-01"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-04",
+    "source_family": "orchard",
+    "kind": "cross_page_header_unit",
+    "query": "云田监测局批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
+    "required": {
+      "f2-orchard-table": [
+        "O-82-02 | 北区 | 合格 | 12.5 | 2026-04-03",
+        "O-82-04 | 北区 | 合格 | 14.5 | 2026-04-05",
+        "O-82-08 | 北区 | 合格 | 18.5 | 2026-04-09",
+        "O-82-10 | 北区 | 合格 | 20.5 | 2026-04-11",
+        "O-82-14 | 北区 | 合格 | 24.5 | 2026-04-15",
+        "O-82-16 | 北区 | 合格 | 26.5 | 2026-04-17",
+        "O-82-20 | 北区 | 合格 | 30.5 | 2026-04-21",
+        "O-82-22 | 北区 | 合格 | 32.5 | 2026-04-23",
+        "O-82-26 | 北区 | 合格 | 36.5 | 2026-04-27",
+        "O-82-28 | 北区 | 合格 | 38.5 | 2026-04-01",
+        "读数(毫克/升)",
+        "隔离记录不纳入合格样本统计"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-05",
+    "source_family": "orchard",
+    "kind": "same_name_org_binding",
+    "query": "云田监测局的林青在2026公报中担任什么职务？",
+    "required": {
+      "f2-orchard-policy-2026": [
+        "林青”在云田监测局任采样负责人"
+      ]
+    },
+    "wrong_binding_sources": [
+      "f2-orchard-other-org"
+    ],
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-06",
+    "source_family": "orchard",
+    "kind": "negation_date_scope",
+    "query": "只看O-82的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
+    "required": {
+      "f2-orchard-policy-2026": [
+        "不含设备租赁费",
+        "不得把隔离状态记录计入合格记录"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-07",
+    "source_family": "orchard",
+    "kind": "chinese_alias_evidence",
+    "query": "果园那边林青的岗位是什么？预算是多少钱（口语问法）？",
+    "required": {
+      "f2-orchard-policy-2026": [
+        "林青”在云田监测局任采样负责人",
+        "1249元"
+      ]
+    },
+    "expected_abstain": false,
+    "top_k": 4
+  },
+  {
+    "id": "retained-orchard-08",
+    "source_family": "orchard",
+    "kind": "unsupported_abstention",
+    "query": "云田监测局O-82在2026年授权的月球站点密码是什么？",
+    "required": {},
+    "expected_abstain": true,
+    "top_k": 4
+  }
+]

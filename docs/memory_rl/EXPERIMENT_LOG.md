@@ -282,3 +282,6 @@ F1检查点6固定源码a37c0728deacf1bc01a6e1458ac3826a2d570e2e：
 最后核对发现独立验证JSON的before/after_chunk_ids曾错误命名为document ID；保留原final-verification.json作为初次审计，更正字段含义并分别记录document/chunk ID，输出final-verification-v2.json与stdout。指标不变，64成对0变化，冻结Hash/源码/DB稳定、Memory0退步。legal-scope-edit.json另保存实际“删除地区限制”进入合法澄清而非危险请求拒绝的本地输出。
 
 检查点6 commit+push完成：e1a815c2cc57bdfc3789d0282da8bd255dde97c2。git whitespace检查排除pytest原始txt/xml产物（原始输出自带空白不清洗），其余源码/报告通过。检查点7最终报告/STATUS/DECISIONS/CODEX_REPORT/ACCEPTANCE只写当前证据和限制，最终资产manifest对全部本轮产物和冻结输入逐文件SHA256核验，不含私有目录、密钥或权重二进制。
+
+
+F2检查点1：`/tmp/omni-m1a-venv/bin/python tools/freeze_foundation_f2.py`冻结48题；`/tmp/omni-m1a-venv/bin/python tools/validate_foundation_f2.py`验证48题Gold literal、来源族隔离及全部文件SHA；`/tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2.py --split dev --output docs/foundation/runs/f2-A-dev-before.json`与retained对应命令生成No Change输出。开发探索结果另存`f2-dev-exploration.json`。两split同源码Python3.12.3/SQLite3.45.1、动态BM25、top4，没使用Dense或生成模型。保留baseline是在任何索引方案改变前执行；随后不可用于选参数。

@@ -183,3 +183,11 @@ M1-C检查点3：原Omni Planner请求级有界经验context、HTTP/SSE开关、
 16题A10/B14保持；185两组177→178仅safe-09安全改善、0原成功退步；22题9/22、22/22、22/22、0错误晋升。综合相关533passed/7failed/12subtests，额外SSE故障1passed；完整失败/旧版本复现保存，旧Gold/断言不改。原验证器向量不变断言失败被保留，新的独立通用行为核验与冻结Hash验证通过。
 
 M1-C7/7/8/9仅历史独立审计，不复跑付费模型；生成层指标not_run。协议、复杂来源绑定、AVG/SUM、全库重建与SSE取消仍有限；候选池与Reward差异不足，PPO未就绪。没有训练或合并main、0付费请求，停止等待ChatGPT审核。
+
+## F2 检查点1：困难RAG集与No Change基线（2026-10-11）
+
+先fetch `origin memory`，远端与本地均为1003a19344e3570a229f71e290d6d987101258d9；Qimem原未跟踪，不变。用开发源族探索后冻结48题、30份原生解析PDF/TXT文档，开发和保留各24题，分别使用cedar/harbor/meadow和island/orchard/summit六个来源族，每族8题，防止同源改写泄漏。Gold原文literal由`validate_foundation_f2.py`逐项核对。F1四个manifest/F1资产未更改。
+
+固定动态BM25/top4/无Dense实际运行：开发 Source Recall .8095、Evidence Recall .4325、MRR .3571、NDCG .3941、21可答题中6题完整、6项错误来源绑定、unsupported检索污染3、P50/P95 14.17/36.56ms；保留分别.8095/.4167/.3333/.3750、6/21完整、6绑定、3污染、14.40/39.30ms。48题SHA/locator均通过；Answer EM/正确率/忠实度未运行。仅合成困难评测，不是公开基准。
+
+详细输入、评分方法、Hash和逐题日志见`docs/foundation/F2_HARD_RAG_BENCHMARK.md`、`benchmarks/foundation_f2_20261011/manifest.json`及`docs/foundation/runs/f2-*-before.json`。接下来只用开发源族设计索引，保留源族只作最终评估。
