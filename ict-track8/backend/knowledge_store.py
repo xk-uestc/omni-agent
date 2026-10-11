@@ -388,6 +388,21 @@ class KnowledgeStore:
                        (json.dumps(element,ensure_ascii=False),document_id,element_id))
         return element
 
+    def verify_formula_record(self, formula):
+        """Replay review authority, including identical-original reparsing."""
+        document_id = formula.get('document_id')
+        if formula.get('source_uri') != f'/api/v1/knowledge/documents/{document_id}/original':
+            raise SourceIntegrityError('结构化公式来源身份不一致')
+        records = self.formula_records(document_id, expected_sha256=formula.get('sha256'))
+        current = next((e for e in records if e['element_id'] == formula.get('structured_element_id')),None)
+        review = current.get('formula_review') if current else None
+        if (not current or not isinstance(review,dict) or current.get('review_status') != 'verified' or
+                current.get('calculator_input_eligible') is not True or review != formula.get('formula_review') or
+                any(formula.get(k) != review.get(k) for k in ('expression','parameters','label')) or
+                formula.get('locator') != current['source_locator']):
+            raise SourceRevisionError('公式记录重解析、审核撤销或审核内容变化，请重新定位。')
+        return current
+
     def delete(self, document_id, *, expected_sha256):
         """Remove a pinned logical revision atomically; keep immutable originals.
 

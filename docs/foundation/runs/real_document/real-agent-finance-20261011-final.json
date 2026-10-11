@@ -1,0 +1,169 @@
+{
+  "created_at": "2026-10-11T14:16:59Z",
+  "dataset": "OHR-Bench public development split",
+  "case_id": "a9189b43-d6c1-4fe5-80fa-e92a083ae2fb",
+  "question": "What was the total amount of Sales/Use Tax collected from 2017 to 2021?",
+  "gold_answer_scoring_only": "$343,215,345",
+  "route": "document",
+  "status": "ok",
+  "answer_mode": "extractive_fallback",
+  "answer": "[1] 1 Capital Program(CashBasis)\nThe following is a breakdown of sources and uses of the second penny Sales & Use Tax and directly related sources:\nSources:\n2017\n2018\n2019\n2020\n2021\nTotal\nSales/UseTax\n$62,113,328\n4$68,479,944\n$65,218,994\nS71,903,941 $75,499,138\n$343.215.345\nSales/Use Tax Audits\n600,000\n600,000\n600,000\n600,000\n600,000\n3,000,000\nSpecial Assesment & Cost Recovery\n245,000\n290,000\n245,000\n125,000\n140,000\n1,045,000\nCableFranchiseFeefor Capital Use\n90,000\n90,000\n90,000\n90,000\n90,000\n450,000\nTotal Sales/Use Ta\n\n[2] Sources: | 2017 | 2018 | 2019 | 2020 | 2021 | Total\n\n[3] The following is a breakdown of sources and uses of the second penny Sales & Use Tax and directly related sources:\n\n[4] Total Sales/Use Tax Capital Program Uses | 44,593,584 | | | | |",
+  "answer_scores": {
+    "normalized_exact_match": 0,
+    "english_token_f1": 0.019802,
+    "normalized_gold_substring": true
+  },
+  "citations": [
+    {
+      "citation_id": 1,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "page_no": 1,
+      "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+      "locator": null,
+      "snippet": "1 Capital Program(CashBasis)\nThe following is a breakdown of sources and uses of the second penny Sales & Use Tax and directly related sources:\nSources:\n2017\n2018\n2019\n2020\n2021\nTotal\nSales/UseTax\n$62,113,328\n4$68,479,944\n$65,218,994\nS71,903,941 $75,499,138\n$343.215.345\nSales/Use Tax Audits\n600,000\n600,000\n600,000\n600,000\n600,000\n3,000,000\nSpecial Assesment & Cost Recovery\n245,000\n290,000\n245,000\n125,000\n140,000\n1,045,000\nCableFranchiseFeefor Capital Use\n90,000\n90,000\n90,000\n90,000\n90,000\n450,000\nTotal Sales/Use Ta"
+    },
+    {
+      "citation_id": 2,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "page_no": 1,
+      "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+      "locator": null,
+      "snippet": "Sources: | 2017 | 2018 | 2019 | 2020 | 2021 | Total"
+    },
+    {
+      "citation_id": 3,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "page_no": 1,
+      "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+      "locator": null,
+      "snippet": "The following is a breakdown of sources and uses of the second penny Sales & Use Tax and directly related sources:"
+    },
+    {
+      "citation_id": 4,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "page_no": 1,
+      "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+      "locator": null,
+      "snippet": "Total Sales/Use Tax Capital Program Uses | 44,593,584 | | | | |"
+    }
+  ],
+  "visual_source_proof": null,
+  "trace": [
+    {
+      "stage": "document_retrieval",
+      "status": null,
+      "page_selection_scope": null
+    },
+    {
+      "stage": "evidence_selection",
+      "status": null,
+      "page_selection_scope": null
+    },
+    {
+      "stage": "visual_page_routing",
+      "status": "no_complete_grid_key",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "visual_chart_routing",
+      "status": "no_supported_native_chart_key",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "native_aligned_table_routing",
+      "status": "not_applicable",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "native_total_routing",
+      "status": "not_applicable",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "native_page_answer_dossier",
+      "status": "not_applicable",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "native_row_comparison_routing",
+      "status": "not_applicable",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "native_row_selection_routing",
+      "status": "not_applicable",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "generation_evidence",
+      "status": null,
+      "page_selection_scope": null
+    },
+    {
+      "stage": "grounded_generation",
+      "status": "unavailable_or_invalid",
+      "page_selection_scope": null
+    },
+    {
+      "stage": "original_page_visual_fallback",
+      "status": "visual_source_not_verified",
+      "page_selection_scope": "at_most_two_scoped_pages_not_exhaustive_document_scan"
+    }
+  ],
+  "model": "deepseek-flash",
+  "api_calls": [
+    {
+      "operation": "omni_plan",
+      "call_number": 14,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 11808,
+      "output_tokens": 44,
+      "response_model": "deepseek-flash",
+      "wall_ms": 906.696
+    },
+    {
+      "operation": "grounded_answer",
+      "call_number": 15,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1711,
+      "output_tokens": 101,
+      "response_model": "deepseek-flash",
+      "wall_ms": 955.642
+    },
+    {
+      "operation": "grounded_answer_correction",
+      "call_number": 16,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1863,
+      "output_tokens": 255,
+      "response_model": "deepseek-flash",
+      "wall_ms": 1448.454
+    },
+    {
+      "operation": "visual_source_literal_selection",
+      "call_number": 17,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1859,
+      "output_tokens": 160,
+      "response_model": "deepseek-flash",
+      "wall_ms": 1642.856
+    },
+    {
+      "operation": "visual_source_independent_review",
+      "call_number": 18,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1902,
+      "output_tokens": 79,
+      "response_model": "deepseek-flash",
+      "wall_ms": 1560.125
+    }
+  ],
+  "total_input_tokens": 19143,
+  "total_output_tokens": 639,
+  "elapsed_seconds": 6.81
+}

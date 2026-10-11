@@ -11,6 +11,7 @@ import importlib.metadata
 import json
 import os
 import resource
+import signal
 import subprocess
 import sys
 import time
@@ -97,27 +98,23 @@ def main():
                 if not files:
                     raise ValueError('mineru_no_structured_output')
             else:
-                if converter is None:
-                    import torch
-                    torch.set_num_threads(4)
-                    from docling.datamodel.base_models import InputFormat
-                    from docling.datamodel.pipeline_options import PdfPipelineOptions, RapidOcrOptions
-                    from docling.datamodel.accelerator_options import AcceleratorOptions, AcceleratorDevice
-                    from docling.document_converter import DocumentConverter, PdfFormatOption
-                    options = PdfPipelineOptions(artifacts_path=Path('/tmp/omni-docling-models'),
-                        document_timeout=args.timeout,
-                        do_ocr=True, do_table_structure=True, do_formula_enrichment=not args.skip_formula_enrichment,
-                        enable_remote_services=False,
-                        accelerator_options=AcceleratorOptions(num_threads=4, device=AcceleratorDevice.CPU),
-                        ocr_options=RapidOcrOptions())
-                    converter = DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=options)})
-                converted = converter.convert(source, page_range=(1, args.page_limit), raises_on_error=False)
-                result['conversion_status'] = str(converted.status)
-                result['formula_enrichment'] = not args.skip_formula_enrichment
-                converted.document.save_as_json(out/'docling.json')
-                result['raw_files'] = [str((out/'docling.json').relative_to(args.output))]
-                result['errors'] = [str(e) for e in converted.errors]
-                if converted.status.value != 'success':
+                cmd = [sys.executable, str(ROOT/'tools/docling_pdf_worker.py'), '--source', str(source),
+                       '--output', str(out), '--pages', str(args.page_limit), '--timeout', str(args.timeout)]
+                if args.skip_formula_enrichment:
+                    cmd.append('--skip-formula')
+                result.update(command=cmd, process_policy='isolated_cold_worker_hard_timeout')
+                with (out/'parser.txt').open('w') as log:
+                    proc = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
+                        env={**os.environ,'OMP_NUM_THREADS':'4','MKL_NUM_THREADS':'4','HF_HUB_OFFLINE':'1'})
+                    try:
+                        code = proc.wait(timeout=args.timeout)
+                    except subprocess.TimeoutExpired:
+                        os.killpg(proc.pid,signal.SIGKILL);proc.wait()
+                        raise RuntimeError('docling_hard_timeout')
+                result['raw_files'] = [str((out/'docling.json').relative_to(args.output))] if (out/'docling.json').exists() else []
+                if (out/'worker-status.json').exists():
+                    result.update(json.loads((out/'worker-status.json').read_text()))
+                if code:
                     raise RuntimeError('docling_partial_or_failed')
             result['status'] = 'ok'
         except Exception:

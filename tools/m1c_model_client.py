@@ -13,6 +13,9 @@ from backend.responses_client import GenerationError
 
 
 class BudgetedPlanner:
+    # Individual routes still validate their complete source and review contract.
+    supports_visual_source_review = True
+
     def __init__(self,config,ledger,*,max_calls,session=None):
         p=Path(config);st=p.lstat()
         if p.is_symlink() or not stat.S_ISREG(st.st_mode) or st.st_uid!=os.geteuid() or st.st_mode & 0o077:
@@ -26,7 +29,21 @@ class BudgetedPlanner:
         self.session=session or requests.Session();self.audit={};self.calls=[]
 
     def generate(self,instructions,context,schema,*,name='answer',max_tokens=4000,**kwargs):
-        if kwargs.get('image_attachments'):raise GenerationError('text-only research planner')
+        image_attachments=kwargs.get('image_attachments')
+        image_content=[]
+        if image_attachments is not None:
+            # Reuse the application's PDF image integrity checks, then map its
+            # verified Responses parts to DeepSeek's OpenAI-compatible format.
+            from backend.responses_client import StructuredResponses
+            checked,_=StructuredResponses._image_content(image_attachments)
+            for part in checked:
+                if part.get('type')=='input_text':
+                    image_content.append({'type':'text','text':part['text']})
+                elif part.get('type')=='input_image':
+                    image_content.append({'type':'image_url','image_url':{
+                        'url':part['image_url'],'detail':part.get('detail','high')}})
+                else:
+                    raise GenerationError('unsupported verified visual content')
         # Exclusive advisory lock serializes budget reservation across processes.
         import fcntl
         self.ledger.parent.mkdir(parents=True,exist_ok=True)
@@ -35,12 +52,13 @@ class BudgetedPlanner:
             if count>=self.max_calls:raise GenerationError('approved model call budget exhausted')
             f.write(json.dumps({'call':count+1,'operation':name,'reserved_at':time.time()})+'\n');f.flush();os.fsync(f.fileno())
         started=time.perf_counter();audit={'provider':'deepseek_chat_completions','model':self.model,'operation':name,
-            'call_number':count+1,'status':'failed','http_status':None,'temperature':0,'thinking':'disabled','max_output_tokens':min(max_tokens,5000),
+            'call_number':count+1,'status':'failed','http_status':None,'temperature':0,'thinking':'disabled','max_output_tokens':min(max_tokens,1000),
             'input_tokens':None,'output_tokens':None,'transport_attempts':1}
         self.audit=audit
-        body={'model':self.model,'temperature':0,'thinking':{'type':'disabled'},'max_tokens':min(max_tokens,5000),'stream':False,'response_format':{'type':'json_object'},
+        body={'model':self.model,'temperature':0,'thinking':{'type':'disabled'},'max_tokens':min(max_tokens,1000),'stream':False,'response_format':{'type':'json_object'},
             'messages':[{'role':'system','content':instructions+'\nReturn one JSON object matching this schema:\n'+json.dumps(schema,ensure_ascii=False)},
-                        {'role':'user','content':json.dumps(context,ensure_ascii=False)}]}
+                        {'role':'user','content':[{'type':'text','text':json.dumps(context,ensure_ascii=False)},*image_content]
+                         if image_content else json.dumps(context,ensure_ascii=False)}]}
         call={'context':context,'request_schema':schema,'audit':audit}
         try:
             response=self.session.post(self.url,headers={'Authorization':'Bearer '+self.token},json=body,timeout=(10,55),allow_redirects=False)
@@ -57,7 +75,8 @@ class BudgetedPlanner:
                 if spec.get('type')=='string' and not isinstance(output[key],str):raise GenerationError('structured plan value type invalid')
                 if 'enum' in spec and output[key] not in spec['enum']:raise GenerationError('structured plan enum invalid')
             if audit['finish_reason']!='stop':raise GenerationError('truncated model plan')
-            audit.update(status='completed',model_verified=data.get('model')==self.model)
+            audit.update(status='completed',response_model=data.get('model'),
+                         model_verified=data.get('model')==self.model)
             return output
         except (requests.RequestException,ValueError,KeyError,TypeError) as exc:
             audit['error_type']=type(exc).__name__

@@ -563,6 +563,8 @@ class DependencyAgent:
             formula = args['formula']
             if not {'expression', 'source_uri', 'locator'} <= formula.keys():
                 raise DependencyPlanError('公式没有有效文档来源')
+            if formula.get('structured_element_id'):
+                self.knowledge_store.verify_formula_record(formula)
             from .formula_parameter_binding import validate_formula_sql_parameters
             parameter_validation = validate_formula_sql_parameters(
                 self.sql_engine, formula, original_args['parameters'], args['parameters'], results,
@@ -623,6 +625,8 @@ class DependencyAgent:
                     raise DependencyPlanError('参数不是有限数字')
                 bindings[name] = ParameterEvidence(numeric, source, locator, unit or 'unknown')
             calculated = FormulaBinder().calculate(formula['expression'], bindings, formula_source=formula['source_uri'], formula_locator=formula['locator'])
+            if formula.get('structured_element_id'):
+                self.knowledge_store.verify_formula_record(formula)
             calculated['parameter_semantics_validation'] = parameter_validation
             calculated['temporal_validation'] = {'status': 'verified', **temporal} if temporal else {'status': 'not_inferred'}
             if temporal:

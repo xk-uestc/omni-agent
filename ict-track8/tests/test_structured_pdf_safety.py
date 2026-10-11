@@ -43,7 +43,7 @@ def test_observed_formula_cannot_become_calculation_or_generation_evidence(tmp_p
     assert selected==[] and omitted[0]['reason']=='structured_recognition_not_reviewed'
 
 
-def test_private_review_binds_image_formula_and_parameters_then_revision_invalidates(tmp_path):
+def test_private_review_binds_image_formula_and_parameters_then_revision_invalidates(tmp_path,monkeypatch):
     store=KnowledgeStore(tmp_path/'store',pdf_backend=ObservedBackend())
     result=store.ingest(pdf_bytes(),document_id='p',title='formula',modality='pdf',filename='p.pdf')
     formula=store.formula_records('p',expected_sha256=result['sha256'])[0]
@@ -64,6 +64,13 @@ def test_private_review_binds_image_formula_and_parameters_then_revision_invalid
     assert reviewed['calculator_input_eligible'] is True
     formula_result=DependencyAgent(None,store).execute('document_formula',{'document_id':'p','label':'R'},{},{})
     assert formula_result['expression']=='x/y' and formula_result['parameters']==['x','y']
+    # Reparse identical bytes clears review without changing the original SHA.
+    store.ingest(pdf_bytes(),document_id='p',title='formula',modality='pdf',filename='p.pdf')
+    def forbidden(*args,**kwargs):raise RuntimeError('stale review reached parameter processing')
+    monkeypatch.setattr('backend.formula_parameter_binding.validate_formula_sql_parameters',forbidden)
+    with pytest.raises(SourceRevisionError):
+        DependencyAgent(None,store).execute('calculate',{'formula':formula_result,'parameters':{}},
+            {'formula':{'ref':'f','path':[]},'parameters':{}},{'f':formula_result})
     store.ingest(pdf_bytes('R = x + y.'),document_id='p',title='formula',modality='pdf',filename='p.pdf')
     with pytest.raises(SourceRevisionError):store.formula_records('p',expected_sha256=result['sha256'])
     new=store.document('p');assert all(e['review_status']=='requires_review' for e in new['elements'])

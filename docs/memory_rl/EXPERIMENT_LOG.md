@@ -328,3 +328,12 @@ F3 第二项：生产 search 接入有明确正文关系的来源内对象范围
 F3 第三项：F2受限原页表链生产化到 prepare_evidence/answer/dossier。六题各30行原文/10匹配行，均完整；Top-K .5754/10，Top-K+单独bundle .8571/16，实际answer证据 .7619/15，错绑0/24。0真实模型调用；表格无独立审核器时显式待审核。更新拒用反例1失败后修复为初始hits立即pin校验，最终156定向回归通过；所有原始日志保留。下一步仅冻结后的保留集/最终回归/成本记录。第二项远端SHA efa941c8de8db9a6809a3ae30f633412ef62ff3c。
 
 F3 最终冻结复核：生产及远端 `67c4d3963d7078edeb9c1d5f7c58981caa072ffd`。正式保留Top-K .5595、10/21、错绑3/24；Top-K+bundle .7024/13，实际answer证据 .6071/12。机构语法未识别中心/研究所/监测局，保留3机构表题拒用及3错绑保留，不调规则。F1同flat32题指标逐题不变；16/185/22完全保持F2 pass向量、DB只读、model_calls=0，旧M1-A equality verifier失败及新F2独立核验成功均原样记录。934通过/6既有失败/12子测试，task_experience16测试通过；tracked demo测试副作用已恢复原Git字节。成本同环境P50/P95由23.79/103.39ms增至75.15/159.82ms，最大Python分配峰值+约3.81MiB，既有索引-40960bytes，无新索引结构。正式成绩不是答案准确率/公开benchmark。完整原始命令/日志/哈希在F3_RESULTS及runs/f3，结束本轮并等待ChatGPT审核，不训练、不改main。
+
+## 2026-10-11 真实OHR扫描表生成答案与视觉回放
+
+- 原有真实失败：OHR财务扫描页RapidOCR把Sales/Use Tax总额识别为`$343.215.345`并拆坏表格行/列；完整OmniAgent链路只能返回页级OCR摘录，固定OHR答案scorer EM0、F1 .019802。
+- 生产改动：`tools/m1c_model_client.py`复用原PDF视觉证据校验并映射DeepSeek图像输入；`visual_source_answer.py`只对显式opt-in `deepseek-flash`开放原页选择+第二次独立复核，模型选择不授权数字执行。对通过审核的单一金额/数量问题，服务器仅展示唯一完整数字字面量，行标签和表头继续留在引用中；有歧义/独立审核失败仍旧回退OCR摘录。
+- 真实完整Agent调用：Sales/Use Tax题改进后一次EM/F1=1/1，第二次回退；Highways & Streets CIP模型选行/值并通过复核，保存的引用字面量经新服务器投影后EM/F1=1/1（该数值投影0新模型调用）；Events Center Non-Taxable Bonds独立审查拒绝。不能把保存证据后处理写成新的模型端到端调用。
+- 原页路径单独再跑通过；原PDF SHA、渲染SHA、问题SHA及三个PDF区域回放相符，八项review均true。产物：`docs/foundation/runs/real_document/real-agent-finance-20261011-*.json`。
+- 本轮共29次DeepSeek API调用，113138 input / 3455 output tokens；峰价估算约$0.038，限30次/200000 UTF-8字节文本上下文/每次1000输出tokens；只发送公开OHR页与问题、检索内容。无训练和私有文档外传。A100宿主可见但当前解析容器无GPU设备节点；MinerU CPU，答案生成远程API。
+- 改后专项`python -m pytest ict-track8/tests/test_m1c_model_budget.py ict-track8/tests/test_visual_source_fallback.py -q`：11 passed；代码`py_compile`通过。既有公式安全修复相关70项先前通过；本次未跑完整回归。未完成公式计算、三类语义对齐的真实跨源、保留集和总赛题验收。详见`docs/foundation/REAL_DOCUMENT_END_TO_END.md`。

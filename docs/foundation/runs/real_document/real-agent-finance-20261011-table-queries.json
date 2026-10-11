@@ -1,0 +1,355 @@
+{
+  "created_at": "2026-10-11T14:21:00Z",
+  "dataset": "OHR-Bench public development split",
+  "source_document": "finance/DUDE_fc03b3768346584a3fa425c656bfe748",
+  "model": "deepseek-flash",
+  "execution": "production OmniAgent planner + KnowledgeStore + original-page visual selection/review; answers scored after generation",
+  "records": [
+    {
+      "case_id": "a4f9dbee-3501-4e21-9107-f6505542bb64",
+      "question": "What is the total amount allocated for the Highways & Streets Capital Improvements (CIP) from 2017 to 2021?",
+      "gold_answer_scoring_only": "198,687,347",
+      "route": "document",
+      "status": "ok",
+      "answer_mode": "visual_source_model_reviewed",
+      "answer": "Highways & Streets\n198,687,347",
+      "answer_scores": {
+        "normalized_exact_match": 0,
+        "english_token_f1": 0.5,
+        "normalized_gold_substring": true
+      },
+      "citations": [
+        {
+          "citation_id": 1,
+          "document_id": "ohr-0015f5d2d1d7355ea6d8",
+          "page_no": 1,
+          "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+          "locator": {
+            "type": "pdf_visual_region",
+            "page_no": 1,
+            "bbox_display_pt": [
+              32.4095,
+              496.748,
+              96.0055,
+              507.031
+            ],
+            "coordinate_system": "pdf_display_points_top_left"
+          },
+          "snippet": "Highways & Streets"
+        },
+        {
+          "citation_id": 2,
+          "document_id": "ohr-0015f5d2d1d7355ea6d8",
+          "page_no": 1,
+          "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+          "locator": {
+            "type": "pdf_visual_region",
+            "page_no": 1,
+            "bbox_display_pt": [
+              511.8255,
+              496.748,
+              554.019,
+              507.031
+            ],
+            "coordinate_system": "pdf_display_points_top_left"
+          },
+          "snippet": "198,687,347"
+        }
+      ],
+      "visual_source_proof": {
+        "version": "literal-visual-source-v1",
+        "parts": [
+          {
+            "evidence_id": "f1c564211be392515f18344b5f66816139ecc09a3e948b386d30181318393920",
+            "quote": "Highways & Streets",
+            "bbox_normalized": [
+              0.053,
+              0.628,
+              0.157,
+              0.641
+            ],
+            "page_no": 1,
+            "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+            "render_sha256": "2dea6b921e34bee854d22f3f6fa9d5a45cb365b8713aa4ea61019e823cde17c7",
+            "bbox_display_pt": [
+              32.4095,
+              496.748,
+              96.0055,
+              507.031
+            ],
+            "coordinate_system": "pdf_display_points_top_left",
+            "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+          },
+          {
+            "evidence_id": "f1c564211be392515f18344b5f66816139ecc09a3e948b386d30181318393920",
+            "quote": "198,687,347",
+            "bbox_normalized": [
+              0.837,
+              0.628,
+              0.906,
+              0.641
+            ],
+            "page_no": 1,
+            "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+            "render_sha256": "2dea6b921e34bee854d22f3f6fa9d5a45cb365b8713aa4ea61019e823cde17c7",
+            "bbox_display_pt": [
+              511.8255,
+              496.748,
+              554.019,
+              507.031
+            ],
+            "coordinate_system": "pdf_display_points_top_left",
+            "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+          }
+        ],
+        "review": {
+          "approved": true,
+          "whole_question_answered": true,
+          "all_requested_items_present": true,
+          "quotes_visibly_exact": true,
+          "regions_locate_quotes": true,
+          "units_signs_periods_preserved": true,
+          "source_relationship_explicit": true,
+          "no_inference_or_arithmetic": true
+        },
+        "question_sha256": "ce4372af6b3df47b58cdaaeb1973d0be10f8a91ce92a2714cb1749b14d0d8d5d",
+        "semantic_verification": "independent_model_review_not_formal_entailment",
+        "page_selection_scope": "at_most_two_scoped_pages_not_exhaustive_document_scan"
+      },
+      "trace": [
+        {
+          "stage": "original_page_visual_fallback",
+          "status": "model_reviewed",
+          "page_selection_scope": "at_most_two_scoped_pages_not_exhaustive_document_scan",
+          "selection_shape": {
+            "abstain": false,
+            "part_count": 2,
+            "all_evidence_ids_known": true
+          },
+          "rejected_checks": []
+        }
+      ],
+      "api_calls": [
+        {
+          "operation": "omni_plan",
+          "call_number": 21,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 11738,
+          "output_tokens": 51,
+          "response_model": "deepseek-flash",
+          "wall_ms": 1845.277
+        },
+        {
+          "operation": "grounded_answer",
+          "call_number": 22,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 1725,
+          "output_tokens": 12,
+          "response_model": "deepseek-flash",
+          "wall_ms": 570.046
+        },
+        {
+          "operation": "visual_source_literal_selection",
+          "call_number": 23,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 1866,
+          "output_tokens": 159,
+          "response_model": "deepseek-flash",
+          "wall_ms": 1935.051
+        },
+        {
+          "operation": "visual_source_independent_review",
+          "call_number": 24,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 1908,
+          "output_tokens": 79,
+          "response_model": "deepseek-flash",
+          "wall_ms": 1592.749
+        }
+      ],
+      "input_tokens": 17237,
+      "output_tokens": 301,
+      "elapsed_seconds": 6.23,
+      "post_review_display_projection": {
+        "answer": "198,687,347",
+        "answer_scores": {
+          "normalized_exact_match": 1,
+          "english_token_f1": 1.0,
+          "normalized_gold_substring": true
+        },
+        "reused_saved_visual_review_and_citations": true,
+        "additional_model_calls": 0
+      }
+    },
+    {
+      "case_id": "a918d2a8-be19-4a50-80fa-e92a083ae2fb",
+      "question": "What is the total amount of debt service obligations for the Events Center Non-Taxable Bonds from 2017 to 2021?",
+      "gold_answer_scoring_only": "$38,391,239",
+      "route": "document",
+      "status": "ok",
+      "answer_mode": "extractive_fallback",
+      "answer": "[1] 1 Capital Program(CashBasis)\nThe following is a breakdown of sources and uses of the second penny Sales & Use Tax and directly related sources:\nSources:\n2017\n2018\n2019\n2020\n2021\nTotal\nSales/UseTax\n$62,113,328\n4$68,479,944\n$65,218,994\nS71,903,941 $75,499,138\n$343.215.345\nSales/Use Tax Audits\n600,000\n600,000\n600,000\n600,000\n600,000\n3,000,000\nSpecial Assesment & Cost Recovery\n245,000\n290,000\n245,000\n125,000\n140,000\n1,045,000\nCableFranchiseFeefor Capital Use\n90,000\n90,000\n90,000\n90,000\n90,000\n450,000\nTotal Sales/Use Ta\n\n[2] Sources: | 2017 | 2018 | 2019 | 2020 | 2021 | Total\n\n[3] Events Center Non-Taxable Bonds | 6,548,028 | 7,235,928 | 8,200,428 | 8,202,528 | 8,204,327 | 38,391,239\n\n[4] Events Center Taxable Bonds | 1,644,403 | 1,835,003 | 766,203 | 763,103 | 739,802 | 5,748,514",
+      "answer_scores": {
+        "normalized_exact_match": 0,
+        "english_token_f1": 0.020619,
+        "normalized_gold_substring": true
+      },
+      "citations": [
+        {
+          "citation_id": 1,
+          "document_id": "ohr-0015f5d2d1d7355ea6d8",
+          "page_no": 1,
+          "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+          "locator": null,
+          "snippet": "1 Capital Program(CashBasis)\nThe following is a breakdown of sources and uses of the second penny Sales & Use Tax and directly related sources:\nSources:\n2017\n2018\n2019\n2020\n2021\nTotal\nSales/UseTax\n$62,113,328\n4$68,479,944\n$65,218,994\nS71,903,941 $75,499,138\n$343.215.345\nSales/Use Tax Audits\n600,000\n600,000\n600,000\n600,000\n600,000\n3,000,000\nSpecial Assesment & Cost Recovery\n245,000\n290,000\n245,000\n125,000\n140,000\n1,045,000\nCableFranchiseFeefor Capital Use\n90,000\n90,000\n90,000\n90,000\n90,000\n450,000\nTotal Sales/Use Ta"
+        },
+        {
+          "citation_id": 2,
+          "document_id": "ohr-0015f5d2d1d7355ea6d8",
+          "page_no": 1,
+          "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+          "locator": null,
+          "snippet": "Sources: | 2017 | 2018 | 2019 | 2020 | 2021 | Total"
+        },
+        {
+          "citation_id": 3,
+          "document_id": "ohr-0015f5d2d1d7355ea6d8",
+          "page_no": 1,
+          "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+          "locator": null,
+          "snippet": "Events Center Non-Taxable Bonds | 6,548,028 | 7,235,928 | 8,200,428 | 8,202,528 | 8,204,327 | 38,391,239"
+        },
+        {
+          "citation_id": 4,
+          "document_id": "ohr-0015f5d2d1d7355ea6d8",
+          "page_no": 1,
+          "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+          "locator": null,
+          "snippet": "Events Center Taxable Bonds | 1,644,403 | 1,835,003 | 766,203 | 763,103 | 739,802 | 5,748,514"
+        }
+      ],
+      "visual_source_proof": null,
+      "trace": [
+        {
+          "stage": "document_retrieval"
+        },
+        {
+          "stage": "evidence_selection"
+        },
+        {
+          "stage": "visual_page_routing",
+          "status": "no_complete_grid_key"
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_supported_native_chart_key"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable"
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable"
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable"
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable"
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable"
+        },
+        {
+          "stage": "generation_evidence"
+        },
+        {
+          "stage": "grounded_generation",
+          "status": "unavailable_or_invalid",
+          "fallback": "attributed_extracts"
+        },
+        {
+          "stage": "original_page_visual_fallback",
+          "status": "visual_source_not_verified",
+          "page_selection_scope": "at_most_two_scoped_pages_not_exhaustive_document_scan",
+          "error_code": "visual_source_semantic_review_rejected",
+          "selection_shape": {
+            "abstain": false,
+            "part_count": 2,
+            "all_evidence_ids_known": true
+          },
+          "rejected_checks": [
+            "no_inference_or_arithmetic"
+          ]
+        }
+      ],
+      "api_calls": [
+        {
+          "operation": "omni_plan",
+          "call_number": 25,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 11880,
+          "output_tokens": 51,
+          "response_model": "deepseek-flash",
+          "wall_ms": 1193.312
+        },
+        {
+          "operation": "grounded_answer",
+          "call_number": 26,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 1725,
+          "output_tokens": 115,
+          "response_model": "deepseek-flash",
+          "wall_ms": 980.217
+        },
+        {
+          "operation": "grounded_answer_correction",
+          "call_number": 27,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 1877,
+          "output_tokens": 121,
+          "response_model": "deepseek-flash",
+          "wall_ms": 1124.904
+        },
+        {
+          "operation": "visual_source_literal_selection",
+          "call_number": 28,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 1866,
+          "output_tokens": 162,
+          "response_model": "deepseek-flash",
+          "wall_ms": 1979.86
+        },
+        {
+          "operation": "visual_source_independent_review",
+          "call_number": 29,
+          "status": "completed",
+          "http_status": 200,
+          "input_tokens": 1911,
+          "output_tokens": 79,
+          "response_model": "deepseek-flash",
+          "wall_ms": 1741.716
+        }
+      ],
+      "input_tokens": 19259,
+      "output_tokens": 528,
+      "elapsed_seconds": 7.22
+    }
+  ],
+  "total_calls": 9,
+  "total_input_tokens": 36496,
+  "total_output_tokens": 829,
+  "post_review_projection_scope": "computed after live runs from the stored independently reviewed visual literals; not another model answer or call"
+}

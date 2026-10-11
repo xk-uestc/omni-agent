@@ -47,10 +47,17 @@ def main():
         if hashlib.sha256(raw).hexdigest()!=d['pdf_sha256']:
             raise ValueError('frozen_source_changed')
         t = time.perf_counter()
-        record = store.ingest(raw, document_id=doc_id(d['doc_name']), title=d['doc_name'][-200:],
-                              modality='pdf', filename=Path(d['pdf_path']).name)
-        ingests.append({'doc_name':d['doc_name'], 'sha256':d['pdf_sha256'], 'seconds':time.perf_counter()-t,
-                        'chunks':record['chunk_count'], 'stats':record['stats']})
+        try:
+            record = store.ingest(raw, document_id=doc_id(d['doc_name']), title=d['doc_name'][-200:],
+                                  modality='pdf', filename=Path(d['pdf_path']).name)
+            ingests.append({'doc_name':d['doc_name'], 'sha256':d['pdf_sha256'], 'seconds':time.perf_counter()-t,
+                            'status':'ok','chunks':record['chunk_count'], 'stats':record['stats']})
+        except ValueError as exc:
+            # A parser refusal is an evaluation failure, not permission to
+            # remove its questions or silently use a different backend.
+            ingests.append({'doc_name':d['doc_name'],'sha256':d['pdf_sha256'],'seconds':time.perf_counter()-t,
+                            'status':'failed','error':str(exc),'chunks':0,'stats':{}})
+        (args.output/'ingests.json').write_text(json.dumps(ingests,ensure_ascii=False,indent=2))
     predictions = []
     for q in queries:
         t = time.perf_counter()

@@ -5,7 +5,7 @@ import fitz
 import pytest
 
 from backend.knowledge_store import KnowledgeStore
-from backend.visual_source_answer import locate_parts, route_visual_source_fallback
+from backend.visual_source_answer import _display_answer, locate_parts, route_visual_source_fallback
 from backend.visual_evidence import render_pdf_evidence
 
 
@@ -51,6 +51,15 @@ def test_reviewed_quotes_keep_actual_page_and_source_geometry(tmp_path):
     assert locator['page_no']==1 and locator['bbox_display_pt']==[32,50,260,80]
     assert client.calls==['visual_source_literal_selection','visual_source_independent_review']
     assert 'not_formal' in result['visual_source_proof']['semantic_verification']
+
+
+def test_single_currency_lookup_projects_value_while_retaining_label_citations():
+    question='What was the total amount of Sales/Use Tax collected from 2017 to 2021?'
+    parts=[{'quote':'Sales/Use Tax'},{'quote':'$ 343,215,345'}]
+    assert _display_answer(question,parts)=='$ 343,215,345'
+    assert _display_answer('What is the total amount allocated for Highways & Streets?',
+        [{'quote':'Highways & Streets'},{'quote':'198,687,347'}])=='198,687,347'
+    assert _display_answer('Which elements and which methods are shown?',parts)=='Sales/Use Tax\n$ 343,215,345'
 
 
 def test_rejected_partial_visual_answer_does_not_replace_text_result(tmp_path):

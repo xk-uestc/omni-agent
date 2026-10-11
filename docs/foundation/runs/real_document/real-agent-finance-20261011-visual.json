@@ -1,0 +1,136 @@
+{
+  "created_at": "2026-10-11T14:14:37Z",
+  "dataset": "OHR-Bench public development split",
+  "case_id": "a9189b43-d6c1-4fe5-80fa-e92a083ae2fb",
+  "question": "What was the total amount of Sales/Use Tax collected from 2017 to 2021?",
+  "gold_answer_scoring_only": "$343,215,345",
+  "route": "document",
+  "status": "ok",
+  "answer_mode": "visual_source_model_reviewed",
+  "answer": "Sales/Use Tax\n$ 343,215,345",
+  "answer_scores": {
+    "normalized_exact_match": 0,
+    "english_token_f1": 0.5,
+    "normalized_gold_substring": true
+  },
+  "citations": [
+    {
+      "citation_id": 1,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "page_no": 1,
+      "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+      "locator": {
+        "type": "pdf_visual_region",
+        "page_no": 1,
+        "bbox_display_pt": [
+          39.7475,
+          114.695,
+          94.7825,
+          126.56
+        ],
+        "coordinate_system": "pdf_display_points_top_left"
+      },
+      "snippet": "Sales/Use Tax"
+    },
+    {
+      "citation_id": 2,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "page_no": 1,
+      "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+      "locator": {
+        "type": "pdf_visual_region",
+        "page_no": 1,
+        "bbox_display_pt": [
+          483.08500000000004,
+          114.695,
+          550.35,
+          126.56
+        ],
+        "coordinate_system": "pdf_display_points_top_left"
+      },
+      "snippet": "$ 343,215,345"
+    }
+  ],
+  "trace": [
+    {
+      "stage": "original_page_visual_fallback",
+      "status": "model_reviewed",
+      "page_selection_scope": "at_most_two_scoped_pages_not_exhaustive_document_scan",
+      "selection_shape": {
+        "abstain": false,
+        "part_count": 2,
+        "all_evidence_ids_known": true
+      },
+      "rejected_checks": []
+    }
+  ],
+  "model": "deepseek-flash",
+  "api_calls": [
+    {
+      "operation": "omni_plan",
+      "call_number": 4,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 11808,
+      "output_tokens": 44,
+      "response_model": "deepseek-flash",
+      "wall_ms": 1285.925
+    },
+    {
+      "operation": "grounded_answer",
+      "call_number": 5,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1711,
+      "output_tokens": 101,
+      "response_model": "deepseek-flash",
+      "wall_ms": 837.74
+    },
+    {
+      "operation": "grounded_answer_correction",
+      "call_number": 6,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1863,
+      "output_tokens": 255,
+      "response_model": "deepseek-flash",
+      "wall_ms": 1636.11
+    },
+    {
+      "operation": "visual_source_literal_selection",
+      "call_number": 7,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1859,
+      "output_tokens": 160,
+      "response_model": "deepseek-flash",
+      "wall_ms": 2485.978
+    },
+    {
+      "operation": "visual_source_independent_review",
+      "call_number": 8,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1902,
+      "output_tokens": 79,
+      "response_model": "deepseek-flash",
+      "wall_ms": 1531.894
+    }
+  ],
+  "total_input_tokens": 19143,
+  "total_output_tokens": 639,
+  "elapsed_seconds": 8.07,
+  "result_keys": [
+    "answer",
+    "answer_mode",
+    "calculator_input_eligible",
+    "citations",
+    "prior_text_answer",
+    "question",
+    "retrieval",
+    "retrieval_audit",
+    "status",
+    "trace",
+    "visual_source_proof"
+  ]
+}
