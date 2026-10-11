@@ -33,6 +33,8 @@ def test_unspecified_competing_version_requires_clarification(tmp_path):
     hits, audit = s.search('北岬研究院E-17公报预算？', with_audit=True)
     assert not hits
     assert audit['source_binding']['status'] == 'requires_clarification'
+    result = s.answer('北岬研究院E-17公报预算？')
+    assert result['needs_clarification'] and result['clarification_code'] == 'source_version_required'
 
 
 def test_negation_preserved_and_other_document_revocation_not_self(tmp_path):

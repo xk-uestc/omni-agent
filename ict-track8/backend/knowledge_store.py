@@ -908,6 +908,13 @@ class KnowledgeStore:
                            **({'document_id': document_id} if document_id is not None else {}),
                            **({'page_no': page_no} if page_no is not None else {}), with_audit=True,
                            progress_callback=progress_callback)
+        if not hits and retrieval_audit.get('source_binding', {}).get('status') == 'requires_clarification':
+            return self._attach_retrieval_audit({
+                'status': 'insufficient_evidence', 'question': question,
+                'answer_mode': 'source_version_clarification', 'clarification_code': 'source_version_required',
+                'needs_clarification': True, 'answer': '资料存在多个有效版本，请指定所用年份或版本。',
+                'citations': [], 'retrieval': self.retrieval_health(),
+                'trace': [{'stage': 'source_binding', 'status': 'requires_clarification'}]}, retrieval_audit)
         hits, part_audit = self._question_part_hits(question, hits, top_k=top_k,
                                                    document_id=document_id, page_no=page_no)
         if part_audit is not None:
@@ -1091,7 +1098,25 @@ class KnowledgeStore:
         self._verify_citation_sources(recovered['citations'])
         return recovered
 
+    def prepare_evidence(self, question, hits, *, document_id=None, page_no=None):
+        """Bounded production evidence preparation; never expands Top-K scores."""
+        from .bounded_table_evidence import prepare_table_bundle
+        return prepare_table_bundle(self, question, hits, document_id=document_id, page_no=page_no)
+
     def _answer_hits(self, question, hits, *, document_id=None, page_no=None, image_attachments=None):
+        bundle = (self.prepare_evidence(question, hits, document_id=document_id, page_no=page_no)
+                  if not image_attachments else None)
+        from .source_answer_dossier import route as route_native_dossier
+        prepared_dossier_trace = None
+        if bundle and bundle['status'] == 'complete_for_declared_scope':
+            prepared, prepared_dossier_trace = route_native_dossier(self, question, hits,
+                document_id=document_id, page_no=page_no, evidence_bundle=bundle)
+            if prepared is not None:
+                prepared['evidence_bundle'] = bundle
+                prepared['trace'].insert(0, {'stage': 'bounded_table_evidence', 'status': bundle['status'],
+                    'extra_retrieval_calls': bundle['extra_retrieval_calls'],
+                    'extra_native_page_reads': bundle['extra_native_page_reads']})
+                return prepared
         from .native_row_selection import route_native_row_selection
         selection_result, selection_trace = ((None, {'stage': 'native_row_selection', 'status': 'not_applicable'})
             if image_attachments else route_native_row_selection(self, question, hits, document_id=document_id, page_no=page_no))
@@ -1133,10 +1158,10 @@ class KnowledgeStore:
             else (None, {'stage': 'native_total_routing', 'status': 'not_applicable'}))
         if total_result is not None:
             return total_result
-        from .source_answer_dossier import route as route_native_dossier
         dossier_result, dossier_trace = ((None, {'stage': 'source_answer_dossier', 'status': 'not_applicable'})
             if image_attachments else route_native_dossier(self, question, hits,
-                document_id=document_id, page_no=page_no))
+                document_id=document_id, page_no=page_no) if prepared_dossier_trace is None
+                else (None, prepared_dossier_trace))
         if dossier_result is not None:
             return dossier_result
         query_terms = set(_tokenize(question))
@@ -1157,6 +1182,18 @@ class KnowledgeStore:
         result['trace'].append(dossier_trace)
         result['trace'].append(row_trace)
         result['trace'].append(selection_trace)
+        if bundle and bundle['status'] != 'not_applicable':
+            result['evidence_bundle'] = bundle
+            result['trace'].append({'stage': 'bounded_table_evidence', 'status': bundle['status'],
+                'extra_retrieval_calls': bundle['extra_retrieval_calls'],
+                'extra_native_page_reads': bundle['extra_native_page_reads'],
+                'answer_authority': False})
+            if bundle['status'] == 'complete_for_declared_scope':
+                # Full enumeration needs the existing independent dossier
+                # review. A generic Top-K answer must not ignore this inventory.
+                result.update(status='insufficient_evidence', answer='没有足够的文档证据，暂不能回答。',
+                    answer_mode='bounded_evidence_pending_review')
+                return result
         if self.generator and selected:
             from .responses_client import GenerationError
             from .answer_contract import question_contract

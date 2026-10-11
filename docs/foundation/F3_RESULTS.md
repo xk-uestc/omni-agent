@@ -26,3 +26,26 @@ timeout 120s env PYTHONPATH=ict-track8:tools ICT8_DEMO_MODE=1 ICT8_DB_PATH=/tmp/
 命令同上 evaluator，输出 `linked-dev-final.json`；pytest 文件为 `test_f3_linked_evidence.py test_f3_source_binding.py test_foundation_retrieval.py test_knowledge_store.py test_foundation_safety.py`，42通过，日志 `linked-tests-final.txt`。首次预算测试1失败见 `linked-tests.txt`。
 
 第一项远端提交 `bee7f2ef2dd01b4cb6fb8c5c3241b47aa0b91e2f`。
+
+第三项开发冻结：旧 F2 scorer `frozen-topk-dev.json/txt` 为 `.5754`、10/21完整、0/24错绑、无证据污染3/3。生产 `answer()` 的单独证据测量 `pipeline-dev-scopes.json/txt`：
+
+| 证据通道 | Recall | 完整 /21 |
+|---|---:|---:|
+| 原始 Top-K=4 | .5754 | 10 |
+| 原始 Top-K + 单独有界 bundle | .8571 | 16 |
+| 实际 answer 入口筛选后证据 + bundle | .7619 | 15 |
+
+六道表格题实际进入新增路径，各30条原文清单/10条匹配行；六题均完整，1额外检索、显式编号3页/机构解析5页。`dossier_preparation` 收据另确认原有答案准备流程取得完整原页，重新构造成本再增加1检索和3–5页。确定性审核器测试证明引文、两页行、独立审核和重放实际接通，真实模型not_run。每次prepare上限6页/32000字；并非整个有审核器答案的累计读取上限6页。
+
+生产热查询72次（每题3次）：P50/P95 54.29/148.84ms（含已有问题子句导航）；生成器准备文本P50 1366、最大3615字，真实生成器可见0字。24题已有入口总检索1–3次，新增表链6题各1次，额外原页读取总24页；模型前重构/最终重放成本单列而不冒充首次预算。
+
+结构性剩余失败：长册3题仍只取周期，没有编号→第9页例外的明确关系；口语别名3题在实际 answer 的既有 question-part/词项门槛中被筛空（初始Top-K仍有部分证据），其中一题Top-K本来完整，因此 answer 完整15而Top-K+bundle为16。未为这六题无限调整规则。无证据题在检索仍3/3污染。3道别名题实际无证据错误拒答；六道表格题无审核器时待审核拒答，不能声称真实问答成功。
+
+复现：
+
+```bash
+PYTHONPATH=ict-track8:tools /tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f3_pipeline.py --split dev --output docs/foundation/runs/f3/pipeline-dev-scopes.json
+PYTHONPATH=ict-track8:tools /tmp/omni-m1a-venv/bin/python tools/evaluate_foundation_f2.py --split dev --output docs/foundation/runs/f3/frozen-topk-dev.json
+```
+
+第二项远端提交 `efa941c8de8db9a6809a3ae30f633412ef62ff3c`。第三项提交后冻结生产实现，再运行保留集及完整回归，不依据其分数改算法。

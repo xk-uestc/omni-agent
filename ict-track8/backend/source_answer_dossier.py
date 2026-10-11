@@ -46,13 +46,29 @@ def native_page(document, page, number, page_count):
         'complete_native_page': True, 'page_count': page_count}
 
 
-def build_dossier(store, question, hits, *, document_id=None, page_no=None):
+def build_dossier(store, question, hits, *, document_id=None, page_no=None, evidence_bundle=None):
     """Rank complete original pages within at most four retrieved PDF sources.
 
     Full short documents are navigated, long documents use hit neighbors. No
     reference answer, expected document/page or title-as-fact enters ranking.
     Oversize pages are omitted whole, never presented as a complete prefix.
     """
+    if evidence_bundle is not None and evidence_bundle['status'] == 'complete_for_declared_scope':
+        # Reconstruct, don't trust caller-supplied page text/conditions. The
+        # normal source replay and independent whole-question review remain.
+        current = store.prepare_evidence(question, hits, document_id=document_id, page_no=page_no)
+        def proof(bundle):
+            return {k: v for k, v in bundle.items() if k != 'elapsed_ms'}
+        if proof(current) != proof(evidence_bundle):
+            raise ValueError('dossier_table_bundle_changed')
+        pages = deepcopy(current['pages'])
+        return pages, {'scanned_pages': current['extra_native_page_reads'], 'included_pages': len(pages),
+            'evidence_scope': current['scope'], 'native_chars': current['native_chars'],
+            'coverage': current['row_scope'], 'omitted': [], 'ranking_is_navigation_only': True,
+            'scope': 'bounded_native_table_inventory_requires_independent_review',
+            'bundle_replay_cost': {'extra_retrieval_calls': current['extra_retrieval_calls'],
+                'extra_native_page_reads': current['extra_native_page_reads']},
+            'table_bundle': {k: deepcopy(current[k]) for k in ('document_id','source_sha256','predicates','row_scope')}}
     documents = {d['document_id']: d for d in store.list_documents() if d['modality'] == 'pdf'}
     ids = [document_id] if document_id is not None else list(dict.fromkeys(
         h.metadata.get('document_id') for h in hits))[:4]
@@ -233,14 +249,15 @@ def validate_review(review, candidate, pages, quotes):
     return inventory
 
 
-def route(store, question, hits, *, document_id=None, page_no=None):
+def route(store, question, hits, *, document_id=None, page_no=None, evidence_bundle=None):
     client = getattr(getattr(store, 'generator', None), 'client', None)
     trace = {'stage': 'native_page_answer_dossier', 'status': 'not_applicable', 'model_audits': []}
     if (getattr(client, 'supports_native_answer_dossier', False) is not True
             or getattr(client, 'model', None) != 'gpt-6-luna' or getattr(client, 'reasoning', None) != 'medium'
             or (getattr(client, 'audit', {}) and not _completed(client.audit))):
         return None, trace
-    pages, scope = build_dossier(store, question, hits, document_id=document_id, page_no=page_no)
+    pages, scope = build_dossier(store, question, hits, document_id=document_id, page_no=page_no,
+        evidence_bundle=evidence_bundle)
     trace['evidence_scope'] = scope
     if not pages:
         trace['status'] = 'no_complete_native_pages'
