@@ -1,4 +1,5 @@
 import sqlite3
+import json
 from pathlib import Path
 
 import pytest
@@ -184,6 +185,56 @@ def test_explicit_average_wording_resolves_overall_result_request(tmp_path, monk
         result.parameters[:2])
     assert next(iter(result.rows[0].values())) == pytest.approx(expected)
     assert model.calls == 0
+
+
+def test_explicit_aggregate_cues_override_single_metric_catalog_default(tmp_path, monkeypatch):
+    monkeypatch.setenv("ICT8_FAST_SQL", "0")
+    engine, model = _engine(tmp_path)
+    average = engine.answer("2025年按地区分别统计销售额平均值")
+    assert average.status == "ok", average.to_dict()
+    assert average.plan["metric_function"] == "AVG"
+    assert 'AVG("sales_orders"."sales_amount")' in average.sql
+    with sqlite3.connect(engine.database_path) as connection:
+        expected = connection.execute(
+            "SELECT region,AVG(sales_amount) FROM sales_orders "
+            "WHERE order_date>=? AND order_date<? GROUP BY region ORDER BY 2 DESC,1",
+            ("2025-01-01", "2026-01-01")).fetchall()
+    assert [tuple(row.values()) for row in average.rows] == expected
+
+    distinct = engine.answer("2025年订单数去重计数")
+    assert distinct.status == "ok", distinct.to_dict()
+    assert distinct.plan["metric_function"] == "COUNT_DISTINCT"
+    assert 'COUNT(DISTINCT "sales_orders"."order_id")' in distinct.sql
+    expected_distinct = _scalar(engine.database_path,
+        "SELECT COUNT(DISTINCT order_id) FROM sales_orders WHERE order_date>=? AND order_date<?",
+        ("2025-01-01", "2026-01-01"))
+    assert next(iter(distinct.rows[0].values())) == expected_distinct
+    assert "去重" in distinct.columns[0]
+    assert model.calls == 0
+
+
+def test_catalog_override_avg_uses_sql_null_and_group_grain_semantics(tmp_path):
+    database=tmp_path/"nullable.sqlite"
+    with sqlite3.connect(database) as connection:
+        connection.executescript("""
+            CREATE TABLE records(record_id INTEGER PRIMARY KEY, region TEXT, amount REAL, event_date TEXT);
+            INSERT INTO records VALUES
+              (1,'华东',10,'2025-01-01'),(2,'华东',NULL,'2025-02-01'),
+              (3,'华南',20,'2025-03-01');
+        """)
+    catalog={"version":"f2-explicit-aggregation-v1","time_columns":{"amount":"event_date"},
+        "metrics":[{"id":"amount","table":"records","column":"amount","function":"SUM",
+            "label":"金额","aliases":["金额"],"query_alias":"金额","unit":"currency","missing":"null"}]}
+    catalog_path=tmp_path/"catalog.json"
+    catalog_path.write_text(json.dumps(catalog,ensure_ascii=False),encoding="utf-8")
+    engine=Nl2SqlEngine(database,metric_catalog_path=catalog_path)
+    result=engine.answer("2025年按region分别统计金额平均值")
+    assert result.status=="ok",result.to_dict()
+    assert result.plan["metric_function"]=="AVG"
+    with sqlite3.connect(database) as connection:
+        expected=connection.execute("SELECT region,AVG(amount) FROM records WHERE event_date>=? AND event_date<? GROUP BY region ORDER BY 2 DESC,1",
+            ("2025-01-01","2026-01-01")).fetchall()
+    assert [tuple(row.values()) for row in result.rows]==expected==[("华南",20.0),("华东",10.0)]
 
 
 @pytest.mark.parametrize("question", [

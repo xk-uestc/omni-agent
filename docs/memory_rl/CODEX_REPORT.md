@@ -199,3 +199,9 @@ M1-C7/7/8/9仅历史独立审计，不复跑付费模型；生成层指标not_ru
 固定动态BM25/top4/无Dense实际运行：开发 Source Recall .8095、Evidence Recall .4325、MRR .3571、NDCG .3941、21可答题中6题完整、6项错误来源绑定、unsupported检索污染3、P50/P95 14.17/36.56ms；保留分别.8095/.4167/.3333/.3750、6/21完整、6绑定、3污染、14.40/39.30ms。48题SHA/locator均通过；Answer EM/正确率/忠实度未运行。仅合成困难评测，不是公开基准。
 
 详细输入、评分方法、Hash和逐题日志见`docs/foundation/F2_HARD_RAG_BENCHMARK.md`、`benchmarks/foundation_f2_20261011/manifest.json`及`docs/foundation/runs/f2-*-before.json`。接下来只用开发源族设计索引，保留源族只作最终评估。
+
+## F2 检查点4：显式聚合口径与目录覆盖（2026-10-11）
+
+定位到`MetricCatalog.apply()`会把目录默认函数（如SUM）覆盖回规划器已识别的原问题明确聚合（如AVG）；来源意图验证并未出错，收到的计划已丢失用户口径。现在只对单一目录源、绑定物理指标的原问题聚合cue应用显式覆盖；口径冲突仍澄清，目录表/列/时间绑定保留，覆盖来源写入semantic audit。验证快路径仅认可与目录指标ID、配置函数、请求函数和输出标签相互一致的带审计覆盖，SQL仍经过MetricCompiler及只读安全执行。
+
+加入SQLite独立oracle的分组AVG、COUNT(DISTINCT)、NULL分母/分组粒度测试；动态Excel来源绑定确认scope与当前查询AVG都通过；记忆适配器确认历史SUM别名不能静默改写当前AVG（无SQL/行，clarify）。目录、编译器、动态来源绑定、Memory和对话SQL修改相关集 **217 passed**。详细根因、契约及测试范围见`docs/foundation/F2_SEMANTIC_CORRECTNESS.md`；这是本地回归证据，不是公开benchmark或全项目验收。检查点5–6仍待执行。

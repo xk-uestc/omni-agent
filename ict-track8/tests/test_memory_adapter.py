@@ -77,6 +77,14 @@ def test_filter_binding_and_explicit_conflict(setup):
     assert 'explicit_condition_conflict' in str(r['memory'])
 
 
+def test_current_explicit_average_cannot_be_silently_rewritten_to_historical_sum(setup):
+    a,_,_=setup
+    result=a.query('2025年华东晨光额平均值')
+    assert result['status']=='clarification'
+    assert not result['result'].get('sql') and not result['result'].get('rows')
+    assert result['route']=='clarify'
+
+
 @pytest.mark.parametrize('change,reason',[
     ({'verification_state':'candidate'},'unverified'),({'valid_to':'2026-10-09T00:00:00+08:00'},'expired'),
     ({'binding':{'table':'sales_orders','column':'missing','function':'SUM','filters':[]}},'invalid_metric')])

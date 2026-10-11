@@ -20,7 +20,7 @@ from . import lexicon
 from .model_contract import ModelPlanError, ModelPlanProvider, ModelPlanValidator
 from .metric_compiler import MetricCompiler, MetricPlanError
 from .models import QueryPlan, QueryResult, TableInfo, LinkCandidate
-from .planner import SingleTablePlanner, _strip_unsafe_instruction_noise
+from .planner import SingleTablePlanner, _AVERAGE_THRESHOLD_RE, _strip_unsafe_instruction_noise
 from .schema import SchemaIntrospector, SchemaLinker, normalize_text
 from .security import SqlSafetyError, execute_read_only
 from .semantics import MetricCatalog
@@ -349,6 +349,16 @@ class Nl2SqlEngine:
         expanded, expansion = self.metric_catalog.expand(question, tables) if self.metric_catalog else (question, None)
         if expansion and self._catalog_expansion_omits_an_explicit_metric(question, tables, expansion):
             expansion = None
+        explicit_catalog_aggregate = None
+        if self.metric_catalog and expansion and not expansion.get('calculations') and len(expansion.get('sources',()))==1:
+            metric=self.metric_catalog.sources.get(expansion['sources'][0])
+            functions=self._explicit_catalog_aggregates(question,tables,metric) if metric else set()
+            if len(functions)>1:
+                # Leave conflicting operators visible to the typed planner so
+                # its existing ambiguous_aggregation clarification can fire.
+                expansion=None
+            elif len(functions)==1 and next(iter(functions))!=metric.function:
+                explicit_catalog_aggregate=next(iter(functions))
         metric_override = None
         date_binding_override = None
         if (self.metric_catalog and expansion and not expansion.get("calculations")
@@ -398,6 +408,29 @@ class Nl2SqlEngine:
                 "source_alias": metric_override["alias"],
             }
         plan = self.metric_catalog.apply(plan, expansion) if self.metric_catalog else plan
+        if explicit_catalog_aggregate is not None and expansion and not plan.clarification:
+            source_id=expansion['sources'][0]
+            metric=self.metric_catalog.sources[source_id]
+            plan.metric_function=explicit_catalog_aggregate
+            matching=[item for item in plan.metrics if (item.table,item.column)==(metric.table,metric.column)]
+            for item in matching:
+                item.function=explicit_catalog_aggregate
+                prefixes={'AVG':'平均','COUNT_DISTINCT':'去重','MAX':'最高','MIN':'最低'}
+                label=item.label
+                for prefix in prefixes.values():
+                    if label.startswith(prefix) and prefix!=prefixes.get(explicit_catalog_aggregate):
+                        label=label[len(prefix):]
+                        break
+                requested_prefix=prefixes.get(explicit_catalog_aggregate)
+                if requested_prefix and not label.startswith(requested_prefix):
+                    label=requested_prefix+label
+                item.label=label
+            plan.metric_label=(matching[0].label if matching else
+                ('平均'+metric.label if explicit_catalog_aggregate=='AVG' else metric.label))
+            plan.semantic_audit['explicit_aggregation_override']={
+                'metric_id':source_id,'configured_function':metric.function,
+                'requested_function':explicit_catalog_aggregate,
+                'source':'typed_aggregation_cue_in_original_question'}
         if (not plan.clarification and expansion and not expansion.get("calculations")
                 and len(expansion.get("sources", ())) == 1
                 and re.search(r"不同|去重|不重复|distinct", question, re.I)):
@@ -412,6 +445,18 @@ class Nl2SqlEngine:
         if semantic is not None and semantic.changed:
             plan.semantic_audit['language_normalization'] = semantic.to_dict()
         return plan
+
+    def _explicit_catalog_aggregates(self,question,tables,metric):
+        """Read only explicit operator cues bound to the selected catalog field."""
+        if metric is None:return set()
+        links=[link for link in self.planner.linker.link(question,tables)
+               if link.role=='metric' and (link.table,link.column)==(metric.table,metric.column)]
+        functions=set()
+        for link in links:
+            clause=self.planner._metric_clause(question,link)
+            clause=_AVERAGE_THRESHOLD_RE.sub('',clause)
+            functions.update(function for _cue,function in self.planner._aggregate_matches(clause,[link]))
+        return functions
 
     def _shared_catalog_time_binding(self, question, tables):
         """Resolve one shared date role only for explicitly conjoined catalog metrics."""
@@ -569,14 +614,27 @@ class Nl2SqlEngine:
             or (plan.analysis_mode == "rank" and len(plan.dimensions) == 1
                 and len(plan.metrics) == 1 and not plan.derived_metrics and plan.having is None)
         )
+        explicit_override = plan.semantic_audit.get("explicit_aggregation_override", {})
         catalog_sources_safe = bool(plan.metrics) and all(
             metric.id in getattr(self.metric_catalog, "sources", {})
-            and (metric.table, metric.column, metric.function, metric.label) == (
+            and (metric.table, metric.column) == (
                 self.metric_catalog.sources[metric.id].table,
                 self.metric_catalog.sources[metric.id].column,
-                self.metric_catalog.sources[metric.id].function,
-                self.metric_catalog.sources[metric.id].label,
             )
+            and (metric.label == self.metric_catalog.sources[metric.id].label
+                 or (explicit_override.get("metric_id") == metric.id
+                     and metric.label == {
+                         "AVG": "平均", "COUNT_DISTINCT": "去重",
+                         "MAX": "最高", "MIN": "最低",
+                     }.get(metric.function, "")
+                     + self.metric_catalog.sources[metric.id].label))
+            and (metric.function == self.metric_catalog.sources[metric.id].function
+                 or (explicit_override.get("metric_id") == metric.id
+                     and explicit_override.get("configured_function")
+                         == self.metric_catalog.sources[metric.id].function
+                     and explicit_override.get("requested_function") == metric.function
+                     and explicit_override.get("source")
+                         == "typed_aggregation_cue_in_original_question"))
             for metric in plan.metrics
         ) if self.metric_catalog else False
         catalog_derived_safe = all(
