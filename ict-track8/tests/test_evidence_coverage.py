@@ -172,7 +172,10 @@ class CoverageTests(unittest.TestCase):
 def test_store_selects_third_same_source_and_verifies_original(tmp_path, monkeypatch):
     from backend.knowledge_store import KnowledgeStore
     from backend.cross_source import DocumentRecord, DocumentHit, JsonDocumentRetriever
-    store = KnowledgeStore(tmp_path)
+    # This test stubs JsonDocumentRetriever.search below; pin the explicit
+    # dynamic control so the stub remains the retrieval implementation under
+    # the production-default persistent index.
+    store = KnowledgeStore(tmp_path, use_persistent_bm25=False)
     store.ingest(b'Period budget formula diapers.', document_id='report', title='Report', modality='txt', filename='report.txt')
     store.ingest(b'Period distractor.', document_id='other', title='Other', modality='txt', filename='other.txt')
     rows = [('a', 'report', 10, 'Period.'), ('b', 'report', 9, 'Budget.'),

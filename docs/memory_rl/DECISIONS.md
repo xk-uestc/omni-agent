@@ -100,3 +100,11 @@
 - Planner一次修复限原有结构句柄错误，修复计划仍重新通过完整意图、来源、Schema、编译和安全校验；语义漏项不被修复器猜补，第二次结构失败停止。
 - SSE timeout只撤销客户端等待，不伪称终止底层线程/请求。 worker permit延续到后台finally；起线程失败即回收permit。活动worker有BoundedSemaphore上限。
 - 此checkpoint没有实现断流取消、可恢复任务状态存储或跨客户端重试幂等；需要这些产品合同前不得声称exactly-once。
+
+## F2检查点6终版决定（2026-10-11）
+
+- F2 persistent BM25保持为有版本/来源校验的精确检索索引。最终困难dev/retained对照与动态BM25指标相同；小集未证明延迟改善，不在此基础上宣称检索质量或性能普遍提升。保留100/500/1000页本地扩展证据与索引成本边界。
+- F1集满召回但BGE无新增证据收益；没有根据这一已饱和集调Dense参数。复杂证据C只作为scope原型，当前未接入生产。
+- AVG/SUM根因确认为目录apply覆盖planner typed function，修复保持目录物理绑定、审计、动态scope及SQL安全。现有AVG旧失败通过。
+- 六项残余失败不删除：两项整体危险请求旧断言与现行安全拒绝合同冲突；两项历史上下文/fake planner期望，及两项证据恢复接口/preview断言，均在F1起点或合同记录中保留。未新增失败。
+- 不启动训练。Answer generation为not_run、真实M1-C模型未复测、Memory效应未证明泛化，PPO readiness不成立；F2完成后停在此处等待ChatGPT审核。

@@ -210,4 +210,14 @@ M1-C7/7/8/9仅历史独立审计，不复跑付费模型；生成层指标not_ru
 
 M1-C原始模型产物已保留，正式轨迹报告A/B/C/D非法JSON或DSML协议错误数为2/4/3/3。当前Responses契约仍严格JSON Schema、仅取completed输出；一次修复仅限结构句柄/输出错误并对完整计划重新验证，语义漏条件和协议失败不进入宽松文本提取/结构修复。新增失败指纹（字符数、SHA256、JSON parser行列位置），不把模型原文写入常规审计。固定本地DSML响应保持拒绝；真实模型正确率未评测。
 
-Agent SSE现在将超时类别/阶段、`worker_cancelled=false`及后台状态返回客户端；线程启动失败也归还并发permit。真实路由生成器故障夹具确认超时期间worker仍持有permit，返回后最终释放；最大并行worker受BoundedSemaphore限制。不能强制停止已开始的Python线程/底层调用，客户端断流也不取消；不声称强制取消、持久状态查询或跨重试exactly-once。Responses provider/audit、strict model-plan、有限修复及stream faults相关离线集 **50 passed / 2既有FastAPI弃用警告**。证据见`docs/foundation/F2_RUNTIME_RELIABILITY.md`。没有调用真实或付费模型；检查点6仍待执行。
+Agent SSE现在将超时类别/阶段、`worker_cancelled=false`及后台状态返回客户端；线程启动失败也归还并发permit。真实路由生成器故障夹具确认超时期间worker仍持有permit，返回后最终释放；最大并行worker受BoundedSemaphore限制。不能强制停止已开始的Python线程/底层调用，客户端断流也不取消；不声称强制取消、持久状态查询或跨重试exactly-once。Responses provider/audit、strict model-plan、有限修复及stream faults相关离线集 **50 passed / 2既有FastAPI弃用警告**。证据见`docs/foundation/F2_RUNTIME_RELIABILITY.md`。没有调用真实或付费模型。
+
+## F2 检查点6：冻结SHA终版验证（2026-10-11）
+
+生产源码固定在`6608785ac364d4188948e1e4167cfb21c9da5b3d`，其后仅调整一个旧检索测试夹具：明确初始化动态BM25 control，因为其stub只替换了`JsonDocumentRetriever.search`；该测试单独通过，保留原选择断言，并且不影响生产代码。最终选定回归 **950 passed / 6 failed / 12 subtests / 25 warnings**。六失败与F1原7失败完全重叠，唯独F2修复的原AVG/SUM来源测试现通过；没有新增失败。六项分别是reset后follow-up分类旧期望、verified rule替fake planner、两个与整体危险请求拒绝合同相冲突的旧部分执行断言、以及两个F1起点可复现的证据恢复测试接口/预览期望问题。原断言和冻结Gold均保留。逐题日志见`docs/foundation/runs/f2-final-tests-v4.txt`。
+
+冻结F2 difficult dev/retained的dynamic与persistent BM25逐指标相同，无证据或来源回退；小集热延迟无改善，容量型原生PDF实验在100/500/1000页有实测收益，索引成本和小语料退化均披露。六表任务scope完整由Top-K 0/6、dossier 4/6到bounded table chain 6/6。32题F1 BM25/BGE仍全召回；Dense无分数收益且P50略慢。BGE七文件哈希匹配revision manifest并全程离线使用。
+
+终版本地基线：16题A10/16、B14/16；185题A/B均178/185；M1-B2形成22题A9/22、B/C22/22，独立候选语义precision20/23、源抽取fidelity23/23。M1-C没有F2真实模型请求；M1-C历史轨迹中JSON/DSML协议问题继续作为模型效果待实测边界。全部收益分别归类为RAG索引、证据范围、SQL语义正确性或Memory机制，不相互归因。PPO/SFT/GRPO均未运行，PPO readiness仍不成立。
+
+最终复核详见[`F2_FINAL_REVIEW.md`](../foundation/F2_FINAL_REVIEW.md)，冻结输入/最终结果SHA见`docs/foundation/runs/F2_FINAL_ARTIFACT_MANIFEST.json`。检查点6提交后停止，等待ChatGPT审核。
