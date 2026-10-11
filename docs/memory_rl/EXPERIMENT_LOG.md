@@ -311,3 +311,8 @@ F2检查点4：相关回归运行`PYTHONPATH=ict-track8:tools ICT8_DB_PATH=/tmp/
 F2检查点5：`PYTHONPATH=ict-track8:tools ICT8_DB_PATH=/tmp/f2-api.sqlite`，空模型/检索Provider配置，运行 Responses provider/audit、ModelPlan strict contract、既有一次结构修复合同四测及SSE故障：50 passed、2个FastAPI弃用警告。DSML混入JSON夹具确认严格拒绝；运行审计只留输出SHA/字符数及JSON解析位置。M1-C已有正式原始调用产物保留，错误数A/B/C/D=2/4/3/3，未重放或请求真实模型。同步SSE测试直接消费本地路由生成器，worker在超时后继续持有BoundedSemaphore，完成后释放；agent线程启动失败路径亦验证释放。未证明断流强制取消、耐久任务查状态或重试幂等。细节见`docs/foundation/F2_RUNTIME_RELIABILITY.md`。
 
 F2检查点6：生产源码freeze=`6608785ac364d4188948e1e4167cfb21c9da5b3d`；最终合并集合950 passed/6 failed/12 subtests/25 warnings，用仓库文档所需本机socket权限执行，日志`f2-final-tests-v4.txt/xml`。六失败与F1原7项完全重叠，F2 AVG/SUM旧失败现通过；原断言未删改。证据覆盖测试仅改为显式动态BM25，因为它stub的是动态retriever接口；测试通过，生产代码未变。F2 dev/retained最终A/B动态/持久结果分别在`f2-final-{dynamic,persistent}-{dev,retained}.json`，所有召回/排序/错误来源/污染/SHA locator完全相同；小集延迟近似。最终6题表scope A/B/C=0/6、4/6、6/6。F1 32题BM25/BGE同为满召回，BGE无Dense收益且略慢。M1-B1新label输出16题10/16→14/16，185题178/185两组；M1-B2新label22题9/22→22/22→22/22，candidate precision20/23/source fidelity23/23。详细评分/六旧失败分类及成本见`docs/foundation/F2_FINAL_REVIEW.md`；`F2_FINAL_ARTIFACT_MANIFEST.json`包含freeze SHA、提交链、实验输入和最终日志哈希。所有模型Provider空配置，BGE仅本地已固定权重离线运行；没有付费API/训练。
+# F3 检查点2：候选检索实验（2026-10-11）
+
+在冻结困难集开发split上运行当前BM25、有界查询分解与本地BGE尝试。BM25逐题基准复核CP1：候选必要证据Recall@20 .5595，最终Recall@4 .4325，完整6/21，错绑6/24，无证据题污染3/3。分解最多扩展到2个短子句，并保留显式标识/年份，每题最多3次查询。14题chunk集合变化，但必要证据Recall、完整数、错误绑定和污染无改善，P50/P95由22.52/61.89升到43.84/120.84ms。没有部署。
+
+本地BGE revision `7999e1d3359715c523056ef9478215996d62a620` 七个资产SHA全部匹配，语言支持声明为中文。当前Python评测环境缺PyTorch，真实dense调用未执行，报告标注not_run并留存纯BM25回退记录；没有安装依赖、联网或调用生成模型。待依赖环境可用时再决定是否补跑dev。详情：`docs/foundation/F3_RETRIEVAL_RESULTS.md`及`docs/foundation/runs/f3-cp2-*.json`。

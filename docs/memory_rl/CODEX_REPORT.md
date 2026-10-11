@@ -235,3 +235,6 @@ Agent SSE现在将超时类别/阶段、`worker_cancelled=false`及后台状态�
 终版本地基线：16题A10/16、B14/16；185题A/B均178/185；M1-B2形成22题A9/22、B/C22/22，独立候选语义precision20/23、源抽取fidelity23/23。M1-C没有F2真实模型请求；M1-C历史轨迹中JSON/DSML协议问题继续作为模型效果待实测边界。全部收益分别归类为RAG索引、证据范围、SQL语义正确性或Memory机制，不相互归因。PPO/SFT/GRPO均未运行，PPO readiness仍不成立。
 
 最终复核详见[`F2_FINAL_REVIEW.md`](../foundation/F2_FINAL_REVIEW.md)，冻结输入/最终结果SHA见`docs/foundation/runs/F2_FINAL_ARTIFACT_MANIFEST.json`。检查点6提交后停止，等待ChatGPT审核。
+# F3 检查点2完成：当前唯一分支`memory`；下一步检查点3证据选择与预算分配
+
+Dense对照被环境依赖阻断，不能声称BGE已评测。BM25与有界分解结果、退步及“不部署”结论记录于`docs/foundation/F3_RETRIEVAL_RESULTS.md`。
