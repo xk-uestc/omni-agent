@@ -205,3 +205,9 @@ M1-C7/7/8/9仅历史独立审计，不复跑付费模型；生成层指标not_ru
 定位到`MetricCatalog.apply()`会把目录默认函数（如SUM）覆盖回规划器已识别的原问题明确聚合（如AVG）；来源意图验证并未出错，收到的计划已丢失用户口径。现在只对单一目录源、绑定物理指标的原问题聚合cue应用显式覆盖；口径冲突仍澄清，目录表/列/时间绑定保留，覆盖来源写入semantic audit。验证快路径仅认可与目录指标ID、配置函数、请求函数和输出标签相互一致的带审计覆盖，SQL仍经过MetricCompiler及只读安全执行。
 
 加入SQLite独立oracle的分组AVG、COUNT(DISTINCT)、NULL分母/分组粒度测试；动态Excel来源绑定确认scope与当前查询AVG都通过；记忆适配器确认历史SUM别名不能静默改写当前AVG（无SQL/行，clarify）。目录、编译器、动态来源绑定、Memory和对话SQL修改相关集 **217 passed**。详细根因、契约及测试范围见`docs/foundation/F2_SEMANTIC_CORRECTNESS.md`；这是本地回归证据，不是公开benchmark或全项目验收。检查点5–6仍待执行。
+
+## F2 检查点5：规划协议与流式超时状态（2026-10-11）
+
+M1-C原始模型产物已保留，正式轨迹报告A/B/C/D非法JSON或DSML协议错误数为2/4/3/3。当前Responses契约仍严格JSON Schema、仅取completed输出；一次修复仅限结构句柄/输出错误并对完整计划重新验证，语义漏条件和协议失败不进入宽松文本提取/结构修复。新增失败指纹（字符数、SHA256、JSON parser行列位置），不把模型原文写入常规审计。固定本地DSML响应保持拒绝；真实模型正确率未评测。
+
+Agent SSE现在将超时类别/阶段、`worker_cancelled=false`及后台状态返回客户端；线程启动失败也归还并发permit。真实路由生成器故障夹具确认超时期间worker仍持有permit，返回后最终释放；最大并行worker受BoundedSemaphore限制。不能强制停止已开始的Python线程/底层调用，客户端断流也不取消；不声称强制取消、持久状态查询或跨重试exactly-once。Responses provider/audit、strict model-plan、有限修复及stream faults相关离线集 **50 passed / 2既有FastAPI弃用警告**。证据见`docs/foundation/F2_RUNTIME_RELIABILITY.md`。没有调用真实或付费模型；检查点6仍待执行。

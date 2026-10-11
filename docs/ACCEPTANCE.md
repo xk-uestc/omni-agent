@@ -498,3 +498,5 @@ Round24完整回归已结束：`LOCAL_REGRESSION_ROUND24_NATIVE_ROWS_20261006.js
 2026-10-11 F2检查点3复杂证据范围：冻结dev 6个多页表任务，Top-K/现有F1 dossier/受限表链必要证据完整0/6、4/6、6/6。表链策略复用page_scope/row_scope，验证来源→对象代码→表源链、30个唯一原生行ID、重复表头/单位、过滤字段/排除脚注与SHA；最多6页，实际读取3–4页。预算、重复ID、检索后来源替换均关闭失败。C在部分题更慢，不宣称端到端答案正确或生产收益；不涉及retained调参。见`foundation/F2_EVIDENCE_COMPLETENESS.md`及`runs/f2-evidence-scope-dev-final-v10.json`。
 
 2026-10-11 F2检查点4显式聚合语义：修复MetricCatalog目录默认聚合覆盖原问题明确AVG等口径，保持目录物理来源与时间绑定；冲突继续澄清。审计约束的验证快路径、MetricCompiler及只读SQL检查保留。独立SQL oracle覆盖分组AVG、COUNT(DISTINCT)、NULL与分组粒度，动态source binding及历史SUM Memory冲突各有拒答回归；相关217项测试通过。此为本地正确性回归，不是公开基准或整体完成。见`foundation/F2_SEMANTIC_CORRECTNESS.md`。
+
+2026-10-11 F2检查点5 Agent执行协议与SSE：M1-C已存原始轨迹记录A/B/C/D协议失败2/4/3/3；当前保留严格JSON Schema拒绝，并对新增本地DSML fixture记录仅含hash/解析位置的失败audit；结构修复最多一次，语义缺项不猜补。Agent SSE timeout现在披露transport阶段、`worker_cancelled=false`与后台状态，线程启动失败归还permit，真实路由生成器故障测试验证超时后slot仍占用且worker结束后释放。离线相关50通过/2个FastAPI弃用警告，无真实模型调用。Python线程/底层工具不支持强制取消，断流仍继续执行；未实现耐久状态查询或跨重试幂等。见`foundation/F2_RUNTIME_RELIABILITY.md`，不将此作为端到端模型收益。

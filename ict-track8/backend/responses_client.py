@@ -271,7 +271,21 @@ class StructuredResponses:
                         raise GenerationError('模型拒绝处理请求')
                     if part.get('type') == 'output_text':
                         texts.append(part.get('text', ''))
-            result = json.loads(''.join(texts))
+            raw_output = ''.join(texts)
+            try:
+                result = json.loads(raw_output)
+            except json.JSONDecodeError as exc:
+                # Keep an audit fingerprint and parse location without storing
+                # arbitrary model text, which may contain user data or secrets.
+                audit['output_failure'] = {
+                    'kind': 'invalid_json',
+                    'characters': len(raw_output),
+                    'sha256': hashlib.sha256(raw_output.encode('utf-8')).hexdigest(),
+                    'error_position': exc.pos,
+                    'error_line': exc.lineno,
+                    'error_column': exc.colno,
+                }
+                raise
             if not isinstance(result, dict):
                 raise GenerationError('模型输出必须为对象')
         except (ValueError, TypeError) as exc:

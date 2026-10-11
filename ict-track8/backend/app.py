@@ -988,6 +988,7 @@ def agent_query_stream(request: AgentQueryRequest) -> StreamingResponse:
 
     def worker() -> None:
         try:
+            result_holder["worker_state"] = "running"
             result_holder["result"] = agent.answer(
                 request.question,
                 top_k_documents=request.top_k_documents,
@@ -998,19 +999,29 @@ def agent_query_stream(request: AgentQueryRequest) -> StreamingResponse:
         except Exception as exc:  # headers 已发送，错误作为 SSE 事件返回（不透传内部异常文本）
             result_holder["error"] = {"code": type(exc).__name__, "message": "查询执行失败"}
         finally:
+            result_holder["worker_state"] = "failed" if "error" in result_holder else "completed"
             events.put(("complete", None))
             STREAM_SLOTS.release()
 
     if not STREAM_SLOTS.acquire(blocking=False):
         raise HTTPException(status_code=429, detail={"code": "stream_busy", "message": "并发流式请求过多，请稍后重试"})
-    threading.Thread(target=worker, name="ict8-agent-stream", daemon=True).start()
+    try:
+        threading.Thread(target=worker, name="ict8-agent-stream", daemon=True).start()
+    except Exception as exc:
+        STREAM_SLOTS.release()
+        raise HTTPException(status_code=503, detail={"code": "stream_worker_start_failed",
+            "message": "查询任务未能启动"}) from exc
 
     def generate():
         deadline = time.monotonic() + STREAM_TIMEOUT_SECONDS
         while True:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
-                yield f"event: error\ndata: {json.dumps({'detail': {'code': 'timeout', 'message': '查询超时'}}, ensure_ascii=False)}\n\n"
+                yield f"event: error\ndata: {json.dumps({'detail': {
+                    'code': 'timeout', 'failure_category': 'provider_transport',
+                    'phase': 'transport', 'worker_cancelled': False,
+                    'worker_state': result_holder.get('worker_state', 'running'),
+                    'message': '查询超时；底层操作不会因SSE截止时间被强制中断'}}, ensure_ascii=False)}\n\n"
                 return
             try:
                 kind, payload = events.get(timeout=min(10.0, remaining))
