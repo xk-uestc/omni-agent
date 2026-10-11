@@ -6,6 +6,7 @@ for scoring. This tool never calls a generator or accesses private settings.
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
 import re
 import tempfile
@@ -113,6 +114,8 @@ def run(split: str, output: str, mode: str, bench: Path = BENCH):
             records.append({
                 "id": task["id"], "family": task["source_family"], "kind": task["kind"],
                 "query": task["query"], "decomposition_queries": query_set[1:],
+                "query_language": audit.get("query_language"),
+                "dense_status": audit.get("dense_status"),
                 "candidate_source_recall_at_20": len(required_sources & candidate_sources) / len(required_sources) if required_sources else None,
                 "candidate_evidence_recall_at_20": sum(candidate_recovered) / len(candidate_recovered) if candidate_recovered else None,
                 "source_recall_at_k": len(required_sources & set(ids)) / len(required_sources) if required_sources else None,
@@ -145,6 +148,14 @@ def run(split: str, output: str, mode: str, bench: Path = BENCH):
             "source_families": sorted(families), "source_before": before,
             "source_after": source_hashes(), "input_manifest_sha256": sha(manifest_path) if manifest_path.exists() else None,
             "scorer_sha256": sha(__file__), "dense_status": dense_status,
+            "runtime_versions": {
+                name: (importlib.metadata.version(name) if _has_package(name) else None)
+                for name in ("torch", "transformers", "safetensors")
+            },
+            "dense_query_language_counts": {
+                language: sum(record.get("query_language") == language for record in records)
+                for language in sorted({record.get("query_language") for record in records if record.get("query_language")})
+            },
             "query_policy": "at most original plus two deterministic clauses; exact identifier/year anchors preserved",
             "query_budget": {"max_queries_per_task": 3, "max_top_k_per_query": 20},
             "metrics": summary, "records": records,
@@ -153,6 +164,14 @@ def run(split: str, output: str, mode: str, bench: Path = BENCH):
         assert before == source_hashes()
         dump(output, report)
         print(json.dumps(summary, ensure_ascii=False))
+
+
+def _has_package(name: str) -> bool:
+    try:
+        importlib.metadata.distribution(name)
+        return True
+    except importlib.metadata.PackageNotFoundError:
+        return False
 
 
 if __name__ == "__main__":

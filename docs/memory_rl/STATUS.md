@@ -10,7 +10,7 @@
 - 后续独立复核：`d96a2fa`下manifest 189/189 SHA与字节长度匹配；困难集dynamic/persistent BM25 dev与retained指标一致，SQL/跨源fixture回归315 passed。profile提示tokenize/page-scope耗时，未据单次profile改变检索语义；详见`docs/foundation/F2_FOLLOWUP_REPRO_20261011.md`及`docs/foundation/runs/f2-repeat-*-20261011.json`。困难RAG集没有SQL gold或静态/动态记忆因果证据，仍不进入M2。
 - F1旧结论仍有效：不得训练；PPO readiness未成立；旧测试7失败及本轮新增失败要逐项披露。
 - F3-CP1从`d61ce23dfa32fcb2be01d6b71235f3e48e693aed`开始：困难集阶段损失逐题报告与机器JSON已完成；Frozen exact Top-K scorer parity dev `.4325`、retained `.4167`。字段格式规范化后确认解析内容多数仍在，候选池与Top-4是主要损失；Coverage选择器净增dev约`.004`、retained无增益。六道表格题上来源绑定重评分发现历史A `.0417`含两个跨源单位命中，正确来源 exact宏均值`.0139`；既有历史分数保留。验证48题/30文档manifest、stage replay两split通过，F2 evidence回归4 passed。详见`docs/foundation/F3_FAILURE_ATTRIBUTION.md`。
-- F3-CP2开发集对照：BM25必要证据候选Recall@20 `.5595`，来源Recall@20 `1.0`（不能代替证据召回），最终Recall@4 `.4325`、完整6/21、错绑6/24、拒答污染3/3。BGE权重校验通过但本地评测环境缺`torch`，Dense明确not_run；纯英文跳过策略已核对。最多2个子句扩展令14/24题结果片段变化，宏观证据召回/完整数/错绑/污染持平，P50/P95约翻倍，因此不改生产检索。详见`docs/foundation/F3_RETRIEVAL_RESULTS.md`与三份逐题JSON。
+- F3-CP2开发集对照：BM25必要证据候选Recall@20 `.5595`，最终Recall@4 `.4325`、完整6/21、错绑6/24、污染3/3。更正：按F1既有流程使用`/tmp/f1-bge-venv`实际运行BGE；版本Torch 2.14.1+cu130、Transformers 5.19.0（高于仓库`<5`范围）。BGE将Recall@4升至`.4405`、来源Recall升至`.8571`，但完整6/21、错绑6/24、污染3/3、候选证据Recall@20 `.5595`均无改善，P95 1.397秒，不上线。最多2个子句扩展令14/24题片段变化，宏观证据召回/安全指标持平且P50/P95约翻倍，不上线。详见`docs/foundation/F3_RETRIEVAL_RESULTS.md`及三份逐题JSON。
 
 ## F1基础设施最终审核记录
 

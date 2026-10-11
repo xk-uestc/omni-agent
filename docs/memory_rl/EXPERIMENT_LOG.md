@@ -315,4 +315,4 @@ F2检查点6：生产源码freeze=`6608785ac364d4188948e1e4167cfb21c9da5b3d`；�
 
 在冻结困难集开发split上运行当前BM25、有界查询分解与本地BGE尝试。BM25逐题基准复核CP1：候选必要证据Recall@20 .5595，最终Recall@4 .4325，完整6/21，错绑6/24，无证据题污染3/3。分解最多扩展到2个短子句，并保留显式标识/年份，每题最多3次查询。14题chunk集合变化，但必要证据Recall、完整数、错误绑定和污染无改善，P50/P95由22.52/61.89升到43.84/120.84ms。没有部署。
 
-本地BGE revision `7999e1d3359715c523056ef9478215996d62a620` 七个资产SHA全部匹配，语言支持声明为中文。当前Python评测环境缺PyTorch，真实dense调用未执行，报告标注not_run并留存纯BM25回退记录；没有安装依赖、联网或调用生成模型。待依赖环境可用时再决定是否补跑dev。详情：`docs/foundation/F3_RETRIEVAL_RESULTS.md`及`docs/foundation/runs/f3-cp2-*.json`。
+更正前述环境说明：`/tmp/omni-m1a-venv`是M1-A/F2轻量复测环境，没有Torch；F1既有命令明确把Dense评测放在`/tmp/f1-bge-venv`。本轮按该流程离线实际运行BGE，并将BM25、分解在相同venv重跑。实际依赖为Torch 2.14.1+cu130、Transformers 5.19.0、safetensors 0.8.0；Transformers超出项目`<5`范围，须标注验证限制。BGE dev结果来源Recall@4 .8571、字段证据Recall@4 .4405、候选证据Recall@20 .5595、完整6/21、错绑6/24、污染3/3、P50/P95 41.77/1396.91ms。增益不足以修复完整证据或来源错误，不上线。没有联网下载、模型API调用或训练。详情：`docs/foundation/F3_RETRIEVAL_RESULTS.md`及`docs/foundation/runs/f3-cp2-*.json`。

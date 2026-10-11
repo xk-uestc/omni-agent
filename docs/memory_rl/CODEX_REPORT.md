@@ -237,4 +237,4 @@ Agent SSE现在将超时类别/阶段、`worker_cancelled=false`及后台状态�
 最终复核详见[`F2_FINAL_REVIEW.md`](../foundation/F2_FINAL_REVIEW.md)，冻结输入/最终结果SHA见`docs/foundation/runs/F2_FINAL_ARTIFACT_MANIFEST.json`。检查点6提交后停止，等待ChatGPT审核。
 # F3 检查点2完成：当前唯一分支`memory`；下一步检查点3证据选择与预算分配
 
-Dense对照被环境依赖阻断，不能声称BGE已评测。BM25与有界分解结果、退步及“不部署”结论记录于`docs/foundation/F3_RETRIEVAL_RESULTS.md`。
+更正：沿用F1既有的隔离Dense环境实际完成BGE开发集评测。召回有小幅改善但完整证据、错误绑定及污染未改善，尾延迟高且Transformers版本超出仓库约束，暂不部署。完整结果见`docs/foundation/F3_RETRIEVAL_RESULTS.md`。

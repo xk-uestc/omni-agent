@@ -3,7 +3,7 @@
     "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
     "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
     "sqlite": "3.45.1",
-    "head": "eec0d464c4ff5da3ec0f2790bb272f6a3def72bc"
+    "head": "cc1ba471aebe50a248f0780217db5748405456f1"
   },
   "split": "dev",
   "mode": "bm25_bge",
@@ -331,8 +331,16 @@
     "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
   },
   "input_manifest_sha256": "10d41e4034cadd38d3f36dae352d42568af03faf68be498960e825223258a634",
-  "scorer_sha256": "5660764f901164ba22157a40a3646c4287d8f9c4471033bd231bf870d5511135",
-  "dense_status": "not_run_missing_local_dependency:ModuleNotFoundError",
+  "scorer_sha256": "389e819b46a6e8f3c19362d31ecdb46e5b56b891a3bddfbfb41b5c3a5ec1e3f1",
+  "dense_status": "enabled",
+  "runtime_versions": {
+    "torch": "2.14.1+cu130",
+    "transformers": "5.19.0",
+    "safetensors": "0.8.0"
+  },
+  "dense_query_language_counts": {
+    "zh_or_mixed": 24
+  },
   "query_policy": "at most original plus two deterministic clauses; exact identifier/year anchors preserved",
   "query_budget": {
     "max_queries_per_task": 3,
@@ -342,16 +350,16 @@
     "task_count": 24,
     "source_family_count": 3,
     "document_count": 15,
-    "source_recall_at_k": 0.8095238095238095,
+    "source_recall_at_k": 0.8571428571428571,
     "candidate_source_recall_at_20": 1.0,
     "candidate_evidence_recall_at_20": 0.5595238095238095,
-    "evidence_recall_at_k": 0.43253968253968256,
+    "evidence_recall_at_k": 0.44047619047619047,
     "complete_required_evidence": 6,
     "wrong_entity_source_binding": 6,
     "unsupported_retrieval_contamination": 3,
-    "query_p50_ms": 22.54852798068896,
-    "query_p95_ms": 59.21788897830993,
-    "dense_status": "not_run_missing_local_dependency:ModuleNotFoundError",
+    "query_p50_ms": 41.77323204930872,
+    "query_p95_ms": 1396.9108010060154,
+    "dense_status": "enabled",
     "answer_metrics": "not_run"
   },
   "records": [
@@ -361,6 +369,8 @@
       "kind": "same_title_time",
       "query": "杉木 研究站2026年公报中，代码E-17的预算多少？租赁费是否包含？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -368,210 +378,6 @@
       "required_evidence_count": 3,
       "recovered_evidence_count": 3,
       "complete_required_evidence": true,
-      "gold_sources": [
-        "f2-cedar-policy-2026"
-      ],
-      "retrieved_sources": [
-        "f2-cedar-policy-2025",
-        "f2-cedar-policy-2026",
-        "f2-cedar-long"
-      ],
-      "hit_chunk_ids": [
-        "31fcb4c0eed5044e84d7d938",
-        "f66daf49b881b91f226235b3",
-        "6ed872d6aed6a6351bdb02ff",
-        "9341dd2a032d1a9bc21c0fc5"
-      ],
-      "hit_evidence": {
-        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-cedar-policy-2026": "2026年预算为1235元,明确不含设备租赁费;仅对E-17有效。\n北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
-        "f2-cedar-long": "rterly report archived measurement\ncedar 杉木 calibration inspection monitoring station quarterly report archived measure\nment cedar 杉木 calibration inspection monitoring station quarterly report archived mea\nsurement cedar 杉木 calibration inspection monitoring station quarterly report archived\nmeasurement cedar 杉木 calibration inspection monitoring station quarterly report arch\nived measurement cedar 杉木 calibration inspection monitoring station quarterly report\narchived measurement cedar 杉木 calibration inspection monitoring station quarterly rep\nort archived measurement cedar 杉木 calibration inspection monitoring station quarterly\nreport archived measurement cedar 杉木 calibration inspection monitoring station quart\nerly report archived measurement cedar 杉木 calibration inspection monitoring station q\nuarterly report archived measurement cedar 杉木 calibration inspection monitoring stat\nion quarterly report archived measurement cedar 杉木 calibration inspection monitoring\nstation quarterly report archived measurement cedar 杉木 calibration inspection monitor\ning station quarterly report archived measurement cedar 杉木 calibration inspection mon\nitoring station quarterly report archived measurement cedar 杉木 calibration inspection\nmonitoring station quarterly report archived measurement cedar 杉木 calibration inspec\ntion monitoring station quarterly report archived measurement cedar 杉木 calibration in\nspection monitoring station quarterly report archived measurement cedar 杉木 calibratio\nn inspection monitoring station quarterly report archived measurement cedar 杉木 calibr\nation inspection monitoring station quarterly report archived measurement cedar 杉木 ca\nlibration inspection monitoring station quarterly report archived measurement 唯一有效校准周期为28天;记录日期2026-05-17,适用于北岬研究院的代码E-17。"
-      },
-      "wrong_entity_source_binding": true,
-      "wrong_binding_sources": [
-        "f2-cedar-policy-2025"
-      ],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 37.89098805282265,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-cedar-02",
-      "family": "cedar",
-      "kind": "long_distributed_conditions",
-      "query": "北岬研究院代码E-17校准周期几天？计算时停机日和维修等待时间如何处理？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.3333333333333333,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.3333333333333333,
-      "required_evidence_count": 3,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-cedar-long"
-      ],
-      "retrieved_sources": [
-        "f2-cedar-other-org",
-        "f2-cedar-long",
-        "f2-cedar-policy-2026",
-        "f2-cedar-policy-2025"
-      ],
-      "hit_chunk_ids": [
-        "9210bcc2cff77f86563a50c1",
-        "9341dd2a032d1a9bc21c0fc5",
-        "6ed872d6aed6a6351bdb02ff",
-        "31fcb4c0eed5044e84d7d938"
-      ],
-      "hit_evidence": {
-        "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。",
-        "f2-cedar-long": "rterly report archived measurement\ncedar 杉木 calibration inspection monitoring station quarterly report archived measure\nment cedar 杉木 calibration inspection monitoring station quarterly report archived mea\nsurement cedar 杉木 calibration inspection monitoring station quarterly report archived\nmeasurement cedar 杉木 calibration inspection monitoring station quarterly report arch\nived measurement cedar 杉木 calibration inspection monitoring station quarterly report\narchived measurement cedar 杉木 calibration inspection monitoring station quarterly rep\nort archived measurement cedar 杉木 calibration inspection monitoring station quarterly\nreport archived measurement cedar 杉木 calibration inspection monitoring station quart\nerly report archived measurement cedar 杉木 calibration inspection monitoring station q\nuarterly report archived measurement cedar 杉木 calibration inspection monitoring stat\nion quarterly report archived measurement cedar 杉木 calibration inspection monitoring\nstation quarterly report archived measurement cedar 杉木 calibration inspection monitor\ning station quarterly report archived measurement cedar 杉木 calibration inspection mon\nitoring station quarterly report archived measurement cedar 杉木 calibration inspection\nmonitoring station quarterly report archived measurement cedar 杉木 calibration inspec\ntion monitoring station quarterly report archived measurement cedar 杉木 calibration in\nspection monitoring station quarterly report archived measurement cedar 杉木 calibratio\nn inspection monitoring station quarterly report archived measurement cedar 杉木 calibr\nation inspection monitoring station quarterly report archived measurement cedar 杉木 ca\nlibration inspection monitoring station quarterly report archived measurement 唯一有效校准周期为28天;记录日期2026-05-17,适用于北岬研究院的代码E-17。",
-        "f2-cedar-policy-2026": "北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
-        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 14.248192019294947,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-cedar-03",
-      "family": "cedar",
-      "kind": "complete_table_enumeration",
-      "query": "请完整列出杉木代码E-17批次中北区且结论合格的所有编号，并带上读数和日期。",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.0,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.0,
-      "required_evidence_count": 10,
-      "recovered_evidence_count": 0,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-cedar-table"
-      ],
-      "retrieved_sources": [
-        "f2-cedar-long",
-        "f2-cedar-table"
-      ],
-      "hit_chunk_ids": [
-        "9341dd2a032d1a9bc21c0fc5",
-        "0902cc77a74e6e7e38e1e632",
-        "2527712c3bb73584d989c5d1",
-        "2ab208d855b3fd3af07e7073"
-      ],
-      "hit_evidence": {
-        "f2-cedar-long": "rterly report archived measurement\ncedar 杉木 calibration inspection monitoring station quarterly report archived measure\nment cedar 杉木 calibration inspection monitoring station quarterly report archived mea\nsurement cedar 杉木 calibration inspection monitoring station quarterly report archived\nmeasurement cedar 杉木 calibration inspection monitoring station quarterly report arch\nived measurement cedar 杉木 calibration inspection monitoring station quarterly report\narchived measurement cedar 杉木 calibration inspection monitoring station quarterly rep\nort archived measurement cedar 杉木 calibration inspection monitoring station quarterly\nreport archived measurement cedar 杉木 calibration inspection monitoring station quart\nerly report archived measurement cedar 杉木 calibration inspection monitoring station q\nuarterly report archived measurement cedar 杉木 calibration inspection monitoring stat\nion quarterly report archived measurement cedar 杉木 calibration inspection monitoring\nstation quarterly report archived measurement cedar 杉木 calibration inspection monitor\ning station quarterly report archived measurement cedar 杉木 calibration inspection mon\nitoring station quarterly report archived measurement cedar 杉木 calibration inspection\nmonitoring station quarterly report archived measurement cedar 杉木 calibration inspec\ntion monitoring station quarterly report archived measurement cedar 杉木 calibration in\nspection monitoring station quarterly report archived measurement cedar 杉木 calibratio\nn inspection monitoring station quarterly report archived measurement cedar 杉木 calibr\nation inspection monitoring station quarterly report archived measurement cedar 杉木 ca\nlibration inspection monitoring station quarterly report archived measurement 唯一有效校准周期为28天;记录日期2026-05-17,适用于北岬研究院的代码E-17。",
-        "f2-cedar-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-16 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 26.5 | 日期: 2026-04-17\nPDF table on page 3 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-26 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 36.5 | 日期: 2026-04-27\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-10 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 20.5 | 日期: 2026-04-11"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 14.6170380176045,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-cedar-04",
-      "family": "cedar",
-      "kind": "cross_page_header_unit",
-      "query": "北岬研究院批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.08333333333333333,
-      "source_recall_at_k": 0.0,
-      "evidence_recall_at_k": 0.0,
-      "required_evidence_count": 12,
-      "recovered_evidence_count": 0,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-cedar-table"
-      ],
-      "retrieved_sources": [
-        "f2-cedar-other-org",
-        "f2-cedar-policy-2026",
-        "f2-meadow-table"
-      ],
-      "hit_chunk_ids": [
-        "9210bcc2cff77f86563a50c1",
-        "5f63aaf5beea9f933413ab5e",
-        "6ed872d6aed6a6351bdb02ff",
-        "48928c9008c7bb6a5d2cefc3"
-      ],
-      "hit_evidence": {
-        "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。",
-        "f2-cedar-policy-2026": "对象“林青”在北岬研究院任采样负责人;另一份同名记录中的林青不属于本机构。\n北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
-        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 96.17342101410031,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-cedar-05",
-      "family": "cedar",
-      "kind": "same_name_org_binding",
-      "query": "北岬研究院的林青在2026公报中担任什么职务？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 1.0,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 1.0,
-      "required_evidence_count": 1,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": true,
-      "gold_sources": [
-        "f2-cedar-policy-2026"
-      ],
-      "retrieved_sources": [
-        "f2-cedar-other-org",
-        "f2-cedar-policy-2026",
-        "f2-cedar-policy-2025"
-      ],
-      "hit_chunk_ids": [
-        "9210bcc2cff77f86563a50c1",
-        "5f63aaf5beea9f933413ab5e",
-        "6ed872d6aed6a6351bdb02ff",
-        "31fcb4c0eed5044e84d7d938"
-      ],
-      "hit_evidence": {
-        "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。",
-        "f2-cedar-policy-2026": "对象“林青”在北岬研究院任采样负责人;另一份同名记录中的林青不属于本机构。\n北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
-        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
-      },
-      "wrong_entity_source_binding": true,
-      "wrong_binding_sources": [
-        "f2-cedar-other-org"
-      ],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 23.069578979630023,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-cedar-06",
-      "family": "cedar",
-      "kind": "negation_date_scope",
-      "query": "只看E-17的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.5,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.5,
-      "required_evidence_count": 2,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": false,
       "gold_sources": [
         "f2-cedar-policy-2026"
       ],
@@ -591,12 +397,226 @@
         "f2-cedar-policy-2026": "2026年预算为1235元,明确不含设备租赁费;仅对E-17有效。\n北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
         "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。"
       },
+      "wrong_entity_source_binding": true,
+      "wrong_binding_sources": [
+        "f2-cedar-policy-2025"
+      ],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 1396.9108010060154,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-cedar-02",
+      "family": "cedar",
+      "kind": "long_distributed_conditions",
+      "query": "北岬研究院代码E-17校准周期几天？计算时停机日和维修等待时间如何处理？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.3333333333333333,
+      "source_recall_at_k": 0.0,
+      "evidence_recall_at_k": 0.0,
+      "required_evidence_count": 3,
+      "recovered_evidence_count": 0,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-cedar-long"
+      ],
+      "retrieved_sources": [
+        "f2-cedar-policy-2026",
+        "f2-cedar-other-org",
+        "f2-cedar-policy-2025",
+        "f2-cedar-table"
+      ],
+      "hit_chunk_ids": [
+        "6ed872d6aed6a6351bdb02ff",
+        "9210bcc2cff77f86563a50c1",
+        "31fcb4c0eed5044e84d7d938",
+        "1fba094f4abc6fb053937db5"
+      ],
+      "hit_evidence": {
+        "f2-cedar-policy-2026": "北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
+        "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。",
+        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-cedar-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-18 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 28.5 | 日期: 2026-04-19"
+      },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 22.54852798068896,
+      "query_ms": 30.81538196420297,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-cedar-03",
+      "family": "cedar",
+      "kind": "complete_table_enumeration",
+      "query": "请完整列出杉木代码E-17批次中北区且结论合格的所有编号，并带上读数和日期。",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.0,
+      "required_evidence_count": 10,
+      "recovered_evidence_count": 0,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-cedar-table"
+      ],
+      "retrieved_sources": [
+        "f2-cedar-table"
+      ],
+      "hit_chunk_ids": [
+        "2bfda0d1de12946d945dedb2",
+        "0902cc77a74e6e7e38e1e632",
+        "2ab208d855b3fd3af07e7073",
+        "51f93a3b58a230a53a7665c0"
+      ],
+      "hit_evidence": {
+        "f2-cedar-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-14 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 24.5 | 日期: 2026-04-15\nPDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-16 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 26.5 | 日期: 2026-04-17\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-10 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 20.5 | 日期: 2026-04-11\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-08 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 18.5 | 日期: 2026-04-09"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 31.607632990926504,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-cedar-04",
+      "family": "cedar",
+      "kind": "cross_page_header_unit",
+      "query": "北岬研究院批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.08333333333333333,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.08333333333333333,
+      "required_evidence_count": 12,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-cedar-table"
+      ],
+      "retrieved_sources": [
+        "f2-meadow-table",
+        "f2-cedar-table",
+        "f2-harbor-table"
+      ],
+      "hit_chunk_ids": [
+        "48928c9008c7bb6a5d2cefc3",
+        "ccd1320039334c2e1e90bc99",
+        "13c7317a3c7306bea472ebe2",
+        "519b14691beea5b69a1b4a9c"
+      ],
+      "hit_evidence": {
+        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07\nPDF table on page 3 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-24 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 34.5 | 日期: 2026-04-25",
+        "f2-cedar-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07",
+        "f2-harbor-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-12 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 22.5 | 日期: 2026-04-13"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 2935.744748043362,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-cedar-05",
+      "family": "cedar",
+      "kind": "same_name_org_binding",
+      "query": "北岬研究院的林青在2026公报中担任什么职务？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 1.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 1.0,
+      "required_evidence_count": 1,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": true,
+      "gold_sources": [
+        "f2-cedar-policy-2026"
+      ],
+      "retrieved_sources": [
+        "f2-cedar-policy-2026",
+        "f2-cedar-policy-2025",
+        "f2-cedar-other-org"
+      ],
+      "hit_chunk_ids": [
+        "5f63aaf5beea9f933413ab5e",
+        "31fcb4c0eed5044e84d7d938",
+        "9210bcc2cff77f86563a50c1",
+        "6ed872d6aed6a6351bdb02ff"
+      ],
+      "hit_evidence": {
+        "f2-cedar-policy-2026": "对象“林青”在北岬研究院任采样负责人;另一份同名记录中的林青不属于本机构。\n北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
+        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。"
+      },
+      "wrong_entity_source_binding": true,
+      "wrong_binding_sources": [
+        "f2-cedar-other-org"
+      ],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 61.95543298963457,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-cedar-06",
+      "family": "cedar",
+      "kind": "negation_date_scope",
+      "query": "只看E-17的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.5,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.5,
+      "required_evidence_count": 2,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-cedar-policy-2026"
+      ],
+      "retrieved_sources": [
+        "f2-cedar-policy-2025",
+        "f2-cedar-policy-2026",
+        "f2-cedar-table",
+        "f2-cedar-other-org"
+      ],
+      "hit_chunk_ids": [
+        "31fcb4c0eed5044e84d7d938",
+        "f66daf49b881b91f226235b3",
+        "28e23a93d9b8f1ee56bcd0f3",
+        "9210bcc2cff77f86563a50c1"
+      ],
+      "hit_evidence": {
+        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-cedar-policy-2026": "2026年预算为1235元,明确不含设备租赁费;仅对E-17有效。",
+        "f2-cedar-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-15 | 区域: 东区 | 结论: 隔离 | 读数(毫克/升): 25.5 | 日期: 2026-04-16",
+        "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 41.77323204930872,
       "answer_metrics": "not_run"
     },
     {
@@ -605,6 +625,8 @@
       "kind": "chinese_alias_evidence",
       "query": "杉木那边林青的岗位是什么？预算是多少钱（口语问法）？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -618,27 +640,27 @@
       "retrieved_sources": [
         "f2-cedar-policy-2025",
         "f2-meadow-policy-2025",
-        "f2-harbor-policy-2025",
-        "f2-cedar-policy-2026"
+        "f2-cedar-policy-2026",
+        "f2-harbor-policy-2025"
       ],
       "hit_chunk_ids": [
         "31fcb4c0eed5044e84d7d938",
         "88f2ab45bfdcb38e433cc5e4",
-        "dc89d3cd25018c5de7c43b2e",
-        "5f63aaf5beea9f933413ab5e"
+        "5f63aaf5beea9f933413ab5e",
+        "dc89d3cd25018c5de7c43b2e"
       ],
       "hit_evidence": {
         "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
         "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-cedar-policy-2026": "对象“林青”在北岬研究院任采样负责人;另一份同名记录中的林青不属于本机构。"
+        "f2-cedar-policy-2026": "对象“林青”在北岬研究院任采样负责人;另一份同名记录中的林青不属于本机构。",
+        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
       },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 58.778834994882345,
+      "query_ms": 95.59099504258484,
       "answer_metrics": "not_run"
     },
     {
@@ -647,6 +669,8 @@
       "kind": "unsupported_abstention",
       "query": "北岬研究院E-17在2026年授权的月球站点密码是什么？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": null,
       "candidate_evidence_recall_at_20": null,
       "source_recall_at_k": null,
@@ -656,29 +680,27 @@
       "complete_required_evidence": null,
       "gold_sources": [],
       "retrieved_sources": [
-        "f2-cedar-other-org",
         "f2-cedar-policy-2026",
-        "f2-cedar-policy-2025",
-        "f2-cedar-long"
+        "f2-cedar-other-org",
+        "f2-cedar-policy-2025"
       ],
       "hit_chunk_ids": [
-        "9210bcc2cff77f86563a50c1",
         "6ed872d6aed6a6351bdb02ff",
+        "9210bcc2cff77f86563a50c1",
         "31fcb4c0eed5044e84d7d938",
-        "9341dd2a032d1a9bc21c0fc5"
+        "f66daf49b881b91f226235b3"
       ],
       "hit_evidence": {
+        "f2-cedar-policy-2026": "北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。\n2026年预算为1235元,明确不含设备租赁费;仅对E-17有效。",
         "f2-cedar-other-org": "另一个样本库。对象林青属于北岬研究院的邻近机构北岬研究院附属组,不适用代码E-17。",
-        "f2-cedar-policy-2026": "北岬研究院季度运行公报。标题重复:季度运行公报。对象代码E-17,年份2026。",
-        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-cedar-long": "rterly report archived measurement\ncedar 杉木 calibration inspection monitoring station quarterly report archived measure\nment cedar 杉木 calibration inspection monitoring station quarterly report archived mea\nsurement cedar 杉木 calibration inspection monitoring station quarterly report archived\nmeasurement cedar 杉木 calibration inspection monitoring station quarterly report arch\nived measurement cedar 杉木 calibration inspection monitoring station quarterly report\narchived measurement cedar 杉木 calibration inspection monitoring station quarterly rep\nort archived measurement cedar 杉木 calibration inspection monitoring station quarterly\nreport archived measurement cedar 杉木 calibration inspection monitoring station quart\nerly report archived measurement cedar 杉木 calibration inspection monitoring station q\nuarterly report archived measurement cedar 杉木 calibration inspection monitoring stat\nion quarterly report archived measurement cedar 杉木 calibration inspection monitoring\nstation quarterly report archived measurement cedar 杉木 calibration inspection monitor\ning station quarterly report archived measurement cedar 杉木 calibration inspection mon\nitoring station quarterly report archived measurement cedar 杉木 calibration inspection\nmonitoring station quarterly report archived measurement cedar 杉木 calibration inspec\ntion monitoring station quarterly report archived measurement cedar 杉木 calibration in\nspection monitoring station quarterly report archived measurement cedar 杉木 calibratio\nn inspection monitoring station quarterly report archived measurement cedar 杉木 calibr\nation inspection monitoring station quarterly report archived measurement cedar 杉木 ca\nlibration inspection monitoring station quarterly report archived measurement 唯一有效校准周期为28天;记录日期2026-05-17,适用于北岬研究院的代码E-17。"
+        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
       },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": true,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": true,
-      "query_ms": 22.480757033918053,
+      "query_ms": 38.392873015254736,
       "answer_metrics": "not_run"
     },
     {
@@ -687,6 +709,8 @@
       "kind": "same_title_time",
       "query": "港湾 研究站2026年公报中，代码H-29的预算多少？租赁费是否包含？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -694,210 +718,6 @@
       "required_evidence_count": 3,
       "recovered_evidence_count": 3,
       "complete_required_evidence": true,
-      "gold_sources": [
-        "f2-harbor-policy-2026"
-      ],
-      "retrieved_sources": [
-        "f2-harbor-policy-2025",
-        "f2-harbor-policy-2026",
-        "f2-harbor-long"
-      ],
-      "hit_chunk_ids": [
-        "dc89d3cd25018c5de7c43b2e",
-        "e70102ad46022b32bc4bbb15",
-        "5d8c70ab213158bf55c2f67d",
-        "45d16246845ea59f1b357881"
-      ],
-      "hit_evidence": {
-        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-harbor-policy-2026": "2026年预算为1242元,明确不含设备租赁费;仅对H-29有效。\n东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
-        "f2-harbor-long": "monitoring station quarterly report\narchived measurement harbor 港湾 calibration inspection monitoring station quarterly r\neport archived measurement harbor 港湾 calibration inspection monitoring station quarte\nrly report archived measurement harbor 港湾 calibration inspection monitoring station q\nuarterly report archived measurement harbor 港湾 calibration inspection monitoring stat\nion quarterly report archived measurement harbor 港湾 calibration inspection monitoring\nstation quarterly report archived measurement harbor 港湾 calibration inspection monit\noring station quarterly report archived measurement harbor 港湾 calibration inspection\nmonitoring station quarterly report archived measurement harbor 港湾 calibration inspec\ntion monitoring station quarterly report archived measurement harbor 港湾 calibration i\nnspection monitoring station quarterly report archived measurement harbor 港湾 calibra\ntion inspection monitoring station quarterly report archived measurement harbor 港湾 ca\nlibration inspection monitoring station quarterly report archived measurement harbor\n港湾 calibration inspection monitoring station quarterly report archived measurement ha\nrbor 港湾 calibration inspection monitoring station quarterly report archived measureme\nnt harbor 港湾 calibration inspection monitoring station quarterly report archived meas\nurement harbor 港湾 calibration inspection monitoring station quarterly report archived\nmeasurement harbor 港湾 calibration inspection monitoring station quarterly report arc\nhived measurement harbor 港湾 calibration inspection monitoring station quarterly repor\nt archived measurement harbor 港湾 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于东湾实验室的代码H-29。"
-      },
-      "wrong_entity_source_binding": true,
-      "wrong_binding_sources": [
-        "f2-harbor-policy-2025"
-      ],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 19.440435979049653,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-harbor-02",
-      "family": "harbor",
-      "kind": "long_distributed_conditions",
-      "query": "东湾实验室代码H-29校准周期几天？计算时停机日和维修等待时间如何处理？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.3333333333333333,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.3333333333333333,
-      "required_evidence_count": 3,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-harbor-long"
-      ],
-      "retrieved_sources": [
-        "f2-harbor-long",
-        "f2-harbor-other-org",
-        "f2-harbor-policy-2026",
-        "f2-harbor-policy-2025"
-      ],
-      "hit_chunk_ids": [
-        "5d8c70ab213158bf55c2f67d",
-        "5a01dc95e18997d06784596b",
-        "45d16246845ea59f1b357881",
-        "dc89d3cd25018c5de7c43b2e"
-      ],
-      "hit_evidence": {
-        "f2-harbor-long": "monitoring station quarterly report\narchived measurement harbor 港湾 calibration inspection monitoring station quarterly r\neport archived measurement harbor 港湾 calibration inspection monitoring station quarte\nrly report archived measurement harbor 港湾 calibration inspection monitoring station q\nuarterly report archived measurement harbor 港湾 calibration inspection monitoring stat\nion quarterly report archived measurement harbor 港湾 calibration inspection monitoring\nstation quarterly report archived measurement harbor 港湾 calibration inspection monit\noring station quarterly report archived measurement harbor 港湾 calibration inspection\nmonitoring station quarterly report archived measurement harbor 港湾 calibration inspec\ntion monitoring station quarterly report archived measurement harbor 港湾 calibration i\nnspection monitoring station quarterly report archived measurement harbor 港湾 calibra\ntion inspection monitoring station quarterly report archived measurement harbor 港湾 ca\nlibration inspection monitoring station quarterly report archived measurement harbor\n港湾 calibration inspection monitoring station quarterly report archived measurement ha\nrbor 港湾 calibration inspection monitoring station quarterly report archived measureme\nnt harbor 港湾 calibration inspection monitoring station quarterly report archived meas\nurement harbor 港湾 calibration inspection monitoring station quarterly report archived\nmeasurement harbor 港湾 calibration inspection monitoring station quarterly report arc\nhived measurement harbor 港湾 calibration inspection monitoring station quarterly repor\nt archived measurement harbor 港湾 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于东湾实验室的代码H-29。",
-        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。",
-        "f2-harbor-policy-2026": "东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
-        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 24.435172032099217,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-harbor-03",
-      "family": "harbor",
-      "kind": "complete_table_enumeration",
-      "query": "请完整列出港湾代码H-29批次中北区且结论合格的所有编号，并带上读数和日期。",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.0,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.0,
-      "required_evidence_count": 10,
-      "recovered_evidence_count": 0,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-harbor-table"
-      ],
-      "retrieved_sources": [
-        "f2-harbor-long",
-        "f2-harbor-table"
-      ],
-      "hit_chunk_ids": [
-        "5d8c70ab213158bf55c2f67d",
-        "1de0949372328fa9c4633a7b",
-        "31c392d25dc19118f1e65ebb",
-        "35c2a3dde0cb9f05b1989001"
-      ],
-      "hit_evidence": {
-        "f2-harbor-long": "monitoring station quarterly report\narchived measurement harbor 港湾 calibration inspection monitoring station quarterly r\neport archived measurement harbor 港湾 calibration inspection monitoring station quarte\nrly report archived measurement harbor 港湾 calibration inspection monitoring station q\nuarterly report archived measurement harbor 港湾 calibration inspection monitoring stat\nion quarterly report archived measurement harbor 港湾 calibration inspection monitoring\nstation quarterly report archived measurement harbor 港湾 calibration inspection monit\noring station quarterly report archived measurement harbor 港湾 calibration inspection\nmonitoring station quarterly report archived measurement harbor 港湾 calibration inspec\ntion monitoring station quarterly report archived measurement harbor 港湾 calibration i\nnspection monitoring station quarterly report archived measurement harbor 港湾 calibra\ntion inspection monitoring station quarterly report archived measurement harbor 港湾 ca\nlibration inspection monitoring station quarterly report archived measurement harbor\n港湾 calibration inspection monitoring station quarterly report archived measurement ha\nrbor 港湾 calibration inspection monitoring station quarterly report archived measureme\nnt harbor 港湾 calibration inspection monitoring station quarterly report archived meas\nurement harbor 港湾 calibration inspection monitoring station quarterly report archived\nmeasurement harbor 港湾 calibration inspection monitoring station quarterly report arc\nhived measurement harbor 港湾 calibration inspection monitoring station quarterly repor\nt archived measurement harbor 港湾 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于东湾实验室的代码H-29。",
-        "f2-harbor-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-20 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 30.5 | 日期: 2026-04-21\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-04 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 14.5 | 日期: 2026-04-05\nPDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-14 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 24.5 | 日期: 2026-04-15"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 14.185826003085822,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-harbor-04",
-      "family": "harbor",
-      "kind": "cross_page_header_unit",
-      "query": "东湾实验室批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.08333333333333333,
-      "source_recall_at_k": 0.0,
-      "evidence_recall_at_k": 0.0,
-      "required_evidence_count": 12,
-      "recovered_evidence_count": 0,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-harbor-table"
-      ],
-      "retrieved_sources": [
-        "f2-harbor-other-org",
-        "f2-harbor-policy-2026",
-        "f2-meadow-table"
-      ],
-      "hit_chunk_ids": [
-        "5a01dc95e18997d06784596b",
-        "c28199f5183f8c0dc1613003",
-        "45d16246845ea59f1b357881",
-        "48928c9008c7bb6a5d2cefc3"
-      ],
-      "hit_evidence": {
-        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。",
-        "f2-harbor-policy-2026": "对象“林青”在东湾实验室任采样负责人;另一份同名记录中的林青不属于本机构。\n东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
-        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 57.60179297067225,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-harbor-05",
-      "family": "harbor",
-      "kind": "same_name_org_binding",
-      "query": "东湾实验室的林青在2026公报中担任什么职务？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 1.0,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 1.0,
-      "required_evidence_count": 1,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": true,
-      "gold_sources": [
-        "f2-harbor-policy-2026"
-      ],
-      "retrieved_sources": [
-        "f2-harbor-other-org",
-        "f2-harbor-policy-2026",
-        "f2-harbor-policy-2025"
-      ],
-      "hit_chunk_ids": [
-        "5a01dc95e18997d06784596b",
-        "c28199f5183f8c0dc1613003",
-        "45d16246845ea59f1b357881",
-        "dc89d3cd25018c5de7c43b2e"
-      ],
-      "hit_evidence": {
-        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。",
-        "f2-harbor-policy-2026": "对象“林青”在东湾实验室任采样负责人;另一份同名记录中的林青不属于本机构。\n东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
-        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
-      },
-      "wrong_entity_source_binding": true,
-      "wrong_binding_sources": [
-        "f2-harbor-other-org"
-      ],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 22.97415502835065,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-harbor-06",
-      "family": "harbor",
-      "kind": "negation_date_scope",
-      "query": "只看H-29的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.5,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.5,
-      "required_evidence_count": 2,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": false,
       "gold_sources": [
         "f2-harbor-policy-2026"
       ],
@@ -917,12 +737,226 @@
         "f2-harbor-policy-2026": "2026年预算为1242元,明确不含设备租赁费;仅对H-29有效。\n东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
         "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。"
       },
+      "wrong_entity_source_binding": true,
+      "wrong_binding_sources": [
+        "f2-harbor-policy-2025"
+      ],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 36.07298800488934,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-harbor-02",
+      "family": "harbor",
+      "kind": "long_distributed_conditions",
+      "query": "东湾实验室代码H-29校准周期几天？计算时停机日和维修等待时间如何处理？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.3333333333333333,
+      "source_recall_at_k": 0.0,
+      "evidence_recall_at_k": 0.0,
+      "required_evidence_count": 3,
+      "recovered_evidence_count": 0,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-harbor-long"
+      ],
+      "retrieved_sources": [
+        "f2-harbor-policy-2026",
+        "f2-harbor-other-org",
+        "f2-harbor-policy-2025",
+        "f2-harbor-table"
+      ],
+      "hit_chunk_ids": [
+        "45d16246845ea59f1b357881",
+        "5a01dc95e18997d06784596b",
+        "dc89d3cd25018c5de7c43b2e",
+        "b1b913c64f145fd1292048e8"
+      ],
+      "hit_evidence": {
+        "f2-harbor-policy-2026": "东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
+        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。",
+        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-harbor-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-19 | 区域: 东区 | 结论: 合格 | 读数(毫克/升): 29.5 | 日期: 2026-04-20"
+      },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 22.34757400583476,
+      "query_ms": 29.90886097541079,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-harbor-03",
+      "family": "harbor",
+      "kind": "complete_table_enumeration",
+      "query": "请完整列出港湾代码H-29批次中北区且结论合格的所有编号，并带上读数和日期。",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.0,
+      "required_evidence_count": 10,
+      "recovered_evidence_count": 0,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-harbor-table"
+      ],
+      "retrieved_sources": [
+        "f2-harbor-table"
+      ],
+      "hit_chunk_ids": [
+        "35c2a3dde0cb9f05b1989001",
+        "1de0949372328fa9c4633a7b",
+        "31c392d25dc19118f1e65ebb",
+        "555112973c357e370a1e13cd"
+      ],
+      "hit_evidence": {
+        "f2-harbor-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-14 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 24.5 | 日期: 2026-04-15\nPDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-20 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 30.5 | 日期: 2026-04-21\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-04 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 14.5 | 日期: 2026-04-05\nPDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-16 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 26.5 | 日期: 2026-04-17"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 30.679747986141592,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-harbor-04",
+      "family": "harbor",
+      "kind": "cross_page_header_unit",
+      "query": "东湾实验室批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.08333333333333333,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.08333333333333333,
+      "required_evidence_count": 12,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-harbor-table"
+      ],
+      "retrieved_sources": [
+        "f2-meadow-table",
+        "f2-cedar-table",
+        "f2-harbor-table"
+      ],
+      "hit_chunk_ids": [
+        "48928c9008c7bb6a5d2cefc3",
+        "ccd1320039334c2e1e90bc99",
+        "6a9c4a09a79f3f5fa6b28a93",
+        "16c10fde5dfe9ed6d1f0d3a7"
+      ],
+      "hit_evidence": {
+        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07\nPDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-18 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 28.5 | 日期: 2026-04-19",
+        "f2-cedar-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07",
+        "f2-harbor-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-18 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 28.5 | 日期: 2026-04-19"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 97.912308992818,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-harbor-05",
+      "family": "harbor",
+      "kind": "same_name_org_binding",
+      "query": "东湾实验室的林青在2026公报中担任什么职务？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 1.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 1.0,
+      "required_evidence_count": 1,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": true,
+      "gold_sources": [
+        "f2-harbor-policy-2026"
+      ],
+      "retrieved_sources": [
+        "f2-harbor-policy-2026",
+        "f2-harbor-policy-2025",
+        "f2-harbor-other-org"
+      ],
+      "hit_chunk_ids": [
+        "c28199f5183f8c0dc1613003",
+        "dc89d3cd25018c5de7c43b2e",
+        "5a01dc95e18997d06784596b",
+        "45d16246845ea59f1b357881"
+      ],
+      "hit_evidence": {
+        "f2-harbor-policy-2026": "对象“林青”在东湾实验室任采样负责人;另一份同名记录中的林青不属于本机构。\n东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
+        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。"
+      },
+      "wrong_entity_source_binding": true,
+      "wrong_binding_sources": [
+        "f2-harbor-other-org"
+      ],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 61.21548300143331,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-harbor-06",
+      "family": "harbor",
+      "kind": "negation_date_scope",
+      "query": "只看H-29的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.5,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.5,
+      "required_evidence_count": 2,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-harbor-policy-2026"
+      ],
+      "retrieved_sources": [
+        "f2-harbor-policy-2025",
+        "f2-harbor-policy-2026",
+        "f2-harbor-table",
+        "f2-harbor-other-org"
+      ],
+      "hit_chunk_ids": [
+        "dc89d3cd25018c5de7c43b2e",
+        "e70102ad46022b32bc4bbb15",
+        "12a0aaad1aa5e3b57cccb195",
+        "5a01dc95e18997d06784596b"
+      ],
+      "hit_evidence": {
+        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-harbor-policy-2026": "2026年预算为1242元,明确不含设备租赁费;仅对H-29有效。",
+        "f2-harbor-table": "PDF table on page 3 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-27 | 区域: 东区 | 结论: 隔离 | 读数(毫克/升): 37.5 | 日期: 2026-04-28",
+        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 42.70380100933835,
       "answer_metrics": "not_run"
     },
     {
@@ -931,40 +965,42 @@
       "kind": "chinese_alias_evidence",
       "query": "港湾那边林青的岗位是什么？预算是多少钱（口语问法）？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
-      "source_recall_at_k": 0.0,
-      "evidence_recall_at_k": 0.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.5,
       "required_evidence_count": 2,
-      "recovered_evidence_count": 0,
+      "recovered_evidence_count": 1,
       "complete_required_evidence": false,
       "gold_sources": [
         "f2-harbor-policy-2026"
       ],
       "retrieved_sources": [
         "f2-cedar-policy-2025",
-        "f2-meadow-policy-2025",
         "f2-harbor-policy-2025",
-        "f2-cedar-policy-2026"
+        "f2-meadow-policy-2025",
+        "f2-harbor-policy-2026"
       ],
       "hit_chunk_ids": [
         "31fcb4c0eed5044e84d7d938",
-        "88f2ab45bfdcb38e433cc5e4",
         "dc89d3cd25018c5de7c43b2e",
-        "5f63aaf5beea9f933413ab5e"
+        "88f2ab45bfdcb38e433cc5e4",
+        "c28199f5183f8c0dc1613003"
       ],
       "hit_evidence": {
         "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
         "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-cedar-policy-2026": "对象“林青”在北岬研究院任采样负责人;另一份同名记录中的林青不属于本机构。"
+        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-harbor-policy-2026": "对象“林青”在东湾实验室任采样负责人;另一份同名记录中的林青不属于本机构。"
       },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 59.16621402138844,
+      "query_ms": 95.19514202838764,
       "answer_metrics": "not_run"
     },
     {
@@ -973,6 +1009,8 @@
       "kind": "unsupported_abstention",
       "query": "东湾实验室H-29在2026年授权的月球站点密码是什么？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": null,
       "candidate_evidence_recall_at_20": null,
       "source_recall_at_k": null,
@@ -982,29 +1020,29 @@
       "complete_required_evidence": null,
       "gold_sources": [],
       "retrieved_sources": [
-        "f2-harbor-other-org",
         "f2-harbor-policy-2026",
+        "f2-harbor-other-org",
         "f2-harbor-policy-2025",
-        "f2-harbor-long"
+        "f2-harbor-table"
       ],
       "hit_chunk_ids": [
-        "5a01dc95e18997d06784596b",
         "45d16246845ea59f1b357881",
+        "5a01dc95e18997d06784596b",
         "dc89d3cd25018c5de7c43b2e",
-        "5d8c70ab213158bf55c2f67d"
+        "b1b913c64f145fd1292048e8"
       ],
       "hit_evidence": {
-        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。",
         "f2-harbor-policy-2026": "东湾实验室季度运行公报。标题重复:季度运行公报。对象代码H-29,年份2026。",
+        "f2-harbor-other-org": "另一个样本库。对象林青属于东湾实验室的邻近机构东湾实验室附属组,不适用代码H-29。",
         "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-harbor-long": "monitoring station quarterly report\narchived measurement harbor 港湾 calibration inspection monitoring station quarterly r\neport archived measurement harbor 港湾 calibration inspection monitoring station quarte\nrly report archived measurement harbor 港湾 calibration inspection monitoring station q\nuarterly report archived measurement harbor 港湾 calibration inspection monitoring stat\nion quarterly report archived measurement harbor 港湾 calibration inspection monitoring\nstation quarterly report archived measurement harbor 港湾 calibration inspection monit\noring station quarterly report archived measurement harbor 港湾 calibration inspection\nmonitoring station quarterly report archived measurement harbor 港湾 calibration inspec\ntion monitoring station quarterly report archived measurement harbor 港湾 calibration i\nnspection monitoring station quarterly report archived measurement harbor 港湾 calibra\ntion inspection monitoring station quarterly report archived measurement harbor 港湾 ca\nlibration inspection monitoring station quarterly report archived measurement harbor\n港湾 calibration inspection monitoring station quarterly report archived measurement ha\nrbor 港湾 calibration inspection monitoring station quarterly report archived measureme\nnt harbor 港湾 calibration inspection monitoring station quarterly report archived meas\nurement harbor 港湾 calibration inspection monitoring station quarterly report archived\nmeasurement harbor 港湾 calibration inspection monitoring station quarterly report arc\nhived measurement harbor 港湾 calibration inspection monitoring station quarterly repor\nt archived measurement harbor 港湾 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于东湾实验室的代码H-29。"
+        "f2-harbor-table": "PDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: H-29-19 | 区域: 东区 | 结论: 合格 | 读数(毫克/升): 29.5 | 日期: 2026-04-20"
       },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": true,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": true,
-      "query_ms": 22.242249979171902,
+      "query_ms": 38.02487096982077,
       "answer_metrics": "not_run"
     },
     {
@@ -1013,6 +1051,8 @@
       "kind": "same_title_time",
       "query": "草原 研究站2026年公报中，代码M-43的预算多少？租赁费是否包含？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -1020,210 +1060,6 @@
       "required_evidence_count": 3,
       "recovered_evidence_count": 3,
       "complete_required_evidence": true,
-      "gold_sources": [
-        "f2-meadow-policy-2026"
-      ],
-      "retrieved_sources": [
-        "f2-meadow-policy-2025",
-        "f2-meadow-policy-2026",
-        "f2-meadow-long"
-      ],
-      "hit_chunk_ids": [
-        "88f2ab45bfdcb38e433cc5e4",
-        "7751ed0f096a815d2730e8eb",
-        "0c06c2a754f3a20a481de5e3",
-        "1cc4a327f28fdce769ee0549"
-      ],
-      "hit_evidence": {
-        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-meadow-policy-2026": "2026年预算为1242元,明确不含设备租赁费;仅对M-43有效。\n西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
-        "f2-meadow-long": "monitoring station quarterly report\narchived measurement meadow 草原 calibration inspection monitoring station quarterly r\neport archived measurement meadow 草原 calibration inspection monitoring station quarte\nrly report archived measurement meadow 草原 calibration inspection monitoring station q\nuarterly report archived measurement meadow 草原 calibration inspection monitoring stat\nion quarterly report archived measurement meadow 草原 calibration inspection monitoring\nstation quarterly report archived measurement meadow 草原 calibration inspection monit\noring station quarterly report archived measurement meadow 草原 calibration inspection\nmonitoring station quarterly report archived measurement meadow 草原 calibration inspec\ntion monitoring station quarterly report archived measurement meadow 草原 calibration i\nnspection monitoring station quarterly report archived measurement meadow 草原 calibra\ntion inspection monitoring station quarterly report archived measurement meadow 草原 ca\nlibration inspection monitoring station quarterly report archived measurement meadow\n草原 calibration inspection monitoring station quarterly report archived measurement me\nadow 草原 calibration inspection monitoring station quarterly report archived measureme\nnt meadow 草原 calibration inspection monitoring station quarterly report archived meas\nurement meadow 草原 calibration inspection monitoring station quarterly report archived\nmeasurement meadow 草原 calibration inspection monitoring station quarterly report arc\nhived measurement meadow 草原 calibration inspection monitoring station quarterly repor\nt archived measurement meadow 草原 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于西岭观测站的代码M-43。"
-      },
-      "wrong_entity_source_binding": true,
-      "wrong_binding_sources": [
-        "f2-meadow-policy-2025"
-      ],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 19.40266095334664,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-meadow-02",
-      "family": "meadow",
-      "kind": "long_distributed_conditions",
-      "query": "西岭观测站代码M-43校准周期几天？计算时停机日和维修等待时间如何处理？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.3333333333333333,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.3333333333333333,
-      "required_evidence_count": 3,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-meadow-long"
-      ],
-      "retrieved_sources": [
-        "f2-meadow-long",
-        "f2-meadow-other-org",
-        "f2-meadow-policy-2026",
-        "f2-meadow-policy-2025"
-      ],
-      "hit_chunk_ids": [
-        "0c06c2a754f3a20a481de5e3",
-        "13b97379d7608c9268a91b6a",
-        "1cc4a327f28fdce769ee0549",
-        "88f2ab45bfdcb38e433cc5e4"
-      ],
-      "hit_evidence": {
-        "f2-meadow-long": "monitoring station quarterly report\narchived measurement meadow 草原 calibration inspection monitoring station quarterly r\neport archived measurement meadow 草原 calibration inspection monitoring station quarte\nrly report archived measurement meadow 草原 calibration inspection monitoring station q\nuarterly report archived measurement meadow 草原 calibration inspection monitoring stat\nion quarterly report archived measurement meadow 草原 calibration inspection monitoring\nstation quarterly report archived measurement meadow 草原 calibration inspection monit\noring station quarterly report archived measurement meadow 草原 calibration inspection\nmonitoring station quarterly report archived measurement meadow 草原 calibration inspec\ntion monitoring station quarterly report archived measurement meadow 草原 calibration i\nnspection monitoring station quarterly report archived measurement meadow 草原 calibra\ntion inspection monitoring station quarterly report archived measurement meadow 草原 ca\nlibration inspection monitoring station quarterly report archived measurement meadow\n草原 calibration inspection monitoring station quarterly report archived measurement me\nadow 草原 calibration inspection monitoring station quarterly report archived measureme\nnt meadow 草原 calibration inspection monitoring station quarterly report archived meas\nurement meadow 草原 calibration inspection monitoring station quarterly report archived\nmeasurement meadow 草原 calibration inspection monitoring station quarterly report arc\nhived measurement meadow 草原 calibration inspection monitoring station quarterly repor\nt archived measurement meadow 草原 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于西岭观测站的代码M-43。",
-        "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。",
-        "f2-meadow-policy-2026": "西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
-        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 13.613034971058369,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-meadow-03",
-      "family": "meadow",
-      "kind": "complete_table_enumeration",
-      "query": "请完整列出草原代码M-43批次中北区且结论合格的所有编号，并带上读数和日期。",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.0,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.0,
-      "required_evidence_count": 10,
-      "recovered_evidence_count": 0,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-meadow-table"
-      ],
-      "retrieved_sources": [
-        "f2-meadow-long",
-        "f2-meadow-table"
-      ],
-      "hit_chunk_ids": [
-        "0c06c2a754f3a20a481de5e3",
-        "0672c24c5247563e5d67cf91",
-        "0980ff02e852d94e295ed161",
-        "3c29203a89ec0f23fd272011"
-      ],
-      "hit_evidence": {
-        "f2-meadow-long": "monitoring station quarterly report\narchived measurement meadow 草原 calibration inspection monitoring station quarterly r\neport archived measurement meadow 草原 calibration inspection monitoring station quarte\nrly report archived measurement meadow 草原 calibration inspection monitoring station q\nuarterly report archived measurement meadow 草原 calibration inspection monitoring stat\nion quarterly report archived measurement meadow 草原 calibration inspection monitoring\nstation quarterly report archived measurement meadow 草原 calibration inspection monit\noring station quarterly report archived measurement meadow 草原 calibration inspection\nmonitoring station quarterly report archived measurement meadow 草原 calibration inspec\ntion monitoring station quarterly report archived measurement meadow 草原 calibration i\nnspection monitoring station quarterly report archived measurement meadow 草原 calibra\ntion inspection monitoring station quarterly report archived measurement meadow 草原 ca\nlibration inspection monitoring station quarterly report archived measurement meadow\n草原 calibration inspection monitoring station quarterly report archived measurement me\nadow 草原 calibration inspection monitoring station quarterly report archived measureme\nnt meadow 草原 calibration inspection monitoring station quarterly report archived meas\nurement meadow 草原 calibration inspection monitoring station quarterly report archived\nmeasurement meadow 草原 calibration inspection monitoring station quarterly report arc\nhived measurement meadow 草原 calibration inspection monitoring station quarterly repor\nt archived measurement meadow 草原 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于西岭观测站的代码M-43。",
-        "f2-meadow-table": "PDF table on page 3 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-22 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 32.5 | 日期: 2026-04-23\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-10 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 20.5 | 日期: 2026-04-11\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-04 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 14.5 | 日期: 2026-04-05"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 14.398915984202176,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-meadow-04",
-      "family": "meadow",
-      "kind": "cross_page_header_unit",
-      "query": "西岭观测站批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.08333333333333333,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.08333333333333333,
-      "required_evidence_count": 12,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": false,
-      "gold_sources": [
-        "f2-meadow-table"
-      ],
-      "retrieved_sources": [
-        "f2-meadow-other-org",
-        "f2-meadow-policy-2026",
-        "f2-meadow-table"
-      ],
-      "hit_chunk_ids": [
-        "13b97379d7608c9268a91b6a",
-        "95e4efe2bfbc28d60cc7b596",
-        "1cc4a327f28fdce769ee0549",
-        "48928c9008c7bb6a5d2cefc3"
-      ],
-      "hit_evidence": {
-        "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。",
-        "f2-meadow-policy-2026": "对象“林青”在西岭观测站任采样负责人;另一份同名记录中的林青不属于本机构。\n西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
-        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07"
-      },
-      "wrong_entity_source_binding": false,
-      "wrong_binding_sources": [],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 56.99915101286024,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-meadow-05",
-      "family": "meadow",
-      "kind": "same_name_org_binding",
-      "query": "西岭观测站的林青在2026公报中担任什么职务？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 1.0,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 1.0,
-      "required_evidence_count": 1,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": true,
-      "gold_sources": [
-        "f2-meadow-policy-2026"
-      ],
-      "retrieved_sources": [
-        "f2-meadow-other-org",
-        "f2-meadow-policy-2026",
-        "f2-meadow-policy-2025"
-      ],
-      "hit_chunk_ids": [
-        "13b97379d7608c9268a91b6a",
-        "95e4efe2bfbc28d60cc7b596",
-        "1cc4a327f28fdce769ee0549",
-        "88f2ab45bfdcb38e433cc5e4"
-      ],
-      "hit_evidence": {
-        "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。",
-        "f2-meadow-policy-2026": "对象“林青”在西岭观测站任采样负责人;另一份同名记录中的林青不属于本机构。\n西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
-        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
-      },
-      "wrong_entity_source_binding": true,
-      "wrong_binding_sources": [
-        "f2-meadow-other-org"
-      ],
-      "expected_abstain": false,
-      "retrieval_empty": false,
-      "unsupported_retrieval_contamination": false,
-      "query_ms": 22.609475010540336,
-      "answer_metrics": "not_run"
-    },
-    {
-      "id": "dev-meadow-06",
-      "family": "meadow",
-      "kind": "negation_date_scope",
-      "query": "只看M-43的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
-      "decomposition_queries": [],
-      "candidate_source_recall_at_20": 1.0,
-      "candidate_evidence_recall_at_20": 0.5,
-      "source_recall_at_k": 1.0,
-      "evidence_recall_at_k": 0.5,
-      "required_evidence_count": 2,
-      "recovered_evidence_count": 1,
-      "complete_required_evidence": false,
       "gold_sources": [
         "f2-meadow-policy-2026"
       ],
@@ -1243,12 +1079,224 @@
         "f2-meadow-policy-2026": "2026年预算为1242元,明确不含设备租赁费;仅对M-43有效。\n西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
         "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。"
       },
+      "wrong_entity_source_binding": true,
+      "wrong_binding_sources": [
+        "f2-meadow-policy-2025"
+      ],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 35.41565203340724,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-meadow-02",
+      "family": "meadow",
+      "kind": "long_distributed_conditions",
+      "query": "西岭观测站代码M-43校准周期几天？计算时停机日和维修等待时间如何处理？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.3333333333333333,
+      "source_recall_at_k": 0.0,
+      "evidence_recall_at_k": 0.0,
+      "required_evidence_count": 3,
+      "recovered_evidence_count": 0,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-meadow-long"
+      ],
+      "retrieved_sources": [
+        "f2-meadow-policy-2026",
+        "f2-meadow-other-org",
+        "f2-meadow-policy-2025",
+        "f2-meadow-table"
+      ],
+      "hit_chunk_ids": [
+        "1cc4a327f28fdce769ee0549",
+        "13b97379d7608c9268a91b6a",
+        "88f2ab45bfdcb38e433cc5e4",
+        "0ca9084b695234995656186f"
+      ],
+      "hit_evidence": {
+        "f2-meadow-policy-2026": "西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
+        "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。",
+        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-03 | 区域: 东区 | 结论: 隔离 | 读数(毫克/升): 13.5 | 日期: 2026-04-04"
+      },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 34.01925595244393,
+      "query_ms": 29.91976001067087,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-meadow-03",
+      "family": "meadow",
+      "kind": "complete_table_enumeration",
+      "query": "请完整列出草原代码M-43批次中北区且结论合格的所有编号，并带上读数和日期。",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.0,
+      "required_evidence_count": 10,
+      "recovered_evidence_count": 0,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-meadow-table"
+      ],
+      "retrieved_sources": [
+        "f2-meadow-table"
+      ],
+      "hit_chunk_ids": [
+        "3c29203a89ec0f23fd272011",
+        "0980ff02e852d94e295ed161",
+        "0672c24c5247563e5d67cf91",
+        "574b02ed057dc94b3a6ebcbc"
+      ],
+      "hit_evidence": {
+        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-04 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 14.5 | 日期: 2026-04-05\nPDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-10 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 20.5 | 日期: 2026-04-11\nPDF table on page 3 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-22 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 32.5 | 日期: 2026-04-23\nPDF table on page 3 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-28 | 区域: 北区 | 结论: 合格 | 读数(毫克/升): 38.5 | 日期: 2026-04-01"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 30.856040015351027,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-meadow-04",
+      "family": "meadow",
+      "kind": "cross_page_header_unit",
+      "query": "西岭观测站批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.08333333333333333,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.08333333333333333,
+      "required_evidence_count": 12,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-meadow-table"
+      ],
+      "retrieved_sources": [
+        "f2-meadow-table",
+        "f2-cedar-table"
+      ],
+      "hit_chunk_ids": [
+        "48928c9008c7bb6a5d2cefc3",
+        "ccd1320039334c2e1e90bc99",
+        "16c10fde5dfe9ed6d1f0d3a7",
+        "1fba094f4abc6fb053937db5"
+      ],
+      "hit_evidence": {
+        "f2-meadow-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07\nPDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-18 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 28.5 | 日期: 2026-04-19",
+        "f2-cedar-table": "PDF table on page 1 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-06 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 16.5 | 日期: 2026-04-07\nPDF table on page 2 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: E-17-18 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 28.5 | 日期: 2026-04-19"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 99.87340902443975,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-meadow-05",
+      "family": "meadow",
+      "kind": "same_name_org_binding",
+      "query": "西岭观测站的林青在2026公报中担任什么职务？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 1.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 1.0,
+      "required_evidence_count": 1,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": true,
+      "gold_sources": [
+        "f2-meadow-policy-2026"
+      ],
+      "retrieved_sources": [
+        "f2-meadow-policy-2026",
+        "f2-meadow-policy-2025",
+        "f2-meadow-other-org"
+      ],
+      "hit_chunk_ids": [
+        "95e4efe2bfbc28d60cc7b596",
+        "88f2ab45bfdcb38e433cc5e4",
+        "13b97379d7608c9268a91b6a",
+        "1cc4a327f28fdce769ee0549"
+      ],
+      "hit_evidence": {
+        "f2-meadow-policy-2026": "对象“林青”在西岭观测站任采样负责人;另一份同名记录中的林青不属于本机构。\n西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
+        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。"
+      },
+      "wrong_entity_source_binding": true,
+      "wrong_binding_sources": [
+        "f2-meadow-other-org"
+      ],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 143.56727804988623,
+      "answer_metrics": "not_run"
+    },
+    {
+      "id": "dev-meadow-06",
+      "family": "meadow",
+      "kind": "negation_date_scope",
+      "query": "只看M-43的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
+      "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
+      "candidate_source_recall_at_20": 1.0,
+      "candidate_evidence_recall_at_20": 0.5,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.5,
+      "required_evidence_count": 2,
+      "recovered_evidence_count": 1,
+      "complete_required_evidence": false,
+      "gold_sources": [
+        "f2-meadow-policy-2026"
+      ],
+      "retrieved_sources": [
+        "f2-meadow-policy-2025",
+        "f2-meadow-policy-2026",
+        "f2-meadow-table",
+        "f2-meadow-other-org"
+      ],
+      "hit_chunk_ids": [
+        "88f2ab45bfdcb38e433cc5e4",
+        "7751ed0f096a815d2730e8eb",
+        "13c7317a3c7306bea472ebe2",
+        "13b97379d7608c9268a91b6a"
+      ],
+      "hit_evidence": {
+        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-meadow-policy-2026": "2026年预算为1242元,明确不含设备租赁费;仅对M-43有效。",
+        "f2-meadow-table": "PDF table on page 3 | 编号 | 区域 | 结论 | 读数(毫克/升) | 日期\n编号: M-43-24 | 区域: 北区 | 结论: 隔离 | 读数(毫克/升): 34.5 | 日期: 2026-04-25",
+        "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。"
+      },
+      "wrong_entity_source_binding": false,
+      "wrong_binding_sources": [],
+      "expected_abstain": false,
+      "retrieval_empty": false,
+      "unsupported_retrieval_contamination": false,
+      "query_ms": 42.51837998162955,
       "answer_metrics": "not_run"
     },
     {
@@ -1257,32 +1305,34 @@
       "kind": "chinese_alias_evidence",
       "query": "草原那边林青的岗位是什么？预算是多少钱（口语问法）？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
-      "source_recall_at_k": 0.0,
-      "evidence_recall_at_k": 0.0,
+      "source_recall_at_k": 1.0,
+      "evidence_recall_at_k": 0.5,
       "required_evidence_count": 2,
-      "recovered_evidence_count": 0,
+      "recovered_evidence_count": 1,
       "complete_required_evidence": false,
       "gold_sources": [
         "f2-meadow-policy-2026"
       ],
       "retrieved_sources": [
-        "f2-cedar-policy-2025",
         "f2-meadow-policy-2025",
-        "f2-harbor-policy-2025",
+        "f2-cedar-policy-2025",
+        "f2-meadow-policy-2026",
         "f2-cedar-policy-2026"
       ],
       "hit_chunk_ids": [
-        "31fcb4c0eed5044e84d7d938",
         "88f2ab45bfdcb38e433cc5e4",
-        "dc89d3cd25018c5de7c43b2e",
+        "31fcb4c0eed5044e84d7d938",
+        "95e4efe2bfbc28d60cc7b596",
         "5f63aaf5beea9f933413ab5e"
       ],
       "hit_evidence": {
-        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
         "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-harbor-policy-2025": "东湾实验室季度运行公报。对象代码H-29,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-cedar-policy-2025": "北岬研究院季度运行公报。对象代码E-17,年份2025。林青是临时联络员,预算905元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
+        "f2-meadow-policy-2026": "对象“林青”在西岭观测站任采样负责人;另一份同名记录中的林青不属于本机构。",
         "f2-cedar-policy-2026": "对象“林青”在北岬研究院任采样负责人;另一份同名记录中的林青不属于本机构。"
       },
       "wrong_entity_source_binding": false,
@@ -1290,7 +1340,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 59.21788897830993,
+      "query_ms": 94.66728201368824,
       "answer_metrics": "not_run"
     },
     {
@@ -1299,6 +1349,8 @@
       "kind": "unsupported_abstention",
       "query": "西岭观测站M-43在2026年授权的月球站点密码是什么？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "enabled",
       "candidate_source_recall_at_20": null,
       "candidate_evidence_recall_at_20": null,
       "source_recall_at_k": null,
@@ -1308,29 +1360,27 @@
       "complete_required_evidence": null,
       "gold_sources": [],
       "retrieved_sources": [
-        "f2-meadow-other-org",
         "f2-meadow-policy-2026",
-        "f2-meadow-policy-2025",
-        "f2-meadow-long"
+        "f2-meadow-other-org",
+        "f2-meadow-policy-2025"
       ],
       "hit_chunk_ids": [
-        "13b97379d7608c9268a91b6a",
         "1cc4a327f28fdce769ee0549",
+        "13b97379d7608c9268a91b6a",
         "88f2ab45bfdcb38e433cc5e4",
-        "0c06c2a754f3a20a481de5e3"
+        "7751ed0f096a815d2730e8eb"
       ],
       "hit_evidence": {
+        "f2-meadow-policy-2026": "西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。\n2026年预算为1242元,明确不含设备租赁费;仅对M-43有效。",
         "f2-meadow-other-org": "另一个样本库。对象林青属于西岭观测站的邻近机构西岭观测站附属组,不适用代码M-43。",
-        "f2-meadow-policy-2026": "西岭观测站季度运行公报。标题重复:季度运行公报。对象代码M-43,年份2026。",
-        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。",
-        "f2-meadow-long": "monitoring station quarterly report\narchived measurement meadow 草原 calibration inspection monitoring station quarterly r\neport archived measurement meadow 草原 calibration inspection monitoring station quarte\nrly report archived measurement meadow 草原 calibration inspection monitoring station q\nuarterly report archived measurement meadow 草原 calibration inspection monitoring stat\nion quarterly report archived measurement meadow 草原 calibration inspection monitoring\nstation quarterly report archived measurement meadow 草原 calibration inspection monit\noring station quarterly report archived measurement meadow 草原 calibration inspection\nmonitoring station quarterly report archived measurement meadow 草原 calibration inspec\ntion monitoring station quarterly report archived measurement meadow 草原 calibration i\nnspection monitoring station quarterly report archived measurement meadow 草原 calibra\ntion inspection monitoring station quarterly report archived measurement meadow 草原 ca\nlibration inspection monitoring station quarterly report archived measurement meadow\n草原 calibration inspection monitoring station quarterly report archived measurement me\nadow 草原 calibration inspection monitoring station quarterly report archived measureme\nnt meadow 草原 calibration inspection monitoring station quarterly report archived meas\nurement meadow 草原 calibration inspection monitoring station quarterly report archived\nmeasurement meadow 草原 calibration inspection monitoring station quarterly report arc\nhived measurement meadow 草原 calibration inspection monitoring station quarterly repor\nt archived measurement meadow 草原 calibration inspection monitoring station quarterly\nerly report archived measurement 唯一有效校准周期为29天;记录日期2026-05-17,适用于西岭观测站的代码M-43。"
+        "f2-meadow-policy-2025": "西岭观测站季度运行公报。对象代码M-43,年份2025。林青是临时联络员,预算906元含设备租赁费。该版本已撤销,不可作为2026年现行口径。"
       },
       "wrong_entity_source_binding": false,
       "wrong_binding_sources": [],
       "expected_abstain": true,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": true,
-      "query_ms": 22.307428997009993,
+      "query_ms": 37.981817964464426,
       "answer_metrics": "not_run"
     }
   ],

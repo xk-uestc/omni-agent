@@ -3,7 +3,7 @@
     "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
     "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
     "sqlite": "3.45.1",
-    "head": "eec0d464c4ff5da3ec0f2790bb272f6a3def72bc"
+    "head": "cc1ba471aebe50a248f0780217db5748405456f1"
   },
   "split": "dev",
   "mode": "bm25",
@@ -331,8 +331,16 @@
     "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
   },
   "input_manifest_sha256": "10d41e4034cadd38d3f36dae352d42568af03faf68be498960e825223258a634",
-  "scorer_sha256": "5660764f901164ba22157a40a3646c4287d8f9c4471033bd231bf870d5511135",
+  "scorer_sha256": "389e819b46a6e8f3c19362d31ecdb46e5b56b891a3bddfbfb41b5c3a5ec1e3f1",
   "dense_status": "not_configured",
+  "runtime_versions": {
+    "torch": "2.14.1+cu130",
+    "transformers": "5.19.0",
+    "safetensors": "0.8.0"
+  },
+  "dense_query_language_counts": {
+    "zh_or_mixed": 24
+  },
   "query_policy": "at most original plus two deterministic clauses; exact identifier/year anchors preserved",
   "query_budget": {
     "max_queries_per_task": 3,
@@ -349,8 +357,8 @@
     "complete_required_evidence": 6,
     "wrong_entity_source_binding": 6,
     "unsupported_retrieval_contamination": 3,
-    "query_p50_ms": 22.522985993418843,
-    "query_p95_ms": 61.891215038485825,
+    "query_p50_ms": 22.861117031425238,
+    "query_p95_ms": 59.70004800474271,
     "dense_status": "not_configured",
     "answer_metrics": "not_run"
   },
@@ -361,6 +369,8 @@
       "kind": "same_title_time",
       "query": "杉木 研究站2026年公报中，代码E-17的预算多少？租赁费是否包含？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -394,7 +404,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 37.51617902889848,
+      "query_ms": 39.27506896434352,
       "answer_metrics": "not_run"
     },
     {
@@ -403,6 +413,8 @@
       "kind": "long_distributed_conditions",
       "query": "北岬研究院代码E-17校准周期几天？计算时停机日和维修等待时间如何处理？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.3333333333333333,
       "source_recall_at_k": 1.0,
@@ -436,7 +448,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 14.017548004630953,
+      "query_ms": 14.250860025640577,
       "answer_metrics": "not_run"
     },
     {
@@ -445,6 +457,8 @@
       "kind": "complete_table_enumeration",
       "query": "请完整列出杉木代码E-17批次中北区且结论合格的所有编号，并带上读数和日期。",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.0,
       "source_recall_at_k": 1.0,
@@ -474,7 +488,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 14.549568004440516,
+      "query_ms": 14.512830006424338,
       "answer_metrics": "not_run"
     },
     {
@@ -483,6 +497,8 @@
       "kind": "cross_page_header_unit",
       "query": "北岬研究院批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.08333333333333333,
       "source_recall_at_k": 0.0,
@@ -514,7 +530,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 96.00246301852167,
+      "query_ms": 97.65719599090517,
       "answer_metrics": "not_run"
     },
     {
@@ -523,6 +539,8 @@
       "kind": "same_name_org_binding",
       "query": "北岬研究院的林青在2026公报中担任什么职务？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -556,7 +574,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 22.76774897472933,
+      "query_ms": 23.559294000733644,
       "answer_metrics": "not_run"
     },
     {
@@ -565,6 +583,8 @@
       "kind": "negation_date_scope",
       "query": "只看E-17的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.5,
       "source_recall_at_k": 1.0,
@@ -596,7 +616,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 22.18743896810338,
+      "query_ms": 22.737066028639674,
       "answer_metrics": "not_run"
     },
     {
@@ -605,6 +625,8 @@
       "kind": "chinese_alias_evidence",
       "query": "杉木那边林青的岗位是什么？预算是多少钱（口语问法）？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -638,7 +660,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 58.251398033462465,
+      "query_ms": 59.70004800474271,
       "answer_metrics": "not_run"
     },
     {
@@ -647,6 +669,8 @@
       "kind": "unsupported_abstention",
       "query": "北岬研究院E-17在2026年授权的月球站点密码是什么？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": null,
       "candidate_evidence_recall_at_20": null,
       "source_recall_at_k": null,
@@ -678,7 +702,7 @@
       "expected_abstain": true,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": true,
-      "query_ms": 22.017770970705897,
+      "query_ms": 23.078708967659622,
       "answer_metrics": "not_run"
     },
     {
@@ -687,6 +711,8 @@
       "kind": "same_title_time",
       "query": "港湾 研究站2026年公报中，代码H-29的预算多少？租赁费是否包含？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -720,7 +746,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 18.78773100906983,
+      "query_ms": 20.098499953746796,
       "answer_metrics": "not_run"
     },
     {
@@ -729,6 +755,8 @@
       "kind": "long_distributed_conditions",
       "query": "东湾实验室代码H-29校准周期几天？计算时停机日和维修等待时间如何处理？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.3333333333333333,
       "source_recall_at_k": 1.0,
@@ -762,7 +790,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 26.039707008749247,
+      "query_ms": 25.940926978364587,
       "answer_metrics": "not_run"
     },
     {
@@ -771,6 +799,8 @@
       "kind": "complete_table_enumeration",
       "query": "请完整列出港湾代码H-29批次中北区且结论合格的所有编号，并带上读数和日期。",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.0,
       "source_recall_at_k": 1.0,
@@ -800,7 +830,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 14.140307030174881,
+      "query_ms": 14.301983057521284,
       "answer_metrics": "not_run"
     },
     {
@@ -809,6 +839,8 @@
       "kind": "cross_page_header_unit",
       "query": "东湾实验室批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.08333333333333333,
       "source_recall_at_k": 0.0,
@@ -840,7 +872,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 56.957020016852766,
+      "query_ms": 57.32633400475606,
       "answer_metrics": "not_run"
     },
     {
@@ -849,6 +881,8 @@
       "kind": "same_name_org_binding",
       "query": "东湾实验室的林青在2026公报中担任什么职务？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -882,7 +916,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 23.098446952644736,
+      "query_ms": 23.428644984960556,
       "answer_metrics": "not_run"
     },
     {
@@ -891,6 +925,8 @@
       "kind": "negation_date_scope",
       "query": "只看H-29的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.5,
       "source_recall_at_k": 1.0,
@@ -922,7 +958,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 22.522985993418843,
+      "query_ms": 22.861117031425238,
       "answer_metrics": "not_run"
     },
     {
@@ -931,6 +967,8 @@
       "kind": "chinese_alias_evidence",
       "query": "港湾那边林青的岗位是什么？预算是多少钱（口语问法）？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 0.0,
@@ -964,7 +1002,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 61.891215038485825,
+      "query_ms": 59.33242099126801,
       "answer_metrics": "not_run"
     },
     {
@@ -973,6 +1011,8 @@
       "kind": "unsupported_abstention",
       "query": "东湾实验室H-29在2026年授权的月球站点密码是什么？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": null,
       "candidate_evidence_recall_at_20": null,
       "source_recall_at_k": null,
@@ -1004,7 +1044,7 @@
       "expected_abstain": true,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": true,
-      "query_ms": 23.180777963716537,
+      "query_ms": 22.263263002969325,
       "answer_metrics": "not_run"
     },
     {
@@ -1013,6 +1053,8 @@
       "kind": "same_title_time",
       "query": "草原 研究站2026年公报中，代码M-43的预算多少？租赁费是否包含？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -1046,7 +1088,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 19.791956001427025,
+      "query_ms": 19.576930964831263,
       "answer_metrics": "not_run"
     },
     {
@@ -1055,6 +1097,8 @@
       "kind": "long_distributed_conditions",
       "query": "西岭观测站代码M-43校准周期几天？计算时停机日和维修等待时间如何处理？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.3333333333333333,
       "source_recall_at_k": 1.0,
@@ -1088,7 +1132,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 13.567082991357893,
+      "query_ms": 13.84304097155109,
       "answer_metrics": "not_run"
     },
     {
@@ -1097,6 +1141,8 @@
       "kind": "complete_table_enumeration",
       "query": "请完整列出草原代码M-43批次中北区且结论合格的所有编号，并带上读数和日期。",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.0,
       "source_recall_at_k": 1.0,
@@ -1126,7 +1172,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 14.43391403881833,
+      "query_ms": 14.243137964513153,
       "answer_metrics": "not_run"
     },
     {
@@ -1135,6 +1181,8 @@
       "kind": "cross_page_header_unit",
       "query": "西岭观测站批次验收记录里，所有北区合格记录使用什么单位？逐条列出编号、读数、日期，并说明隔离项是否计入。",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.08333333333333333,
       "source_recall_at_k": 1.0,
@@ -1166,7 +1214,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 58.358683018013835,
+      "query_ms": 57.82794102560729,
       "answer_metrics": "not_run"
     },
     {
@@ -1175,6 +1223,8 @@
       "kind": "same_name_org_binding",
       "query": "西岭观测站的林青在2026公报中担任什么职务？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 1.0,
@@ -1208,7 +1258,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 22.51198299927637,
+      "query_ms": 22.833464958239347,
       "answer_metrics": "not_run"
     },
     {
@@ -1217,6 +1267,8 @@
       "kind": "negation_date_scope",
       "query": "只看M-43的2026现行季度公报：租赁费包含在预算里吗？隔离状态可以计入合格样本吗？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 0.5,
       "source_recall_at_k": 1.0,
@@ -1248,7 +1300,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 34.64139997959137,
+      "query_ms": 34.04068999225274,
       "answer_metrics": "not_run"
     },
     {
@@ -1257,6 +1309,8 @@
       "kind": "chinese_alias_evidence",
       "query": "草原那边林青的岗位是什么？预算是多少钱（口语问法）？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": 1.0,
       "candidate_evidence_recall_at_20": 1.0,
       "source_recall_at_k": 0.0,
@@ -1290,7 +1344,7 @@
       "expected_abstain": false,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": false,
-      "query_ms": 59.738763025961816,
+      "query_ms": 58.50481800734997,
       "answer_metrics": "not_run"
     },
     {
@@ -1299,6 +1353,8 @@
       "kind": "unsupported_abstention",
       "query": "西岭观测站M-43在2026年授权的月球站点密码是什么？",
       "decomposition_queries": [],
+      "query_language": "zh_or_mixed",
+      "dense_status": "not_configured",
       "candidate_source_recall_at_20": null,
       "candidate_evidence_recall_at_20": null,
       "source_recall_at_k": null,
@@ -1330,7 +1386,7 @@
       "expected_abstain": true,
       "retrieval_empty": false,
       "unsupported_retrieval_contamination": true,
-      "query_ms": 22.385222022421658,
+      "query_ms": 22.52134494483471,
       "answer_metrics": "not_run"
     }
   ],
