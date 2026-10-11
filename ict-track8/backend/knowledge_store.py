@@ -454,12 +454,11 @@ class KnowledgeStore:
         normalized_query = unicodedata.normalize('NFKC', query)
         identifiers = tuple(dict.fromkeys(re.findall(
             r'(?<![A-Za-z0-9_])(?=[A-Za-z0-9_-]*[A-Za-z])(?=[A-Za-z0-9_-]*\d)[A-Za-z][A-Za-z0-9_-]{2,63}(?![A-Za-z0-9_])', normalized_query)))
+        linked_scope = None
         if identifiers:
-            def eligible(record):
-                text = unicodedata.normalize('NFKC', record.content)
-                return all(re.search(r'(?<![A-Za-z0-9_])' + re.escape(identifier) + r'(?![A-Za-z0-9_])', text, re.I)
-                           for identifier in identifiers)
-            records = [record for record in records if eligible(record)]
+            from .linked_evidence import expand_identifier_scope
+            records, linked_scope = expand_identifier_scope(records, identifiers,
+                verify=self.verify_source, document=self.document)
         _publish_rag_progress(progress_callback, 'source_binding', 'success',
             f"已限定到 {len({record.metadata['document_id'] for record in records})} 份资料、{len(records)} 个可检索片段。",
             input={'document_id': document_id, 'page_no': page_no, 'exact_identifiers': list(identifiers)},
@@ -481,6 +480,7 @@ class KnowledgeStore:
                           'exact_identifiers': list(identifiers)},
                 'retrieval': self.retrieval_health(), 'candidate_count': 0,
                 'source_binding': source_binding,
+                'linked_scope': linked_scope,
                 'dense_status': 'not_run_no_exact_identifier_match',
                 'channels': [], 'selected_count': 0, 'candidates': [],
                 'termination': 'exact_identifier_scope_had_no_matching_chunks'})
@@ -620,6 +620,7 @@ class KnowledgeStore:
             'version': 'ict8-rag-audit-v1',
             'query': query,
             'source_binding': source_binding,
+            'linked_scope': linked_scope,
             'scope': {'document_id': document_id, 'page_no': page_no,
                       'exact_identifiers': list(identifiers)},
             'retrieval': self.retrieval_health(),
@@ -690,6 +691,7 @@ class KnowledgeStore:
                  'question_shape_navigation': {'method': 'generic_purpose_body_affinity_not_semantic_proof',
                      'body_affinity': body_answer_affinity(query, navigation_contents[hit.document_id])},
                  'identifier_anchors': list(identifiers), 'evidence_role': role,
+                 'identifier_scope_link': linked_scope['links'].get(hit.document_id) if linked_scope else None,
                  'evidence_selection': {
                      'method': coverage_selection.audit['method'],
                      'semantic_sufficiency': 'not_evaluated',

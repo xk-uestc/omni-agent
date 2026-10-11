@@ -20,3 +20,9 @@ timeout 120s env PYTHONPATH=ict-track8:tools ICT8_DEMO_MODE=1 ICT8_DB_PATH=/tmp/
 原始 stdout：`runs/f3/binding-dev-final.txt`、`binding-tests-verified.txt`。额外检索0、额外原页读取0；绑定在现有正文集合上执行，新增持久索引0。完整性能与所有最终回归待候选冻结后补录。
 
 来源绑定回归：47通过、12子测试；第一次环境外运行因未初始化显式测试库46通过/1失败，保留 binding-tests-final.txt；修正演示库测试配置后验证。
+
+来源内关联开发结果：Recall@4 `.5754`，完整 `10/21`，错误绑定 `0/24`，无证据污染 `3/3`。三题Recall .5→1，必要证据0退步，逐题 `runs/f3/linked-deltas.json`，最终 scorer 结果 `linked-dev-final.json/txt`。MRR `.6468→.5754` 下降（首条可能为对象声明而非 Gold literal），nDCG `.6217→.6477`；不隐藏这一排序代价。新关联只有0额外检索/0原页读取，增加来源校验及当前索引正文导航；持久索引0增量。
+
+命令同上 evaluator，输出 `linked-dev-final.json`；pytest 文件为 `test_f3_linked_evidence.py test_f3_source_binding.py test_foundation_retrieval.py test_knowledge_store.py test_foundation_safety.py`，42通过，日志 `linked-tests-final.txt`。首次预算测试1失败见 `linked-tests.txt`。
+
+第一项远端提交 `bee7f2ef2dd01b4cb6fb8c5c3241b47aa0b91e2f`。
