@@ -142,11 +142,17 @@ class DependencyAgent:
         with read_scope() if read_scope else nullcontext():
             audit, initial_versions, formula_results = [], {}, {}
             search_bindings = {'source_ranges': [], 'bindings': []}
+            cell_bindings = {'source_ranges': [], 'bindings': []}
             try:
                 if original_question is not None:
                     from .sql_document_binding import authorize_sql_document_search, normalize_sql_document_references
                     search_bindings = authorize_sql_document_search(original_question, tasks, self.sql_engine)
                     normalize_sql_document_references(search_bindings, tasks)
+                    from .sql_document_cell_binding import authorize_sql_document_cells, normalize_cell_references
+                    cell_bindings = authorize_sql_document_cells(original_question, tasks, self.sql_engine, self.knowledge_store)
+                    normalize_cell_references(cell_bindings, tasks)
+                    for binding in cell_bindings['bindings']:
+                        initial_versions[binding['document_id']] = binding['source_sha256']
                     proofs = []
                     for task in tasks:
                         if task['tool'] != 'document_formula' or self.references(task['args']):
@@ -164,7 +170,7 @@ class DependencyAgent:
                             raise SourceConstraintError('formula_target_evidence_unverified') from exc
                     source_constraints, audit = bind_source_constraints(
                         original_question, tasks, self.sql_engine, verified_formula_targets=tuple(proofs),
-                        verified_document_search_ranges=tuple(search_bindings['source_ranges']))
+                        verified_document_search_ranges=tuple(search_bindings['source_ranges'] + cell_bindings['source_ranges']))
                     formula_consumption = self._formula_consumption_contracts(
                         tasks, dependencies, audit, formula_results)
                 else:
@@ -183,13 +189,15 @@ class DependencyAgent:
                         'user_constraint_validation': {'status': 'unverified', 'error_code': exc.code}}
             result = self._run_ordered(tasks, ordered, dependencies, on_event=on_event,
                                        source_constraints=source_constraints or {}, original_question=original_question,
-                                       initial_versions=initial_versions, search_bindings=search_bindings,
+                initial_versions=initial_versions, search_bindings=search_bindings, cell_bindings=cell_bindings,
                                        formula_consumption=formula_consumption)
             result['user_constraint_validation'] = {'status': ('verified' if source_constraints else 'not_applicable')
                                                    if original_question is not None else 'verified' if source_constraints else 'not_provided',
                                                    'scope': 'explicit_server_bound_sql_source_clauses', 'bindings': audit}
             if search_bindings['bindings']:
                 result['user_constraint_validation']['document_search_bindings'] = search_bindings['bindings']
+            if cell_bindings['bindings']:
+                result['user_constraint_validation']['document_cell_bindings'] = cell_bindings['bindings']
             if result['status'] != 'ok' and (original_question is not None or source_constraints):
                 result['user_constraint_validation']['status'] = 'incomplete'
             return result
@@ -272,7 +280,7 @@ class DependencyAgent:
         return contracts
 
     def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, source_constraints=None, original_question=None,
-                     initial_versions=None, search_bindings=None, formula_consumption=None):
+                     initial_versions=None, search_bindings=None, cell_bindings=None, formula_consumption=None):
         results, trace = {}, []
         versions = dict(initial_versions or {})
         trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
@@ -295,6 +303,10 @@ class DependencyAgent:
                     from .sql_document_binding import validate_sql_document_search
                     search_validation = validate_sql_document_search(
                         search_bindings, task=task, tasks=tasks, results=results, engine=self.sql_engine)
+                if task['tool'] == 'document_cell' and cell_bindings and cell_bindings['bindings']:
+                    from .sql_document_cell_binding import validate_sql_document_cell
+                    search_validation = validate_sql_document_cell(cell_bindings, task=task, tasks=tasks,
+                        results=results, engine=self.sql_engine, knowledge=self.knowledge_store)
                 required = (source_constraints or {}).get(task['id'])
                 if task['tool'] == 'sql' and original_question is not None:
                     from .dynamic_source_binding import bind_dynamic_source_filters

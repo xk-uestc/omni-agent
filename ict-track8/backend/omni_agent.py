@@ -59,6 +59,9 @@ search_fact: {evidence:引用search整个结果,scope:适用对象,label:事实�
 document_formula: {document_id,label}；返回 expression/parameters/source_uri/locator。
 document_cell: {document_id,where:{列名:实际值},column:列名}；返回 value/unit/source_uri/locator。
 document_cell.where 只包含用户明确给定的筛选条件，不能从预览猜出输出值后再把输出列加入where。
+若对象来自SQL排名，where必须引用该SQL的dimension_values真实维度值，不得猜冠军、固定工种或引用统计数值。随后直接调用document_cell读取实际单元格。
+server_ranked_cell_intent只是服务器从用户原话、Schema和原件独立核验的范围导航，不含工具图或答案；你仍需自主提出sql→document_cell计划，服务器会重验排名、全部并列对象、来源版本与列。
+用户要求最高一个时，sql.question必须明确“取最高的1个”，不能仅列出所有工种并降序排序；可沿用server_ranked_cell_intent.scope_question的原始数据库范围。
 where必须使用table_rows.values中的真实JSON值和类型；text中的百分比、货币等显示字符串不等于底层筛选值，不得把数值改成字符串。
 例如表格values为0.15而text显示15%时，比率条件填写数值0.15；若来源实际存储字符串则保留该字符串，不得自行强制转型。
 按年份和比率寻找地区时，where只使用原问题的年份/比率；读取地区作为结果，不预填一个地区。
@@ -263,9 +266,30 @@ def _normalize_model_tasks(plan, tasks, engine, knowledge, question):
             except SourceConstraintError as exc:
                 _reject_plan('sql_document_plan_scope_invalid', [exc.code])
         _check_static_document_cells(tasks, knowledge)
+        from .sql_document_cell_binding import authorize_sql_document_cells
+        try:
+            cells = authorize_sql_document_cells(question, tasks, engine, knowledge)
+            if cells['bindings']:
+                from .fusion_constraints import bind_source_constraints, verify_required_intent
+                required, _ = bind_source_constraints(question, tasks, engine,
+                    verified_document_search_ranges=tuple(cells['source_ranges']))
+                for task in tasks:
+                    if task['tool'] == 'sql':
+                        text = task['args'].get('question')
+                        if not isinstance(text, str) or verify_required_intent(engine.extract_required_intent(text), required[task['id']]):
+                            raise SourceConstraintError('sql_document_cell_scope_unverified')
+        except SourceConstraintError as exc:
+            _reject_plan('sql_document_cell_plan_scope_invalid', [exc.code])
         plan['tasks_json'] = json.dumps(tasks, ensure_ascii=False)
         return plan, notes
     if tasks == []:
+        if plan['route'] in {'sql', 'document'}:
+            from .sql_document_cell_binding import ranked_cell_intent
+            try:
+                if ranked_cell_intent(question, engine, knowledge) is not None:
+                    _reject_plan('ranked_document_cell_requires_fusion')
+            except SourceConstraintError as exc:
+                _reject_plan('sql_document_cell_plan_scope_invalid', [exc.code])
         if plan['route'] in {'sql', 'document'} and explicit_cross_source_request(question):
             _reject_plan('single_source_cross_source_request')
         return plan, []
@@ -1163,6 +1187,13 @@ class OmniAgent:
                     'required_operations': requirements,
                     'database_schema': self.engine.schema(include_row_count=False),
                     'documents': self.catalogue(context_question, trace_callback=_trace_callback)}
+                from .sql_document_cell_binding import ranked_cell_intent
+                try:
+                    ranked_intent = ranked_cell_intent(scope_question, self.engine, self.knowledge)
+                    if ranked_intent:
+                        context['server_ranked_cell_intent'] = ranked_intent.navigation()
+                except SourceConstraintError as exc:
+                    context['server_ranked_cell_scope_error'] = exc.code
                 if self.experience is not None and not image_attachments:
                     experience_decision = self.experience.select(scope_question)
                     if experience_decision.get('advice'):
@@ -1212,7 +1243,9 @@ class OmniAgent:
                     planning_attempts.append({'attempt': attempt+1, 'validation': ('complete' if not errors else
                         'plan_protocol_rejected' if protocol_error else 'requested_operation_missing'),
                                               'errors': errors, 'api_audit': audit})
-                    if protocol_details:
+                    if rejection_code == 'sql_document_cell_plan_scope_invalid':
+                        planning_attempts[-1]['source_scope_errors'] = protocol_details
+                    elif protocol_details:
                         planning_attempts[-1]['reference_type_errors'] = protocol_details
                     if not errors:
                         rejection_code = None
@@ -1263,7 +1296,13 @@ class OmniAgent:
                         context['plan_completion_feedback']['instruction'] += (
                             '当前非fusion路由与非空任务图不兼容。按route_task_contract重新输出完整计划，'
                             '不要重复提交document/sql路由加多步任务；不能为了格式合规删掉用户要求的实际操作。')
-                    if protocol_details:
+                    if rejection_code == 'sql_document_cell_plan_scope_invalid':
+                        context['plan_completion_feedback']['source_scope_errors'] = protocol_details
+                        context['plan_completion_feedback']['instruction'] += (
+                            '按server_ranked_cell_intent的独立原始范围修复SQL与PDF依赖；'
+                            'SQL问题必须保留top_n=1，明确取最高的1个，不能仅全量降序。'
+                            'document_cell必须使用已核验document_id/column和SQL维度引用；不得固定冠军。')
+                    elif protocol_details:
                         context['plan_completion_feedback']['reference_type_errors'] = protocol_details
                         context['plan_completion_feedback']['instruction'] += (
                             '文本字段只接受标量或扁平标量数组；按给出的字段路径与类型重新规划，'
@@ -1401,8 +1440,10 @@ class OmniAgent:
                 result = {'status': 'clarification', 'clarification': str(exc), 'clarification_code': exc.code,
                           'results': {}, 'trace': [], 'trace_id': 'source_scope_unverified'}
             result['execution_plan'] = tasks
-            from .fusion_result_answer import calculation_answer
+            from .fusion_result_answer import calculation_answer, ranked_cell_answer
             rendered_answer=calculation_answer(tasks,result,self.knowledge)
+            if not rendered_answer:
+                rendered_answer=ranked_cell_answer(tasks,result,self.knowledge)
             if rendered_answer:result['answer']=rendered_answer
             fusion_retrieval_summary(result)
             state = {'route': route, 'trace_id': result['trace_id']}
