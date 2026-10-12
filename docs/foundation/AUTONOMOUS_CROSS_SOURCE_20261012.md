@@ -105,11 +105,81 @@ table cells and formula/SQL operands have been consumed by model-proposed
 plans, across two originals and two distinct workflow types. These do not
 prove arbitrary multi-document joint analysis, scans or multilevel headers.
 
-At this checkpoint 14 of the approved 20 calls have been reserved. No image
-input, training, rental or legacy budget use occurred. Final token/cost and
-regression receipts are appended with the post-freeze acceptance below.
+At this checkpoint 14 of the approved 20 calls had been reserved. No image
+input, training, rental or legacy budget use occurred.
 
 ```bash
 python tools/replay_public_formula_integration.py --data-root /home/viva/omni-agent/runtime/real_document_upgrade/data --model-config /home/viva/omni-agent/runtime/private/m1c-model.env --ledger runtime/autonomous_cross_source/model-ledger.jsonl --output runtime/autonomous_cross_source/formula-model-replay.json
 python tools/replay_ranked_pdf_planning.py --mode model --dataset standards --data-root /home/viva/omni-agent/runtime/real_document_upgrade/data --config /home/viva/omni-agent/runtime/private/m1c-model.env --ledger runtime/autonomous_cross_source/model-ledger.jsonl --output runtime/autonomous_cross_source/standard-model-replay.json
 ```
+
+## Frozen acceptance, regressions and final limits
+
+Production freeze / second pushed commit:
+`644a097e0077a588f2ea525ca7eff50fe470d062`.
+First pushed capability commit: `5fa17ed5de0ef6cf0196912ade091142b79ee84d`.
+Later commits only save acceptance evidence, harness and status documentation.
+Source fingerprints are in `production-freeze.json`.
+
+One retained original was selected by its position as the first retained
+manifest entry before parsing. It is the ceat.200600410 FCCU paper page,
+SHA `8ec39e435894a6e887ee4f83a2d7f618755c2d813e5b6f1175cbfb2d7e85c428`.
+This source was not used to develop this round's changes, although prior
+project parser experiments may have processed this retained split. This is
+not a claim of whole-project never-seen exposure. No Gold was read.
+
+The frozen task asks SQL for the most monitored variable and the actual PDF
+for its Description. It **fails**: the line-less scientific table generates
+zero verified native tables/rows, so the server does not authorize the proposed
+cell. Two real planning calls end in clarification. Original-page visual
+inspection confirms a table is present; its missing structural authority is
+a real parser/consumption gap. Neither a different retained source nor a
+post-acceptance production fix was used. Raw refusal and both model plans are
+in `frozen-acceptance.json.gz`.
+
+Final combined relevant regressions: **542 passed / 4 failed**, 23 dependency
+deprecation warnings. All four failures were reproduced independently at
+the unchanged starting SHA: reset-history mode expectation; unsafe request
+test expecting partial execution; model-followup dispatch expectation;
+single-source recovery fixture expecting `ok` for incomplete generation.
+The SQL safety / incomplete-answer policies were not weakened. A final
+protocol identity/repair audit after the last narrow adapter guard is
+42 passed; these overlap and must not be added to 542. The 102-test formula /
+protocol targeted receipt also overlaps. Not every project test was run.
+The first broad run and isolated stream tests stalled in sandbox-local
+async communication, with the same isolated baseline stall. In the host
+environment HTTP/SSE fixtures pass (12); the final combined host run finishes
+in 23.01 seconds. Partial sandbox runs are not counted as complete passes.
+
+Production files changed across the round:
+`dependency_agent.py`, `fusion_constraints.py`, `sql_document_binding.py`,
+`sql_document_cell_binding.py`, `omni_agent.py`, `responses_client.py`,
+`fusion_result_answer.py`. Research adapters/harnesses remain separate in
+`tools/`; no global deployment configuration was changed. No source originals,
+frozen Gold, `Qimem/`, `main` or older local uncommitted work were modified.
+
+16 ledger reservations / 16 known responses, model `deepseek-flash`, text
+only. Input: 100,640 tokens; output: 3,468; cached input: 51,840. Actual billed
+currency is not available from these receipts. Using [official peak token
+prices](https://api-docs.deepseek.com/quick_start/pricing/), estimated total is
+$0.01911264 with reported cache hits, or a conservative $0.0343536 without
+cache discounts, well within the approved RMB 5 cap. Sum of model response
+wall times is 23.808 seconds. Full-task development wall times: ranked original
+1.919s; short ranked question 1.617s; HTTP 1.974s; SSE 2.369s; standards 2.093s.
+These are shared-machine observations, not isolated performance benchmarks.
+All individual latencies, usage and failed calls are retained.
+
+The next principal score limits are independently binding abbreviated formula
+parameter scopes, extracting verifiable structure from line-less/scanned and
+multilevel tables, and proving a full multi-document/database analysis task.
+Workflow C remains unverified. No aggregate official RAG/SQL/competition
+accuracy, public cross-source benchmark score or remote deployment is claimed.
+
+```bash
+python tools/accept_frozen_cross_source.py --data-root /home/viva/omni-agent/runtime/real_document_upgrade/data --config /home/viva/omni-agent/runtime/private/m1c-model.env --ledger runtime/autonomous_cross_source/model-ledger.jsonl --output runtime/autonomous_cross_source/frozen-acceptance-replay.json
+PYTHONPATH=ict-track8 python -m pytest ict-track8/tests/test_sql_document_cells.py ict-track8/tests/test_sql_document_binding.py ict-track8/tests/test_fusion_source_constraints.py ict-track8/tests/test_cross_source_agent.py ict-track8/tests/test_formula_parameter_binding.py ict-track8/tests/test_document_formula_binding.py ict-track8/tests/test_dynamic_source_binding.py ict-track8/tests/test_fusion_history.py ict-track8/tests/test_native_table_consumption.py ict-track8/tests/test_memory_adapter.py ict-track8/tests/test_memory_formation.py ict-track8/tests/test_memory_core.py ict-track8/tests/test_omni_query_stream.py ict-track8/tests/test_foundation_stream_fault.py ict-track8/tests/test_nl2sql_baseline.py ict-track8/tests/test_nl2sql_v2.py ict-track8/tests/test_omni_agent.py ict-track8/tests/test_omni_plan_recovery_round4.py ict-track8/tests/test_completed_plan_protocol_repair.py ict-track8/tests/test_responses_audit.py ict-track8/tests/test_m1c_model_budget.py -q
+```
+
+Model replays consume remaining budget and are not automatic authorization
+for new calls after this delivered round. Run local HTTP/SSE regression tests
+in an environment permitting their local asynchronous communication.
