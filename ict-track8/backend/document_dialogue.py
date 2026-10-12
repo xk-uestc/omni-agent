@@ -12,7 +12,10 @@ def seal(payload):
 
 
 def document_context(question, result, knowledge):
-    if result.get('status') != 'ok':
+    source_read_only = (result.get('status') == 'insufficient_evidence'
+        and result.get('answer_mode') == 'attributed_extracts'
+        and result.get('answer_completeness') == 'retrieval_only')
+    if result.get('status') != 'ok' and not source_read_only:
         return None
     documents = {}
     for citation in result.get('citations', []):

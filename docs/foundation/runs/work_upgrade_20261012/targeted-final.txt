@@ -1,0 +1,48 @@
+........................................................................ [  6%]
+........................................................................ [ 13%]
+........................................................................ [ 20%]
+........................................................................ [ 27%]
+........................................................................ [ 33%]
+........................................................................ [ 40%]
+........................................................................ [ 47%]
+........................................................................ [ 54%]
+........................................................................ [ 61%]
+........................................................................ [ 67%]
+........................................................................ [ 74%]
+........................................................................ [ 81%]
+........................................................................ [ 88%]
+........................................................................ [ 95%]
+...................................................                      [100%]
+=============================== warnings summary ===============================
+../../../../tmp/omni-work-venv/lib/python3.12/site-packages/starlette/testclient.py:37
+  /tmp/omni-work-venv/lib/python3.12/site-packages/starlette/testclient.py:37: DeprecationWarning: The anyio.abc.BlockingPortal alias is deprecated, use anyio.from_thread.BlockingPortal instead.
+    _PortalFactoryType = typing.Callable[[], typing.ContextManager[anyio.abc.BlockingPortal]]
+
+ict-track8/tests/test_knowledge_store.py::test_image_without_ocr_is_not_answer_evidence
+  /workspace/scratch/ac7a6b62475b/omni-agent/ict-track8/backend/image_quality.py:243: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    pixels = list(image.resize((min(256, width), min(256, height))).getdata())
+
+ict-track8/tests/test_knowledge_store.py::test_image_without_ocr_is_not_answer_evidence
+  /workspace/scratch/ac7a6b62475b/omni-agent/ict-track8/backend/image_quality.py:300: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    pixels = list(sample.getdata())
+
+ict-track8/tests/test_knowledge_store.py::test_api_ingest_query_and_original_roundtrip
+  /workspace/scratch/ac7a6b62475b/omni-agent/ict-track8/backend/app.py:195: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+ict-track8/tests/test_knowledge_store.py::test_api_ingest_query_and_original_roundtrip
+  /tmp/omni-work-venv/lib/python3.12/site-packages/fastapi/applications.py:4495: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1059 passed, 5 warnings in 17.91s

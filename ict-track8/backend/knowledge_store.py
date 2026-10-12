@@ -225,12 +225,42 @@ class KnowledgeStore:
         if not filename or len(filename) > 200:
             raise ValueError('无效文件名')
         structure = None
+        native_structure = None
         if modality in {'txt', 'md'}:
             text = raw.decode('utf-8-sig')
             from .text_structure import chunk_text
             parsed = chunk_text(self.chunker, text, document_id=document_id, modality=modality)
         elif modality == 'pdf':
             parsed = self.chunker.parse_pdf(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
+            # The existing PyMuPDF grid engine is cheap and deterministic for
+            # native tables; MinerU remains the complex/scanned observation path.
+            from .visual_tables import extract_native_table_records
+            from .structured_document import seal, chunks_from_structure
+            import fitz
+            with fitz.open(stream=raw, filetype='pdf') as pdf:
+                geometry = [(float(p.rect.width), float(p.rect.height)) for p in pdf]
+            if len(geometry) <= 40:
+                start = time.monotonic()
+                elements = []
+                try:
+                    for page in range(1, len(geometry)+1):
+                        elements.extend(extract_native_table_records(raw, page_no=page,
+                                        expected_source_sha256=hashlib.sha256(raw).hexdigest()))
+                        if time.monotonic()-start > 30:
+                            raise ValueError('native_table_ingest_time_budget')
+                    native_structure = seal(elements, geometry, hashlib.sha256(raw).hexdigest(),
+                                            {'name':'pymupdf_native_grid', 'version':fitz.VersionBind})
+                    for e in native_structure['elements']:
+                        e['element_id'] = 'native_' + e['element_id']
+                        e['review_status'] = 'native_geometry_verified'
+                    parsed['chunks'].extend(chunks_from_structure(native_structure, document_id, self.chunker))
+                    parsed['stats']['native_table_seconds'] = round(time.monotonic()-start, 4)
+                    parsed['stats']['native_table_count'] = len(elements)
+                except ValueError as exc:
+                    native_structure = None
+                    parsed['warnings'].append(str(exc))
+            else:
+                parsed['warnings'].append('native_table_ingest_page_budget_exceeded')
             if self.pdf_backend is not None:
                 from .structured_document import chunks_from_structure
                 structure = self.pdf_backend.parse(raw)
@@ -300,13 +330,16 @@ class KnowledgeStore:
         if structure is not None:
             record['structured_document'] = {k:v for k,v in structure.items() if k != 'elements'}
             record['routing']['formula_tool'] = False
+        if native_structure is not None:
+            record['native_table_parser'] = native_structure['parser']
         with self.connect() as connection:
             connection.execute('DELETE FROM documents WHERE document_id=?', (document_id,))
             connection.execute('INSERT INTO documents VALUES(?,?,?,?,?,?)', (document_id, title, modality, filename, digest, json.dumps(record, ensure_ascii=False)))
             for chunk in parsed['chunks']:
                 chunk['metadata'].update({'source_sha256': digest, 'original_document_id': document_id})
                 connection.execute('INSERT INTO chunks VALUES(?,?,?)', (chunk['chunk_id'], document_id, json.dumps(chunk, ensure_ascii=False)))
-            for element in structure['elements'] if structure is not None else []:
+            for element in ((structure['elements'] if structure is not None else []) +
+                            (native_structure['elements'] if native_structure is not None else [])):
                 element['document_id'] = document_id
                 element['source_uri'] = f'/api/v1/knowledge/documents/{document_id}/original'
                 element['source_locator'] = f'page:{element["page_no"]}/element:{element["element_id"]}'
@@ -328,6 +361,78 @@ class KnowledgeStore:
                     observation_digest(element) != element['observation_sha256']):
                 raise SourceIntegrityError('结构化观察记录发生变化')
         return [e for e in elements if e['kind'] == 'formula']
+
+    def verify_native_table(self, document_id, element_id, *, expected_sha256):
+        """Replay a stored native relation from immutable bytes before use."""
+        from .structured_document import observation_digest
+        from .visual_tables import extract_native_table_records
+        raw = self.verify_source(document_id, expected_sha256=expected_sha256).read_bytes()
+        record = next((e for e in self.document(document_id).get('elements', [])
+                       if e['element_id'] == element_id), None)
+        if (not record or record.get('table_structure_status') != 'native_geometry_verified'
+                or observation_digest(record) != record.get('observation_sha256')):
+            raise SourceIntegrityError('原生表格记录未通过核验')
+        fresh = extract_native_table_records(raw, page_no=record['page_no'], expected_source_sha256=expected_sha256)
+        if not any(all(e.get(k) == record.get(k) for k in ('kind','page_no','order','bbox','text','cells')) for e in fresh):
+            raise SourceRevisionError('原生表格关系无法从原件重放')
+        self.verify_source(document_id, expected_sha256=expected_sha256)
+        return record
+
+    def native_table_cell(self, document_id, *, where, column):
+        """A unique complete literal row selector, rehydrated from the table."""
+        from .pdf_table_values import label, literal_cell
+        document = self.document(document_id)
+        if document['modality'] != 'pdf' or not isinstance(where, dict) or not where or not isinstance(column, str):
+            raise ValueError('PDF表格取值必须明确匹配条件和列')
+        candidates = []
+        for table in document.get('elements', []):
+            if table.get('table_structure_status') != 'native_geometry_verified':
+                continue
+            cells = table['cells']
+            headers = {c['column']:c['text'] for c in cells if c['is_header']}
+            if not {label(k) for k in [*where, column]} <= set(headers.values()):
+                continue
+            for row in sorted({c['row'] for c in cells if not c['is_header']}):
+                values = {headers[c['column']]: c for c in cells if not c['is_header'] and
+                          c['row'] <= row < c['row']+c['row_span'] and c['column_span'] == 1}
+                if label(column) not in values:
+                    continue
+                if not all(label(k) in values and type(v) in (str,int,float) and
+                           type(literal_cell(values[label(k)]['text'], label(k))['raw_value']) is type(v) and
+                           literal_cell(values[label(k)]['text'], label(k))['raw_value'] == v
+                           for k,v in where.items()):
+                    continue
+                target = values[label(column)]
+                literal = literal_cell(target['text'], label(column))
+                candidates.append({'value':literal['numeric_value'] if literal['numeric_value'] is not None else target['text'],
+                    'raw_value':target['text'], 'unit':literal['unit'],
+                    'source_uri':table['source_uri'], 'sha256':document['sha256'], 'document_id':document_id,
+                    'locator':table['source_locator']+f'/row:{row}/column:'+label(column),
+                    'structured_element_id':table['element_id'], 'page_no':table['page_no'],
+                    'bbox_display_pt':target['bbox'], 'matched_conditions':dict(where),
+                    'condition_bboxes_display_pt':{k:values[label(k)]['bbox'] for k in where},
+                    'column_header_bbox_display_pt':next(c['bbox'] for c in cells if c['is_header'] and c['text']==label(column)),
+                    'validation':'native_table_literal_cell_replayed',
+                    'calculator_input_eligible':literal['numeric_value'] is not None and literal['unit'] != 'unknown'})
+        if len(candidates) != 1:
+            raise ValueError('PDF表格取值缺失或歧义；必须明确唯一记录')
+        fact = candidates[0]
+        self.verify_native_table(document_id, fact['structured_element_id'], expected_sha256=document['sha256'])
+        return fact
+
+    def _verify_native_table_chunk(self, chunk):
+        from .structured_document import chunks_from_structure
+        meta = chunk['metadata']
+        record = self.verify_native_table(chunk['document_id'], meta['structured_element_id'],
+                                          expected_sha256=meta['source_sha256'])
+        structure = {'parser':meta['parser'], 'elements':[record]}
+        expected = chunks_from_structure(structure, chunk['document_id'], self.chunker)
+        if not any(c['text'] == chunk['text'] and c['source_locator'] == chunk['source_locator'] and
+                   all(c['metadata'].get(k) == meta.get(k) for k in
+                       ('headers','values','row_index','table_id','structured_table_cells','observation_sha256'))
+                   for c in expected):
+            raise SourceIntegrityError('表格切片与当前原件记录不一致')
+        return True
 
     def review_formula(self, document_id, element_id, *, receipt_path):
         """Trusted local human review only; deliberately absent from HTTP/tools.
@@ -403,6 +508,18 @@ class KnowledgeStore:
             raise SourceRevisionError('公式记录重解析、审核撤销或审核内容变化，请重新定位。')
         return current
 
+    def verify_native_formula(self, formula):
+        from .native_formula_pages import extract_native_literal_formulas
+        document_id = formula.get('document_id')
+        if formula.get('source_uri') != f'/api/v1/knowledge/documents/{document_id}/original':
+            raise SourceIntegrityError('原生公式来源身份不一致')
+        raw = self.verify_source(document_id, expected_sha256=formula.get('sha256')).read_bytes()
+        candidates = extract_native_literal_formulas(raw, label=formula.get('label'), expected_sha256=formula['sha256'])
+        if not any(all(c.get(k) == formula.get(k) for k in
+                       ('label','expression','parameters','sha256','locator','native_formula_proof')) for c in candidates):
+            raise SourceRevisionError('公式表达式与完整原件行不一致')
+        self.verify_source(document_id, expected_sha256=formula['sha256'])
+
     def delete(self, document_id, *, expected_sha256):
         """Remove a pinned logical revision atomically; keep immutable originals.
 
@@ -427,7 +544,7 @@ class KnowledgeStore:
                 raise KeyError(document_id)
             result = json.loads(row[0])
             result['chunks'] = [json.loads(item[0]) for item in connection.execute('SELECT payload FROM chunks WHERE document_id=? ORDER BY rowid', (document_id,))]
-            if 'structured_document' in result:
+            if 'structured_document' in result or 'native_table_parser' in result:
                 result['elements'] = [json.loads(item[0]) for item in connection.execute(
                     'SELECT payload FROM document_elements WHERE document_id=? ORDER BY element_id', (document_id,))]
         self._verified_asset(result)
@@ -1224,6 +1341,10 @@ class KnowledgeStore:
         return prepare_table_bundle(self, question, hits, document_id=document_id, page_no=page_no)
 
     def _answer_hits(self, question, hits, *, document_id=None, page_no=None, image_attachments=None):
+        if not image_attachments:
+            literal = self._native_table_literal_answer(question, hits, document_id=document_id, page_no=page_no)
+            if literal is not None:
+                return literal
         bundle = (self.prepare_evidence(question, hits, document_id=document_id, page_no=page_no)
                   if not image_attachments else None)
         from .source_answer_dossier import route as route_native_dossier
@@ -1288,13 +1409,19 @@ class KnowledgeStore:
         # This local baseline returns attributed quotations, not inferred factual claims.
         selected = [hit for hit in hits if len(query_terms.intersection(hit.matched_terms)) >= min(2, len(query_terms))
                     or hit.metadata.get('dense_cosine', -1) >= 0.6]
-        result = {'status': 'ok' if selected else 'insufficient_evidence', 'question': question,
+        result = {'status': 'insufficient_evidence', 'question': question,
                 'answer_mode': 'attributed_extracts',
-                'answer': '\n\n'.join(f'[{i}] {hit.snippet}' for i, hit in enumerate(selected, 1)) if selected else '没有足够的文档证据，暂不能回答。',
+                'answer': '已找到相关原文，但尚未核验完整答案。' if selected else '没有足够的文档证据，暂不能回答。',
+                'retrieved_excerpts': '\n\n'.join(f'[{i}] {hit.snippet}' for i, hit in enumerate(selected, 1)),
+                'answer_completeness': 'retrieval_only' if selected else 'evidence_missing',
                 'citations': [{'citation_id': i, **hit.to_dict()} for i, hit in enumerate(selected, 1)],
                 'retrieval': self.retrieval_health(),
                 'trace': [{'stage': 'document_retrieval', 'channel': self.retrieval_health()['mode'], 'candidate_count': len(hits)},
                           {'stage': 'evidence_selection', 'selected_count': len(selected), 'generation': 'extractive'}]}
+        # Preserve the short, clearly labelled source preview used by the UI;
+        # full/low-quality OCR excerpts live only in citations/excerpt fields.
+        if selected and not any(h.metadata.get('ocr_status') for h in selected) and len(result['retrieved_excerpts']) <= 600:
+            result['answer'] += '\n未核验原文：\n' + result['retrieved_excerpts']
         result['trace'].append(visual_trace)
         result['trace'].append(chart_trace)
         result['trace'].append(table_trace)
@@ -1419,6 +1546,9 @@ class KnowledgeStore:
                 if image_attachments:
                     raise ValueError('图片内容未能完成分析，本次没有生成忽略图片的回答，请稍后重试。') from exc
                 result['answer_mode'] = 'extractive_fallback'
+                result['status'] = 'insufficient_evidence'
+                result['answer'] = '相关原文未能支持经过核验的完整答案，请查看来源或补充资料。'
+                result['answer_completeness'] = 'generation_unverified'
                 attempts = getattr(exc, 'generation_attempts', None)
                 if attempts:
                     result['generation_attempts'] = attempts
@@ -1587,6 +1717,50 @@ class KnowledgeStore:
                 result['trace'].append(recovery_trace)
         return result
 
+    def _native_table_literal_answer(self, question, hits, *, document_id=None, page_no=None):
+        from .visual_table_reader import bind_native_record_question
+        ids = [document_id] if document_id else list(dict.fromkeys(h.metadata['document_id'] for h in hits))
+        if len(ids) > 4:
+            return None
+        matches = []
+        pinned = []
+        for did in ids:
+            document = self.document(did)
+            if document['modality'] != 'pdf':
+                continue
+            self.verify_source(did, expected_sha256=document['sha256'])
+            pinned.append((did,document['sha256']))
+            records = [e for e in document.get('elements', []) if page_no is None or e['page_no'] == page_no]
+            binding = bind_native_record_question(question, records)
+            if binding['status'] == 'bound':
+                matches.append((document,binding['fact']))
+        if len(matches) != 1:
+            return None
+        document, selection = matches[0]
+        # Lookup replays the original table and checks uniqueness across the
+        # complete document, including competing rows/pages outside Top-K.
+        try:
+            fact = self.native_table_cell(document['document_id'], where=selection['where'], column=selection['column'])
+        except ValueError:
+            return None
+        if fact['structured_element_id'] != selection['element_id']:
+            return None
+        for did,digest in pinned:
+            self.verify_source(did, expected_sha256=digest)
+        citation = {'citation_id':1, 'document_id':document['document_id'], 'title':document['title'],
+            'snippet':fact['raw_value'], 'source_uri':fact['source_uri'], 'score':None, 'matched_terms':[],
+            'metadata':{'document_id':document['document_id'], 'source_sha256':fact['sha256'],
+                        'source_locator':fact['locator'], 'page_no':fact['page_no'],
+                        'bbox_display_pt':fact['bbox_display_pt'],
+                        'column_header_bbox_display_pt':fact['column_header_bbox_display_pt'],
+                        'condition_bboxes_display_pt':fact['condition_bboxes_display_pt']}}
+        return {'status':'ok', 'question':question, 'answer':fact['raw_value'],
+                'answer_mode':'native_table_literal', 'answer_completeness':'complete_literal_cell',
+                'citations':[citation], 'table_fact':fact, 'retrieval':self.retrieval_health(),
+                'trace':[{'stage':'native_table_literal', 'status':'verified', 'model_requests_attempted':0,
+                          'scope':'complete_literal_question_and_replayed_native_cell',
+                          'candidate_document_ids':ids}]}
+
     def _verify_citation_sources(self, citations):
         expected = {}
         for hit in citations:
@@ -1667,10 +1841,13 @@ class KnowledgeStore:
                                    and (chunk['content_type'] == 'paragraph'
                                        or chunk['content_type'] == 'heading' and substantive_numbered_heading(chunk['text']))
                                    and not chunk['metadata'].get('ocr_status'))
-                if chunk['metadata'].get('structured_element_id') and chunk['metadata'].get('review_status') != 'verified':
+                native_table = bool(chunk['metadata'].get('native_table_record'))
+                if native_table:
+                    self._verify_native_table_chunk(chunk)
+                if chunk['metadata'].get('structured_element_id') and not native_table and chunk['metadata'].get('review_status') != 'verified':
                     reason = 'structured_recognition_not_reviewed'
                 elif (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
-                        and not _verified_pdf_row(chunk)):
+                        and not native_table and not _verified_pdf_row(chunk)):
                     reason = 'pdf_table_layout_not_verified'
                 elif len(selected) >= MAX_EVIDENCE_ITEMS:
                     reason = 'evidence_item_limit'
@@ -1746,13 +1923,16 @@ class KnowledgeStore:
                     (hit['metadata']['chunk_id'], hit['metadata']['document_id'])).fetchone()
                 chunk = json.loads(row[0]) if row else None
                 evidence = hit['generation_evidence']
+                native_table = bool(chunk and chunk['metadata'].get('native_table_record'))
+                if native_table:
+                    self._verify_native_table_chunk(chunk)
                 if (chunk is None or text_sha256(chunk['text']) != evidence['chunk_sha256']
                         or text_sha256(json.dumps(chunk, ensure_ascii=False, sort_keys=True)) != evidence['chunk_payload_sha256']
                         or chunk['metadata'].get('source_sha256') != evidence['source_sha256']
                         or chunk['source_locator'] != evidence['source_locator']
                         or chunk['page_no'] != evidence['page_no']
                         or (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
-                            and not _verified_pdf_row(chunk))):
+                            and not native_table and not _verified_pdf_row(chunk))):
                     raise SourceRevisionError('执行中权威资料切片发生变化，请重新执行。')
                 if evidence.get('native_context') is not None:
                     from .pdf_native_context import extract_native_page_context

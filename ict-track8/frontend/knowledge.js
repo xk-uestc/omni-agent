@@ -222,6 +222,9 @@ function renderOmni(box,question,data,activeSession,timeline=null){
 }
 function element(tag,text,className){const e=document.createElement(tag);if(text!=null)e.textContent=String(text);if(className)e.className=className;return e;}
 function appendAnswer(host,result){
+  if(result.answer_mode==='native_table_literal'){
+    host.append(element('p','已核对原件中的行、列和单元格；答案保留原文。单位未明确时，数值不能自动用于计算。','muted'));
+  }
   if(result.status==='insufficient_evidence'){
     host.append(element('p','资料不足或存在冲突，暂不能给出完整答案。下方内容是相关原文，供核对和补充资料。','error'));
   }

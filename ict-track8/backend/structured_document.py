@@ -252,13 +252,29 @@ def chunks_from_structure(structure, document_id, chunker):
                 'observation_sha256': e['observation_sha256']}
         locator = f'page:{e["page_no"]}/element:{e["element_id"]}'
         if e['kind'] == 'table':
+            header_rows = sorted({c['row'] for c in e['cells'] if c.get('is_header')})
+            header_paths = {}
+            for c in e['cells']:
+                if c.get('is_header'):
+                    for col in range(c['column'], c['column'] + c['column_span']):
+                        header_paths.setdefault(col, []).append(c['text'])
             rows = sorted({c['row'] for c in e['cells']})
             for row in rows:
-                cells = [c for c in e['cells'] if c['row'] == row]
-                text = ' | '.join(c['text'] for c in cells)
+                if row in header_rows:
+                    continue
+                cells = [c for c in e['cells'] if not c.get('is_header') and
+                         c['row'] <= row < c['row'] + c['row_span']]
+                cells.sort(key=lambda c: c['column'])
+                headers = [' / '.join(header_paths.get(c['column'], [])) or f'column_{c["column"]}' for c in cells]
+                text = ' | '.join(f'{h}: {c["text"]}' for h, c in zip(headers, cells))
                 meta = {**base, 'structured_table_cells': cells, 'table_id': e['element_id'],
-                        'row_index': row, 'table_structure_status': 'recognized_requires_review'}
-                # No headers are guessed; rowspan/colspan remain in the table record.
+                        'row_index': row, 'table_column_header_paths': header_paths,
+                        'table_structure_status': e.get('table_structure_status', 'recognized_requires_review')}
+                if e.get('table_structure_status') == 'native_geometry_verified':
+                    from .pdf_table_values import literal_cell
+                    meta.update(headers=headers, values=[literal_cell(c['text'], h) for h, c in zip(headers, cells)],
+                                native_table_record=True)
+                # Only explicit header cells contribute; parser guesses are not headers.
                 chunks.extend(chunker._make_chunks(document_id, 'pdf', 'table_row', text,
                     locator=locator + f'/row:{row}', page_no=e['page_no'], quality=.8,
                     warnings=('parser_observation_requires_review',), metadata=meta))

@@ -13,6 +13,13 @@ from backend import visual_work_budget
 from tests.test_visual_table_reader import grid_pdf, Client
 
 
+@pytest.fixture(autouse=True)
+def exercise_visual_fallback_only(monkeypatch):
+    # Native literal cells now precede vision. This module tests the retained
+    # visual fallback's model/budget contracts, not the new no-model path.
+    monkeypatch.setattr(KnowledgeStore, '_native_table_literal_answer', lambda *a, **kw: None)
+
+
 def store_with_grid(tmp_path, client=None):
     client = client or Client()
     store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))

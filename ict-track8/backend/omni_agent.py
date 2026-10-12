@@ -142,9 +142,12 @@ def fusion_retrieval_summary(result):
             missing.append(entity)
             messages.append(f'数据库确定的对象为{entity}；本次检索片段未定位该对象的对应资料，暂不能给出其“{target}”。')
     if messages:
+        result['tool_execution_status'] = result['status']
+        result['status'] = 'insufficient_evidence'
         result['answer'] = '\n'.join(messages)
         result['answer_mode'] = 'verified_sql_entity_with_retrieved_excerpts'
         result['answer_status'] = 'insufficient_evidence' if missing else 'retrieved_excerpts'
+        result['answer_completeness'] = 'retrieval_only'
 
 
 def _reject_plan(code, details=None):
@@ -208,6 +211,12 @@ def _check_static_document_cells(tasks, knowledge):
             document = knowledge.document(args['document_id'])
         except (ValueError, TypeError, KeyError, OSError):
             _reject_plan('document_cell_static_source_unverified')
+        if document['modality'] == 'pdf':
+            try:
+                knowledge.native_table_cell(args['document_id'], where=args['where'], column=args['column'])
+            except (ValueError, TypeError, KeyError, OSError):
+                _reject_plan('document_cell_static_selection_unverified')
+            continue
         candidates = []
         for chunk in document['chunks']:
             metadata = chunk['metadata']
@@ -1087,6 +1096,15 @@ class OmniAgent:
             and inherited is None and scope_question == question
             and (not planning_history or fresh_scope)
             and not fusion_history_audit.get('requires_clarification') else None)
+        native_document = None
+        if (direct_sql is None and not image_attachments and not history_error and inherited is None
+                and not planning_history and not fusion_history_audit.get('requires_clarification')
+                and not re.search(r'数据库|数据表|\bSQL\b|\bdatabase\b', scope_question, re.I)):
+            # A complete, unique document cell must not become a SQL query
+            # merely because its column says “地区” or “数量”. This is source
+            # selection from actual original evidence, never keyword override.
+            hits = self.knowledge.search(scope_question, top_k=4)
+            native_document = self.knowledge._native_table_literal_answer(scope_question, hits)
         explicit_formula_tasks=None
         if (os.getenv('ICT8_FAST_SQL','0')=='1' and not image_attachments and not history_error and inherited is None
                 and not fusion_history_audit.get('requires_clarification')):
@@ -1108,6 +1126,10 @@ class OmniAgent:
         elif direct_sql is not None:
             plan, source = direct_sql, 'server_verified_sql_route'
             planning_notes.append('complete_schema_value_time_coverage_model_sql_planner_retained')
+        elif native_document is not None:
+            plan={'route':'document','effective_question':scope_question,'tasks_json':'[]','clarification':''}
+            source='server_verified_native_table_route'
+            planning_notes.append('complete_literal_question_bound_to_original_document_table')
         elif explicit_formula_tasks is not None:
             plan={'route':'fusion','effective_question':scope_question,
                 'tasks_json':json.dumps(explicit_formula_tasks,ensure_ascii=False),'clarification':''}

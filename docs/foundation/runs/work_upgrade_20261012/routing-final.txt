@@ -1,0 +1,562 @@
+.................FF..FFF...........................................FFFFF [ 76%]
+FFFFFFF..............F                                                   [100%]
+=================================== FAILURES ===================================
+______________ test_definition_switch_and_bound_document_followup ______________
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a6eaf30>
+
+    def test_definition_switch_and_bound_document_followup(agent):
+        agent.query('2025年华东销售额',session_id='docs')
+        result=agent.query('销售额是什么意思',session_id='docs')
+        assert result['route']=='document'
+        first=agent.query('查询文档“销售与售后手册”：保修期限是多少',session_id='docs')
+>       assert first['status']=='ok'
+E       AssertionError: assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_unified_routing.py:76: AssertionError
+______________ test_sql_entity_to_document_and_ambiguous_pointer _______________
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca10674ce0>
+
+    def test_sql_entity_to_document_and_ambiguous_pointer(agent):
+        agent.query('2025年各地区销售额排名',session_id='bridge')
+        ambiguous=agent.query('它的销售方法是什么',session_id='bridge')
+        assert ambiguous['status']=='clarification'
+        agent.query('华东排名多少',session_id='bridge')
+        result=agent.query('它的销售方法是什么',session_id='bridge')
+>       assert result['route']=='document' and result['status']=='ok'
+E       AssertionError: assert ('document' == 'document'
+E         
+E           document and 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence)
+
+ict-track8/tests/test_unified_routing.py:88: AssertionError
+_ test_mixed_task_executes_sql_then_retrieves_real_entity[\u5148\u4ece\u6570\u636e\u5e93\u67e5\u8be22025\u5e74\u9500\u552e\u989d\u6392\u540d\u7b2c\u4e00\u7684\u5730\u533a\uff0c\u518d\u68c0\u7d22\u8be5\u5730\u533a\u9500\u552e\u65b9\u6cd5] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a5255e0>
+question = '先从数据库查询2025年销售额排名第一的地区，再检索该地区销售方法'
+
+    @pytest.mark.parametrize('question', [
+        '先从数据库查询2025年销售额排名第一的地区，再检索该地区销售方法',
+        '2025年销售额排名第一的地区，再检索该地区销售方法',
+    ])
+    def test_mixed_task_executes_sql_then_retrieves_real_entity(agent, question):
+        class Planner:
+            audit={'status':'completed','http_status':200}
+            def generate(self,*args,**kwargs):
+                return {'route':'fusion','effective_question':'2025年各地区销售额排名第一的地区销售方法',
+                    'clarification':'','tasks_json':json.dumps([
+                        {'id':'sales','tool':'sql','args':{'question':'2025年各地区销售额排名前1'}},
+                        {'id':'methods','tool':'search','args':{'query':[
+                            {'ref':'sales','path':['rows',0,'region']},'销售方法']}}
+                    ],ensure_ascii=False)}
+        agent.client=Planner()
+        result=agent.query(question)
+>       assert result['route']=='fusion' and result['status']=='ok',result
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '先从数据库查询2025年销售额排名第一的地区，再检索该地区销售方法', 'effective_question': '先从数据库查询2025年销售额排名第一的地区，再检索该地区销售方法', 'route': 'fusion', ...}
+E       assert ('fusion' == 'fusion'
+E         
+E           fusion and 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence)
+
+ict-track8/tests/test_unified_routing.py:124: AssertionError
+_ test_mixed_task_executes_sql_then_retrieves_real_entity[2025\u5e74\u9500\u552e\u989d\u6392\u540d\u7b2c\u4e00\u7684\u5730\u533a\uff0c\u518d\u68c0\u7d22\u8be5\u5730\u533a\u9500\u552e\u65b9\u6cd5] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a593fb0>
+question = '2025年销售额排名第一的地区，再检索该地区销售方法'
+
+    @pytest.mark.parametrize('question', [
+        '先从数据库查询2025年销售额排名第一的地区，再检索该地区销售方法',
+        '2025年销售额排名第一的地区，再检索该地区销售方法',
+    ])
+    def test_mixed_task_executes_sql_then_retrieves_real_entity(agent, question):
+        class Planner:
+            audit={'status':'completed','http_status':200}
+            def generate(self,*args,**kwargs):
+                return {'route':'fusion','effective_question':'2025年各地区销售额排名第一的地区销售方法',
+                    'clarification':'','tasks_json':json.dumps([
+                        {'id':'sales','tool':'sql','args':{'question':'2025年各地区销售额排名前1'}},
+                        {'id':'methods','tool':'search','args':{'query':[
+                            {'ref':'sales','path':['rows',0,'region']},'销售方法']}}
+                    ],ensure_ascii=False)}
+        agent.client=Planner()
+        result=agent.query(question)
+>       assert result['route']=='fusion' and result['status']=='ok',result
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '2025年销售额排名第一的地区，再检索该地区销售方法', 'effective_question': '2025年销售额排名第一的地区，再检索该地区销售方法', 'route': 'fusion', ...}
+E       assert ('fusion' == 'fusion'
+E         
+E           fusion and 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence)
+
+ict-track8/tests/test_unified_routing.py:124: AssertionError
+_______________ test_document_pronoun_after_document_stays_bound _______________
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a620500>
+
+    def test_document_pronoun_after_document_stays_bound(agent):
+        agent.query('查询文档“销售与售后手册”：保修期限是多少', session_id='doc-pointer')
+        followup=agent.query('它的退货期限是多少', session_id='doc-pointer')
+>       assert followup['status']=='ok' and '7天' in followup['result']['answer']
+E       AssertionError: assert ('clarification' == 'ok'
+E         
+E         - ok
+E         + clarification)
+
+ict-track8/tests/test_unified_routing.py:133: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u6210\u672c\u600e\u4e48\u8ba1\u7b97] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a5d8bf0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca0a5da390>
+question = '成本怎么计算', with_history = False
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '成本怎么计算', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚未...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u672c\u91d1\u600e\u4e48\u8ba1\u7b97] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a525d90>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca0a526210>
+question = '本金怎么计算', with_history = False
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '本金怎么计算', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚未...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u672c\u94b1\u600e\u4e48\u8ba1\u7b97] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0ebbe7e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca0a5da150>
+question = '本钱怎么计算', with_history = False
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '本钱怎么计算', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚未...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u6210\u672c\u662f\u4ec0\u4e48\u610f\u601d] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a5d92e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca0a5dbd10>
+question = '成本是什么意思', with_history = False
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '成本是什么意思', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u9500\u552e\u989d\u662f\u4ec0\u4e48\u610f\u601d] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca09003890>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca090031d0>
+question = '销售额是什么意思', with_history = False
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '销售额是什么意思', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u8ba2\u5355\u6570\u91cf\u662f\u4ec0\u4e48\u610f\u601d] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca090039e0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca09003230>
+question = '订单数量是什么意思', with_history = False
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '订单数量是什么意思', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u6210\u672c\u600e\u4e48\u8ba1\u7b97] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca0a526c30>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca0a5264e0>
+question = '成本怎么计算', with_history = True
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '成本怎么计算', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚未...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u672c\u91d1\u600e\u4e48\u8ba1\u7b97] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca09000aa0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca09002ae0>
+question = '本金怎么计算', with_history = True
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '本金怎么计算', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚未...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u672c\u94b1\u600e\u4e48\u8ba1\u7b97] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca09c10890>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca09c11910>
+question = '本钱怎么计算', with_history = True
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '本钱怎么计算', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚未...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u6210\u672c\u662f\u4ec0\u4e48\u610f\u601d] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca10674f80>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca1061bb90>
+question = '成本是什么意思', with_history = True
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '成本是什么意思', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但尚...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u9500\u552e\u989d\u662f\u4ec0\u4e48\u610f\u601d] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca09c11940>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca09c10530>
+question = '销售额是什么意思', with_history = True
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '销售额是什么意思', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，但...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_ test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u8ba2\u5355\u6570\u91cf\u662f\u4ec0\u4e48\u610f\u601d] _
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca09cfc980>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fca09cfca40>
+question = '订单数量是什么意思', with_history = True
+
+    @pytest.mark.parametrize('question',[
+        '成本怎么计算', '本金怎么计算', '本钱怎么计算',
+        '成本是什么意思', '销售额是什么意思', '订单数量是什么意思',
+    ])
+    @pytest.mark.parametrize('with_history',[False,True])
+    def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkeypatch,question,with_history):
+        if with_history:
+            assert agent.query('2025年华东销售额',session_id='definitions')['status'] == 'ok'
+        def forbidden(*args,**kwargs):
+            raise AssertionError('a pure definition must not execute SQL or call route model')
+        monkeypatch.setattr(agent.engine,'answer',forbidden)
+        agent.client = type('NoApi',(),{'generate':forbidden})()
+        result = agent.query(question,session_id='definitions')
+        assert result['route'] == 'document', result
+        assert result['effective_question'] == question
+        assert not result['result'].get('sql')
+>       assert result['status'] == 'ok', result['result']
+E       AssertionError: {'status': 'insufficient_evidence', 'question': '订单数量是什么意思', 'answer_mode': 'attributed_extracts', 'answer': '已找到相关原文，...业务最初投入或借入的资金,不包含利息。本钱是本金或投入资金的口语称呼。
+E         
+E         毛利的计算方法是销售额减去销售成本。销售额是已经成交订单的收入金额。
+E         
+E         订单数量是满足指定条件的订单记录数量。华东采用定期客户回访的销售方法。', ...}
+E       assert 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence
+
+ict-track8/tests/test_term_definition_routing.py:63: AssertionError
+_________ test_sql_entity_bridge_definition_remains_document_retrieval _________
+
+agent = <backend.omni_agent.OmniAgent object at 0x7fca09c123f0>
+
+    def test_sql_entity_bridge_definition_remains_document_retrieval(agent):
+        first = agent.query('2025年各地区销售额排名',session_id='entity-bridge')
+        assert first['status'] == 'ok'
+        selected = agent.query('华东排名多少',session_id='entity-bridge')
+        assert selected['status'] == 'ok'
+        answer = agent.query('它的销售方法是什么',session_id='entity-bridge')
+>       assert answer['route'] == 'document' and answer['status'] == 'ok', answer
+E       AssertionError: {'status': 'insufficient_evidence', 'route': 'document', 'question': '它的销售方法是什么', 'effective_question': '华东的销售方法是什么', ...}
+E       assert ('document' == 'document'
+E         
+E           document and 'insufficient_evidence' == 'ok'
+E         
+E         - ok
+E         + insufficient_evidence)
+
+ict-track8/tests/test_term_definition_routing.py:114: AssertionError
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_unified_routing.py::test_definition_switch_and_bound_document_followup
+FAILED ict-track8/tests/test_unified_routing.py::test_sql_entity_to_document_and_ambiguous_pointer
+FAILED ict-track8/tests/test_unified_routing.py::test_mixed_task_executes_sql_then_retrieves_real_entity[\u5148\u4ece\u6570\u636e\u5e93\u67e5\u8be22025\u5e74\u9500\u552e\u989d\u6392\u540d\u7b2c\u4e00\u7684\u5730\u533a\uff0c\u518d\u68c0\u7d22\u8be5\u5730\u533a\u9500\u552e\u65b9\u6cd5]
+FAILED ict-track8/tests/test_unified_routing.py::test_mixed_task_executes_sql_then_retrieves_real_entity[2025\u5e74\u9500\u552e\u989d\u6392\u540d\u7b2c\u4e00\u7684\u5730\u533a\uff0c\u518d\u68c0\u7d22\u8be5\u5730\u533a\u9500\u552e\u65b9\u6cd5]
+FAILED ict-track8/tests/test_unified_routing.py::test_document_pronoun_after_document_stays_bound
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u6210\u672c\u600e\u4e48\u8ba1\u7b97]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u672c\u91d1\u600e\u4e48\u8ba1\u7b97]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u672c\u94b1\u600e\u4e48\u8ba1\u7b97]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u6210\u672c\u662f\u4ec0\u4e48\u610f\u601d]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u9500\u552e\u989d\u662f\u4ec0\u4e48\u610f\u601d]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[False-\u8ba2\u5355\u6570\u91cf\u662f\u4ec0\u4e48\u610f\u601d]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u6210\u672c\u600e\u4e48\u8ba1\u7b97]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u672c\u91d1\u600e\u4e48\u8ba1\u7b97]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u672c\u94b1\u600e\u4e48\u8ba1\u7b97]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u6210\u672c\u662f\u4ec0\u4e48\u610f\u601d]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u9500\u552e\u989d\u662f\u4ec0\u4e48\u610f\u601d]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_real_knowledge_retrieval_never_executes_sql_for_definition[True-\u8ba2\u5355\u6570\u91cf\u662f\u4ec0\u4e48\u610f\u601d]
+FAILED ict-track8/tests/test_term_definition_routing.py::test_sql_entity_bridge_definition_remains_document_retrieval
+18 failed, 76 passed in 5.20s

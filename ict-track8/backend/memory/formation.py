@@ -56,7 +56,16 @@ class MemoryFormation:
 
     def capture(self,response,event_id):
         """Consume only actual document-result citations; never user statements."""
-        if response.get('route')!='document' or response.get('status')!='ok':return []
+        if response.get('route')!='document':return []
+        result=response.get('result',{})
+        # A source read can succeed while answering the whole question does
+        # not. Preserve candidate-only extraction from the actual pinned txt
+        # citations; review/promotion and task-experience success gates remain
+        # independent. Never admit failed generation or failed source review.
+        source_read_only=(response.get('status')=='insufficient_evidence'
+            and result.get('answer_mode')=='attributed_extracts'
+            and result.get('answer_completeness')=='retrieval_only')
+        if response.get('status')!='ok' and not source_read_only:return []
         grouped={}
         for citation in (response.get('result') or {}).get('citations',[]):
             meta=citation.get('metadata',{})

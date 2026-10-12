@@ -447,11 +447,21 @@ class DependencyAgent:
             if tool == 'document_formula':
                 if set(args) != {'document_id', 'label'}:
                     raise DependencyPlanError('公式定位参数非法')
+                native_formulas = []
+                if document['modality'] == 'pdf':
+                    from .native_formula_pages import extract_native_literal_formulas
+                    raw = self.knowledge_store.verify_source(document['document_id'], expected_sha256=document['sha256']).read_bytes()
+                    native_formulas = [{**e, 'document_id':document['document_id'],
+                        'source_uri':f'/api/v1/knowledge/documents/{document["document_id"]}/original', 'chunk_id':None}
+                        for e in extract_native_literal_formulas(raw,label=args['label'],expected_sha256=document['sha256'])]
+                    self.knowledge_store.verify_source(document['document_id'],expected_sha256=document['sha256'])
                 if 'structured_document' in document:
                     records = self.knowledge_store.formula_records(document['document_id'], expected_sha256=document['sha256'])
                     reviewed = [e for e in records if e.get('review_status') == 'verified'
                                 and e.get('calculator_input_eligible') is True and e['formula_review']['label'] == args['label']]
                     if len(reviewed) != 1:
+                        if not reviewed and len(native_formulas) == 1:
+                            return native_formulas[0]
                         raise DependencyPlanError('公式缺失、审核不完整或存在歧义，不能自动计算', code='formula_review_required')
                     item = reviewed[0]
                     return {'expression':item['formula_review']['expression'], 'parameters':item['formula_review']['parameters'],
@@ -459,13 +469,14 @@ class DependencyAgent:
                             'chunk_id':None, 'sha256':document['sha256'], 'document_id':document['document_id'],
                             'formula_review':item['formula_review'], 'structured_element_id':item['element_id']}
                 candidates = []
-                for chunk in document['chunks']:
+                for chunk in document['chunks'] if document['modality'] != 'pdf' else []:
                     formulas = DocumentAnalyzer().analyze(chunk['text']).formulas
                     for formula in formulas:
                         if formula.label == args['label'] and formula.status != 'rejected':
                             candidates.append({'expression': formula.normalized_expression, 'parameters': list(formula.parameters), 'label': formula.label,
                                 'source_uri': f'/api/v1/knowledge/documents/{document["document_id"]}/original', 'locator': chunk['source_locator'], 'chunk_id': chunk['chunk_id'], 'sha256': document['sha256']})
                 if document['modality'] == 'pdf':
+                    candidates.extend(native_formulas)
                     from .native_formula_pages import extract_cross_page_formulas
                     raw = self.knowledge_store.verify_source(document['document_id'], expected_sha256=document['sha256']).read_bytes()
                     cross_page = extract_cross_page_formulas(raw, label=args['label'], expected_sha256=document['sha256'])
@@ -516,6 +527,12 @@ class DependencyAgent:
                 from .excel_layout import literal_matches,query_literal
                 if set(args) != {'document_id', 'where', 'column'} or not isinstance(args['where'], dict) or not args['where']:
                     raise DependencyPlanError('表格取值必须明确匹配条件和列')
+                if document['modality'] == 'pdf':
+                    try:
+                        return self.knowledge_store.native_table_cell(args['document_id'],
+                                    where=args['where'], column=args['column'])
+                    except ValueError as exc:
+                        raise DependencyPlanError(str(exc), code='pdf_table_cell_unverified') from exc
                 candidates = []
                 seen_cells = set()
                 for chunk in document['chunks']:
@@ -565,6 +582,8 @@ class DependencyAgent:
                 raise DependencyPlanError('公式没有有效文档来源')
             if formula.get('structured_element_id'):
                 self.knowledge_store.verify_formula_record(formula)
+            if formula.get('native_formula_proof'):
+                self.knowledge_store.verify_native_formula(formula)
             from .formula_parameter_binding import validate_formula_sql_parameters
             parameter_validation = validate_formula_sql_parameters(
                 self.sql_engine, formula, original_args['parameters'], args['parameters'], results,
@@ -627,6 +646,8 @@ class DependencyAgent:
             calculated = FormulaBinder().calculate(formula['expression'], bindings, formula_source=formula['source_uri'], formula_locator=formula['locator'])
             if formula.get('structured_element_id'):
                 self.knowledge_store.verify_formula_record(formula)
+            if formula.get('native_formula_proof'):
+                self.knowledge_store.verify_native_formula(formula)
             calculated['parameter_semantics_validation'] = parameter_validation
             calculated['temporal_validation'] = {'status': 'verified', **temporal} if temporal else {'status': 'not_inferred'}
             if temporal:

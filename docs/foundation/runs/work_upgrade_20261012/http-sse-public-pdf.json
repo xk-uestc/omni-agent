@@ -1,0 +1,946 @@
+{
+  "api_calls": "local_testclient_only",
+  "ingest_http": 200,
+  "query": {
+    "status": "ok",
+    "question": "高级熟练工的一般地区值是多少？",
+    "effective_question": "高级熟练工的一般地区值是多少？",
+    "route": "document",
+    "planner_source": "server_verified_native_table_route",
+    "session_id": null,
+    "context_turns": 0,
+    "state": {
+      "route": "document",
+      "sources": [
+        "labor"
+      ],
+      "document_context": {
+        "payload": {
+          "question": "高级熟练工的一般地区值是多少？",
+          "documents": {
+            "labor": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8"
+          }
+        },
+        "sha256": "63357dbafdc8118c39cc13bb42b9a6492265490e35cde73a25720f34ceeba0d6"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "question": "高级熟练工的一般地区值是多少？",
+      "answer": "10.26",
+      "answer_mode": "native_table_literal",
+      "answer_completeness": "complete_literal_cell",
+      "citations": [
+        {
+          "citation_id": 1,
+          "document_id": "labor",
+          "title": "定额教材",
+          "snippet": "10.26",
+          "source_uri": "/api/v1/knowledge/documents/labor/original",
+          "score": null,
+          "matched_terms": [],
+          "metadata": {
+            "document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "source_locator": "page:1/element:native_e00000/row:1/column:一般地区",
+            "page_no": 1,
+            "bbox_display_pt": [
+              322.6510009765625,
+              335.0380554199219,
+              444.916015625,
+              350.9520263671875
+            ],
+            "column_header_bbox_display_pt": [
+              322.6510009765625,
+              319.1250305175781,
+              444.916015625,
+              335.0380554199219
+            ],
+            "condition_bboxes_display_pt": {
+              "定额人等级": [
+                179.42800903320312,
+                335.0380554199219,
+                322.6510009765625,
+                350.9520263671875
+              ]
+            }
+          }
+        }
+      ],
+      "table_fact": {
+        "value": 10.26,
+        "raw_value": "10.26",
+        "unit": "unknown",
+        "source_uri": "/api/v1/knowledge/documents/labor/original",
+        "sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+        "document_id": "labor",
+        "locator": "page:1/element:native_e00000/row:1/column:一般地区",
+        "structured_element_id": "native_e00000",
+        "page_no": 1,
+        "bbox_display_pt": [
+          322.6510009765625,
+          335.0380554199219,
+          444.916015625,
+          350.9520263671875
+        ],
+        "matched_conditions": {
+          "定额人等级": "高级熟练工"
+        },
+        "condition_bboxes_display_pt": {
+          "定额人等级": [
+            179.42800903320312,
+            335.0380554199219,
+            322.6510009765625,
+            350.9520263671875
+          ]
+        },
+        "column_header_bbox_display_pt": [
+          322.6510009765625,
+          319.1250305175781,
+          444.916015625,
+          335.0380554199219
+        ],
+        "validation": "native_table_literal_cell_replayed",
+        "calculator_input_eligible": false
+      },
+      "retrieval": {
+        "mode": "bm25",
+        "embedding_model": null,
+        "dense_answer_threshold": null
+      },
+      "trace": [
+        {
+          "stage": "native_table_literal",
+          "status": "verified",
+          "model_requests_attempted": 0,
+          "scope": "complete_literal_question_and_replayed_native_cell",
+          "candidate_document_ids": [
+            "labor"
+          ]
+        }
+      ],
+      "retrieval_audit": {
+        "version": "ict8-rag-audit-v1",
+        "query": "高级熟练工的一般地区值是多少？",
+        "source_binding": {
+          "version": "body-source-conditions-v1",
+          "status": "bound",
+          "requested": {
+            "years": [],
+            "versions": [],
+            "organizations": [],
+            "objects": []
+          },
+          "rejected_sources": {},
+          "ambiguous_sources": [],
+          "sources": {
+            "labor": {
+              "document_id": "labor",
+              "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            }
+          },
+          "authority": "explicit_body_declarations_only_not_filename_or_keyword_presence"
+        },
+        "linked_scope": null,
+        "scope": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "index": {
+          "strategy": "persistent_versioned_bm25",
+          "status": "persistent_index",
+          "tokenizer_version": "ict8-tokenize-cjk-2-3-latin-v1"
+        },
+        "query_language": "zh_or_mixed",
+        "dense_status": "not_configured",
+        "channels": [
+          "bm25"
+        ],
+        "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+        "candidate_pool_limit": 20,
+        "candidate_count": 16,
+        "selection_budget": 4,
+        "selected_count": 4,
+        "selection": {
+          "method": "query_body_lexical_coverage_navigation_only",
+          "semantic_sufficiency": "not_evaluated",
+          "top_k": 4,
+          "candidate_count": 16,
+          "unique_body_count": 16,
+          "query_facets": {
+            "练工": 1.0,
+            "工的": 1.0,
+            "级熟": 1.0,
+            "的一": 1.0,
+            "熟练": 1.0,
+            "地区": 1.0,
+            "一般": 1.0,
+            "区值": 1.0,
+            "般地": 1.0,
+            "高级": 1.0,
+            "值是": 1.0,
+            "是多": 1.0
+          },
+          "covered_lexical_facets": [
+            "一般",
+            "地区",
+            "熟练",
+            "级熟",
+            "练工",
+            "般地",
+            "高级"
+          ],
+          "uncovered_lexical_facets": [
+            "值是",
+            "区值",
+            "工的",
+            "是多",
+            "的一"
+          ],
+          "available_but_unselected_facets": [
+            "工的"
+          ],
+          "selection_budget_exhausted": true,
+          "source_counts": {
+            "labor": 4
+          },
+          "steps": [
+            {
+              "chunk_id": "dab117698619eb1098ebae45",
+              "source_id": "labor",
+              "ranking_score": 50.58486583783784,
+              "utility": 1.166667,
+              "new_lexical_facets": [
+                "一般",
+                "地区",
+                "熟练",
+                "级熟",
+                "练工",
+                "般地",
+                "高级"
+              ],
+              "body_sha256": "f501c0569451ded4ee74a1afd184c5f5d6feb295a51556420263281c403c7d3b"
+            },
+            {
+              "chunk_id": "c462590b083b1f72e5215591",
+              "source_id": "labor",
+              "ranking_score": 39.252759567567566,
+              "utility": 0.518185,
+              "new_lexical_facets": [],
+              "body_sha256": "649a9d78d8df9454620c29f10c3782c480760c085ce19adc35c120dcf5508729"
+            },
+            {
+              "chunk_id": "30cd0d8d518af2ec4fbf9d36",
+              "source_id": "labor",
+              "ranking_score": 30.15139135135135,
+              "utility": 0.367239,
+              "new_lexical_facets": [],
+              "body_sha256": "2fd6940da3eedfc58999b645263becc9ef86b87cc8e84cc5b7b93438226d6654"
+            },
+            {
+              "chunk_id": "d9902cd9d50c37d1ae161a79",
+              "source_id": "labor",
+              "ranking_score": 28.47219616216216,
+              "utility": 0.319002,
+              "new_lexical_facets": [],
+              "body_sha256": "9229ccb1f00409300ff4cdf23496e7e8474305607613a7c9ec0358dc4cbba87c"
+            }
+          ],
+          "skipped": []
+        },
+        "candidates": [
+          {
+            "chunk_id": "dab117698619eb1098ebae45",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "序号: 1 | 定额人等级: 高级熟练工 | 一般地区: 10.26",
+            "source_locator": "page:1/element:native_e00000/row:1",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 1,
+            "bm25_rank": 1,
+            "bm25_raw": 29.708572,
+            "bm25_relative": 1.0,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 50.58486583783784,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "级熟",
+              "级熟练",
+              "高级",
+              "高级熟",
+              "一般地",
+              "熟练",
+              "熟练工",
+              "练工",
+              "般地",
+              "般地区",
+              "地区",
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "primary",
+            "selection_utility": 1.166667,
+            "new_lexical_facets": [
+              "一般",
+              "地区",
+              "熟练",
+              "级熟",
+              "练工",
+              "般地",
+              "高级"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "c462590b083b1f72e5215591",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "高级熟练工",
+            "source_locator": "page:1:block:21",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 2,
+            "bm25_rank": 2,
+            "bm25_raw": 23.053208,
+            "bm25_relative": 0.776,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 39.252759567567566,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "级熟",
+              "级熟练",
+              "高级",
+              "高级熟",
+              "熟练",
+              "熟练工",
+              "练工"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.518185,
+            "new_lexical_facets": [],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "30cd0d8d518af2ec4fbf9d36",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "序号: 2 | 定额人等级: 熟练工 | 一般地区: 7.61",
+            "source_locator": "page:1/element:native_e00000/row:2",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 3,
+            "bm25_rank": 3,
+            "bm25_raw": 17.70796,
+            "bm25_relative": 0.5961,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 30.15139135135135,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "熟练工",
+              "一般地",
+              "熟练",
+              "练工",
+              "般地",
+              "般地区",
+              "地区",
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.367239,
+            "new_lexical_facets": [],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "d9902cd9d50c37d1ae161a79",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "序号: 3 | 定额人等级: 半熟练工 | 一般地区: 5.95",
+            "source_locator": "page:1/element:native_e00000/row:3",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 4,
+            "bm25_rank": 4,
+            "bm25_raw": 16.721766,
+            "bm25_relative": 0.5629,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 28.47219616216216,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "一般地",
+              "熟练",
+              "熟练工",
+              "练工",
+              "般地",
+              "般地区",
+              "地区",
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.319002,
+            "new_lexical_facets": [],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "27b7f7d404018dde4d80c70f",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "序号: 4 | 定额人等级: 普工 | 一般地区: 4.90",
+            "source_locator": "page:1/element:native_e00000/row:4",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 5,
+            "bm25_rank": 5,
+            "bm25_raw": 10.584054,
+            "bm25_relative": 0.3563,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 18.02149735135135,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "一般地",
+              "般地",
+              "般地区",
+              "地区",
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "17e9cf1fda361c6cf003c254",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "表11 1 单位:元/工时一般地区人工预算单价计算标准",
+            "source_locator": "page:1:block:18",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 6,
+            "bm25_rank": 6,
+            "bm25_raw": 8.618898,
+            "bm25_relative": 0.2901,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 14.675420918918919,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "一般地",
+              "般地",
+              "般地区",
+              "地区",
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "450f9a208e64a8af0c07ba83",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "熟练工",
+            "source_locator": "page:1:block:23",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 7,
+            "bm25_rank": 7,
+            "bm25_raw": 8.453816,
+            "bm25_relative": 0.2846,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 14.39433535135135,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "熟练工",
+              "熟练",
+              "练工"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "d71d432ea0d4a48b222ff484",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "本书仅列出了一般地区人工预算单价计算标准见表11 1。",
+            "source_locator": "page:1:block:17",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 8,
+            "bm25_rank": 8,
+            "bm25_raw": 8.073781,
+            "bm25_relative": 0.2718,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 13.74724872972973,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "一般地",
+              "般地",
+              "般地区",
+              "地区",
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "15cab5c7ea24967130bf1748",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "半熟练工",
+            "source_locator": "page:1:block:25",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 9,
+            "bm25_rank": 9,
+            "bm25_raw": 7.709868,
+            "bm25_relative": 0.2595,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 13.127613081081082,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "熟练",
+              "熟练工",
+              "练工"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "5f72c7082ba738adbe100d10",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "2)辅助工资,是在基本工资之外,以其他形式支付给职工的工资性收入。包括:",
+            "source_locator": "page:1:block:12",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 10,
+            "bm25_rank": 10,
+            "bm25_raw": 2.481131,
+            "bm25_relative": 0.0835,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 4.224628459459459,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "工的"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "9fb7afef7cae6897d1e89ed0",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "(1)人工预算单价。是指支付给从事建筑及安装工程施工的生产工人的各项费用。包",
+            "source_locator": "page:1:block:5",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 11,
+            "bm25_rank": 11,
+            "bm25_raw": 2.325508,
+            "bm25_relative": 0.0783,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 3.959648756756757,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "工的"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "a7f3b86775a03317ce7f7bfc",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "1)材料原价。除电及火工产品外,材料原价按工程所在地区就近的大物资供应公司、",
+            "source_locator": "page:1:block:31",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 12,
+            "bm25_rank": 12,
+            "bm25_raw": 1.355356,
+            "bm25_relative": 0.0456,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.307768324324324,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "地区"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "b06c341e43dc1f3aae97655a",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "价格。材料预算价格一般包括材料原价、运杂费、运输保险费、采购及保管费4项,个别",
+            "source_locator": "page:1:block:29",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 13,
+            "bm25_rank": 13,
+            "bm25_raw": 1.336771,
+            "bm25_relative": 0.045,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.2761235945945946,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "84e743ee7c60fe5594bd2709",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "所发生的各种运载车辆的运费、调车费、装卸费和其他杂费等费用。一般分铁路、公路、",
+            "source_locator": "page:1:block:38",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 14,
+            "bm25_rank": 14,
+            "bm25_raw": 1.297013,
+            "bm25_relative": 0.0437,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.2084275405405402,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "8a3a9f6aadb917b8de2747ba",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "1根据国家有关规定属于工资性质的各种津贴,主要包括地区津贴、施工津贴和加班津贴",
+            "source_locator": "page:1:block:13",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 15,
+            "bm25_rank": 15,
+            "bm25_raw": 1.27265,
+            "bm25_relative": 0.0428,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.1669445945945944,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "地区"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "ff25540b569a02c1f1f1616a",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "建设工程造价管理部门公布的信息价计算。电及火工产品执行国家定价。包装费一般包含",
+            "source_locator": "page:1:block:33",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 16,
+            "bm25_rank": 16,
+            "bm25_raw": 1.207247,
+            "bm25_relative": 0.0406,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.0555827297297298,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "一般"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "labor",
+            "source_document_id": "labor",
+            "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+            "title": "定额教材",
+            "snippet": "10.26",
+            "source_locator": "page:1/element:native_e00000/row:1/column:一般地区",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": null,
+            "bm25_rank": null,
+            "bm25_raw": null,
+            "bm25_relative": null,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": null,
+            "matched_terms": [],
+            "retrieval_channels": [
+              "unknown"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": "later_evidence_selection",
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "final_citation_added_after_initial_candidate_selection",
+            "evidence_status": "final_citation_source_checked_separately",
+            "final_citation_ids": [
+              1
+            ]
+          }
+        ]
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "server_verified_native_table_route",
+        "route": "document",
+        "latency_ms": 115.322,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [
+          "complete_literal_question_bound_to_original_document_table"
+        ],
+        "attempts": []
+      },
+      {
+        "stage": "native_table_literal",
+        "status": "verified",
+        "model_requests_attempted": 0,
+        "scope": "complete_literal_question_and_replayed_native_cell",
+        "candidate_document_ids": [
+          "labor"
+        ]
+      }
+    ],
+    "audit_id": "12a3034ab9ade0f2f5def9a8",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "高级熟练工的一般地区值是多少？"
+    },
+    "routing": {
+      "selected_route": "document",
+      "label": "资料问答",
+      "strategy": "source_query",
+      "reason": "检索原文并核对来源。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "failure_trace": [],
+    "task_verification": {
+      "execution_status": "ok",
+      "independent_whole_question_success": "not_verified_by_status",
+      "first_failure": null
+    }
+  },
+  "stream_raw": "event: trace\ndata: {\"stage\": \"tool_call\", \"tool\": \"context.resolve\", \"status\": \"running\", \"input\": null, \"executed\": false, \"call_id\": \"omni-call-1\"}\n\nevent: trace\ndata: {\"stage\": \"tool_call\", \"tool\": \"context.resolve\", \"status\": \"success\", \"output\": {\"status\": null}, \"executed\": true, \"summary\": \"调用完成\", \"call_id\": \"omni-call-1\"}\n\nevent: trace\ndata: {\"stage\": \"tool_call\", \"tool\": \"knowledge.answer\", \"status\": \"running\", \"input\": {\"question\": \"高级熟练工的一般地区值是多少？\"}, \"executed\": false, \"call_id\": \"omni-call-2\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.question_analysis\", \"rag_step\": \"question_analysis\", \"status\": \"running\", \"summary\": \"正在整理本轮问题与检索目标。\", \"input\": {\"question\": \"高级熟练工的一般地区值是多少？\"}, \"output\": {}, \"call_id\": \"omni-call-3\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.question_analysis\", \"rag_step\": \"question_analysis\", \"status\": \"success\", \"summary\": \"检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。\", \"input\": {}, \"output\": {\"question\": \"高级熟练工的一般地区值是多少？\", \"retrieval_query\": \"高级熟练工的一般地区值是多少？\", \"query_rewrite\": \"none\"}, \"latency_ms\": 0.007, \"executed\": true, \"call_id\": \"omni-call-3\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.context_resolution\", \"rag_step\": \"context_resolution\", \"status\": \"running\", \"summary\": \"正在核对多轮上下文、指代和附加输入。\", \"input\": {\"mode\": \"independent_question\"}, \"output\": {}, \"call_id\": \"omni-call-4\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.context_resolution\", \"rag_step\": \"context_resolution\", \"status\": \"success\", \"summary\": \"按本轮完整问题处理；没有沿用未经核验的历史文档来源。\", \"input\": {}, \"output\": {\"mode\": \"independent_question\", \"actual_question\": \"高级熟练工的一般地区值是多少？\", \"effective_question\": \"高级熟练工的一般地区值是多少？\", \"context_turns\": 0, \"image_count\": 0, \"retrieval_context_attached\": false}, \"latency_ms\": 0.007, \"executed\": true, \"call_id\": \"omni-call-4\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.source_binding\", \"rag_step\": \"source_binding\", \"status\": \"running\", \"summary\": \"正在应用资料范围和页码限制。\", \"input\": {\"document_id\": null, \"page_no\": null, \"scope\": \"all_sources\"}, \"output\": {}, \"call_id\": \"omni-call-5\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.source_binding\", \"rag_step\": \"source_binding\", \"status\": \"success\", \"summary\": \"已限定到 1 份资料、40 个可检索片段。\", \"input\": {\"document_id\": null, \"page_no\": null, \"exact_identifiers\": []}, \"output\": {\"document_count\": 1, \"eligible_chunk_count\": 40, \"scope\": \"all_sources\"}, \"latency_ms\": 3.609, \"executed\": true, \"call_id\": \"omni-call-5\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.bm25_retrieval\", \"rag_step\": \"bm25_retrieval\", \"status\": \"running\", \"summary\": \"正在按词项相关度查找手册片段。\", \"input\": {\"query\": \"高级熟练工的一般地区值是多少？\", \"candidate_limit\": 100}, \"output\": {}, \"call_id\": \"omni-call-6\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.bm25_retrieval\", \"rag_step\": \"bm25_retrieval\", \"status\": \"success\", \"summary\": \"关键词召回得到 16 个候选片段。\", \"input\": {}, \"output\": {\"candidate_count\": 16}, \"latency_ms\": 1.343, \"executed\": true, \"call_id\": \"omni-call-6\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.dense_retrieval\", \"rag_step\": \"dense_retrieval\", \"status\": \"skipped\", \"summary\": \"Dense 向量索引未配置，本轮保留关键词召回。\", \"input\": {}, \"output\": {\"dense_status\": \"not_configured\"}, \"executed\": false, \"call_id\": \"omni-call-7\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.hybrid_ranking\", \"rag_step\": \"hybrid_ranking\", \"status\": \"running\", \"summary\": \"正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。\", \"input\": {\"dense_status\": \"not_configured\"}, \"output\": {}, \"call_id\": \"omni-call-8\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.hybrid_ranking\", \"rag_step\": \"hybrid_ranking\", \"status\": \"success\", \"summary\": \"BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。\", \"input\": {}, \"output\": {\"dense_status\": \"not_configured\", \"rrf_executed\": false, \"ranking_method\": \"bm25_then_page_scope_and_body_affinity\"}, \"latency_ms\": 0.064, \"executed\": true, \"call_id\": \"omni-call-8\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.evidence_selection\", \"rag_step\": \"evidence_selection\", \"status\": \"running\", \"summary\": \"正在应用资料范围约束，并裁剪相关证据片段。\", \"input\": {\"candidate_count\": 16, \"selection_limit\": 4}, \"output\": {}, \"call_id\": \"omni-call-9\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.evidence_selection\", \"rag_step\": \"evidence_selection\", \"status\": \"success\", \"summary\": \"从 16 个排序候选中选出 4 个证据片段。\", \"input\": {}, \"output\": {\"candidate_count\": 16, \"selected_count\": 4, \"selection_method\": \"query_body_lexical_coverage_navigation_only\", \"selected_evidence\": [{\"title\": \"定额教材\", \"chunk_id\": \"dab117698619eb1098ebae45\", \"source_locator\": \"page:1/element:native_e00000/row:1\", \"page_no\": 1, \"snippet\": \"序号: 1 | 定额人等级: 高级熟练工 | 一般地区: 10.26\", \"image_count\": 0}, {\"title\": \"定额教材\", \"chunk_id\": \"c462590b083b1f72e5215591\", \"source_locator\": \"page:1:block:21\", \"page_no\": 1, \"snippet\": \"高级熟练工\", \"image_count\": 0}, {\"title\": \"定额教材\", \"chunk_id\": \"30cd0d8d518af2ec4fbf9d36\", \"source_locator\": \"page:1/element:native_e00000/row:2\", \"page_no\": 1, \"snippet\": \"序号: 2 | 定额人等级: 熟练工 | 一般地区: 7.61\", \"image_count\": 0}, {\"title\": \"定额教材\", \"chunk_id\": \"d9902cd9d50c37d1ae161a79\", \"source_locator\": \"page:1/element:native_e00000/row:3\", \"page_no\": 1, \"snippet\": \"序号: 3 | 定额人等级: 半熟练工 | 一般地区: 5.95\", \"image_count\": 0}]}, \"latency_ms\": 0.634, \"executed\": true, \"call_id\": \"omni-call-9\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.generation_evidence\", \"rag_step\": \"generation_evidence\", \"status\": \"running\", \"summary\": \"正在整理选中片段、原文定位和关联图片。\", \"input\": {\"selected_count\": 4}, \"output\": {}, \"call_id\": \"omni-call-10\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.generation_evidence\", \"rag_step\": \"generation_evidence\", \"status\": \"success\", \"summary\": \"已整理 4 个入选片段，交由回答与来源核验流程处理。\", \"input\": {}, \"output\": {\"evidence_count\": 4, \"evidence\": [{\"title\": \"定额教材\", \"chunk_id\": \"dab117698619eb1098ebae45\", \"source_locator\": \"page:1/element:native_e00000/row:1\", \"page_no\": 1, \"snippet\": \"序号: 1 | 定额人等级: 高级熟练工 | 一般地区: 10.26\", \"image_count\": 0}, {\"title\": \"定额教材\", \"chunk_id\": \"c462590b083b1f72e5215591\", \"source_locator\": \"page:1:block:21\", \"page_no\": 1, \"snippet\": \"高级熟练工\", \"image_count\": 0}, {\"title\": \"定额教材\", \"chunk_id\": \"30cd0d8d518af2ec4fbf9d36\", \"source_locator\": \"page:1/element:native_e00000/row:2\", \"page_no\": 1, \"snippet\": \"序号: 2 | 定额人等级: 熟练工 | 一般地区: 7.61\", \"image_count\": 0}, {\"title\": \"定额教材\", \"chunk_id\": \"d9902cd9d50c37d1ae161a79\", \"source_locator\": \"page:1/element:native_e00000/row:3\", \"page_no\": 1, \"snippet\": \"序号: 3 | 定额人等级: 半熟练工 | 一般地区: 5.95\", \"image_count\": 0}], \"user_image_count\": 0}, \"latency_ms\": 0.024, \"executed\": true, \"call_id\": \"omni-call-10\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.answer_generation\", \"rag_step\": \"answer_generation\", \"status\": \"running\", \"summary\": \"正在依据入选证据生成或核验回答。\", \"input\": {\"question\": \"高级熟练工的一般地区值是多少？\", \"evidence_count\": 4}, \"output\": {}, \"call_id\": \"omni-call-11\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.answer_generation\", \"rag_step\": \"answer_generation\", \"status\": \"success\", \"summary\": \"已返回回答并完成来源核验。\", \"input\": {}, \"output\": {\"status\": \"ok\", \"answer_mode\": \"native_table_literal\", \"citation_count\": 1}, \"latency_ms\": 83.818, \"executed\": true, \"call_id\": \"omni-call-11\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.completion\", \"rag_step\": \"completion\", \"status\": \"running\", \"summary\": \"正在整理最终回答与来源信息。\", \"input\": {}, \"output\": {}, \"call_id\": \"omni-call-12\"}\n\nevent: trace\ndata: {\"stage\": \"rag_process\", \"tool\": \"rag.completion\", \"rag_step\": \"completion\", \"status\": \"success\", \"summary\": \"文档处理已完成。\", \"input\": {}, \"output\": {\"status\": \"ok\", \"answer_mode\": \"native_table_literal\", \"citation_count\": 1}, \"latency_ms\": 0.054, \"executed\": true, \"call_id\": \"omni-call-12\"}\n\nevent: trace\ndata: {\"stage\": \"tool_call\", \"tool\": \"knowledge.answer\", \"status\": \"success\", \"output\": {\"status\": \"ok\", \"citation_count\": 1}, \"executed\": true, \"summary\": \"调用完成\", \"call_id\": \"omni-call-2\"}\n\nevent: trace\ndata: {\"stage\": \"query_complete\", \"tool\": \"query.complete\", \"status\": \"success\", \"executed\": false, \"output\": {\"status\": \"ok\", \"route\": \"document\"}, \"summary\": \"回答已返回\", \"call_id\": \"omni-call-13\"}\n\nevent: done\ndata: {\"status\": \"ok\", \"question\": \"高级熟练工的一般地区值是多少？\", \"effective_question\": \"高级熟练工的一般地区值是多少？\", \"route\": \"document\", \"planner_source\": \"server_verified_native_table_route\", \"session_id\": null, \"context_turns\": 0, \"state\": {\"route\": \"document\", \"sources\": [\"labor\"], \"document_context\": {\"payload\": {\"question\": \"高级熟练工的一般地区值是多少？\", \"documents\": {\"labor\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\"}}, \"sha256\": \"63357dbafdc8118c39cc13bb42b9a6492265490e35cde73a25720f34ceeba0d6\"}}, \"result\": {\"status\": \"ok\", \"question\": \"高级熟练工的一般地区值是多少？\", \"answer\": \"10.26\", \"answer_mode\": \"native_table_literal\", \"answer_completeness\": \"complete_literal_cell\", \"citations\": [{\"citation_id\": 1, \"document_id\": \"labor\", \"title\": \"定额教材\", \"snippet\": \"10.26\", \"source_uri\": \"/api/v1/knowledge/documents/labor/original\", \"score\": null, \"matched_terms\": [], \"metadata\": {\"document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"source_locator\": \"page:1/element:native_e00000/row:1/column:一般地区\", \"page_no\": 1, \"bbox_display_pt\": [322.6510009765625, 335.0380554199219, 444.916015625, 350.9520263671875], \"column_header_bbox_display_pt\": [322.6510009765625, 319.1250305175781, 444.916015625, 335.0380554199219], \"condition_bboxes_display_pt\": {\"定额人等级\": [179.42800903320312, 335.0380554199219, 322.6510009765625, 350.9520263671875]}}}], \"table_fact\": {\"value\": 10.26, \"raw_value\": \"10.26\", \"unit\": \"unknown\", \"source_uri\": \"/api/v1/knowledge/documents/labor/original\", \"sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"document_id\": \"labor\", \"locator\": \"page:1/element:native_e00000/row:1/column:一般地区\", \"structured_element_id\": \"native_e00000\", \"page_no\": 1, \"bbox_display_pt\": [322.6510009765625, 335.0380554199219, 444.916015625, 350.9520263671875], \"matched_conditions\": {\"定额人等级\": \"高级熟练工\"}, \"condition_bboxes_display_pt\": {\"定额人等级\": [179.42800903320312, 335.0380554199219, 322.6510009765625, 350.9520263671875]}, \"column_header_bbox_display_pt\": [322.6510009765625, 319.1250305175781, 444.916015625, 335.0380554199219], \"validation\": \"native_table_literal_cell_replayed\", \"calculator_input_eligible\": false}, \"retrieval\": {\"mode\": \"bm25\", \"embedding_model\": null, \"dense_answer_threshold\": null}, \"trace\": [{\"stage\": \"native_table_literal\", \"status\": \"verified\", \"model_requests_attempted\": 0, \"scope\": \"complete_literal_question_and_replayed_native_cell\", \"candidate_document_ids\": [\"labor\"]}], \"retrieval_audit\": {\"version\": \"ict8-rag-audit-v1\", \"query\": \"高级熟练工的一般地区值是多少？\", \"source_binding\": {\"version\": \"body-source-conditions-v1\", \"status\": \"bound\", \"requested\": {\"years\": [], \"versions\": [], \"organizations\": [], \"objects\": []}, \"rejected_sources\": {}, \"ambiguous_sources\": [], \"sources\": {\"labor\": {\"document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"declared_years\": [], \"declared_versions\": [], \"declared_objects\": [], \"evidence\": [], \"declared_organizations\": [], \"status\": \"no_explicit_conflict\", \"reason\": null}}, \"authority\": \"explicit_body_declarations_only_not_filename_or_keyword_presence\"}, \"linked_scope\": null, \"scope\": {\"document_id\": null, \"page_no\": null, \"exact_identifiers\": []}, \"retrieval\": {\"mode\": \"bm25\", \"embedding_model\": null, \"dense_answer_threshold\": null}, \"index\": {\"strategy\": \"persistent_versioned_bm25\", \"status\": \"persistent_index\", \"tokenizer_version\": \"ict8-tokenize-cjk-2-3-latin-v1\"}, \"query_language\": \"zh_or_mixed\", \"dense_status\": \"not_configured\", \"channels\": [\"bm25\"], \"ranking_method\": \"bm25_then_idf_query_coverage_page_scope_and_body_affinity\", \"candidate_pool_limit\": 20, \"candidate_count\": 16, \"selection_budget\": 4, \"selected_count\": 4, \"selection\": {\"method\": \"query_body_lexical_coverage_navigation_only\", \"semantic_sufficiency\": \"not_evaluated\", \"top_k\": 4, \"candidate_count\": 16, \"unique_body_count\": 16, \"query_facets\": {\"练工\": 1.0, \"工的\": 1.0, \"级熟\": 1.0, \"的一\": 1.0, \"熟练\": 1.0, \"地区\": 1.0, \"一般\": 1.0, \"区值\": 1.0, \"般地\": 1.0, \"高级\": 1.0, \"值是\": 1.0, \"是多\": 1.0}, \"covered_lexical_facets\": [\"一般\", \"地区\", \"熟练\", \"级熟\", \"练工\", \"般地\", \"高级\"], \"uncovered_lexical_facets\": [\"值是\", \"区值\", \"工的\", \"是多\", \"的一\"], \"available_but_unselected_facets\": [\"工的\"], \"selection_budget_exhausted\": true, \"source_counts\": {\"labor\": 4}, \"steps\": [{\"chunk_id\": \"dab117698619eb1098ebae45\", \"source_id\": \"labor\", \"ranking_score\": 50.58486583783784, \"utility\": 1.166667, \"new_lexical_facets\": [\"一般\", \"地区\", \"熟练\", \"级熟\", \"练工\", \"般地\", \"高级\"], \"body_sha256\": \"f501c0569451ded4ee74a1afd184c5f5d6feb295a51556420263281c403c7d3b\"}, {\"chunk_id\": \"c462590b083b1f72e5215591\", \"source_id\": \"labor\", \"ranking_score\": 39.252759567567566, \"utility\": 0.518185, \"new_lexical_facets\": [], \"body_sha256\": \"649a9d78d8df9454620c29f10c3782c480760c085ce19adc35c120dcf5508729\"}, {\"chunk_id\": \"30cd0d8d518af2ec4fbf9d36\", \"source_id\": \"labor\", \"ranking_score\": 30.15139135135135, \"utility\": 0.367239, \"new_lexical_facets\": [], \"body_sha256\": \"2fd6940da3eedfc58999b645263becc9ef86b87cc8e84cc5b7b93438226d6654\"}, {\"chunk_id\": \"d9902cd9d50c37d1ae161a79\", \"source_id\": \"labor\", \"ranking_score\": 28.47219616216216, \"utility\": 0.319002, \"new_lexical_facets\": [], \"body_sha256\": \"9229ccb1f00409300ff4cdf23496e7e8474305607613a7c9ec0358dc4cbba87c\"}], \"skipped\": []}, \"candidates\": [{\"chunk_id\": \"dab117698619eb1098ebae45\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"序号: 1 | 定额人等级: 高级熟练工 | 一般地区: 10.26\", \"source_locator\": \"page:1/element:native_e00000/row:1\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 1, \"bm25_rank\": 1, \"bm25_raw\": 29.708572, \"bm25_relative\": 1.0, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 50.58486583783784, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"级熟\", \"级熟练\", \"高级\", \"高级熟\", \"一般地\", \"熟练\", \"熟练工\", \"练工\", \"般地\", \"般地区\", \"地区\", \"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": true, \"selection_role\": \"primary\", \"selection_utility\": 1.166667, \"new_lexical_facets\": [\"一般\", \"地区\", \"熟练\", \"级熟\", \"练工\", \"般地\", \"高级\"], \"selection_note\": \"coverage_selector_selected\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"c462590b083b1f72e5215591\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"高级熟练工\", \"source_locator\": \"page:1:block:21\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 2, \"bm25_rank\": 2, \"bm25_raw\": 23.053208, \"bm25_relative\": 0.776, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 39.252759567567566, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"级熟\", \"级熟练\", \"高级\", \"高级熟\", \"熟练\", \"熟练工\", \"练工\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": true, \"selection_role\": \"supporting\", \"selection_utility\": 0.518185, \"new_lexical_facets\": [], \"selection_note\": \"coverage_selector_selected\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"30cd0d8d518af2ec4fbf9d36\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"序号: 2 | 定额人等级: 熟练工 | 一般地区: 7.61\", \"source_locator\": \"page:1/element:native_e00000/row:2\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 3, \"bm25_rank\": 3, \"bm25_raw\": 17.70796, \"bm25_relative\": 0.5961, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 30.15139135135135, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"熟练工\", \"一般地\", \"熟练\", \"练工\", \"般地\", \"般地区\", \"地区\", \"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": true, \"selection_role\": \"supporting\", \"selection_utility\": 0.367239, \"new_lexical_facets\": [], \"selection_note\": \"coverage_selector_selected\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"d9902cd9d50c37d1ae161a79\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"序号: 3 | 定额人等级: 半熟练工 | 一般地区: 5.95\", \"source_locator\": \"page:1/element:native_e00000/row:3\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 4, \"bm25_rank\": 4, \"bm25_raw\": 16.721766, \"bm25_relative\": 0.5629, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 28.47219616216216, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"一般地\", \"熟练\", \"熟练工\", \"练工\", \"般地\", \"般地区\", \"地区\", \"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": true, \"selection_role\": \"supporting\", \"selection_utility\": 0.319002, \"new_lexical_facets\": [], \"selection_note\": \"coverage_selector_selected\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"27b7f7d404018dde4d80c70f\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"序号: 4 | 定额人等级: 普工 | 一般地区: 4.90\", \"source_locator\": \"page:1/element:native_e00000/row:4\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 5, \"bm25_rank\": 5, \"bm25_raw\": 10.584054, \"bm25_relative\": 0.3563, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 18.02149735135135, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"一般地\", \"般地\", \"般地区\", \"地区\", \"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"17e9cf1fda361c6cf003c254\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"表11 1 单位:元/工时一般地区人工预算单价计算标准\", \"source_locator\": \"page:1:block:18\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 6, \"bm25_rank\": 6, \"bm25_raw\": 8.618898, \"bm25_relative\": 0.2901, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 14.675420918918919, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"一般地\", \"般地\", \"般地区\", \"地区\", \"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"450f9a208e64a8af0c07ba83\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"熟练工\", \"source_locator\": \"page:1:block:23\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 7, \"bm25_rank\": 7, \"bm25_raw\": 8.453816, \"bm25_relative\": 0.2846, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 14.39433535135135, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"熟练工\", \"熟练\", \"练工\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"d71d432ea0d4a48b222ff484\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"本书仅列出了一般地区人工预算单价计算标准见表11 1。\", \"source_locator\": \"page:1:block:17\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 8, \"bm25_rank\": 8, \"bm25_raw\": 8.073781, \"bm25_relative\": 0.2718, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 13.74724872972973, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"一般地\", \"般地\", \"般地区\", \"地区\", \"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"15cab5c7ea24967130bf1748\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"半熟练工\", \"source_locator\": \"page:1:block:25\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 9, \"bm25_rank\": 9, \"bm25_raw\": 7.709868, \"bm25_relative\": 0.2595, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 13.127613081081082, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"熟练\", \"熟练工\", \"练工\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"5f72c7082ba738adbe100d10\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"2)辅助工资,是在基本工资之外,以其他形式支付给职工的工资性收入。包括:\", \"source_locator\": \"page:1:block:12\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 10, \"bm25_rank\": 10, \"bm25_raw\": 2.481131, \"bm25_relative\": 0.0835, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 4.224628459459459, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"工的\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"9fb7afef7cae6897d1e89ed0\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"(1)人工预算单价。是指支付给从事建筑及安装工程施工的生产工人的各项费用。包\", \"source_locator\": \"page:1:block:5\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 11, \"bm25_rank\": 11, \"bm25_raw\": 2.325508, \"bm25_relative\": 0.0783, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 3.959648756756757, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"工的\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"a7f3b86775a03317ce7f7bfc\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"1)材料原价。除电及火工产品外,材料原价按工程所在地区就近的大物资供应公司、\", \"source_locator\": \"page:1:block:31\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 12, \"bm25_rank\": 12, \"bm25_raw\": 1.355356, \"bm25_relative\": 0.0456, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 2.307768324324324, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"地区\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"b06c341e43dc1f3aae97655a\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"价格。材料预算价格一般包括材料原价、运杂费、运输保险费、采购及保管费4项,个别\", \"source_locator\": \"page:1:block:29\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 13, \"bm25_rank\": 13, \"bm25_raw\": 1.336771, \"bm25_relative\": 0.045, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 2.2761235945945946, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"84e743ee7c60fe5594bd2709\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"所发生的各种运载车辆的运费、调车费、装卸费和其他杂费等费用。一般分铁路、公路、\", \"source_locator\": \"page:1:block:38\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 14, \"bm25_rank\": 14, \"bm25_raw\": 1.297013, \"bm25_relative\": 0.0437, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 2.2084275405405402, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"8a3a9f6aadb917b8de2747ba\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"1根据国家有关规定属于工资性质的各种津贴,主要包括地区津贴、施工津贴和加班津贴\", \"source_locator\": \"page:1:block:13\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 15, \"bm25_rank\": 15, \"bm25_raw\": 1.27265, \"bm25_relative\": 0.0428, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 2.1669445945945944, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"地区\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"ff25540b569a02c1f1f1616a\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"建设工程造价管理部门公布的信息价计算。电及火工产品执行国家定价。包装费一般包含\", \"source_locator\": \"page:1:block:33\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": 16, \"bm25_rank\": 16, \"bm25_raw\": 1.207247, \"bm25_relative\": 0.0406, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": 2.0555827297297298, \"body_query_term_coverage\": 0.0, \"matched_terms\": [\"一般\"], \"retrieval_channels\": [\"bm25\"], \"selected_in_initial_coverage\": false, \"selection_role\": null, \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"not_selected_by_coverage_selector\", \"evidence_status\": \"retrieval_candidate_not_fact_verification\"}, {\"chunk_id\": \"labor\", \"source_document_id\": \"labor\", \"source_sha256\": \"0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8\", \"title\": \"定额教材\", \"snippet\": \"10.26\", \"source_locator\": \"page:1/element:native_e00000/row:1/column:一般地区\", \"page_no\": 1, \"sheet_name\": null, \"row_start\": null, \"row_end\": null, \"ranking_rank\": null, \"bm25_rank\": null, \"bm25_raw\": null, \"bm25_relative\": null, \"dense_rank\": null, \"dense_cosine\": null, \"rrf_rank\": null, \"rrf_score\": null, \"ranking_score\": null, \"matched_terms\": [], \"retrieval_channels\": [\"unknown\"], \"selected_in_initial_coverage\": false, \"selection_role\": \"later_evidence_selection\", \"selection_utility\": null, \"new_lexical_facets\": [], \"selection_note\": \"final_citation_added_after_initial_candidate_selection\", \"evidence_status\": \"final_citation_source_checked_separately\", \"final_citation_ids\": [1]}]}}, \"trace\": [{\"stage\": \"intent_planning\", \"source\": \"server_verified_native_table_route\", \"route\": \"document\", \"latency_ms\": 113.876, \"error\": null, \"rejection_code\": null, \"normalizations\": [\"complete_literal_question_bound_to_original_document_table\"], \"attempts\": []}, {\"stage\": \"native_table_literal\", \"status\": \"verified\", \"model_requests_attempted\": 0, \"scope\": \"complete_literal_question_and_replayed_native_cell\", \"candidate_document_ids\": [\"labor\"]}], \"audit_id\": \"12a3034ab9ade0f2f5def9a8\", \"context_resolution\": {\"mode\": \"independent\", \"actual_question\": \"高级熟练工的一般地区值是多少？\"}, \"routing\": {\"selected_route\": \"document\", \"label\": \"资料问答\", \"strategy\": \"source_query\", \"reason\": \"检索原文并核对来源。\", \"context_mode\": \"independent\", \"model_enabled\": false}, \"failure_trace\": [], \"task_verification\": {\"execution_status\": \"ok\", \"independent_whole_question_success\": \"not_verified_by_status\", \"first_failure\": null}}\n\n",
+  "paid_calls": 0
+}

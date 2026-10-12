@@ -1,0 +1,218 @@
+{
+  "classification": "transparent_integration_manual_graph_not_autonomous",
+  "model_calls": 0,
+  "original_source": {
+    "split": "dev",
+    "image_name": "docstructbench_dianzishu_zhongwenzaixian-o.O-61520788.pdf_391.jpg",
+    "group": "docstructbench_dianzishu_zhongwenzaixian-o.O-61520788",
+    "source": "book",
+    "target_category": "equation_isolated",
+    "attributes": {
+      "data_source": "book",
+      "language": "simplified_chinese",
+      "layout": "single_column",
+      "special_issue": [
+        "table_horizontal",
+        "table_omission_line"
+      ]
+    },
+    "dataset": "OmniDocBench-v1.0",
+    "pdf_path": "inputs/odb/docstructbench_dianzishu_zhongwenzaixian-o.O-61520788.pdf_391.pdf",
+    "pdf_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+    "pdf_bytes": 789345,
+    "url": "https://huggingface.co/datasets/opendatalab/OmniDocBench/resolve/f5f559bddf50e36f7f9899d842d0006f13ce8afc/ori_pdfs/docstructbench_dianzishu_zhongwenzaixian-o.O-61520788.pdf_391.pdf"
+  },
+  "database_rows": {
+    "材料采购": [
+      [
+        1,
+        500
+      ]
+    ],
+    "保险参数": [
+      [
+        1,
+        0.02
+      ]
+    ]
+  },
+  "metric_catalog": {
+    "version": "transparent_engineering_mapping_v1",
+    "metrics": [
+      {
+        "id": "price",
+        "table": "材料采购",
+        "column": "材料原价",
+        "function": "SUM",
+        "label": "材料原价",
+        "query_alias": "材料原价",
+        "aliases": [
+          "材料原价"
+        ],
+        "unit": "currency",
+        "currency": "CNY"
+      },
+      {
+        "id": "rate",
+        "table": "保险参数",
+        "column": "材料运输保险费率",
+        "function": "SUM",
+        "label": "材料运输保险费率",
+        "query_alias": "材料运输保险费率",
+        "aliases": [
+          "材料运输保险费率"
+        ],
+        "unit": "ratio"
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "f",
+      "tool": "document_formula",
+      "args": {
+        "document_id": "cost-textbook",
+        "label": "运输保险费"
+      }
+    },
+    {
+      "id": "price",
+      "tool": "sql",
+      "args": {
+        "question": "材料采购材料原价合计"
+      }
+    },
+    {
+      "id": "rate",
+      "tool": "sql",
+      "args": {
+        "question": "保险参数材料运输保险费率合计"
+      }
+    },
+    {
+      "id": "cost",
+      "tool": "calculate",
+      "args": {
+        "formula": {
+          "ref": "f",
+          "path": []
+        },
+        "parameters": {
+          "材料原价": {
+            "ref": "price",
+            "path": [
+              "aggregate_cells",
+              "材料采购",
+              "材料原价",
+              "SUM",
+              0
+            ]
+          },
+          "材料运输保险费率": {
+            "ref": "rate",
+            "path": [
+              "aggregate_cells",
+              "保险参数",
+              "材料运输保险费率",
+              "SUM",
+              0
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "runs": [
+    {
+      "question": null,
+      "result": {
+        "status": "incomplete",
+        "trace_id": "22e84d4009f7533664d0",
+        "results": {},
+        "trace": [
+          {
+            "trace_id": "22e84d4009f7533664d0",
+            "task_id": "f",
+            "tool": "document_formula",
+            "dependencies": [],
+            "status": "failed",
+            "error": "公式缺失或存在多个冲突版本",
+            "error_code": "tool_contract_failed",
+            "latency_ms": 40.078,
+            "failure": {
+              "version": "foundation-failure-v1",
+              "category": "executor",
+              "phase": "execution",
+              "code": "tool_contract_failed",
+              "task_id": "f",
+              "retryable": false,
+              "independent_task_success": "not_verified"
+            }
+          }
+        ],
+        "failed_task": "f",
+        "error": "公式缺失或存在多个冲突版本",
+        "error_code": "tool_contract_failed",
+        "skipped_tasks": [
+          "price",
+          "rate",
+          "cost"
+        ],
+        "edges": [
+          {
+            "from": "f",
+            "to": "cost"
+          },
+          {
+            "from": "price",
+            "to": "cost"
+          },
+          {
+            "from": "rate",
+            "to": "cost"
+          }
+        ],
+        "user_constraint_validation": {
+          "status": "not_provided",
+          "scope": "explicit_server_bound_sql_source_clauses",
+          "bindings": []
+        }
+      }
+    },
+    {
+      "question": "根据文档《工程成本教材》的运输保险费公式，从数据库查询材料采购材料原价合计作为参数，从数据库查询保险参数材料运输保险费率合计作为参数，计算运输保险费。",
+      "result": {
+        "status": "clarification",
+        "trace_id": "22e84d4009f7533664d0",
+        "results": {},
+        "trace": [],
+        "failure_trace": [
+          {
+            "version": "foundation-failure-v1",
+            "category": "answer_verification",
+            "phase": "source_binding",
+            "code": "formula_target_evidence_unverified",
+            "task_id": null,
+            "retryable": false,
+            "independent_task_success": "not_verified"
+          }
+        ],
+        "clarification": "跨源查询的来源范围尚未核验，请明确各数据库取数的表、指标、时间和包含/排除条件。",
+        "clarification_code": "formula_target_evidence_unverified",
+        "error_code": "formula_target_evidence_unverified",
+        "skipped_tasks": [
+          "f",
+          "price",
+          "rate",
+          "cost"
+        ],
+        "edges": [],
+        "user_constraint_validation": {
+          "status": "unverified",
+          "error_code": "formula_target_evidence_unverified"
+        }
+      }
+    }
+  ],
+  "independent_decimal_result": "10.00"
+}

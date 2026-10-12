@@ -75,6 +75,51 @@ def bind_visual_table_question(question, tables):
     return {'status': 'bound', 'clarification_code': None, 'fact': candidates[0]}
 
 
+def bind_native_record_question(question, records):
+    """Reuse complete-key/question binding for persisted text or numeric cells."""
+    from .pdf_table_values import literal_cell
+    tables = []
+    for record in records:
+        if record.get('table_structure_status') != 'native_geometry_verified':
+            continue
+        cells = record['cells']
+        headers = {c['column']:c['text'] for c in cells if c['is_header']}
+        facts = []
+        for row in sorted({c['row'] for c in cells if not c['is_header']}):
+            body = [c for c in cells if not c['is_header'] and c['column_span'] == 1
+                    and c['row'] <= row < c['row']+c['row_span']]
+            for selector in body:
+                if not label_present(selector['text'], question):
+                    continue
+                value = literal_cell(selector['text'], headers[selector['column']])
+                if value['numeric_value'] is not None or not selector['text']:
+                    continue
+                for target in body:
+                    if target is selector or not label_present(headers[target['column']], question):
+                        continue
+                    facts.append({'fact_key':{'row_header':selector['text'],
+                                             'column_header_path':[headers[target['column']]]},
+                        'element_id':record['element_id'], 'row_index':row,
+                        'where':{headers[selector['column']]:value['raw_value']},
+                        'column':headers[target['column']]})
+        if facts:
+            tables.append({'table_id':record['element_id'], 'facts':facts,
+                'row_headers':list(dict.fromkeys(f['fact_key']['row_header'] for f in facts)),
+                'column_header_paths':[[h] for h in headers.values()]})
+    # Test the whole question for each literal key before declaring ambiguity.
+    # E.g. 熟练工 is a substring of 高级熟练工, but leaves unbound text and cannot
+    # pass the existing complete-question binder. Never use longest/fuzzy rank.
+    bound = []
+    for table in tables:
+        for fact in table['facts']:
+            candidate = {**table, 'facts':[fact]}
+            binding = bind_visual_table_question(question, {'tables':[candidate]})
+            if binding['status'] == 'bound':
+                bound.append(binding)
+    return bound[0] if len(bound) == 1 else {
+        'status':'incomplete', 'clarification_code':'cell_scope_ambiguous_or_not_explicit', 'fact':None}
+
+
 class VisualTableReader:
     def __init__(self, client, ocr_pipeline=None):
         if client.model != 'gpt-6-luna' or client.reasoning != 'medium':

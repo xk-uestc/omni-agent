@@ -464,6 +464,7 @@ function renderDocumentEvidence(host,data){
   const items=data.document_evidence||[];if(!items.length)return;
   const docs=el("div","docs");
   if(data.answer_mode==="visual_source_model_reviewed")docs.append(el("p","schema-caption","原页读取 · 独立视觉模型复核；下面展示返回的原文片段，可展开原页核对数值与单位。"));
+  if(data.answer_mode==="native_table_literal")docs.append(el("p","schema-caption","已核对原件中的行列关系，答案保留原文；单位未明确时不能自动用于计算。"));
   if(data.answer_mode==="native_row_comparison_model_reviewed")docs.append(el("p","schema-caption","原页表格比较 · 样本编号与单位已核对，数值关系由服务器计算；下方保留两页原始记录。"));
   if(data.answer_mode==="native_row_selection_model_reviewed")docs.append(el("p","schema-caption","原页字段筛选 · 已遍历本次候选表格内匹配记录，并独立复核输出字段；可展开原页查看对应位置。"));
   if(data.answer_mode==="source_multi_span_model_reviewed")docs.append(el("p","schema-caption","回答由多段原文组成，各子问与所选资料中的相关项目已分别复核。可展开来源核对；本次范围不包含未检索的页面。"));
