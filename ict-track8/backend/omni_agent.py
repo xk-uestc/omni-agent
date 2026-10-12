@@ -12,7 +12,7 @@ from contextlib import ExitStack
 from .dependency_agent import DependencyAgent
 from .fusion_normalization import normalize_fusion_tasks
 from .text_reference_contract import text_reference_errors
-from .responses_client import GenerationError, object_schema
+from .responses_client import GenerationError, object_schema, completed_json_protocol_failure
 from .nl2sql.schema import normalize_text
 from .plan_requirements import requested_operations, completion_errors
 from .fusion_constraints import SourceConstraintError
@@ -1216,8 +1216,17 @@ class OmniAgent:
                                 name='omni_plan' if attempt == 0 else 'omni_plan_completion_repair', max_tokens=5000,
                                 **image_generate_options))
                     except GenerationError:
+                        failed_audit = dict(getattr(self.client, 'audit', {}))
                         planning_attempts.append({'attempt': attempt+1, 'validation': 'provider_failed',
-                                                  'api_audit': dict(getattr(self.client, 'audit', {}))})
+                                                  'api_audit': failed_audit})
+                        if attempt == 0 and completed_json_protocol_failure(failed_audit):
+                            planning_attempts[-1]['validation'] = 'completed_invalid_json'
+                            context = {**context, 'plan_completion_feedback': {
+                                'errors': ['completed_plan_invalid_json'],
+                                'instruction': '为同一原始问题重新提出完整计划。只返回一个符合Schema的JSON对象；'
+                                    'tasks_json为JSON数组的字符串。不得输出DSML、Markdown、角色分隔符或JSON后的附加文字。'
+                                    '保留全部用户约束；上一响应未被执行，不可假设任何工具已经运行。'}}
+                            continue
                         raise
                     protocol_error = None
                     protocol_details = []

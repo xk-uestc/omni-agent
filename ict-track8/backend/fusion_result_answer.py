@@ -43,6 +43,14 @@ def calculation_answer(tasks,result,knowledge):
         step=results.get(task['id'],{})
         if task['tool']=='calculate' and step.get('parameter_semantics_validation',{}).get('status')=='verified':
             formula=results[task['args']['formula']['ref']]
+            proof=formula.get('native_formula_proof',{})
+            if proof.get('literal_text'):
+                citation={'source_uri':formula['source_uri'],'snippet':proof['literal_text'],
+                    'metadata':{'document_id':formula['document_id'],'source_sha256':formula['sha256'],
+                                'source_locator':formula['locator'],'page_no':proof['page_no'],
+                                'bbox_display_pt':proof['bbox_display_pt']}}
+                citations=result.setdefault('citations',[])
+                if citation not in citations:citations.append(citation)
             selectors=[]
             for name,reference in task['args']['parameters'].items():
                 fact=results.get(reference['ref'],{})

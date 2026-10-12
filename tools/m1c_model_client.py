@@ -4,6 +4,7 @@ Only local research harnesses instantiate this; no global service reconfiguratio
 Credentials/error bodies are never included in audit. No transport retries.
 """
 import json
+import hashlib
 import os
 from pathlib import Path
 import stat
@@ -69,7 +70,17 @@ class BudgetedPlanner:
                          response_model=data.get('model'),finish_reason=data['choices'][0].get('finish_reason'))
             content=data['choices'][0]['message']['content']
             call['assistant_content']=content[:24000] if isinstance(content,str) else None
-            output=json.loads(content);call['output']=output
+            audit.update(response_completed=audit['finish_reason']=='stop',
+                         model_verified=data.get('model')==self.model)
+            if not audit['model_verified'] or not audit['response_completed']:
+                raise GenerationError('model identity or completion not verified')
+            try:
+                output=json.loads(content)
+            except json.JSONDecodeError as exc:
+                audit['output_failure']={'kind':'invalid_json','characters':len(content),
+                    'sha256':hashlib.sha256(content.encode()).hexdigest(),'error_position':exc.pos}
+                raise
+            call['output']=output
             if not isinstance(output,dict) or set(output)!=set(schema['required']):raise GenerationError('structured plan keys invalid')
             for key,spec in schema['properties'].items():
                 if spec.get('type')=='string' and not isinstance(output[key],str):raise GenerationError('structured plan value type invalid')

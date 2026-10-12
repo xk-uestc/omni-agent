@@ -101,7 +101,9 @@ def ranked_cell_intent(question, engine, knowledge):
             if len(clauses) != 1:
                 _reject()
             required = engine.extract_required_intent(clauses[0].text)
+            from .fusion_constraints import _metrics
             if (required.clarification or required.coverage.get('unresolved') or required.top_n != 1
+                    or len(_metrics(required)) != 1 or required.derived_metrics
                     or required.order_desc is not True or required.dimensions != [dimension]
                     or required.dimension_tables.get(dimension, required.table) != table
                     or required.dimension_transforms.get(dimension, 'raw') != 'raw'

@@ -69,5 +69,47 @@ offline raw-trace inspection and manual replay do not.
 Raw outputs, full planning contexts/model outputs, actual SQL/cell provenance
 and SSE events, including the initial failed natural-plan repair, are saved
 without dropping failures in `runs/autonomous_cross_source_20261012/*.json.gz`.
-The full formula workflow is under investigation; it is not claimed complete
-at this checkpoint. Scans, multilevel headers and unseen sources remain open.
+## Checkpoint 2: fresh bounded protocol repair and formula execution
+
+The real formula baseline model produced a JSON object followed by DSML/role
+text, so strict JSON decoding correctly refused it. The production planner
+now allows one fresh proposal in its existing two-call budget only for an
+identified, completed HTTP response with an `invalid_json` fingerprint.
+It never strips or executes malformed output and never feeds arbitrary raw
+provider output back into context. Transport loss, truncation, refusal and
+identity failure are not protocol repair eligibility. The research adapter
+records the same audit fields and retains strict model-identity checking.
+
+The explicit source question from the prior manual integration now runs via
+real OmniAgent model planning: actual textbook formula -> SQL aggregates ->
+independent variable/unit/business-slot validation -> safe calculation.
+The model needed a fresh plan after it used illegal non-ASCII task IDs. Result
+is 10.00 CNY, independently equal to Decimal(500)*Decimal(.02). The original
+formula quote is presented as a conventional PDF citation; normalized formula
+syntax is not misrepresented as a verbatim quote. SQL numbers are artificial
+business data and remain disclosed. This is one real-source integration task,
+not an official paired SQL/document benchmark.
+
+The abbreviated request using only `费率` still refuses source scope after a
+successful real malformed-JSON repair. Its short alias and combined database
+parameter scope are not yet independently bound. No alias or filter guard was
+relaxed to pass it. That failed output and its successful JSON repair are
+retained in `formula-model-after.json.gz`.
+
+A second development original (engineering standards list) now runs through
+the same autonomous SQL -> PDF path with a different text-valued target:
+SQL finds 《中华人民共和国劳动合同法》 with 130 citations in the declared
+artificial integration data; the PDF returns `主席令第65 号`. No production
+source-specific branch was added. Thus actual numeric table cells, textual
+table cells and formula/SQL operands have been consumed by model-proposed
+plans, across two originals and two distinct workflow types. These do not
+prove arbitrary multi-document joint analysis, scans or multilevel headers.
+
+At this checkpoint 14 of the approved 20 calls have been reserved. No image
+input, training, rental or legacy budget use occurred. Final token/cost and
+regression receipts are appended with the post-freeze acceptance below.
+
+```bash
+python tools/replay_public_formula_integration.py --data-root /home/viva/omni-agent/runtime/real_document_upgrade/data --model-config /home/viva/omni-agent/runtime/private/m1c-model.env --ledger runtime/autonomous_cross_source/model-ledger.jsonl --output runtime/autonomous_cross_source/formula-model-replay.json
+python tools/replay_ranked_pdf_planning.py --mode model --dataset standards --data-root /home/viva/omni-agent/runtime/real_document_upgrade/data --config /home/viva/omni-agent/runtime/private/m1c-model.env --ledger runtime/autonomous_cross_source/model-ledger.jsonl --output runtime/autonomous_cross_source/standard-model-replay.json
+```

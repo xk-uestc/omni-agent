@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--config', type=Path)
     parser.add_argument('--ledger', type=Path)
     parser.add_argument('--question', action='append')
+    parser.add_argument('--dataset', choices=['labor', 'standards'], default='labor')
     args = parser.parse_args()
     sys.path.insert(0, str(args.code_root / 'ict-track8'))
     from backend.knowledge_store import KnowledgeStore
@@ -35,10 +36,12 @@ def main():
     from backend.session import ConversationStore
     saved = json.loads((ROOT / 'docs/foundation/runs/work_upgrade_20261012/sql-to-public-pdf-grammar-1.json').read_text())
     manifest = json.loads((ROOT / 'benchmarks/real_document_20261011/odb-manifest.json').read_text())
-    source = next(d for d in manifest['documents'] if d['split'] == 'dev' and '61520788' in d['image_name'])
+    source_key = '61520788' if args.dataset == 'labor' else '61521384'
+    source = next(d for d in manifest['documents'] if d['split'] == 'dev' and source_key in d['image_name'])
     raw = (args.data_root / source['pdf_path']).read_bytes()
     assert hashlib.sha256(raw).hexdigest() == source['pdf_sha256']
-    questions = args.question or [saved['question']]
+    questions = args.question or [saved['question'] if args.dataset == 'labor' else
+        '找出引用次数最高的标准名称，并查询工程标准清单中该标准名称的标准号。']
     rows = [(1, '高级熟练工', 80), (2, '熟练工', 50), (3, '半熟练工', 20), (4, '普工', 10), (5, '高级熟练工', 30)]
     catalog = {'version': 'transparent_labor_mapping_v1', 'metrics': [
         {'id': 'hours', 'table': '用工统计', 'column': '工时', 'function': 'SUM', 'label': '总工时',
@@ -63,7 +66,27 @@ def main():
         cat = root / 'catalog.json'; cat.write_text(json.dumps(catalog, ensure_ascii=False))
         engine = Nl2SqlEngine(db, metric_catalog_path=cat)
         knowledge = KnowledgeStore(root / 'knowledge')
-        knowledge.ingest(raw, document_id='labor', title='定额教材', modality='pdf', filename=Path(source['pdf_path']).name)
+        doc_id, title = ('labor', '定额教材') if args.dataset == 'labor' else ('standards', '工程标准清单')
+        knowledge.ingest(raw, document_id=doc_id, title=title, modality='pdf', filename=Path(source['pdf_path']).name)
+        expected = 10.26
+        if args.dataset == 'standards':
+            literal_rows = []
+            for chunk in knowledge.document(doc_id)['chunks']:
+                headers = chunk['metadata'].get('headers', [])
+                if '法规、标准、规程、规范' in headers and '标准号' in headers:
+                    literal_rows.append(dict(zip(headers, [v['raw_value'] for v in chunk['metadata']['values']])))
+            assert len(literal_rows) >= 3
+            names = [r['法规、标准、规程、规范'] for r in literal_rows[:3]]
+            rows = [(1, names[0], 80), (2, names[1], 50), (3, names[2], 70), (4, names[2], 60)]
+            with sqlite3.connect(db) as connection:
+                connection.execute('CREATE TABLE 标准引用(记录ID INTEGER PRIMARY KEY, 标准名称 TEXT, 引用次数 REAL)')
+                connection.executemany('INSERT INTO 标准引用 VALUES(?,?,?)', rows)
+            catalog = {'version': 'transparent_standard_citation_mapping_v1', 'metrics': [
+                {'id': 'citations', 'table': '标准引用', 'column': '引用次数', 'function': 'SUM',
+                 'label': '总引用次数', 'query_alias': '引用次数', 'aliases': ['引用次数'], 'unit': 'count'}]}
+            cat.write_text(json.dumps(catalog, ensure_ascii=False)); engine = Nl2SqlEngine(db, metric_catalog_path=cat)
+            expected = literal_rows[2]['标准号']
+            report.update(database_rows=rows, metric_catalog=catalog)
         conversations = ConversationStore()
         agent = OmniAgent(engine, knowledge, conversations, model)
         for question in questions:
@@ -104,7 +127,7 @@ def main():
             elapsed = time.perf_counter() - started
             nested = result.get('result', result)
             cell = next((v for v in nested.get('results', {}).values() if v.get('validation') == 'native_table_literal_cell_replayed'), {})
-            passed = result['status'] == 'ok' and cell.get('value') == 10.26
+            passed = result['status'] == 'ok' and cell.get('value') == expected
             if model is not None:
                 passed = passed and result.get('planner_source') == 'model_validated' and bool(nested.get('answer'))
             report['runs'].append({'question': question, 'seconds': elapsed, 'complete_task_passed': passed,
