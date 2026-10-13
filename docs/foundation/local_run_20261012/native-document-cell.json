@@ -1,0 +1,83 @@
+{
+  "http_status": 200,
+  "request": {
+    "tasks": [
+      {
+        "id": "cell",
+        "tool": "document_cell",
+        "args": {
+          "document_id": "local-labor",
+          "where": {
+            "定额人等级": "高级熟练工"
+          },
+          "column": "一般地区"
+        }
+      }
+    ]
+  },
+  "response": {
+    "status": "ok",
+    "trace_id": "905105178e0f14d8efe0",
+    "results": {
+      "cell": {
+        "value": 10.26,
+        "raw_value": "10.26",
+        "unit": "unknown",
+        "source_uri": "/api/v1/knowledge/documents/local-labor/original",
+        "sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+        "document_id": "local-labor",
+        "locator": "page:1/element:native_e00000/row:1/column:一般地区",
+        "structured_element_id": "native_e00000",
+        "page_no": 1,
+        "bbox_display_pt": [
+          322.6510009765625,
+          335.0380554199219,
+          444.916015625,
+          350.9520263671875
+        ],
+        "matched_conditions": {
+          "定额人等级": "高级熟练工"
+        },
+        "condition_bboxes_display_pt": {
+          "定额人等级": [
+            179.42800903320312,
+            335.0380554199219,
+            322.6510009765625,
+            350.9520263671875
+          ]
+        },
+        "column_header_bbox_display_pt": [
+          322.6510009765625,
+          319.1250305175781,
+          444.916015625,
+          335.0380554199219
+        ],
+        "validation": "native_table_literal_cell_replayed",
+        "calculator_input_eligible": false
+      }
+    },
+    "trace": [
+      {
+        "trace_id": "905105178e0f14d8efe0",
+        "task_id": "cell",
+        "tool": "document_cell",
+        "dependencies": [],
+        "status": "complete",
+        "latency_ms": 382.971
+      }
+    ],
+    "source_validation": {
+      "status": "verified",
+      "documents": {
+        "local-labor": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8"
+      },
+      "scope": "selected_original_hash_and_logical_version_not_semantic_truth"
+    },
+    "edges": [],
+    "user_constraint_validation": {
+      "status": "not_provided",
+      "scope": "explicit_server_bound_sql_source_clauses",
+      "bindings": []
+    }
+  }
+}
