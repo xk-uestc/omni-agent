@@ -1333,6 +1333,13 @@ class KnowledgeStore:
         self._attach_retrieval_audit(recovered, retrieval_audit)
         self._verify_citation_sources(result['citations'])
         self._verify_citation_sources(recovered['citations'])
+        _publish_rag_progress(progress_callback, 'answer_generation',
+            'success' if recovered.get('status') == 'ok' else 'attention',
+            ('补充检索后已返回回答并完成来源核验。' if recovered.get('status') == 'ok'
+             else '补充检索后，当前证据仍不足或需要补充条件。'),
+            output={'status': recovered.get('status'), 'answer_mode': recovered.get('answer_mode'),
+                    'citation_count': len(recovered.get('citations') or [])},
+            latency_ms=(time.perf_counter() - generation_started) * 1000, executed=True)
         return recovered
 
     def prepare_evidence(self, question, hits, *, document_id=None, page_no=None):

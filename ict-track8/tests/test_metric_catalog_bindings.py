@@ -213,6 +213,47 @@ def test_explicit_aggregate_cues_override_single_metric_catalog_default(tmp_path
     assert model.calls == 0
 
 
+@pytest.mark.parametrize('metrics', [
+    '销售额合计和去重订单数',
+    '去重订单数和销售额合计',
+    '销售额合计和订单数去重计数',
+])
+def test_each_distinct_metric_consumes_its_own_bound_cue(tmp_path, monkeypatch, metrics):
+    monkeypatch.setenv('ICT8_FAST_SQL', '0')
+    database = initialize_rich_demo_data(tmp_path / 'distinct.sqlite')
+    catalog = Path(__file__).resolve().parents[1] / 'data' / 'demo_metric_catalog.json'
+    engine = Nl2SqlEngine(database, metric_catalog_path=catalog)
+    question = '2025年华东' + metrics
+    required = engine.extract_required_intent(question)
+    assert required.clarification is None, required.to_dict()
+    assert not required.coverage['unresolved']
+    assert {(item.column, item.function) for item in required.metrics} == {
+        ('sales_amount', 'SUM'), ('order_id', 'COUNT_DISTINCT')}
+    result = engine.answer(question)
+    assert result.status == 'ok', result.to_dict()
+    assert 'COUNT(DISTINCT "sales_orders"."order_id")' in result.sql
+    with sqlite3.connect(engine.database_path) as connection:
+        amount, count = connection.execute(
+            'SELECT SUM(sales_amount), COUNT(DISTINCT order_id) FROM sales_orders '
+            'WHERE order_date>=? AND order_date<? AND region=?',
+            ('2025-01-01', '2026-01-01', '华东')).fetchone()
+    actual = {item['column']: result.rows[0][item['label']] for item in result.plan['metrics']}
+    assert actual == {'sales_amount': amount, 'order_id': count}
+
+
+@pytest.mark.parametrize('metrics', [
+    '去重销售额和去重订单数',
+    '去重销售额和订单数',
+    '销售额合计和去重订单数的波动幅度',
+])
+def test_count_distinct_does_not_hide_other_unsupported_metric_modifiers(tmp_path, metrics):
+    engine, model = _engine(tmp_path)
+    required = engine.extract_required_intent('2025年华东' + metrics)
+    assert required.clarification is not None
+    assert required.coverage['unresolved']
+    assert model.calls == 0
+
+
 def test_catalog_override_avg_uses_sql_null_and_group_grain_semantics(tmp_path):
     database=tmp_path/"nullable.sqlite"
     with sqlite3.connect(database) as connection:

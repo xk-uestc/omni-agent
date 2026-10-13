@@ -2,10 +2,11 @@ const API = new URLSearchParams(location.search).get("api") || window.ICT8_API_B
 const STREAM = new URLSearchParams(location.search).get("stream") !== "false";
 const $ = (id) => document.getElementById(id);
 const examples = [
-  {question:"2025年各地区销售额排名",hint:"查询业务数据"},
-  {question:"销售额的统计口径是什么",hint:"查阅资料依据"},
-  {question:"先查询2025年销售额排名第一的地区，再检索该地区的销售经验",hint:"结合数据与资料"},
-  {question:"2025年华东地区销售额同比",hint:"分析变化"},
+  {title:'读懂一份文档',question:"销售额的统计口径是什么",hint:"检索原文 · 回答附带出处",icon:'file'},
+  {title:'定位复杂表格',question:"高级熟练工的一般地区值是多少？",hint:"读取原生单元格 · 查看原页",icon:'table'},
+  {title:'按公式计算',question:"根据文档《经营指标公式》的客单价公式，从数据库查询2025年华东销售额合计和订单数，再计算客单价。",hint:"文档公式 · 数据参数 · 安全计算",icon:'calculate'},
+  {title:'完成跨源分析',question:"先查询2025年销售额排名第一的地区，再检索该地区的销售经验",hint:"查询数据库 · 找到实体 · 阅读资料",icon:'layers'},
+  {title:'补齐模糊条件',question:"帮我看看利润",hint:"先问清口径，再继续任务",icon:'clarify'},
 ];
 const questionDomains = [
   ['采购与供应商','purchase_orders',['2025年各地区采购金额','2025年已入库的采购数量','2025年各供应商采购金额排名']],
@@ -22,6 +23,33 @@ let activeController = null, busy = false, turns = [];
 let pendingImages = [], imageReads = 0, imageReadBytes = 0;
 let latestContext = null, independentNext = false;
 let demoRunning = false;
+let selectedDocument = null, documentCatalog = [], fileUploading = false, uploadRevision = 0;
+function selectDocument(doc){
+  selectedDocument=doc||null;
+  const select=$('documentScope');if(select)select.value=doc?.document_id||'';
+  const chip=$('selectedDocument');if(chip){chip.hidden=!doc;chip.textContent=doc?`当前文件：${doc.title||doc.document_id}`:'';}
+  $('q').placeholder=doc?'问这份文件，或输入“帮我分析这个文件”':'描述你的任务，Agent 会选择需要的工具';
+}
+function fillTask(question,doc=null){if(busy||fileUploading)return;selectDocument(doc);$('q').value=question;$('q').dispatchEvent(new Event('input'));$('q').focus();}
+async function uploadDocument(file){
+  if(!file||busy||fileUploading)return;
+  const status=$('documentUploadStatus');status.hidden=false;
+  if(file.size>20*1024*1024){status.textContent='文件超过20 MB，请在资料库中检查大小后上传。';return;}
+  const revision=++uploadRevision,uploadSession=sessionId;fileUploading=true;syncComposerControls();$('documentPicker').disabled=true;status.textContent=`正在上传并解析 ${file.name}…`;
+  try{
+    const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.onerror=()=>reject(Error('无法读取文件，请重新选择'));reader.readAsDataURL(file);});
+    const ext=file.name.split('.').pop().toLowerCase();const modality=({txt:'txt',md:'md',pdf:'pdf',docx:'docx',xlsx:'xlsx'})[ext];
+    if(!modality)throw Error('请上传 PDF、Word、Excel、TXT 或 Markdown 文件');
+    const result=await post('/api/v1/knowledge/ingest',{document_id:`upload-${crypto.randomUUID()}`,title:file.name.replace(/\.[^.]+$/,''),filename:file.name,modality,file_base64:data,language:'chi_sim+eng'});
+    await loadKnowledgeCatalog();await loadMeta();
+    const doc=result.document||result;const selected=documentCatalog.find(item=>item.document_id===doc.document_id);
+    if(!selected)throw Error('资料已提交，请到资料库核对入库状态');
+    if(revision!==uploadRevision||sessionId!==uploadSession)return;
+    fileUploading=false;selectDocument(selected);status.textContent=`${file.name} 已入库 · ${selected.chunk_count||0} 个可检索片段。现在可以提问。`;
+    fillTask('帮我分析这个文件。',selected);
+  }catch(error){status.textContent=`文件未就绪：${error.message}`;}
+  finally{fileUploading=false;$('documentPicker').disabled=false;syncComposerControls();}
+}
 function updateContextComposer(){
   const host=$("contextComposer"),independent=independentNext||!$("useContext").checked;
   const state=window.ConversationContext.composerState(latestContext,independent);
@@ -49,8 +77,9 @@ async function json(response) { const data=await response.json().catch(()=>({}))
 function post(path, body, signal) { return fetch(API+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),signal}).then(json); }
 function syncComposerControls(){
   const send=$("send"),picker=$("imagePicker");
-  if(send)send.disabled=busy||imageReads>0||(!$('q').value.trim()&&!pendingImages.length);
-  if(picker)picker.disabled=busy||pendingImages.length+imageReads>=3;
+  if(send)send.disabled=busy||fileUploading||imageReads>0||(!$('q').value.trim()&&!pendingImages.length);
+  if(picker)picker.disabled=busy||fileUploading||pendingImages.length+imageReads>=3;
+  if($('documentScope'))$('documentScope').disabled=busy||fileUploading;
 }
 function setImageStatus(message){const status=$("imageStatus");status.textContent=message||"";status.hidden=!message;}
 function renderImagePreviews(){
@@ -123,7 +152,7 @@ async function openRagPreview(doc,{kind,format,originalUrl,trigger}){
   header.append(heading,close);
   const content=el("div","rag-preview-content");content.append(el("p","rag-preview-loading","正在载入预览…"));
   const footer=el("div","rag-preview-footer"),ask=el("button","rag-preview-ask","根据这份资料提问");ask.type="button";
-  ask.onclick=()=>{$("q").value=`根据《${doc.title||doc.document_id}》，`;$("q").dispatchEvent(new Event("input"));$("q").focus();closeRagPreview();};
+  ask.onclick=()=>{fillTask('帮我分析这个文件。',doc);closeRagPreview();};
   const original=el("a","rag-preview-original","打开原文件");original.href=originalUrl;original.target="_blank";original.rel="noopener noreferrer";
   footer.append(ask,original);panel.append(header,content,footer);
   $("ragSources").closest(".sidebar").append(panel);trigger.setAttribute("aria-expanded","true");positionRagPreview(panel,trigger);
@@ -179,8 +208,8 @@ function renderExamples() {
   const suggests=$("suggests");suggests.replaceChildren();
   for(const example of examples){
     const card=el("button","suggest");card.type="button";
-    card.append(el("b","",example.question),el("span","",example.hint));
-    card.onclick=()=>ask(example.question);suggests.append(card);
+    card.append(el('span','demo-number',String(examples.indexOf(example)+1).padStart(2,'0')),el("b","",example.title),el("span","",example.hint),el('small','demo-action','试一试 ↗'));
+    card.onclick=()=>fillTask(example.question);suggests.append(card);
   }
 }
 function renderQuestionCatalog(tables=questionDomains.map(([,table])=>({name:table}))){
@@ -224,6 +253,12 @@ async function loadKnowledgeCatalog(){
   const host=$("ragSources");host.replaceChildren(el("p","data-source-detail","正在读取资料…"));
   try{
     const data=await fetch(API+"/api/v1/knowledge/documents").then(json);
+    documentCatalog=data.documents||[];
+    if(selectedDocument&&!documentCatalog.some(doc=>doc.document_id===selectedDocument.document_id))selectDocument(null);
+    const picker=$('documentScope');if(picker){picker.replaceChildren(new Option('自动选择数据与资料',''));
+      for(const doc of documentCatalog)picker.append(new Option(doc.title||doc.document_id,doc.document_id));
+      picker.value=selectedDocument?.document_id||'';}
+    if($('workspaceDocuments'))$('workspaceDocuments').textContent=String(documentCatalog.length);
     host.replaceChildren();
     if(!data.documents?.length){host.append(el("p","data-source-detail","当前尚未接入资料"));return;}
     for(const doc of data.documents){
@@ -242,8 +277,7 @@ async function loadKnowledgeCatalog(){
       original.append(icon,name,el("span","rag-file-meta",`${format} · ${Number(doc.chunk_count)||0} 个片段`));
       const actions=el("div","rag-file-actions");
       const askButton=el("button","rag-file-ask","提问");askButton.type="button";askButton.title=`结合《${title}》提问`;askButton.setAttribute("aria-label",`结合《${title}》提问`);
-      askButton.onclick=()=>{$("q").value=`根据《${title}》，`;
-        $("q").dispatchEvent(new Event("input"));$("q").focus();};
+      askButton.onclick=()=>fillTask('帮我分析这个文件。',doc);
       const originalAction=el("a","rag-file-original","原文件");originalAction.href=originalUrl;originalAction.target="_blank";originalAction.rel="noopener noreferrer";originalAction.title=`查看原文件：${title}`;
       actions.append(askButton,originalAction);item.append(original,actions);host.append(item);
     }
@@ -256,6 +290,8 @@ async function loadMeta() {
       fetch(API+"/api/v1/data-sources").then(json)]);
     liveSchema={tables:Array.isArray(schema.tables)?schema.tables:[],source:schema.source||null};
     $("apiHealth").dataset.state=health.ok?"ok":"error";$("healthText").textContent=health.ok?"API 已连接":"API 异常";
+    if($('modelStatus'))$('modelStatus').textContent=health.generation?.mode==='responses'?`${health.generation.model} · 已配置`:'当前使用原文与工具模式';
+    if($('workspaceTables'))$('workspaceTables').textContent=String(liveSchema.tables.length);
     const tables=schema.tables||[],box=$("schema");
     const recordCount=tables.reduce((sum,table)=>sum+(Number(table.row_count)||0),0);
     const tableNames={suppliers:'供应商',purchase_orders:'采购订单',shipment_records:'物流发货',payment_receipts:'回款记录',operating_expenses:'运营费用',employees:'员工档案',payroll_records:'薪酬记录',web_traffic_daily:'网站流量',sales_orders:'销售订单',customers:'客户',products:'产品',regions:'地区',sales_reps:'销售人员',inventory_snapshots:'库存快照',marketing_campaigns:'营销活动',sales_returns:'退货退款',sales_targets:'销售目标',support_tickets:'售后工单'};
@@ -302,7 +338,7 @@ function beginTurn(question,images=[]){
   });user.append(previews);}
   const assistant=el("div","turn assistant"),body=el("div","agent-inspection-host"),title=el("span"),wait=el("span");
   const live=window.ToolTimeline.create({getSchema:()=>liveSchema});toolTimelineCleanups.add(live.dispose);
-  const answer=el("div");assistant.append(live.root,body,answer);$("feed").append(user,assistant);
+  const answer=el("div");assistant.append(live.root,answer,body);$("feed").append(user,assistant);
   const turn={question,status:"进行中",element:user};turns.push(turn);renderTurns();$("thread").scrollTop=$("thread").scrollHeight;
   return {body,wait,title,answer,turn,live};
 }
@@ -406,10 +442,10 @@ function normalizeOmniResponse(data){
   const fusionSummary=data.route==='fusion'?(result.status==='ok'?'联合查询完成，下面展示数据结果与资料来源。':'联合查询尚未完成，请查看需要补充的条件。'):null;
   return {...data,omni_response:true,answer:result.answer||result.clarification||sqlSummary||fusionSummary||result.explanation?.join("；")||"本次未返回文字说明。",
     structured:["sql","comparison"].includes(data.route)?result:{},document_evidence:result.citations||[],
-    visual_source_proof:result.visual_source_proof,native_row_proof:result.native_row_proof,native_total_proof:result.native_total_proof,answer_mode:result.answer_mode,
+    visual_source_proof:result.visual_source_proof,native_row_proof:result.native_row_proof,native_total_proof:result.native_total_proof,table_fact:result.table_fact,answer_mode:result.answer_mode,
     answer_span_result:result.answer_span_result};
 }
-function sourcePageViewer(host,item,part,nativeSelection,totalSelection,financialSelection){
+function sourcePageViewer(host,item,part,nativeSelection,totalSelection,financialSelection,tableFact){
   const metadata=item.metadata||{},did=metadata.document_id||item.document_id,page=metadata.page_no;
   const sourceSha=metadata.source_sha256;
   if(typeof did!=="string"||!Number.isInteger(page)||page<1||!/^[a-f0-9]{64}$/.test(sourceSha||""))return;
@@ -441,7 +477,8 @@ function sourcePageViewer(host,item,part,nativeSelection,totalSelection,financia
       const nativeBoxes=metadata.native_row&&nativeSelection?window.NativeRowOverlay?.model(metadata,manifest,nativeSelection):
         metadata.native_total_annotation&&totalSelection?window.NativeRowOverlay?.totalModel(metadata,manifest,totalSelection):
         metadata.fact?.value_kind==='native_grouped_financial_cell_literal'&&financialSelection?
-          window.NativeRowOverlay?.factModel(metadata,manifest,financialSelection):null;
+          window.NativeRowOverlay?.factModel(metadata,manifest,financialSelection):
+        tableFact?window.NativeRowOverlay?.tableFactModel(metadata,manifest,tableFact):null;
       const box=part?.bbox_normalized,matched=Boolean(nativeBoxes?.length)||(part?.page_no===page&&part.source_sha256===sourceSha&&part.render_sha256===sha);
       const valid=Array.isArray(box)&&box.length===4&&box.every(v=>typeof v==="number"&&Number.isFinite(v)&&v>=0&&v<=1)&&box[0]<box[2]&&box[1]<box[3];
       if(matched&&(valid||nativeBoxes?.length)){
@@ -492,8 +529,9 @@ function renderDocumentEvidence(host,data){
     const candidate=data.visual_source_proof?.parts?.[item.citation_id-1];
     const part=candidate?.quote===item.snippet?candidate:null;
     const chunkSource=window.SourceEvidence?.citation(item,{api:API});if(chunkSource)row.append(chunkSource);
-    const financialSelection=items.filter(c=>c.metadata?.document_id===did&&c.metadata?.page_no===page&&c.metadata?.source_sha256===metadata.source_sha256).map(c=>c.metadata?.fact).filter(Boolean);
-    sourcePageViewer(row,item,part,data.native_row_proof?.selection,data.native_total_proof?.selected_annotations,financialSelection);docs.append(row);
+    const financialSelection=(data.document_evidence_context||items).filter(c=>c.metadata?.document_id===did&&c.metadata?.page_no===page&&c.metadata?.source_sha256===metadata.source_sha256).map(c=>c.metadata?.fact).filter(Boolean);
+    const tableFact=data.table_fact||data.result?.table_fact;
+    sourcePageViewer(row,item,part,data.native_row_proof?.selection,data.native_total_proof?.selected_annotations,financialSelection,tableFact);docs.append(row);
   });host.append(docs);
 }
 function renderResultSchemas(host,result){
@@ -526,7 +564,7 @@ function renderResultSchemas(host,result){
 function renderResult(view,data,originalQuestion){
   data=normalizeOmniResponse(data);
   latestContext=window.ConversationContext.nextContext(latestContext,data);independentNext=false;updateContextComposer();
-  document.querySelectorAll(".clarify button, .clarify input, .comparison-controls button").forEach(control=>control.disabled=true);
+  document.querySelectorAll(".clarify button, .clarify input, .comparison-controls button, button.agent-result-action").forEach(control=>control.disabled=true);
   view.live?.finish(data);
   view.wait.remove();view.title.textContent=data.status==="clarification"?"需要补充条件":`已完成 · ${data.latency_ms??"—"} ms`;view.turn.status=data.status||"完成";renderTurns();
   if(data.structured?.sql&&liveSchema.tables.length){
@@ -696,11 +734,24 @@ function renderResult(view,data,originalQuestion){
   }else{
     const source=window.SourceEvidence?.sql(structured,{api:API,schema:liveSchema});if(source)answer.append(source);
   }
-  clearSourceViewers(view.answer);view.answer.replaceChildren(answer);$("thread").scrollTop=$("thread").scrollHeight;
+  clearSourceViewers(view.answer);
+  if(window.AgentResults){
+    const resultSession=sessionId,resultDocument=selectedDocument?{...selectedDocument}:null;
+    const card=window.AgentResults.render(data,{api:API,renderEvidence:renderDocumentEvidence,renderTable,
+      suppressGuidanceActions:structured.status==='clarification'&&structured.clarification_code!=='selected_source_reference_conflict',onClarify:action=>{
+        if(busy||fileUploading||sessionId!==resultSession)return;if(action.kind==='option'&&action.code&&action.option)clarify(originalQuestion,action.code,action.option);
+        else if(action.kind==='clear_scope')fillTask(originalQuestion,null);
+        else fillTask(originalQuestion,resultDocument);
+      }});
+    const controls=[...answer.querySelectorAll('.clarify-description,.clarify,.clarify-help')];controls.forEach(node=>(card.querySelector('.agent-result-guidance')||card).append(node));
+    const legacy=el('details','result-detail-archive');legacy.append(el('summary','','完整查询详情与字段关系'),answer);
+    view.answer.replaceChildren(card,legacy);
+  }else view.answer.replaceChildren(answer);
+  view.answer.scrollIntoView({block:'nearest',behavior:'smooth'});
 }
 function parseSse(block){let type="message";const lines=[];block.split("\n").forEach(line=>{if(line.startsWith("event:"))type=line.slice(6).trim();if(line.startsWith("data:"))lines.push(line.slice(5).trimStart());});return lines.length?{type,data:JSON.parse(lines.join("\n"))}:null;}
 async function streamQuery(question,useContext,completeResults,view,signal,images=[]){
-  const response=await fetch(API+"/api/v1/omni/query/stream",{method:"POST",headers:{"Content-Type":"application/json",Accept:"text/event-stream"},body:JSON.stringify({question,session_id:sessionId,reset_context:!useContext,complete_results:completeResults,images:images.map(image=>image.dataUrl)}),signal});
+  const response=await fetch(API+"/api/v1/omni/query/stream",{method:"POST",headers:{"Content-Type":"application/json",Accept:"text/event-stream"},body:JSON.stringify({question,session_id:sessionId,reset_context:!useContext,complete_results:completeResults,document_id:selectedDocument?.document_id||null,images:images.map(image=>image.dataUrl)}),signal});
   if(!response.ok){await json(response);throw Error("查询失败");}
   if(!response.body)throw Error("当前连接未提供执行事件，请切换非流式模式重试。");
   const reader=response.body.getReader(),decoder=new TextDecoder();let buffer="",result=null;
@@ -712,21 +763,21 @@ async function streamQuery(question,useContext,completeResults,view,signal,image
   if(!result)throw Error("流式连接未返回完整结果");return result;
 }
 async function run(question,request,images=[]){
-  if(busy)return;busy=true;$("send").disabled=true;
+  if(busy||fileUploading)return;busy=true;$("send").disabled=true;
   syncComposerControls();
   $("sixDemo").disabled=true;
-  document.querySelectorAll(".clarify button, .clarify input, .comparison-controls button, .pending-task-list button").forEach(control=>control.disabled=true);
+  document.querySelectorAll(".clarify button, .clarify input, .comparison-controls button, .pending-task-list button, button.agent-result-action").forEach(control=>control.disabled=true);
   updateContextComposer();const view=beginTurn(question,images),controller=new AbortController();activeController=controller;
   try{const data=await request(view,controller.signal);if(!controller.signal.aborted){renderResult(view,data,question);return data;}}
   catch(error){if(!controller.signal.aborted){view.live?.fail(error.message||"请求失败");view.wait.remove();view.title.textContent="查询失败";view.turn.status="失败";view.answer.append(el("div","error-line",error.message||"请求失败"));renderTurns();}}
   finally{if(activeController===controller){activeController=null;busy=false;$("sixDemo").disabled=demoRunning;updateContextComposer();syncComposerControls();}}
 }
 function ask(question,images=[]){const text=question.trim();if(!text)return;const useContext=$("useContext").checked&&!independentNext,completeResults=$("completeResults").checked;
-  return run(text,(view,signal)=>STREAM?streamQuery(text,useContext,completeResults,view,signal,images):post("/api/v1/omni/query",{question:text,session_id:sessionId,reset_context:!useContext,complete_results:completeResults,images:images.map(image=>image.dataUrl)},signal),images);}
+  return run(text,(view,signal)=>STREAM?streamQuery(text,useContext,completeResults,view,signal,images):post("/api/v1/omni/query",{question:text,session_id:sessionId,reset_context:!useContext,complete_results:completeResults,document_id:selectedDocument?.document_id||null,images:images.map(image=>image.dataUrl)},signal),images);}
 function clarify(question,code,option,omni=true,time){return run(time?`${option.label||option.value}：${time}`:option.label||option.value,async(_view,signal)=>{
   return post("/api/v1/omni/clarify",{original_question:question,clarification_code:code,selected_value:option.value,selected_label:option.label,selected_time:time,session_id:sessionId,complete_results:$("completeResults").checked},signal);
 });}
-$("form").addEventListener("submit",e=>{e.preventDefault();if(busy||imageReads)return;const question=$("q").value.trim()||(pendingImages.length?"请结合图片和相关资料回答":"");if(!question)return;
+$("form").addEventListener("submit",e=>{e.preventDefault();if(busy||fileUploading||imageReads)return;const question=$("q").value.trim()||(pendingImages.length?"请结合图片和相关资料回答":"");if(!question)return;
   const images=pendingImages.map(image=>({...image}));pendingImages=[];renderImagePreviews();setImageStatus("");$("q").value="";$("q").style.height="auto";ask(question,images);});
 $("q").addEventListener("input",()=>{$("q").style.height="auto";$("q").style.height=`${Math.min(160,$("q").scrollHeight)}px`;syncComposerControls();});
 $("q").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("form").requestSubmit();}});
@@ -738,7 +789,7 @@ $("q").addEventListener("paste",event=>{
 });
 $("form").addEventListener("dragover",event=>{if(Array.from(event.dataTransfer?.items||[]).some(item=>item.kind==="file"))event.preventDefault();});
 $("form").addEventListener("drop",event=>{const files=Array.from(event.dataTransfer?.files||[]);if(files.length){event.preventDefault();addImageFiles(files);}});
-function switchConversation(next){activeController?.abort();activeController=null;busy=false;latestContext=null;independentNext=false;$("useContext").checked=true;updateContextComposer();syncComposerControls();clearSourceViewers();clearToolTimelines();sessionId=next;turns=[];$("feed").replaceChildren($("empty"));$("empty").style.display="";renderTurns();conversationSessionPicker?.refresh();}
+function switchConversation(next){uploadRevision++;selectDocument(null);if($('documentUploadStatus'))$('documentUploadStatus').hidden=true;activeController?.abort();activeController=null;busy=false;latestContext=null;independentNext=false;$("useContext").checked=true;updateContextComposer();syncComposerControls();clearSourceViewers();clearToolTimelines();sessionId=next;turns=[];$("feed").replaceChildren($("empty"));$("empty").style.display="";$("thread").scrollTop=0;renderTurns();conversationSessionPicker?.refresh();}
 function newChat(){try{switchConversation(conversationSessions.start());}catch(error){$("q").setCustomValidity(error.message);$("q").reportValidity();$("q").setCustomValidity("");}}
 $("useContext").addEventListener("change",()=>{independentNext=false;updateContextComposer();});
 $("newChat").onclick=newChat;$("newChatTop").onclick=newChat;
@@ -762,4 +813,7 @@ $("sixDemo").onclick=async()=>{
   }finally{demoRunning=false;button.textContent=label;button.disabled=busy;}
 };
 $("theme").onclick=()=>{document.documentElement.dataset.theme=document.documentElement.dataset.theme==="dark"?"light":"dark";};
+$('documentScope').onchange=event=>selectDocument(documentCatalog.find(doc=>doc.document_id===event.target.value));
+$('documentPicker').onclick=()=>$('documentFiles').click();
+$('documentFiles').onchange=event=>{uploadDocument(event.target.files[0]);event.target.value='';};
 renderExamples();renderQuestionCatalog();schemaLoadPromise=loadMeta();loadKnowledgeCatalog();syncComposerControls();

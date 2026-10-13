@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>数智问问 · ICT 赛题八</title>
+  <title>Omni-Agent · 数据与文档工作台</title>
   <style>
     :root {
       --bg: #fff; --soft: #f7f7f8; --hover: #f0f0f2; --line: #ececec;
@@ -294,28 +294,30 @@
   <link rel="stylesheet" href="./codex-ui.css?v=20261008-rag-process-1" />
   <link rel="stylesheet" href="./query-result-viz.css?v=20261003-polish-6" />
   <link rel="stylesheet" href="./result-browser.css?v=20261003-full-results-1" />
-<link rel="stylesheet" href="./source-evidence.css?v=20261008-sql-source-highlight-1"></head>
+<link rel="stylesheet" href="./source-evidence.css?v=20261008-sql-source-highlight-1">
+<link rel="stylesheet" href="./agent-results.css?v=20261013">
+<link rel="stylesheet" href="./agent-workspace.css?v=20261013"></head>
 <body>
   <div class="app">
     <aside class="sidebar">
       <div class="brand">
-        <img class="brand-logo" src="./brand-logo.png?v=20261006-brand-1" alt="数智问问 Cloud Data Intelligence" />
+        <svg class="omni-symbol" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m16 3 12 7v12l-12 7L4 22V10Z" stroke="currentColor" stroke-width="2"/><path d="m4 10 12 7 12-7M16 17v12M10 6.5l12 7" stroke="currentColor" stroke-width="2"/></svg><div><b>Omni-Agent</b><span>数据与文档智能体</span></div>
       </div>
       <button class="new-chat" id="newChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>新对话</button>
       <a class="new-chat" href="./knowledge.html" aria-label="资料管理与原件浏览"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料管理与原件浏览</a>
       <a class="new-chat" href="./capabilities.html" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>赛题全量验收台</a>
       <button class="new-chat" id="sixDemo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16" stroke-linecap="round"/><circle cx="8" cy="5" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="17" cy="19" r="1" fill="currentColor"/></svg>演示六轮追问</button>
-      <div class="nav-label">会话记忆</div>
+      <div class="nav-label">当前任务</div>
       <ol class="turns" id="turns"></ol>
       <div class="nav-label">已接入数据源</div>
       <div class="data-source-list" id="dataSources" aria-live="polite"></div>
-      <div class="nav-label">RAG 知识库</div>
+      <div class="nav-label">可用资料</div>
       <div class="rag-file-grid" id="ragSources" aria-live="polite"></div>
       <div class="side-foot">查询与证据来自后端；没有结果时会明确说明。</div>
     </aside>
     <main class="stage">
       <header class="topbar">
-        <div class="model-chip">数智问问 <em id="capTitle">智能问答</em></div>
+        <div class="model-chip">工作台 <em id="capTitle">让复杂任务有据可查</em></div>
         <a class="top-route" href="./knowledge.html" title="资料管理与原件浏览" aria-label="资料管理与原件浏览"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料库</a>
         <a class="top-route" href="./capabilities.html" title="赛题全量验收台" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>验收</a>
         <button class="top-new" id="newChatTop" type="button" title="新对话">＋ 新对话</button>
@@ -327,19 +329,26 @@
       <div class="thread" id="thread">
         <div class="col" id="feed">
           <div class="empty" id="empty">
-            <h1>问数据，查依据</h1>
-            <p>直接提出问题，系统自动选择数据查询、资料检索，或结合两者回答。</p>
+            <div class="workspace-eyebrow"><span></span> OMNI · AGENT WORKSPACE</div>
+            <h1>一个问题，<br>连接数据与答案。</h1>
+            <p>查数据库、读文档、找公式、做计算。<br class="mobile-break">每一步有记录，每个结论有出处。</p>
+            <div class="workspace-signals"><span><b id="workspaceTables">—</b> 张数据表</span><span><b id="workspaceDocuments">—</b> 份可用资料</span><span id="modelStatus">正在读取模型状态</span></div>
+            <div class="demo-section-heading"><h2>从一个真实任务开始</h2><span>选择问题，发送后实时执行</span></div>
             <div class="grid" id="suggests"></div>
+            <a class="workspace-upload-link" href="./knowledge.html">带上你的资料，开始一次分析 <span>↗</span></a>
           </div>
         </div>
       </div>
       <div class="composer-wrap" id="askComposer">
         <div id="contextComposer" class="context-composer" role="status" aria-live="polite" hidden></div>
         <form class="composer" id="form">
+          <div class="composer-scope"><label for="documentScope">资料范围</label><select id="documentScope" aria-label="当前任务资料范围"><option value="">自动选择数据与资料</option></select><span class="scope-chip" id="selectedDocument" hidden></span></div>
           <div class="composer-image-previews" id="imagePreviews" aria-live="polite" hidden></div>
           <div class="composer-row">
             <textarea id="q" rows="1" placeholder="直接提问：查数据、找依据，或结合两者分析"></textarea>
             <input id="imageFiles" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+            <input id="documentFiles" type="file" accept=".pdf,.docx,.xlsx,.txt,.md" hidden>
+            <button id="documentPicker" class="composer-document-picker" type="button" aria-label="上传文档" title="上传文档并提问"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m8 12 6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l9-9M7 13l6-6" stroke-linecap="round"/></svg></button>
             <button class="composer-image-picker" id="imagePicker" type="button" title="添加图片" aria-label="添加图片">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="1.6"/><path d="m21 15-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
@@ -348,13 +357,14 @@
             </button>
           </div>
           <p class="composer-image-status" id="imageStatus" role="status" hidden></p>
+          <p id="documentUploadStatus" class="document-upload-status" role="status" hidden></p>
         </form>
         <div class="meta">
           <label><input id="useContext" type="checkbox" checked> 承接上一轮</label>
           <label title="读取完整问数结果并分页展示；保留资源预算。图表只展示初始预览。"><input id="completeResults" type="checkbox"> 获取完整结果</label>
           <span>Enter 提交</span>
         </div>
-        <div class="hint">工具调用与反馈可展开查看 · SQL、字段与原文依据均保留</div>
+        <div class="hint">答案基于当前资料与数据 · 展开执行过程可核对工具和来源</div>
       </div>
     </main>
   </div>
@@ -369,7 +379,7 @@
 <script src="./vendor/react.production.min.js" defer></script>
 <script src="./vendor/react-dom.production.min.js" defer></script>
 <script src="./tool-timeline.js?v=20261008-rag-process-2" defer></script>
-<script src="./native-row-overlay.js?v=20261006-financial-4" defer></script>
-<script src="./source-evidence.js?v=20261009-precise-source-cells-2" defer></script><script src="./app.js?v=20261008-generalization-repair-1" defer></script>
+<script src="./native-row-overlay.js?v=20261013-table-cell-1" defer></script>
+<script src="./source-evidence.js?v=20261009-precise-source-cells-2" defer></script><script src="./agent-results.js?v=20261013" defer></script><script src="./app.js?v=20261013-product" defer></script>
 </body>
 </html>

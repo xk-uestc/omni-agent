@@ -10,7 +10,7 @@ from .grounded_generation import (_ENGLISH_ACTUAL_HEADING, _ENGLISH_FORECAST_HEA
                                   _FORECAST_HEADING, _DECLARED_UNIT_HEADING,
                                   _DECLARED_CONDITION_HEADING, MAX_LOCAL_SCOPE_HEADINGS)
 from .native_continuation import (choose_continuation, continuation_state,
-                                  enrich_native_line_styles)
+                                  enrich_native_line_styles, choose_cjk_numeric_continuation)
 from .native_anchor import ANCHOR_POLICY_VERSION, anchor_ranges, literal_compact
 
 EXTRACTION_VERSION = 'original-native-complete-block-context-v5'
@@ -159,6 +159,13 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
         continuation_members = continuation['members']
         column_transition = continuation.get('column_transition')
         continuation_policy_version = continuation.get('continuation_policy_version')
+    elif rotated_row is None:
+        continuation = choose_cjk_numeric_continuation(block, ordered,
+            {**order, 'source_sha256': hashlib.sha256(raw).hexdigest()}, max_chars=max_chars)
+        if continuation is not None:
+            text = continuation['text']
+            continuation_members = continuation['members']
+            continuation_policy_version = continuation['continuation_policy_version']
     unit_insertions = []
     # All-page uniqueness: a unit cannot attach to two competing number lines.
     for unit in ordered:
@@ -292,7 +299,8 @@ def extract_native_context(raw, page_no, anchor_text, max_chars=1800):
     return {'text': text, 'source_sha256': hashlib.sha256(raw).hexdigest(), 'page_no': page_no,
             'evidence_sha256': text_sha256(text), 'text_sha256': text_sha256(text),
             'evidence_chars': len(text), 'max_chars': max_chars,
-            'extraction_version': EXTRACTION_VERSION,
+            'extraction_version': ('original-native-complete-block-context-v6'
+                if continuation_policy_version == 'native-cjk-numeric-unit-wrap-v1' else EXTRACTION_VERSION),
             'mode': ('original_native_complete_rotated_row' if rotated_row else
                      'original_native_complete_continuation' if continuation_members else
                      'original_native_complete_block'),

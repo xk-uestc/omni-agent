@@ -113,7 +113,7 @@ class DependencyAgent:
             raise DependencyPlanError('查询文本为空或过长')
         return text
 
-    def run(self, tasks, *, on_event=None, original_question=None, source_constraints=None):
+    def run(self, tasks, *, on_event=None, on_progress=None, original_question=None, source_constraints=None):
         # Server-bound reference normalization never mutates the caller graph.
         tasks = deepcopy(tasks)
         from .nl2sql.security import unsafe_request_reason
@@ -125,6 +125,8 @@ class DependencyAgent:
                      'failure_category': 'safety', 'error_code': 'read_only_query_required'}
             if on_event:
                 on_event(dict(event))
+            if on_progress:
+                on_progress(dict(event))
             return {'status': 'clarification', 'results': {}, 'trace': [event],
                     'trace_id': hashlib.sha256(json.dumps(tasks, sort_keys=True).encode()).hexdigest()[:20],
                     'clarification': '整条请求包含写入或绕过规则意图，未执行任何子任务。',
@@ -133,10 +135,12 @@ class DependencyAgent:
         try:
             ordered, dependencies = self.validate(tasks)
         except DependencyPlanError:
-            if on_event:
-                from .failure_trace import failure
-                on_event({'stage': 'planning', 'status': 'failed', 'executed': False,
-                          'failure': failure('planner', 'planning', 'dependency_plan_invalid')})
+            from .failure_trace import failure
+            event = {'stage': 'planning', 'status': 'failed', 'executed': False,
+                     'failure': failure('planner', 'planning', 'dependency_plan_invalid')}
+            for callback in (on_event, on_progress):
+                if callback:
+                    callback(dict(event))
             raise
         read_scope = getattr(self.sql_engine, 'consistent_reads', None)
         with read_scope() if read_scope else nullcontext():
@@ -182,12 +186,14 @@ class DependencyAgent:
                          'failure': for_code(exc.code, phase='source_binding')}
                 if on_event:
                     on_event(dict(event))
+                if on_progress:
+                    on_progress(dict(event))
                 return {'status': 'clarification', 'trace_id': trace_id, 'results': {}, 'trace': [],
                         'failure_trace': [event['failure']],
                         'clarification': str(exc), 'clarification_code': exc.code, 'error_code': exc.code,
                         'skipped_tasks': [task['id'] for task in ordered], 'edges': [],
                         'user_constraint_validation': {'status': 'unverified', 'error_code': exc.code}}
-            result = self._run_ordered(tasks, ordered, dependencies, on_event=on_event,
+            result = self._run_ordered(tasks, ordered, dependencies, on_event=on_event, on_progress=on_progress,
                                        source_constraints=source_constraints or {}, original_question=original_question,
                 initial_versions=initial_versions, search_bindings=search_bindings, cell_bindings=cell_bindings,
                                        formula_consumption=formula_consumption)
@@ -279,7 +285,7 @@ class DependencyAgent:
             raise SourceConstraintError('formula_target_not_consumed')
         return contracts
 
-    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, source_constraints=None, original_question=None,
+    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, on_progress=None, source_constraints=None, original_question=None,
                      initial_versions=None, search_bindings=None, cell_bindings=None, formula_consumption=None):
         results, trace = {}, []
         versions = dict(initial_versions or {})
@@ -312,6 +318,10 @@ class DependencyAgent:
                     from .dynamic_source_binding import bind_dynamic_source_filters
                     required = bind_dynamic_source_filters(self, task=task, tasks=tasks, results=results,
                         required_intent=required, original_question=original_question)
+                if on_progress:
+                    on_progress({'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'],
+                                 'dependencies': sorted(dependencies[task['id']]),
+                                 'status': 'running', 'executed': False})
                 result = (self.execute(task['tool'], args, task['args'], results, original_question=original_question)
                           if task['tool'] == 'calculate' else
                           self.execute(task['tool'], args, task['args'], results, required_intent=required)
@@ -331,8 +341,12 @@ class DependencyAgent:
                     versions[document_id] = digest
                 self._verify_versions(versions)
                 results[task['id']] = result
-                event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'complete', 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
+                from .presentation_events import tool_receipt
+                event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'complete', 'latency_ms': round((time.perf_counter()-started)*1000, 3),
+                         'output': tool_receipt(task['tool'], result)}
                 trace.append(event)
+                if on_progress:
+                    on_progress(dict(event))
                 if on_event:
                     on_event(dict(event))
             except (ValueError, KeyError, TypeError, SyntaxError, OverflowError, OSError, sqlite3.DatabaseError) as exc:
@@ -345,6 +359,8 @@ class DependencyAgent:
                     event['source_constraint_code'] = exc.code
                     event['constraint_error_codes'] = list(getattr(exc, 'constraint_error_codes', ()))
                 trace.append(event)
+                if on_progress:
+                    on_progress(dict(event))
                 if on_event:
                     on_event(dict(event))
                 return {'status': 'incomplete', 'trace_id': trace_id, 'results': results, 'trace': trace, 'failed_task': task['id'], 'error': message,

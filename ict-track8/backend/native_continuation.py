@@ -367,3 +367,49 @@ def choose_continuation(block, ordered, order, max_chars=1800):
             'continuation_policy_version': CONTINUATION_POLICY_VERSION,
             'mode': 'unique_native_successor_first_closed_sentence_prototype',
             'calculator_input_eligible': False}
+
+
+def choose_cjk_numeric_continuation(block, ordered, order, max_chars=1800):
+    """Read a printed Chinese number/unit wrap, using fresh native geometry.
+
+    This narrow extension handles a prose line ending at a number whose
+    adjacent line starts with a literal counter/unit. It does not merge
+    arbitrary Chinese blocks, labels, table rows or new paragraphs. The
+    existing successor, sentence-closure, source-pin and budget checks still
+    apply. The returned text remains ineligible as a calculator input.
+    """
+    text = block.get('normalized_text', '')
+    if (not isinstance(text, str) or len(re.findall(r'[\u3400-\u9fff]', text)) < 12
+            or not re.search(r'[，,。；;]', text)
+            or not re.search(r'\d(?:[\d,.]*\d)?\s*$', text)
+            or '\n' in text or not isinstance(ordered, list)):
+        return None
+    indexes = [index for index, item in enumerate(ordered) if item is block]
+    if len(indexes) != 1 or indexes[0] + 1 >= len(ordered):
+        return None
+    following = ordered[indexes[0] + 1]
+    # These are language counters/units, not question-specific entities or
+    # metric aliases. The literal source supplies the complete unit and fact.
+    if not re.match(r'^(?:个|次|场|项|件|人|户|家|条|份|笔|套|台|辆|座|所|种|页|'
+                    r'年|月|日|天|小时|分钟|秒|元|万元|亿元|吨|公斤|千克|克|米|'
+                    r'公里|千米|平方米|立方米)', following.get('normalized_text', '').lstrip()):
+        return None
+    leading_lines = block.get('native_lines') or []
+    next_lines = following.get('native_lines') or []
+    if len(leading_lines) != 1 or not next_lines:
+        return None
+    before, after = leading_lines[0], next_lines[0]
+    if (not _box(before.get('bbox')) or not _box(after.get('bbox'))
+            or not before.get('native_style') or before['native_style'] != after.get('native_style')
+            or before.get('native_direction') != (1.0, 0.0)
+            or after.get('native_direction') != (1.0, 0.0)):
+        return None
+    bb, fb = before['bbox'], after['bbox']
+    height = bb[3] - bb[1]
+    if (bb[2] - bb[0] < 12 * height or abs(bb[0] - fb[0]) > min(3, height * .25)
+            or fb[2] > bb[2] + height or fb[2] - fb[0] < height):
+        return None
+    result = choose_continuation(block, ordered, order, max_chars=max_chars)
+    if result['text'] is None or result.get('column_transition') is not None:
+        return None
+    return {**result, 'continuation_policy_version': 'native-cjk-numeric-unit-wrap-v1'}

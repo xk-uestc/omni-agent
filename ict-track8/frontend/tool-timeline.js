@@ -6,6 +6,7 @@
   'use strict';
   const TOOLS={
     'intent.plan':['理解问题','thought'], 'context.resolve':['核对对话上下文','thought'], 'knowledge.answer':['文档问答','file'],
+    'document.scope':['核验所选文档','file'], 'document.overview':['读取文档结构与正文摘录','file'],
     nl2sql:['NL2SQL · 生成 SQL','code'], sql:['查询数据库','database'], 'database.read':['查询数据库','database'],
     'database.schema':['查看数据库结构','database'], 'database.write':['修改数据库内容','edit'],
     search:['检索文档','search'], 'knowledge.search':['检索文档','search'], document_retrieval:['检索文档','search'],
@@ -43,9 +44,9 @@
     if(tool==='database.write'&&!(event.executed===true&&status==='success')){
       if(status==='success'||status==='reported')status='attention';
     }
-    const label=TOOLS[tool]||[event.title||'工具调用','terminal'];
-    const kind=tool&&!['context.resolve','query.complete'].includes(tool)?'tool':'commentary';
-    let summary=event.summary||event.message||NARRATION[stage]||
+    const label=TOOLS[tool]||[event.presentation?.label||event.title||(tool==='query.failure'?'任务诊断':'工具调用'),'terminal'];
+    const kind=tool&&!event.rag_step&&!String(tool).startsWith('rag.')&&!['context.resolve','query.complete'].includes(tool)?'tool':'commentary';
+    let summary=event.presentation?.summary||event.summary||event.message||NARRATION[stage]||
       (kind==='tool'?'':event.source?'正在处理本次问题。':'');
     if(summary==='调用完成'||!summary){
       if(tool==='context.resolve')summary=status==='running'?'正在核对当前问题与已有对话中的条件。':'已核对本轮问题与对话上下文。';
@@ -56,11 +57,13 @@
       else if(tool==='knowledge.search')summary='检索本次问题相关的资料。';
     }
     if(!tool&&!summary)return null;
-    return {id:String(event.call_id||event.id||event.task_id&&`${event.trace_id||'task'}:${event.task_id}`||`${kind}:${stage}`),
+    return {id:String(event.call_id||event.id||event.task_id&&`${event.trace_id?'fusion:'+event.trace_id:'task'}:${event.task_id}`||`${kind}:${stage}`),
       tool:tool||null,stage,title:label[0],icon:label[1],kind,status,summary,
       input:event.input||event.args||{},output:event.output||event.result||
         (status!=='running'?event:{}),latency_ms:event.latency_ms,
-      executed:event.executed,language:tool==='nl2sql'||tool==='sql'||tool==='database.read'?'sql':'json'};
+      executed:event.executed,depends_on:event.presentation?.depends_on||event.dependencies||[],
+      stateLabel:status==='attention'?(event.status==='insufficient_evidence'?'缺少依据':'待补充'):null,
+      receipt:event.presentation?.receipt||{},language:tool==='nl2sql'||tool==='sql'||tool==='database.read'?'sql':'json'};
   }
   function reduceEvents(rows,event){
     const item=normalizeEvent(event);if(!item||item.status==='skipped')return rows;
@@ -110,7 +113,7 @@
     thought:'M8 18h8 M9 21h6 M8 15a7 7 0 1 1 8 0v3H8z',
     check:'M5 12l4 4L19 6',close:'M6 6l12 12 M6 18L18 6',chevron:'M9 5l7 7-7 7'
   };
-  const STATUS={running:'运行中',success:'完成',error:'失败',attention:'需要确认',stopped:'已停止',reported:'处理记录'};
+  const STATUS={running:'运行中',success:'完成',error:'未完成',attention:'待补充',stopped:'已停止',reported:'处理记录'};
   const RAG_STEPS=[
     ['question_analysis','问题解析'],
     ['context_resolution','多轮上下文与部件指代消解'],
@@ -139,7 +142,7 @@
     return milliseconds>=1000?`${(milliseconds/1000).toFixed(1)} s`:`${Math.round(milliseconds)} ms`;
   }
   function invocationVerb(status){
-    return {running:'正在调用',success:'已调用',error:'调用失败',attention:'调用待确认',stopped:'调用已停止',reported:'调用记录'}[status]||'调用记录';
+    return {running:'正在调用',success:'已调用',error:'调用失败',attention:'结果待补充',stopped:'调用已停止',reported:'调用记录'}[status]||'调用记录';
   }
   function invocationPreview(item){
     const input=item.input||{},output=item.output||{};
@@ -150,9 +153,11 @@
   function create(options={}){
     const React=window.React,ReactDOM=window.ReactDOM;
     if(!React||!ReactDOM)throw Error('工具时间线组件未加载');
-    const h=React.createElement,root=document.createElement('div');root.className='agent-timeline';
+    const h=React.createElement,root=document.createElement('details');root.className='agent-timeline';root.open=true;
     root.setAttribute('aria-label','工具调用与执行反馈');
-    const mount=ReactDOM.createRoot(root);let rows=[],waiting=true,finished=false,finalData=null,ragStarted=false;
+    const heading=document.createElement('summary');heading.className='agent-run-heading';
+    const mountHost=document.createElement('div');mountHost.className='agent-run-content';root.append(heading,mountHost);
+    const mount=ReactDOM.createRoot(mountHost);let rows=[],waiting=true,finished=false,finalData=null,ragStarted=false;
     const requestStartedAt=performance.now();
     const ragProgress=new Map(RAG_STEPS.map(([key])=>[key,{status:'pending',input:{},output:{}}]));
     const attachments=new Map();
@@ -238,16 +243,13 @@
       const steps=RAG_STEPS.map(([key,title])=>({key,title,...ragProgress.get(key)}));
       const completed=steps.filter(step=>['success','error','attention','skipped','stopped'].includes(step.status)).length;
       const current=steps.find(step=>step.status==='running');
-      const percent=Math.round(completed/steps.length*100);
       return h('section',{className:'agent-rag-process','aria-label':'RAG 可审计处理过程'},
         h('header',{className:'agent-rag-head'},h('div',null,
           h('strong',null,'知识库召回'),
           h('p',null,'问题解析、混合检索、证据筛选与答案生成。')),
-          h('span',{className:'agent-rag-progress-label'},`${percent}% · ${completed}/${steps.length} · ${((performance.now()-requestStartedAt)/1000).toFixed(1)} s`)),
-        h('div',{className:'agent-rag-progress','role':'progressbar','aria-valuemin':0,'aria-valuemax':100,'aria-valuenow':percent},
-          h('i',{style:{width:`${percent}%`}})),
+          h('span',{className:'agent-rag-progress-label'},`${steps.filter(step=>step.status==='success').length} 个阶段完成`)),
         current?h('p',{className:'agent-rag-current','role':'status'},current.summary||`正在${current.title}…`):null,
-        h('ol',{className:'agent-rag-steps'},steps.map((step,index)=>{
+        h('ol',{className:'agent-rag-steps'},steps.filter(step=>!['pending','skipped'].includes(step.status)).map((step,index)=>{
           const status=step.status||'pending',open=status==='running'||(!current&&step.key==='generation_evidence'&&status==='success');
           const duration=Number.isFinite(step.latency_ms)?formatRagDuration(step.latency_ms):'';
           return h('li',{key:step.key,'data-state':status},
@@ -263,14 +265,24 @@
                 h('b',null,'处理结果'),h(RagFields,{data:step.output})):null));
         })));
     }
-    function Timeline(){return h(React.Fragment,null,
+    function Timeline(){const calls=rows.filter(item=>item.kind==='tool'&&item.tool!=='query.failure');return h(React.Fragment,null,
+      calls.length?h('ol',{className:'agent-task-flow','aria-label':'实际执行的工具'},calls.map(item=>h('li',{key:item.id,'data-state':item.status},
+        h('span',{className:'agent-task-icon'},item.status==='running'?h('i',{className:'agent-spinner'}):h(Icon,{name:item.status==='success'?'check':item.icon})),
+        h('div',null,h('strong',null,item.title),h('small',null,item.summary||STATUS[item.status]),
+          item.depends_on?.length?h('small',{className:'agent-dependency'},`依赖：${item.depends_on.join(' → ')}`):null),
+        h('span',{className:`state-${item.status}`},item.stateLabel||STATUS[item.status])))):null,
+      h('details',{className:'agent-technical'},h('summary',null,'工具详情与检索记录'),
       ragStarted?h(RagProcess,{key:'rag-process'}):null,
       rows.filter(item=>!(ragStarted&&(item.tool==='knowledge.answer'||item.tool==='knowledge.search'||
         item.tool==='document_retrieval'||RAG_TRACE_STAGES.has(item.stage)))).map(item=>item.kind==='tool'?h(Tool,{key:item.id,item,attachment:attachments.get(item.id)}):h('p',{key:item.id,className:'agent-commentary',
-        'data-status':item.status},h(Icon,{name:'thought'}),h('span',null,item.summary))),
+        'data-status':item.status},h(Icon,{name:'thought'}),h('span',null,item.summary)))),
       waiting?h('div',{className:'agent-request-wait',role:'status'},h('i',{className:'agent-spinner'}),'正在处理你的请求…'):null);
     }
-    function draw(){mount.render(h(Timeline));}
+    function draw(){const count=rows.filter(item=>item.kind==='tool'&&item.status==='success').length;
+      const current=rows.find(item=>item.status==='running');
+      const label=finished?(finalData?.status==='ok'?'执行完成':'本次执行已结束'):(current?.title||'正在处理任务');
+      heading.textContent=`${label} · ${count} 项工具完成 · ${((performance.now()-requestStartedAt)/1000).toFixed(1)} 秒`;
+      root.dataset.running=String(!finished);root.dataset.status=finished?(finalData?.status||'error'):'running';mount.render(h(Timeline));}
     function update(event){if(finished)return;
       if(event&&typeof event.rag_step==='string'&&ragProgress.has(event.rag_step)){
         ragStarted=true;const old=ragProgress.get(event.rag_step),status=normalizedStatus(event);
@@ -292,7 +304,7 @@
       rows=rows.map(row=>row.status==='running'?{...row,status:'stopped',summary:row.summary||'未收到此工具的完成记录。'}:row);
       for(const [key,value] of ragProgress)if(value.status==='running'||value.status==='pending')ragProgress.set(key,{...value,
         status:value.status==='running'?'stopped':'skipped',summary:value.summary||'请求结束前未执行此阶段。'});
-      finished=true;draw();}
+      finished=true;root.open=false;draw();}
     function record(event){rows=reduceEvents(rows,event);draw();}
     function attach(tool,node){
       const item=rows.find(row=>row.tool===tool);

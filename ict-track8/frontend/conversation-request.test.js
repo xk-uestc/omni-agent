@@ -9,7 +9,7 @@ function harness(){
     $:()=>send,updateContextComposer:()=>{},beginTurn:()=>({}),renderResult:()=>{},
     renderTurns:()=>{},el:()=>({}),post:async()=>({})};
   vm.createContext(sandbox);
-  vm.runInContext('let busy=false,activeController=null;'+source.slice(source.indexOf('async function run('),source.indexOf('function ask(')),sandbox);
+  vm.runInContext('let busy=false,activeController=null,fileUploading=false,demoRunning=false;function syncComposerControls(){send.disabled=busy;}'+source.slice(source.indexOf('async function run('),source.indexOf('function ask(')),sandbox);
   return sandbox;
 }
 test('previous choices are locked before the next request is sent',async()=>{
@@ -29,13 +29,13 @@ test('an aborted previous chat cannot unlock a new in-flight request',async()=>{
 });
 test('independent question sends reset_context while preserving the current session',async()=>{
   let body;
-  const h={STREAM:false,sessionId:'current-session',independentNext:true,$:()=>({checked:true}),
+  const h={STREAM:false,selectedDocument:null,sessionId:'current-session',independentNext:true,$:()=>({checked:true}),
     run:async(q,request)=>request({},undefined),post:async(path,payload)=>{body=payload;}};
   vm.createContext(h);
   vm.runInContext(source.slice(source.indexOf('function ask('),source.indexOf('function clarify(')),h);
   await h.ask('2024年订单数');
   assert.equal(body.reset_context,true);assert.equal(body.session_id,'current-session');
-  h.independentNext=false;await h.ask('那华南呢');assert.equal(body.reset_context,false);
+  h.independentNext=false;h.selectedDocument={document_id:'selected-pdf'};await h.ask('那华南呢');assert.equal(body.reset_context,false);assert.equal(body.document_id,'selected-pdf');
 });
 
 test('streaming keeps the selected session and context flags without a duplicate POST',async()=>{

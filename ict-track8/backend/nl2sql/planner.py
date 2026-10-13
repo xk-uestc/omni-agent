@@ -331,8 +331,18 @@ class SingleTablePlanner:
             if explicit_count and column.nullable and not integer_pk:
                 return self._clarify(plan, 'ambiguous_count_semantics',
                     '该字段可为空，请明确需要记录行数还是非空字段计数；当前不将COUNT(*)冒充COUNT(字段)。', 0.3)
-            if plan.metric_function == 'COUNT_DISTINCT':
-                consumed.extend(cue for cue in ('去重', '不同') if cue in clause)
+            functions = {metric.function for metric in plan.metrics
+                         if (metric.table, metric.column) == (link.table, link.column)}
+            if not plan.metrics and (plan.metric_table, plan.metric_column) == (link.table, link.column):
+                functions.add(plan.metric_function)
+            if functions == {'COUNT_DISTINCT'}:
+                # Bind the cue to this physical metric, including when it is
+                # not the first metric. Consuming a bare "去重" globally would
+                # also hide an unsupported DISTINCT request on another metric.
+                alias = re.escape(normalize_text(link.matched_alias))
+                consumed.extend(match.group(0) for match in re.finditer(
+                    r'(?:去重(?:计数)?|不同)(?:的)?' + alias
+                    + r'|' + alias + r'(?:去重(?:计数)?|不同)', clause))
         reachable = self._many_to_one_distances(plan.metric_table, tables)
 
         # ---- "X所在Y"：X 只限定关联路径，不作为分组维度
