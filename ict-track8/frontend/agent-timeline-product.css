@@ -1,0 +1,13 @@
+/* Shared execution receipt UI for chat and the document workspace. */
+.agent-timeline{border:1px solid var(--ui-line,#e6e8ef);border-radius:12px;padding:0;background:var(--ui-bg,#fff);margin:15px 0;font-size:12px}
+.agent-run-heading{cursor:pointer;padding:13px 16px;color:var(--ui-muted,#737b8d);font-size:12px;list-style:none;display:flex;align-items:center;gap:9px}
+.agent-run-heading:before{content:'✓';width:21px;height:21px;display:grid;place-items:center;border-radius:50%;background:var(--ui-soft,#f6f7f9);color:var(--accent,#4f46e5);font-size:11px}
+.agent-timeline[data-running=true]>.agent-run-heading:before{content:'';width:12px;height:12px;border:2px solid var(--ui-line,#e6e8ef);border-top-color:var(--accent,#4f46e5);animation:agent-spin 1s linear infinite;margin:3px}
+.agent-timeline[data-running=false]:not([data-status=ok])>.agent-run-heading:before{content:'·';font-size:20px;color:var(--ui-muted,#737b8d)}
+.agent-run-heading:after{content:'展开';margin-left:auto;font-size:10px}.agent-timeline[open]>.agent-run-heading:after{content:'收起'}.agent-run-heading::-webkit-details-marker{display:none}
+.agent-run-content{padding:0 17px 14px;border-top:1px solid var(--ui-line,#e6e8ef)}
+.agent-task-flow{padding:12px 0;margin:0;list-style:none}.agent-task-flow>li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:start;gap:9px;padding:11px 0;border-bottom:1px solid var(--ui-line,#e6e8ef);font-size:10px}.agent-task-flow>li:last-child{border:0}
+.agent-task-icon{display:grid;place-items:center;width:26px;height:26px;background:var(--ui-soft,#f6f7f9);border-radius:8px;color:var(--ui-muted,#737b8d)}.agent-task-flow [data-state=success] .agent-task-icon{color:#218365;background:#edf7f2}
+.agent-task-flow strong{display:block;font-size:12px;line-height:1.5}.agent-task-flow small{display:block;font-size:11px;color:var(--ui-muted,#737b8d);line-height:1.7;margin-top:3px;overflow-wrap:anywhere}.agent-dependency{font-family:ui-monospace,monospace}
+.agent-technical{margin:5px 0 0;color:var(--ui-muted,#737b8d)}.agent-technical>summary{cursor:pointer;font-size:11px;padding:6px 0}.agent-tool-verb{display:none}.agent-tool-panel{margin-left:0}
+@media(prefers-reduced-motion:reduce){.agent-spinner,.agent-run-heading:before{animation:none!important}}

@@ -13,7 +13,7 @@
   const text=value=>typeof value==='string'?value:typeof value==='number'&&Number.isFinite(value)?String(value):'';
   const scalar=value=>typeof value==='string'||typeof value==='number'&&Number.isFinite(value)||typeof value==='boolean';
   const display=value=>value==null?'未提供':scalar(value)?String(value):'结构化数据';
-  const unit=value=>value==='unknown'||value==null?'':value==='CNY'?'元':value==='ratio'?'比例':text(value);
+  const unit=value=>value==='unknown'||value==null?'':({'CNY':'元','count':'计数','CNY*count^-1':'元 / 计数','ratio':'比例'})[value]||text(value);
   function unwrap(data){const value=object(data);return object(value.response).status?value.response:value;}
   function statusOf(data,result){
     if(result.status&&!SUCCESS.has(result.status))return text(result.status);
@@ -170,8 +170,12 @@
     }
     if(model.metrics.length){
       const metrics=el('div','agent-result-metrics');for(const metric of model.metrics){const tile=el('div','agent-result-metric');tile.append(el('div','agent-metric-label',metric.label));
-        const number=el('div','agent-metric-value',display(metric.value));if(metric.unit)number.append(el('span','agent-metric-unit',metric.unit));tile.append(number);
-        if(metric.unitUnknown)tile.append(el('p','agent-metric-note','原文未明确单位，保留原值。'));metrics.append(tile);}card.append(metrics);
+        const numeric=metric.kind==='calculate'&&typeof metric.value==='number'&&Number.isFinite(metric.value);
+        const shown=numeric?metric.value.toLocaleString('zh-CN',Math.abs(metric.value)>0&&Math.abs(metric.value)<.01?{maximumSignificantDigits:4}:{maximumFractionDigits:2}):display(metric.value);
+        const rounded=numeric&&Number(shown.replace(/,/g,''))!==metric.value;
+        const number=el('div','agent-metric-value',(rounded?'≈ ':'')+shown);if(metric.unit)number.append(el('span','agent-metric-unit',metric.unit));tile.append(number);
+        if(rounded)tile.append(el('p','agent-metric-note','显示值已取近似；完整精度见下方执行依据。'));
+        if(metric.unitUnknown)tile.append(el('p','agent-metric-note','当前提取结果未核定单位，保留原值。'));metrics.append(tile);}card.append(metrics);
     }
     if(model.answer)card.append(markdown(model.answer,references));
     if(model.ok&&model.sql&&options.renderTable){const table=el('div','agent-query-table');options.renderTable(table,model.sql);card.append(table);}
