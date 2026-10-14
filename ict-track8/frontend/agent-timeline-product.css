@@ -1,13 +1,151 @@
-/* Shared execution receipt UI for chat and the document workspace. */
-.agent-timeline{border:1px solid var(--ui-line,#e6e8ef);border-radius:12px;padding:0;background:var(--ui-bg,#fff);margin:15px 0;font-size:12px}
-.agent-run-heading{cursor:pointer;padding:13px 16px;color:var(--ui-muted,#737b8d);font-size:12px;list-style:none;display:flex;align-items:center;gap:9px}
-.agent-run-heading:before{content:'✓';width:21px;height:21px;display:grid;place-items:center;border-radius:50%;background:var(--ui-soft,#f6f7f9);color:var(--accent,#4f46e5);font-size:11px}
-.agent-timeline[data-running=true]>.agent-run-heading:before{content:'';width:12px;height:12px;border:2px solid var(--ui-line,#e6e8ef);border-top-color:var(--accent,#4f46e5);animation:agent-spin 1s linear infinite;margin:3px}
-.agent-timeline[data-running=false]:not([data-status=ok])>.agent-run-heading:before{content:'·';font-size:20px;color:var(--ui-muted,#737b8d)}
-.agent-run-heading:after{content:'展开';margin-left:auto;font-size:10px}.agent-timeline[open]>.agent-run-heading:after{content:'收起'}.agent-run-heading::-webkit-details-marker{display:none}
-.agent-run-content{padding:0 17px 14px;border-top:1px solid var(--ui-line,#e6e8ef)}
-.agent-task-flow{padding:12px 0;margin:0;list-style:none}.agent-task-flow>li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:start;gap:9px;padding:11px 0;border-bottom:1px solid var(--ui-line,#e6e8ef);font-size:10px}.agent-task-flow>li:last-child{border:0}
-.agent-task-icon{display:grid;place-items:center;width:26px;height:26px;background:var(--ui-soft,#f6f7f9);border-radius:8px;color:var(--ui-muted,#737b8d)}.agent-task-flow [data-state=success] .agent-task-icon{color:#218365;background:#edf7f2}
-.agent-task-flow strong{display:block;font-size:12px;line-height:1.5}.agent-task-flow small{display:block;font-size:11px;color:var(--ui-muted,#737b8d);line-height:1.7;margin-top:3px;overflow-wrap:anywhere}.agent-dependency{font-family:ui-monospace,monospace}
-.agent-technical{margin:5px 0 0;color:var(--ui-muted,#737b8d)}.agent-technical>summary{cursor:pointer;font-size:11px;padding:6px 0}.agent-tool-verb{display:none}.agent-tool-panel{margin-left:0}
-@media(prefers-reduced-motion:reduce){.agent-spinner,.agent-run-heading:before{animation:none!important}}
+/* ==========================================================================
+   Claude Extended Thinking / ChatGPT o3-Style Collapsible Reasoning Chain
+   ========================================================================== */
+
+.reasoning-accordion {
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface-subtle);
+  overflow: hidden;
+  transition: border-color 0.15s ease;
+}
+
+.reasoning-summary-bar {
+  width: 100%;
+  padding: 9px 14px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+}
+
+.reasoning-summary-bar:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.reasoning-summary-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.thinking-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--status-success);
+}
+
+.reasoning-step-pills {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.mini-step-tag {
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+}
+
+.reasoning-chevron {
+  font-size: 11px;
+  color: var(--text-muted);
+  transition: transform 0.2s ease;
+}
+
+.reasoning-accordion.open .reasoning-chevron {
+  transform: rotate(180deg);
+}
+
+.reasoning-steps-list {
+  display: none;
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--border-hairline);
+  background-color: var(--bg-surface);
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reasoning-accordion.open .reasoning-steps-list {
+  display: flex;
+}
+
+.trace-step-item {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: flex-start;
+  position: relative;
+}
+
+.trace-step-item:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 22px;
+  bottom: -12px;
+  width: 1.5px;
+  background-color: var(--border-hairline);
+}
+
+.trace-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--accent-soft);
+  color: var(--accent-primary);
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.trace-step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.trace-step-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.trace-step-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.trace-step-code {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-primary);
+  background: var(--bg-surface-subtle);
+  padding: 3px 7px;
+  border-radius: 5px;
+  border: 1px solid var(--border-hairline);
+  margin-top: 2px;
+  display: inline-block;
+}
+
+.trace-step-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}

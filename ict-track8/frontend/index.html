@@ -1,385 +1,172 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Omni-Agent · 数据与文档工作台</title>
-  <style>
-    :root {
-      --bg: #fff; --soft: #f7f7f8; --hover: #f0f0f2; --line: #ececec;
-      --text: #0d0d0d; --muted: #6d6d77; --dim: #555564; --purple: #257b64;
-      --radius: 16px; --sidebar: 300px;
-      --role-metric:#2a78d6; --role-dimension:#eb6834; --role-filter:#1baf7a;
-      --role-time:#eda100; --role-operator:#e87ba4;
-    }
-    :root[data-theme="dark"] {
-      --bg:#0d0d0d; --soft:#1a1a19; --hover:#222; --line:#2c2c2a;
-      --text:#f4f4f5; --muted:#8a8a84; --dim:#b4b4ae;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%;
-      height: 100dvh;
-      max-height: 100dvh;
-    }
-    body {
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      color: var(--text); background: var(--bg); overflow: hidden;
-    }
-    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
-    .app {
-      display: grid;
-      grid-template-columns: var(--sidebar) minmax(0, 1fr);
-      grid-template-rows: minmax(0, 1fr);
-      height: 100%;
-      min-height: 0;
-    }
-    .sidebar {
-      background: #f9f9f9; border-right: 1px solid var(--line);
-      padding: 12px; display: flex; flex-direction: column;
-      min-height: 0; overflow-y: auto;
-    }
-    .sidebar > * { flex-shrink: 0; }
-    #ragSources { min-height: 110px; max-height: 220px; }
-    .brand { padding: 5px 6px 10px; }
-    .brand-logo { display: block; width: min(100%, 264px); max-height: 96px; height: auto; object-fit: contain; object-position: left center; }
-    .brand { display: flex; gap: 10px; align-items: center; padding: 8px 8px 14px; }
-    .mark { width: 28px; height: 28px; background: #111; color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
-    .brand b { font-size: 14px; } .brand span { display: block; font-size: 11px; color: var(--muted); }
-    .new-chat { padding: 10px 12px; border: 1px solid var(--line); background: #fff; border-radius: 10px; font-size: 13.5px; font-weight: 500; }
-    .new-chat:hover { background: var(--hover); }
-    .nav-label { font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; padding: 16px 8px 6px; }
-    .cap {
-      width: 100%; text-align: left; padding: 7px 10px; border-radius: 8px;
-      font-size: 12.5px; color: var(--dim); display: flex; gap: 8px; align-items: center;
-    }
-    .cap:hover, .cap.on { background: #fff; color: var(--text); }
-    .cap i { font-style: normal; font-size: 10px; color: var(--muted); width: 28px; flex: none; }
-    .schema { margin-top: 8px; padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 8px; font-size: 12px; color: var(--dim); line-height: 1.5; }
-    .schema b { color: var(--text); font-weight: 600; }
-    .schema-legend-item.role-used { --schema-role-color: #257b64; }
-    .schema-column.role-used .schema-column-bg { fill: color-mix(in srgb, #257b64 18%, var(--bg)); }
-    .schema-column.role-used .schema-column-bar { fill: #257b64; }
-    .result-schema-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; align-items:start; min-width:0; margin-top:24px; padding-top:18px; border-top:1px solid var(--line); }
-    .result-schema-section { min-width:0; }
-    .result-schema-section + .result-schema-section { min-width:0; padding-left:22px; border-left:1px solid var(--line); }
-    .result-schema-section h3 { font-size:15px; margin-bottom:8px; }
-    .side-foot { padding: 8px 8px 2px; font-size: 10.5px; color: var(--muted); line-height: 1.45; }
-    .stage {
-      display: flex; flex-direction: column;
-      min-width: 0; min-height: 0; height: 100%;
-      position: relative; overflow: hidden;
-    }
-    .topbar { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; border-bottom: 1px solid var(--line); }
-    .model-chip { font-size: 14px; font-weight: 600; } .model-chip em { font-style: normal; color: var(--muted); font-weight: 500; font-size: 13px; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; display: inline-block; }
-    .thread {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-y: scroll;
-      overflow-x: hidden;
-      padding: 28px 0 168px;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      touch-action: pan-y;
-    }
-    .col { width: min(1020px, calc(100% - 48px)); margin: 0 auto; }
-    .empty { padding: 64px 0 20px; text-align: center; }
-    .empty h1 { font-size: 32px; font-weight: 600; letter-spacing: -.03em; }
-    .empty p { margin-top: 10px; color: var(--dim); }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 32px; text-align: left; }
-    .suggest { padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; }
-    .suggest:hover { background: var(--soft); }
-    .suggest b { display: block; font-size: 13.5px; } .suggest span { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); }
-    .turn { margin: 0 0 28px; }
-    .user { display: flex; justify-content: flex-end; }
-    .bubble { max-width: 78%; background: var(--soft); border-radius: 18px; padding: 10px 16px; font-size: 15.5px; line-height: 1.55; }
-    .ctx { display: block; margin-top: 4px; font-size: 11.5px; color: var(--muted); }
-    .thought { margin: 2px 0 14px; }
-    .thought-head { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14.5px; }
-    .thought-head svg { width: 16px; height: 16px; }
-    .thought-head .chev { transition: transform .18s ease; }
-    .thought.open .thought-head .chev { transform: rotate(180deg); }
-    .thought-body { display: none; padding: 8px 0 4px; }
-    .thought.open .thought-body { display: block; }
-    .plan-line { font-size: 15px; line-height: 1.65; margin: 0 0 12px; }
-    .step-title { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14.5px; padding: 5px 0; width: 100%; text-align: left; }
-    .step-title .ico { width: 16px; height: 16px; }
-    .step-title .lab { flex: 1; }
-    .step-title .chev { width: 14px; height: 14px; transition: transform .16s ease; }
-    .step.open > .step-title .chev { transform: rotate(180deg); }
-    .step-panel { display: none; padding: 2px 0 10px; }
-    .step.open > .step-panel { display: block; }
-    .ghost-step { color: #c3c3cb; font-size: 14.5px; padding: 4px 0; }
-    .tool, .out { background: var(--soft); border-radius: var(--radius); padding: 12px 14px; margin: 8px 0; }
-    .tool-bar { display: flex; justify-content: space-between; color: var(--dim); font-size: 13px; margin-bottom: 8px; }
-    .lang { display: inline-flex; gap: 6px; align-items: center; font-weight: 500; }
-    .copy { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: var(--muted); }
-    .copy:hover { background: #e8e8ea; }
-    .cmd, .out, .sqlbox {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12.5px; line-height: 1.55; white-space: pre-wrap; word-break: break-word;
-    }
-    .cmd { color: var(--purple); }
-    .dots { width: 42px; height: 28px; border-radius: 999px; border: 1px solid var(--line); display: inline-flex; align-items: center; justify-content: center; gap: 4px; margin: 10px 0; }
-    .dots i { width: 4px; height: 4px; border-radius: 50%; background: #b4b4be; animation: blink 1.1s infinite; }
-    .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
-    @keyframes blink { 0%,80%,100%{opacity:.25} 40%{opacity:1} }
-    .answer { font-size: 15.5px; line-height: 1.7; }
-    .answer p + p { margin-top: 10px; }
-    .warn { color: var(--dim); }
-    .kpis { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0; margin: 16px 0 8px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .kpi { padding: 13px 16px 13px 0; }
-    .kpi + .kpi { border-left: 1px solid var(--line); padding-left: 16px; }
-    .kpi em { display: block; font-style: normal; font-size: 11px; color: var(--muted); }
-    .kpi b { display: block; margin-top: 4px; font-size: 18px; letter-spacing: -.03em; overflow-wrap: anywhere; }
-    table.data { width: 100%; border-collapse: collapse; margin: 8px 0 6px; font-size: 13.5px; }
-    table.data th, table.data td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
-    table.data th { color: var(--dim); font-weight: 500; font-size: 12px; }
-    .evidence { margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-    .evidence summary { list-style: none; padding: 10px 14px; font-size: 13px; color: var(--dim); cursor: pointer; background: #fafafa; }
-    .evidence summary::-webkit-details-marker { display: none; }
-    .sqlbox { padding: 12px 14px; background: #fff; border-top: 1px solid var(--line); color: #333; }
-    .clarify, .follow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-    .opt, .chip { padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 13px; background: #fff; }
-    .opt:hover, .chip:hover { background: var(--soft); }
-    .docs { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-    .doc {
-      border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: #fff;
-    }
-    .doc .meta { font-size: 12px; color: var(--muted); margin-bottom: 6px; display: flex; gap: 8px; flex-wrap: wrap; }
-    .doc .ttl { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
-    .doc .snip { font-size: 13.5px; line-height: 1.6; color: #333; }
-    .doc mark { background: #f4e8ff; color: inherit; padding: 0 2px; }
-    .qual { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 12px; }
-    .qual .kpi b { font-size: 16px; }
-    .heads { margin: 10px 0 0; font-size: 13.5px; line-height: 1.7; color: var(--dim); }
-    .vision { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-    .shot { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff; }
-    .shot img, .shot canvas { display: block; width: 100%; height: auto; background: #f3f3f4; }
-    .shot .cap { padding: 8px 10px; font-size: 12px; color: var(--dim); }
-    .upload { margin-top: 10px; font-size: 13px; color: var(--dim); }
-    .composer-wrap {
-      position: absolute; left: 0; right: 0; bottom: 0;
-      padding: 0 24px 16px;
-      background: linear-gradient(to top,#fff 72%,rgba(255,255,255,0));
-      pointer-events: none;
-    }
-    .composer-wrap .composer, .composer-wrap .hint, .composer-wrap .meta { pointer-events: auto; }
-    .meta { width:min(760px,100%); margin:8px auto 0; display:flex; gap:12px; align-items:center; font-size:12px; color:var(--muted); }
-    .meta label { display:inline-flex; gap:6px; align-items:center; cursor:pointer; color:var(--dim); }
-    .tabs { display:flex; gap:4px; background:var(--soft); padding:3px; border-radius:999px; }
-    .tab { padding:5px 12px; border-radius:999px; font-size:13px; color:var(--dim); }
-    .tab.on { background:#fff; color:var(--text); box-shadow:0 0 0 1px var(--line); }
-    :root[data-theme="dark"] .tab.on { background:#1a1a19; }
-    .theme-btn { width:30px; height:30px; border:1px solid var(--line); border-radius:999px; }
-    .qline { font-size:20px; line-height:2.6; word-break:break-word; padding:12px 4px 4px; }
-    .span { padding:1px 3px 2px; border-radius:4px; background:color-mix(in srgb,var(--role) 16%,transparent); }
-    .span[data-role="metric"]{--role:var(--role-metric)}
-    .span[data-role="dimension"]{--role:var(--role-dimension)}
-    .span[data-role="filter"]{--role:var(--role-filter)}
-    .span[data-role="time"]{--role:var(--role-time)}
-    .span[data-role="operator"]{--role:var(--role-operator)}
-    .span[data-role="unresolved"]{--role:#d03b3b;text-decoration:underline wavy #d03b3b;box-shadow:none}
-    .span[data-role="ignored"]{background:var(--soft);text-decoration:line-through;color:var(--muted);box-shadow:none}
-    .legend { display:flex; flex-wrap:wrap; gap:8px 12px; margin-top:8px; font-size:12px; color:var(--dim); }
-    .sw { width:8px; height:8px; border-radius:2px; display:inline-block; margin-right:4px; }
-    .audit { margin-top:14px; display:flex; flex-direction:column; gap:8px; }
-    .astep { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; }
-    :root[data-theme="dark"] .astep { background:#161616; }
-    .astep h4 { font-size:13px; padding:10px 14px; background:var(--soft); display:flex; gap:8px; }
-    .astep h4 b { font-weight:700; }
-    .astep h4 span { color:var(--muted); font-weight:500; }
-    .astep .bd { padding:12px 14px; font-size:13.5px; }
-    .joinp { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
-    .joinp em { font-style:normal; font-family:ui-monospace,monospace; font-size:12px; border:1px solid var(--line); padding:1px 6px; border-radius:4px; }
-    .audit-intro { display:flex; align-items:baseline; justify-content:space-between; gap:12px; padding:0 2px; }
-    .audit-intro b { font-size:13px; } .audit-intro span { color:var(--muted); font-size:12px; }
-    .annotated { display:inline-block; position:relative; padding:0 3px 1px; margin-top:8px; border-radius:4px; background:color-mix(in srgb,var(--role) 16%,transparent); line-height:1.45; }
-    .annotated small { position:absolute; left:2px; top:-15px; white-space:nowrap; font:11px/1.1 ui-sans-serif,system-ui,sans-serif; color:var(--dim); }
-    .annotated[data-role="metric"]{--role:var(--role-metric)} .annotated[data-role="dimension"]{--role:var(--role-dimension)}
-    .annotated[data-role="filter"]{--role:var(--role-filter)} .annotated[data-role="time"]{--role:var(--role-time)}
-    .annotated[data-role="operator"]{--role:var(--role-operator)} .annotated[data-role="unresolved"]{--role:#d03b3b}
-    .audit-summary { display:grid; grid-template-columns:auto minmax(0,1fr); gap:8px 16px; padding:12px 14px; border:1px solid var(--line); border-radius:10px; background:var(--soft); font-size:13px; line-height:1.6; }
-    .audit-summary .key { color:var(--muted); white-space:nowrap; }
-    .audit-table-wrap { width:100%; overflow-x:auto; border:1px solid var(--line); border-radius:10px; margin-top:12px; }
-    .audit-table { width:100%; min-width:570px; border-collapse:collapse; font-size:12.5px; }
-    .audit-table th { background:var(--soft); color:var(--dim); font-weight:600; text-align:left; }
-    .audit-table th,.audit-table td { padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:middle; }
-    .audit-table tbody tr:last-child td { border-bottom:0; }
-    .audit-table code,.audit-summary code { font:12px ui-monospace,SFMono-Regular,monospace; overflow-wrap:anywhere; }
-    .role-dot { display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:6px; background:var(--role); }
-    .role-dot[data-role="metric"]{--role:var(--role-metric)} .role-dot[data-role="dimension"]{--role:var(--role-dimension)}
-    .role-dot[data-role="filter"]{--role:var(--role-filter)} .role-dot[data-role="time"]{--role:var(--role-time)}
-    .role-dot[data-role="operator"]{--role:var(--role-operator)} .role-dot[data-role="unresolved"]{--role:#d03b3b}
-    .confidence { display:flex; align-items:center; gap:8px; font-variant-numeric:tabular-nums; }
-    .confidence i { display:block; width:48px; height:5px; border-radius:5px; background:var(--hover); overflow:hidden; }
-    .confidence i::before { content:""; display:block; width:var(--score); height:100%; background:var(--role-metric); }
-    .schema-stage { overflow-x:auto; background:var(--bg); border:1px solid var(--line); border-radius:12px; margin:4px 0 10px; }
-    .schema-graphic { display:block; width:100%; min-width:850px; height:auto; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
-    .schema-graphic .edge { fill:none; stroke:#d3d1c9; stroke-width:1.4; }
-    .schema-graphic .edge.active { stroke:var(--text); stroke-width:2.4; }
-    .schema-graphic .node { opacity:.35; } .schema-graphic .node.active { opacity:1; }
-    .schema-graphic .box { fill:var(--bg); stroke:var(--line); stroke-width:1.3; }
-    .schema-graphic .node.active .box { stroke:var(--text); stroke-width:1.7; }
-    .schema-graphic .head { fill:var(--soft); }
-    .schema-graphic text { fill:var(--text); font-size:11px; }
-    .schema-graphic .name { font:600 13px ui-sans-serif,system-ui,sans-serif; }
-    .schema-graphic .count,.schema-graphic .type,.schema-graphic .key { fill:var(--muted); font-size:10px; }
-    .schema-graphic .highlight.metric { fill:color-mix(in srgb,var(--role-metric) 20%,var(--bg)); }
-    .schema-graphic .highlight.dimension { fill:color-mix(in srgb,var(--role-dimension) 20%,var(--bg)); }
-    .schema-graphic .highlight.filter { fill:color-mix(in srgb,var(--role-filter) 20%,var(--bg)); }
-    .schema-graphic .bar.metric { fill:var(--role-metric); } .schema-graphic .bar.dimension { fill:var(--role-dimension); }
-    .schema-graphic .bar.filter { fill:var(--role-filter); }
-    .schema-graphic .badge { fill:var(--bg); } .schema-graphic .card { fill:var(--dim); font:600 10px ui-sans-serif,system-ui,sans-serif; }
-    .schema-caption { color:var(--muted); font-size:11.5px; line-height:1.5; margin:5px 0; }
-    .audit .astep h4 { flex-wrap:wrap; } .audit .astep .bd { line-height:1.55; }
-    @media(max-width:900px){ .result-schema-grid { grid-template-columns:minmax(0,1fr); gap:18px; } .result-schema-section + .result-schema-section { padding:18px 0 0; border-left:0; border-top:1px solid var(--line); } }
-    @media(max-width:640px){ .col { width:calc(100% - 28px); } .qline { font-size:17px; } .audit-summary { grid-template-columns:1fr; gap:2px; } .audit-summary .key:not(:first-child){margin-top:5px;} }
-    .turns { list-style:none; display:flex; flex-direction:column; gap:4px; max-height:180px; overflow:auto; }
-    .turn-item { width:100%; text-align:left; padding:7px 8px; border-radius:8px; font-size:12.5px; }
-    .turn-item:hover { background:#fff; }
-    .turn-item .eff { color:var(--muted); font-size:11.5px; }
-    .composer { width: min(760px,100%); margin: 0 auto; border: 1px solid #e4e4e7; border-radius: 22px; box-shadow: 0 8px 28px rgba(0,0,0,.06); padding: 8px 10px 8px 14px; display: flex; flex-direction: column; align-items: stretch; gap: 6px; background: #fff; }
-    .composer-row { width: 100%; display: flex; align-items: flex-end; gap: 8px; }
-    .composer textarea { flex: 1; resize: none; border: 0; outline: none; font-size: 15px; line-height: 1.5; max-height: 160px; min-height: 28px; padding: 10px 0; }
-    .send { width: 36px; height: 36px; border-radius: 50%; background: #0d0d0d; color: #fff; display: grid; place-items: center; }
-    .send:disabled { opacity: .25; }
-    .composer-image-picker { width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--dim); }
-    .composer-image-picker:hover:not(:disabled) { background: var(--soft); color: var(--text); }
-    .composer-image-picker:disabled { opacity: .4; }
-    .composer-image-previews { width: 100%; display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 0 3px; }
-    .composer-image-previews[hidden], .composer-image-status[hidden] { display: none; }
-    .composer-image-thumb { position: relative; width: 56px; height: 56px; flex: 0 0 56px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; }
-    .composer-image-thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
-    .composer-image-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; background: rgba(20,20,20,.8); color: #fff; font-size: 15px; line-height: 1; }
-    .composer-image-status { width: 100%; margin: 0; color: #b33939; font-size: 12px; }
-    .user-image-attachments { display: flex; flex-wrap: wrap; gap: 7px; margin: 8px 0 0 10px; }
-    .user-image-attachments img { width: 72px; height: 72px; object-fit: cover; border: 1px solid var(--line); border-radius: 7px; }
-    .doc-images { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
-    .doc-image { width: min(240px,100%); margin: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: var(--soft); }
-    .doc-image img { display: block; width: 100%; max-height: 210px; object-fit: contain; }
-    .doc-image figcaption { padding: 6px 8px; color: var(--muted); font-size: 11px; }
-    :root[data-theme="dark"] .composer-image-picker, :root[data-theme="dark"] .doc-image { background: var(--soft); color: var(--text); }
-    .top-new { border: 1px solid var(--line); border-radius: 6px; padding: 5px 9px; font-size: 12px; margin-left: auto; margin-right: 10px; white-space: nowrap; }
-    .top-new:hover { background: var(--soft); }
-    .hint { text-align: center; font-size: 11.5px; color: var(--muted); margin-top: 8px; }
-    :root[data-theme="dark"] .sidebar { background: #151515; }
-    :root[data-theme="dark"] .new-chat, :root[data-theme="dark"] .schema,
-    :root[data-theme="dark"] .opt, :root[data-theme="dark"] .chip,
-    :root[data-theme="dark"] .doc, :root[data-theme="dark"] .composer,
-    :root[data-theme="dark"] .evidence summary, :root[data-theme="dark"] .sqlbox { background: var(--soft); color: var(--text); }
-    :root[data-theme="dark"] .composer textarea { background: var(--soft); color: var(--text); }
-    .health[data-state="error"] .dot { background: #d64545; }
-    .health[data-state="loading"] .dot { background: #e5a22b; }
-    .error-line { margin: 8px 0 14px; padding: 10px 12px; border-left: 3px solid #d64545; background: #fff4f4; color: #8d2626; font-size: 13px; }
-    .empty-state { color: var(--muted); font-size: 13px; margin: 8px 0; }
-    .trace-json { overflow-x: auto; }
-    @media (max-width: 900px) {
-      .app { grid-template-columns: 1fr; } .sidebar { display: none; }
-      .composer-wrap { left: 0; } .grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 640px) {
-      .topbar { padding: 0 10px; gap: 4px; }
-      .model-chip em, #healthText { display: none; }
-      .top-new { padding: 5px 6px; margin-right: 2px; }
-      .tab { padding: 5px 7px; font-size: 12px; }
-      .composer-wrap { padding: 0 12px 12px; }
-      .meta { flex-wrap: wrap; gap: 5px 12px; }
-    }
-
-</style>
-  <link rel="stylesheet" href="./modern-ui.css?v=20261008-floating-question-catalog-2" />
-  <link rel="stylesheet" href="./query-journey.css?v=20261007-sql-layout-2" />
-  <link rel="stylesheet" href="./codex-ui.css?v=20261008-rag-process-1" />
-  <link rel="stylesheet" href="./query-result-viz.css?v=20261003-polish-6" />
-  <link rel="stylesheet" href="./result-browser.css?v=20261003-full-results-1" />
-<link rel="stylesheet" href="./source-evidence.css?v=20261008-sql-source-highlight-1">
-<link rel="stylesheet" href="./agent-results.css?v=20261013-release-1">
-<link rel="stylesheet" href="./agent-workspace.css?v=20261013-release-1"><link rel="stylesheet" href="./agent-timeline-product.css?v=20261013-release-1"></head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云数智询 Cloud Data Intelligence — 多模态数据驱动的可解释精准问数/问答智能体</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./agent-workspace.css">
+  <link rel="stylesheet" href="./agent-results.css">
+  <link rel="stylesheet" href="./agent-timeline-product.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
 <body>
-  <div class="app">
+  <div id="app" class="workspace-container">
+    <!-- 左侧导航栏：品牌、会话列表与多轮记忆槽位 (branch: memory) -->
     <aside class="sidebar">
-      <div class="brand">
-        <svg class="omni-symbol" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m16 3 12 7v12l-12 7L4 22V10Z" stroke="currentColor" stroke-width="2"/><path d="m4 10 12 7 12-7M16 17v12M10 6.5l12 7" stroke="currentColor" stroke-width="2"/></svg><div><b>Omni-Agent</b><span>数据与文档智能体</span></div>
+      <div class="brand-header">
+        <div class="brand-logo-wrap">
+          <img src="./brand-logo.png" alt="云数智询 Cloud Data Intelligence" class="brand-logo-img">
+        </div>
+        <span class="verify-pill cross-source" style="font-size:10.5px;">赛题八</span>
       </div>
-      <button class="new-chat" id="newChat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>新对话</button>
-      <a class="new-chat" href="./knowledge.html" aria-label="资料管理与原件浏览"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料管理与原件浏览</a>
-      <a class="new-chat" href="./capabilities.html" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>赛题全量验收台</a>
-      <button class="new-chat" id="sixDemo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16" stroke-linecap="round"/><circle cx="8" cy="5" r="1" fill="currentColor"/><circle cx="13" cy="12" r="1" fill="currentColor"/><circle cx="17" cy="19" r="1" fill="currentColor"/></svg>演示六轮追问</button>
-      <div class="nav-label">当前任务</div>
-      <ol class="turns" id="turns"></ol>
-      <div class="nav-label">已接入数据源</div>
-      <div class="data-source-list" id="dataSources" aria-live="polite"></div>
-      <div class="nav-label">可用资料</div>
-      <div class="rag-file-grid" id="ragSources" aria-live="polite"></div>
-      <div class="side-foot">查询与证据来自后端；没有结果时会明确说明。</div>
+
+      <button type="button" id="new-chat-btn" class="new-chat-btn">
+        <span>＋ 新建多模态问数会话</span>
+        <span class="kbd-hint">⌘K</span>
+      </button>
+
+      <div class="sidebar-section-label">
+        <span>典型赛题评测场景会话</span>
+        <span>4 组</span>
+      </div>
+      <div id="session-picker" class="session-list"></div>
+
+      <!-- Memory 分支核心特性：多轮对话短期与长期记忆可视化 -->
+      <div class="sidebar-memory-panel">
+        <div class="memory-header">
+          <div class="memory-title">
+            <span class="memory-dot"></span>
+            <span>多轮上下文记忆 (Memory)</span>
+          </div>
+          <span id="memory-turn-badge" style="font-size:10.5px;color:var(--accent-primary);font-weight:600;">第 1 轮</span>
+        </div>
+        <div id="sidebar-memory-slots" class="memory-slots"></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <span>中电云计算 · 高校ICT大赛</span>
+        <span style="font-family:var(--font-mono);font-size:11px;">branch: ui-update</span>
+      </div>
     </aside>
-    <main class="stage">
-      <header class="topbar">
-        <div class="model-chip">工作台 <em id="capTitle">让复杂任务有据可查</em></div>
-        <a class="top-route" href="./knowledge.html" title="资料管理与原件浏览" aria-label="资料管理与原件浏览"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4.8A2.8 2.8 0 0 1 7.8 2H20v17H7.8A2.8 2.8 0 0 0 5 21.8zM5 4.8v17M9 7h7M9 11h7" stroke-linecap="round" stroke-linejoin="round"/></svg>资料库</a>
-        <a class="top-route" href="./capabilities.html" title="赛题全量验收台" aria-label="赛题全量验收台"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3 19 6v5c0 4.8-3 8-7 10-4-2-7-5.2-7-10V6zM9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>验收</a>
-        <button class="top-new" id="newChatTop" type="button" title="新对话">＋ 新对话</button>
-        <div style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--dim)">
-          <span class="health" id="apiHealth" data-state="loading"><span class="dot"></span> <span id="healthText">正在连接 API</span></span>
-          <button class="theme-btn" id="theme" type="button" title="深浅色">◐</button>
+
+    <!-- 中央主工作区：自然对话流 + 底部悬浮输入框 -->
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button type="button" id="toggle-sidebar-btn" class="icon-btn" title="收起/展开侧边栏">☰ 导航</button>
+          <div id="connection-status" class="status-badge demo" title="点击配置真实后端 Agent API 地址">
+            <span class="dot"></span>
+            <span>系统连接检测中...</span>
+          </div>
+        </div>
+
+        <div class="top-bar-right">
+          <button type="button" id="open-api-modal-btn" class="icon-btn">⚡ 接入真实 API</button>
+          <button type="button" id="theme-toggle-btn" class="icon-btn">🌙 深色外观</button>
+          <button type="button" id="toggle-inspector-btn" class="icon-btn active">📑 可解释溯源台</button>
         </div>
       </header>
-      <div class="thread" id="thread">
-        <div class="col" id="feed">
-          <div class="empty" id="empty">
-            <div class="workspace-eyebrow"><span></span> OMNI · AGENT WORKSPACE</div>
-            <h1>一个问题，<br>连接数据与答案。</h1>
-            <p>查数据库、读文档、找公式、做计算。<br class="mobile-break">每一步有记录，每个结论有出处。</p>
-            <div class="workspace-signals"><span><b id="workspaceTables">—</b> 张数据表</span><span><b id="workspaceDocuments">—</b> 份可用资料</span><span id="modelStatus">正在读取模型状态</span></div>
-            <div class="demo-section-heading"><h2>从一个真实任务开始</h2><span>选择问题，发送后实时执行</span></div>
-            <div class="grid" id="suggests"></div>
-            <a class="workspace-upload-link" href="./knowledge.html">带上你的资料，开始一次分析 <span>↗</span></a>
-          </div>
-        </div>
-      </div>
-      <div class="composer-wrap" id="askComposer">
-        <div id="contextComposer" class="context-composer" role="status" aria-live="polite" hidden></div>
-        <form class="composer" id="form">
-          <div class="composer-scope"><label for="documentScope">资料范围</label><select id="documentScope" aria-label="当前任务资料范围"><option value="">自动选择数据与资料</option></select><span class="scope-chip" id="selectedDocument" hidden></span></div>
-          <div class="composer-image-previews" id="imagePreviews" aria-live="polite" hidden></div>
-          <div class="composer-row">
-            <textarea id="q" rows="1" placeholder="直接提问：查数据、找依据，或结合两者分析"></textarea>
-            <input id="imageFiles" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
-            <input id="documentFiles" type="file" accept=".pdf,.docx,.xlsx,.txt,.md" hidden>
-            <button id="documentPicker" class="composer-document-picker" type="button" aria-label="上传文档" title="上传文档并提问"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m8 12 6-6a3 3 0 0 1 4 4l-8 8a5 5 0 0 1-7-7l9-9M7 13l6-6" stroke-linecap="round"/></svg></button>
-            <button class="composer-image-picker" id="imagePicker" type="button" title="添加图片" aria-label="添加图片">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" stroke="currentColor" stroke-width="1.6"/><path d="m21 15-5-5L5 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+      <!-- 对话与问数结果展示流 -->
+      <section id="results-scroll-area" class="results-display">
+        <div id="agent-results-container" class="conversation-stream"></div>
+      </section>
+
+      <!-- 底部悬浮输入区 (Apple / Claude / ChatGPT 风格) -->
+      <section class="query-section">
+        <div class="composer-container">
+          <div class="scenario-pills-bar">
+            <button type="button" class="scenario-pill" data-scenario="cross_source">
+              <span class="pill-tag">跨源融合+公式</span>
+              <span>对比“帝都”智算项目营收与报告预期增长率</span>
             </button>
-            <button class="send" id="send" type="submit" aria-label="发送">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 19V5M12 5l-7 7M12 5l7 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <button type="button" class="scenario-pill" data-scenario="clarification">
+              <span class="pill-tag">中级3·主动澄清</span>
+              <span>查询今年各部门增长率排名（测试维度缺失澄清）</span>
+            </button>
+            <button type="button" class="scenario-pill" data-scenario="complex_sql">
+              <span class="pill-tag">中级4&5·多表SQL</span>
+              <span>华北与华东政务云复购率超80%客户及客单价</span>
+            </button>
+            <button type="button" class="scenario-pill" data-scenario="ocr_rag">
+              <span class="pill-tag">中级6-9·扫描件RAG</span>
+              <span>扫描版白皮书“權限隔離”目录重构与安全公式</span>
             </button>
           </div>
-          <p class="composer-image-status" id="imageStatus" role="status" hidden></p>
-          <p id="documentUploadStatus" class="document-upload-status" role="status" hidden></p>
-        </form>
-        <div class="meta">
-          <label><input id="useContext" type="checkbox" checked> 承接上一轮</label>
-          <label title="读取完整问数结果并分页展示；保留资源预算。图表只展示初始预览。"><input id="completeResults" type="checkbox"> 获取完整结果</label>
-          <span>Enter 提交</span>
+
+          <div class="input-box-wrapper">
+            <textarea id="query-input" rows="2" placeholder="输入自然语言问数或知识库问题（支持业务别名如“帝都”、跨表 SQL 查询、PDF 公式验算及多轮追问）..."></textarea>
+            <div class="composer-toolbar">
+              <div class="composer-tools-left">
+                <button type="button" class="tool-chip active" data-mode="auto">✨ 智能多源协同 (Auto)</button>
+                <button type="button" class="tool-chip" data-mode="nl2sql">🗄️ 结构化问数 (NL2SQL)</button>
+                <button type="button" class="tool-chip" data-mode="rag">📄 知识库与公式 (RAG)</button>
+                <button type="button" class="tool-chip" data-mode="clarify">🛡️ 严格语义澄清校验</button>
+              </div>
+              <button type="button" id="submit-btn" class="primary-btn">
+                <span>发送询问</span>
+                <span>↑</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="hint">答案基于当前资料与数据 · 展开执行过程可核对工具和来源</div>
-      </div>
+      </section>
     </main>
+
+    <!-- 右侧可解释性溯源与执行审计工作台 (Claude Artifacts / NotebookLM 风格) -->
+    <aside class="inspector-drawer">
+      <div class="inspector-header">
+        <div class="inspector-title">
+          <span>🔬 可解释性溯源与执行审计</span>
+        </div>
+        <span style="font-size:11px;color:var(--text-muted);">有迹可循</span>
+      </div>
+
+      <div class="inspector-tabs">
+        <button type="button" class="inspector-tab active" data-tab="sql">SQL与图表</button>
+        <button type="button" class="inspector-tab" data-tab="schema">Schema拓扑</button>
+        <button type="button" class="inspector-tab" data-tab="rag">文档与公式</button>
+        <button type="button" class="inspector-tab" data-tab="memory">多轮记忆</button>
+      </div>
+
+      <div id="inspector-body" class="inspector-body"></div>
+    </aside>
   </div>
-  <div id="demoDomainCatalog"></div>
-<script src="./schema-svg.js?v=20261007-result-schema-clean-1" defer></script>
-<script src="./syntax-highlight.js?v=20261003-journey-2" defer></script>
-<script src="./query-result-viz.js?v=20261003-full-results-2" defer></script>
-<script src="./query-journey.js?v=20261007-sql-notes-1" defer></script>
-<script src="./result-browser.js?v=20261003-full-results-1" defer></script>
-<script src="./conversation-context.js?v=20261005-dialogue-sources-2" defer></script>
-<script src="./conversation-session.js?v=20261006-tools-2" defer></script>
-<script src="./vendor/react.production.min.js" defer></script>
-<script src="./vendor/react-dom.production.min.js" defer></script>
-<script src="./tool-timeline.js?v=20261013-release-1" defer></script>
-<script src="./native-row-overlay.js?v=20261013-release-1" defer></script>
-<script src="./source-evidence.js?v=20261009-precise-source-cells-2" defer></script><script src="./agent-results.js?v=20261013-release-1" defer></script><script src="./app.js?v=20261013-release-1" defer></script>
+
+  <!-- 接入真实 Agent API 配置弹窗 -->
+  <div id="api-settings-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px);z-index:100;align-items:center;justify-content:center;padding:16px;">
+    <div style="background:var(--bg-surface);border:1px solid var(--border-strong);border-radius:16px;max-width:460px;width:100%;padding:22px;box-shadow:var(--shadow-md);display:flex;flex-direction:column;gap:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h3 style="font-size:16px;font-weight:600;">⚡ 接入真实 Agent 后端 API</h3>
+        <button type="button" id="close-api-modal-btn" class="icon-btn" style="height:28px;">✕</button>
+      </div>
+      <p style="font-size:12.5px;color:var(--text-secondary);line-height:1.55;">
+        当前界面完全兼容 <code>ict-track8/backend</code> 接口规范（<code>/health</code>、<code>/api/v1/nl2sql/schema</code>、<code>/api/v1/agent/query</code>）。填入您的后端地址或 API Key 后即可直接联调真实模型。
+      </p>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:12px;font-weight:600;color:var(--text-secondary);">后端服务地址 (ICT8_API_BASE)</label>
+        <input id="api-base-input" type="text" value="http://localhost:8000" style="padding:9px 12px;border-radius:8px;border:1px solid var(--border-strong);background:var(--bg-surface-subtle);font-family:var(--font-mono);font-size:12.5px;">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <label style="font-size:12px;font-weight:600;color:var(--text-secondary);">API Key / Bearer Token (可选)</label>
+        <input id="api-key-input" type="password" placeholder="sk-..." style="padding:9px 12px;border-radius:8px;border:1px solid var(--border-strong);background:var(--bg-surface-subtle);font-family:var(--font-mono);font-size:12.5px;">
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-secondary);cursor:pointer;">
+        <input id="api-stream-checkbox" type="checkbox" checked>
+        <span>启用 SSE 流式推理链路推送 (stream=true)</span>
+      </label>
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px;">
+        <button type="button" id="save-api-settings-btn" class="primary-btn">保存并测试连接</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模块脚本 -->
+  <script src="./schema-svg.js"></script>
+  <script src="./conversation-context.js"></script>
+  <script src="./conversation-session.js"></script>
+  <script src="./agent-results.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
