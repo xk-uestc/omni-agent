@@ -60,7 +60,8 @@ def test_real_knowledge_retrieval_never_executes_sql_for_definition(agent,monkey
     assert result['route'] == 'document', result
     assert result['effective_question'] == question
     assert not result['result'].get('sql')
-    assert result['status'] == 'ok', result['result']
+    assert result['status'] == 'insufficient_evidence', result['result']
+    assert result['result']['answer_completeness'] == 'retrieval_only'
     assert result['result'].get('citations')
     assert {citation['metadata']['document_id'] for citation in result['result']['citations']} == {'term-manual'}
     assert 'executed_sql_context' not in result['state']
@@ -111,7 +112,7 @@ def test_sql_entity_bridge_definition_remains_document_retrieval(agent):
     selected = agent.query('华东排名多少',session_id='entity-bridge')
     assert selected['status'] == 'ok'
     answer = agent.query('它的销售方法是什么',session_id='entity-bridge')
-    assert answer['route'] == 'document' and answer['status'] == 'ok', answer
+    assert answer['route'] == 'document' and answer['status'] == 'insufficient_evidence', answer
     assert answer['effective_question'] == '华东的销售方法是什么'
     assert answer['result']['sql_entity_evidence']['entity'] == '华东'
     assert '定期客户回访' in answer['result']['answer']

@@ -1,0 +1,2667 @@
+{
+  "question": "销售额的统计口径是什么",
+  "http_status": 200,
+  "seconds": 7.448673028033227,
+  "response": {
+    "status": "ok",
+    "question": "销售额的统计口径是什么",
+    "effective_question": "销售额的统计口径是什么",
+    "route": "document",
+    "planner_source": "server_verified_term_definition_route",
+    "session_id": null,
+    "context_turns": 0,
+    "state": {
+      "route": "document",
+      "sources": [
+        "revenue-policy",
+        "revenue-policy",
+        "revenue-policy",
+        "revenue-policy"
+      ],
+      "document_context": {
+        "payload": {
+          "question": "销售额的统计口径是什么",
+          "documents": {
+            "revenue-policy": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b"
+          }
+        },
+        "sha256": "a6cf2f751e12bc87acc73e4170d5398b20db7de2b737ba79d4974547e97a6953"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "question": "销售额的统计口径是什么",
+      "answer_mode": "model_grounded",
+      "answer": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售 [2]",
+      "retrieved_excerpts": "[1] 销售额统计口径\n\n[2] 销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售\n\n[3] ,不推断缺失的订单状态。\n\n[4] 实表,没有该表时不得给出净销售额。",
+      "answer_completeness": "retrieval_only",
+      "citations": [
+        {
+          "citation_id": 1,
+          "document_id": "72c43848f4c2bbbf411e352b",
+          "title": "销售额统计口径",
+          "score": 0.9823,
+          "matched_terms": [
+            "统计口",
+            "计口",
+            "计口径",
+            "统计",
+            "口径",
+            "售额",
+            "销售额",
+            "销售"
+          ],
+          "snippet": "销售额统计口径",
+          "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+          "metadata": {
+            "raw_text": "销售额统计口径",
+            "raw_page_text": "销售额统计口径\n\n合成演示样本 CC0 非真实企业数据\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售\n\n,不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数,销量采用数量合计,不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时,应按订单粒度统计订单金额,防止重复累加。退款需要单独的退款事\n\n实表,没有该表时不得给出净销售额。",
+            "ocr_status": null,
+            "ocr_attempts": [],
+            "ocr_selected_transforms": [],
+            "ocr_metadata": {},
+            "coordinate_evidence": {
+              "bbox_status": "exact_block",
+              "layout_block_ids": [
+                0,
+                2
+              ],
+              "source_bbox_pdf_user_pt": [
+                78.0,
+                679.9088,
+                204.0,
+                759.4258
+              ],
+              "source_bbox_fitz_unrotated_pt": [
+                78.0,
+                82.464,
+                204.0,
+                161.981
+              ],
+              "page_bbox_pdf_user_pt": [
+                0.0,
+                0.0,
+                595.2756,
+                841.8898
+              ],
+              "source_bbox_fitz_display_pt": [
+                78.0,
+                82.464,
+                204.0,
+                161.981
+              ],
+              "source_bbox_render_px": null,
+              "page_geometry": {
+                "rotation_degrees": 0,
+                "rotation_source": "pdf_page_rotate",
+                "media_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "crop_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_rect_fitz_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_size_pt": [
+                  595.2756,
+                  841.8898
+                ],
+                "coordinate_systems": {
+                  "pdf_user_space": {
+                    "origin": "bottom_left",
+                    "unit": "pt"
+                  },
+                  "fitz_unrotated_text_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "fitz_display_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "render_pixel_space": {
+                    "origin": "top_left",
+                    "unit": "px"
+                  }
+                },
+                "mappings": {
+                  "pdf_user_to_fitz_unrotated": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    -1.0,
+                    0.0,
+                    841.889771
+                  ],
+                  "fitz_unrotated_to_display": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "fitz_display_to_render_pixel": null
+                },
+                "render": null,
+                "coordinate_mapping_version": "cropbox-unrotated-v2",
+                "mapping_status": "complete"
+              },
+              "reading_order": {
+                "version": "native-bbox-columns-v1",
+                "mode": "native_blocks_yx",
+                "column_count": 1,
+                "block_ids": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              "render_input_sha256": null,
+              "render_size_px": null,
+              "render_scale": null,
+              "ocr_trigger_reasons": [],
+              "ocr_applied_to_page_text": false
+            },
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "original_document_id": "revenue-policy",
+            "document_id": "revenue-policy",
+            "chunk_id": "72c43848f4c2bbbf411e352b",
+            "source_locator": "page:1:block:1",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 55.41948,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 1.0,
+            "bm25_rank": 1,
+            "ranking_score": 95.57555932228077,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0.36229209767288295,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.0,
+            "body_query_term_method": "not_applied_to_paginated_sources",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "primary",
+            "identifier_scope_link": null,
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [
+                "口径",
+                "售额",
+                "统计",
+                "计口",
+                "销售"
+              ],
+              "body_sha256": "4954c7c100d94e87af15b8a54a04eca15a9954e0b50d740d0975d1a3dfafaac6",
+              "utility": 1.144444,
+              "uncovered_lexical_facets": [
+                "径是",
+                "是什",
+                "的统"
+              ],
+              "selection_budget_exhausted": true
+            }
+          }
+        },
+        {
+          "citation_id": 2,
+          "document_id": "e2285ee589c8c824bd06f751",
+          "title": "销售额统计口径",
+          "score": 0.9781,
+          "matched_terms": [
+            "统计口",
+            "计口",
+            "计口径",
+            "统计",
+            "口径",
+            "销售",
+            "售额",
+            "销售额",
+            "额的"
+          ],
+          "snippet": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+          "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+          "metadata": {
+            "raw_text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+            "raw_page_text": "销售额统计口径\n\n合成演示样本 CC0 非真实企业数据\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售\n\n,不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数,销量采用数量合计,不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时,应按订单粒度统计订单金额,防止重复累加。退款需要单独的退款事\n\n实表,没有该表时不得给出净销售额。",
+            "ocr_status": null,
+            "ocr_attempts": [],
+            "ocr_selected_transforms": [],
+            "ocr_metadata": {},
+            "coordinate_evidence": {
+              "bbox_status": "exact_block",
+              "layout_block_ids": [
+                4
+              ],
+              "source_bbox_pdf_user_pt": [
+                78.0,
+                643.9088,
+                507.0,
+                655.1618
+              ],
+              "source_bbox_fitz_unrotated_pt": [
+                78.0,
+                186.728,
+                507.0,
+                197.981
+              ],
+              "page_bbox_pdf_user_pt": [
+                0.0,
+                0.0,
+                595.2756,
+                841.8898
+              ],
+              "source_bbox_fitz_display_pt": [
+                78.0,
+                186.728,
+                507.0,
+                197.981
+              ],
+              "source_bbox_render_px": null,
+              "page_geometry": {
+                "rotation_degrees": 0,
+                "rotation_source": "pdf_page_rotate",
+                "media_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "crop_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_rect_fitz_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_size_pt": [
+                  595.2756,
+                  841.8898
+                ],
+                "coordinate_systems": {
+                  "pdf_user_space": {
+                    "origin": "bottom_left",
+                    "unit": "pt"
+                  },
+                  "fitz_unrotated_text_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "fitz_display_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "render_pixel_space": {
+                    "origin": "top_left",
+                    "unit": "px"
+                  }
+                },
+                "mappings": {
+                  "pdf_user_to_fitz_unrotated": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    -1.0,
+                    0.0,
+                    841.889771
+                  ],
+                  "fitz_unrotated_to_display": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "fitz_display_to_render_pixel": null
+                },
+                "render": null,
+                "coordinate_mapping_version": "cropbox-unrotated-v2",
+                "mapping_status": "complete"
+              },
+              "reading_order": {
+                "version": "native-bbox-columns-v1",
+                "mode": "native_blocks_yx",
+                "column_count": 1,
+                "block_ids": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              "render_input_sha256": null,
+              "render_size_px": null,
+              "render_scale": null,
+              "ocr_trigger_reasons": [],
+              "ocr_applied_to_page_text": false
+            },
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "original_document_id": "revenue-policy",
+            "document_id": "revenue-policy",
+            "chunk_id": "e2285ee589c8c824bd06f751",
+            "source_locator": "page:1:block:5",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [
+              "第一章 销售额统计口径",
+              "1.1 定义"
+            ],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 44.598565,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 0.8047,
+            "bm25_rank": 4,
+            "ranking_score": 76.91398033410084,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0.36229209767288295,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.0,
+            "body_query_term_method": "not_applied_to_paginated_sources",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "supporting",
+            "identifier_scope_link": null,
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [
+                "额的"
+              ],
+              "body_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+              "utility": 0.627211,
+              "uncovered_lexical_facets": [
+                "径是",
+                "是什",
+                "的统"
+              ],
+              "selection_budget_exhausted": true
+            }
+          },
+          "generation_evidence": {
+            "text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "chunk_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+            "evidence_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+            "chunk_payload_sha256": "79afc2c6f026d73f0fef7d643d9c964a19c47fb67768623ec6f44df4ec633ea2",
+            "offset_start": null,
+            "offset_end": null,
+            "truncated": false,
+            "source_locator": "page:1:block:5",
+            "page_no": 1,
+            "original_chars": 39,
+            "evidence_chars": 39,
+            "mode": "authoritative_pdf_native_block_context",
+            "anchor_original_chars": 39,
+            "native_context": {
+              "text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "page_no": 1,
+              "evidence_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+              "text_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+              "evidence_chars": 39,
+              "max_chars": 3200,
+              "extraction_version": "original-native-complete-block-context-v5",
+              "mode": "original_native_complete_block",
+              "members": [
+                {
+                  "block_id": 4,
+                  "native_block_id": 4,
+                  "native_column_part": null,
+                  "bbox_fitz_unrotated_pt": [
+                    78.0,
+                    186.728,
+                    507.0,
+                    197.981
+                  ],
+                  "text_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88",
+                  "source_range": null,
+                  "parent_text_sha256": null,
+                  "lines": [
+                    {
+                      "line_index": 0,
+                      "bbox_fitz_unrotated_pt": [
+                        78.0,
+                        186.728,
+                        507.0,
+                        197.981
+                      ],
+                      "text_sha256": "61e05f51835c2d905f75dfb5a6bf6499fd1a768b790ed4224d205ea88e1bf855",
+                      "native_style": [
+                        [
+                          "STSong-Light",
+                          11.0,
+                          0
+                        ]
+                      ],
+                      "native_direction": [
+                        1.0,
+                        0.0
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "reading_order": {
+                "version": "native-bbox-columns-v1",
+                "mode": "native_blocks_yx",
+                "column_count": 1,
+                "block_ids": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              "unit_insertions": [],
+              "column_transition": null,
+              "rotated_native_row": null,
+              "anchor_match_policy": "native-literal-and-legacy-wrap-alias-union-v2",
+              "anchor_match": {
+                "policy_version": "native-literal-and-legacy-wrap-alias-union-v2",
+                "page_reading_order_range": [
+                  50,
+                  89
+                ],
+                "members": [
+                  {
+                    "block_id": 4,
+                    "native_block_id": 4,
+                    "native_column_part": null,
+                    "source_range": [
+                      0,
+                      39
+                    ],
+                    "parent_source_range": null
+                  }
+                ]
+              },
+              "continuation_policy_version": null,
+              "calculator_input_eligible": false
+            },
+            "native_context_max_chars": 3200
+          }
+        },
+        {
+          "citation_id": 3,
+          "document_id": "ad073a54def770b153b16488",
+          "title": "销售额统计口径",
+          "score": 0.9796,
+          "matched_terms": [
+            "统计口",
+            "计口",
+            "计口径",
+            "统计",
+            "口径",
+            "售额",
+            "销售额",
+            "销售"
+          ],
+          "snippet": ",不推断缺失的订单状态。",
+          "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+          "metadata": {
+            "raw_text": ",不推断缺失的订单状态。",
+            "raw_page_text": "销售额统计口径\n\n合成演示样本 CC0 非真实企业数据\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售\n\n,不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数,销量采用数量合计,不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时,应按订单粒度统计订单金额,防止重复累加。退款需要单独的退款事\n\n实表,没有该表时不得给出净销售额。",
+            "ocr_status": null,
+            "ocr_attempts": [],
+            "ocr_selected_transforms": [],
+            "ocr_metadata": {},
+            "coordinate_evidence": {
+              "bbox_status": "exact_block",
+              "layout_block_ids": [
+                5
+              ],
+              "source_bbox_pdf_user_pt": [
+                78.0,
+                625.9088,
+                210.0,
+                637.1618
+              ],
+              "source_bbox_fitz_unrotated_pt": [
+                78.0,
+                204.728,
+                210.0,
+                215.981
+              ],
+              "page_bbox_pdf_user_pt": [
+                0.0,
+                0.0,
+                595.2756,
+                841.8898
+              ],
+              "source_bbox_fitz_display_pt": [
+                78.0,
+                204.728,
+                210.0,
+                215.981
+              ],
+              "source_bbox_render_px": null,
+              "page_geometry": {
+                "rotation_degrees": 0,
+                "rotation_source": "pdf_page_rotate",
+                "media_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "crop_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_rect_fitz_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_size_pt": [
+                  595.2756,
+                  841.8898
+                ],
+                "coordinate_systems": {
+                  "pdf_user_space": {
+                    "origin": "bottom_left",
+                    "unit": "pt"
+                  },
+                  "fitz_unrotated_text_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "fitz_display_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "render_pixel_space": {
+                    "origin": "top_left",
+                    "unit": "px"
+                  }
+                },
+                "mappings": {
+                  "pdf_user_to_fitz_unrotated": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    -1.0,
+                    0.0,
+                    841.889771
+                  ],
+                  "fitz_unrotated_to_display": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "fitz_display_to_render_pixel": null
+                },
+                "render": null,
+                "coordinate_mapping_version": "cropbox-unrotated-v2",
+                "mapping_status": "complete"
+              },
+              "reading_order": {
+                "version": "native-bbox-columns-v1",
+                "mode": "native_blocks_yx",
+                "column_count": 1,
+                "block_ids": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              "render_input_sha256": null,
+              "render_size_px": null,
+              "render_scale": null,
+              "ocr_trigger_reasons": [],
+              "ocr_applied_to_page_text": false
+            },
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "original_document_id": "revenue-policy",
+            "document_id": "revenue-policy",
+            "chunk_id": "ad073a54def770b153b16488",
+            "source_locator": "page:1:block:6",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [
+              "第一章 销售额统计口径",
+              "1.1 定义"
+            ],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 47.958325,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 0.8654,
+            "bm25_rank": 3,
+            "ranking_score": 82.70816933025573,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0.36229209767288295,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.0,
+            "body_query_term_method": "not_applied_to_paginated_sources",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "supporting",
+            "identifier_scope_link": null,
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [],
+              "body_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+              "utility": 0.555759,
+              "uncovered_lexical_facets": [
+                "径是",
+                "是什",
+                "的统"
+              ],
+              "selection_budget_exhausted": true
+            }
+          },
+          "generation_evidence": {
+            "text": ",不推断缺失的订单状态。",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "chunk_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+            "evidence_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+            "chunk_payload_sha256": "000fd963c640ee3bdcaa99f9b8500f5b8062a6f6b87d18cd83effa2fff249042",
+            "offset_start": null,
+            "offset_end": null,
+            "truncated": false,
+            "source_locator": "page:1:block:6",
+            "page_no": 1,
+            "original_chars": 12,
+            "evidence_chars": 12,
+            "mode": "authoritative_pdf_native_block_context",
+            "anchor_original_chars": 12,
+            "native_context": {
+              "text": ",不推断缺失的订单状态。",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "page_no": 1,
+              "evidence_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+              "text_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+              "evidence_chars": 12,
+              "max_chars": 3200,
+              "extraction_version": "original-native-complete-block-context-v5",
+              "mode": "original_native_complete_block",
+              "members": [
+                {
+                  "block_id": 5,
+                  "native_block_id": 5,
+                  "native_column_part": null,
+                  "bbox_fitz_unrotated_pt": [
+                    78.0,
+                    204.728,
+                    210.0,
+                    215.981
+                  ],
+                  "text_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0",
+                  "source_range": null,
+                  "parent_text_sha256": null,
+                  "lines": [
+                    {
+                      "line_index": 0,
+                      "bbox_fitz_unrotated_pt": [
+                        78.0,
+                        204.728,
+                        210.0,
+                        215.981
+                      ],
+                      "text_sha256": "da5246d877ce50796f8926666a53715bf4d9e2edc4e1a0eb3ca46926a5797784",
+                      "native_style": [
+                        [
+                          "STSong-Light",
+                          11.0,
+                          0
+                        ]
+                      ],
+                      "native_direction": [
+                        1.0,
+                        0.0
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "reading_order": {
+                "version": "native-bbox-columns-v1",
+                "mode": "native_blocks_yx",
+                "column_count": 1,
+                "block_ids": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              "unit_insertions": [],
+              "column_transition": null,
+              "rotated_native_row": null,
+              "anchor_match_policy": "native-literal-and-legacy-wrap-alias-union-v2",
+              "anchor_match": {
+                "policy_version": "native-literal-and-legacy-wrap-alias-union-v2",
+                "page_reading_order_range": [
+                  91,
+                  103
+                ],
+                "members": [
+                  {
+                    "block_id": 5,
+                    "native_block_id": 5,
+                    "native_column_part": null,
+                    "source_range": [
+                      0,
+                      12
+                    ],
+                    "parent_source_range": null
+                  }
+                ]
+              },
+              "continuation_policy_version": null,
+              "calculator_input_eligible": false
+            },
+            "native_context_max_chars": 3200
+          }
+        },
+        {
+          "citation_id": 4,
+          "document_id": "786b4686ee20b0e726a33408",
+          "title": "销售额统计口径",
+          "score": 0.9796,
+          "matched_terms": [
+            "统计口",
+            "计口",
+            "计口径",
+            "统计",
+            "口径",
+            "售额",
+            "销售额",
+            "销售"
+          ],
+          "snippet": "实表,没有该表时不得给出净销售额。",
+          "source_uri": "/api/v1/knowledge/documents/revenue-policy/original",
+          "metadata": {
+            "raw_text": "实表,没有该表时不得给出净销售额。",
+            "raw_page_text": "销售额统计口径\n\n合成演示样本 CC0 非真实企业数据\n\n第一章 销售额统计口径\n\n1.1 定义\n\n销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售\n\n,不推断缺失的订单状态。\n\n1.2 时间\n\n按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。\n\n1.3 核验\n\n订单数采用去重订单编号计数,销量采用数量合计,不能用明细行数冒充订单数。\n\n1.4 联表\n\n将订单关联明细时,应按订单粒度统计订单金额,防止重复累加。退款需要单独的退款事\n\n实表,没有该表时不得给出净销售额。",
+            "ocr_status": null,
+            "ocr_attempts": [],
+            "ocr_selected_transforms": [],
+            "ocr_metadata": {},
+            "coordinate_evidence": {
+              "bbox_status": "exact_block",
+              "layout_block_ids": [
+                12
+              ],
+              "source_bbox_pdf_user_pt": [
+                78.0,
+                499.9088,
+                265.0,
+                511.1618
+              ],
+              "source_bbox_fitz_unrotated_pt": [
+                78.0,
+                330.728,
+                265.0,
+                341.981
+              ],
+              "page_bbox_pdf_user_pt": [
+                0.0,
+                0.0,
+                595.2756,
+                841.8898
+              ],
+              "source_bbox_fitz_display_pt": [
+                78.0,
+                330.728,
+                265.0,
+                341.981
+              ],
+              "source_bbox_render_px": null,
+              "page_geometry": {
+                "rotation_degrees": 0,
+                "rotation_source": "pdf_page_rotate",
+                "media_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "crop_box_pdf_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_rect_fitz_pt": [
+                  0.0,
+                  0.0,
+                  595.2756,
+                  841.8898
+                ],
+                "display_size_pt": [
+                  595.2756,
+                  841.8898
+                ],
+                "coordinate_systems": {
+                  "pdf_user_space": {
+                    "origin": "bottom_left",
+                    "unit": "pt"
+                  },
+                  "fitz_unrotated_text_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "fitz_display_space": {
+                    "origin": "top_left",
+                    "unit": "pt"
+                  },
+                  "render_pixel_space": {
+                    "origin": "top_left",
+                    "unit": "px"
+                  }
+                },
+                "mappings": {
+                  "pdf_user_to_fitz_unrotated": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    -1.0,
+                    0.0,
+                    841.889771
+                  ],
+                  "fitz_unrotated_to_display": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0
+                  ],
+                  "fitz_display_to_render_pixel": null
+                },
+                "render": null,
+                "coordinate_mapping_version": "cropbox-unrotated-v2",
+                "mapping_status": "complete"
+              },
+              "reading_order": {
+                "version": "native-bbox-columns-v1",
+                "mode": "native_blocks_yx",
+                "column_count": 1,
+                "block_ids": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              "render_input_sha256": null,
+              "render_size_px": null,
+              "render_scale": null,
+              "ocr_trigger_reasons": [],
+              "ocr_applied_to_page_text": false
+            },
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "original_document_id": "revenue-policy",
+            "document_id": "revenue-policy",
+            "chunk_id": "786b4686ee20b0e726a33408",
+            "source_locator": "page:1:block:13",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [
+              "第一章 销售额统计口径",
+              "1.4 联表"
+            ],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 47.90147,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 0.8643,
+            "bm25_rank": 2,
+            "ranking_score": 82.61011809582935,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0.36229209767288295,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.0,
+            "body_query_term_method": "not_applied_to_paginated_sources",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "supporting",
+            "identifier_scope_link": null,
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [],
+              "body_sha256": "ba5a09a4a76889b4c70151547ae10fb84695526b3011076686425e7d64bd147b",
+              "utility": 0.53004,
+              "uncovered_lexical_facets": [
+                "径是",
+                "是什",
+                "的统"
+              ],
+              "selection_budget_exhausted": true
+            }
+          },
+          "generation_evidence": {
+            "text": "实表,没有该表时不得给出净销售额。",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "chunk_sha256": "ba5a09a4a76889b4c70151547ae10fb84695526b3011076686425e7d64bd147b",
+            "evidence_sha256": "ba5a09a4a76889b4c70151547ae10fb84695526b3011076686425e7d64bd147b",
+            "chunk_payload_sha256": "2b8efa4226bcbd9971ada8e02c459d323567255bf7b288582d69193552adb111",
+            "offset_start": null,
+            "offset_end": null,
+            "truncated": false,
+            "source_locator": "page:1:block:13",
+            "page_no": 1,
+            "original_chars": 17,
+            "evidence_chars": 17,
+            "mode": "authoritative_pdf_native_block_context",
+            "anchor_original_chars": 17,
+            "native_context": {
+              "text": "实表,没有该表时不得给出净销售额。",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "page_no": 1,
+              "evidence_sha256": "ba5a09a4a76889b4c70151547ae10fb84695526b3011076686425e7d64bd147b",
+              "text_sha256": "ba5a09a4a76889b4c70151547ae10fb84695526b3011076686425e7d64bd147b",
+              "evidence_chars": 17,
+              "max_chars": 3200,
+              "extraction_version": "original-native-complete-block-context-v5",
+              "mode": "original_native_complete_block",
+              "members": [
+                {
+                  "block_id": 12,
+                  "native_block_id": 12,
+                  "native_column_part": null,
+                  "bbox_fitz_unrotated_pt": [
+                    78.0,
+                    330.728,
+                    265.0,
+                    341.981
+                  ],
+                  "text_sha256": "ba5a09a4a76889b4c70151547ae10fb84695526b3011076686425e7d64bd147b",
+                  "source_range": null,
+                  "parent_text_sha256": null,
+                  "lines": [
+                    {
+                      "line_index": 0,
+                      "bbox_fitz_unrotated_pt": [
+                        78.0,
+                        330.728,
+                        265.0,
+                        341.981
+                      ],
+                      "text_sha256": "dfb65f05ec55dfbf33483ede9ae29f51cbb9730018184c167c3d51bb1a5f5fb1",
+                      "native_style": [
+                        [
+                          "STSong-Light",
+                          11.0,
+                          0
+                        ]
+                      ],
+                      "native_direction": [
+                        1.0,
+                        0.0
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "reading_order": {
+                "version": "native-bbox-columns-v1",
+                "mode": "native_blocks_yx",
+                "column_count": 1,
+                "block_ids": [
+                  0,
+                  1,
+                  2,
+                  3,
+                  4,
+                  5,
+                  6,
+                  7,
+                  8,
+                  9,
+                  10,
+                  11,
+                  12
+                ]
+              },
+              "unit_insertions": [],
+              "column_transition": null,
+              "rotated_native_row": null,
+              "anchor_match_policy": "native-literal-and-legacy-wrap-alias-union-v2",
+              "anchor_match": {
+                "policy_version": "native-literal-and-legacy-wrap-alias-union-v2",
+                "page_reading_order_range": [
+                  263,
+                  280
+                ],
+                "members": [
+                  {
+                    "block_id": 12,
+                    "native_block_id": 12,
+                    "native_column_part": null,
+                    "source_range": [
+                      0,
+                      17
+                    ],
+                    "parent_source_range": null
+                  }
+                ]
+              },
+              "continuation_policy_version": null,
+              "calculator_input_eligible": false
+            },
+            "native_context_max_chars": 3200
+          }
+        }
+      ],
+      "retrieval": {
+        "mode": "bm25",
+        "embedding_model": null,
+        "dense_answer_threshold": null
+      },
+      "trace": [
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 4
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 4,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [
+            "revenue-policy"
+          ],
+          "status": "no_complete_grid_key",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          },
+          "candidate_pages": 1,
+          "page_indexes": [
+            {
+              "document_id": "revenue-policy",
+              "status": "built_complete",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "page_count": 1,
+              "complete": true,
+              "extractor_version": "PyMuPDF:1.28.2:lines_strict:unrotated:algorithm:dd0203f9bf6fbcedd2a6cc0e94d2df14ea6084c35705ca6c18a7c0ce1459d938",
+              "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+            }
+          ],
+          "complete_key_matches": 0,
+          "scope_rejections": []
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_supported_native_chart_key",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [
+            "revenue-policy"
+          ],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_pages": 1,
+          "complete_candidate_scan": true,
+          "complete_key_matches": 0,
+          "scope_rejections": [],
+          "scan_seconds": 0.002
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "generation_evidence",
+          "selected_count": 3,
+          "total_chars": 68,
+          "omitted": [
+            {
+              "citation_id": 1,
+              "reason": "native_complete_context_unavailable"
+            }
+          ],
+          "max_items": 8,
+          "max_chars_per_item": 1800,
+          "max_native_chars_per_item": 3200,
+          "max_total_chars": 12000
+        },
+        {
+          "stage": "grounded_generation",
+          "status": "validated",
+          "model": "deepseek-flash"
+        },
+        {
+          "stage": "typed_answer_projection",
+          "status": "unsupported",
+          "reason": "question_contract_unsupported",
+          "original_answer_retained": true
+        }
+      ],
+      "claims": [
+        {
+          "text": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+          "support": [
+            {
+              "citation_id": 2,
+              "quote": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售"
+            }
+          ]
+        }
+      ],
+      "generation_audit": {
+        "provider": "responses",
+        "model": "deepseek-flash",
+        "reasoning": "low",
+        "operation": "grounded_answer",
+        "http_status": 200,
+        "status": "completed",
+        "model_verified": true,
+        "transport_attempts": 1,
+        "transport_failures": [],
+        "response_model": "deepseek-flash",
+        "input_tokens": 1237,
+        "output_tokens": 1163,
+        "total_tokens": 2400,
+        "cached_input_tokens": 512,
+        "reasoning_tokens": 1089,
+        "response_completed": true,
+        "call_index": 1,
+        "latency_ms": 7338.153
+      },
+      "whole_question_review": null,
+      "generation_attempts": [
+        {
+          "attempt": 1,
+          "operation": "grounded_answer",
+          "validation_status": "validated",
+          "error_category": null,
+          "provider_audit": {
+            "provider": "responses",
+            "model": "deepseek-flash",
+            "reasoning": "low",
+            "operation": "grounded_answer",
+            "http_status": 200,
+            "status": "completed",
+            "model_verified": true,
+            "transport_attempts": 1,
+            "transport_failures": [],
+            "response_model": "deepseek-flash",
+            "input_tokens": 1237,
+            "output_tokens": 1163,
+            "total_tokens": 2400,
+            "cached_input_tokens": 512,
+            "reasoning_tokens": 1089,
+            "response_completed": true,
+            "call_index": 1,
+            "latency_ms": 7338.153
+          },
+          "whole_question_review": null
+        }
+      ],
+      "generation_repaired": false,
+      "support_validation": "bounded_local_relations_quotes_and_signed_numbers_checked_not_general_entailment_proof",
+      "retrieval_audit": {
+        "version": "ict8-rag-audit-v1",
+        "query": "销售额的统计口径是什么",
+        "source_binding": {
+          "version": "body-source-conditions-v1",
+          "status": "bound",
+          "requested": {
+            "years": [],
+            "versions": [],
+            "organizations": [],
+            "objects": []
+          },
+          "rejected_sources": {},
+          "ambiguous_sources": [],
+          "sources": {
+            "local-warranty": {
+              "document_id": "local-warranty",
+              "source_sha256": "e09ac68bbb2f1f7a0f22bfe3f7ad9109fc9ed8c4d6d966778443b74aa09a455d",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "local-labor": {
+              "document_id": "local-labor",
+              "source_sha256": "0c0a7958d6deddbb858fe2e1cb52905a04e745f501c372d3bc55db7ce7e3e0a8",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "revenue-policy": {
+              "document_id": "revenue-policy",
+              "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "return-policy": {
+              "document_id": "return-policy",
+              "source_sha256": "61f0497e358612722583087cd2d3bbcaded2b1f2ae752d4dae799bbee73e2198",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "metric-definitions": {
+              "document_id": "metric-definitions",
+              "source_sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "champion-method": {
+              "document_id": "champion-method",
+              "source_sha256": "a724f110a2e369e56ef9dc38307e9cc81ccd014f67cc87c869801fbbc9505fa3",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "forecast-report": {
+              "document_id": "forecast-report",
+              "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "service-playbook": {
+              "document_id": "service-playbook",
+              "source_sha256": "d512511795479ec4024f8d68f1144a6ce12e4170354c29915fe6a94a222aabfa",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "data-dictionary": {
+              "document_id": "data-dictionary",
+              "source_sha256": "4a2cc00c9ee8a0eee82ef05def359a7df3ebde4ae65fa0cffee6457741906df0",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "compliance-guide": {
+              "document_id": "compliance-guide",
+              "source_sha256": "baa1d93f47262fd46373a9872a0574677e0fdb0c404399330297cb1fefa925c7",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "policy-history": {
+              "document_id": "policy-history",
+              "source_sha256": "f9f589b95dd222e6a9d1e0a2ac47ce1f1997f355b63c427286fdb6ee832031d0",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "region-targets": {
+              "document_id": "region-targets",
+              "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+              "declared_years": [
+                "2026"
+              ],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [
+                {
+                  "chunk_id": "978a8985fe44634aec8107e7",
+                  "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                  "page_no": null,
+                  "source_locator": "sheet:标准数据:table:标准数据!A1:D4:row:2",
+                  "quote": "年份: 2026",
+                  "role": "declared_year"
+                },
+                {
+                  "chunk_id": "38fcac53eaf685cb18a5ed4c",
+                  "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                  "page_no": null,
+                  "source_locator": "sheet:标准数据:table:标准数据!A1:D4:row:3",
+                  "quote": "年份: 2026",
+                  "role": "declared_year"
+                },
+                {
+                  "chunk_id": "26c0fe70a72324970073852c",
+                  "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+                  "page_no": null,
+                  "source_locator": "sheet:标准数据:table:标准数据!A1:D4:row:4",
+                  "quote": "年份: 2026",
+                  "role": "declared_year"
+                }
+              ],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "service-thresholds": {
+              "document_id": "service-thresholds",
+              "source_sha256": "e3bd834047d30b69f6fa25da96ccc4fe743891b776aaa3114c542d1b53595f0f",
+              "declared_years": [],
+              "declared_versions": [
+                "2025"
+              ],
+              "declared_objects": [],
+              "evidence": [
+                {
+                  "chunk_id": "7e339d7f3caef398655f5d02",
+                  "source_sha256": "e3bd834047d30b69f6fa25da96ccc4fe743891b776aaa3114c542d1b53595f0f",
+                  "page_no": null,
+                  "source_locator": "sheet:标准数据:table:标准数据!A1:C4:row:2",
+                  "quote": "版本: 2025",
+                  "role": "declared_version"
+                },
+                {
+                  "chunk_id": "99bf1c740e006043aa855675",
+                  "source_sha256": "e3bd834047d30b69f6fa25da96ccc4fe743891b776aaa3114c542d1b53595f0f",
+                  "page_no": null,
+                  "source_locator": "sheet:标准数据:table:标准数据!A1:C4:row:3",
+                  "quote": "版本: 2025",
+                  "role": "declared_version"
+                },
+                {
+                  "chunk_id": "6934131f82a338278b99e788",
+                  "source_sha256": "e3bd834047d30b69f6fa25da96ccc4fe743891b776aaa3114c542d1b53595f0f",
+                  "page_no": null,
+                  "source_locator": "sheet:标准数据:table:标准数据!A1:C4:row:4",
+                  "quote": "版本: 2025",
+                  "role": "declared_version"
+                }
+              ],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "service-scan": {
+              "document_id": "service-scan",
+              "source_sha256": "9ceeb12747d949588ddb41b9b51b1a66d33ca147237079e7f740bd726f849501",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "service-scan-upside-down": {
+              "document_id": "service-scan-upside-down",
+              "source_sha256": "be7345b25de5f6a8d748d571e4bc571d045be4efbc8143c2ea7b94429ff35979",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "service-scanned-pdf": {
+              "document_id": "service-scanned-pdf",
+              "source_sha256": "116bdbdc056838a691c0ac52941dbb796e3df2837618b41db584e15346173a85",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            },
+            "visual-grid-acceptance-20261001": {
+              "document_id": "visual-grid-acceptance-20261001",
+              "source_sha256": "e413edd54ec9b67b4e5bfb62455056a3cb76506c916e68db15d5a71cb318369f",
+              "declared_years": [],
+              "declared_versions": [],
+              "declared_objects": [],
+              "evidence": [],
+              "declared_organizations": [],
+              "status": "no_explicit_conflict",
+              "reason": null
+            }
+          },
+          "authority": "explicit_body_declarations_only_not_filename_or_keyword_presence"
+        },
+        "linked_scope": null,
+        "scope": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "index": {
+          "strategy": "persistent_versioned_bm25",
+          "status": "persistent_index",
+          "tokenizer_version": "ict8-tokenize-cjk-2-3-latin-v1"
+        },
+        "query_language": "zh_or_mixed",
+        "dense_status": "not_configured",
+        "channels": [
+          "bm25"
+        ],
+        "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+        "candidate_pool_limit": 20,
+        "candidate_count": 20,
+        "selection_budget": 4,
+        "selected_count": 4,
+        "selection": {
+          "method": "query_body_lexical_coverage_navigation_only",
+          "semantic_sufficiency": "not_evaluated",
+          "top_k": 4,
+          "candidate_count": 20,
+          "unique_body_count": 20,
+          "query_facets": {
+            "是什": 1.0,
+            "的统": 1.0,
+            "计口": 1.0,
+            "口径": 1.0,
+            "统计": 1.0,
+            "售额": 1.0,
+            "额的": 1.0,
+            "径是": 1.0,
+            "销售": 1.0
+          },
+          "covered_lexical_facets": [
+            "口径",
+            "售额",
+            "统计",
+            "计口",
+            "销售",
+            "额的"
+          ],
+          "uncovered_lexical_facets": [
+            "径是",
+            "是什",
+            "的统"
+          ],
+          "available_but_unselected_facets": [],
+          "selection_budget_exhausted": true,
+          "source_counts": {
+            "revenue-policy": 4
+          },
+          "steps": [
+            {
+              "chunk_id": "72c43848f4c2bbbf411e352b",
+              "source_id": "revenue-policy",
+              "ranking_score": 95.57555932228077,
+              "utility": 1.144444,
+              "new_lexical_facets": [
+                "口径",
+                "售额",
+                "统计",
+                "计口",
+                "销售"
+              ],
+              "body_sha256": "4954c7c100d94e87af15b8a54a04eca15a9954e0b50d740d0975d1a3dfafaac6"
+            },
+            {
+              "chunk_id": "e2285ee589c8c824bd06f751",
+              "source_id": "revenue-policy",
+              "ranking_score": 76.91398033410084,
+              "utility": 0.627211,
+              "new_lexical_facets": [
+                "额的"
+              ],
+              "body_sha256": "c2ba57ef22f64cc69e5fc6c29dce8403132b67b6ace866015564a26c15effc88"
+            },
+            {
+              "chunk_id": "ad073a54def770b153b16488",
+              "source_id": "revenue-policy",
+              "ranking_score": 82.70816933025573,
+              "utility": 0.555759,
+              "new_lexical_facets": [],
+              "body_sha256": "896f2a1a8267fc0bfaaa1d1063bf8cb15e58f7554b4a98c74a68d704a9d508f0"
+            },
+            {
+              "chunk_id": "786b4686ee20b0e726a33408",
+              "source_id": "revenue-policy",
+              "ranking_score": 82.61011809582935,
+              "utility": 0.53004,
+              "new_lexical_facets": [],
+              "body_sha256": "ba5a09a4a76889b4c70151547ae10fb84695526b3011076686425e7d64bd147b"
+            }
+          ],
+          "skipped": []
+        },
+        "candidates": [
+          {
+            "chunk_id": "72c43848f4c2bbbf411e352b",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": "销售额统计口径",
+            "source_locator": "page:1:block:1",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 1,
+            "bm25_rank": 1,
+            "bm25_raw": 55.41948,
+            "bm25_relative": 1.0,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 95.57555932228077,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "primary",
+            "selection_utility": 1.144444,
+            "new_lexical_facets": [
+              "口径",
+              "售额",
+              "统计",
+              "计口",
+              "销售"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              1
+            ]
+          },
+          {
+            "chunk_id": "ad073a54def770b153b16488",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": ",不推断缺失的订单状态。",
+            "source_locator": "page:1:block:6",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 2,
+            "bm25_rank": 3,
+            "bm25_raw": 47.958325,
+            "bm25_relative": 0.8654,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 82.70816933025573,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.555759,
+            "new_lexical_facets": [],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              3
+            ]
+          },
+          {
+            "chunk_id": "786b4686ee20b0e726a33408",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": "实表,没有该表时不得给出净销售额。",
+            "source_locator": "page:1:block:13",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 3,
+            "bm25_rank": 2,
+            "bm25_raw": 47.90147,
+            "bm25_relative": 0.8643,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 82.61011809582935,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.53004,
+            "new_lexical_facets": [],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              4
+            ]
+          },
+          {
+            "chunk_id": "e2285ee589c8c824bd06f751",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": "销售额是销售明细中销售金额的合计,单位为人民币元。演示库中的记录代表已入账销售",
+            "source_locator": "page:1:block:5",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 4,
+            "bm25_rank": 4,
+            "bm25_raw": 44.598565,
+            "bm25_relative": 0.8047,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 76.91398033410084,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "销售",
+              "售额",
+              "销售额",
+              "额的"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.627211,
+            "new_lexical_facets": [
+              "额的"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              2
+            ]
+          },
+          {
+            "chunk_id": "3b24c37b205308830696611f",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": "按交易日期划分自然年和自然月,2025年统计区间为2025-01-01至2026-01-01,不含右端点。",
+            "source_locator": "page:1:block:8",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 5,
+            "bm25_rank": 5,
+            "bm25_raw": 41.91095,
+            "bm25_relative": 0.7562,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 72.27896198192663,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计",
+              "统计口",
+              "计口",
+              "计口径",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "335bea32474365b885771a5f",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": "合成演示样本 CC0 非真实企业数据",
+            "source_locator": "page:1:block:2",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 6,
+            "bm25_rank": 6,
+            "bm25_raw": 40.336033,
+            "bm25_relative": 0.7278,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 69.56288501474526,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "dcc268a2ec9e15836536fe5e",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": "将订单关联明细时,应按订单粒度统计订单金额,防止重复累加。退款需要单独的退款事",
+            "source_locator": "page:1:block:12",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 7,
+            "bm25_rank": 7,
+            "bm25_raw": 39.962726,
+            "bm25_relative": 0.7211,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 68.91908566253332,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计",
+              "统计口",
+              "计口",
+              "计口径",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "79f87c9263a376cadf5a5c4f",
+            "source_document_id": "revenue-policy",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "title": "销售额统计口径",
+            "snippet": "订单数采用去重订单编号计数,销量采用数量合计,不能用明细行数冒充订单数。",
+            "source_locator": "page:1:block:10",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 8,
+            "bm25_rank": 8,
+            "bm25_raw": 39.458594,
+            "bm25_relative": 0.712,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 68.04966758296526,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "统计口",
+              "计口",
+              "计口径",
+              "统计",
+              "口径",
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "5a94263cf5c607d6e336f42f",
+            "source_document_id": "metric-definitions",
+            "source_sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10",
+            "title": "经营指标公式",
+            "snippet": "毛利率 = (销售额 - 成本) / 销售额",
+            "source_locator": "body:paragraph:8",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 9,
+            "bm25_rank": 9,
+            "bm25_raw": 8.936764,
+            "bm25_relative": 0.1613,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 10.001326015141998,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "销售额",
+              "售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "e87d74b2bbc1d0cead89ea24",
+            "source_document_id": "metric-definitions",
+            "source_sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10",
+            "title": "经营指标公式",
+            "snippet": "增长率 = (本期销售额 - 上期销售额) / 上期销售额",
+            "source_locator": "body:paragraph:11",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 10,
+            "bm25_rank": 10,
+            "bm25_raw": 8.918935,
+            "bm25_relative": 0.1609,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 9.981373195360254,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "f24259fdbace3bbaee096ecd",
+            "source_document_id": "forecast-report",
+            "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+            "title": "2026经营预测报告",
+            "snippet": "目标销售额 = 基准销售额 * (1 + 目标增长率)",
+            "source_locator": "page:1:block:8",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 11,
+            "bm25_rank": 11,
+            "bm25_raw": 7.790701,
+            "bm25_relative": 0.1406,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 9.934201994334797,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "994252e14202f91c266385f7",
+            "source_document_id": "metric-definitions",
+            "source_sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10",
+            "title": "经营指标公式",
+            "snippet": "客单价 = 销售额 / 订单数",
+            "source_locator": "body:paragraph:5",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 12,
+            "bm25_rank": 12,
+            "bm25_raw": 7.299371,
+            "bm25_relative": 0.1317,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 8.16888406994669,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "销售额",
+              "售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "26c0fe70a72324970073852c",
+            "source_document_id": "region-targets",
+            "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+            "title": "区域目标表",
+            "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华北 | 年份: 2026 | 目标销售额_人民币元: ¥25,000.00 | 目标增长率: 8%",
+            "source_locator": "sheet:标准数据:table:标准数据!A1:D4:row:4",
+            "page_no": null,
+            "sheet_name": "标准数据",
+            "row_start": 4,
+            "row_end": 4,
+            "ranking_rank": 13,
+            "bm25_rank": 13,
+            "bm25_raw": 6.702074,
+            "bm25_relative": 0.1209,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 7.500436069656398,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "38fcac53eaf685cb18a5ed4c",
+            "source_document_id": "region-targets",
+            "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+            "title": "区域目标表",
+            "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标销售额_人民币元: ¥32,000.00 | 目标增长率: 10%",
+            "source_locator": "sheet:标准数据:table:标准数据!A1:D4:row:3",
+            "page_no": null,
+            "sheet_name": "标准数据",
+            "row_start": 3,
+            "row_end": 3,
+            "ranking_rank": 14,
+            "bm25_rank": 14,
+            "bm25_raw": 6.702074,
+            "bm25_relative": 0.1209,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 7.500436069656398,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "978a8985fe44634aec8107e7",
+            "source_document_id": "region-targets",
+            "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+            "title": "区域目标表",
+            "snippet": "标准数据 | 地区 | 年份 | 目标销售额_人民币元 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标销售额_人民币元: ¥40,000.00 | 目标增长率: 12%",
+            "source_locator": "sheet:标准数据:table:标准数据!A1:D4:row:2",
+            "page_no": null,
+            "sheet_name": "标准数据",
+            "row_start": 2,
+            "row_end": 2,
+            "ranking_rank": 15,
+            "bm25_rank": 15,
+            "bm25_raw": 6.702074,
+            "bm25_relative": 0.1209,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 7.500436069656398,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "eea4aa25eea7821dd6a5b526",
+            "source_document_id": "region-targets",
+            "source_sha256": "441b308db03fdd74df61bc2cc17619839537bfd541c4e6666bc32e0779ec50d7",
+            "title": "区域目标表",
+            "snippet": "标准数据 | A1: 地区 | B1: 年份 | C1: 目标销售额_人民币元 | D1: 目标增长率",
+            "source_locator": "sheet:标准数据:cells:A1,B1,C1,D1",
+            "page_no": null,
+            "sheet_name": "标准数据",
+            "row_start": 1,
+            "row_end": 1,
+            "ranking_rank": 16,
+            "bm25_rank": 16,
+            "bm25_raw": 5.692179,
+            "bm25_relative": 0.1027,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 6.370240717506356,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "b92764ea28e7790ca01a46c3",
+            "source_document_id": "forecast-report",
+            "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+            "title": "2026经营预测报告",
+            "snippet": "2026年目标增长率为12%,预测基准为2025年销售额。该目标是经营计划,不是已实现增长",
+            "source_locator": "page:1:block:5",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 17,
+            "bm25_rank": 18,
+            "bm25_raw": 4.690244,
+            "bm25_relative": 0.0846,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 5.980698180910398,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "c0c1bb9b6efe36dae8645c58",
+            "source_document_id": "forecast-report",
+            "source_sha256": "0842bcda84c6d1f4e7fea2d772338f974834211bff57eb70b28b7407692a1c29",
+            "title": "2026经营预测报告",
+            "snippet": "目标完成率需要实际销售额和计划目标同时存在。不能将预测数据写入实际业绩,不能把",
+            "source_locator": "page:1:block:12",
+            "page_no": 1,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 18,
+            "bm25_rank": 20,
+            "bm25_raw": 4.272446,
+            "bm25_relative": 0.0771,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 5.447948980956621,
+            "body_query_term_coverage": 0.0,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "b523a44517c045c7129f24c6",
+            "source_document_id": "metric-definitions",
+            "source_sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10",
+            "title": "经营指标公式",
+            "snippet": "客单价的销售额单位为人民币元,订单数单位为笔。订单数为零时结果未知。",
+            "source_locator": "body:paragraph:6",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 19,
+            "bm25_rank": 17,
+            "bm25_raw": 4.815826,
+            "bm25_relative": 0.0869,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 5.3894951078709505,
+            "body_query_term_coverage": 0.07941442899182138,
+            "matched_terms": [
+              "售额",
+              "销售额",
+              "销售"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          },
+          {
+            "chunk_id": "4c3a87715ec627fee39eb782",
+            "source_document_id": "metric-definitions",
+            "source_sha256": "24208812517ea8cab63e98f7c661790f5be8e516fc5fd48849aa7310b32b1b10",
+            "title": "经营指标公式",
+            "snippet": "同比为上年同期,环比为紧邻上期;必须使用相同统计范围、币种和业务口径。",
+            "source_locator": "body:paragraph:12",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 20,
+            "bm25_rank": 19,
+            "bm25_raw": 4.568643,
+            "bm25_relative": 0.0824,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 5.049636652816015,
+            "body_query_term_coverage": 0.07018767612410877,
+            "matched_terms": [
+              "统计",
+              "口径"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": false,
+            "selection_role": null,
+            "selection_utility": null,
+            "new_lexical_facets": [],
+            "selection_note": "not_selected_by_coverage_selector",
+            "evidence_status": "retrieval_candidate_not_fact_verification"
+          }
+        ]
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "server_verified_term_definition_route",
+        "route": "document",
+        "latency_ms": 50.405,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      },
+      {
+        "stage": "document_retrieval",
+        "channel": "bm25",
+        "candidate_count": 4
+      },
+      {
+        "stage": "evidence_selection",
+        "selected_count": 4,
+        "generation": "extractive"
+      },
+      {
+        "stage": "visual_page_routing",
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+        "candidate_document_ids": [
+          "revenue-policy"
+        ],
+        "status": "no_complete_grid_key",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 4000,
+          "source_bytes": 41943040,
+          "pages_per_source": 1000,
+          "source_bytes_per_source": 20971520,
+          "index_build_seconds_per_source": 60,
+          "index_bytes_per_source": 16777216,
+          "cache_bytes": 134217728,
+          "cache_entries": 128
+        },
+        "candidate_pages": 1,
+        "page_indexes": [
+          {
+            "document_id": "revenue-policy",
+            "status": "built_complete",
+            "source_sha256": "3ac170a692a664caefce8a85975a3043243fc5b72a80b8a57cf891d3825dd60b",
+            "page_count": 1,
+            "complete": true,
+            "extractor_version": "PyMuPDF:1.28.2:lines_strict:unrotated:algorithm:dd0203f9bf6fbcedd2a6cc0e94d2df14ea6084c35705ca6c18a7c0ce1459d938",
+            "coverage": "all_pages_native_strict_grid_not_ocr_or_charts"
+          }
+        ],
+        "complete_key_matches": 0,
+        "scope_rejections": []
+      },
+      {
+        "stage": "visual_chart_routing",
+        "status": "no_supported_native_chart_key",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 1000,
+          "total_bytes": 41943040,
+          "source_bytes": 20971520,
+          "seconds": 60
+        },
+        "candidate_document_ids": [
+          "revenue-policy"
+        ],
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+        "candidate_pages": 1,
+        "complete_candidate_scan": true,
+        "complete_key_matches": 0,
+        "scope_rejections": [],
+        "scan_seconds": 0.002
+      },
+      {
+        "stage": "native_aligned_table_routing",
+        "status": "not_applicable",
+        "model_requests_attempted": 0,
+        "model_audits": []
+      },
+      {
+        "stage": "native_total_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_page_answer_dossier",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_comparison_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_selection_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "generation_evidence",
+        "selected_count": 3,
+        "total_chars": 68,
+        "omitted": [
+          {
+            "citation_id": 1,
+            "reason": "native_complete_context_unavailable"
+          }
+        ],
+        "max_items": 8,
+        "max_chars_per_item": 1800,
+        "max_native_chars_per_item": 3200,
+        "max_total_chars": 12000
+      },
+      {
+        "stage": "grounded_generation",
+        "status": "validated",
+        "model": "deepseek-flash"
+      },
+      {
+        "stage": "typed_answer_projection",
+        "status": "unsupported",
+        "reason": "question_contract_unsupported",
+        "original_answer_retained": true
+      }
+    ],
+    "audit_id": "5bfde9fe2d395222ed050ba9",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "销售额的统计口径是什么"
+    },
+    "routing": {
+      "selected_route": "document",
+      "label": "资料问答",
+      "strategy": "source_query",
+      "reason": "检索原文并核对来源。",
+      "context_mode": "independent",
+      "model_enabled": true
+    },
+    "failure_trace": [],
+    "task_verification": {
+      "execution_status": "ok",
+      "independent_whole_question_success": "not_verified_by_status",
+      "first_failure": null
+    }
+  }
+}

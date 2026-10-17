@@ -1,0 +1,1226 @@
+{
+  "task": {
+    "id": "d07",
+    "split": "development",
+    "workflow": "SQL",
+    "question": "2025年华东销售额",
+    "variant": "normal"
+  },
+  "arm": "D",
+  "response": {
+    "status": "ok",
+    "question": "2025年华东销售额",
+    "effective_question": "2025年华东销售额",
+    "route": "sql",
+    "planner_source": "model_validated",
+    "session_id": "new-d07",
+    "context_turns": 0,
+    "state": {
+      "route": "sql",
+      "metrics": [],
+      "filters": [
+        {
+          "column": "order_date",
+          "operator": "RANGE",
+          "value": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "source_text": "2025年",
+          "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+          "table": "sales_orders"
+        },
+        {
+          "column": "region",
+          "operator": "=",
+          "value": "华东",
+          "source_text": "华东",
+          "explanation": "限定 region ∈ {华东}",
+          "table": "sales_orders"
+        }
+      ],
+      "dimensions": [],
+      "clarification_code": null,
+      "pending_question": null,
+      "executed_sql_context": {
+        "payload": {
+          "question": "2025年华东销售额",
+          "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "华东",
+            100
+          ],
+          "source_revision": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51"
+        },
+        "sha256": "7af63aa4cc97e5dd062730d8673fc45ebcf449ef906fff7e2cc0bc248658fad7"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "result_state": "rows",
+      "notices": [],
+      "question": "2025年华东销售额",
+      "rewritten_question": "2025年华东销售额",
+      "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华东",
+        100
+      ],
+      "columns": [
+        "销售额"
+      ],
+      "rows": [
+        {
+          "销售额": 4868.0
+        }
+      ],
+      "plan": {
+        "table": "sales_orders",
+        "metric_table": "sales_orders",
+        "metric_column": "sales_amount",
+        "metric_function": "SUM",
+        "metric_label": "销售额",
+        "analysis_mode": "aggregate",
+        "dimensions": [],
+        "dimension_tables": {},
+        "dimension_transforms": {},
+        "dimension_labels": {},
+        "filters": [
+          {
+            "column": "order_date",
+            "operator": "RANGE",
+            "value": [
+              "2025-01-01",
+              "2026-01-01"
+            ],
+            "source_text": "2025年",
+            "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+            "table": "sales_orders"
+          },
+          {
+            "column": "region",
+            "operator": "=",
+            "value": "华东",
+            "source_text": "华东",
+            "explanation": "限定 region ∈ {华东}",
+            "table": "sales_orders"
+          }
+        ],
+        "having": null,
+        "links": [
+          {
+            "source_text": "销售额",
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "role": "metric",
+            "score": 0.82,
+            "matched_alias": "销售额",
+            "metric_function": "SUM"
+          }
+        ],
+        "join_tables": [],
+        "join_conditions": [],
+        "join_path": [],
+        "join_alternatives": [],
+        "order_desc": true,
+        "limit": 100,
+        "complete_results": false,
+        "semantic_row_limit": null,
+        "preview_row_limit": null,
+        "confidence": 0.58,
+        "rewritten_question": "2025年华东销售额",
+        "comparison_mode": "none",
+        "comparison_period": {},
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": [],
+        "assumptions": [
+          "日期参数格式：iso_text",
+          "使用表 sales_orders 的只读聚合查询"
+        ],
+        "planner_source": "rules",
+        "top_n": null,
+        "fan_out": false,
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华东",
+            "销售额"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "intent_audit": {
+          "question": "2025年华东销售额",
+          "metric": {
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "function": "SUM",
+            "label": "销售额"
+          },
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华东",
+              "source_text": "华东",
+              "explanation": "限定 region ∈ {华东}",
+              "table": "sales_orders"
+            }
+          ],
+          "time_range": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "group_by": [],
+          "comparison": "none",
+          "comparison_window": null,
+          "top_n": null,
+          "confidence": 0.58,
+          "unresolved": [],
+          "execution_allowed": true,
+          "planner_source": "rules",
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "grain_audit": {},
+          "semantic_audit": {
+            "date_storage_formats": {
+              "sales_orders.order_date": "iso_text"
+            }
+          }
+        },
+        "planner_audit": {},
+        "model_plan_diagnostics": {},
+        "metrics": [],
+        "derived_metrics": [],
+        "order_metric": null,
+        "grain_audit": {},
+        "semantic_audit": {
+          "date_storage_formats": {
+            "sales_orders.order_date": "iso_text"
+          }
+        },
+        "output_metrics": []
+      },
+      "explanation": [
+        "识别指标：销售额（SUM）",
+        "查询表：sales_orders",
+        "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+        "限定 region ∈ {华东}",
+        "日期参数格式：iso_text",
+        "使用表 sales_orders 的只读聚合查询",
+        "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+      ],
+      "provenance": {
+        "source_type": "structured_database",
+        "database": "mixed.sqlite",
+        "table": "sales_orders",
+        "row_count": 1,
+        "row_limit": 100,
+        "result_completeness": "within_return_limit",
+        "query_hash": "8afdfacea252cfd1",
+        "field_links": [
+          {
+            "source_text": "销售额",
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "role": "metric",
+            "score": 0.82,
+            "matched_alias": "销售额",
+            "metric_function": "SUM"
+          }
+        ],
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华东",
+            "销售额"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "consistency": "sqlite_read_transaction",
+        "source_revision": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+        "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+        "grain_audit": {},
+        "result_cells": [
+          {
+            "row": 0,
+            "column": "销售额",
+            "query_hash": "8afdfacea252cfd1",
+            "locator": {
+              "type": "sql_result",
+              "row": 0,
+              "column": "销售额"
+            }
+          }
+        ],
+        "output_cardinality": {
+          "status": "verified",
+          "maximum_output_rows": 1,
+          "method": "executed_select_scope_cardinality",
+          "verified_singleton_scopes": 1,
+          "aggregate_functions": [
+            "SUM"
+          ],
+          "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+        }
+      },
+      "clarification": null,
+      "clarification_code": null,
+      "clarification_options": [],
+      "source_tables": {
+        "database": "mixed.sqlite",
+        "source_revision": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+        "query_hash": "8afdfacea252cfd1",
+        "source_question": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华东",
+          100
+        ],
+        "reused_result": false,
+        "tables": [
+          {
+            "name": "sales_orders",
+            "used_columns": [
+              "order_date",
+              "region",
+              "sales_amount"
+            ]
+          }
+        ],
+        "basis": "executed_sql_ast_physical_sources"
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "model_validated",
+        "route": "sql",
+        "latency_ms": 1194.387,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "validation": "complete",
+            "errors": [],
+            "api_audit": {
+              "provider": "deepseek_chat_completions",
+              "model": "deepseek-flash",
+              "operation": "omni_plan",
+              "call_number": 56,
+              "status": "completed",
+              "http_status": 200,
+              "temperature": 0,
+              "thinking": "disabled",
+              "max_output_tokens": 5000,
+              "input_tokens": 4127,
+              "output_tokens": 30,
+              "transport_attempts": 1,
+              "usage": {
+                "prompt_tokens": 4127,
+                "completion_tokens": 30,
+                "total_tokens": 4157,
+                "prompt_tokens_details": {
+                  "cached_tokens": 3968
+                },
+                "prompt_cache_hit_tokens": 3968,
+                "prompt_cache_miss_tokens": 159
+              },
+              "response_model": "deepseek-flash",
+              "finish_reason": "stop",
+              "model_verified": true,
+              "wall_ms": 1181.641
+            }
+          }
+        ],
+        "task_experience": {
+          "state": {
+            "task_features": {
+              "workflow": null,
+              "years": [
+                "2025"
+              ],
+              "required_operations": {
+                "version_comparison_dates": []
+              }
+            },
+            "available_tools": [
+              "calculate",
+              "compare",
+              "document_cell",
+              "document_fact",
+              "document_formula",
+              "policy_select",
+              "search",
+              "search_fact",
+              "sql"
+            ],
+            "candidates": [
+              {
+                "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+                "reason": "task_not_applicable",
+                "experience": null
+              }
+            ],
+            "completed_steps": [],
+            "budget": {
+              "max_items": 1,
+              "max_characters": 3000
+            },
+            "failure": null,
+            "source_versions": {
+              "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+              "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+              "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+              "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+              "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+              "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+              "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+            }
+          },
+          "action": {
+            "type": "generic_planning_checklist"
+          },
+          "legal_actions": [
+            {
+              "type": "no_experience"
+            },
+            {
+              "type": "request_clarification"
+            }
+          ],
+          "selected": [],
+          "advice": {
+            "kind": "ordinary_planning_advice",
+            "checklist": [
+              "Preserve every user operation, source, region and time constraint.",
+              "Generate a new complete dependency graph using current question, schema and document evidence.",
+              "Read current formulas and typed cells; never reuse historical values.",
+              "Bind SQL result dimensions to retrieval and verify each source. Clarify if unavailable."
+            ]
+          },
+          "retrieval_ms": 4.518
+        },
+        "task_experience_observation": {
+          "event_id": "experience-cac4ee60953349f79c9a609e9c7af226",
+          "stored": true
+        }
+      }
+    ],
+    "audit_id": "ae65f8bbf219dcb6d685d915",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华东销售额"
+    },
+    "routing": {
+      "selected_route": "sql",
+      "label": "数据库问数",
+      "strategy": "source_query",
+      "reason": "查询所需指标和数据。",
+      "context_mode": "independent",
+      "model_enabled": true
+    },
+    "query_reference_id": "q_9ab8ba8c05ad44589fa9757407b8d6ec"
+  },
+  "model_calls": [
+    {
+      "context": {
+        "question": "2025年华东销售额",
+        "actual_question": "2025年华东销售额",
+        "server_context_resolution": {
+          "mode": "independent",
+          "actual_question": "2025年华东销售额"
+        },
+        "history": [],
+        "source_intent_hint": "sql",
+        "reference_date": "2026-10-09",
+        "required_operations": {
+          "version_comparison_dates": []
+        },
+        "database_schema": {
+          "tables": [
+            {
+              "name": "finance_loans",
+              "columns": [
+                {
+                  "name": "loan_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "loan_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "loan_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "interest_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "loan_id"
+                ]
+              ]
+            },
+            {
+              "name": "sales_orders",
+              "columns": [
+                {
+                  "name": "order_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "order_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "channel",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "quantity",
+                  "data_type": "INTEGER",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "sales_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "cost_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "gross_profit",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "product_name",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "order_id"
+                ]
+              ]
+            }
+          ],
+          "source": "sqlite_read_only"
+        },
+        "documents": [
+          {
+            "id": "policy",
+            "title": "指标与计划",
+            "modality": "txt",
+            "text": "目标销售额 = 基准销售额 * (1 + 目标增长率)\n客单价 = 销售额 / 订单数\n统计说明:按指定年度和地区重新查询数据库。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 65,
+                "locator": "lines:1-3",
+                "chunk_id": "30f316ceeb9c9573822db935"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "alt_policy",
+            "title": "年度预算公式",
+            "modality": "txt",
+            "text": "目标销售额 = 基准销售额 * (1 + 目标增长率)\n年度预算需读取本期参数,基准年度由用户指定。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 50,
+                "locator": "lines:1-2",
+                "chunk_id": "70e46598735bd86c447de349"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "targets",
+            "title": "区域计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 12%\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 10%",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 54,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "18866d7aa0a4908b88df37ac"
+              },
+              {
+                "text_start": 55,
+                "text_end": 90,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "b6ff553c802374af9a8965ff"
+              },
+              {
+                "text_start": 91,
+                "text_end": 145,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "cde0223868881655658ce172"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.12
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.1
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "revised",
+            "title": "修订计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 18%\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 16%",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 54,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "5f77724053e06f8d76d61b51"
+              },
+              {
+                "text_start": 55,
+                "text_end": 90,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "ab4704c757495b0e832c9558"
+              },
+              {
+                "text_start": 91,
+                "text_end": 145,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "9798ef123d3f28d2ac78d30f"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.18
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.16
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "methods",
+            "title": "区域团队方法",
+            "modality": "txt",
+            "text": "华东冠军团队的方法:每日核验库存,按客户需求安排补货。华东团队的复核流程:每周检查需求记录。\n华南冠军团队的方法:每周复核渠道订单。华南团队的复核流程:每日核验渠道凭证。\n华北冠军团队的方法:按周汇总客户需求并协调仓库。华北团队的复核流程:双人核对订单清单。\n西南冠军团队的方法:按月检查品类库存并跟进补货。西南团队的复核流程:逐项检查补货单据。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 173,
+                "locator": "lines:1-4",
+                "chunk_id": "5adf4bb5d746bbad205906a0"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          }
+        ],
+        "task_experience": {
+          "kind": "ordinary_planning_advice",
+          "checklist": [
+            "Preserve every user operation, source, region and time constraint.",
+            "Generate a new complete dependency graph using current question, schema and document evidence.",
+            "Read current formulas and typed cells; never reuse historical values.",
+            "Bind SQL result dimensions to retrieval and verify each source. Clarify if unavailable."
+          ]
+        }
+      },
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string",
+            "enum": [
+              "sql",
+              "document",
+              "fusion",
+              "clarify"
+            ]
+          },
+          "effective_question": {
+            "type": "string"
+          },
+          "clarification": {
+            "type": "string"
+          },
+          "tasks_json": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "route",
+          "effective_question",
+          "clarification",
+          "tasks_json"
+        ],
+        "additionalProperties": false
+      },
+      "audit": {
+        "provider": "deepseek_chat_completions",
+        "model": "deepseek-flash",
+        "operation": "omni_plan",
+        "call_number": 56,
+        "status": "completed",
+        "http_status": 200,
+        "temperature": 0,
+        "thinking": "disabled",
+        "max_output_tokens": 5000,
+        "input_tokens": 4127,
+        "output_tokens": 30,
+        "transport_attempts": 1,
+        "usage": {
+          "prompt_tokens": 4127,
+          "completion_tokens": 30,
+          "total_tokens": 4157,
+          "prompt_tokens_details": {
+            "cached_tokens": 3968
+          },
+          "prompt_cache_hit_tokens": 3968,
+          "prompt_cache_miss_tokens": 159
+        },
+        "response_model": "deepseek-flash",
+        "finish_reason": "stop",
+        "model_verified": true,
+        "wall_ms": 1181.641
+      },
+      "assistant_content": "{\"route\": \"sql\", \"effective_question\": \"2025年华东销售额\", \"clarification\": \"\", \"tasks_json\": \"[]\"}",
+      "output": {
+        "route": "sql",
+        "effective_question": "2025年华东销售额",
+        "clarification": "",
+        "tasks_json": "[]"
+      }
+    }
+  ],
+  "decision": {
+    "state": {
+      "task_features": {
+        "workflow": null,
+        "years": [
+          "2025"
+        ],
+        "required_operations": {
+          "version_comparison_dates": []
+        }
+      },
+      "available_tools": [
+        "calculate",
+        "compare",
+        "document_cell",
+        "document_fact",
+        "document_formula",
+        "policy_select",
+        "search",
+        "search_fact",
+        "sql"
+      ],
+      "candidates": [
+        {
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "reason": "task_not_applicable",
+          "experience": null
+        }
+      ],
+      "completed_steps": [],
+      "budget": {
+        "max_items": 1,
+        "max_characters": 3000
+      },
+      "failure": null,
+      "source_versions": {
+        "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+        "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+        "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+        "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+        "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+        "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+        "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+      }
+    },
+    "action": {
+      "type": "generic_planning_checklist"
+    },
+    "legal_actions": [
+      {
+        "type": "no_experience"
+      },
+      {
+        "type": "request_clarification"
+      }
+    ],
+    "selected": [],
+    "advice": {
+      "kind": "ordinary_planning_advice",
+      "checklist": [
+        "Preserve every user operation, source, region and time constraint.",
+        "Generate a new complete dependency graph using current question, schema and document evidence.",
+        "Read current formulas and typed cells; never reuse historical values.",
+        "Bind SQL result dimensions to retrieval and verify each source. Clarify if unavailable."
+      ]
+    },
+    "retrieval_ms": 4.518
+  },
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "running",
+      "input": {
+        "query": "2025年华东销售额",
+        "top_k": 20
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "running",
+      "input": {
+        "question": "2025年华东销售额"
+      },
+      "executed": false,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华东",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "result_state": "rows",
+        "row_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "sql"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-5"
+    }
+  ],
+  "wall_ms": 1210.395,
+  "source_versions": {
+    "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+    "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+    "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+    "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+    "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+    "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+  },
+  "model_call_count": 1,
+  "input_tokens": 4127,
+  "output_tokens": 30,
+  "tool_calls": 4,
+  "pool": [
+    {
+      "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+      "memory_type": "task_experience",
+      "term": "experience_sql_document",
+      "content": "Source-bound method; replan from current request.",
+      "binding": {},
+      "scope": {
+        "deployment": "m1c",
+        "project": "competition-demo",
+        "data_sources": [
+          "alt_policy",
+          "database",
+          "methods",
+          "next_targets",
+          "policy",
+          "revised",
+          "targets"
+        ]
+      },
+      "provenance": {
+        "authority": "trusted_local_review",
+        "candidate_digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+        "candidate_id": "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+        "confirmation_id": "seed-review-1",
+        "evidence": {
+          "event_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+          "trace_sha256": "578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+          "verifier_sha256": "c180c255c8393da9e1da7f830c1d3508fef4559fec349c4180b18a4cb5a5b9a5"
+        },
+        "evidence_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+        "origin": "agent_execution",
+        "review": {
+          "candidate_id": "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "decision": "confirm",
+          "digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "reason": "Independent whole-task fixture verification",
+          "request_id": "seed-review-1",
+          "reviewed_at": "2026-10-10T12:00:00+00:00",
+          "reviewer": {
+            "account": "viva",
+            "configuration_sha256": "d4c76babc2aeb15726a1ae89f9354bf9bfde1eeb354fdf7155720bc131285187",
+            "host": "a100",
+            "memory_path": "/home/viva/omni-agent/runtime/m1c-formal-final-20261010/seed-memory.sqlite",
+            "scope_key": "{\"data_sources\":[\"alt_policy\",\"database\",\"methods\",\"next_targets\",\"policy\",\"revised\",\"targets\"],\"deployment\":\"m1c\",\"project\":\"competition-demo\"}",
+            "uid": 1001
+          },
+          "source_version": {
+            "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+            "sources": {
+              "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+              "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+            }
+          },
+          "supersedes": null,
+          "validation": {
+            "candidate_digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+            "checked_at": "2026-10-10T12:00:00+00:00",
+            "checks": "typed_experience+immutable_verified_trace+shared_context_validity",
+            "reasons": [],
+            "valid": true
+          }
+        },
+        "verification_id": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea"
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+          "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+        }
+      },
+      "valid_from": "2026-10-10T12:00:00+00:00",
+      "valid_to": null,
+      "verification_state": "confirmed",
+      "created_at": "2026-10-10T12:00:00+00:00",
+      "updated_at": "2026-10-10T12:00:00+00:00",
+      "task_trace_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+      "experience": {
+        "documents": [
+          "methods"
+        ],
+        "execution_authority": "none",
+        "formula_labels": [],
+        "on_missing_or_ambiguous": "clarify",
+        "rebinding": [
+          "current_request_time_region_metric_and_all_explicit_operations",
+          "fresh_read_only_sql_results",
+          "current_document_formula_and_typed_cells",
+          "verified_output_references_no_literal_historical_values"
+        ],
+        "steps": [
+          {
+            "argument_sources": [
+              "current_question_or_current_source"
+            ],
+            "depends_on": [],
+            "role": "step_0",
+            "tool": "sql"
+          },
+          {
+            "argument_sources": [
+              "current_question_or_current_source",
+              "step_0.verified_output"
+            ],
+            "depends_on": [
+              "step_0"
+            ],
+            "role": "step_1",
+            "tool": "search"
+          }
+        ],
+        "version": 1,
+        "workflow": "sql_document"
+      }
+    }
+  ],
+  "events": [
+    {
+      "action": {
+        "type": "generic_planning_checklist"
+      },
+      "event_id": "experience-cac4ee60953349f79c9a609e9c7af226",
+      "feedback": {
+        "execution_status": "ok",
+        "failure_reason": null,
+        "independent_task_verified": false,
+        "planner_source": "model_validated",
+        "retrieval_ms": 4.518,
+        "tool_calls": 0
+      },
+      "kind": "task_experience_decision",
+      "legal_actions": [
+        {
+          "type": "no_experience"
+        },
+        {
+          "type": "request_clarification"
+        }
+      ],
+      "promotion": "none",
+      "state": {
+        "available_tools": [
+          "calculate",
+          "compare",
+          "document_cell",
+          "document_fact",
+          "document_formula",
+          "policy_select",
+          "search",
+          "search_fact",
+          "sql"
+        ],
+        "budget": {
+          "max_characters": 3000,
+          "max_items": 1
+        },
+        "candidates": [
+          {
+            "experience": null,
+            "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+            "reason": "task_not_applicable"
+          }
+        ],
+        "completed_steps": [],
+        "failure": null,
+        "source_versions": {
+          "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+          "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+          "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+          "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+          "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+          "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+          "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+        },
+        "task_features": {
+          "required_operations": {
+            "version_comparison_dates": []
+          },
+          "workflow": null,
+          "years": [
+            "2025"
+          ]
+        }
+      }
+    }
+  ],
+  "score": {
+    "task_success": true,
+    "operation_coverage": true,
+    "result_correct": true,
+    "source_correct": true,
+    "clarification_correct": null
+  },
+  "selection_correct": null,
+  "stale_or_wrong_use": false,
+  "controller_feedback": {
+    "task_success": true,
+    "operation_coverage": true,
+    "result_correct": true,
+    "source_correct": true,
+    "clarification_correct": null,
+    "cost": {
+      "model_calls": 1,
+      "input_tokens": 4127,
+      "output_tokens": 30,
+      "tool_calls": 4,
+      "wall_ms": 1210.395
+    },
+    "failure_reason": null,
+    "trained_policy": false
+  }
+}

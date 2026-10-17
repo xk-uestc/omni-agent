@@ -1,0 +1,198 @@
+{
+  "response": {
+    "status": "clarification",
+    "question": "2025年华东青松额是多少",
+    "effective_question": "2025年华东青松额是多少",
+    "route": "clarify",
+    "session_id": "g05-target",
+    "result": {
+      "status": "clarification",
+      "clarification": "记忆口径、当前来源或本轮条件存在未核实之处，请确认业务指标及筛选范围。",
+      "clarification_code": "memory_unverified",
+      "sql": null,
+      "rows": []
+    },
+    "trace": [],
+    "context_resolution": {
+      "mode": "memory_binding_rejected",
+      "executed": false,
+      "context_preserved": true
+    },
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "memory_id": "unverified",
+          "term": "青松额",
+          "reason": "unverified"
+        }
+      ],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 1.984,
+      "trace_id": "719a8dfebf534f7ab6b393fc2efb205d",
+      "observe_ms": 1.173,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "clarification",
+        "model_planning_failed": false
+      }
+    },
+    "failure_trace": [
+      {
+        "version": "foundation-failure-v1",
+        "category": "executor",
+        "phase": "execution",
+        "code": "memory_unverified",
+        "task_id": null,
+        "retryable": false,
+        "independent_task_success": "not_verified"
+      }
+    ],
+    "task_verification": {
+      "execution_status": "clarification",
+      "independent_whole_question_success": "not_verified_by_status",
+      "first_failure": {
+        "version": "foundation-failure-v1",
+        "category": "executor",
+        "phase": "execution",
+        "code": "memory_unverified",
+        "task_id": null,
+        "retryable": false,
+        "independent_task_success": "not_verified"
+      }
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 3.268,
+  "trace": [
+    {
+      "stage": "memory",
+      "tool": "memory.recall",
+      "status": "success",
+      "executed": true,
+      "call_id": "719a8dfebf534f7ab6b393fc2efb205d:memory.recall",
+      "trace_id": "719a8dfebf534f7ab6b393fc2efb205d",
+      "output": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [
+          {
+            "memory_id": "unverified",
+            "term": "青松额",
+            "reason": "unverified"
+          }
+        ],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 1.984,
+        "trace_id": "719a8dfebf534f7ab6b393fc2efb205d"
+      }
+    },
+    {
+      "stage": "memory",
+      "tool": "memory.observe",
+      "status": "success",
+      "executed": true,
+      "call_id": "719a8dfebf534f7ab6b393fc2efb205d:memory.observe",
+      "trace_id": "719a8dfebf534f7ab6b393fc2efb205d",
+      "output": {
+        "stored": true,
+        "promotion": "none",
+        "category": "clarification",
+        "model_planning_failed": false
+      }
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "clarification",
+        "route": "clarify"
+      }
+    }
+  ],
+  "memory": {
+    "recall_count": 1,
+    "selected": [],
+    "consumed": [],
+    "decisions": [
+      {
+        "memory_id": "unverified",
+        "term": "青松额",
+        "reason": "unverified"
+      }
+    ],
+    "degraded": false,
+    "bindings": [],
+    "recall_ms": 1.984,
+    "trace_id": "719a8dfebf534f7ab6b393fc2efb205d",
+    "observe_ms": 1.173,
+    "observe": {
+      "stored": true,
+      "promotion": "none",
+      "category": "clarification",
+      "model_planning_failed": false
+    }
+  },
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 0,
+  "memory_operations": 2,
+  "id": "g05",
+  "category": "unverified_guard",
+  "score": {
+    "safe_abstention": true,
+    "executed_sql": false,
+    "answer_rows_present": false,
+    "status": "clarification",
+    "limitation": "Checks output abstention only; recall/write isolation cannot be measured without adapter instrumentation."
+  },
+  "target_history_before": 0,
+  "target_session": "g05-target",
+  "preparation_session": "g05-preparation",
+  "preparation": [],
+  "candidate_ids": [
+    "unverified"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "b10cbc15c788fc67180be28e25c7e31842d6f349743e7223f3722019dd6dd89f",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": null,
+  "memory_store_bytes_before": 65536,
+  "memory_store_bytes_after": 65536,
+  "archived_events": [
+    {
+      "category": "clarification",
+      "consumed": [],
+      "event_id": "719a8dfebf534f7ab6b393fc2efb205d",
+      "model_planning_failed": false,
+      "promotion": "none",
+      "question_sha256": "29694b66ae9a04924ed7e119c12a7c461ab6422224c9c0083ef355d74f299f0c",
+      "rejected": [
+        {
+          "memory_id": "unverified",
+          "reason": "unverified"
+        }
+      ],
+      "selected": [],
+      "source_versions": {},
+      "verification": {
+        "execution_verified": false,
+        "independent_task_verified": false
+      }
+    }
+  ],
+  "pass": true
+}

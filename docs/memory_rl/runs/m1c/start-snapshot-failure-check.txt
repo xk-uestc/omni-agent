@@ -1,0 +1,86 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+___________ test_metric_display_alias_is_bound_to_same_physical_sum ____________
+
+engine = <backend.nl2sql.engine.Nl2SqlEngine object at 0x777fd9fd3590>
+
+    def test_metric_display_alias_is_bound_to_same_physical_sum(engine):
+        tasks, bundle, results = prepared(engine)
+        result = results['winner']
+        replace_self_consistent_sql_result(engine, result,
+            'SELECT region, "销售额" AS "总销售额", "排名" FROM (' + result['sql'] + ')', result['parameters'])
+        result['plan']['metric_label'] = '总销售额'
+>       assert validate(engine, tasks, bundle, results)['status'] == 'verified'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tmp/omni-m1c-start-snapshot/ict-track8/tests/test_sql_document_binding.py:388: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/omni-m1c-start-snapshot/ict-track8/tests/test_sql_document_binding.py:41: in validate
+    return validate_sql_document_search(bundle, task=tasks[1], tasks=tasks, results=results, engine=engine)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/tmp/omni-m1c-start-snapshot/ict-track8/backend/sql_document_binding.py:280: in validate_sql_document_search
+    != _physical_rows(rows, result.get('columns', []), actual_bindings)):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/tmp/omni-m1c-start-snapshot/ict-track8/backend/sql_document_binding.py:79: in _physical_rows
+    _reject()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'sql_document_scope_unverified'
+
+    def _reject(code='sql_document_scope_unverified'):
+>       raise SourceConstraintError(code)
+E       backend.fusion_constraints.SourceConstraintError: 跨源查询的来源范围尚未核验，请明确各数据库取数的表、指标、时间和包含/排除条件。
+
+/tmp/omni-m1c-start-snapshot/ict-track8/backend/sql_document_binding.py:15: SourceConstraintError
+_______________ test_new_topic_and_reset_do_not_inherit_sources ________________
+
+agent = <backend.omni_agent.OmniAgent object at 0x777fd825f5f0>
+
+    def test_new_topic_and_reset_do_not_inherit_sources(agent):
+        assert agent.query(FIRST, session_id='topic')['status'] == 'ok'
+        result = agent.query('换个主题：2024年华北地区销售额', session_id='topic')
+        assert result['context_resolution']['mode'] == 'independent'
+        result = agent.query('那华南呢', session_id='topic', reset_context=True)
+        assert result['context_turns'] == 0
+>       assert result['context_resolution']['mode'] == 'independent'
+E       AssertionError: assert 'missing_followup_context' == 'independent'
+E         
+E         - independent
+E         + missing_followup_context
+
+/tmp/omni-m1c-start-snapshot/ict-track8/tests/test_fusion_history.py:129: AssertionError
+_ test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification _
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-30/test_model_sees_verified_sql_f0')
+
+    def test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification(tmp_path):
+        engine = Nl2SqlEngine(initialize_database(tmp_path / 'sales.sqlite'))
+        agent = OmniAgent(engine, KnowledgeStore(tmp_path / 'knowledge'), ConversationStore())
+        first = agent.query('2024年华南地区销售额', session_id='known')
+        assert first['status'] == 'ok'
+        class Planner:
+            audit = {'status': 'completed', 'http_status': 200}
+            def __init__(self):
+                self.contexts = []
+            def generate(self, instructions, context, schema, **kwargs):
+                self.contexts.append(context)
+                assert '2024年' in context['question'] and '华南' in context['question'] and '订单数' in context['question']
+                assert context['actual_question'] == '那订单数呢'
+                return {'route': 'clarify' if len(self.contexts) == 1 else 'sql',
+                        'effective_question': context['question'], 'clarification': '请提供年份地区', 'tasks_json': '[]'}
+        planner = Planner()
+        agent.client = planner
+        result = agent.query('那订单数呢', session_id='known')
+        assert result['status'] == 'ok' and result['route'] == 'sql'
+>       assert result['planner_source'] == 'model_validated' and len(planner.contexts) == 2
+E       AssertionError: assert ('rules_basic' == 'model_validated'
+E         
+E         - model_validated
+E         + rules_basic)
+
+/tmp/omni-m1c-start-snapshot/ict-track8/tests/test_omni_agent.py:99: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../tmp/omni-m1c-start-snapshot/ict-track8/tests/test_sql_document_binding.py::test_metric_display_alias_is_bound_to_same_physical_sum
+FAILED ../../../tmp/omni-m1c-start-snapshot/ict-track8/tests/test_fusion_history.py::test_new_topic_and_reset_do_not_inherit_sources
+FAILED ../../../tmp/omni-m1c-start-snapshot/ict-track8/tests/test_omni_agent.py::test_model_sees_verified_sql_followup_before_route_selection_and_repairs_spurious_clarification
+3 failed in 0.78s

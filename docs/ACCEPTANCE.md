@@ -1,5 +1,9 @@
 # 官方赛题全量验收清单
 
+2026-10-11真实文档续轮：DeepSeek视觉API接入现有原页问答回退路径，对公开OHR开发扫描PDF三道表格题做真实Agent调用；Sales/Use Tax答案完整链路一次EM/F1 1/1、同题重试一次安全回退，CIP行/总额经模型选取和复核后由当前服务器数值投影达到EM/F1 1/1，Events Center债务题复核拒绝。另有同题原页分支重放再次通过，3个定位框/SHA/8项审核均可回放。29次API调用，专项11通过。不是OHR聚合成绩；公式参数计算、多页复杂表格、三类真实跨源链路、保留集和整体赛题要求仍未完成。详见`foundation/REAL_DOCUMENT_CAPABILITY_RESULTS.md`与`foundation/REAL_DOCUMENT_END_TO_END.md`。
+
+2026-10-11 F3生产RAG实质改进：正文条件绑定、显式来源内关联、有界原始表bundle已接入。冻结自编困难集Top-K开发/保留完整均6→10/21、Recall .4325/.4167→.5754/.5595、错绑6→0/3；补证完整16/13，实际答案入口证据完整15/12。保留机构解析泛化不足、无证据污染各3/3、真实答案模型not_run。F1旧32及16/185/22保持，相关934通过/6既有失败；不代表公开基准、整体赛题完成或RL ready。详见 [F3_RESULTS.md](foundation/F3_RESULTS.md)，生产源码冻结 `67c4d3963d7078edeb9c1d5f7c58981caa072ffd`；停止等待ChatGPT审核。
+
 2026-10-06 Round36终版：接入长列表极值（最多256项）、原件多项合并占比与最高项＋指定项占比、原生分散图表标签及明确行名字面角色绑定；全部仍核对来源、列、期间、单位和独立整问审核。修复图表候选干扰金额倍率读取。最终保留OHR36题EM12/36、token F1 .517178944，较Round35的12/36、.537417028严格匹配无净增、F1下降.020238083；3题转对、3题退步，不挑历史最佳、不降低评分。复合占比算出≈29.91%仍按原评分失败；普通金额题$22.4 bn恢复。终版全量4902 passed、0 failed、3 skipped、12 subtests passed、4既有警告，源码起止及当前380个文件SHA一致；既有浏览器工具检查19项通过。新六题同原件6/6仅覆盖最后过滤补丁之前，不代替全套。原36题是已暴露OHR开发子集，非赛题官方盲测。详见`NATIVE_COMPOSITE_ANSWERS_ROUND36_20261006.md`及终版原始报告；工程预估仍59—73，RAG≥70%与整体80分目标未证明，正式部署及远端版本另核对。
 
 2026-10-06 Round34—35：原生多层金融表、同源Boolean+金额变化、来源前缀问法与服务端argmax/argmin已接入。相同6题/原件的极值答案严格匹配1/6→6/6，原件运算重放0/6→6/6；相同8题/16原件的显式报表版本查询0/8→8/8。旧无版本金融集合存在同年冲突，0/8与3/8记录保留，不能当作无歧义准确率。完整OHR36题终版EM12/36、F1 .537417，相对Round33 EM11/36、F1 .516085仅小幅改善；不拼接最佳答案，不归因于单个补丁。相关Python90项、前端41项、实际Edge工具与原页定位19项通过；终版全量4870 passed、0 failed、3 skipped、12 subtests passed、4既有警告，源码稳定。8030已加载gpt-6-luna版本，代码与全部保留报告一并交付。详见`NATIVE_FINANCE_EXTREMA_ROUND35_20261006.md`，工程预估仍59—73，整体80分目标未达成。
@@ -486,3 +490,19 @@ Round24完整回归已结束：`LOCAL_REGRESSION_ROUND24_NATIVE_ROWS_20261006.js
 
 
 2026-10-09 NL2SQL 通用字段理解与历史上下文升级最终验收：按真实Schema/业务概念/指标口径和可信历史关联字段，包含口语、匿名/改名Schema迁移、总额/单件及整体/组成区分、净/毛利润、派生公式凭证及保留原筛选的字段澄清。固定自建185回合 88/185→185/185，原88项成功0倒退；69文件相关回归2121 passed/2 skipped/0 failed，源码和测试稳定；独立定义统计21/21、澄清22/22、前端来源高亮7/7、API安全5/5。两版共同正确11题各10次串行高精度实测：中位308.140→228.543ms、P95 317.185→241.377ms，各题未观察到退化；仅代表本地NL2SQL，不计外部API或RAG。8031模型模式进程22856已加载最终源码，本地HTTP32/32，公网首次31/32含一次HTTPError，失败题3/3及完整重测32/32，全部旧失败保留；本地/公网首页及health均200。详见benchmarks/context_semantics_20261009/report.md与docs/SCHEMA_FIELD_UNDERSTANDING_20261009.md。不是官方/盲测或国家一等奖成绩，未标记整体赛题全部完成。
+
+
+2026-10-10 F1基础设施验收：仅memory分支、固定后端a37c0728deacf1bc01a6e1458ac3826a2d570e2e，10/100/500原生页、1千/1万/10万SQL行本地真实路径与4并发实验、来源生命周期/锁/坏库/fake503/SSE超时证据已归档。单来源读取300→3chunk、8次热中位约4.00→1.87ms；500页全库约700ms仍是瓶颈。BGE权重实际下载/核验/离线Dense，32题冻结合成RAG集A/B前后召回评分无变化，C导航增加噪声不部署；生成层not_run。新增有界页/行证据Scope、混用版本拒用、危险混合请求整体拒绝、单指标alias/失败Trace。原16/185/22无原成功退步，185两组177→178仅安全修复；综合相关533passed/7failed/12subtests、单独SSE1passed，7失败及起点复现均披露，未宣称全绿。M1-C历史7/7/8/9未重跑、PPO未就绪、未训练、未合并main、0付费调用。此为本地合成及机制证据，不计公开/官方问答成绩，不标记整体赛题完成。详见foundation/FOUNDATION_FINAL_REVIEW.md和runs/FINAL_ARTIFACT_MANIFEST.json。
+
+
+2026-10-11 F2检查点1冻结困难RAG评测：48个合成任务/30份实际PDF/TXT解析来源，dev/retained各24题并按source family分离，Gold literal、manifest与无泄漏验证可复现。无Dense动态BM25基线dev/retained必要证据召回.4325/.4167，完整6/21、6/21，source recall同为.8095，wrong-source命中各6题、unsupported检索污染各3题，答案生成not_run。属于困难合成诊断而非公开基准。见foundation/F2_HARD_RAG_BENCHMARK.md与runs/f2-*-before.json。
+
+2026-10-11 F2检查点2检索索引：版本化SQLite精确词项倒排BM25保持冻结开发集Source/Evidence Recall、MRR/NDCG、完整证据数、错误来源、无证据污染、SHA/locator逐项一致。Native PDF 10/100/500/1000页热P50动态→索引4.55→4.94、107.41→30.79、715.83→529.24、1461.08→1102.45ms；小语料略慢，1k页仍约1.1秒。FTS5中文候选Source Recall .6190且更慢，不采用。相关pytest 56 passed/5 warnings。以上是本地合成与工程性能证据，不是公开基准或端到端答案质量，不标记整体完成。AVG/SUM、证据补全、Agent/SSE及最终整合验证仍待处理；详见`foundation/F2_HARD_RAG_BENCHMARK.md`及`runs/f2-index-scale-after2.json`。
+
+2026-10-11 F2检查点3复杂证据范围：冻结dev 6个多页表任务，Top-K/现有F1 dossier/受限表链必要证据完整0/6、4/6、6/6。表链策略复用page_scope/row_scope，验证来源→对象代码→表源链、30个唯一原生行ID、重复表头/单位、过滤字段/排除脚注与SHA；最多6页，实际读取3–4页。预算、重复ID、检索后来源替换均关闭失败。C在部分题更慢，不宣称端到端答案正确或生产收益；不涉及retained调参。见`foundation/F2_EVIDENCE_COMPLETENESS.md`及`runs/f2-evidence-scope-dev-final-v10.json`。
+
+2026-10-11 F2检查点4显式聚合语义：修复MetricCatalog目录默认聚合覆盖原问题明确AVG等口径，保持目录物理来源与时间绑定；冲突继续澄清。审计约束的验证快路径、MetricCompiler及只读SQL检查保留。独立SQL oracle覆盖分组AVG、COUNT(DISTINCT)、NULL与分组粒度，动态source binding及历史SUM Memory冲突各有拒答回归；相关217项测试通过。此为本地正确性回归，不是公开基准或整体完成。见`foundation/F2_SEMANTIC_CORRECTNESS.md`。
+
+2026-10-11 F2检查点5 Agent执行协议与SSE：M1-C已存原始轨迹记录A/B/C/D协议失败2/4/3/3；当前保留严格JSON Schema拒绝，并对新增本地DSML fixture记录仅含hash/解析位置的失败audit；结构修复最多一次，语义缺项不猜补。Agent SSE timeout现在披露transport阶段、`worker_cancelled=false`与后台状态，线程启动失败归还permit，真实路由生成器故障测试验证超时后slot仍占用且worker结束后释放。离线相关50通过/2个FastAPI弃用警告，无真实模型调用。Python线程/底层工具不支持强制取消，断流仍继续执行；未实现耐久状态查询或跨重试幂等。见`foundation/F2_RUNTIME_RELIABILITY.md`，不将此作为端到端模型收益。
+
+2026-10-11 F2检查点6终版固定production SHA `6608785ac364d4188948e1e4167cfb21c9da5b3d`：F2困难集dynamic/persistent在dev/retained召回、排序、来源绑定、污染、locator逐项相同；小集时延无实质改善，规模PDF在100页以上热查询有收益但带来冷构建/本地索引成本。六表范围完整0/6→4/6→6/6；32题F1 BGE与BM25同满召回，Dense无收益，略慢。AVG/SUM缺陷修复且相关217项通过。M1-A 16题10/16→14/16；上下文185题两组178/185；M1-B2 22题A9/22、B/C22/22，候选独立语义precision20/23、抽取fidelity23/23。本地完整相关回归950 passed、6 failed、12 subtests、25 warnings；六失败均与F1原失败重叠，具体在`foundation/F2_FINAL_REVIEW.md`，旧Gold/断言保留。没有模型生成评测、真实M1-C重跑或任何训练；PPO readiness不成立。最终hash索引见`foundation/runs/F2_FINAL_ARTIFACT_MANIFEST.json`。整体赛题未标记完成，F2完成后等待ChatGPT审核。

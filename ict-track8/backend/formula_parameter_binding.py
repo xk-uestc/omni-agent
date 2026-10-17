@@ -126,6 +126,16 @@ def _document_parameter(name, path, result, resolved, *, original_question=None,
             or type(result.get('value')) not in (int, float) or not math.isfinite(result['value'])):
         _reject()
     locator = result.get('locator', '')
+    if result.get('validation') == 'native_table_literal_cell_replayed':
+        if knowledge is None or result.get('calculator_input_eligible') is not True:
+            _reject()
+        try:
+            current = knowledge.native_table_cell(result['document_id'],
+                where=result['matched_conditions'], column=locator.rsplit('/column:', 1)[1])
+        except (ValueError, KeyError, IndexError, TypeError):
+            _reject()
+        if current != result:
+            _reject()
     label = locator.rsplit('/column:', 1)[1] if '/column:' in locator else result.get('label')
     qualifier = None
     if isinstance(label, str) and _stem(name) != _stem(label):

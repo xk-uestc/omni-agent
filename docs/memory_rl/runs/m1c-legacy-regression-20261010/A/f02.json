@@ -1,0 +1,116 @@
+{
+  "response": {
+    "status": "clarification",
+    "question": "根据《指标与计划》和《区域计划》，给出2026年华南目标销售额，基准为2025年华南销售额",
+    "effective_question": "根据《指标与计划》和《区域计划》，给出2026年华南目标销售额，基准为2025年华南销售额",
+    "route": "clarify",
+    "planner_source": "rules_basic",
+    "session_id": "f02-target",
+    "context_turns": 0,
+    "state": {
+      "route": "clarify",
+      "pending": "该问题需要联合查询数据库和资料；模型规划当前不可用，请稍后重试。"
+    },
+    "result": {
+      "status": "clarification",
+      "clarification": "该问题需要联合查询数据库和资料；模型规划当前不可用，请稍后重试。"
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "clarify",
+        "latency_ms": 5.026,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      }
+    ],
+    "audit_id": "0fd1013067b5bca1f139000f",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "根据《指标与计划》和《区域计划》，给出2026年华南目标销售额，基准为2025年华南销售额"
+    },
+    "routing": {
+      "selected_route": "clarify",
+      "label": "补充条件",
+      "strategy": "source_query",
+      "reason": "确认来源及查询范围后继续。",
+      "context_mode": "independent",
+      "model_enabled": false
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 5.32,
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "clarification",
+        "route": "clarify"
+      },
+      "summary": "需要补充条件或证据",
+      "call_id": "omni-call-2"
+    }
+  ],
+  "memory": {},
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 1,
+  "memory_operations": 0,
+  "id": "f02",
+  "category": "benefit_method",
+  "score": {
+    "status": "clarification",
+    "value_pass": false,
+    "documents_pass": false,
+    "baseline_sql_pass": false,
+    "parameter_provenance_pass": false,
+    "graph_pass": false,
+    "expected_scorer_only": 6414.48,
+    "actual_terminal_values": []
+  },
+  "target_history_before": 0,
+  "target_session": "f02-target",
+  "preparation_session": "f02-preparation",
+  "preparation": [],
+  "candidate_ids": [
+    "method"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "a349442a03231e438b4b92b7a86a59462d03f0d84ec531e8d8f0ee27c6eb5db2",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": null,
+  "memory_store_bytes_before": 65536,
+  "memory_store_bytes_after": 65536,
+  "archived_events": [],
+  "pass": false
+}

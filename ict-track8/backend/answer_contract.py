@@ -35,6 +35,7 @@ _NATIVE_MODES = {
     'original-native-complete-block-context-v3': frozenset({'original_native_complete_block', 'original_native_complete_continuation'}),
     'original-native-complete-block-context-v4': frozenset({'original_native_complete_block', 'original_native_complete_continuation', 'original_native_complete_rotated_row'}),
     'original-native-complete-block-context-v5': frozenset({'original_native_complete_block', 'original_native_complete_continuation', 'original_native_complete_rotated_row'}),
+    'original-native-complete-block-context-v6': frozenset({'original_native_complete_continuation'}),
 }
 
 
@@ -160,11 +161,11 @@ def native_source_only_contract_valid(native):
     if not isinstance(native, dict) or native.get('extraction_version') not in {
             'original-native-complete-block-context-v4', 'original-native-bounded-page-region-v2',
             'original-native-complete-block-context-v5', 'original-native-bounded-page-region-v3',
-            'original-native-bounded-page-region-v4'}:
+            'original-native-complete-block-context-v6', 'original-native-bounded-page-region-v4'}:
         return True
     new_anchor = native.get('extraction_version') in {
         'original-native-complete-block-context-v5', 'original-native-bounded-page-region-v3',
-        'original-native-bounded-page-region-v4'}
+        'original-native-complete-block-context-v6', 'original-native-bounded-page-region-v4'}
     policy = (ANCHOR_POLICY_VERSION if new_anchor
               else 'whitespace_and_printed_alphabetic_line_wrap_hyphen_only')
     if (not native_context_mode_valid(native) or native.get('calculator_input_eligible') is not False
@@ -174,6 +175,12 @@ def native_source_only_contract_valid(native):
         match = native.get('anchor_match')
         if (not isinstance(match, dict) or match.get('policy_version') != policy
                 or not isinstance(match.get('members'), list) or not match['members']):
+            return False
+    if native.get('extraction_version') == 'original-native-complete-block-context-v6':
+        if (native.get('continuation_policy_version') != 'native-cjk-numeric-unit-wrap-v1'
+                or native.get('column_transition') is not None
+                or native.get('rotated_native_row') is not None
+                or not isinstance(native.get('members'), list) or len(native['members']) < 2):
             return False
     if native.get('mode') == 'original_native_complete_rotated_row':
         rotated = native.get('rotated_native_row')

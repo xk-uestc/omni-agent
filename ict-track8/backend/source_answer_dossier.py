@@ -46,23 +46,48 @@ def native_page(document, page, number, page_count):
         'complete_native_page': True, 'page_count': page_count}
 
 
-def build_dossier(store, question, hits, *, document_id=None, page_no=None):
+def build_dossier(store, question, hits, *, document_id=None, page_no=None, evidence_bundle=None):
     """Rank complete original pages within at most four retrieved PDF sources.
 
     Full short documents are navigated, long documents use hit neighbors. No
     reference answer, expected document/page or title-as-fact enters ranking.
     Oversize pages are omitted whole, never presented as a complete prefix.
     """
+    if evidence_bundle is not None and evidence_bundle['status'] == 'complete_for_declared_scope':
+        # Reconstruct, don't trust caller-supplied page text/conditions. The
+        # normal source replay and independent whole-question review remain.
+        current = store.prepare_evidence(question, hits, document_id=document_id, page_no=page_no)
+        def proof(bundle):
+            return {k: v for k, v in bundle.items() if k != 'elapsed_ms'}
+        if proof(current) != proof(evidence_bundle):
+            raise ValueError('dossier_table_bundle_changed')
+        pages = deepcopy(current['pages'])
+        return pages, {'scanned_pages': current['extra_native_page_reads'], 'included_pages': len(pages),
+            'evidence_scope': current['scope'], 'native_chars': current['native_chars'],
+            'coverage': current['row_scope'], 'omitted': [], 'ranking_is_navigation_only': True,
+            'scope': 'bounded_native_table_inventory_requires_independent_review',
+            'bundle_replay_cost': {'extra_retrieval_calls': current['extra_retrieval_calls'],
+                'extra_native_page_reads': current['extra_native_page_reads']},
+            'table_bundle': {k: deepcopy(current[k]) for k in ('document_id','source_sha256','predicates','row_scope')}}
     documents = {d['document_id']: d for d in store.list_documents() if d['modality'] == 'pdf'}
     ids = [document_id] if document_id is not None else list(dict.fromkeys(
         h.metadata.get('document_id') for h in hits))[:4]
     pages, ledger, scanned = [], [], 0
+    scanned_inventory, declared_sources = [], []
     for did in ids:
         if did not in documents:
             continue
         d = documents[did]
+        pinned = {h.metadata.get('source_sha256') for h in hits
+                  if h.metadata.get('document_id') == did and h.metadata.get('source_sha256')}
+        if pinned and pinned != {d['sha256']}:
+            from .knowledge_store import SourceRevisionError
+            raise SourceRevisionError('检索来源版本已变化，未混合新旧原页。')
         raw = store.verify_source(did, expected_sha256=d['sha256']).read_bytes()
         with fitz.open(stream=raw, filetype='pdf') as pdf:
+            declared_sources.append({'document_id': did, 'source_sha256': d['sha256'],
+                'pages': [page_no] if page_no is not None else list(range(1, len(pdf)+1)),
+                'scope_kind': 'explicit_page' if page_no is not None else 'nominated_whole_source'})
             if page_no is not None:
                 if document_id is None or type(page_no) is not int or not 1 <= page_no <= len(pdf):
                     raise ValueError('dossier_explicit_page_invalid')
@@ -78,6 +103,7 @@ def build_dossier(store, question, hits, *, document_id=None, page_no=None):
                     ledger.append({'document_id': did, 'page_no': number, 'reason': 'scan_budget'})
                     continue
                 scanned += 1
+                scanned_inventory.append({'document_id': did, 'source_sha256': d['sha256'], 'page_no': number})
                 p = native_page(d, pdf[number-1], number, len(pdf))
                 text = p['text']
                 if not 40 <= len(text) <= 12000:
@@ -85,6 +111,7 @@ def build_dossier(store, question, hits, *, document_id=None, page_no=None):
                         'reason': 'no_native_text_or_complete_page_over_budget'})
                     continue
                 pages.append(p)
+        store.verify_source(did, expected_sha256=d['sha256'])
     terms = _terms(question)
     frequencies = Counter(t for p in pages for t in _terms(p['text']) if t in terms)
     weights = {t: math.log(1+(len(pages)+.5)/(frequencies[t]+.5)) for t in terms}
@@ -112,7 +139,11 @@ def build_dossier(store, question, hits, *, document_id=None, page_no=None):
         'included_pages': sorted(p['page_no'] for p in selected if p['document_id'] == did),
         'whole_document_included': len([p for p in selected if p['document_id'] == did]) ==
             int(documents[did]['stats'].get('page_count') or 1)} for did in ids if did in documents]
+    from .evidence_scope import page_scope
+    bounded_scope = page_scope(declared_sources, scanned_inventory, selected, omitted=ledger,
+        required_conditions=('whole_question', 'entity_roles_exclusions', 'units_dates_qualifiers', 'record_inventory'))
     return selected, {'scanned_pages': scanned, 'included_pages': len(selected),
+        'evidence_scope': bounded_scope,
         'native_chars': size, 'coverage': coverage, 'omitted': ledger,
         'ranking_is_navigation_only': True, 'scope': 'selected_complete_native_pages_not_unseen_document_closure'}
 
@@ -218,14 +249,15 @@ def validate_review(review, candidate, pages, quotes):
     return inventory
 
 
-def route(store, question, hits, *, document_id=None, page_no=None):
+def route(store, question, hits, *, document_id=None, page_no=None, evidence_bundle=None):
     client = getattr(getattr(store, 'generator', None), 'client', None)
     trace = {'stage': 'native_page_answer_dossier', 'status': 'not_applicable', 'model_audits': []}
     if (getattr(client, 'supports_native_answer_dossier', False) is not True
             or getattr(client, 'model', None) != 'gpt-6-luna' or getattr(client, 'reasoning', None) != 'medium'
             or (getattr(client, 'audit', {}) and not _completed(client.audit))):
         return None, trace
-    pages, scope = build_dossier(store, question, hits, document_id=document_id, page_no=page_no)
+    pages, scope = build_dossier(store, question, hits, document_id=document_id, page_no=page_no,
+        evidence_bundle=evidence_bundle)
     trace['evidence_scope'] = scope
     if not pages:
         trace['status'] = 'no_complete_native_pages'

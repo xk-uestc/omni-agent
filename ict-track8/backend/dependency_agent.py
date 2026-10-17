@@ -23,7 +23,9 @@ from .fusion_constraints import SourceConstraintError, VerifiedFormulaTarget, bi
 
 
 class DependencyPlanError(ValueError):
-    pass
+    def __init__(self, message, *, code='tool_contract_failed'):
+        super().__init__(message)
+        self.code = code
 
 
 class DependencyAgent:
@@ -94,7 +96,7 @@ class DependencyAgent:
                         raise KeyError(key)
                 return current
             except (KeyError, IndexError, TypeError) as exc:
-                raise DependencyPlanError('引用位置无可用结果') from exc
+                raise DependencyPlanError('引用位置无可用结果', code='parameter_binding_failed') from exc
         if isinstance(value, dict):
             return {key: DependencyAgent.resolve(v, results) for key, v in value.items()}
         if isinstance(value, list):
@@ -111,19 +113,50 @@ class DependencyAgent:
             raise DependencyPlanError('查询文本为空或过长')
         return text
 
-    def run(self, tasks, *, on_event=None, original_question=None, source_constraints=None):
+    def run(self, tasks, *, on_event=None, on_progress=None, original_question=None, source_constraints=None):
         # Server-bound reference normalization never mutates the caller graph.
         tasks = deepcopy(tasks)
-        ordered, dependencies = self.validate(tasks)
+        from .nl2sql.security import unsafe_request_reason
+        questions = [original_question] if original_question is not None else []
+        questions.extend(t.get('args', {}).get('question') for t in tasks
+                         if isinstance(t, dict) and t.get('tool') == 'sql' and isinstance(t.get('args'), dict))
+        if any(unsafe_request_reason(q) for q in questions):
+            event = {'stage': 'request_safety', 'status': 'rejected', 'executed': False,
+                     'failure_category': 'safety', 'error_code': 'read_only_query_required'}
+            if on_event:
+                on_event(dict(event))
+            if on_progress:
+                on_progress(dict(event))
+            return {'status': 'clarification', 'results': {}, 'trace': [event],
+                    'trace_id': hashlib.sha256(json.dumps(tasks, sort_keys=True).encode()).hexdigest()[:20],
+                    'clarification': '整条请求包含写入或绕过规则意图，未执行任何子任务。',
+                    'clarification_code': 'read_only_query_required', 'error_code': 'read_only_query_required',
+                    'skipped_tasks': [t.get('id') for t in tasks if isinstance(t, dict)], 'edges': []}
+        try:
+            ordered, dependencies = self.validate(tasks)
+        except DependencyPlanError:
+            from .failure_trace import failure
+            event = {'stage': 'planning', 'status': 'failed', 'executed': False,
+                     'failure': failure('planner', 'planning', 'dependency_plan_invalid')}
+            for callback in (on_event, on_progress):
+                if callback:
+                    callback(dict(event))
+            raise
         read_scope = getattr(self.sql_engine, 'consistent_reads', None)
         with read_scope() if read_scope else nullcontext():
             audit, initial_versions, formula_results = [], {}, {}
             search_bindings = {'source_ranges': [], 'bindings': []}
+            cell_bindings = {'source_ranges': [], 'bindings': []}
             try:
                 if original_question is not None:
                     from .sql_document_binding import authorize_sql_document_search, normalize_sql_document_references
                     search_bindings = authorize_sql_document_search(original_question, tasks, self.sql_engine)
                     normalize_sql_document_references(search_bindings, tasks)
+                    from .sql_document_cell_binding import authorize_sql_document_cells, normalize_cell_references
+                    cell_bindings = authorize_sql_document_cells(original_question, tasks, self.sql_engine, self.knowledge_store)
+                    normalize_cell_references(cell_bindings, tasks)
+                    for binding in cell_bindings['bindings']:
+                        initial_versions[binding['document_id']] = binding['source_sha256']
                     proofs = []
                     for task in tasks:
                         if task['tool'] != 'document_formula' or self.references(task['args']):
@@ -141,26 +174,36 @@ class DependencyAgent:
                             raise SourceConstraintError('formula_target_evidence_unverified') from exc
                     source_constraints, audit = bind_source_constraints(
                         original_question, tasks, self.sql_engine, verified_formula_targets=tuple(proofs),
-                        verified_document_search_ranges=tuple(search_bindings['source_ranges']))
+                        verified_document_search_ranges=tuple(search_bindings['source_ranges'] + cell_bindings['source_ranges']))
                     formula_consumption = self._formula_consumption_contracts(
                         tasks, dependencies, audit, formula_results)
                 else:
                     formula_consumption = {}
             except SourceConstraintError as exc:
                 trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
+                from .failure_trace import for_code
+                event = {'stage': 'source_binding', 'status': 'failed', 'executed': False,
+                         'failure': for_code(exc.code, phase='source_binding')}
+                if on_event:
+                    on_event(dict(event))
+                if on_progress:
+                    on_progress(dict(event))
                 return {'status': 'clarification', 'trace_id': trace_id, 'results': {}, 'trace': [],
+                        'failure_trace': [event['failure']],
                         'clarification': str(exc), 'clarification_code': exc.code, 'error_code': exc.code,
                         'skipped_tasks': [task['id'] for task in ordered], 'edges': [],
                         'user_constraint_validation': {'status': 'unverified', 'error_code': exc.code}}
-            result = self._run_ordered(tasks, ordered, dependencies, on_event=on_event,
+            result = self._run_ordered(tasks, ordered, dependencies, on_event=on_event, on_progress=on_progress,
                                        source_constraints=source_constraints or {}, original_question=original_question,
-                                       initial_versions=initial_versions, search_bindings=search_bindings,
+                initial_versions=initial_versions, search_bindings=search_bindings, cell_bindings=cell_bindings,
                                        formula_consumption=formula_consumption)
             result['user_constraint_validation'] = {'status': ('verified' if source_constraints else 'not_applicable')
                                                    if original_question is not None else 'verified' if source_constraints else 'not_provided',
                                                    'scope': 'explicit_server_bound_sql_source_clauses', 'bindings': audit}
             if search_bindings['bindings']:
                 result['user_constraint_validation']['document_search_bindings'] = search_bindings['bindings']
+            if cell_bindings['bindings']:
+                result['user_constraint_validation']['document_cell_bindings'] = cell_bindings['bindings']
             if result['status'] != 'ok' and (original_question is not None or source_constraints):
                 result['user_constraint_validation']['status'] = 'incomplete'
             return result
@@ -242,8 +285,8 @@ class DependencyAgent:
             raise SourceConstraintError('formula_target_not_consumed')
         return contracts
 
-    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, source_constraints=None, original_question=None,
-                     initial_versions=None, search_bindings=None, formula_consumption=None):
+    def _run_ordered(self, tasks, ordered, dependencies, *, on_event=None, on_progress=None, source_constraints=None, original_question=None,
+                     initial_versions=None, search_bindings=None, cell_bindings=None, formula_consumption=None):
         results, trace = {}, []
         versions = dict(initial_versions or {})
         trace_id = hashlib.sha256(json.dumps(tasks, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:20]
@@ -266,11 +309,19 @@ class DependencyAgent:
                     from .sql_document_binding import validate_sql_document_search
                     search_validation = validate_sql_document_search(
                         search_bindings, task=task, tasks=tasks, results=results, engine=self.sql_engine)
+                if task['tool'] == 'document_cell' and cell_bindings and cell_bindings['bindings']:
+                    from .sql_document_cell_binding import validate_sql_document_cell
+                    search_validation = validate_sql_document_cell(cell_bindings, task=task, tasks=tasks,
+                        results=results, engine=self.sql_engine, knowledge=self.knowledge_store)
                 required = (source_constraints or {}).get(task['id'])
                 if task['tool'] == 'sql' and original_question is not None:
                     from .dynamic_source_binding import bind_dynamic_source_filters
                     required = bind_dynamic_source_filters(self, task=task, tasks=tasks, results=results,
                         required_intent=required, original_question=original_question)
+                if on_progress:
+                    on_progress({'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'],
+                                 'dependencies': sorted(dependencies[task['id']]),
+                                 'status': 'running', 'executed': False})
                 result = (self.execute(task['tool'], args, task['args'], results, original_question=original_question)
                           if task['tool'] == 'calculate' else
                           self.execute(task['tool'], args, task['args'], results, required_intent=required)
@@ -290,18 +341,26 @@ class DependencyAgent:
                     versions[document_id] = digest
                 self._verify_versions(versions)
                 results[task['id']] = result
-                event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'complete', 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
+                from .presentation_events import tool_receipt
+                event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'complete', 'latency_ms': round((time.perf_counter()-started)*1000, 3),
+                         'output': tool_receipt(task['tool'], result)}
                 trace.append(event)
+                if on_progress:
+                    on_progress(dict(event))
                 if on_event:
                     on_event(dict(event))
             except (ValueError, KeyError, TypeError, SyntaxError, OverflowError, OSError, sqlite3.DatabaseError) as exc:
-                code = 'source_constraint_mismatch' if isinstance(exc,SourceConstraintError) else 'evidence_revision_changed' if isinstance(exc,SourceRevisionError) else 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else 'tool_contract_failed'
+                code = 'source_constraint_mismatch' if isinstance(exc,SourceConstraintError) else 'evidence_revision_changed' if isinstance(exc,SourceRevisionError) else 'evidence_integrity_failed' if isinstance(exc,SourceIntegrityError) else 'storage_unavailable' if isinstance(exc,(OSError,sqlite3.DatabaseError)) else getattr(exc, 'code', 'tool_contract_failed')
                 message = '数据源暂不可读取，请恢复文件或解除数据库锁后重新执行。' if code=='storage_unavailable' else str(exc)[:200]
                 event = {'trace_id': trace_id, 'task_id': task['id'], 'tool': task['tool'], 'dependencies': sorted(dependencies[task['id']]), 'status': 'failed', 'error': message, 'error_code':code, 'latency_ms': round((time.perf_counter()-started)*1000, 3)}
+                from .failure_trace import for_code
+                event['failure'] = for_code(code, task_id=task['id'])
                 if isinstance(exc, SourceConstraintError):
                     event['source_constraint_code'] = exc.code
                     event['constraint_error_codes'] = list(getattr(exc, 'constraint_error_codes', ()))
                 trace.append(event)
+                if on_progress:
+                    on_progress(dict(event))
                 if on_event:
                     on_event(dict(event))
                 return {'status': 'incomplete', 'trace_id': trace_id, 'results': results, 'trace': trace, 'failed_task': task['id'], 'error': message,
@@ -397,7 +456,7 @@ class DependencyAgent:
             except SearchScopeError as exc:
                 raise DependencyPlanError(str(exc)) from exc
             if not hits:
-                raise DependencyPlanError('没有文档证据')
+                raise DependencyPlanError('没有文档证据', code='evidence_missing')
             return {'hits': [hit.to_dict() for hit in hits], 'search_scope': scope}
         if tool == 'search_fact':
             from .evidence_fact import extract_search_fact
@@ -409,18 +468,43 @@ class DependencyAgent:
             return extract_search_fact(self.knowledge_store, args['evidence'],
                                        scope=args['scope'], label=args['label'], unit=args['unit'])
         if tool in {'document_formula', 'document_cell', 'document_fact'}:
-            document = self.knowledge_store.document(args['document_id'])
+            try:
+                document = self.knowledge_store.document(args['document_id'])
+            except KeyError as exc:
+                raise DependencyPlanError('所需原始资料尚未入库或已移除', code='source_missing') from exc
             if tool == 'document_formula':
                 if set(args) != {'document_id', 'label'}:
                     raise DependencyPlanError('公式定位参数非法')
+                native_formulas = []
+                if document['modality'] == 'pdf':
+                    from .native_formula_pages import extract_native_literal_formulas
+                    raw = self.knowledge_store.verify_source(document['document_id'], expected_sha256=document['sha256']).read_bytes()
+                    native_formulas = [{**e, 'document_id':document['document_id'],
+                        'source_uri':f'/api/v1/knowledge/documents/{document["document_id"]}/original', 'chunk_id':None}
+                        for e in extract_native_literal_formulas(raw,label=args['label'],expected_sha256=document['sha256'])]
+                    self.knowledge_store.verify_source(document['document_id'],expected_sha256=document['sha256'])
+                if 'structured_document' in document:
+                    records = self.knowledge_store.formula_records(document['document_id'], expected_sha256=document['sha256'])
+                    reviewed = [e for e in records if e.get('review_status') == 'verified'
+                                and e.get('calculator_input_eligible') is True and e['formula_review']['label'] == args['label']]
+                    if len(reviewed) != 1:
+                        if not reviewed and len(native_formulas) == 1:
+                            return native_formulas[0]
+                        raise DependencyPlanError('公式缺失、审核不完整或存在歧义，不能自动计算', code='formula_review_required')
+                    item = reviewed[0]
+                    return {'expression':item['formula_review']['expression'], 'parameters':item['formula_review']['parameters'],
+                            'label':args['label'], 'source_uri':item['source_uri'], 'locator':item['source_locator'],
+                            'chunk_id':None, 'sha256':document['sha256'], 'document_id':document['document_id'],
+                            'formula_review':item['formula_review'], 'structured_element_id':item['element_id']}
                 candidates = []
-                for chunk in document['chunks']:
+                for chunk in document['chunks'] if document['modality'] != 'pdf' else []:
                     formulas = DocumentAnalyzer().analyze(chunk['text']).formulas
                     for formula in formulas:
                         if formula.label == args['label'] and formula.status != 'rejected':
                             candidates.append({'expression': formula.normalized_expression, 'parameters': list(formula.parameters), 'label': formula.label,
                                 'source_uri': f'/api/v1/knowledge/documents/{document["document_id"]}/original', 'locator': chunk['source_locator'], 'chunk_id': chunk['chunk_id'], 'sha256': document['sha256']})
                 if document['modality'] == 'pdf':
+                    candidates.extend(native_formulas)
                     from .native_formula_pages import extract_cross_page_formulas
                     raw = self.knowledge_store.verify_source(document['document_id'], expected_sha256=document['sha256']).read_bytes()
                     cross_page = extract_cross_page_formulas(raw, label=args['label'], expected_sha256=document['sha256'])
@@ -471,6 +555,12 @@ class DependencyAgent:
                 from .excel_layout import literal_matches,query_literal
                 if set(args) != {'document_id', 'where', 'column'} or not isinstance(args['where'], dict) or not args['where']:
                     raise DependencyPlanError('表格取值必须明确匹配条件和列')
+                if document['modality'] == 'pdf':
+                    try:
+                        return self.knowledge_store.native_table_cell(args['document_id'],
+                                    where=args['where'], column=args['column'])
+                    except ValueError as exc:
+                        raise DependencyPlanError(str(exc), code='pdf_table_cell_unverified') from exc
                 candidates = []
                 seen_cells = set()
                 for chunk in document['chunks']:
@@ -518,6 +608,10 @@ class DependencyAgent:
             formula = args['formula']
             if not {'expression', 'source_uri', 'locator'} <= formula.keys():
                 raise DependencyPlanError('公式没有有效文档来源')
+            if formula.get('structured_element_id'):
+                self.knowledge_store.verify_formula_record(formula)
+            if formula.get('native_formula_proof'):
+                self.knowledge_store.verify_native_formula(formula)
             from .formula_parameter_binding import validate_formula_sql_parameters
             parameter_validation = validate_formula_sql_parameters(
                 self.sql_engine, formula, original_args['parameters'], args['parameters'], results,
@@ -578,6 +672,10 @@ class DependencyAgent:
                     raise DependencyPlanError('参数不是有限数字')
                 bindings[name] = ParameterEvidence(numeric, source, locator, unit or 'unknown')
             calculated = FormulaBinder().calculate(formula['expression'], bindings, formula_source=formula['source_uri'], formula_locator=formula['locator'])
+            if formula.get('structured_element_id'):
+                self.knowledge_store.verify_formula_record(formula)
+            if formula.get('native_formula_proof'):
+                self.knowledge_store.verify_native_formula(formula)
             calculated['parameter_semantics_validation'] = parameter_validation
             calculated['temporal_validation'] = {'status': 'verified', **temporal} if temporal else {'status': 'not_inferred'}
             if temporal:

@@ -1,0 +1,7097 @@
+{
+  "environment": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "platform": "Linux-7.0.0-38-generic-x86_64-with-glibc2.39",
+    "sqlite": "3.45.1",
+    "head": "a37c0728deacf1bc01a6e1458ac3826a2d570e2e"
+  },
+  "source_before": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/amount_cell_review.py": "79f23d04f7b29ccc3ee7c112b3f9ddbaefab17f8186bc0cfa310e9ad6e524b9c",
+    "ict-track8/backend/answer_contract.py": "1ace63ef88f6bb2bdda8ed4c1240c0aa9cee4150fdef1eaa164192d5985cdd38",
+    "ict-track8/backend/app.py": "6dc3f1596e7b479730009e1090db446fd877852a7391008433329e8ce3e27a85",
+    "ict-track8/backend/blank_cell_review.py": "9e0c17118c7af8bce75823bf1695bb9d0fb6cdb328f38229af234fae24133d63",
+    "ict-track8/backend/cell_crop_quality.py": "5904e3aa7c15c527d35f81f070c5bba73b4a18773900e6e43f96292f8c2b1899",
+    "ict-track8/backend/chunk_cleaning.py": "a395c2951cf09ece5d1d867a4dec504918060c49013c3b359148195aa12884dd",
+    "ict-track8/backend/clarification.py": "e919e59572505ef1ebd242bd6eafc86a705d698808ac536714e1ad21328bcbf2",
+    "ict-track8/backend/clarification_continuation.py": "895228f875220e3c2c0f71b87ee49b960f870e13f7c59df8e1ccfc1f44a38031",
+    "ict-track8/backend/comparison_batch_edit.py": "84b521e46244d270f320ad2c845ee1faef61d8764920fe5e672b5ca91359e3d7",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/conversation_comparison.py": "590d04f52950d7f5202accbd938dd1883fa6dffa76d86db0c7f4601d545577a0",
+    "ict-track8/backend/conversation_sources.py": "956e6afeb65f4888e8bf8975224dc60183e928e7c42f4c15ee2325d5e7aebaf1",
+    "ict-track8/backend/conversational_sql_edit.py": "a5c2e32fce7d1066939749a636fa34eb1a9ad46cadb1273c45a0b713e35b5a3a",
+    "ict-track8/backend/cross_source.py": "514d8889727bee781412ef55e6b3d9293830178515ba870323f188a99109ad86",
+    "ict-track8/backend/dense_retrieval.py": "39f47e5924a97674cd5c810e1714a56848a11ec91efe766d3ec3aa75a227915d",
+    "ict-track8/backend/dependency_agent.py": "803f4a2931ced83504d2e0d078c0b2f6730e0bce420c80910910cba0bf5a4e9f",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/document_dialogue.py": "b5fa28038a6b1acd880299b874669485fc9dd0745fd114d76bde8e6a4ba6b797",
+    "ict-track8/backend/document_parts_answer.py": "491e03a166d718d8ae581736e756ccaa5849afceb25e97d3accbe43ad6d7922e",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d6b2b921496a0df1743e37c31e9cb494aa9a2e435531c6040cc279a9a6821596",
+    "ict-track8/backend/evidence_scope.py": "2ff82f9375266b51e7a6a7b76d8988fc2be6aad76c2a090fd5e8cbf565fbd45f",
+    "ict-track8/backend/excel_layout.py": "15e67b8f90777f0f5b9561148a1c5eedb77464c32fd4b482509e1564befc47a0",
+    "ict-track8/backend/executed_scope_edit.py": "956efa3fb8a7df4b051b383a3a032c20811a585130765542d6556c9c4e55abff",
+    "ict-track8/backend/failure_trace.py": "23fa391835db911b4d09ee2d68f121bb3193fd7d206000dd0a528a9908ad6ef7",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "dd9573c757dbbfe1d758ab9d5277a7df731ea25fbc614975fc9dc3d6aed48050",
+    "ict-track8/backend/fusion_constraints.py": "27d53ea2d4492c2b4bdbc360d10ef38c87d81f6a9fa1f188150e251fb1c9e179",
+    "ict-track8/backend/fusion_formula_planner.py": "f79f40863ecb87d21504d2b025769bc4308628b1f116a292432216a42ccbd089",
+    "ict-track8/backend/fusion_history.py": "c363ecd847f99d74d2d9d36a3022ae4283ee70d0ee0d72e09c22200fdfa7a31b",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/fusion_parameter_followup.py": "93fbc3c9d5834ce789268e30252631140d7e053ad5e6ff369cb23401e724159c",
+    "ict-track8/backend/fusion_result_answer.py": "7ada3a145159f87e950b55d92e5ca5fcc2de5c19e03ff9f545f20f30ed2e209b",
+    "ict-track8/backend/grounded_generation.py": "65ce265392e685c6b0831e08a50d308b6ea89fcfe8723736938ee196b1afad9e",
+    "ict-track8/backend/grounded_span_answer.py": "6d0634e88e2e81cbca072259d941600cf762839b10668fcb631a740b95534aa7",
+    "ict-track8/backend/history_reference.py": "2bd41a9add5e440233033e0b763aa14a66e014517214dd9dab2546cc5d3a2e62",
+    "ict-track8/backend/image_geometry.py": "548d66430f34631fb1cee0172dccf0ce56e485e541cc672ae9847f34f402ce1f",
+    "ict-track8/backend/image_quality.py": "c4ac8d492966d597689b300c0ae31880bfe2278ac6889c75a79c7a508ce3f514",
+    "ict-track8/backend/knowledge_store.py": "0e0caa24408684e996b5bea61d98dffa8cf853ee4ea1a016c4ec4d689e086819",
+    "ict-track8/backend/memory/__init__.py": "d228f7bda5aa927ee56d48f200d82d5727351ca3e87b9286e6e34dd765e149d9",
+    "ict-track8/backend/memory/adapter.py": "4bd796e3fe96b461b91c3963d84900c2d37671df9a5ff0dc5f05dfa678d2204f",
+    "ict-track8/backend/memory/admin.py": "df158a89e8bd35faa8e3791a5060797c96358204d97adc26b9c53c2e288e1347",
+    "ict-track8/backend/memory/core.py": "3ed5dfd4b69924f88a29b3665c5a0d38941d8e81b91bd7427585800dc7aef98e",
+    "ict-track8/backend/memory/experience.py": "3fd61294eb3e530df28be8ef1c2f57d00f91ff2531e82b653fa98973cfff8f73",
+    "ict-track8/backend/memory/extraction.py": "6a4e64ccb738556b5d30b234236dea2969c22b0317b524895ed1f9059e8567b6",
+    "ict-track8/backend/memory/formation.py": "f610bb1d4e89f71e1328adbfd86fb5bd93dccf290ff053a117250f156454da2a",
+    "ict-track8/backend/multimodal_input.py": "e45ef075b1796a5633ef98e3a1facee4dc03fefc142823afd2975c2e064c2769",
+    "ict-track8/backend/native_amount_annotations.py": "d1cde2be5a590d7d5eaa9715b0aa6dea49ad3fedf8b932c8049ab1a6865a90ee",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_financial_tables.py": "2fef01f2fcb74c6007df8387eb2dd16b72a00914a430c26ac4d4f95dfb78e656",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_fraction.py": "58e9bb44c864cb3024924d189a806098b75ac803195ff1bd62f3f9a8bbedeb81",
+    "ict-track8/backend/native_label_amounts.py": "f05d65953cc5a07e26f2dfaf8ee9d44fdc8471c8aa914ee5dad0e2c5be987133",
+    "ict-track8/backend/native_row_comparison.py": "b1596c32915ca3f2e3b793bc9594770e0e745ac196eac5075057fcc29d186f65",
+    "ict-track8/backend/native_row_registry.py": "6e6ed439e5038b429d576838cb4b31d85418580c903ec7e2834885c017147be9",
+    "ict-track8/backend/native_row_selection.py": "58e2f0d6f5b9c660be08cba0fe2802b0d7b003f4aac92619b21c7dad68840d02",
+    "ict-track8/backend/native_table_chain.py": "6763e5b28c75c7b7cf6bbbe2973d5200572614437e11ec0ca5d2d35f4aeab214",
+    "ict-track8/backend/native_table_question.py": "d4644f73791dcbf887d969ed90bc1486cb53aee3223c42aa521bfcddce0e4fcd",
+    "ict-track8/backend/native_text_tables.py": "85ebe2f07c495e453249d3758907b65b3e2f8052df0ad4e270ca7fbf3e1f4ad0",
+    "ict-track8/backend/native_total_question.py": "1b4d52cafc32a0439a4d4912ce1bcdd6ff323c81db71aabef0ae69fc24f31338",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "edcb071fba84cd09ab5b7d8b268b41bf4e5bf671ab748b38e9692e6d60bb1259",
+    "ict-track8/backend/nl2sql/date_profile.py": "17bb0f0760598b11d6c87f2c8bff49230212d8e28222180bd2e2f257e565b6bc",
+    "ict-track8/backend/nl2sql/date_semantics.py": "fadabe473170b649f344222d607099b1f6d3a54187314ac8a90b733e5771a86d",
+    "ict-track8/backend/nl2sql/engine.py": "e5e83da04326d08cd08f9c92105ff9c1be8e76714ca47851f80b1dd1746472d0",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "3deb55d9f764e06406d583dcb03581f5ae9c27058a39e069bc37c6b0a51fe5ed",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "c147cb0135f1991bb157f0aa5f90cf241c60273634a33e168f29341f527b79bc",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "59e2774de7b294d82d09519291927affd4af90fa315e359e358c089422a028a4",
+    "ict-track8/backend/nl2sql/operations_seed.py": "43b86672b6c52800a4ba112e0114eb207da1764f0d4f33b8812ee6730abc1c57",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "410a77f53eacbbc574666846f184b0ce203b5087034dfa1185b97c13f24ab690",
+    "ict-track8/backend/nl2sql/question_roles.py": "d46718c1ff236f7ebeee46912fbc84e962aaa6cf1a6713de936c3faf0f56f82b",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "42d9942edb34bd32de45460197dca3fcb275e6f817bb6deb911474863508cf18",
+    "ict-track8/backend/nl2sql/result_artifact.py": "1edbaa4a1edde4a4986163c81303f04204c60edd0133a8bd1e828d1cfa17d43a",
+    "ict-track8/backend/nl2sql/result_scope.py": "e5ed17397664ceb3b204e74a455717f56cc3592fba1bcd195c75bb4596ebf6cf",
+    "ict-track8/backend/nl2sql/schema.py": "2d077fcbe1cb0c6f4ce42bf38fc0dcbbee0d1d14d18b473d186f0f571e0c3456",
+    "ict-track8/backend/nl2sql/schema_profile.py": "27b04ce92d186762553436b97f2b2fea00594d6d51918e71d521fc686eed04ae",
+    "ict-track8/backend/nl2sql/security.py": "0d2ac7316422a44ef0a2318852ca0fc848e8c58c125bff08ee5fddf176441917",
+    "ict-track8/backend/nl2sql/seed.py": "707dc7b401de9fda53f6b139e1bb9d2da05f14e33ee4f1c3e47fa9f422ddcd67",
+    "ict-track8/backend/nl2sql/semantic_graph.py": "f4fb8c9776a0c9b1b171b2f58cd2a8d19e8b0dbc05f0da52d60d335962572fd7",
+    "ict-track8/backend/nl2sql/semantics.py": "793fd2c2b0dc0a4b9ffd8f957b76066409c04c83e42e747e54b98f2c9f3d1753",
+    "ict-track8/backend/nl2sql/t2s.py": "3c5e5666b65da6e146da87458c6c4f651f97f587a06508e6bf1140d67442a59a",
+    "ict-track8/backend/nl2sql/value_index.py": "9fe51698229ad843f4c1e8b8e642ba0955b9d70d6568f130e504d82580765f12",
+    "ict-track8/backend/ocr.py": "7f4199cb56a890968f0930906645db51111f2283974cfb3c6b10ee5d2050a8a4",
+    "ict-track8/backend/ocr_evidence_selection.py": "0f27eedc6667add900e4964715119515782046da9d792594db6ba576d3dc48aa",
+    "ict-track8/backend/ocr_fast_fusion.py": "21c3162565a996df9f57ac66ffa81cc940b0b16d858529adebc9d31308cc27da",
+    "ict-track8/backend/ocr_gap_fusion.py": "e8a80f101ab8235daaf6ce1e1cc30ea14e83b36c28a2af89cde3dc01a7482668",
+    "ict-track8/backend/ocr_pairing.py": "b37c1382184147a2843897d602ff9ed5010e328ab48549537cd9ef527d0c881b",
+    "ict-track8/backend/ocr_region_fusion.py": "1d689a63a3dd32aad794caf1054198c98ddaf90623103aa1eb1c22d3a729c5bb",
+    "ict-track8/backend/ocr_table_fusion.py": "fe87d2352324ded1f7fadaad3de63f2ca43c5c7c5edceed22b40450a3927ae2e",
+    "ict-track8/backend/omni_agent.py": "5eda6a84cca6d2d7b003bb372da6ef0e589637cf23909c55847729ee6dfe6217",
+    "ict-track8/backend/orientation_quality.py": "dc1fa8de4f1b67b7dc230628ce5b58a15f39555708bf02a96fcc891a2bf474d0",
+    "ict-track8/backend/pdf_amount_verification.py": "f6cb41333e916d2ee2b1a09cf6c90b35d5bdd8305ef5be53a650aa2df8bb54ab",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "2fb1825c5adad87bf582032d926a98f99df5f339a9e7f3f2aa0b76d41d4a1b92",
+    "ict-track8/backend/pdf_page_index.py": "045fb9ecb3571d77ede9fc6aaae0ac2ff24517854b051caa70d1c2200fc59fd2",
+    "ict-track8/backend/pdf_table_continuity.py": "4db0e648b18826b0738abf1b9e041e1d179959dea1f8fd8b75c7f9fa95a18ddf",
+    "ict-track8/backend/pdf_table_preview.py": "194e7a04be35f82773951a19fb5200035901246d2f842aaec031387bf0dec9c5",
+    "ict-track8/backend/pending_comparison_resume.py": "0ef6e94f3e66740d8359e9e5cbc841a5bc5abd8cb96c1660a991371c0e8a0c21",
+    "ict-track8/backend/pending_filter_edit.py": "f5f416fdbe55e7767d7ab070b9733e92aa91ae1b2f3d45aff22e791cf275ac47",
+    "ict-track8/backend/pending_scope_edit.py": "797fa7d658258248e876452c1ea1ee8fd863ee70892aad9a4d99cdcc5d3ac4ca",
+    "ict-track8/backend/pending_source_validation.py": "469cf499e261a831878ebd9dfbd3361cc07e90b3dba58b7485ae2094ed4f5e9c",
+    "ict-track8/backend/pending_task_catalog.py": "8b27285383744c18aa2717f89ea0b7307400236754c424d20d81e0f7842d75a3",
+    "ict-track8/backend/pending_task_resume.py": "82cc83fe6f6edea7ebdd26af24eca28d45cff0a9e03211e7b0f28560570e0b09",
+    "ict-track8/backend/pending_task_store.py": "0df1d168cd790941397345673f8c12ddefeb2e0da24b45f292fd673d44b7b2eb",
+    "ict-track8/backend/perspective.py": "f92be7397a689af508b96a9a9d0f158af73d625b7bb955df97db2e8eba992d5c",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/ranked_result_followup.py": "bf10bccea106ac7b171199b15e412e26e92ad1f05ef68066ec0014a4d19ddf1b",
+    "ict-track8/backend/raysource_media.py": "b7f1c8a2e6c328f57a77e7e5bdf1d6f84082512592a752539dd9851cba921be5",
+    "ict-track8/backend/relational_scope_edit.py": "2fba5d364e38c2fc944c1271a53ddb0500fd40f6155deb385341b044d8cd58d2",
+    "ict-track8/backend/responses_client.py": "6acfd535d2b9071b093e06e24a5035125dfdace5de80e1f1a6322269fe35e15f",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/round13_document_scope_prototype.py": "5fe5693351a4e790394055ec9589b5107a5b20a4eafe2661da89217aabec023c",
+    "ict-track8/backend/scanned_grid_selection.py": "2533127e8f0448ff015110b08266a3e71719fd39eb4ee740246ceae99b01061a",
+    "ict-track8/backend/scanned_table_layout.py": "648e56820d2f0e0527a6df2bff3526461ccfe41bdf4ebe5fc5b5b11bec48ee91",
+    "ict-track8/backend/scanned_table_structure.py": "9de373f77d1d5b2a9279ac2704fe9a6c169835521ef7f102b577efe483937385",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/semantic_pending.py": "7641eb48c915586ce2e70c3f8ab15af90c3f6792a7e283b22c94d1338142c666",
+    "ict-track8/backend/session.py": "b9aac070ab8437c0a942d06e6347c830f1e9358958bd25aba310f420ddfb76cb",
+    "ict-track8/backend/source_answer_dossier.py": "4056d6147b3100a6b038803f02dbedd2a202d67425b6db78a36fc083a5fb2c07",
+    "ict-track8/backend/source_multi_span_answer.py": "0092e5283af289d63a00712858d66d757660ec055840613f60b59acd97e710fc",
+    "ict-track8/backend/source_provenance.py": "677ffad3e15d13832960a000a611bde1ec21d5df07afc38f44cee5240ce46bf9",
+    "ict-track8/backend/source_span_answer.py": "67277684700bb6e98246440a2b561fc03f06abd8e7e7cfa4d0747bf5c58041ae",
+    "ict-track8/backend/sql_document_binding.py": "bce65c5d94199f94f3785aab864ba9343bb9b2ddb1d2cdc1328d75083e5d204b",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "93511b107c988c85d5184c8adf3d20a3269f24cecd6b306e50a43a774cc6c6cd",
+    "ict-track8/backend/table_arithmetic.py": "34cd34f0081269f44397df4707a7bfca5c7d008b9aaca609ead693fe0df4f8d8",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "51e808fa3ba119e4b747ea1f2a66fa38e2dd66996b1304cd748615afeccab567",
+    "ict-track8/backend/text_structure.py": "fdf5242f65283cf8c06644d9b05197c81c709fe2e7693bf6656646be941c37c2",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unified_context.py": "76a070fbd125452cd292353306371225dcf8efeb8ef9bd718b67b3d2c018c59c",
+    "ict-track8/backend/unified_routing.py": "53171d999ad00da28eff8114c355e09415eb857dd48bfcadbc4c58b3807e4920",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "9be3033ead43d8c3177e388bdd9a3ef2f7baf7c8fef212941c80af538cbb8973",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "source_after": {
+    "ict-track8/backend/__init__.py": "462d793077f9f32dab01af30b989cb69a04003a11dd87011aa898767c630ad4f",
+    "ict-track8/backend/amount_cell_review.py": "79f23d04f7b29ccc3ee7c112b3f9ddbaefab17f8186bc0cfa310e9ad6e524b9c",
+    "ict-track8/backend/answer_contract.py": "1ace63ef88f6bb2bdda8ed4c1240c0aa9cee4150fdef1eaa164192d5985cdd38",
+    "ict-track8/backend/app.py": "6dc3f1596e7b479730009e1090db446fd877852a7391008433329e8ce3e27a85",
+    "ict-track8/backend/blank_cell_review.py": "9e0c17118c7af8bce75823bf1695bb9d0fb6cdb328f38229af234fae24133d63",
+    "ict-track8/backend/cell_crop_quality.py": "5904e3aa7c15c527d35f81f070c5bba73b4a18773900e6e43f96292f8c2b1899",
+    "ict-track8/backend/chunk_cleaning.py": "a395c2951cf09ece5d1d867a4dec504918060c49013c3b359148195aa12884dd",
+    "ict-track8/backend/clarification.py": "e919e59572505ef1ebd242bd6eafc86a705d698808ac536714e1ad21328bcbf2",
+    "ict-track8/backend/clarification_continuation.py": "895228f875220e3c2c0f71b87ee49b960f870e13f7c59df8e1ccfc1f44a38031",
+    "ict-track8/backend/comparison_batch_edit.py": "84b521e46244d270f320ad2c845ee1faef61d8764920fe5e672b5ca91359e3d7",
+    "ict-track8/backend/config.py": "491710773dde2093cb271f14f3dbdb06344dce5ce9ae5b16d427c5a05d3a9759",
+    "ict-track8/backend/conversation_comparison.py": "590d04f52950d7f5202accbd938dd1883fa6dffa76d86db0c7f4601d545577a0",
+    "ict-track8/backend/conversation_sources.py": "956e6afeb65f4888e8bf8975224dc60183e928e7c42f4c15ee2325d5e7aebaf1",
+    "ict-track8/backend/conversational_sql_edit.py": "a5c2e32fce7d1066939749a636fa34eb1a9ad46cadb1273c45a0b713e35b5a3a",
+    "ict-track8/backend/cross_source.py": "514d8889727bee781412ef55e6b3d9293830178515ba870323f188a99109ad86",
+    "ict-track8/backend/dense_retrieval.py": "39f47e5924a97674cd5c810e1714a56848a11ec91efe766d3ec3aa75a227915d",
+    "ict-track8/backend/dependency_agent.py": "803f4a2931ced83504d2e0d078c0b2f6730e0bce420c80910910cba0bf5a4e9f",
+    "ict-track8/backend/document_analysis.py": "f21aba15cb39d751c5e4b3f3158990503d8a360de5d0f00a4079227d0d57f6ac",
+    "ict-track8/backend/document_dialogue.py": "b5fa28038a6b1acd880299b874669485fc9dd0745fd114d76bde8e6a4ba6b797",
+    "ict-track8/backend/document_parts_answer.py": "491e03a166d718d8ae581736e756ccaa5849afceb25e97d3accbe43ad6d7922e",
+    "ict-track8/backend/dynamic_source_binding.py": "e97e65ae29709b867531ae40ad5fbc735367fcaa0db1f7004abe7abea1ffd712",
+    "ict-track8/backend/evaluation.py": "8c3f35fbf75eecfa2f113566b8a3c9d8eca08d114dea72b456482901f7cc07c2",
+    "ict-track8/backend/evidence_context.py": "47a4f518c3b0aea0891092192fc35da67b7c7743e25e4bb90e63b1d62406ca4a",
+    "ict-track8/backend/evidence_coverage.py": "7dd6fe7a6b06ab66bf222601689146e98d7641f607168ad48d2129beafb426dc",
+    "ict-track8/backend/evidence_fact.py": "f656847e10fbac9b7f58f4d198e239aad59b6ca08dd23677493ef3955b655bac",
+    "ict-track8/backend/evidence_recovery.py": "d6b2b921496a0df1743e37c31e9cb494aa9a2e435531c6040cc279a9a6821596",
+    "ict-track8/backend/evidence_scope.py": "2ff82f9375266b51e7a6a7b76d8988fc2be6aad76c2a090fd5e8cbf565fbd45f",
+    "ict-track8/backend/excel_layout.py": "15e67b8f90777f0f5b9561148a1c5eedb77464c32fd4b482509e1564befc47a0",
+    "ict-track8/backend/executed_scope_edit.py": "956efa3fb8a7df4b051b383a3a032c20811a585130765542d6556c9c4e55abff",
+    "ict-track8/backend/failure_trace.py": "23fa391835db911b4d09ee2d68f121bb3193fd7d206000dd0a528a9908ad6ef7",
+    "ict-track8/backend/formula_binding.py": "397aeacb98c6c9e0bc8a15b902cf18215b06f26c9fae6d2a878f2637ec72f1dd",
+    "ict-track8/backend/formula_parameter_binding.py": "dd9573c757dbbfe1d758ab9d5277a7df731ea25fbc614975fc9dc3d6aed48050",
+    "ict-track8/backend/fusion_constraints.py": "27d53ea2d4492c2b4bdbc360d10ef38c87d81f6a9fa1f188150e251fb1c9e179",
+    "ict-track8/backend/fusion_formula_planner.py": "f79f40863ecb87d21504d2b025769bc4308628b1f116a292432216a42ccbd089",
+    "ict-track8/backend/fusion_history.py": "c363ecd847f99d74d2d9d36a3022ae4283ee70d0ee0d72e09c22200fdfa7a31b",
+    "ict-track8/backend/fusion_normalization.py": "e51663ac231135e3fdad610bf72d7ef938fe26d95be468eb211d396d78391971",
+    "ict-track8/backend/fusion_parameter_followup.py": "93fbc3c9d5834ce789268e30252631140d7e053ad5e6ff369cb23401e724159c",
+    "ict-track8/backend/fusion_result_answer.py": "7ada3a145159f87e950b55d92e5ca5fcc2de5c19e03ff9f545f20f30ed2e209b",
+    "ict-track8/backend/grounded_generation.py": "65ce265392e685c6b0831e08a50d308b6ea89fcfe8723736938ee196b1afad9e",
+    "ict-track8/backend/grounded_span_answer.py": "6d0634e88e2e81cbca072259d941600cf762839b10668fcb631a740b95534aa7",
+    "ict-track8/backend/history_reference.py": "2bd41a9add5e440233033e0b763aa14a66e014517214dd9dab2546cc5d3a2e62",
+    "ict-track8/backend/image_geometry.py": "548d66430f34631fb1cee0172dccf0ce56e485e541cc672ae9847f34f402ce1f",
+    "ict-track8/backend/image_quality.py": "c4ac8d492966d597689b300c0ae31880bfe2278ac6889c75a79c7a508ce3f514",
+    "ict-track8/backend/knowledge_store.py": "0e0caa24408684e996b5bea61d98dffa8cf853ee4ea1a016c4ec4d689e086819",
+    "ict-track8/backend/memory/__init__.py": "d228f7bda5aa927ee56d48f200d82d5727351ca3e87b9286e6e34dd765e149d9",
+    "ict-track8/backend/memory/adapter.py": "4bd796e3fe96b461b91c3963d84900c2d37671df9a5ff0dc5f05dfa678d2204f",
+    "ict-track8/backend/memory/admin.py": "df158a89e8bd35faa8e3791a5060797c96358204d97adc26b9c53c2e288e1347",
+    "ict-track8/backend/memory/core.py": "3ed5dfd4b69924f88a29b3665c5a0d38941d8e81b91bd7427585800dc7aef98e",
+    "ict-track8/backend/memory/experience.py": "3fd61294eb3e530df28be8ef1c2f57d00f91ff2531e82b653fa98973cfff8f73",
+    "ict-track8/backend/memory/extraction.py": "6a4e64ccb738556b5d30b234236dea2969c22b0317b524895ed1f9059e8567b6",
+    "ict-track8/backend/memory/formation.py": "f610bb1d4e89f71e1328adbfd86fb5bd93dccf290ff053a117250f156454da2a",
+    "ict-track8/backend/multimodal_input.py": "e45ef075b1796a5633ef98e3a1facee4dc03fefc142823afd2975c2e064c2769",
+    "ict-track8/backend/native_amount_annotations.py": "d1cde2be5a590d7d5eaa9715b0aa6dea49ad3fedf8b932c8049ab1a6865a90ee",
+    "ict-track8/backend/native_anchor.py": "eb26c5e03ace23eb902c04241a708f04159fd9c7ea4f9336dd2a7c380378fad4",
+    "ict-track8/backend/native_continuation.py": "5724efa9fb106392dbfcd5667445ed2a2606913e88b29ff8da43ee19934ef6b9",
+    "ict-track8/backend/native_financial_tables.py": "2fef01f2fcb74c6007df8387eb2dd16b72a00914a430c26ac4d4f95dfb78e656",
+    "ict-track8/backend/native_formula_pages.py": "a499d6f26ef2bd56287289eebe87f0a439a74c08f002820439a0954d0303342c",
+    "ict-track8/backend/native_fraction.py": "58e9bb44c864cb3024924d189a806098b75ac803195ff1bd62f3f9a8bbedeb81",
+    "ict-track8/backend/native_label_amounts.py": "f05d65953cc5a07e26f2dfaf8ee9d44fdc8471c8aa914ee5dad0e2c5be987133",
+    "ict-track8/backend/native_row_comparison.py": "b1596c32915ca3f2e3b793bc9594770e0e745ac196eac5075057fcc29d186f65",
+    "ict-track8/backend/native_row_registry.py": "6e6ed439e5038b429d576838cb4b31d85418580c903ec7e2834885c017147be9",
+    "ict-track8/backend/native_row_selection.py": "58e2f0d6f5b9c660be08cba0fe2802b0d7b003f4aac92619b21c7dad68840d02",
+    "ict-track8/backend/native_table_chain.py": "6763e5b28c75c7b7cf6bbbe2973d5200572614437e11ec0ca5d2d35f4aeab214",
+    "ict-track8/backend/native_table_question.py": "d4644f73791dcbf887d969ed90bc1486cb53aee3223c42aa521bfcddce0e4fcd",
+    "ict-track8/backend/native_text_tables.py": "85ebe2f07c495e453249d3758907b65b3e2f8052df0ad4e270ca7fbf3e1f4ad0",
+    "ict-track8/backend/native_total_question.py": "1b4d52cafc32a0439a4d4912ce1bcdd6ff323c81db71aabef0ae69fc24f31338",
+    "ict-track8/backend/nl2sql/__init__.py": "f605fa38bfccb02ab241725fd84b7854f58ea07c23fc39ea507efb87c9614a30",
+    "ict-track8/backend/nl2sql/annotation.py": "0fa01743810613d18360a2b285126bd7581b5c67b7f839060e69829debc55a51",
+    "ict-track8/backend/nl2sql/complex_query.py": "edcb071fba84cd09ab5b7d8b268b41bf4e5bf671ab748b38e9692e6d60bb1259",
+    "ict-track8/backend/nl2sql/date_profile.py": "17bb0f0760598b11d6c87f2c8bff49230212d8e28222180bd2e2f257e565b6bc",
+    "ict-track8/backend/nl2sql/date_semantics.py": "fadabe473170b649f344222d607099b1f6d3a54187314ac8a90b733e5771a86d",
+    "ict-track8/backend/nl2sql/engine.py": "e5e83da04326d08cd08f9c92105ff9c1be8e76714ca47851f80b1dd1746472d0",
+    "ict-track8/backend/nl2sql/industry_seed.py": "78dd7ccfa5f771a0acb0c988da8d4562d2910f9736bfc903c5e42044c6572608",
+    "ict-track8/backend/nl2sql/lexicon.py": "3deb55d9f764e06406d583dcb03581f5ae9c27058a39e069bc37c6b0a51fe5ed",
+    "ict-track8/backend/nl2sql/metric_compiler.py": "c147cb0135f1991bb157f0aa5f90cf241c60273634a33e168f29341f527b79bc",
+    "ict-track8/backend/nl2sql/model_contract.py": "152aa5de1aeaba9d944da3fb03fa27d2fec0d172e8a68d1bc1e23ba6a5147130",
+    "ict-track8/backend/nl2sql/models.py": "59e2774de7b294d82d09519291927affd4af90fa315e359e358c089422a028a4",
+    "ict-track8/backend/nl2sql/operations_seed.py": "43b86672b6c52800a4ba112e0114eb207da1764f0d4f33b8812ee6730abc1c57",
+    "ict-track8/backend/nl2sql/plan_structure.py": "f4ff9feb438e338c6b90bb605c271013a443e0fd093e79ebcb34dc88ba8d0328",
+    "ict-track8/backend/nl2sql/planner.py": "410a77f53eacbbc574666846f184b0ce203b5087034dfa1185b97c13f24ab690",
+    "ict-track8/backend/nl2sql/question_roles.py": "d46718c1ff236f7ebeee46912fbc84e962aaa6cf1a6713de936c3faf0f56f82b",
+    "ict-track8/backend/nl2sql/relational_output_profile.py": "dbfbc32f821249f7b91d12d3bbb025c47c07694f255971d483a723f90fd55de8",
+    "ict-track8/backend/nl2sql/responses_provider.py": "42d9942edb34bd32de45460197dca3fcb275e6f817bb6deb911474863508cf18",
+    "ict-track8/backend/nl2sql/result_artifact.py": "1edbaa4a1edde4a4986163c81303f04204c60edd0133a8bd1e828d1cfa17d43a",
+    "ict-track8/backend/nl2sql/result_scope.py": "e5ed17397664ceb3b204e74a455717f56cc3592fba1bcd195c75bb4596ebf6cf",
+    "ict-track8/backend/nl2sql/schema.py": "2d077fcbe1cb0c6f4ce42bf38fc0dcbbee0d1d14d18b473d186f0f571e0c3456",
+    "ict-track8/backend/nl2sql/schema_profile.py": "27b04ce92d186762553436b97f2b2fea00594d6d51918e71d521fc686eed04ae",
+    "ict-track8/backend/nl2sql/security.py": "0d2ac7316422a44ef0a2318852ca0fc848e8c58c125bff08ee5fddf176441917",
+    "ict-track8/backend/nl2sql/seed.py": "707dc7b401de9fda53f6b139e1bb9d2da05f14e33ee4f1c3e47fa9f422ddcd67",
+    "ict-track8/backend/nl2sql/semantic_graph.py": "f4fb8c9776a0c9b1b171b2f58cd2a8d19e8b0dbc05f0da52d60d335962572fd7",
+    "ict-track8/backend/nl2sql/semantics.py": "793fd2c2b0dc0a4b9ffd8f957b76066409c04c83e42e747e54b98f2c9f3d1753",
+    "ict-track8/backend/nl2sql/t2s.py": "3c5e5666b65da6e146da87458c6c4f651f97f587a06508e6bf1140d67442a59a",
+    "ict-track8/backend/nl2sql/value_index.py": "9fe51698229ad843f4c1e8b8e642ba0955b9d70d6568f130e504d82580765f12",
+    "ict-track8/backend/ocr.py": "7f4199cb56a890968f0930906645db51111f2283974cfb3c6b10ee5d2050a8a4",
+    "ict-track8/backend/ocr_evidence_selection.py": "0f27eedc6667add900e4964715119515782046da9d792594db6ba576d3dc48aa",
+    "ict-track8/backend/ocr_fast_fusion.py": "21c3162565a996df9f57ac66ffa81cc940b0b16d858529adebc9d31308cc27da",
+    "ict-track8/backend/ocr_gap_fusion.py": "e8a80f101ab8235daaf6ce1e1cc30ea14e83b36c28a2af89cde3dc01a7482668",
+    "ict-track8/backend/ocr_pairing.py": "b37c1382184147a2843897d602ff9ed5010e328ab48549537cd9ef527d0c881b",
+    "ict-track8/backend/ocr_region_fusion.py": "1d689a63a3dd32aad794caf1054198c98ddaf90623103aa1eb1c22d3a729c5bb",
+    "ict-track8/backend/ocr_table_fusion.py": "fe87d2352324ded1f7fadaad3de63f2ca43c5c7c5edceed22b40450a3927ae2e",
+    "ict-track8/backend/omni_agent.py": "5eda6a84cca6d2d7b003bb372da6ef0e589637cf23909c55847729ee6dfe6217",
+    "ict-track8/backend/orientation_quality.py": "dc1fa8de4f1b67b7dc230628ce5b58a15f39555708bf02a96fcc891a2bf474d0",
+    "ict-track8/backend/pdf_amount_verification.py": "f6cb41333e916d2ee2b1a09cf6c90b35d5bdd8305ef5be53a650aa2df8bb54ab",
+    "ict-track8/backend/pdf_ingest.py": "f1369749613581e70eecfdf523a2543df6e60ab0f4f6c18c4c95972aab67b4b7",
+    "ict-track8/backend/pdf_native_context.py": "2fb1825c5adad87bf582032d926a98f99df5f339a9e7f3f2aa0b76d41d4a1b92",
+    "ict-track8/backend/pdf_page_index.py": "045fb9ecb3571d77ede9fc6aaae0ac2ff24517854b051caa70d1c2200fc59fd2",
+    "ict-track8/backend/pdf_table_continuity.py": "4db0e648b18826b0738abf1b9e041e1d179959dea1f8fd8b75c7f9fa95a18ddf",
+    "ict-track8/backend/pdf_table_preview.py": "194e7a04be35f82773951a19fb5200035901246d2f842aaec031387bf0dec9c5",
+    "ict-track8/backend/pending_comparison_resume.py": "0ef6e94f3e66740d8359e9e5cbc841a5bc5abd8cb96c1660a991371c0e8a0c21",
+    "ict-track8/backend/pending_filter_edit.py": "f5f416fdbe55e7767d7ab070b9733e92aa91ae1b2f3d45aff22e791cf275ac47",
+    "ict-track8/backend/pending_scope_edit.py": "797fa7d658258248e876452c1ea1ee8fd863ee70892aad9a4d99cdcc5d3ac4ca",
+    "ict-track8/backend/pending_source_validation.py": "469cf499e261a831878ebd9dfbd3361cc07e90b3dba58b7485ae2094ed4f5e9c",
+    "ict-track8/backend/pending_task_catalog.py": "8b27285383744c18aa2717f89ea0b7307400236754c424d20d81e0f7842d75a3",
+    "ict-track8/backend/pending_task_resume.py": "82cc83fe6f6edea7ebdd26af24eca28d45cff0a9e03211e7b0f28560570e0b09",
+    "ict-track8/backend/pending_task_store.py": "0df1d168cd790941397345673f8c12ddefeb2e0da24b45f292fd673d44b7b2eb",
+    "ict-track8/backend/perspective.py": "f92be7397a689af508b96a9a9d0f158af73d625b7bb955df97db2e8eba992d5c",
+    "ict-track8/backend/plan_requirements.py": "7eea0e8bc4563a8b78fc65ae8eacec43c8b4be11b5814f359a9f815ac1062a16",
+    "ict-track8/backend/policy_evidence.py": "0c796cee81e00405a7ef5b8b2d1345a19fae9c1ebb79b52d50c51ea31d51fb3c",
+    "ict-track8/backend/production_audit.py": "ae2a2fd91bb77e61f3228b1fd38203af5370b57cca9ee13f5351da836d3a710a",
+    "ict-track8/backend/ranked_result_followup.py": "bf10bccea106ac7b171199b15e412e26e92ad1f05ef68066ec0014a4d19ddf1b",
+    "ict-track8/backend/raysource_media.py": "b7f1c8a2e6c328f57a77e7e5bdf1d6f84082512592a752539dd9851cba921be5",
+    "ict-track8/backend/relational_scope_edit.py": "2fba5d364e38c2fc944c1271a53ddb0500fd40f6155deb385341b044d8cd58d2",
+    "ict-track8/backend/responses_client.py": "6acfd535d2b9071b093e06e24a5035125dfdace5de80e1f1a6322269fe35e15f",
+    "ict-track8/backend/retrieval_adapter.py": "c6a0295a106588d8ac8b3fc759de44ab34027cf3b4cc2736f6c1e0b16cc7b573",
+    "ict-track8/backend/round13_document_scope_prototype.py": "5fe5693351a4e790394055ec9589b5107a5b20a4eafe2661da89217aabec023c",
+    "ict-track8/backend/scanned_grid_selection.py": "2533127e8f0448ff015110b08266a3e71719fd39eb4ee740246ceae99b01061a",
+    "ict-track8/backend/scanned_table_layout.py": "648e56820d2f0e0527a6df2bff3526461ccfe41bdf4ebe5fc5b5b11bec48ee91",
+    "ict-track8/backend/scanned_table_structure.py": "9de373f77d1d5b2a9279ac2704fe9a6c169835521ef7f102b577efe483937385",
+    "ict-track8/backend/search_scope.py": "22ab585abb6b3b8660a58124bb18344f94a5c9a1a4485383a4935155247bff68",
+    "ict-track8/backend/semantic_pending.py": "7641eb48c915586ce2e70c3f8ab15af90c3f6792a7e283b22c94d1338142c666",
+    "ict-track8/backend/session.py": "b9aac070ab8437c0a942d06e6347c830f1e9358958bd25aba310f420ddfb76cb",
+    "ict-track8/backend/source_answer_dossier.py": "4056d6147b3100a6b038803f02dbedd2a202d67425b6db78a36fc083a5fb2c07",
+    "ict-track8/backend/source_multi_span_answer.py": "0092e5283af289d63a00712858d66d757660ec055840613f60b59acd97e710fc",
+    "ict-track8/backend/source_provenance.py": "677ffad3e15d13832960a000a611bde1ec21d5df07afc38f44cee5240ce46bf9",
+    "ict-track8/backend/source_span_answer.py": "67277684700bb6e98246440a2b561fc03f06abd8e7e7cfa4d0747bf5c58041ae",
+    "ict-track8/backend/sql_document_binding.py": "bce65c5d94199f94f3785aab864ba9343bb9b2ddb1d2cdc1328d75083e5d204b",
+    "ict-track8/backend/sql_evidence.py": "41e0cc6abe336be738d06b524f7c5a9ac9fb303bcb3d02c6b35e4b951aac6aa9",
+    "ict-track8/backend/sql_history_scope.py": "93511b107c988c85d5184c8adf3d20a3269f24cecd6b306e50a43a774cc6c6cd",
+    "ict-track8/backend/table_arithmetic.py": "34cd34f0081269f44397df4707a7bfca5c7d008b9aaca609ead693fe0df4f8d8",
+    "ict-track8/backend/text_quality.py": "2cdd5a14ef5e46f7f1081717ad6d9a4fce6e9935dcfee91d22562cf67d7c078e",
+    "ict-track8/backend/text_reference_contract.py": "51e808fa3ba119e4b747ea1f2a66fa38e2dd66996b1304cd748615afeccab567",
+    "ict-track8/backend/text_structure.py": "fdf5242f65283cf8c06644d9b05197c81c709fe2e7693bf6656646be941c37c2",
+    "ict-track8/backend/typed_answer.py": "bc48d2e3c5cb55967f56097508600119b90bb2a573d58fddc5d1de43c900ac98",
+    "ict-track8/backend/typed_span_execution.py": "c11d597d82b19b84af4b5bb7e85ade6933592d0a6431a6a3a688e230698f62b9",
+    "ict-track8/backend/unified_context.py": "76a070fbd125452cd292353306371225dcf8efeb8ef9bd718b67b3d2c018c59c",
+    "ict-track8/backend/unified_routing.py": "53171d999ad00da28eff8114c355e09415eb857dd48bfcadbc4c58b3807e4920",
+    "ict-track8/backend/unit_algebra.py": "b287dfb76205fd10eb15b88f0bf2fd8a999205e34a5c32a64d5597fb2900c363",
+    "ict-track8/backend/visual_cell_verification.py": "f7077c8ca0e7d57cc024ac139461a9eec865884de813217b8a4b00067ee82537",
+    "ict-track8/backend/visual_chart_routing.py": "9be3033ead43d8c3177e388bdd9a3ef2f7baf7c8fef212941c80af538cbb8973",
+    "ict-track8/backend/visual_charts.py": "75d402e2c9c1affd939d91b457ce47988b099f3fa29a0bf923e3980df7dc073a",
+    "ict-track8/backend/visual_evidence.py": "1aa9ff11616d7eca5352cfe750c0b2a27858eb77292e9ef0baa9c5e867fa23a0",
+    "ict-track8/backend/visual_routing.py": "773f0673555af0eaa28331ed0328bf01bdd1f62e29384796c0894043f351f7cb",
+    "ict-track8/backend/visual_source_answer.py": "893b58a7a594470d111b3776a5700ed3122f069ef7bba024a38c73cd0021a002",
+    "ict-track8/backend/visual_table_reader.py": "bce1c0a79ca04cb39bb4ecfa4f58cae1b89f6cad6afa1d5fabdd2b7cfd685b73",
+    "ict-track8/backend/visual_tables.py": "70f61b2b139f4989220b613aa6187be966bec32507de7d49f4314392153ee248",
+    "ict-track8/backend/visual_work_budget.py": "8a078029af43c5430e8d7ce4618d3b72bdda48b2850b7c3066b94d7734c24171"
+  },
+  "script_sha256": "74ecf9ede89e08f86b2dd3e2d1189793c2ffc9f25026cd7676477fccfe50183c",
+  "documents": [
+    {
+      "pages": 10,
+      "source_sha256": "4bd669905a84d2b2440744112d072481124128962a488754197aee4cdb6feb9a",
+      "source_bytes": 6858,
+      "chunks": 50,
+      "index_build_ms": 25.77091899001971,
+      "cold_query_ms": 17.096881987527013,
+      "query_ms": [
+        4.233925021253526,
+        4.070342984050512,
+        3.976331965532154,
+        3.931801998987794,
+        3.9933340158313513,
+        3.9278340409509838,
+        3.9356009801849723,
+        4.027547023724765,
+        4.0056019788607955,
+        4.057213023770601,
+        3.9183550397865474,
+        3.946382028516382
+      ],
+      "query_p50_ms": 3.9848329906817526,
+      "query_p95_ms": 4.233925021253526,
+      "source_verification_ms": 0.1902309595607221,
+      "answer_preparation_ms": 7.376783003564924,
+      "prepared_pages": 6,
+      "prepared_scope": {
+        "scanned_pages": 10,
+        "included_pages": 6,
+        "evidence_scope": {
+          "version": "bounded-evidence-scope-v1",
+          "status": "budget_exhausted",
+          "declared_sources": [
+            {
+              "document_id": "operations",
+              "source_sha256": "4bd669905a84d2b2440744112d072481124128962a488754197aee4cdb6feb9a",
+              "pages": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10
+              ],
+              "scope_kind": "nominated_whole_source"
+            }
+          ],
+          "scanned_pages": [
+            [
+              "operations",
+              1
+            ],
+            [
+              "operations",
+              2
+            ],
+            [
+              "operations",
+              3
+            ],
+            [
+              "operations",
+              4
+            ],
+            [
+              "operations",
+              5
+            ],
+            [
+              "operations",
+              6
+            ],
+            [
+              "operations",
+              7
+            ],
+            [
+              "operations",
+              8
+            ],
+            [
+              "operations",
+              9
+            ],
+            [
+              "operations",
+              10
+            ]
+          ],
+          "supplied_pages": [
+            [
+              "operations",
+              1
+            ],
+            [
+              "operations",
+              2
+            ],
+            [
+              "operations",
+              3
+            ],
+            [
+              "operations",
+              4
+            ],
+            [
+              "operations",
+              5
+            ],
+            [
+              "operations",
+              6
+            ]
+          ],
+          "unscanned_pages": [],
+          "unsupplied_pages": [
+            [
+              "operations",
+              7
+            ],
+            [
+              "operations",
+              8
+            ],
+            [
+              "operations",
+              9
+            ],
+            [
+              "operations",
+              10
+            ]
+          ],
+          "required_conditions": [
+            "entity_roles_exclusions",
+            "record_inventory",
+            "units_dates_qualifiers",
+            "whole_question"
+          ],
+          "verified_conditions": [],
+          "unverified_conditions": [
+            "entity_roles_exclusions",
+            "record_inventory",
+            "units_dates_qualifiers",
+            "whole_question"
+          ],
+          "omitted": [
+            {
+              "document_id": "operations",
+              "page_no": 7,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 8,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 9,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 10,
+              "reason": "evidence_budget"
+            }
+          ],
+          "budget_exhausted": true,
+          "semantic_sufficiency": "not_proved_by_page_coverage",
+          "closure": "declared_source_versions_and_pages_only_not_global_corpus"
+        },
+        "native_chars": 3264,
+        "coverage": [
+          {
+            "document_id": "operations",
+            "page_count": 10,
+            "included_pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "whole_document_included": false
+          }
+        ],
+        "omitted": [
+          {
+            "document_id": "operations",
+            "page_no": 7,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 8,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 9,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 10,
+            "reason": "evidence_budget"
+          }
+        ],
+        "ranking_is_navigation_only": true,
+        "scope": "selected_complete_native_pages_not_unseen_document_closure"
+      },
+      "offline_answer_ms": 11.226461036130786,
+      "offline_answer_status": "ok",
+      "offline_answer_mode": "attributed_extracts",
+      "generated_end_to_end": "not_run",
+      "concurrency": {
+        "workers": 4,
+        "requests": 24,
+        "samples": [
+          {
+            "ms": 24.418797984253615,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 25.259013986214995,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 24.773016979452223,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 24.31268902728334,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 5.548385961446911,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 20.446082984562963,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 25.892417004797608,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 25.409713969565928,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 19.600654020905495,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 24.88874300615862,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 6.556274020113051,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 19.76686395937577,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 23.927273985464126,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 19.391454989090562,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 19.459851027932018,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 14.587794023100287,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 24.638863978907466,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 13.942221994511783,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 14.609801990445703,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 26.830998016521335,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 26.18094498757273,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 25.95169603591785,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 15.702467004302889,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 10.334699996747077,
+            "hits": 4,
+            "source_sha_consistent": true
+          }
+        ],
+        "qps": 189.63286603774398,
+        "p50_ms": 20.446082984562963,
+        "p95_ms": 26.18094498757273,
+        "failures": 0
+      },
+      "restart_identical_hits": true,
+      "incremental_index_build_ms": 23.879156971815974,
+      "replacement_ms": 5.272670998238027,
+      "old_revision_rejected": true,
+      "corrupt_original_rejected": true,
+      "disk_bytes": 449266
+    },
+    {
+      "pages": 100,
+      "source_sha256": "6f5f5789ae4b9eebabdea56722b995364fd123e6209a9d33e818ab0889f9add6",
+      "source_bytes": 60840,
+      "chunks": 500,
+      "index_build_ms": 193.32275597844273,
+      "cold_query_ms": 134.17053502053022,
+      "query_ms": [
+        103.77530800178647,
+        101.89139598514885,
+        103.4636260010302,
+        115.79136998625472,
+        103.18170598475263,
+        102.73341700667515,
+        103.422929008957,
+        107.03361098421738,
+        117.63404798693955,
+        103.00579899922013,
+        103.85149897774681,
+        102.59505501016974
+      ],
+      "query_p50_ms": 103.4432775049936,
+      "query_p95_ms": 117.63404798693955,
+      "source_verification_ms": 0.33969199284911156,
+      "answer_preparation_ms": 8.97181499749422,
+      "prepared_pages": 6,
+      "prepared_scope": {
+        "scanned_pages": 12,
+        "included_pages": 6,
+        "evidence_scope": {
+          "version": "bounded-evidence-scope-v1",
+          "status": "budget_exhausted",
+          "declared_sources": [
+            {
+              "document_id": "operations",
+              "source_sha256": "6f5f5789ae4b9eebabdea56722b995364fd123e6209a9d33e818ab0889f9add6",
+              "pages": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51,
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                62,
+                63,
+                64,
+                65,
+                66,
+                67,
+                68,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75,
+                76,
+                77,
+                78,
+                79,
+                80,
+                81,
+                82,
+                83,
+                84,
+                85,
+                86,
+                87,
+                88,
+                89,
+                90,
+                91,
+                92,
+                93,
+                94,
+                95,
+                96,
+                97,
+                98,
+                99,
+                100
+              ],
+              "scope_kind": "nominated_whole_source"
+            }
+          ],
+          "scanned_pages": [
+            [
+              "operations",
+              4
+            ],
+            [
+              "operations",
+              5
+            ],
+            [
+              "operations",
+              6
+            ],
+            [
+              "operations",
+              24
+            ],
+            [
+              "operations",
+              25
+            ],
+            [
+              "operations",
+              26
+            ],
+            [
+              "operations",
+              30
+            ],
+            [
+              "operations",
+              31
+            ],
+            [
+              "operations",
+              32
+            ],
+            [
+              "operations",
+              79
+            ],
+            [
+              "operations",
+              80
+            ],
+            [
+              "operations",
+              81
+            ]
+          ],
+          "supplied_pages": [
+            [
+              "operations",
+              4
+            ],
+            [
+              "operations",
+              5
+            ],
+            [
+              "operations",
+              6
+            ],
+            [
+              "operations",
+              24
+            ],
+            [
+              "operations",
+              25
+            ],
+            [
+              "operations",
+              26
+            ]
+          ],
+          "unscanned_pages": [
+            [
+              "operations",
+              1
+            ],
+            [
+              "operations",
+              2
+            ],
+            [
+              "operations",
+              3
+            ],
+            [
+              "operations",
+              7
+            ],
+            [
+              "operations",
+              8
+            ],
+            [
+              "operations",
+              9
+            ],
+            [
+              "operations",
+              10
+            ],
+            [
+              "operations",
+              11
+            ],
+            [
+              "operations",
+              12
+            ],
+            [
+              "operations",
+              13
+            ],
+            [
+              "operations",
+              14
+            ],
+            [
+              "operations",
+              15
+            ],
+            [
+              "operations",
+              16
+            ],
+            [
+              "operations",
+              17
+            ],
+            [
+              "operations",
+              18
+            ],
+            [
+              "operations",
+              19
+            ],
+            [
+              "operations",
+              20
+            ],
+            [
+              "operations",
+              21
+            ],
+            [
+              "operations",
+              22
+            ],
+            [
+              "operations",
+              23
+            ],
+            [
+              "operations",
+              27
+            ],
+            [
+              "operations",
+              28
+            ],
+            [
+              "operations",
+              29
+            ],
+            [
+              "operations",
+              33
+            ],
+            [
+              "operations",
+              34
+            ],
+            [
+              "operations",
+              35
+            ],
+            [
+              "operations",
+              36
+            ],
+            [
+              "operations",
+              37
+            ],
+            [
+              "operations",
+              38
+            ],
+            [
+              "operations",
+              39
+            ],
+            [
+              "operations",
+              40
+            ],
+            [
+              "operations",
+              41
+            ],
+            [
+              "operations",
+              42
+            ],
+            [
+              "operations",
+              43
+            ],
+            [
+              "operations",
+              44
+            ],
+            [
+              "operations",
+              45
+            ],
+            [
+              "operations",
+              46
+            ],
+            [
+              "operations",
+              47
+            ],
+            [
+              "operations",
+              48
+            ],
+            [
+              "operations",
+              49
+            ],
+            [
+              "operations",
+              50
+            ],
+            [
+              "operations",
+              51
+            ],
+            [
+              "operations",
+              52
+            ],
+            [
+              "operations",
+              53
+            ],
+            [
+              "operations",
+              54
+            ],
+            [
+              "operations",
+              55
+            ],
+            [
+              "operations",
+              56
+            ],
+            [
+              "operations",
+              57
+            ],
+            [
+              "operations",
+              58
+            ],
+            [
+              "operations",
+              59
+            ],
+            [
+              "operations",
+              60
+            ],
+            [
+              "operations",
+              61
+            ],
+            [
+              "operations",
+              62
+            ],
+            [
+              "operations",
+              63
+            ],
+            [
+              "operations",
+              64
+            ],
+            [
+              "operations",
+              65
+            ],
+            [
+              "operations",
+              66
+            ],
+            [
+              "operations",
+              67
+            ],
+            [
+              "operations",
+              68
+            ],
+            [
+              "operations",
+              69
+            ],
+            [
+              "operations",
+              70
+            ],
+            [
+              "operations",
+              71
+            ],
+            [
+              "operations",
+              72
+            ],
+            [
+              "operations",
+              73
+            ],
+            [
+              "operations",
+              74
+            ],
+            [
+              "operations",
+              75
+            ],
+            [
+              "operations",
+              76
+            ],
+            [
+              "operations",
+              77
+            ],
+            [
+              "operations",
+              78
+            ],
+            [
+              "operations",
+              82
+            ],
+            [
+              "operations",
+              83
+            ],
+            [
+              "operations",
+              84
+            ],
+            [
+              "operations",
+              85
+            ],
+            [
+              "operations",
+              86
+            ],
+            [
+              "operations",
+              87
+            ],
+            [
+              "operations",
+              88
+            ],
+            [
+              "operations",
+              89
+            ],
+            [
+              "operations",
+              90
+            ],
+            [
+              "operations",
+              91
+            ],
+            [
+              "operations",
+              92
+            ],
+            [
+              "operations",
+              93
+            ],
+            [
+              "operations",
+              94
+            ],
+            [
+              "operations",
+              95
+            ],
+            [
+              "operations",
+              96
+            ],
+            [
+              "operations",
+              97
+            ],
+            [
+              "operations",
+              98
+            ],
+            [
+              "operations",
+              99
+            ],
+            [
+              "operations",
+              100
+            ]
+          ],
+          "unsupplied_pages": [
+            [
+              "operations",
+              1
+            ],
+            [
+              "operations",
+              2
+            ],
+            [
+              "operations",
+              3
+            ],
+            [
+              "operations",
+              7
+            ],
+            [
+              "operations",
+              8
+            ],
+            [
+              "operations",
+              9
+            ],
+            [
+              "operations",
+              10
+            ],
+            [
+              "operations",
+              11
+            ],
+            [
+              "operations",
+              12
+            ],
+            [
+              "operations",
+              13
+            ],
+            [
+              "operations",
+              14
+            ],
+            [
+              "operations",
+              15
+            ],
+            [
+              "operations",
+              16
+            ],
+            [
+              "operations",
+              17
+            ],
+            [
+              "operations",
+              18
+            ],
+            [
+              "operations",
+              19
+            ],
+            [
+              "operations",
+              20
+            ],
+            [
+              "operations",
+              21
+            ],
+            [
+              "operations",
+              22
+            ],
+            [
+              "operations",
+              23
+            ],
+            [
+              "operations",
+              27
+            ],
+            [
+              "operations",
+              28
+            ],
+            [
+              "operations",
+              29
+            ],
+            [
+              "operations",
+              30
+            ],
+            [
+              "operations",
+              31
+            ],
+            [
+              "operations",
+              32
+            ],
+            [
+              "operations",
+              33
+            ],
+            [
+              "operations",
+              34
+            ],
+            [
+              "operations",
+              35
+            ],
+            [
+              "operations",
+              36
+            ],
+            [
+              "operations",
+              37
+            ],
+            [
+              "operations",
+              38
+            ],
+            [
+              "operations",
+              39
+            ],
+            [
+              "operations",
+              40
+            ],
+            [
+              "operations",
+              41
+            ],
+            [
+              "operations",
+              42
+            ],
+            [
+              "operations",
+              43
+            ],
+            [
+              "operations",
+              44
+            ],
+            [
+              "operations",
+              45
+            ],
+            [
+              "operations",
+              46
+            ],
+            [
+              "operations",
+              47
+            ],
+            [
+              "operations",
+              48
+            ],
+            [
+              "operations",
+              49
+            ],
+            [
+              "operations",
+              50
+            ],
+            [
+              "operations",
+              51
+            ],
+            [
+              "operations",
+              52
+            ],
+            [
+              "operations",
+              53
+            ],
+            [
+              "operations",
+              54
+            ],
+            [
+              "operations",
+              55
+            ],
+            [
+              "operations",
+              56
+            ],
+            [
+              "operations",
+              57
+            ],
+            [
+              "operations",
+              58
+            ],
+            [
+              "operations",
+              59
+            ],
+            [
+              "operations",
+              60
+            ],
+            [
+              "operations",
+              61
+            ],
+            [
+              "operations",
+              62
+            ],
+            [
+              "operations",
+              63
+            ],
+            [
+              "operations",
+              64
+            ],
+            [
+              "operations",
+              65
+            ],
+            [
+              "operations",
+              66
+            ],
+            [
+              "operations",
+              67
+            ],
+            [
+              "operations",
+              68
+            ],
+            [
+              "operations",
+              69
+            ],
+            [
+              "operations",
+              70
+            ],
+            [
+              "operations",
+              71
+            ],
+            [
+              "operations",
+              72
+            ],
+            [
+              "operations",
+              73
+            ],
+            [
+              "operations",
+              74
+            ],
+            [
+              "operations",
+              75
+            ],
+            [
+              "operations",
+              76
+            ],
+            [
+              "operations",
+              77
+            ],
+            [
+              "operations",
+              78
+            ],
+            [
+              "operations",
+              79
+            ],
+            [
+              "operations",
+              80
+            ],
+            [
+              "operations",
+              81
+            ],
+            [
+              "operations",
+              82
+            ],
+            [
+              "operations",
+              83
+            ],
+            [
+              "operations",
+              84
+            ],
+            [
+              "operations",
+              85
+            ],
+            [
+              "operations",
+              86
+            ],
+            [
+              "operations",
+              87
+            ],
+            [
+              "operations",
+              88
+            ],
+            [
+              "operations",
+              89
+            ],
+            [
+              "operations",
+              90
+            ],
+            [
+              "operations",
+              91
+            ],
+            [
+              "operations",
+              92
+            ],
+            [
+              "operations",
+              93
+            ],
+            [
+              "operations",
+              94
+            ],
+            [
+              "operations",
+              95
+            ],
+            [
+              "operations",
+              96
+            ],
+            [
+              "operations",
+              97
+            ],
+            [
+              "operations",
+              98
+            ],
+            [
+              "operations",
+              99
+            ],
+            [
+              "operations",
+              100
+            ]
+          ],
+          "required_conditions": [
+            "entity_roles_exclusions",
+            "record_inventory",
+            "units_dates_qualifiers",
+            "whole_question"
+          ],
+          "verified_conditions": [],
+          "unverified_conditions": [
+            "entity_roles_exclusions",
+            "record_inventory",
+            "units_dates_qualifiers",
+            "whole_question"
+          ],
+          "omitted": [
+            {
+              "document_id": "operations",
+              "page_no": 30,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 31,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 32,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 79,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 80,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 81,
+              "reason": "evidence_budget"
+            }
+          ],
+          "budget_exhausted": true,
+          "semantic_sufficiency": "not_proved_by_page_coverage",
+          "closure": "declared_source_versions_and_pages_only_not_global_corpus"
+        },
+        "native_chars": 3264,
+        "coverage": [
+          {
+            "document_id": "operations",
+            "page_count": 100,
+            "included_pages": [
+              4,
+              5,
+              6,
+              24,
+              25,
+              26
+            ],
+            "whole_document_included": false
+          }
+        ],
+        "omitted": [
+          {
+            "document_id": "operations",
+            "page_no": 30,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 31,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 32,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 79,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 80,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 81,
+            "reason": "evidence_budget"
+          }
+        ],
+        "ranking_is_navigation_only": true,
+        "scope": "selected_complete_native_pages_not_unseen_document_closure"
+      },
+      "offline_answer_ms": 136.18336099898443,
+      "offline_answer_status": "ok",
+      "offline_answer_mode": "attributed_extracts",
+      "generated_end_to_end": "not_run",
+      "concurrency": {
+        "workers": 4,
+        "requests": 24,
+        "samples": [
+          {
+            "ms": 321.4533290010877,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 320.3561609843746,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 318.7686180463061,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 431.2794590368867,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 223.79236097913235,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 448.15442903200164,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 555.6837589829229,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 294.8136660270393,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 654.0656129946001,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 260.07041399134323,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 321.1404359899461,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 443.44595196889713,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 649.0385960205458,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 638.0919460207224,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 568.0309690069407,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 447.5830859737471,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 261.58622303046286,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 278.4615110140294,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 348.5996159724891,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 463.60625099623576,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 451.5001969994046,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 669.4504980114289,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 400.4994140123017,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 340.3338130447082,
+            "hits": 4,
+            "source_sha_consistent": true
+          }
+        ],
+        "qps": 8.965086881185558,
+        "p50_ms": 400.4994140123017,
+        "p95_ms": 654.0656129946001,
+        "failures": 0
+      },
+      "restart_identical_hits": true,
+      "incremental_index_build_ms": 188.9613089733757,
+      "replacement_ms": 21.829713019542396,
+      "old_revision_rejected": true,
+      "corrupt_original_rejected": true,
+      "disk_bytes": 4279760
+    },
+    {
+      "pages": 500,
+      "source_sha256": "90bc48cfb32c8272b2a339c23b5ac92f1841d42d199e1ba64a421e2513d01ae1",
+      "source_bytes": 301814,
+      "chunks": 2500,
+      "index_build_ms": 923.4747860464267,
+      "cold_query_ms": 672.2449120134115,
+      "query_ms": [
+        698.8280749646947,
+        705.183602985926,
+        696.1558199836873,
+        697.2364049870521,
+        701.2509279884398,
+        701.1029499699362,
+        696.9683969509788,
+        700.5879759672098,
+        695.1893060468137,
+        706.3992809853517,
+        697.8978750412352,
+        712.1051920112222
+      ],
+      "query_p50_ms": 699.7080254659522,
+      "query_p95_ms": 712.1051920112222,
+      "source_verification_ms": 0.8120620041154325,
+      "answer_preparation_ms": 11.421587027143687,
+      "prepared_pages": 6,
+      "prepared_scope": {
+        "scanned_pages": 12,
+        "included_pages": 6,
+        "evidence_scope": {
+          "version": "bounded-evidence-scope-v1",
+          "status": "budget_exhausted",
+          "declared_sources": [
+            {
+              "document_id": "operations",
+              "source_sha256": "90bc48cfb32c8272b2a339c23b5ac92f1841d42d199e1ba64a421e2513d01ae1",
+              "pages": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29,
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49,
+                50,
+                51,
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58,
+                59,
+                60,
+                61,
+                62,
+                63,
+                64,
+                65,
+                66,
+                67,
+                68,
+                69,
+                70,
+                71,
+                72,
+                73,
+                74,
+                75,
+                76,
+                77,
+                78,
+                79,
+                80,
+                81,
+                82,
+                83,
+                84,
+                85,
+                86,
+                87,
+                88,
+                89,
+                90,
+                91,
+                92,
+                93,
+                94,
+                95,
+                96,
+                97,
+                98,
+                99,
+                100,
+                101,
+                102,
+                103,
+                104,
+                105,
+                106,
+                107,
+                108,
+                109,
+                110,
+                111,
+                112,
+                113,
+                114,
+                115,
+                116,
+                117,
+                118,
+                119,
+                120,
+                121,
+                122,
+                123,
+                124,
+                125,
+                126,
+                127,
+                128,
+                129,
+                130,
+                131,
+                132,
+                133,
+                134,
+                135,
+                136,
+                137,
+                138,
+                139,
+                140,
+                141,
+                142,
+                143,
+                144,
+                145,
+                146,
+                147,
+                148,
+                149,
+                150,
+                151,
+                152,
+                153,
+                154,
+                155,
+                156,
+                157,
+                158,
+                159,
+                160,
+                161,
+                162,
+                163,
+                164,
+                165,
+                166,
+                167,
+                168,
+                169,
+                170,
+                171,
+                172,
+                173,
+                174,
+                175,
+                176,
+                177,
+                178,
+                179,
+                180,
+                181,
+                182,
+                183,
+                184,
+                185,
+                186,
+                187,
+                188,
+                189,
+                190,
+                191,
+                192,
+                193,
+                194,
+                195,
+                196,
+                197,
+                198,
+                199,
+                200,
+                201,
+                202,
+                203,
+                204,
+                205,
+                206,
+                207,
+                208,
+                209,
+                210,
+                211,
+                212,
+                213,
+                214,
+                215,
+                216,
+                217,
+                218,
+                219,
+                220,
+                221,
+                222,
+                223,
+                224,
+                225,
+                226,
+                227,
+                228,
+                229,
+                230,
+                231,
+                232,
+                233,
+                234,
+                235,
+                236,
+                237,
+                238,
+                239,
+                240,
+                241,
+                242,
+                243,
+                244,
+                245,
+                246,
+                247,
+                248,
+                249,
+                250,
+                251,
+                252,
+                253,
+                254,
+                255,
+                256,
+                257,
+                258,
+                259,
+                260,
+                261,
+                262,
+                263,
+                264,
+                265,
+                266,
+                267,
+                268,
+                269,
+                270,
+                271,
+                272,
+                273,
+                274,
+                275,
+                276,
+                277,
+                278,
+                279,
+                280,
+                281,
+                282,
+                283,
+                284,
+                285,
+                286,
+                287,
+                288,
+                289,
+                290,
+                291,
+                292,
+                293,
+                294,
+                295,
+                296,
+                297,
+                298,
+                299,
+                300,
+                301,
+                302,
+                303,
+                304,
+                305,
+                306,
+                307,
+                308,
+                309,
+                310,
+                311,
+                312,
+                313,
+                314,
+                315,
+                316,
+                317,
+                318,
+                319,
+                320,
+                321,
+                322,
+                323,
+                324,
+                325,
+                326,
+                327,
+                328,
+                329,
+                330,
+                331,
+                332,
+                333,
+                334,
+                335,
+                336,
+                337,
+                338,
+                339,
+                340,
+                341,
+                342,
+                343,
+                344,
+                345,
+                346,
+                347,
+                348,
+                349,
+                350,
+                351,
+                352,
+                353,
+                354,
+                355,
+                356,
+                357,
+                358,
+                359,
+                360,
+                361,
+                362,
+                363,
+                364,
+                365,
+                366,
+                367,
+                368,
+                369,
+                370,
+                371,
+                372,
+                373,
+                374,
+                375,
+                376,
+                377,
+                378,
+                379,
+                380,
+                381,
+                382,
+                383,
+                384,
+                385,
+                386,
+                387,
+                388,
+                389,
+                390,
+                391,
+                392,
+                393,
+                394,
+                395,
+                396,
+                397,
+                398,
+                399,
+                400,
+                401,
+                402,
+                403,
+                404,
+                405,
+                406,
+                407,
+                408,
+                409,
+                410,
+                411,
+                412,
+                413,
+                414,
+                415,
+                416,
+                417,
+                418,
+                419,
+                420,
+                421,
+                422,
+                423,
+                424,
+                425,
+                426,
+                427,
+                428,
+                429,
+                430,
+                431,
+                432,
+                433,
+                434,
+                435,
+                436,
+                437,
+                438,
+                439,
+                440,
+                441,
+                442,
+                443,
+                444,
+                445,
+                446,
+                447,
+                448,
+                449,
+                450,
+                451,
+                452,
+                453,
+                454,
+                455,
+                456,
+                457,
+                458,
+                459,
+                460,
+                461,
+                462,
+                463,
+                464,
+                465,
+                466,
+                467,
+                468,
+                469,
+                470,
+                471,
+                472,
+                473,
+                474,
+                475,
+                476,
+                477,
+                478,
+                479,
+                480,
+                481,
+                482,
+                483,
+                484,
+                485,
+                486,
+                487,
+                488,
+                489,
+                490,
+                491,
+                492,
+                493,
+                494,
+                495,
+                496,
+                497,
+                498,
+                499,
+                500
+              ],
+              "scope_kind": "nominated_whole_source"
+            }
+          ],
+          "scanned_pages": [
+            [
+              "operations",
+              30
+            ],
+            [
+              "operations",
+              31
+            ],
+            [
+              "operations",
+              32
+            ],
+            [
+              "operations",
+              357
+            ],
+            [
+              "operations",
+              358
+            ],
+            [
+              "operations",
+              359
+            ],
+            [
+              "operations",
+              402
+            ],
+            [
+              "operations",
+              403
+            ],
+            [
+              "operations",
+              404
+            ],
+            [
+              "operations",
+              408
+            ],
+            [
+              "operations",
+              409
+            ],
+            [
+              "operations",
+              410
+            ]
+          ],
+          "supplied_pages": [
+            [
+              "operations",
+              30
+            ],
+            [
+              "operations",
+              31
+            ],
+            [
+              "operations",
+              32
+            ],
+            [
+              "operations",
+              357
+            ],
+            [
+              "operations",
+              358
+            ],
+            [
+              "operations",
+              359
+            ]
+          ],
+          "unscanned_pages": [
+            [
+              "operations",
+              1
+            ],
+            [
+              "operations",
+              2
+            ],
+            [
+              "operations",
+              3
+            ],
+            [
+              "operations",
+              4
+            ],
+            [
+              "operations",
+              5
+            ],
+            [
+              "operations",
+              6
+            ],
+            [
+              "operations",
+              7
+            ],
+            [
+              "operations",
+              8
+            ],
+            [
+              "operations",
+              9
+            ],
+            [
+              "operations",
+              10
+            ],
+            [
+              "operations",
+              11
+            ],
+            [
+              "operations",
+              12
+            ],
+            [
+              "operations",
+              13
+            ],
+            [
+              "operations",
+              14
+            ],
+            [
+              "operations",
+              15
+            ],
+            [
+              "operations",
+              16
+            ],
+            [
+              "operations",
+              17
+            ],
+            [
+              "operations",
+              18
+            ],
+            [
+              "operations",
+              19
+            ],
+            [
+              "operations",
+              20
+            ],
+            [
+              "operations",
+              21
+            ],
+            [
+              "operations",
+              22
+            ],
+            [
+              "operations",
+              23
+            ],
+            [
+              "operations",
+              24
+            ],
+            [
+              "operations",
+              25
+            ],
+            [
+              "operations",
+              26
+            ],
+            [
+              "operations",
+              27
+            ],
+            [
+              "operations",
+              28
+            ],
+            [
+              "operations",
+              29
+            ],
+            [
+              "operations",
+              33
+            ],
+            [
+              "operations",
+              34
+            ],
+            [
+              "operations",
+              35
+            ],
+            [
+              "operations",
+              36
+            ],
+            [
+              "operations",
+              37
+            ],
+            [
+              "operations",
+              38
+            ],
+            [
+              "operations",
+              39
+            ],
+            [
+              "operations",
+              40
+            ],
+            [
+              "operations",
+              41
+            ],
+            [
+              "operations",
+              42
+            ],
+            [
+              "operations",
+              43
+            ],
+            [
+              "operations",
+              44
+            ],
+            [
+              "operations",
+              45
+            ],
+            [
+              "operations",
+              46
+            ],
+            [
+              "operations",
+              47
+            ],
+            [
+              "operations",
+              48
+            ],
+            [
+              "operations",
+              49
+            ],
+            [
+              "operations",
+              50
+            ],
+            [
+              "operations",
+              51
+            ],
+            [
+              "operations",
+              52
+            ],
+            [
+              "operations",
+              53
+            ],
+            [
+              "operations",
+              54
+            ],
+            [
+              "operations",
+              55
+            ],
+            [
+              "operations",
+              56
+            ],
+            [
+              "operations",
+              57
+            ],
+            [
+              "operations",
+              58
+            ],
+            [
+              "operations",
+              59
+            ],
+            [
+              "operations",
+              60
+            ],
+            [
+              "operations",
+              61
+            ],
+            [
+              "operations",
+              62
+            ],
+            [
+              "operations",
+              63
+            ],
+            [
+              "operations",
+              64
+            ],
+            [
+              "operations",
+              65
+            ],
+            [
+              "operations",
+              66
+            ],
+            [
+              "operations",
+              67
+            ],
+            [
+              "operations",
+              68
+            ],
+            [
+              "operations",
+              69
+            ],
+            [
+              "operations",
+              70
+            ],
+            [
+              "operations",
+              71
+            ],
+            [
+              "operations",
+              72
+            ],
+            [
+              "operations",
+              73
+            ],
+            [
+              "operations",
+              74
+            ],
+            [
+              "operations",
+              75
+            ],
+            [
+              "operations",
+              76
+            ],
+            [
+              "operations",
+              77
+            ],
+            [
+              "operations",
+              78
+            ],
+            [
+              "operations",
+              79
+            ],
+            [
+              "operations",
+              80
+            ],
+            [
+              "operations",
+              81
+            ],
+            [
+              "operations",
+              82
+            ],
+            [
+              "operations",
+              83
+            ],
+            [
+              "operations",
+              84
+            ],
+            [
+              "operations",
+              85
+            ],
+            [
+              "operations",
+              86
+            ],
+            [
+              "operations",
+              87
+            ],
+            [
+              "operations",
+              88
+            ],
+            [
+              "operations",
+              89
+            ],
+            [
+              "operations",
+              90
+            ],
+            [
+              "operations",
+              91
+            ],
+            [
+              "operations",
+              92
+            ],
+            [
+              "operations",
+              93
+            ],
+            [
+              "operations",
+              94
+            ],
+            [
+              "operations",
+              95
+            ],
+            [
+              "operations",
+              96
+            ],
+            [
+              "operations",
+              97
+            ],
+            [
+              "operations",
+              98
+            ],
+            [
+              "operations",
+              99
+            ],
+            [
+              "operations",
+              100
+            ],
+            [
+              "operations",
+              101
+            ],
+            [
+              "operations",
+              102
+            ],
+            [
+              "operations",
+              103
+            ],
+            [
+              "operations",
+              104
+            ],
+            [
+              "operations",
+              105
+            ],
+            [
+              "operations",
+              106
+            ],
+            [
+              "operations",
+              107
+            ],
+            [
+              "operations",
+              108
+            ],
+            [
+              "operations",
+              109
+            ],
+            [
+              "operations",
+              110
+            ],
+            [
+              "operations",
+              111
+            ],
+            [
+              "operations",
+              112
+            ],
+            [
+              "operations",
+              113
+            ],
+            [
+              "operations",
+              114
+            ],
+            [
+              "operations",
+              115
+            ],
+            [
+              "operations",
+              116
+            ],
+            [
+              "operations",
+              117
+            ],
+            [
+              "operations",
+              118
+            ],
+            [
+              "operations",
+              119
+            ],
+            [
+              "operations",
+              120
+            ],
+            [
+              "operations",
+              121
+            ],
+            [
+              "operations",
+              122
+            ],
+            [
+              "operations",
+              123
+            ],
+            [
+              "operations",
+              124
+            ],
+            [
+              "operations",
+              125
+            ],
+            [
+              "operations",
+              126
+            ],
+            [
+              "operations",
+              127
+            ],
+            [
+              "operations",
+              128
+            ],
+            [
+              "operations",
+              129
+            ],
+            [
+              "operations",
+              130
+            ],
+            [
+              "operations",
+              131
+            ],
+            [
+              "operations",
+              132
+            ],
+            [
+              "operations",
+              133
+            ],
+            [
+              "operations",
+              134
+            ],
+            [
+              "operations",
+              135
+            ],
+            [
+              "operations",
+              136
+            ],
+            [
+              "operations",
+              137
+            ],
+            [
+              "operations",
+              138
+            ],
+            [
+              "operations",
+              139
+            ],
+            [
+              "operations",
+              140
+            ],
+            [
+              "operations",
+              141
+            ],
+            [
+              "operations",
+              142
+            ],
+            [
+              "operations",
+              143
+            ],
+            [
+              "operations",
+              144
+            ],
+            [
+              "operations",
+              145
+            ],
+            [
+              "operations",
+              146
+            ],
+            [
+              "operations",
+              147
+            ],
+            [
+              "operations",
+              148
+            ],
+            [
+              "operations",
+              149
+            ],
+            [
+              "operations",
+              150
+            ],
+            [
+              "operations",
+              151
+            ],
+            [
+              "operations",
+              152
+            ],
+            [
+              "operations",
+              153
+            ],
+            [
+              "operations",
+              154
+            ],
+            [
+              "operations",
+              155
+            ],
+            [
+              "operations",
+              156
+            ],
+            [
+              "operations",
+              157
+            ],
+            [
+              "operations",
+              158
+            ],
+            [
+              "operations",
+              159
+            ],
+            [
+              "operations",
+              160
+            ],
+            [
+              "operations",
+              161
+            ],
+            [
+              "operations",
+              162
+            ],
+            [
+              "operations",
+              163
+            ],
+            [
+              "operations",
+              164
+            ],
+            [
+              "operations",
+              165
+            ],
+            [
+              "operations",
+              166
+            ],
+            [
+              "operations",
+              167
+            ],
+            [
+              "operations",
+              168
+            ],
+            [
+              "operations",
+              169
+            ],
+            [
+              "operations",
+              170
+            ],
+            [
+              "operations",
+              171
+            ],
+            [
+              "operations",
+              172
+            ],
+            [
+              "operations",
+              173
+            ],
+            [
+              "operations",
+              174
+            ],
+            [
+              "operations",
+              175
+            ],
+            [
+              "operations",
+              176
+            ],
+            [
+              "operations",
+              177
+            ],
+            [
+              "operations",
+              178
+            ],
+            [
+              "operations",
+              179
+            ],
+            [
+              "operations",
+              180
+            ],
+            [
+              "operations",
+              181
+            ],
+            [
+              "operations",
+              182
+            ],
+            [
+              "operations",
+              183
+            ],
+            [
+              "operations",
+              184
+            ],
+            [
+              "operations",
+              185
+            ],
+            [
+              "operations",
+              186
+            ],
+            [
+              "operations",
+              187
+            ],
+            [
+              "operations",
+              188
+            ],
+            [
+              "operations",
+              189
+            ],
+            [
+              "operations",
+              190
+            ],
+            [
+              "operations",
+              191
+            ],
+            [
+              "operations",
+              192
+            ],
+            [
+              "operations",
+              193
+            ],
+            [
+              "operations",
+              194
+            ],
+            [
+              "operations",
+              195
+            ],
+            [
+              "operations",
+              196
+            ],
+            [
+              "operations",
+              197
+            ],
+            [
+              "operations",
+              198
+            ],
+            [
+              "operations",
+              199
+            ],
+            [
+              "operations",
+              200
+            ],
+            [
+              "operations",
+              201
+            ],
+            [
+              "operations",
+              202
+            ],
+            [
+              "operations",
+              203
+            ],
+            [
+              "operations",
+              204
+            ],
+            [
+              "operations",
+              205
+            ],
+            [
+              "operations",
+              206
+            ],
+            [
+              "operations",
+              207
+            ],
+            [
+              "operations",
+              208
+            ],
+            [
+              "operations",
+              209
+            ],
+            [
+              "operations",
+              210
+            ],
+            [
+              "operations",
+              211
+            ],
+            [
+              "operations",
+              212
+            ],
+            [
+              "operations",
+              213
+            ],
+            [
+              "operations",
+              214
+            ],
+            [
+              "operations",
+              215
+            ],
+            [
+              "operations",
+              216
+            ],
+            [
+              "operations",
+              217
+            ],
+            [
+              "operations",
+              218
+            ],
+            [
+              "operations",
+              219
+            ],
+            [
+              "operations",
+              220
+            ],
+            [
+              "operations",
+              221
+            ],
+            [
+              "operations",
+              222
+            ],
+            [
+              "operations",
+              223
+            ],
+            [
+              "operations",
+              224
+            ],
+            [
+              "operations",
+              225
+            ],
+            [
+              "operations",
+              226
+            ],
+            [
+              "operations",
+              227
+            ],
+            [
+              "operations",
+              228
+            ],
+            [
+              "operations",
+              229
+            ],
+            [
+              "operations",
+              230
+            ],
+            [
+              "operations",
+              231
+            ],
+            [
+              "operations",
+              232
+            ],
+            [
+              "operations",
+              233
+            ],
+            [
+              "operations",
+              234
+            ],
+            [
+              "operations",
+              235
+            ],
+            [
+              "operations",
+              236
+            ],
+            [
+              "operations",
+              237
+            ],
+            [
+              "operations",
+              238
+            ],
+            [
+              "operations",
+              239
+            ],
+            [
+              "operations",
+              240
+            ],
+            [
+              "operations",
+              241
+            ],
+            [
+              "operations",
+              242
+            ],
+            [
+              "operations",
+              243
+            ],
+            [
+              "operations",
+              244
+            ],
+            [
+              "operations",
+              245
+            ],
+            [
+              "operations",
+              246
+            ],
+            [
+              "operations",
+              247
+            ],
+            [
+              "operations",
+              248
+            ],
+            [
+              "operations",
+              249
+            ],
+            [
+              "operations",
+              250
+            ],
+            [
+              "operations",
+              251
+            ],
+            [
+              "operations",
+              252
+            ],
+            [
+              "operations",
+              253
+            ],
+            [
+              "operations",
+              254
+            ],
+            [
+              "operations",
+              255
+            ],
+            [
+              "operations",
+              256
+            ],
+            [
+              "operations",
+              257
+            ],
+            [
+              "operations",
+              258
+            ],
+            [
+              "operations",
+              259
+            ],
+            [
+              "operations",
+              260
+            ],
+            [
+              "operations",
+              261
+            ],
+            [
+              "operations",
+              262
+            ],
+            [
+              "operations",
+              263
+            ],
+            [
+              "operations",
+              264
+            ],
+            [
+              "operations",
+              265
+            ],
+            [
+              "operations",
+              266
+            ],
+            [
+              "operations",
+              267
+            ],
+            [
+              "operations",
+              268
+            ],
+            [
+              "operations",
+              269
+            ],
+            [
+              "operations",
+              270
+            ],
+            [
+              "operations",
+              271
+            ],
+            [
+              "operations",
+              272
+            ],
+            [
+              "operations",
+              273
+            ],
+            [
+              "operations",
+              274
+            ],
+            [
+              "operations",
+              275
+            ],
+            [
+              "operations",
+              276
+            ],
+            [
+              "operations",
+              277
+            ],
+            [
+              "operations",
+              278
+            ],
+            [
+              "operations",
+              279
+            ],
+            [
+              "operations",
+              280
+            ],
+            [
+              "operations",
+              281
+            ],
+            [
+              "operations",
+              282
+            ],
+            [
+              "operations",
+              283
+            ],
+            [
+              "operations",
+              284
+            ],
+            [
+              "operations",
+              285
+            ],
+            [
+              "operations",
+              286
+            ],
+            [
+              "operations",
+              287
+            ],
+            [
+              "operations",
+              288
+            ],
+            [
+              "operations",
+              289
+            ],
+            [
+              "operations",
+              290
+            ],
+            [
+              "operations",
+              291
+            ],
+            [
+              "operations",
+              292
+            ],
+            [
+              "operations",
+              293
+            ],
+            [
+              "operations",
+              294
+            ],
+            [
+              "operations",
+              295
+            ],
+            [
+              "operations",
+              296
+            ],
+            [
+              "operations",
+              297
+            ],
+            [
+              "operations",
+              298
+            ],
+            [
+              "operations",
+              299
+            ],
+            [
+              "operations",
+              300
+            ],
+            [
+              "operations",
+              301
+            ],
+            [
+              "operations",
+              302
+            ],
+            [
+              "operations",
+              303
+            ],
+            [
+              "operations",
+              304
+            ],
+            [
+              "operations",
+              305
+            ],
+            [
+              "operations",
+              306
+            ],
+            [
+              "operations",
+              307
+            ],
+            [
+              "operations",
+              308
+            ],
+            [
+              "operations",
+              309
+            ],
+            [
+              "operations",
+              310
+            ],
+            [
+              "operations",
+              311
+            ],
+            [
+              "operations",
+              312
+            ],
+            [
+              "operations",
+              313
+            ],
+            [
+              "operations",
+              314
+            ],
+            [
+              "operations",
+              315
+            ],
+            [
+              "operations",
+              316
+            ],
+            [
+              "operations",
+              317
+            ],
+            [
+              "operations",
+              318
+            ],
+            [
+              "operations",
+              319
+            ],
+            [
+              "operations",
+              320
+            ],
+            [
+              "operations",
+              321
+            ],
+            [
+              "operations",
+              322
+            ],
+            [
+              "operations",
+              323
+            ],
+            [
+              "operations",
+              324
+            ],
+            [
+              "operations",
+              325
+            ],
+            [
+              "operations",
+              326
+            ],
+            [
+              "operations",
+              327
+            ],
+            [
+              "operations",
+              328
+            ],
+            [
+              "operations",
+              329
+            ],
+            [
+              "operations",
+              330
+            ],
+            [
+              "operations",
+              331
+            ],
+            [
+              "operations",
+              332
+            ],
+            [
+              "operations",
+              333
+            ],
+            [
+              "operations",
+              334
+            ],
+            [
+              "operations",
+              335
+            ],
+            [
+              "operations",
+              336
+            ],
+            [
+              "operations",
+              337
+            ],
+            [
+              "operations",
+              338
+            ],
+            [
+              "operations",
+              339
+            ],
+            [
+              "operations",
+              340
+            ],
+            [
+              "operations",
+              341
+            ],
+            [
+              "operations",
+              342
+            ],
+            [
+              "operations",
+              343
+            ],
+            [
+              "operations",
+              344
+            ],
+            [
+              "operations",
+              345
+            ],
+            [
+              "operations",
+              346
+            ],
+            [
+              "operations",
+              347
+            ],
+            [
+              "operations",
+              348
+            ],
+            [
+              "operations",
+              349
+            ],
+            [
+              "operations",
+              350
+            ],
+            [
+              "operations",
+              351
+            ],
+            [
+              "operations",
+              352
+            ],
+            [
+              "operations",
+              353
+            ],
+            [
+              "operations",
+              354
+            ],
+            [
+              "operations",
+              355
+            ],
+            [
+              "operations",
+              356
+            ],
+            [
+              "operations",
+              360
+            ],
+            [
+              "operations",
+              361
+            ],
+            [
+              "operations",
+              362
+            ],
+            [
+              "operations",
+              363
+            ],
+            [
+              "operations",
+              364
+            ],
+            [
+              "operations",
+              365
+            ],
+            [
+              "operations",
+              366
+            ],
+            [
+              "operations",
+              367
+            ],
+            [
+              "operations",
+              368
+            ],
+            [
+              "operations",
+              369
+            ],
+            [
+              "operations",
+              370
+            ],
+            [
+              "operations",
+              371
+            ],
+            [
+              "operations",
+              372
+            ],
+            [
+              "operations",
+              373
+            ],
+            [
+              "operations",
+              374
+            ],
+            [
+              "operations",
+              375
+            ],
+            [
+              "operations",
+              376
+            ],
+            [
+              "operations",
+              377
+            ],
+            [
+              "operations",
+              378
+            ],
+            [
+              "operations",
+              379
+            ],
+            [
+              "operations",
+              380
+            ],
+            [
+              "operations",
+              381
+            ],
+            [
+              "operations",
+              382
+            ],
+            [
+              "operations",
+              383
+            ],
+            [
+              "operations",
+              384
+            ],
+            [
+              "operations",
+              385
+            ],
+            [
+              "operations",
+              386
+            ],
+            [
+              "operations",
+              387
+            ],
+            [
+              "operations",
+              388
+            ],
+            [
+              "operations",
+              389
+            ],
+            [
+              "operations",
+              390
+            ],
+            [
+              "operations",
+              391
+            ],
+            [
+              "operations",
+              392
+            ],
+            [
+              "operations",
+              393
+            ],
+            [
+              "operations",
+              394
+            ],
+            [
+              "operations",
+              395
+            ],
+            [
+              "operations",
+              396
+            ],
+            [
+              "operations",
+              397
+            ],
+            [
+              "operations",
+              398
+            ],
+            [
+              "operations",
+              399
+            ],
+            [
+              "operations",
+              400
+            ],
+            [
+              "operations",
+              401
+            ],
+            [
+              "operations",
+              405
+            ],
+            [
+              "operations",
+              406
+            ],
+            [
+              "operations",
+              407
+            ],
+            [
+              "operations",
+              411
+            ],
+            [
+              "operations",
+              412
+            ],
+            [
+              "operations",
+              413
+            ],
+            [
+              "operations",
+              414
+            ],
+            [
+              "operations",
+              415
+            ],
+            [
+              "operations",
+              416
+            ],
+            [
+              "operations",
+              417
+            ],
+            [
+              "operations",
+              418
+            ],
+            [
+              "operations",
+              419
+            ],
+            [
+              "operations",
+              420
+            ],
+            [
+              "operations",
+              421
+            ],
+            [
+              "operations",
+              422
+            ],
+            [
+              "operations",
+              423
+            ],
+            [
+              "operations",
+              424
+            ],
+            [
+              "operations",
+              425
+            ],
+            [
+              "operations",
+              426
+            ],
+            [
+              "operations",
+              427
+            ],
+            [
+              "operations",
+              428
+            ],
+            [
+              "operations",
+              429
+            ],
+            [
+              "operations",
+              430
+            ],
+            [
+              "operations",
+              431
+            ],
+            [
+              "operations",
+              432
+            ],
+            [
+              "operations",
+              433
+            ],
+            [
+              "operations",
+              434
+            ],
+            [
+              "operations",
+              435
+            ],
+            [
+              "operations",
+              436
+            ],
+            [
+              "operations",
+              437
+            ],
+            [
+              "operations",
+              438
+            ],
+            [
+              "operations",
+              439
+            ],
+            [
+              "operations",
+              440
+            ],
+            [
+              "operations",
+              441
+            ],
+            [
+              "operations",
+              442
+            ],
+            [
+              "operations",
+              443
+            ],
+            [
+              "operations",
+              444
+            ],
+            [
+              "operations",
+              445
+            ],
+            [
+              "operations",
+              446
+            ],
+            [
+              "operations",
+              447
+            ],
+            [
+              "operations",
+              448
+            ],
+            [
+              "operations",
+              449
+            ],
+            [
+              "operations",
+              450
+            ],
+            [
+              "operations",
+              451
+            ],
+            [
+              "operations",
+              452
+            ],
+            [
+              "operations",
+              453
+            ],
+            [
+              "operations",
+              454
+            ],
+            [
+              "operations",
+              455
+            ],
+            [
+              "operations",
+              456
+            ],
+            [
+              "operations",
+              457
+            ],
+            [
+              "operations",
+              458
+            ],
+            [
+              "operations",
+              459
+            ],
+            [
+              "operations",
+              460
+            ],
+            [
+              "operations",
+              461
+            ],
+            [
+              "operations",
+              462
+            ],
+            [
+              "operations",
+              463
+            ],
+            [
+              "operations",
+              464
+            ],
+            [
+              "operations",
+              465
+            ],
+            [
+              "operations",
+              466
+            ],
+            [
+              "operations",
+              467
+            ],
+            [
+              "operations",
+              468
+            ],
+            [
+              "operations",
+              469
+            ],
+            [
+              "operations",
+              470
+            ],
+            [
+              "operations",
+              471
+            ],
+            [
+              "operations",
+              472
+            ],
+            [
+              "operations",
+              473
+            ],
+            [
+              "operations",
+              474
+            ],
+            [
+              "operations",
+              475
+            ],
+            [
+              "operations",
+              476
+            ],
+            [
+              "operations",
+              477
+            ],
+            [
+              "operations",
+              478
+            ],
+            [
+              "operations",
+              479
+            ],
+            [
+              "operations",
+              480
+            ],
+            [
+              "operations",
+              481
+            ],
+            [
+              "operations",
+              482
+            ],
+            [
+              "operations",
+              483
+            ],
+            [
+              "operations",
+              484
+            ],
+            [
+              "operations",
+              485
+            ],
+            [
+              "operations",
+              486
+            ],
+            [
+              "operations",
+              487
+            ],
+            [
+              "operations",
+              488
+            ],
+            [
+              "operations",
+              489
+            ],
+            [
+              "operations",
+              490
+            ],
+            [
+              "operations",
+              491
+            ],
+            [
+              "operations",
+              492
+            ],
+            [
+              "operations",
+              493
+            ],
+            [
+              "operations",
+              494
+            ],
+            [
+              "operations",
+              495
+            ],
+            [
+              "operations",
+              496
+            ],
+            [
+              "operations",
+              497
+            ],
+            [
+              "operations",
+              498
+            ],
+            [
+              "operations",
+              499
+            ],
+            [
+              "operations",
+              500
+            ]
+          ],
+          "unsupplied_pages": [
+            [
+              "operations",
+              1
+            ],
+            [
+              "operations",
+              2
+            ],
+            [
+              "operations",
+              3
+            ],
+            [
+              "operations",
+              4
+            ],
+            [
+              "operations",
+              5
+            ],
+            [
+              "operations",
+              6
+            ],
+            [
+              "operations",
+              7
+            ],
+            [
+              "operations",
+              8
+            ],
+            [
+              "operations",
+              9
+            ],
+            [
+              "operations",
+              10
+            ],
+            [
+              "operations",
+              11
+            ],
+            [
+              "operations",
+              12
+            ],
+            [
+              "operations",
+              13
+            ],
+            [
+              "operations",
+              14
+            ],
+            [
+              "operations",
+              15
+            ],
+            [
+              "operations",
+              16
+            ],
+            [
+              "operations",
+              17
+            ],
+            [
+              "operations",
+              18
+            ],
+            [
+              "operations",
+              19
+            ],
+            [
+              "operations",
+              20
+            ],
+            [
+              "operations",
+              21
+            ],
+            [
+              "operations",
+              22
+            ],
+            [
+              "operations",
+              23
+            ],
+            [
+              "operations",
+              24
+            ],
+            [
+              "operations",
+              25
+            ],
+            [
+              "operations",
+              26
+            ],
+            [
+              "operations",
+              27
+            ],
+            [
+              "operations",
+              28
+            ],
+            [
+              "operations",
+              29
+            ],
+            [
+              "operations",
+              33
+            ],
+            [
+              "operations",
+              34
+            ],
+            [
+              "operations",
+              35
+            ],
+            [
+              "operations",
+              36
+            ],
+            [
+              "operations",
+              37
+            ],
+            [
+              "operations",
+              38
+            ],
+            [
+              "operations",
+              39
+            ],
+            [
+              "operations",
+              40
+            ],
+            [
+              "operations",
+              41
+            ],
+            [
+              "operations",
+              42
+            ],
+            [
+              "operations",
+              43
+            ],
+            [
+              "operations",
+              44
+            ],
+            [
+              "operations",
+              45
+            ],
+            [
+              "operations",
+              46
+            ],
+            [
+              "operations",
+              47
+            ],
+            [
+              "operations",
+              48
+            ],
+            [
+              "operations",
+              49
+            ],
+            [
+              "operations",
+              50
+            ],
+            [
+              "operations",
+              51
+            ],
+            [
+              "operations",
+              52
+            ],
+            [
+              "operations",
+              53
+            ],
+            [
+              "operations",
+              54
+            ],
+            [
+              "operations",
+              55
+            ],
+            [
+              "operations",
+              56
+            ],
+            [
+              "operations",
+              57
+            ],
+            [
+              "operations",
+              58
+            ],
+            [
+              "operations",
+              59
+            ],
+            [
+              "operations",
+              60
+            ],
+            [
+              "operations",
+              61
+            ],
+            [
+              "operations",
+              62
+            ],
+            [
+              "operations",
+              63
+            ],
+            [
+              "operations",
+              64
+            ],
+            [
+              "operations",
+              65
+            ],
+            [
+              "operations",
+              66
+            ],
+            [
+              "operations",
+              67
+            ],
+            [
+              "operations",
+              68
+            ],
+            [
+              "operations",
+              69
+            ],
+            [
+              "operations",
+              70
+            ],
+            [
+              "operations",
+              71
+            ],
+            [
+              "operations",
+              72
+            ],
+            [
+              "operations",
+              73
+            ],
+            [
+              "operations",
+              74
+            ],
+            [
+              "operations",
+              75
+            ],
+            [
+              "operations",
+              76
+            ],
+            [
+              "operations",
+              77
+            ],
+            [
+              "operations",
+              78
+            ],
+            [
+              "operations",
+              79
+            ],
+            [
+              "operations",
+              80
+            ],
+            [
+              "operations",
+              81
+            ],
+            [
+              "operations",
+              82
+            ],
+            [
+              "operations",
+              83
+            ],
+            [
+              "operations",
+              84
+            ],
+            [
+              "operations",
+              85
+            ],
+            [
+              "operations",
+              86
+            ],
+            [
+              "operations",
+              87
+            ],
+            [
+              "operations",
+              88
+            ],
+            [
+              "operations",
+              89
+            ],
+            [
+              "operations",
+              90
+            ],
+            [
+              "operations",
+              91
+            ],
+            [
+              "operations",
+              92
+            ],
+            [
+              "operations",
+              93
+            ],
+            [
+              "operations",
+              94
+            ],
+            [
+              "operations",
+              95
+            ],
+            [
+              "operations",
+              96
+            ],
+            [
+              "operations",
+              97
+            ],
+            [
+              "operations",
+              98
+            ],
+            [
+              "operations",
+              99
+            ],
+            [
+              "operations",
+              100
+            ],
+            [
+              "operations",
+              101
+            ],
+            [
+              "operations",
+              102
+            ],
+            [
+              "operations",
+              103
+            ],
+            [
+              "operations",
+              104
+            ],
+            [
+              "operations",
+              105
+            ],
+            [
+              "operations",
+              106
+            ],
+            [
+              "operations",
+              107
+            ],
+            [
+              "operations",
+              108
+            ],
+            [
+              "operations",
+              109
+            ],
+            [
+              "operations",
+              110
+            ],
+            [
+              "operations",
+              111
+            ],
+            [
+              "operations",
+              112
+            ],
+            [
+              "operations",
+              113
+            ],
+            [
+              "operations",
+              114
+            ],
+            [
+              "operations",
+              115
+            ],
+            [
+              "operations",
+              116
+            ],
+            [
+              "operations",
+              117
+            ],
+            [
+              "operations",
+              118
+            ],
+            [
+              "operations",
+              119
+            ],
+            [
+              "operations",
+              120
+            ],
+            [
+              "operations",
+              121
+            ],
+            [
+              "operations",
+              122
+            ],
+            [
+              "operations",
+              123
+            ],
+            [
+              "operations",
+              124
+            ],
+            [
+              "operations",
+              125
+            ],
+            [
+              "operations",
+              126
+            ],
+            [
+              "operations",
+              127
+            ],
+            [
+              "operations",
+              128
+            ],
+            [
+              "operations",
+              129
+            ],
+            [
+              "operations",
+              130
+            ],
+            [
+              "operations",
+              131
+            ],
+            [
+              "operations",
+              132
+            ],
+            [
+              "operations",
+              133
+            ],
+            [
+              "operations",
+              134
+            ],
+            [
+              "operations",
+              135
+            ],
+            [
+              "operations",
+              136
+            ],
+            [
+              "operations",
+              137
+            ],
+            [
+              "operations",
+              138
+            ],
+            [
+              "operations",
+              139
+            ],
+            [
+              "operations",
+              140
+            ],
+            [
+              "operations",
+              141
+            ],
+            [
+              "operations",
+              142
+            ],
+            [
+              "operations",
+              143
+            ],
+            [
+              "operations",
+              144
+            ],
+            [
+              "operations",
+              145
+            ],
+            [
+              "operations",
+              146
+            ],
+            [
+              "operations",
+              147
+            ],
+            [
+              "operations",
+              148
+            ],
+            [
+              "operations",
+              149
+            ],
+            [
+              "operations",
+              150
+            ],
+            [
+              "operations",
+              151
+            ],
+            [
+              "operations",
+              152
+            ],
+            [
+              "operations",
+              153
+            ],
+            [
+              "operations",
+              154
+            ],
+            [
+              "operations",
+              155
+            ],
+            [
+              "operations",
+              156
+            ],
+            [
+              "operations",
+              157
+            ],
+            [
+              "operations",
+              158
+            ],
+            [
+              "operations",
+              159
+            ],
+            [
+              "operations",
+              160
+            ],
+            [
+              "operations",
+              161
+            ],
+            [
+              "operations",
+              162
+            ],
+            [
+              "operations",
+              163
+            ],
+            [
+              "operations",
+              164
+            ],
+            [
+              "operations",
+              165
+            ],
+            [
+              "operations",
+              166
+            ],
+            [
+              "operations",
+              167
+            ],
+            [
+              "operations",
+              168
+            ],
+            [
+              "operations",
+              169
+            ],
+            [
+              "operations",
+              170
+            ],
+            [
+              "operations",
+              171
+            ],
+            [
+              "operations",
+              172
+            ],
+            [
+              "operations",
+              173
+            ],
+            [
+              "operations",
+              174
+            ],
+            [
+              "operations",
+              175
+            ],
+            [
+              "operations",
+              176
+            ],
+            [
+              "operations",
+              177
+            ],
+            [
+              "operations",
+              178
+            ],
+            [
+              "operations",
+              179
+            ],
+            [
+              "operations",
+              180
+            ],
+            [
+              "operations",
+              181
+            ],
+            [
+              "operations",
+              182
+            ],
+            [
+              "operations",
+              183
+            ],
+            [
+              "operations",
+              184
+            ],
+            [
+              "operations",
+              185
+            ],
+            [
+              "operations",
+              186
+            ],
+            [
+              "operations",
+              187
+            ],
+            [
+              "operations",
+              188
+            ],
+            [
+              "operations",
+              189
+            ],
+            [
+              "operations",
+              190
+            ],
+            [
+              "operations",
+              191
+            ],
+            [
+              "operations",
+              192
+            ],
+            [
+              "operations",
+              193
+            ],
+            [
+              "operations",
+              194
+            ],
+            [
+              "operations",
+              195
+            ],
+            [
+              "operations",
+              196
+            ],
+            [
+              "operations",
+              197
+            ],
+            [
+              "operations",
+              198
+            ],
+            [
+              "operations",
+              199
+            ],
+            [
+              "operations",
+              200
+            ],
+            [
+              "operations",
+              201
+            ],
+            [
+              "operations",
+              202
+            ],
+            [
+              "operations",
+              203
+            ],
+            [
+              "operations",
+              204
+            ],
+            [
+              "operations",
+              205
+            ],
+            [
+              "operations",
+              206
+            ],
+            [
+              "operations",
+              207
+            ],
+            [
+              "operations",
+              208
+            ],
+            [
+              "operations",
+              209
+            ],
+            [
+              "operations",
+              210
+            ],
+            [
+              "operations",
+              211
+            ],
+            [
+              "operations",
+              212
+            ],
+            [
+              "operations",
+              213
+            ],
+            [
+              "operations",
+              214
+            ],
+            [
+              "operations",
+              215
+            ],
+            [
+              "operations",
+              216
+            ],
+            [
+              "operations",
+              217
+            ],
+            [
+              "operations",
+              218
+            ],
+            [
+              "operations",
+              219
+            ],
+            [
+              "operations",
+              220
+            ],
+            [
+              "operations",
+              221
+            ],
+            [
+              "operations",
+              222
+            ],
+            [
+              "operations",
+              223
+            ],
+            [
+              "operations",
+              224
+            ],
+            [
+              "operations",
+              225
+            ],
+            [
+              "operations",
+              226
+            ],
+            [
+              "operations",
+              227
+            ],
+            [
+              "operations",
+              228
+            ],
+            [
+              "operations",
+              229
+            ],
+            [
+              "operations",
+              230
+            ],
+            [
+              "operations",
+              231
+            ],
+            [
+              "operations",
+              232
+            ],
+            [
+              "operations",
+              233
+            ],
+            [
+              "operations",
+              234
+            ],
+            [
+              "operations",
+              235
+            ],
+            [
+              "operations",
+              236
+            ],
+            [
+              "operations",
+              237
+            ],
+            [
+              "operations",
+              238
+            ],
+            [
+              "operations",
+              239
+            ],
+            [
+              "operations",
+              240
+            ],
+            [
+              "operations",
+              241
+            ],
+            [
+              "operations",
+              242
+            ],
+            [
+              "operations",
+              243
+            ],
+            [
+              "operations",
+              244
+            ],
+            [
+              "operations",
+              245
+            ],
+            [
+              "operations",
+              246
+            ],
+            [
+              "operations",
+              247
+            ],
+            [
+              "operations",
+              248
+            ],
+            [
+              "operations",
+              249
+            ],
+            [
+              "operations",
+              250
+            ],
+            [
+              "operations",
+              251
+            ],
+            [
+              "operations",
+              252
+            ],
+            [
+              "operations",
+              253
+            ],
+            [
+              "operations",
+              254
+            ],
+            [
+              "operations",
+              255
+            ],
+            [
+              "operations",
+              256
+            ],
+            [
+              "operations",
+              257
+            ],
+            [
+              "operations",
+              258
+            ],
+            [
+              "operations",
+              259
+            ],
+            [
+              "operations",
+              260
+            ],
+            [
+              "operations",
+              261
+            ],
+            [
+              "operations",
+              262
+            ],
+            [
+              "operations",
+              263
+            ],
+            [
+              "operations",
+              264
+            ],
+            [
+              "operations",
+              265
+            ],
+            [
+              "operations",
+              266
+            ],
+            [
+              "operations",
+              267
+            ],
+            [
+              "operations",
+              268
+            ],
+            [
+              "operations",
+              269
+            ],
+            [
+              "operations",
+              270
+            ],
+            [
+              "operations",
+              271
+            ],
+            [
+              "operations",
+              272
+            ],
+            [
+              "operations",
+              273
+            ],
+            [
+              "operations",
+              274
+            ],
+            [
+              "operations",
+              275
+            ],
+            [
+              "operations",
+              276
+            ],
+            [
+              "operations",
+              277
+            ],
+            [
+              "operations",
+              278
+            ],
+            [
+              "operations",
+              279
+            ],
+            [
+              "operations",
+              280
+            ],
+            [
+              "operations",
+              281
+            ],
+            [
+              "operations",
+              282
+            ],
+            [
+              "operations",
+              283
+            ],
+            [
+              "operations",
+              284
+            ],
+            [
+              "operations",
+              285
+            ],
+            [
+              "operations",
+              286
+            ],
+            [
+              "operations",
+              287
+            ],
+            [
+              "operations",
+              288
+            ],
+            [
+              "operations",
+              289
+            ],
+            [
+              "operations",
+              290
+            ],
+            [
+              "operations",
+              291
+            ],
+            [
+              "operations",
+              292
+            ],
+            [
+              "operations",
+              293
+            ],
+            [
+              "operations",
+              294
+            ],
+            [
+              "operations",
+              295
+            ],
+            [
+              "operations",
+              296
+            ],
+            [
+              "operations",
+              297
+            ],
+            [
+              "operations",
+              298
+            ],
+            [
+              "operations",
+              299
+            ],
+            [
+              "operations",
+              300
+            ],
+            [
+              "operations",
+              301
+            ],
+            [
+              "operations",
+              302
+            ],
+            [
+              "operations",
+              303
+            ],
+            [
+              "operations",
+              304
+            ],
+            [
+              "operations",
+              305
+            ],
+            [
+              "operations",
+              306
+            ],
+            [
+              "operations",
+              307
+            ],
+            [
+              "operations",
+              308
+            ],
+            [
+              "operations",
+              309
+            ],
+            [
+              "operations",
+              310
+            ],
+            [
+              "operations",
+              311
+            ],
+            [
+              "operations",
+              312
+            ],
+            [
+              "operations",
+              313
+            ],
+            [
+              "operations",
+              314
+            ],
+            [
+              "operations",
+              315
+            ],
+            [
+              "operations",
+              316
+            ],
+            [
+              "operations",
+              317
+            ],
+            [
+              "operations",
+              318
+            ],
+            [
+              "operations",
+              319
+            ],
+            [
+              "operations",
+              320
+            ],
+            [
+              "operations",
+              321
+            ],
+            [
+              "operations",
+              322
+            ],
+            [
+              "operations",
+              323
+            ],
+            [
+              "operations",
+              324
+            ],
+            [
+              "operations",
+              325
+            ],
+            [
+              "operations",
+              326
+            ],
+            [
+              "operations",
+              327
+            ],
+            [
+              "operations",
+              328
+            ],
+            [
+              "operations",
+              329
+            ],
+            [
+              "operations",
+              330
+            ],
+            [
+              "operations",
+              331
+            ],
+            [
+              "operations",
+              332
+            ],
+            [
+              "operations",
+              333
+            ],
+            [
+              "operations",
+              334
+            ],
+            [
+              "operations",
+              335
+            ],
+            [
+              "operations",
+              336
+            ],
+            [
+              "operations",
+              337
+            ],
+            [
+              "operations",
+              338
+            ],
+            [
+              "operations",
+              339
+            ],
+            [
+              "operations",
+              340
+            ],
+            [
+              "operations",
+              341
+            ],
+            [
+              "operations",
+              342
+            ],
+            [
+              "operations",
+              343
+            ],
+            [
+              "operations",
+              344
+            ],
+            [
+              "operations",
+              345
+            ],
+            [
+              "operations",
+              346
+            ],
+            [
+              "operations",
+              347
+            ],
+            [
+              "operations",
+              348
+            ],
+            [
+              "operations",
+              349
+            ],
+            [
+              "operations",
+              350
+            ],
+            [
+              "operations",
+              351
+            ],
+            [
+              "operations",
+              352
+            ],
+            [
+              "operations",
+              353
+            ],
+            [
+              "operations",
+              354
+            ],
+            [
+              "operations",
+              355
+            ],
+            [
+              "operations",
+              356
+            ],
+            [
+              "operations",
+              360
+            ],
+            [
+              "operations",
+              361
+            ],
+            [
+              "operations",
+              362
+            ],
+            [
+              "operations",
+              363
+            ],
+            [
+              "operations",
+              364
+            ],
+            [
+              "operations",
+              365
+            ],
+            [
+              "operations",
+              366
+            ],
+            [
+              "operations",
+              367
+            ],
+            [
+              "operations",
+              368
+            ],
+            [
+              "operations",
+              369
+            ],
+            [
+              "operations",
+              370
+            ],
+            [
+              "operations",
+              371
+            ],
+            [
+              "operations",
+              372
+            ],
+            [
+              "operations",
+              373
+            ],
+            [
+              "operations",
+              374
+            ],
+            [
+              "operations",
+              375
+            ],
+            [
+              "operations",
+              376
+            ],
+            [
+              "operations",
+              377
+            ],
+            [
+              "operations",
+              378
+            ],
+            [
+              "operations",
+              379
+            ],
+            [
+              "operations",
+              380
+            ],
+            [
+              "operations",
+              381
+            ],
+            [
+              "operations",
+              382
+            ],
+            [
+              "operations",
+              383
+            ],
+            [
+              "operations",
+              384
+            ],
+            [
+              "operations",
+              385
+            ],
+            [
+              "operations",
+              386
+            ],
+            [
+              "operations",
+              387
+            ],
+            [
+              "operations",
+              388
+            ],
+            [
+              "operations",
+              389
+            ],
+            [
+              "operations",
+              390
+            ],
+            [
+              "operations",
+              391
+            ],
+            [
+              "operations",
+              392
+            ],
+            [
+              "operations",
+              393
+            ],
+            [
+              "operations",
+              394
+            ],
+            [
+              "operations",
+              395
+            ],
+            [
+              "operations",
+              396
+            ],
+            [
+              "operations",
+              397
+            ],
+            [
+              "operations",
+              398
+            ],
+            [
+              "operations",
+              399
+            ],
+            [
+              "operations",
+              400
+            ],
+            [
+              "operations",
+              401
+            ],
+            [
+              "operations",
+              402
+            ],
+            [
+              "operations",
+              403
+            ],
+            [
+              "operations",
+              404
+            ],
+            [
+              "operations",
+              405
+            ],
+            [
+              "operations",
+              406
+            ],
+            [
+              "operations",
+              407
+            ],
+            [
+              "operations",
+              408
+            ],
+            [
+              "operations",
+              409
+            ],
+            [
+              "operations",
+              410
+            ],
+            [
+              "operations",
+              411
+            ],
+            [
+              "operations",
+              412
+            ],
+            [
+              "operations",
+              413
+            ],
+            [
+              "operations",
+              414
+            ],
+            [
+              "operations",
+              415
+            ],
+            [
+              "operations",
+              416
+            ],
+            [
+              "operations",
+              417
+            ],
+            [
+              "operations",
+              418
+            ],
+            [
+              "operations",
+              419
+            ],
+            [
+              "operations",
+              420
+            ],
+            [
+              "operations",
+              421
+            ],
+            [
+              "operations",
+              422
+            ],
+            [
+              "operations",
+              423
+            ],
+            [
+              "operations",
+              424
+            ],
+            [
+              "operations",
+              425
+            ],
+            [
+              "operations",
+              426
+            ],
+            [
+              "operations",
+              427
+            ],
+            [
+              "operations",
+              428
+            ],
+            [
+              "operations",
+              429
+            ],
+            [
+              "operations",
+              430
+            ],
+            [
+              "operations",
+              431
+            ],
+            [
+              "operations",
+              432
+            ],
+            [
+              "operations",
+              433
+            ],
+            [
+              "operations",
+              434
+            ],
+            [
+              "operations",
+              435
+            ],
+            [
+              "operations",
+              436
+            ],
+            [
+              "operations",
+              437
+            ],
+            [
+              "operations",
+              438
+            ],
+            [
+              "operations",
+              439
+            ],
+            [
+              "operations",
+              440
+            ],
+            [
+              "operations",
+              441
+            ],
+            [
+              "operations",
+              442
+            ],
+            [
+              "operations",
+              443
+            ],
+            [
+              "operations",
+              444
+            ],
+            [
+              "operations",
+              445
+            ],
+            [
+              "operations",
+              446
+            ],
+            [
+              "operations",
+              447
+            ],
+            [
+              "operations",
+              448
+            ],
+            [
+              "operations",
+              449
+            ],
+            [
+              "operations",
+              450
+            ],
+            [
+              "operations",
+              451
+            ],
+            [
+              "operations",
+              452
+            ],
+            [
+              "operations",
+              453
+            ],
+            [
+              "operations",
+              454
+            ],
+            [
+              "operations",
+              455
+            ],
+            [
+              "operations",
+              456
+            ],
+            [
+              "operations",
+              457
+            ],
+            [
+              "operations",
+              458
+            ],
+            [
+              "operations",
+              459
+            ],
+            [
+              "operations",
+              460
+            ],
+            [
+              "operations",
+              461
+            ],
+            [
+              "operations",
+              462
+            ],
+            [
+              "operations",
+              463
+            ],
+            [
+              "operations",
+              464
+            ],
+            [
+              "operations",
+              465
+            ],
+            [
+              "operations",
+              466
+            ],
+            [
+              "operations",
+              467
+            ],
+            [
+              "operations",
+              468
+            ],
+            [
+              "operations",
+              469
+            ],
+            [
+              "operations",
+              470
+            ],
+            [
+              "operations",
+              471
+            ],
+            [
+              "operations",
+              472
+            ],
+            [
+              "operations",
+              473
+            ],
+            [
+              "operations",
+              474
+            ],
+            [
+              "operations",
+              475
+            ],
+            [
+              "operations",
+              476
+            ],
+            [
+              "operations",
+              477
+            ],
+            [
+              "operations",
+              478
+            ],
+            [
+              "operations",
+              479
+            ],
+            [
+              "operations",
+              480
+            ],
+            [
+              "operations",
+              481
+            ],
+            [
+              "operations",
+              482
+            ],
+            [
+              "operations",
+              483
+            ],
+            [
+              "operations",
+              484
+            ],
+            [
+              "operations",
+              485
+            ],
+            [
+              "operations",
+              486
+            ],
+            [
+              "operations",
+              487
+            ],
+            [
+              "operations",
+              488
+            ],
+            [
+              "operations",
+              489
+            ],
+            [
+              "operations",
+              490
+            ],
+            [
+              "operations",
+              491
+            ],
+            [
+              "operations",
+              492
+            ],
+            [
+              "operations",
+              493
+            ],
+            [
+              "operations",
+              494
+            ],
+            [
+              "operations",
+              495
+            ],
+            [
+              "operations",
+              496
+            ],
+            [
+              "operations",
+              497
+            ],
+            [
+              "operations",
+              498
+            ],
+            [
+              "operations",
+              499
+            ],
+            [
+              "operations",
+              500
+            ]
+          ],
+          "required_conditions": [
+            "entity_roles_exclusions",
+            "record_inventory",
+            "units_dates_qualifiers",
+            "whole_question"
+          ],
+          "verified_conditions": [],
+          "unverified_conditions": [
+            "entity_roles_exclusions",
+            "record_inventory",
+            "units_dates_qualifiers",
+            "whole_question"
+          ],
+          "omitted": [
+            {
+              "document_id": "operations",
+              "page_no": 402,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 403,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 404,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 408,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 409,
+              "reason": "evidence_budget"
+            },
+            {
+              "document_id": "operations",
+              "page_no": 410,
+              "reason": "evidence_budget"
+            }
+          ],
+          "budget_exhausted": true,
+          "semantic_sufficiency": "not_proved_by_page_coverage",
+          "closure": "declared_source_versions_and_pages_only_not_global_corpus"
+        },
+        "native_chars": 3264,
+        "coverage": [
+          {
+            "document_id": "operations",
+            "page_count": 500,
+            "included_pages": [
+              30,
+              31,
+              32,
+              357,
+              358,
+              359
+            ],
+            "whole_document_included": false
+          }
+        ],
+        "omitted": [
+          {
+            "document_id": "operations",
+            "page_no": 402,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 403,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 404,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 408,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 409,
+            "reason": "evidence_budget"
+          },
+          {
+            "document_id": "operations",
+            "page_no": 410,
+            "reason": "evidence_budget"
+          }
+        ],
+        "ranking_is_navigation_only": true,
+        "scope": "selected_complete_native_pages_not_unseen_document_closure"
+      },
+      "offline_answer_ms": 704.613049980253,
+      "offline_answer_status": "ok",
+      "offline_answer_mode": "attributed_extracts",
+      "generated_end_to_end": "not_run",
+      "concurrency": {
+        "workers": 4,
+        "requests": 24,
+        "samples": [
+          {
+            "ms": 2931.016282993369,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2224.107135029044,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 786.019983002916,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 1501.4040060341358,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2891.9839059817605,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 3629.787533020135,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 3638.0830009584315,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 1475.80413101241,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2947.374222043436,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 4252.930724003818,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2220.444715989288,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2557.738267001696,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 3515.14751103241,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2068.709323008079,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 3193.1381859467365,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2215.5486089759506,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 4182.208970014472,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 3788.9309200108983,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 2878.1322709983215,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 3043.6429120018147,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 4019.931874994654,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 1682.2619950398803,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 3460.3446329711005,
+            "hits": 4,
+            "source_sha_consistent": true
+          },
+          {
+            "ms": 1913.3971519768238,
+            "hits": 4,
+            "source_sha_consistent": true
+          }
+        ],
+        "qps": 1.361310002797637,
+        "p50_ms": 2891.9839059817605,
+        "p95_ms": 4182.208970014472,
+        "failures": 0
+      },
+      "restart_identical_hits": true,
+      "incremental_index_build_ms": 934.03424002463,
+      "replacement_ms": 61.78460497176275,
+      "old_revision_rejected": true,
+      "corrupt_original_rejected": true,
+      "disk_bytes": 21240606
+    }
+  ],
+  "sql": [
+    {
+      "rows": 1000,
+      "database_sha256": "197ebeb529215ea63dc467f59f2c9ecee1995fd834f26b279c8129632a542609",
+      "build_ms": 7.887732004746795,
+      "cold_query_ms": 27.316259976942092,
+      "query_ms": [
+        4.986008978448808,
+        4.648726957384497,
+        4.621891013812274,
+        4.578244988806546,
+        4.525862983427942,
+        4.513059044256806,
+        5.228058027569205,
+        4.623156972229481,
+        4.66957496246323,
+        4.359800019301474,
+        3.547250002156943,
+        3.2734990236349404
+      ],
+      "p50_ms": 4.60006800130941,
+      "p95_ms": 5.228058027569205,
+      "passed": 12,
+      "requests": 12,
+      "disk_bytes": 36864,
+      "concurrency": {
+        "workers": 4,
+        "qps": 190.60755536195424,
+        "samples": [
+          {
+            "ms": 18.301561009138823,
+            "passed": true
+          },
+          {
+            "ms": 16.451178991701454,
+            "passed": true
+          },
+          {
+            "ms": 18.599793955218047,
+            "passed": true
+          },
+          {
+            "ms": 18.73909600544721,
+            "passed": true
+          },
+          {
+            "ms": 19.505326985381544,
+            "passed": true
+          },
+          {
+            "ms": 16.676638973876834,
+            "passed": true
+          },
+          {
+            "ms": 21.708082989789546,
+            "passed": true
+          },
+          {
+            "ms": 26.94454899756238,
+            "passed": true
+          },
+          {
+            "ms": 28.321590973064303,
+            "passed": true
+          },
+          {
+            "ms": 23.3819920103997,
+            "passed": true
+          },
+          {
+            "ms": 17.560184991452843,
+            "passed": true
+          },
+          {
+            "ms": 17.940760997589678,
+            "passed": true
+          },
+          {
+            "ms": 10.622692003380507,
+            "passed": true
+          },
+          {
+            "ms": 21.14160597557202,
+            "passed": true
+          },
+          {
+            "ms": 41.65135102812201,
+            "passed": true
+          },
+          {
+            "ms": 18.08636699570343,
+            "passed": true
+          },
+          {
+            "ms": 12.275522982235998,
+            "passed": true
+          },
+          {
+            "ms": 35.776417003944516,
+            "passed": true
+          },
+          {
+            "ms": 34.02545099379495,
+            "passed": true
+          },
+          {
+            "ms": 29.589732992462814,
+            "passed": true
+          },
+          {
+            "ms": 14.656527957413346,
+            "passed": true
+          },
+          {
+            "ms": 12.528782011941075,
+            "passed": true
+          },
+          {
+            "ms": 9.070957021322101,
+            "passed": true
+          },
+          {
+            "ms": 8.894847007468343,
+            "passed": true
+          }
+        ],
+        "failures": 0
+      }
+    },
+    {
+      "rows": 10000,
+      "database_sha256": "f0d963bf89960315b790aa251110005de3d8830bfd10c8b92392339287c6b86c",
+      "build_ms": 18.867307051550597,
+      "cold_query_ms": 10.164207022171468,
+      "query_ms": [
+        5.380604008678347,
+        5.499878025148064,
+        5.4508940083906054,
+        4.918458987958729,
+        3.963070979807526,
+        3.9894080255180597,
+        3.866143000777811,
+        3.7385280011221766,
+        3.899970033671707,
+        3.812406037468463,
+        3.811970993410796,
+        3.8706609630025923
+      ],
+      "p50_ms": 3.9315205067396164,
+      "p95_ms": 5.499878025148064,
+      "passed": 12,
+      "requests": 12,
+      "disk_bytes": 282624,
+      "concurrency": {
+        "workers": 4,
+        "qps": 212.08591935752662,
+        "samples": [
+          {
+            "ms": 20.796238037291914,
+            "passed": true
+          },
+          {
+            "ms": 20.50911297556013,
+            "passed": true
+          },
+          {
+            "ms": 15.662644000258297,
+            "passed": true
+          },
+          {
+            "ms": 21.2833879631944,
+            "passed": true
+          },
+          {
+            "ms": 19.027664966415614,
+            "passed": true
+          },
+          {
+            "ms": 22.711160010658205,
+            "passed": true
+          },
+          {
+            "ms": 23.7560790264979,
+            "passed": true
+          },
+          {
+            "ms": 17.839749983977526,
+            "passed": true
+          },
+          {
+            "ms": 22.449923038948327,
+            "passed": true
+          },
+          {
+            "ms": 13.928530970588326,
+            "passed": true
+          },
+          {
+            "ms": 19.11468501202762,
+            "passed": true
+          },
+          {
+            "ms": 19.00449802633375,
+            "passed": true
+          },
+          {
+            "ms": 18.480291008017957,
+            "passed": true
+          },
+          {
+            "ms": 19.81313101714477,
+            "passed": true
+          },
+          {
+            "ms": 22.890574007760733,
+            "passed": true
+          },
+          {
+            "ms": 14.61783197009936,
+            "passed": true
+          },
+          {
+            "ms": 18.32686603302136,
+            "passed": true
+          },
+          {
+            "ms": 19.358503981493413,
+            "passed": true
+          },
+          {
+            "ms": 17.360461002681404,
+            "passed": true
+          },
+          {
+            "ms": 18.870285945013165,
+            "passed": true
+          },
+          {
+            "ms": 19.745736964978278,
+            "passed": true
+          },
+          {
+            "ms": 13.89603695133701,
+            "passed": true
+          },
+          {
+            "ms": 14.681943983305246,
+            "passed": true
+          },
+          {
+            "ms": 8.42023198492825,
+            "passed": true
+          }
+        ],
+        "failures": 0
+      }
+    },
+    {
+      "rows": 100000,
+      "database_sha256": "cb70422e302ca8eac00511d24aa83d3e0b8d8ef18da4db43ffef03fe9b891154",
+      "build_ms": 91.37142600957304,
+      "cold_query_ms": 44.51182403136045,
+      "query_ms": [
+        10.442495986353606,
+        10.639332002028823,
+        10.960632003843784,
+        10.574330983217806,
+        10.562973970081657,
+        10.819324001204222,
+        10.876843996811658,
+        10.413384006824344,
+        10.745915002189577,
+        10.791698994580656,
+        10.78419602708891,
+        10.592001024633646
+      ],
+      "p50_ms": 10.6926235021092,
+      "p95_ms": 10.960632003843784,
+      "passed": 12,
+      "requests": 12,
+      "disk_bytes": 2809856,
+      "concurrency": {
+        "workers": 4,
+        "qps": 131.87781912546427,
+        "samples": [
+          {
+            "ms": 34.11491500446573,
+            "passed": true
+          },
+          {
+            "ms": 33.62738504074514,
+            "passed": true
+          },
+          {
+            "ms": 33.809087006375194,
+            "passed": true
+          },
+          {
+            "ms": 33.19449000991881,
+            "passed": true
+          },
+          {
+            "ms": 28.913271031342447,
+            "passed": true
+          },
+          {
+            "ms": 23.10368698090315,
+            "passed": true
+          },
+          {
+            "ms": 34.03162001632154,
+            "passed": true
+          },
+          {
+            "ms": 33.67556299781427,
+            "passed": true
+          },
+          {
+            "ms": 25.499127979855984,
+            "passed": true
+          },
+          {
+            "ms": 25.133369024842978,
+            "passed": true
+          },
+          {
+            "ms": 28.371155029162765,
+            "passed": true
+          },
+          {
+            "ms": 28.46319496165961,
+            "passed": true
+          },
+          {
+            "ms": 26.257565012201667,
+            "passed": true
+          },
+          {
+            "ms": 27.741225028876215,
+            "passed": true
+          },
+          {
+            "ms": 33.21858699200675,
+            "passed": true
+          },
+          {
+            "ms": 27.57360995747149,
+            "passed": true
+          },
+          {
+            "ms": 28.850182017777115,
+            "passed": true
+          },
+          {
+            "ms": 33.32932700868696,
+            "passed": true
+          },
+          {
+            "ms": 31.24600602313876,
+            "passed": true
+          },
+          {
+            "ms": 38.677763019222766,
+            "passed": true
+          },
+          {
+            "ms": 26.269734953530133,
+            "passed": true
+          },
+          {
+            "ms": 27.72646298399195,
+            "passed": true
+          },
+          {
+            "ms": 26.04619401972741,
+            "passed": true
+          },
+          {
+            "ms": 14.007478021085262,
+            "passed": true
+          }
+        ],
+        "failures": 0
+      }
+    }
+  ],
+  "faults": [
+    {
+      "fault": "missing_index",
+      "detected": true,
+      "error_type": "OperationalError",
+      "wall_ms": 0.1432080171070993,
+      "scope": "disposable_fixture_only"
+    },
+    {
+      "fault": "corrupt_database",
+      "detected": true,
+      "error_type": "DatabaseError",
+      "wall_ms": 0.12645398965105414,
+      "scope": "disposable_fixture_only"
+    },
+    {
+      "fault": "store_lock",
+      "detected": true,
+      "error_type": "OperationalError",
+      "wall_ms": 15019.540763052646,
+      "scope": "disposable_fixture_only"
+    },
+    {
+      "fault": "model_service_unavailable",
+      "status": "clarification",
+      "failure_trace": [
+        {
+          "version": "foundation-failure-v1",
+          "category": "provider_transport",
+          "phase": "planning",
+          "code": "model_provider_failed",
+          "task_id": null,
+          "retryable": true,
+          "independent_task_success": "not_verified"
+        }
+      ],
+      "actual_remote_calls": 0
+    }
+  ],
+  "rss_max_kib": 237700,
+  "paid_calls": 0,
+  "model_generation_calls": 0,
+  "tokens": 0,
+  "scope": "real_local_paths_synthetic_isolated_data_not_model_RAG_QA",
+  "clock": "perf_counter nearest-rank P95, 12 warm requests, nonexclusive environment"
+}

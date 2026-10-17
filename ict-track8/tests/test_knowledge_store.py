@@ -15,7 +15,8 @@ def test_corpus_persists_original_chunks_and_replacement(tmp_path):
     assert reopened.list_documents()[0]['sha256'] == hashlib.sha256(raw).hexdigest()
     assert reopened.original('return-policy')[0].read_bytes() == raw
     result = reopened.answer('退货申请期限')
-    assert result['status'] == 'ok' and '7日' in result['answer']
+    assert result['status'] == 'insufficient_evidence'
+    assert result['answer_completeness'] == 'retrieval_only' and '7日' in result['retrieved_excerpts']
     assert result['citations'][0]['metadata']['source_locator']
     store.ingest('退货期限调整为9日。'.encode(), document_id='return-policy', title='退货政策', modality='txt', filename='policy.txt')
     assert len(store.list_documents()) == 1
@@ -56,7 +57,8 @@ def test_api_ingest_query_and_original_roundtrip(tmp_path, monkeypatch):
     response = client.post('/api/v1/knowledge/ingest', json={'document_id': 'warranty', 'title': '保修规则', 'modality': 'txt', 'filename': 'warranty.txt', 'file_base64': base64.b64encode(raw).decode()})
     assert response.status_code == 200
     answer = client.post('/api/v1/knowledge/query', json={'question': '硬件保修期'})
-    assert answer.status_code == 200 and '12个月' in answer.json()['answer']
+    assert answer.status_code == 200 and answer.json()['status'] == 'insufficient_evidence'
+    assert '12个月' in answer.json()['retrieved_excerpts']
     assert client.get('/api/v1/knowledge/documents/warranty/original').content == raw
     assert client.get('/api/v1/knowledge/documents/unknown').status_code == 404
 

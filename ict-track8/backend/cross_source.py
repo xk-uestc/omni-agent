@@ -266,6 +266,18 @@ class CrossSourceAgent:
         complete_results: bool = False,
     ) -> dict[str, Any]:
         started = time.perf_counter()
+        from .nl2sql.security import unsafe_request_reason
+        if unsafe_request_reason(question):
+            refused = self.sql_engine.answer(question)
+            event = {'stage': 'request_safety', 'status': 'rejected', 'executed': False,
+                     'failure_category': 'safety', 'error_code': 'read_only_query_required'}
+            if trace_callback:
+                trace_callback(dict(event))
+            return {'status': 'clarification', 'question': question, 'effective_question': question,
+                    'answer': refused.clarification, 'structured': refused.to_dict(),
+                    'document_query': '', 'document_evidence': [], 'trace': [event],
+                    'context_turns': len(context_questions),
+                    'latency_ms': round((time.perf_counter()-started)*1000, 2)}
         effective_question, context_rewrite = self._with_context(question, context_questions)
         trace_id = hashlib.sha256(f"{effective_question}:{time.time_ns()}".encode()).hexdigest()[:16]
         trace: list[dict[str, Any]] = []

@@ -1,0 +1,386 @@
+{
+  "frozen_hashes_verified": true,
+  "backend_matches_executed": true,
+  "database_read_only": true,
+  "candidate_precision_definition": "Independent fixture Gold: complete, nonconflicting, accurate semantic candidate; separate from literal extraction fidelity.",
+  "candidate_precision": {
+    "numerator": 20,
+    "denominator": 23
+  },
+  "source_extraction_fidelity": {
+    "numerator": 23,
+    "denominator": 23
+  },
+  "formation_proofs": [
+    {
+      "task": "p01",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p02",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p03",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p04",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p05",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p06",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p07",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p08",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p09",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p10",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p11",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    },
+    {
+      "task": "p12",
+      "no_put_enforced": true,
+      "target_history_zero": true,
+      "candidate_link": true,
+      "observed_event_link": true,
+      "child_cli_review_succeeded": true,
+      "real_sql": true,
+      "task_gold_pass": true,
+      "memory_consumed": true
+    }
+  ],
+  "scorer_controls": [
+    {
+      "name": "actual_execution",
+      "task_score": true,
+      "consumed": true,
+      "combined": true,
+      "expected": true,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": true,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 2,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 2,
+        "actual_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            24792.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_channel",
+      "task_score": false,
+      "consumed": true,
+      "combined": false,
+      "expected": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": false,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 2,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 1,
+        "actual_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            24792.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            4792.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_time",
+      "task_score": false,
+      "consumed": true,
+      "combined": false,
+      "expected": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": false,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 2,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 3,
+        "actual_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            24792.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            36789.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "wrong_field",
+      "task_score": false,
+      "consumed": true,
+      "combined": false,
+      "expected": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 2,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 2,
+        "actual_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            24792.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            8
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "missing_execution",
+      "task_score": false,
+      "consumed": true,
+      "combined": false,
+      "expected": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": false,
+        "source_filter_population_pass": false,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 2,
+        "actual_source_table": null,
+        "actual_contributing_records": null,
+        "actual_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            24792.0
+          ]
+        ],
+        "replay_rows": [],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    },
+    {
+      "name": "no_consumption",
+      "task_score": true,
+      "consumed": false,
+      "combined": false,
+      "expected": false,
+      "detail": {
+        "status": "ok",
+        "field_pass": true,
+        "dimension_pass": true,
+        "result_pass": true,
+        "source_filter_population_pass": true,
+        "gold_source_table": "sales_orders",
+        "gold_contributing_records": 2,
+        "actual_source_table": "sales_orders",
+        "actual_contributing_records": 2,
+        "actual_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "gold_rows_scoring_only": [
+          [
+            24792.0
+          ]
+        ],
+        "replay_rows": [
+          [
+            24792.0
+          ]
+        ],
+        "metric_fields_actual": [
+          "sales_amount"
+        ],
+        "version_evidence_pass": true
+      }
+    }
+  ],
+  "legacy185_matches_m1b1": true,
+  "legacy16_matches_m1b1": true,
+  "new_process_proof": {
+    "worker_pid": 8,
+    "process_command": [
+      "/tmp/omni-m1a-venv/bin/python",
+      "/home/viva/omni-agent/tools/evaluate_memory_formation_m1b2.py",
+      "--worker-config",
+      "/home/viva/omni-agent/runtime/f1-formation-final-20261010/C/p01/admin.json",
+      "--question",
+      "2025年华东玄武额是多少",
+      "--arm",
+      "C"
+    ],
+    "target_history_before": 0
+  },
+  "BC_knowledge_bindings_equal": true,
+  "BC_rows_equal": true
+}

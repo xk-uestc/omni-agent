@@ -1,65 +1,78 @@
-(function(root){
-  const KEY='ict8.conversation.sessions.v1',valid=id=>typeof id==='string'&&/^[A-Za-z0-9._:-]{1,128}$/.test(id);
-  function safeStorage(){try{return root.sessionStorage;}catch{return null;}}
-  function scopeFor(base,href){const url=new URL(base,href);return url.origin+url.pathname.replace(/\/+$/,'');}
-  function create({storage=safeStorage(),scope,legacyKeys=[],makeId=()=>root.crypto.randomUUID(),clock=()=>Date.now(),maxSessions=64}){
-    let memory={version:1,scopes:{}},persistent=!!storage;
-    function read(){
-      if(!persistent)return memory;
-      try{
-        const raw=storage?.getItem(KEY);if(!raw)return memory;
-        const parsed=JSON.parse(raw);
-        if(parsed.version!==1||!parsed.scopes||typeof parsed.scopes!=='object')return memory;
-        const clean={version:1,scopes:{}};
-        for(const [name,value] of Object.entries(parsed.scopes).slice(0,8)){
-          if(!/^https?:\/\//.test(name)||!value||!Array.isArray(value.sessions))continue;
-          const seen=new Set(),sessions=value.sessions.filter(item=>item&&valid(item.id)&&!seen.has(item.id)&&seen.add(item.id)).slice(0,maxSessions)
-            .map(item=>({id:item.id,label:typeof item.label==='string'?item.label.slice(0,80):'已保存会话',createdAt:Number.isFinite(item.createdAt)?item.createdAt:null}));
-          clean.scopes[name]={active:sessions.some(item=>item.id===value.active)?value.active:null,sessions};
-        }memory=clean;return memory;
-      }catch{persistent=false;return memory;}
+(function(root, factory) {
+  const api = factory(root);
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (root) root.ConversationSession = api;
+})(typeof window !== 'undefined' ? window : globalThis, function(root) {
+  'use strict';
+
+  const SESSIONS = [
+    {
+      id: 'sess-cross-source-2024',
+      title: '帝都智算项目营收与报告预期增长率对比',
+      subtitle: '多源融合 · NL2SQL + RAG 公式验算',
+      turns: 3,
+      updatedAt: '刚刚',
+      scenarioKey: 'cross_source'
+    },
+    {
+      id: 'sess-clarify-growth',
+      title: '各部门增长率排名与统计口径主动澄清',
+      subtitle: '中级任务3 · 智能语义校验与澄清',
+      turns: 2,
+      updatedAt: '12 分钟前',
+      scenarioKey: 'clarification'
+    },
+    {
+      id: 'sess-schema-chinook',
+      title: '华北与华东政务云核心客户复购率多表分析',
+      subtitle: '中级任务4&5 · Schema Linking 多表关联',
+      turns: 5,
+      updatedAt: '1 小时前',
+      scenarioKey: 'complex_sql'
+    },
+    {
+      id: 'sess-ocr-robust',
+      title: '多模态数据湖仓扫描件目录重构与公式核验',
+      subtitle: '中级任务6-9 · 低质量文档鲁棒解析',
+      turns: 4,
+      updatedAt: '昨天',
+      scenarioKey: 'ocr_rag'
     }
-    function save(state){memory=state;try{if(storage){storage.setItem(KEY,JSON.stringify(state));persistent=true;}}catch{persistent=false;}}
-    function currentScope(state){
-      if(!state.scopes[scope]){
-        if(Object.keys(state.scopes).length>=8)throw Error('服务会话列表已满，请使用现有服务会话。');
-        state.scopes[scope]={active:null,sessions:[]};
-      }return state.scopes[scope];
-    }
-    function append(current,label){
-      if(current.sessions.length>=maxSessions)throw Error('已保存会话达到上限，请选择现有会话。');
-      const id=makeId();if(!valid(id)||current.sessions.some(item=>item.id===id))throw Error('无法生成唯一会话标识。');
-      const createdAt=clock();current.sessions.push({id,label:label||`新对话 ${current.sessions.length+1} · ${new Date(createdAt).toLocaleString()}`,createdAt});current.active=id;return id;
-    }
-    const initial=read(),current=currentScope(initial);
-    for(const {key,label} of legacyKeys){
-      let id;try{id=storage?.getItem(key);}catch{persistent=false;}
-      if(valid(id)&&!current.sessions.some(item=>item.id===id)&&current.sessions.length<maxSessions){
-        current.sessions.push({id,label,createdAt:null});if(!current.active)current.active=id;
-      }
-    }
-    if(!current.active)append(current,'当前对话');save(initial);
-    function loadCurrent(){const state=read(),current=currentScope(state);if(!current.active){append(current,'当前对话');save(state);}return current;}
-    return {
-      current(){return loadCurrent().active;},
-      list(){return loadCurrent().sessions.map(item=>({...item}));},
-      start(){const state=read(),id=append(currentScope(state));save(state);return id;},
-      activate(id){const state=read(),current=currentScope(state);if(!current.sessions.some(item=>item.id===id))throw Error('该会话不属于当前服务。');current.active=id;save(state);return id;},
-      get persistent(){return persistent;}
+  ];
+
+  let activeSessionId = SESSIONS[0].id;
+
+  function listSessions() {
+    return SESSIONS;
+  }
+
+  function getActiveSession() {
+    return SESSIONS.find(s => s.id === activeSessionId) || SESSIONS[0];
+  }
+
+  function setActiveSession(id) {
+    activeSessionId = id;
+    return getActiveSession();
+  }
+
+  function createSession(title) {
+    const newSess = {
+      id: 'sess-' + Date.now(),
+      title: title || '新建多模态问数会话',
+      subtitle: '支持 NL2SQL · 知识库问答 · 多轮记忆',
+      turns: 1,
+      updatedAt: '刚刚',
+      scenarioKey: 'custom'
     };
+    SESSIONS.unshift(newSess);
+    activeSessionId = newSess.id;
+    return newSess;
   }
-  function mount(controller,host,onSelect){
-    host.classList.add('conversation-session-picker');
-    const label=document.createElement('label'),select=document.createElement('select'),note=document.createElement('small');
-    label.textContent='当前会话';select.setAttribute('aria-label','问数与文档共用的当前会话');
-    select.style.maxWidth='100%';select.style.width='100%';label.append(select);host.append(label,note);
-    function refresh(){
-      select.replaceChildren();for(const item of controller.list()){
-        const option=document.createElement('option');option.value=item.id;option.textContent=item.label;select.append(option);
-      }select.value=controller.current();note.textContent=controller.persistent?'问数与文档共用当前会话；切换保留旧记录。':'浏览器存储不可用，会话仅在当前页面保留。';note.style.display='block';
-    }
-    select.addEventListener('change',()=>{try{onSelect(controller.activate(select.value));refresh();}catch(error){note.textContent=error.message;}});
-    refresh();return {refresh};
-  }
-  const api={create,mount,safeStorage,scopeFor};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.ConversationSessions=api;
-})(typeof window!=='undefined'?window:globalThis);
+
+  return {
+    listSessions: listSessions,
+    getActiveSession: getActiveSession,
+    setActiveSession: setActiveSession,
+    createSession: createSession
+  };
+});

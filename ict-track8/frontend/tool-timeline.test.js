@@ -5,6 +5,10 @@ const { normalizeEvent, fromResult, reduceEvents, invocationVerb, create } = req
 test('exports the normalization and live timeline contract', () => {
   [normalizeEvent, fromResult, reduceEvents, create].forEach(fn => assert.equal(typeof fn, 'function'));
 });
+test('RAG stage receipts are not counted again as independent tool calls',()=>{
+  assert.equal(normalizeEvent({tool:'rag.bm25',rag_step:'bm25_retrieval',status:'success'}).kind,'commentary');
+  assert.equal(normalizeEvent({tool:'rag.dense_retrieval',status:'success'}).kind,'commentary');
+});
 
 test('invocation wording distinguishes execution, failure and unverified records', () => {
   assert.equal(invocationVerb('running'),'正在调用');

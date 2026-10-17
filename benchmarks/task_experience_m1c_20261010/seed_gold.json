@@ -1,0 +1,35 @@
+[
+  {
+    "kind": "A",
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+    "year": 2025,
+    "region": "华东",
+    "formula": "目标销售额",
+    "rate": 0.12,
+    "documents": [
+      "policy",
+      "targets"
+    ]
+  },
+  {
+    "kind": "B",
+    "sql": "SELECT region,SUM(sales_amount) AS v FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' GROUP BY region ORDER BY v DESC",
+    "column": "sales_amount",
+    "year": 2025,
+    "target": "冠军团队的方法",
+    "documents": [
+      "methods"
+    ]
+  },
+  {
+    "kind": "A",
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+    "year": 2025,
+    "region": "华东",
+    "formula": "客单价",
+    "rate": null,
+    "documents": [
+      "policy"
+    ]
+  }
+]

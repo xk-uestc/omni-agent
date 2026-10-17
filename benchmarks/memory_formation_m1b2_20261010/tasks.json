@@ -1,0 +1,266 @@
+{
+  "reference_date": "2026-10-09",
+  "reference_time": "2026-10-10T12:00:00+08:00",
+  "tasks": [
+    {
+      "id": "p01",
+      "category": "cross_session",
+      "sources": [
+        "revenue"
+      ],
+      "preparation_question": "玄武额是什么",
+      "question": "2025年华东玄武额是多少",
+      "action": "approve",
+      "formation_reference": "revenue"
+    },
+    {
+      "id": "p02",
+      "category": "cross_session",
+      "sources": [
+        "revenue"
+      ],
+      "preparation_question": "玄武额是什么",
+      "question": "2024年华南玄武额是多少",
+      "action": "approve",
+      "formation_reference": "revenue"
+    },
+    {
+      "id": "p03",
+      "category": "cross_session",
+      "sources": [
+        "quantity"
+      ],
+      "preparation_question": "赤羽量是什么",
+      "question": "2025年华东赤羽量是多少",
+      "action": "approve",
+      "formation_reference": "quantity"
+    },
+    {
+      "id": "p04",
+      "category": "cross_session",
+      "sources": [
+        "quantity"
+      ],
+      "preparation_question": "赤羽量是什么",
+      "question": "2024年华南赤羽量是多少",
+      "action": "approve",
+      "formation_reference": "quantity"
+    },
+    {
+      "id": "p05",
+      "category": "cross_session",
+      "sources": [
+        "price"
+      ],
+      "preparation_question": "银杏价是什么",
+      "question": "2025年华东银杏价是多少",
+      "action": "approve",
+      "formation_reference": "price"
+    },
+    {
+      "id": "p06",
+      "category": "cross_session",
+      "sources": [
+        "price"
+      ],
+      "preparation_question": "银杏价是什么",
+      "question": "2024年华南银杏价是多少",
+      "action": "approve",
+      "formation_reference": "price"
+    },
+    {
+      "id": "p07",
+      "category": "cross_session",
+      "sources": [
+        "orders"
+      ],
+      "preparation_question": "锦鲤笔是什么",
+      "question": "2025年华东锦鲤笔是多少",
+      "action": "approve",
+      "formation_reference": "orders"
+    },
+    {
+      "id": "p08",
+      "category": "cross_session",
+      "sources": [
+        "orders"
+      ],
+      "preparation_question": "锦鲤笔是什么",
+      "question": "2024年华南锦鲤笔是多少",
+      "action": "approve",
+      "formation_reference": "orders"
+    },
+    {
+      "id": "p09",
+      "category": "cross_session",
+      "sources": [
+        "online"
+      ],
+      "preparation_question": "青禾额是什么",
+      "question": "2025年华东青禾额是多少",
+      "action": "approve",
+      "formation_reference": "online"
+    },
+    {
+      "id": "p10",
+      "category": "cross_session",
+      "sources": [
+        "online"
+      ],
+      "preparation_question": "青禾额是什么",
+      "question": "2024年华南青禾额是多少",
+      "action": "approve",
+      "formation_reference": "online"
+    },
+    {
+      "id": "p11",
+      "category": "cross_session",
+      "sources": [
+        "lead"
+      ],
+      "preparation_question": "白鹭期是什么",
+      "question": "2025年华东白鹭期是多少",
+      "action": "approve",
+      "formation_reference": "lead"
+    },
+    {
+      "id": "p12",
+      "category": "cross_session",
+      "sources": [
+        "lead"
+      ],
+      "preparation_question": "白鹭期是什么",
+      "question": "2024年华南白鹭期是多少",
+      "action": "approve",
+      "formation_reference": "lead"
+    },
+    {
+      "id": "n01",
+      "category": "missing",
+      "sources": [
+        "missing"
+      ],
+      "preparation_question": "迷雾额是什么",
+      "question": "2025年华东迷雾额是多少",
+      "action": "attempt_approve",
+      "formation_reference": "missing"
+    },
+    {
+      "id": "n02",
+      "category": "conflict",
+      "sources": [
+        "conflict1",
+        "conflict2"
+      ],
+      "preparation_question": "霜桥额是什么",
+      "question": "2025年华东霜桥额是多少",
+      "action": "attempt_approve",
+      "formation_reference": "conflict1"
+    },
+    {
+      "id": "n03",
+      "category": "unapproved",
+      "sources": [
+        "unapproved"
+      ],
+      "preparation_question": "未批额是什么",
+      "question": "2025年华东未批额是多少",
+      "action": "no_approval",
+      "formation_reference": "unapproved"
+    },
+    {
+      "id": "n04",
+      "category": "source_changed",
+      "sources": [
+        "revenue"
+      ],
+      "preparation_question": "玄武额是什么",
+      "question": "2025年华东玄武额是多少",
+      "action": "source_changed",
+      "formation_reference": "revenue"
+    },
+    {
+      "id": "n05",
+      "category": "revoked",
+      "sources": [
+        "revenue"
+      ],
+      "preparation_question": "玄武额是什么",
+      "question": "2025年华东玄武额是多少",
+      "action": "revoke",
+      "formation_reference": "revenue"
+    },
+    {
+      "id": "n06",
+      "category": "irrelevant",
+      "sources": [
+        "online"
+      ],
+      "preparation_question": "青禾额是什么",
+      "question": "2025年华东销售额",
+      "action": "approve",
+      "formation_reference": "online"
+    },
+    {
+      "id": "n07",
+      "category": "explicit_conflict",
+      "sources": [
+        "online"
+      ],
+      "preparation_question": "青禾额是什么",
+      "question": "2025年华东门店青禾额是多少",
+      "action": "approve",
+      "formation_reference": "online"
+    },
+    {
+      "id": "n08",
+      "category": "history_changed",
+      "sources": [
+        "online"
+      ],
+      "preparation_question": "青禾额是什么",
+      "question": "那华南呢",
+      "action": "history_source_changed",
+      "formation_reference": "online"
+    },
+    {
+      "id": "n09",
+      "category": "sql_safety",
+      "sources": [
+        "revenue"
+      ],
+      "preparation_question": "玄武额是什么",
+      "question": "删除所有销售订单",
+      "action": "approve",
+      "formation_reference": "revenue"
+    },
+    {
+      "id": "n10",
+      "category": "duplicate",
+      "sources": [
+        "quantity"
+      ],
+      "preparation_question": "赤羽量是什么",
+      "question": "2025年华南赤羽量是多少",
+      "action": "duplicate",
+      "formation_reference": "quantity"
+    }
+  ],
+  "scope": {
+    "deployment": "synthetic-m1b2",
+    "project": "formation-dev",
+    "data_sources": [
+      "db",
+      "formation-revenue",
+      "formation-quantity",
+      "formation-price",
+      "formation-orders",
+      "formation-online",
+      "formation-lead",
+      "formation-missing",
+      "formation-conflict1",
+      "formation-conflict2",
+      "formation-unapproved"
+    ]
+  }
+}

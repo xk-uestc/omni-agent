@@ -1,0 +1,25 @@
+# F1 安全与稳定性
+
+safe-09本轮采用冻结整体拒绝契约。共享unsafe_request_reason在原问题进入Memory、归一化、历史改写、模型规划前执行，Nl2SqlEngine与旧CrossSource、DAG低层同样拒绝；不会删除危险片段后继续只读SQL。AST、SQLite authorizer和执行预算保留。自然语言删除查询筛选条件、取消地区限制以及引号内的数据字符串不当作SQL DELETE。拒绝不清空既有会话scope，也不访问模型/记忆/检索。
+
+实际Python、HTTP、SSE、SQL混合语句、旧CrossSource与DAG：26项通过，临时数据库前后SHA一致。原失败日志safety-tests.txt是本轮新测试初次使用错误HTTP路径（404）；修正路径后safety-tests-final.txt通过，原日志保留。模型/外部检索provider均为空，TestClient需要本机socket权限；无付费调用。
+
+两个旧测试明确断言危险混合请求应部分执行，分别是test_nl2sql_v2.py::test_unsafe_natural_language_directive_is_ignored_but_read_only_intent_survives和test_nl2sql_pressure_regressions.py::test_unsafe_write_instruction_is_stripped_or_rejected_without_model。本轮授权契约与该历史断言冲突。保留断言及所有冻结Gold，不通过删除/改Gold取得绿色；最终回归会逐项列出。safe-09冻结评测应由整题scorer记录新的整体拒绝结果，而不改其期望。
+
+M1-C三项旧失败的处理：显示别名物理SUM待进一步证明；reset后缺追问上下文和完全验证SQL快捷路由的旧预期，不为凑测试恢复不必要模型调用或猜测旧scope。Provider失败、协议拒绝、source revision和中间工具未完成会在独立可靠性修改中加入统一Trace归因。
+
+单指标display alias根因已修复：QueryPlan同时保留metrics[]和legacy物理字段，原校验仅使用metrics.label，合法SQL外层alias只更新metric_label后拒绝。现在仅在唯一指标与legacy的table/column/function完全一致时使用新显示名；多指标、不同物理聚合、重复标签仍拒绝。所有结果继续对原scope重新规则编译、独立SQLite执行与物理rows比较，未删断言/改Gold。
+
+新增foundation-failure-v1统一Trace：planning协议失败、provider/transport失败、source缺失/版本/参数绑定、检索无证据、执行契约失败分开；保留第一失败及fallback成功状态，中间任务成功不标独立整题成功。DependencyPlanError仍保留原异常契约，invalid DAG额外发planning事件；来源预绑定失败现在有来源Trace，缺参数ref位置有明确code。Memory Observe保存实际failure_trace但不把status ok当独立task success。SSE timeout输出phase=transport、worker_cancelled=false，明确后台可能继续；本轮没有后台取消/断连持久审计实现。
+
+底层模型输出协议和C/D绑定没有本轮真实模型复跑或证明已解决。统一分类不等于新增恢复动作；provider失败不自动增加补证调用。本轮不重写planner。
+
+运行结果：reliability-tests-final.txt 136passed（别名旧断言现在通过）；独立Trace13passed。API/恢复扩大检查121passed、2failed，两个失败在F1起点94a9926的只读git archive快照原样复现（recovery-failures-start-reproduced.txt）：旧测试插桩忘记传with_audit却要求二元返回，以及snippet新定位已含条件但测试要求不含。保留失败，不为测试减损检索或放宽接口。F1原M1-C415机制及新检查会单独记录最终结果。
+
+更广机制检查发现5项新增仅Trace兼容问题：原tools trace=[]表示尚无任何工具执行，预绑定失败事件曾放入其中。已将预绑定失败保存在独立failure_trace并保持callback有诊断、工具trace仍空，不删除旧断言；原7failed日志保留。修正后446项中444passed、2failed，仅为原reset/SQL快捷路由预期；显示alias失败已实际修复。
+
+最终综合相关回归533passed、7failed、12subtests（foundation-final-tests.txt/xml）。7失败：2旧reset/快捷路由预期，2旧恢复插桩/snippet假设（起点复现），2与授权整体拒绝相冲突的历史部分执行断言，1dynamic绑定AVG修饰词与SUM计划一致性旧错误（起点94a9926中1failed/4passed，dynamic-failure-start-reproduced.txt）。AVG请求被错误保留为SUM是实际正确性限制，不能称来源语义验证全面完成；本轮没有为了抹平这项失败降低断言或改变已冻结Gold。全项目测试不宣称全绿。
+
+原16题A10/B14保持；185两组177→178，仅整体拒绝1题改善，原成功0退步且开关SQL/rows/status一致。M1-B2 22题9/22、22/22、22/22，23候选、20验证、19晋升、0错误晋升。原验证器因断言必须逐题完全不变退出1（该错误原日志保留）；独立F1验证依据“全原请求拒绝、无SQL、无rows、冻结scorer通过”的通用行为核验变更，不使用case ID白名单。该改善来自安全基础设施，不是Memory收益。已在新固定源码重新建立基线，历史报告/评分器不改。
+
+SSE短时故障注入单独1passed：worker在transport超时后仍运行并持有并发许可，响应准确披露worker_cancelled=false，测试清理后回收。该证据证明当前超时语义及其资源风险，未宣称解决取消。legal-scope-edit.json证明自然语言删除地区限制未被read_only_query_required误拒绝（实际返回缺上下文澄清）。最终独立审计使用final-verification-v2.json，原版ID字段误命名保留并更正。

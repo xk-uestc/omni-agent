@@ -129,7 +129,8 @@ def _verified_pdf_row(chunk):
 
 
 class KnowledgeStore:
-    def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None):
+    def __init__(self, root: str | Path, *, ocr_pipeline=None, embedder=None, generator=None,
+                 use_persistent_bm25: bool = True, pdf_backend=None):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=True)
         self.assets = self.root / 'assets'
@@ -138,6 +139,8 @@ class KnowledgeStore:
         self.chunker = DocumentChunker()
         self.ocr_pipeline = ocr_pipeline
         self.generator = generator
+        self.pdf_backend = pdf_backend
+        self.use_persistent_bm25 = bool(use_persistent_bm25)
         with self.connect() as connection:
             connection.executescript('''
                 CREATE TABLE IF NOT EXISTS documents (
@@ -149,7 +152,29 @@ class KnowledgeStore:
                     payload TEXT NOT NULL,
                     FOREIGN KEY(document_id) REFERENCES documents(document_id) ON DELETE CASCADE);
                 CREATE INDEX IF NOT EXISTS chunks_document ON chunks(document_id);
+                CREATE TABLE IF NOT EXISTS document_elements (
+                    document_id TEXT NOT NULL, element_id TEXT NOT NULL,
+                    kind TEXT NOT NULL, payload TEXT NOT NULL,
+                    PRIMARY KEY(document_id, element_id),
+                    FOREIGN KEY(document_id) REFERENCES documents(document_id) ON DELETE CASCADE);
+                CREATE TABLE IF NOT EXISTS retrieval_catalog_revision (
+                    singleton INTEGER PRIMARY KEY CHECK(singleton=1), revision INTEGER NOT NULL);
+                INSERT OR IGNORE INTO retrieval_catalog_revision VALUES(1,0);
+                CREATE TRIGGER IF NOT EXISTS retrieval_documents_insert AFTER INSERT ON documents BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_documents_update AFTER UPDATE ON documents BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_documents_delete AFTER DELETE ON documents BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_chunks_insert AFTER INSERT ON chunks BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_chunks_update AFTER UPDATE ON chunks BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
+                CREATE TRIGGER IF NOT EXISTS retrieval_chunks_delete AFTER DELETE ON chunks BEGIN
+                    UPDATE retrieval_catalog_revision SET revision=revision+1 WHERE singleton=1; END;
             ''')
+        from .retrieval_index import PersistentBM25Index
+        self.persistent_bm25 = PersistentBM25Index(self.root/'retrieval-index.sqlite')
         self.dense_index = None
         if embedder is not None:
             from .dense_retrieval import DenseIndex
@@ -159,6 +184,10 @@ class KnowledgeStore:
         return {'mode': 'bm25_dense_rrf' if self.dense_index else 'bm25',
                 'embedding_model': self.dense_index.embedder.identity if self.dense_index else None,
                 'dense_answer_threshold': 0.6 if self.dense_index else None}
+
+    def _retrieval_revision(self):
+        with self.connect() as connection:
+            return connection.execute('SELECT revision FROM retrieval_catalog_revision WHERE singleton=1').fetchone()[0]
 
     def warm_dense_index(self):
         if self.dense_index is None:
@@ -195,12 +224,54 @@ class KnowledgeStore:
         filename = Path(filename.replace('\\', '/')).name
         if not filename or len(filename) > 200:
             raise ValueError('无效文件名')
+        structure = None
+        native_structure = None
         if modality in {'txt', 'md'}:
             text = raw.decode('utf-8-sig')
             from .text_structure import chunk_text
             parsed = chunk_text(self.chunker, text, document_id=document_id, modality=modality)
         elif modality == 'pdf':
             parsed = self.chunker.parse_pdf(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
+            # The existing PyMuPDF grid engine is cheap and deterministic for
+            # native tables; MinerU remains the complex/scanned observation path.
+            from .visual_tables import extract_native_table_records
+            from .structured_document import seal, chunks_from_structure
+            import fitz
+            with fitz.open(stream=raw, filetype='pdf') as pdf:
+                geometry = [(float(p.rect.width), float(p.rect.height)) for p in pdf]
+            if len(geometry) <= 40:
+                start = time.monotonic()
+                elements = []
+                try:
+                    for page in range(1, len(geometry)+1):
+                        elements.extend(extract_native_table_records(raw, page_no=page,
+                                        expected_source_sha256=hashlib.sha256(raw).hexdigest()))
+                        if time.monotonic()-start > 30:
+                            raise ValueError('native_table_ingest_time_budget')
+                    native_structure = seal(elements, geometry, hashlib.sha256(raw).hexdigest(),
+                                            {'name':'pymupdf_native_grid', 'version':fitz.VersionBind})
+                    for e in native_structure['elements']:
+                        e['element_id'] = 'native_' + e['element_id']
+                        e['review_status'] = 'native_geometry_verified'
+                    parsed['chunks'].extend(chunks_from_structure(native_structure, document_id, self.chunker))
+                    parsed['stats']['native_table_seconds'] = round(time.monotonic()-start, 4)
+                    parsed['stats']['native_table_count'] = len(elements)
+                except ValueError as exc:
+                    native_structure = None
+                    parsed['warnings'].append(str(exc))
+            else:
+                parsed['warnings'].append('native_table_ingest_page_budget_exceeded')
+            if self.pdf_backend is not None:
+                from .structured_document import chunks_from_structure
+                structure = self.pdf_backend.parse(raw)
+                observed = chunks_from_structure(structure, document_id, self.chunker)
+                # Keep the native text path. Add only layout/formula/table
+                # observations, so recognizing a table never deletes prose.
+                observed = [c for c in observed if c['content_type'] in {'formula', 'table_row'}]
+                parsed['chunks'].extend(observed)
+                parsed['stats']['structured_elements'] = len(structure['elements'])
+                parsed['stats']['structured_backend_cost'] = structure['cost']
+                parsed['warnings'].append('structured_recognition_requires_review')
         elif modality == 'docx':
             parsed = self.chunker.parse_docx(raw, document_id=document_id, ocr_pipeline=self.ocr_pipeline, language=language).to_dict()
         elif modality == 'xlsx':
@@ -241,6 +312,11 @@ class KnowledgeStore:
                 else:
                     resplit.append(chunk)
             parsed['chunks'] = resplit
+        if structure is not None:
+            # Native analyzer can accidentally accept a partial PDF equation.
+            # A structure-enabled document uses independently reviewed records.
+            for formula in analysis['formulas']:
+                formula['status'] = 'requires_visual_review'
         record = {'document_id': document_id, 'title': title, 'modality': modality,
                   'filename': filename, 'sha256': digest, 'asset': asset.name,
                   'chunk_count': len(parsed['chunks']), 'warnings': parsed['warnings'], 'stats': parsed['stats'],
@@ -251,17 +327,214 @@ class KnowledgeStore:
                               'review_required': analysis['quality_score']<0.6 or bool(parsed['warnings']) or
                                   bool(analysis['metrics']['text_quality']['typo_candidate_count']) or
                                   'unrecognized_character' in analysis['metrics']['text_quality']['warnings']}}
+        if structure is not None:
+            record['structured_document'] = {k:v for k,v in structure.items() if k != 'elements'}
+            record['routing']['formula_tool'] = False
+        if native_structure is not None:
+            record['native_table_parser'] = native_structure['parser']
         with self.connect() as connection:
             connection.execute('DELETE FROM documents WHERE document_id=?', (document_id,))
             connection.execute('INSERT INTO documents VALUES(?,?,?,?,?,?)', (document_id, title, modality, filename, digest, json.dumps(record, ensure_ascii=False)))
             for chunk in parsed['chunks']:
                 chunk['metadata'].update({'source_sha256': digest, 'original_document_id': document_id})
                 connection.execute('INSERT INTO chunks VALUES(?,?,?)', (chunk['chunk_id'], document_id, json.dumps(chunk, ensure_ascii=False)))
+            for element in ((structure['elements'] if structure is not None else []) +
+                            (native_structure['elements'] if native_structure is not None else [])):
+                element['document_id'] = document_id
+                element['source_uri'] = f'/api/v1/knowledge/documents/{document_id}/original'
+                element['source_locator'] = f'page:{element["page_no"]}/element:{element["element_id"]}'
+                connection.execute('INSERT INTO document_elements VALUES(?,?,?,?)',
+                    (document_id, element['element_id'], element['kind'], json.dumps(element, ensure_ascii=False)))
         return record
 
     def list_documents(self):
         with self.connect() as connection:
             return [json.loads(row[0]) for row in connection.execute('SELECT payload FROM documents ORDER BY document_id')]
+
+    def formula_records(self, document_id, *, expected_sha256):
+        from .structured_document import observation_digest
+        self.verify_source(document_id, expected_sha256=expected_sha256)
+        document = self.document(document_id)
+        elements = document.get('elements', [])
+        for element in elements:
+            if (element['source_sha256'] != expected_sha256 or
+                    observation_digest(element) != element['observation_sha256']):
+                raise SourceIntegrityError('结构化观察记录发生变化')
+        return [e for e in elements if e['kind'] == 'formula']
+
+    def verify_native_table(self, document_id, element_id, *, expected_sha256):
+        """Replay a stored native relation from immutable bytes before use."""
+        from .structured_document import observation_digest
+        from .visual_tables import extract_native_table_records
+        raw = self.verify_source(document_id, expected_sha256=expected_sha256).read_bytes()
+        record = next((e for e in self.document(document_id).get('elements', [])
+                       if e['element_id'] == element_id), None)
+        if (not record or record.get('table_structure_status') != 'native_geometry_verified'
+                or observation_digest(record) != record.get('observation_sha256')):
+            raise SourceIntegrityError('原生表格记录未通过核验')
+        fresh = extract_native_table_records(raw, page_no=record['page_no'], expected_source_sha256=expected_sha256)
+        if not any(all(e.get(k) == record.get(k) for k in ('kind','page_no','order','bbox','text','cells')) for e in fresh):
+            raise SourceRevisionError('原生表格关系无法从原件重放')
+        self.verify_source(document_id, expected_sha256=expected_sha256)
+        return record
+
+    def native_table_cell(self, document_id, *, where, column):
+        """A unique complete literal row selector, rehydrated from the table."""
+        from .pdf_table_values import label, literal_cell
+        document = self.document(document_id)
+        if document['modality'] != 'pdf' or not isinstance(where, dict) or not where or not isinstance(column, str):
+            raise ValueError('PDF表格取值必须明确匹配条件和列')
+        candidates = []
+        for table in document.get('elements', []):
+            if table.get('table_structure_status') != 'native_geometry_verified':
+                continue
+            cells = table['cells']
+            headers = {c['column']:c['text'] for c in cells if c['is_header']}
+            if not {label(k) for k in [*where, column]} <= set(headers.values()):
+                continue
+            for row in sorted({c['row'] for c in cells if not c['is_header']}):
+                values = {headers[c['column']]: c for c in cells if not c['is_header'] and
+                          c['row'] <= row < c['row']+c['row_span'] and c['column_span'] == 1}
+                if label(column) not in values:
+                    continue
+                if not all(label(k) in values and type(v) in (str,int,float) and
+                           type(literal_cell(values[label(k)]['text'], label(k))['raw_value']) is type(v) and
+                           literal_cell(values[label(k)]['text'], label(k))['raw_value'] == v
+                           for k,v in where.items()):
+                    continue
+                target = values[label(column)]
+                literal = literal_cell(target['text'], label(column))
+                candidates.append({'value':literal['numeric_value'] if literal['numeric_value'] is not None else target['text'],
+                    'raw_value':target['text'], 'unit':literal['unit'],
+                    'source_uri':table['source_uri'], 'sha256':document['sha256'], 'document_id':document_id,
+                    'locator':table['source_locator']+f'/row:{row}/column:'+label(column),
+                    'structured_element_id':table['element_id'], 'page_no':table['page_no'],
+                    'bbox_display_pt':target['bbox'], 'matched_conditions':dict(where),
+                    'condition_bboxes_display_pt':{k:values[label(k)]['bbox'] for k in where},
+                    'column_header_bbox_display_pt':next(c['bbox'] for c in cells if c['is_header'] and c['text']==label(column)),
+                    'validation':'native_table_literal_cell_replayed',
+                    'calculator_input_eligible':literal['numeric_value'] is not None and literal['unit'] != 'unknown'})
+        if len(candidates) != 1:
+            raise ValueError('PDF表格取值缺失或歧义；必须明确唯一记录')
+        fact = candidates[0]
+        self.verify_native_table(document_id, fact['structured_element_id'], expected_sha256=document['sha256'])
+        return fact
+
+    def _verify_native_table_chunk(self, chunk):
+        from .structured_document import chunks_from_structure
+        meta = chunk['metadata']
+        record = self.verify_native_table(chunk['document_id'], meta['structured_element_id'],
+                                          expected_sha256=meta['source_sha256'])
+        structure = {'parser':meta['parser'], 'elements':[record]}
+        expected = chunks_from_structure(structure, chunk['document_id'], self.chunker)
+        if not any(c['text'] == chunk['text'] and c['source_locator'] == chunk['source_locator'] and
+                   all(c['metadata'].get(k) == meta.get(k) for k in
+                       ('headers','values','row_index','table_id','structured_table_cells','observation_sha256'))
+                   for c in expected):
+            raise SourceIntegrityError('表格切片与当前原件记录不一致')
+        return True
+
+    def review_formula(self, document_id, element_id, *, receipt_path):
+        """Trusted local human review only; deliberately absent from HTTP/tools.
+
+        A private owner-only receipt pins the original, recognition and rendered
+        region. AST validation is an additional safety check, not visual review.
+        Formula text/chunks stay unverified observations for generation.
+        """
+        import os
+        import stat
+        from .document_analysis import SafeFormulaEvaluator
+        path = Path(receipt_path)
+        info = path.lstat()
+        if (path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                or info.st_mode & 0o077 or info.st_size > 16000):
+            raise PermissionError('公式审核回执必须是当前用户私有的本地文件')
+        receipt = json.loads(path.read_text())
+        required = {'document_id','element_id','source_sha256','observation_sha256','region_png_sha256',
+                    'visually_verified','reviewer','label','expression','parameter_descriptions'}
+        if set(receipt) != required or receipt['document_id'] != document_id or receipt['element_id'] != element_id:
+            raise ValueError('invalid_formula_review_receipt')
+        if receipt['visually_verified'] is not True or not isinstance(receipt['reviewer'], str) or not receipt['reviewer'].strip():
+            raise ValueError('visual_formula_review_required')
+        formulas = self.formula_records(document_id, expected_sha256=receipt['source_sha256'])
+        element = next((e for e in formulas if e['element_id'] == element_id), None)
+        if element is None or receipt['observation_sha256'] != element['observation_sha256']:
+            raise SourceRevisionError('审核对象或识别结果已变化')
+        if not isinstance(receipt['label'],str) or not re.fullmatch(r'[A-Za-z\u3400-\u9fff][\w\u3400-\u9fff]{0,48}', receipt['label']):
+            raise ValueError('invalid_reviewed_formula_label')
+        params = SafeFormulaEvaluator().parameters(receipt['expression'])
+        descriptions = receipt['parameter_descriptions']
+        if not isinstance(descriptions, dict) or set(descriptions) != set(params):
+            raise ValueError('reviewed_formula_parameter_descriptions_incomplete')
+        document = self.document(document_id)
+        by_id = {e['element_id']: e for e in document.get('elements', [])}
+        for name, link in descriptions.items():
+            if not isinstance(link,dict) or set(link) != {'element_id','quote'}:
+                raise ValueError('invalid_parameter_description')
+            context = by_id.get(link['element_id'])
+            if (not context or context['page_no'] != element['page_no'] or context['kind'] != 'text'
+                    or not isinstance(link['quote'],str) or not link['quote'].strip()
+                    or link['quote'] not in context['text']):
+                raise ValueError('parameter_description_source_mismatch')
+        asset = self.visual_asset(document_id, page_no=element['page_no'],
+            expected_source_sha256=receipt['source_sha256'], crop_display_pt=element['bbox'])
+        if receipt['region_png_sha256'] != hashlib.sha256(asset.png_bytes).hexdigest():
+            raise ValueError('formula_review_visual_region_mismatch')
+        review = {**receipt, 'parameters': list(params), 'review_kind':'local_human_visual_confirmation',
+                  'receipt_sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
+        element.update(review_status='verified', calculator_input_eligible=True, formula_review=review)
+        self.verify_source(document_id, expected_sha256=receipt['source_sha256'])
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute('SELECT sha256 FROM documents WHERE document_id=?',(document_id,)).fetchone()
+            if row is None or row[0] != receipt['source_sha256']:
+                raise SourceRevisionError('审核期间来源版本变化')
+            db.execute('UPDATE document_elements SET payload=? WHERE document_id=? AND element_id=?',
+                       (json.dumps(element,ensure_ascii=False),document_id,element_id))
+        return element
+
+    def verify_formula_record(self, formula):
+        """Replay review authority, including identical-original reparsing."""
+        document_id = formula.get('document_id')
+        if formula.get('source_uri') != f'/api/v1/knowledge/documents/{document_id}/original':
+            raise SourceIntegrityError('结构化公式来源身份不一致')
+        records = self.formula_records(document_id, expected_sha256=formula.get('sha256'))
+        current = next((e for e in records if e['element_id'] == formula.get('structured_element_id')),None)
+        review = current.get('formula_review') if current else None
+        if (not current or not isinstance(review,dict) or current.get('review_status') != 'verified' or
+                current.get('calculator_input_eligible') is not True or review != formula.get('formula_review') or
+                any(formula.get(k) != review.get(k) for k in ('expression','parameters','label')) or
+                formula.get('locator') != current['source_locator']):
+            raise SourceRevisionError('公式记录重解析、审核撤销或审核内容变化，请重新定位。')
+        return current
+
+    def verify_native_formula(self, formula):
+        from .native_formula_pages import extract_native_literal_formulas
+        document_id = formula.get('document_id')
+        if formula.get('source_uri') != f'/api/v1/knowledge/documents/{document_id}/original':
+            raise SourceIntegrityError('原生公式来源身份不一致')
+        raw = self.verify_source(document_id, expected_sha256=formula.get('sha256')).read_bytes()
+        candidates = extract_native_literal_formulas(raw, label=formula.get('label'), expected_sha256=formula['sha256'])
+        if not any(all(c.get(k) == formula.get(k) for k in
+                       ('label','expression','parameters','sha256','locator','native_formula_proof')) for c in candidates):
+            raise SourceRevisionError('公式表达式与完整原件行不一致')
+        self.verify_source(document_id, expected_sha256=formula['sha256'])
+
+    def delete(self, document_id, *, expected_sha256):
+        """Remove a pinned logical revision atomically; keep immutable originals.
+
+        This internal store operation introduces no public deletion endpoint.
+        Old handles fail source validation; shared content-addressed assets and
+        audit evidence are never removed by logical deletion.
+        """
+        self.validate_id(document_id)
+        if not isinstance(expected_sha256, str) or not re.fullmatch(r'[a-f0-9]{64}', expected_sha256):
+            raise ValueError('删除资料必须指定当前来源SHA256')
+        with self.connect() as connection:
+            cursor = connection.execute('DELETE FROM documents WHERE document_id=? AND sha256=?',
+                                        (document_id, expected_sha256))
+            if cursor.rowcount != 1:
+                raise SourceRevisionError('资料已移除或版本变化，未删除当前版本。')
 
     def document(self, document_id):
         self.validate_id(document_id)
@@ -271,6 +544,9 @@ class KnowledgeStore:
                 raise KeyError(document_id)
             result = json.loads(row[0])
             result['chunks'] = [json.loads(item[0]) for item in connection.execute('SELECT payload FROM chunks WHERE document_id=? ORDER BY rowid', (document_id,))]
+            if 'structured_document' in result or 'native_table_parser' in result:
+                result['elements'] = [json.loads(item[0]) for item in connection.execute(
+                    'SELECT payload FROM document_elements WHERE document_id=? ORDER BY element_id', (document_id,))]
         self._verified_asset(result)
         return result
 
@@ -346,9 +622,16 @@ class KnowledgeStore:
         result['original_uri'] = asset.manifest['original_uri']
         return result
 
-    def records(self):
+    def records(self, document_id=None):
+        if document_id is not None:
+            self.validate_id(document_id)
         with self.connect() as connection:
-            rows = connection.execute('SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id) ORDER BY c.rowid').fetchall()
+            query = 'SELECT c.payload, d.title FROM chunks c JOIN documents d USING(document_id)'
+            params = ()
+            if document_id is not None:
+                query += ' WHERE c.document_id=?'
+                params = (document_id,)
+            rows = connection.execute(query + ' ORDER BY c.rowid', params).fetchall()
         records = []
         from .answer_contract import substantive_numbered_heading
         from .raysource_media import image_refs_for_chunk
@@ -369,34 +652,50 @@ class KnowledgeStore:
         return records
 
     def search(self, query: str, *, top_k: int = 4, document_id=None, page_no=None,
-               with_audit: bool = False, progress_callback=None) -> list[DocumentHit] | tuple[list[DocumentHit], dict[str, Any]]:
+               with_audit: bool = False, progress_callback=None, _revision_retry: int = 2) -> list[DocumentHit] | tuple[list[DocumentHit], dict[str, Any]]:
         if not isinstance(query, str) or not query.strip() or len(query) > 1000 or not 1 <= top_k <= 20:
             raise ValueError('问题或检索数量超出限制')
         binding_started = time.perf_counter()
+        revision_before = self._retrieval_revision()
+        bm25_status = 'not_started'
         def finish(hits, audit):
+            if self._retrieval_revision() != revision_after:
+                if _revision_retry > 0 and progress_callback is None:
+                    return self.search(query,top_k=top_k,document_id=document_id,page_no=page_no,
+                        with_audit=with_audit,progress_callback=progress_callback,_revision_retry=_revision_retry-1)
+                raise SourceRevisionError('检索期间语料来源发生变化，请使用当前版本重新检索。')
+            audit['index'] = {'strategy':'persistent_versioned_bm25',
+                'status':bm25_status,
+                'tokenizer_version':'ict8-tokenize-cjk-2-3-latin-v1'}
             return (hits, audit) if with_audit else hits
 
-        records = self.records()
+        records = self.records(document_id) if document_id is not None else self.records()
+        revision_after = self._retrieval_revision()
+        if revision_before != revision_after:
+            if _revision_retry > 0 and progress_callback is None:
+                return self.search(query,top_k=top_k,document_id=document_id,page_no=page_no,
+                    with_audit=with_audit,progress_callback=progress_callback,_revision_retry=_revision_retry-1)
+            raise SourceRevisionError('检索开始时语料来源发生变化，请重新检索。')
         if document_id is not None:
             document = self.document(document_id)
-            records = [record for record in records if record.metadata['document_id'] == document_id]
             if page_no is not None:
                 if document['modality'] != 'pdf' or type(page_no) is not int or not 1 <= page_no <= int(document['stats'].get('page_count') or 1):
                     raise ValueError('指定PDF页码超出资料范围')
                 records = [record for record in records if record.metadata.get('page_no') == page_no]
         elif page_no is not None:
             raise ValueError('指定页码时必须选择PDF资料')
+        from .source_binding import bind_sources
+        records, source_binding = bind_sources(query, records)
         # Exact entity identifiers are mandatory scope constraints, not soft synonyms.
         # Dense similarity can confuse contracts differing only in a serial number.
         normalized_query = unicodedata.normalize('NFKC', query)
         identifiers = tuple(dict.fromkeys(re.findall(
             r'(?<![A-Za-z0-9_])(?=[A-Za-z0-9_-]*[A-Za-z])(?=[A-Za-z0-9_-]*\d)[A-Za-z][A-Za-z0-9_-]{2,63}(?![A-Za-z0-9_])', normalized_query)))
+        linked_scope = None
         if identifiers:
-            def eligible(record):
-                text = unicodedata.normalize('NFKC', record.title + '\n' + record.content)
-                return all(re.search(r'(?<![A-Za-z0-9_])' + re.escape(identifier) + r'(?![A-Za-z0-9_])', text, re.I)
-                           for identifier in identifiers)
-            records = [record for record in records if eligible(record)]
+            from .linked_evidence import expand_identifier_scope
+            records, linked_scope = expand_identifier_scope(records, identifiers,
+                verify=self.verify_source, document=self.document)
         _publish_rag_progress(progress_callback, 'source_binding', 'success',
             f"已限定到 {len({record.metadata['document_id'] for record in records})} 份资料、{len(records)} 个可检索片段。",
             input={'document_id': document_id, 'page_no': page_no, 'exact_identifiers': list(identifiers)},
@@ -417,6 +716,8 @@ class KnowledgeStore:
                 'scope': {'document_id': document_id, 'page_no': page_no,
                           'exact_identifiers': list(identifiers)},
                 'retrieval': self.retrieval_health(), 'candidate_count': 0,
+                'source_binding': source_binding,
+                'linked_scope': linked_scope,
                 'dense_status': 'not_run_no_exact_identifier_match',
                 'channels': [], 'selected_count': 0, 'candidates': [],
                 'termination': 'exact_identifier_scope_had_no_matching_chunks'})
@@ -433,13 +734,29 @@ class KnowledgeStore:
                 # authorize a continuation; native source replay owns that.
                 navigation_contents[record.document_id] = previous.content + '\n' + record.content
         page_coverage = _page_scope_coverage(records, query)
-        retriever = JsonDocumentRetriever(records)
+        if self.use_persistent_bm25:
+            retriever = JsonDocumentRetriever.__new__(JsonDocumentRetriever)
+            retriever.documents = tuple(records)
+            try:
+                statistics = self.persistent_bm25.statistics(records)
+                retriever._document_frequency = statistics['document_frequency']
+                retriever._average_document_length = statistics['average_length']
+            except (sqlite3.DatabaseError, OSError, ValueError) as exc:
+                retriever = JsonDocumentRetriever(records)
+                bm25_status = 'dynamic_fallback:' + type(exc).__name__
+        else:
+            retriever=JsonDocumentRetriever(records)
+            bm25_status='dynamic_control'
         query_term_weights, query_term_weight_total = _query_term_weights(retriever, query)
         bm25_started = time.perf_counter()
         _publish_rag_progress(progress_callback, 'bm25_retrieval', 'running',
             '正在按词项相关度查找手册片段。', input={'query': query, 'candidate_limit': 100})
         try:
-            bm25_hits = retriever.search(query, top_k=max(20, top_k * 5), candidate_limit=100)
+            if not self.use_persistent_bm25 or bm25_status.startswith('dynamic_fallback:'):
+                bm25_hits = retriever.search(query, top_k=max(20, top_k * 5), candidate_limit=100)
+            else:
+                bm25_hits, bm25_status = self.persistent_bm25.search(
+                    query, records, top_k=max(20, top_k * 5), candidate_limit=100)
         except Exception:
             _publish_rag_progress(progress_callback, 'bm25_retrieval', 'error',
                 '关键词召回执行失败。', latency_ms=(time.perf_counter() - bm25_started) * 1000,
@@ -539,9 +856,13 @@ class KnowledgeStore:
         retrieval_audit = {
             'version': 'ict8-rag-audit-v1',
             'query': query,
+            'source_binding': source_binding,
+            'linked_scope': linked_scope,
             'scope': {'document_id': document_id, 'page_no': page_no,
                       'exact_identifiers': list(identifiers)},
             'retrieval': self.retrieval_health(),
+            'index': {'strategy':'persistent_versioned_bm25','status':bm25_status,
+                      'tokenizer_version':'ict8-tokenize-cjk-2-3-latin-v1'},
             'query_language': query_language,
             'dense_status': dense_status,
             'channels': ['bm25', 'dense', 'rrf'] if dense_status == 'enabled' else ['bm25'],
@@ -607,6 +928,7 @@ class KnowledgeStore:
                  'question_shape_navigation': {'method': 'generic_purpose_body_affinity_not_semantic_proof',
                      'body_affinity': body_answer_affinity(query, navigation_contents[hit.document_id])},
                  'identifier_anchors': list(identifiers), 'evidence_role': role,
+                 'identifier_scope_link': linked_scope['links'].get(hit.document_id) if linked_scope else None,
                  'evidence_selection': {
                      'method': coverage_selection.audit['method'],
                      'semantic_sufficiency': 'not_evaluated',
@@ -823,6 +1145,13 @@ class KnowledgeStore:
                            **({'document_id': document_id} if document_id is not None else {}),
                            **({'page_no': page_no} if page_no is not None else {}), with_audit=True,
                            progress_callback=progress_callback)
+        if not hits and retrieval_audit.get('source_binding', {}).get('status') == 'requires_clarification':
+            return self._attach_retrieval_audit({
+                'status': 'insufficient_evidence', 'question': question,
+                'answer_mode': 'source_version_clarification', 'clarification_code': 'source_version_required',
+                'needs_clarification': True, 'answer': '资料存在多个有效版本，请指定所用年份或版本。',
+                'citations': [], 'retrieval': self.retrieval_health(),
+                'trace': [{'stage': 'source_binding', 'status': 'requires_clarification'}]}, retrieval_audit)
         hits, part_audit = self._question_part_hits(question, hits, top_k=top_k,
                                                    document_id=document_id, page_no=page_no)
         if part_audit is not None:
@@ -1004,9 +1333,38 @@ class KnowledgeStore:
         self._attach_retrieval_audit(recovered, retrieval_audit)
         self._verify_citation_sources(result['citations'])
         self._verify_citation_sources(recovered['citations'])
+        _publish_rag_progress(progress_callback, 'answer_generation',
+            'success' if recovered.get('status') == 'ok' else 'attention',
+            ('补充检索后已返回回答并完成来源核验。' if recovered.get('status') == 'ok'
+             else '补充检索后，当前证据仍不足或需要补充条件。'),
+            output={'status': recovered.get('status'), 'answer_mode': recovered.get('answer_mode'),
+                    'citation_count': len(recovered.get('citations') or [])},
+            latency_ms=(time.perf_counter() - generation_started) * 1000, executed=True)
         return recovered
 
+    def prepare_evidence(self, question, hits, *, document_id=None, page_no=None):
+        """Bounded production evidence preparation; never expands Top-K scores."""
+        from .bounded_table_evidence import prepare_table_bundle
+        return prepare_table_bundle(self, question, hits, document_id=document_id, page_no=page_no)
+
     def _answer_hits(self, question, hits, *, document_id=None, page_no=None, image_attachments=None):
+        if not image_attachments:
+            literal = self._native_table_literal_answer(question, hits, document_id=document_id, page_no=page_no)
+            if literal is not None:
+                return literal
+        bundle = (self.prepare_evidence(question, hits, document_id=document_id, page_no=page_no)
+                  if not image_attachments else None)
+        from .source_answer_dossier import route as route_native_dossier
+        prepared_dossier_trace = None
+        if bundle and bundle['status'] == 'complete_for_declared_scope':
+            prepared, prepared_dossier_trace = route_native_dossier(self, question, hits,
+                document_id=document_id, page_no=page_no, evidence_bundle=bundle)
+            if prepared is not None:
+                prepared['evidence_bundle'] = bundle
+                prepared['trace'].insert(0, {'stage': 'bounded_table_evidence', 'status': bundle['status'],
+                    'extra_retrieval_calls': bundle['extra_retrieval_calls'],
+                    'extra_native_page_reads': bundle['extra_native_page_reads']})
+                return prepared
         from .native_row_selection import route_native_row_selection
         selection_result, selection_trace = ((None, {'stage': 'native_row_selection', 'status': 'not_applicable'})
             if image_attachments else route_native_row_selection(self, question, hits, document_id=document_id, page_no=page_no))
@@ -1048,23 +1406,29 @@ class KnowledgeStore:
             else (None, {'stage': 'native_total_routing', 'status': 'not_applicable'}))
         if total_result is not None:
             return total_result
-        from .source_answer_dossier import route as route_native_dossier
         dossier_result, dossier_trace = ((None, {'stage': 'source_answer_dossier', 'status': 'not_applicable'})
             if image_attachments else route_native_dossier(self, question, hits,
-                document_id=document_id, page_no=page_no))
+                document_id=document_id, page_no=page_no) if prepared_dossier_trace is None
+                else (None, prepared_dossier_trace))
         if dossier_result is not None:
             return dossier_result
         query_terms = set(_tokenize(question))
         # This local baseline returns attributed quotations, not inferred factual claims.
         selected = [hit for hit in hits if len(query_terms.intersection(hit.matched_terms)) >= min(2, len(query_terms))
                     or hit.metadata.get('dense_cosine', -1) >= 0.6]
-        result = {'status': 'ok' if selected else 'insufficient_evidence', 'question': question,
+        result = {'status': 'insufficient_evidence', 'question': question,
                 'answer_mode': 'attributed_extracts',
-                'answer': '\n\n'.join(f'[{i}] {hit.snippet}' for i, hit in enumerate(selected, 1)) if selected else '没有足够的文档证据，暂不能回答。',
+                'answer': '已找到相关原文，但尚未核验完整答案。' if selected else '没有足够的文档证据，暂不能回答。',
+                'retrieved_excerpts': '\n\n'.join(f'[{i}] {hit.snippet}' for i, hit in enumerate(selected, 1)),
+                'answer_completeness': 'retrieval_only' if selected else 'evidence_missing',
                 'citations': [{'citation_id': i, **hit.to_dict()} for i, hit in enumerate(selected, 1)],
                 'retrieval': self.retrieval_health(),
                 'trace': [{'stage': 'document_retrieval', 'channel': self.retrieval_health()['mode'], 'candidate_count': len(hits)},
                           {'stage': 'evidence_selection', 'selected_count': len(selected), 'generation': 'extractive'}]}
+        # Preserve the short, clearly labelled source preview used by the UI;
+        # full/low-quality OCR excerpts live only in citations/excerpt fields.
+        if selected and not any(h.metadata.get('ocr_status') for h in selected) and len(result['retrieved_excerpts']) <= 600:
+            result['answer'] += '\n未核验原文：\n' + result['retrieved_excerpts']
         result['trace'].append(visual_trace)
         result['trace'].append(chart_trace)
         result['trace'].append(table_trace)
@@ -1072,6 +1436,18 @@ class KnowledgeStore:
         result['trace'].append(dossier_trace)
         result['trace'].append(row_trace)
         result['trace'].append(selection_trace)
+        if bundle and bundle['status'] != 'not_applicable':
+            result['evidence_bundle'] = bundle
+            result['trace'].append({'stage': 'bounded_table_evidence', 'status': bundle['status'],
+                'extra_retrieval_calls': bundle['extra_retrieval_calls'],
+                'extra_native_page_reads': bundle['extra_native_page_reads'],
+                'answer_authority': False})
+            if bundle['status'] == 'complete_for_declared_scope':
+                # Full enumeration needs the existing independent dossier
+                # review. A generic Top-K answer must not ignore this inventory.
+                result.update(status='insufficient_evidence', answer='没有足够的文档证据，暂不能回答。',
+                    answer_mode='bounded_evidence_pending_review')
+                return result
         if self.generator and selected:
             from .responses_client import GenerationError
             from .answer_contract import question_contract
@@ -1177,6 +1553,9 @@ class KnowledgeStore:
                 if image_attachments:
                     raise ValueError('图片内容未能完成分析，本次没有生成忽略图片的回答，请稍后重试。') from exc
                 result['answer_mode'] = 'extractive_fallback'
+                result['status'] = 'insufficient_evidence'
+                result['answer'] = '相关原文未能支持经过核验的完整答案，请查看来源或补充资料。'
+                result['answer_completeness'] = 'generation_unverified'
                 attempts = getattr(exc, 'generation_attempts', None)
                 if attempts:
                     result['generation_attempts'] = attempts
@@ -1345,6 +1724,50 @@ class KnowledgeStore:
                 result['trace'].append(recovery_trace)
         return result
 
+    def _native_table_literal_answer(self, question, hits, *, document_id=None, page_no=None):
+        from .visual_table_reader import bind_native_record_question
+        ids = [document_id] if document_id else list(dict.fromkeys(h.metadata['document_id'] for h in hits))
+        if len(ids) > 4:
+            return None
+        matches = []
+        pinned = []
+        for did in ids:
+            document = self.document(did)
+            if document['modality'] != 'pdf':
+                continue
+            self.verify_source(did, expected_sha256=document['sha256'])
+            pinned.append((did,document['sha256']))
+            records = [e for e in document.get('elements', []) if page_no is None or e['page_no'] == page_no]
+            binding = bind_native_record_question(question, records)
+            if binding['status'] == 'bound':
+                matches.append((document,binding['fact']))
+        if len(matches) != 1:
+            return None
+        document, selection = matches[0]
+        # Lookup replays the original table and checks uniqueness across the
+        # complete document, including competing rows/pages outside Top-K.
+        try:
+            fact = self.native_table_cell(document['document_id'], where=selection['where'], column=selection['column'])
+        except ValueError:
+            return None
+        if fact['structured_element_id'] != selection['element_id']:
+            return None
+        for did,digest in pinned:
+            self.verify_source(did, expected_sha256=digest)
+        citation = {'citation_id':1, 'document_id':document['document_id'], 'title':document['title'],
+            'snippet':fact['raw_value'], 'source_uri':fact['source_uri'], 'score':None, 'matched_terms':[],
+            'metadata':{'document_id':document['document_id'], 'source_sha256':fact['sha256'],
+                        'source_locator':fact['locator'], 'page_no':fact['page_no'],
+                        'bbox_display_pt':fact['bbox_display_pt'],
+                        'column_header_bbox_display_pt':fact['column_header_bbox_display_pt'],
+                        'condition_bboxes_display_pt':fact['condition_bboxes_display_pt']}}
+        return {'status':'ok', 'question':question, 'answer':fact['raw_value'],
+                'answer_mode':'native_table_literal', 'answer_completeness':'complete_literal_cell',
+                'citations':[citation], 'table_fact':fact, 'retrieval':self.retrieval_health(),
+                'trace':[{'stage':'native_table_literal', 'status':'verified', 'model_requests_attempted':0,
+                          'scope':'complete_literal_question_and_replayed_native_cell',
+                          'candidate_document_ids':ids}]}
+
     def _verify_citation_sources(self, citations):
         expected = {}
         for hit in citations:
@@ -1425,8 +1848,13 @@ class KnowledgeStore:
                                    and (chunk['content_type'] == 'paragraph'
                                        or chunk['content_type'] == 'heading' and substantive_numbered_heading(chunk['text']))
                                    and not chunk['metadata'].get('ocr_status'))
-                if (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
-                        and not _verified_pdf_row(chunk)):
+                native_table = bool(chunk['metadata'].get('native_table_record'))
+                if native_table:
+                    self._verify_native_table_chunk(chunk)
+                if chunk['metadata'].get('structured_element_id') and not native_table and chunk['metadata'].get('review_status') != 'verified':
+                    reason = 'structured_recognition_not_reviewed'
+                elif (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
+                        and not native_table and not _verified_pdf_row(chunk)):
                     reason = 'pdf_table_layout_not_verified'
                 elif len(selected) >= MAX_EVIDENCE_ITEMS:
                     reason = 'evidence_item_limit'
@@ -1502,13 +1930,16 @@ class KnowledgeStore:
                     (hit['metadata']['chunk_id'], hit['metadata']['document_id'])).fetchone()
                 chunk = json.loads(row[0]) if row else None
                 evidence = hit['generation_evidence']
+                native_table = bool(chunk and chunk['metadata'].get('native_table_record'))
+                if native_table:
+                    self._verify_native_table_chunk(chunk)
                 if (chunk is None or text_sha256(chunk['text']) != evidence['chunk_sha256']
                         or text_sha256(json.dumps(chunk, ensure_ascii=False, sort_keys=True)) != evidence['chunk_payload_sha256']
                         or chunk['metadata'].get('source_sha256') != evidence['source_sha256']
                         or chunk['source_locator'] != evidence['source_locator']
                         or chunk['page_no'] != evidence['page_no']
                         or (chunk['modality'] == 'pdf' and chunk['content_type'] in {'row', 'table_row', 'table_header'}
-                            and not _verified_pdf_row(chunk))):
+                            and not native_table and not _verified_pdf_row(chunk))):
                     raise SourceRevisionError('执行中权威资料切片发生变化，请重新执行。')
                 if evidence.get('native_context') is not None:
                     from .pdf_native_context import extract_native_page_context

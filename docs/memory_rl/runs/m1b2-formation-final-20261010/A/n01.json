@@ -1,0 +1,1508 @@
+{
+  "response": {
+    "status": "ok",
+    "question": "2025年华东迷雾额是多少",
+    "effective_question": "2025年华东迷雾额是多少",
+    "route": "document",
+    "planner_source": "rules_basic",
+    "session_id": "target-B-n01",
+    "context_turns": 0,
+    "state": {
+      "route": "document",
+      "sources": [
+        "formation-missing"
+      ],
+      "document_context": {
+        "payload": {
+          "question": "2025年华东迷雾额是多少",
+          "documents": {
+            "formation-missing": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536"
+          }
+        },
+        "sha256": "4893a887f24caa28aff4c74a5db209a0a8ca1f9d9b0f9e9b18d7abf4bd3833c6"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "question": "2025年华东迷雾额是多少",
+      "answer_mode": "attributed_extracts",
+      "answer": "[1] 迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+      "citations": [
+        {
+          "citation_id": 1,
+          "document_id": "fbfc0882a93e2eccf49a14f8",
+          "title": "迷雾额业务定义",
+          "score": 0.7146,
+          "matched_terms": [
+            "迷雾额",
+            "迷雾",
+            "雾额"
+          ],
+          "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+          "source_uri": "/api/v1/knowledge/documents/formation-missing/original",
+          "metadata": {
+            "line_start": 1,
+            "line_end": 2,
+            "source_sha256": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536",
+            "original_document_id": "formation-missing",
+            "document_id": "formation-missing",
+            "chunk_id": "fbfc0882a93e2eccf49a14f8",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 2.503782,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 1.0,
+            "bm25_rank": 1,
+            "ranking_score": 2.8922998965517244,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.10344827586206895,
+            "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "primary",
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [
+                "迷雾",
+                "雾额"
+              ],
+              "body_sha256": "14a59841e0a410de757e8bf908174925453ed552ffe7123e0a18e1125cfb4b27",
+              "utility": 0.877778,
+              "uncovered_lexical_facets": [
+                "2025",
+                "东迷",
+                "华东",
+                "年华",
+                "是多",
+                "额是"
+              ],
+              "selection_budget_exhausted": false
+            }
+          }
+        }
+      ],
+      "retrieval": {
+        "mode": "bm25",
+        "embedding_model": null,
+        "dense_answer_threshold": null
+      },
+      "trace": [
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 1
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 1,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "retrieval_audit": {
+        "version": "ict8-rag-audit-v1",
+        "query": "2025年华东迷雾额是多少",
+        "scope": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "query_language": "zh_or_mixed",
+        "dense_status": "not_configured",
+        "channels": [
+          "bm25"
+        ],
+        "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+        "candidate_pool_limit": 20,
+        "candidate_count": 1,
+        "selection_budget": 4,
+        "selected_count": 1,
+        "selection": {
+          "method": "query_body_lexical_coverage_navigation_only",
+          "semantic_sufficiency": "not_evaluated",
+          "top_k": 4,
+          "candidate_count": 1,
+          "unique_body_count": 1,
+          "query_facets": {
+            "华东": 1.0,
+            "东迷": 1.0,
+            "迷雾": 1.0,
+            "雾额": 1.0,
+            "是多": 1.0,
+            "额是": 1.0,
+            "年华": 1.0,
+            "2025": 2.0
+          },
+          "covered_lexical_facets": [
+            "迷雾",
+            "雾额"
+          ],
+          "uncovered_lexical_facets": [
+            "2025",
+            "东迷",
+            "华东",
+            "年华",
+            "是多",
+            "额是"
+          ],
+          "available_but_unselected_facets": [],
+          "selection_budget_exhausted": false,
+          "source_counts": {
+            "formation-missing": 1
+          },
+          "steps": [
+            {
+              "chunk_id": "fbfc0882a93e2eccf49a14f8",
+              "source_id": "formation-missing",
+              "ranking_score": 2.8922998965517244,
+              "utility": 0.877778,
+              "new_lexical_facets": [
+                "迷雾",
+                "雾额"
+              ],
+              "body_sha256": "14a59841e0a410de757e8bf908174925453ed552ffe7123e0a18e1125cfb4b27"
+            }
+          ],
+          "skipped": []
+        },
+        "candidates": [
+          {
+            "chunk_id": "fbfc0882a93e2eccf49a14f8",
+            "source_document_id": "formation-missing",
+            "source_sha256": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536",
+            "title": "迷雾额业务定义",
+            "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 1,
+            "bm25_rank": 1,
+            "bm25_raw": 2.503782,
+            "bm25_relative": 1.0,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 2.8922998965517244,
+            "body_query_term_coverage": 0.10344827586206895,
+            "matched_terms": [
+              "迷雾额",
+              "迷雾",
+              "雾额"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "primary",
+            "selection_utility": 0.877778,
+            "new_lexical_facets": [
+              "迷雾",
+              "雾额"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              1
+            ]
+          }
+        ]
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "document",
+        "latency_ms": 90.4,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      },
+      {
+        "stage": "document_retrieval",
+        "channel": "bm25",
+        "candidate_count": 1
+      },
+      {
+        "stage": "evidence_selection",
+        "selected_count": 1,
+        "generation": "extractive"
+      },
+      {
+        "stage": "visual_page_routing",
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+        "candidate_document_ids": [],
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 4000,
+          "source_bytes": 41943040,
+          "pages_per_source": 1000,
+          "source_bytes_per_source": 20971520,
+          "index_build_seconds_per_source": 60,
+          "index_bytes_per_source": 16777216,
+          "cache_bytes": 134217728,
+          "cache_entries": 128
+        }
+      },
+      {
+        "stage": "visual_chart_routing",
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 1000,
+          "total_bytes": 41943040,
+          "source_bytes": 20971520,
+          "seconds": 60
+        },
+        "candidate_document_ids": [],
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+      },
+      {
+        "stage": "native_aligned_table_routing",
+        "status": "not_applicable",
+        "model_requests_attempted": 0,
+        "model_audits": []
+      },
+      {
+        "stage": "native_total_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_page_answer_dossier",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_comparison_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_selection_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      }
+    ],
+    "audit_id": "2f6b79edaf2d02ec3015ec37",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华东迷雾额是多少"
+    },
+    "routing": {
+      "selected_route": "document",
+      "label": "资料问答",
+      "strategy": "source_query",
+      "reason": "检索原文并核对来源。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "document_reference_id": "q_0172d69ab49f431d96d486ea9842d765"
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 95.771,
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "running",
+      "input": {
+        "question": "2025年华东迷雾额是多少"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "running",
+      "summary": "正在整理本轮问题与检索目标。",
+      "input": {
+        "question": "2025年华东迷雾额是多少"
+      },
+      "output": {},
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "success",
+      "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+      "input": {},
+      "output": {
+        "question": "2025年华东迷雾额是多少",
+        "retrieval_query": "2025年华东迷雾额是多少",
+        "query_rewrite": "none"
+      },
+      "latency_ms": 0.004,
+      "executed": true,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "running",
+      "summary": "正在核对多轮上下文、指代和附加输入。",
+      "input": {
+        "mode": "independent_question"
+      },
+      "output": {},
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "success",
+      "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+      "input": {},
+      "output": {
+        "mode": "independent_question",
+        "actual_question": "2025年华东迷雾额是多少",
+        "effective_question": "2025年华东迷雾额是多少",
+        "context_turns": 0,
+        "image_count": 0,
+        "retrieval_context_attached": false
+      },
+      "latency_ms": 0.004,
+      "executed": true,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "running",
+      "summary": "正在应用资料范围和页码限制。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "scope": "all_sources"
+      },
+      "output": {},
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "success",
+      "summary": "已限定到 1 份资料、1 个可检索片段。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "exact_identifiers": []
+      },
+      "output": {
+        "document_count": 1,
+        "eligible_chunk_count": 1,
+        "scope": "all_sources"
+      },
+      "latency_ms": 0.375,
+      "executed": true,
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "running",
+      "summary": "正在按词项相关度查找手册片段。",
+      "input": {
+        "query": "2025年华东迷雾额是多少",
+        "candidate_limit": 100
+      },
+      "output": {},
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "success",
+      "summary": "关键词召回得到 1 个候选片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 1
+      },
+      "latency_ms": 0.052,
+      "executed": true,
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.dense_retrieval",
+      "rag_step": "dense_retrieval",
+      "status": "skipped",
+      "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured"
+      },
+      "executed": false,
+      "call_id": "omni-call-7"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "running",
+      "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+      "input": {
+        "dense_status": "not_configured"
+      },
+      "output": {},
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "success",
+      "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured",
+        "rrf_executed": false,
+        "ranking_method": "bm25_then_page_scope_and_body_affinity"
+      },
+      "latency_ms": 0.048,
+      "executed": true,
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "running",
+      "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+      "input": {
+        "candidate_count": 1,
+        "selection_limit": 4
+      },
+      "output": {},
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "success",
+      "summary": "从 1 个排序候选中选出 1 个证据片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 1,
+        "selected_count": 1,
+        "selection_method": "query_body_lexical_coverage_navigation_only",
+        "selected_evidence": [
+          {
+            "title": "迷雾额业务定义",
+            "chunk_id": "fbfc0882a93e2eccf49a14f8",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+            "image_count": 0
+          }
+        ]
+      },
+      "latency_ms": 0.795,
+      "executed": true,
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "running",
+      "summary": "正在整理选中片段、原文定位和关联图片。",
+      "input": {
+        "selected_count": 1
+      },
+      "output": {},
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "success",
+      "summary": "已整理 1 个入选片段，交由回答与来源核验流程处理。",
+      "input": {},
+      "output": {
+        "evidence_count": 1,
+        "evidence": [
+          {
+            "title": "迷雾额业务定义",
+            "chunk_id": "fbfc0882a93e2eccf49a14f8",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+            "image_count": 0
+          }
+        ],
+        "user_image_count": 0
+      },
+      "latency_ms": 0.006,
+      "executed": true,
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "running",
+      "summary": "正在依据入选证据生成或核验回答。",
+      "input": {
+        "question": "2025年华东迷雾额是多少",
+        "evidence_count": 1
+      },
+      "output": {},
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "success",
+      "summary": "已返回回答并完成来源核验。",
+      "input": {},
+      "output": {
+        "status": "ok",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 1
+      },
+      "latency_ms": 0.323,
+      "executed": true,
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "running",
+      "summary": "正在整理最终回答与来源信息。",
+      "input": {},
+      "output": {},
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "success",
+      "summary": "文档处理已完成。",
+      "input": {},
+      "output": {
+        "status": "ok",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 1
+      },
+      "latency_ms": 0.017,
+      "executed": true,
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "citation_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "document"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-13"
+    }
+  ],
+  "memory": {},
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 11,
+  "memory_operations": 0,
+  "id": "n01",
+  "category": "missing",
+  "formation_ms": 8.865,
+  "preparation": {
+    "response": {
+      "status": "ok",
+      "question": "迷雾额是什么",
+      "effective_question": "迷雾额是什么",
+      "route": "document",
+      "planner_source": "server_verified_term_definition_route",
+      "session_id": "formation-A-n01",
+      "context_turns": 0,
+      "state": {
+        "route": "document",
+        "sources": [
+          "formation-missing"
+        ],
+        "document_context": {
+          "payload": {
+            "question": "迷雾额是什么",
+            "documents": {
+              "formation-missing": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536"
+            }
+          },
+          "sha256": "32847c48cd86c18dd3d4785a4dc0ef85e262b59a02b857fabb78f415696129da"
+        }
+      },
+      "result": {
+        "status": "ok",
+        "question": "迷雾额是什么",
+        "answer_mode": "attributed_extracts",
+        "answer": "[1] 迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "fbfc0882a93e2eccf49a14f8",
+            "title": "迷雾额业务定义",
+            "score": 0.7146,
+            "matched_terms": [
+              "迷雾额",
+              "迷雾",
+              "雾额"
+            ],
+            "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+            "source_uri": "/api/v1/knowledge/documents/formation-missing/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 2,
+              "source_sha256": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536",
+              "original_document_id": "formation-missing",
+              "document_id": "formation-missing",
+              "chunk_id": "fbfc0882a93e2eccf49a14f8",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "raysource_images": [],
+              "bm25_raw": 2.503782,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "bm25_rank": 1,
+              "ranking_score": 3.3704757692307696,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "body_query_term_coverage": 0.23076923076923075,
+              "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "迷雾",
+                  "雾额"
+                ],
+                "body_sha256": "14a59841e0a410de757e8bf908174925453ed552ffe7123e0a18e1125cfb4b27",
+                "utility": 1.1,
+                "uncovered_lexical_facets": [
+                  "是什",
+                  "额是"
+                ],
+                "selection_budget_exhausted": false
+              }
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 1
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 1,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "native_total_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_page_answer_dossier",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_comparison_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_selection_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          }
+        ],
+        "retrieval_audit": {
+          "version": "ict8-rag-audit-v1",
+          "query": "迷雾额是什么",
+          "scope": {
+            "document_id": null,
+            "page_no": null,
+            "exact_identifiers": []
+          },
+          "retrieval": {
+            "mode": "bm25",
+            "embedding_model": null,
+            "dense_answer_threshold": null
+          },
+          "query_language": "zh_or_mixed",
+          "dense_status": "not_configured",
+          "channels": [
+            "bm25"
+          ],
+          "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+          "candidate_pool_limit": 20,
+          "candidate_count": 1,
+          "selection_budget": 4,
+          "selected_count": 1,
+          "selection": {
+            "method": "query_body_lexical_coverage_navigation_only",
+            "semantic_sufficiency": "not_evaluated",
+            "top_k": 4,
+            "candidate_count": 1,
+            "unique_body_count": 1,
+            "query_facets": {
+              "额是": 1.0,
+              "雾额": 1.0,
+              "是什": 1.0,
+              "迷雾": 1.0
+            },
+            "covered_lexical_facets": [
+              "迷雾",
+              "雾额"
+            ],
+            "uncovered_lexical_facets": [
+              "是什",
+              "额是"
+            ],
+            "available_but_unselected_facets": [],
+            "selection_budget_exhausted": false,
+            "source_counts": {
+              "formation-missing": 1
+            },
+            "steps": [
+              {
+                "chunk_id": "fbfc0882a93e2eccf49a14f8",
+                "source_id": "formation-missing",
+                "ranking_score": 3.3704757692307696,
+                "utility": 1.1,
+                "new_lexical_facets": [
+                  "迷雾",
+                  "雾额"
+                ],
+                "body_sha256": "14a59841e0a410de757e8bf908174925453ed552ffe7123e0a18e1125cfb4b27"
+              }
+            ],
+            "skipped": []
+          },
+          "candidates": [
+            {
+              "chunk_id": "fbfc0882a93e2eccf49a14f8",
+              "source_document_id": "formation-missing",
+              "source_sha256": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536",
+              "title": "迷雾额业务定义",
+              "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "ranking_rank": 1,
+              "bm25_rank": 1,
+              "bm25_raw": 2.503782,
+              "bm25_relative": 1.0,
+              "dense_rank": null,
+              "dense_cosine": null,
+              "rrf_rank": null,
+              "rrf_score": null,
+              "ranking_score": 3.3704757692307696,
+              "body_query_term_coverage": 0.23076923076923075,
+              "matched_terms": [
+                "迷雾额",
+                "迷雾",
+                "雾额"
+              ],
+              "retrieval_channels": [
+                "bm25"
+              ],
+              "selected_in_initial_coverage": true,
+              "selection_role": "primary",
+              "selection_utility": 1.1,
+              "new_lexical_facets": [
+                "迷雾",
+                "雾额"
+              ],
+              "selection_note": "coverage_selector_selected",
+              "evidence_status": "retrieval_candidate_not_fact_verification",
+              "final_citation_ids": [
+                1
+              ]
+            }
+          ]
+        }
+      },
+      "trace": [
+        {
+          "stage": "intent_planning",
+          "source": "server_verified_term_definition_route",
+          "route": "document",
+          "latency_ms": 0.013,
+          "error": null,
+          "rejection_code": null,
+          "normalizations": [],
+          "attempts": []
+        },
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 1
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 1,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "audit_id": "b16db93abbabbf733c9c1366",
+      "context_resolution": {
+        "mode": "independent",
+        "actual_question": "迷雾额是什么"
+      },
+      "routing": {
+        "selected_route": "document",
+        "label": "资料问答",
+        "strategy": "source_query",
+        "reason": "检索原文并核对来源。",
+        "context_mode": "independent",
+        "model_enabled": false
+      },
+      "document_reference_id": "q_95fa48e6f2d241a3a1fc65eb202d6a95"
+    },
+    "error": null,
+    "execution_status": "executed",
+    "wall_ms": 8.622,
+    "trace": [
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "running",
+        "input": null,
+        "executed": false,
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "success",
+        "output": {
+          "status": null
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "running",
+        "input": {
+          "question": "迷雾额是什么"
+        },
+        "executed": false,
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "running",
+        "summary": "正在整理本轮问题与检索目标。",
+        "input": {
+          "question": "迷雾额是什么"
+        },
+        "output": {},
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "success",
+        "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+        "input": {},
+        "output": {
+          "question": "迷雾额是什么",
+          "retrieval_query": "迷雾额是什么",
+          "query_rewrite": "none"
+        },
+        "latency_ms": 0.003,
+        "executed": true,
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "running",
+        "summary": "正在核对多轮上下文、指代和附加输入。",
+        "input": {
+          "mode": "independent_question"
+        },
+        "output": {},
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "success",
+        "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+        "input": {},
+        "output": {
+          "mode": "independent_question",
+          "actual_question": "迷雾额是什么",
+          "effective_question": "迷雾额是什么",
+          "context_turns": 0,
+          "image_count": 0,
+          "retrieval_context_attached": false
+        },
+        "latency_ms": 0.004,
+        "executed": true,
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "running",
+        "summary": "正在应用资料范围和页码限制。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "scope": "all_sources"
+        },
+        "output": {},
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "success",
+        "summary": "已限定到 1 份资料、1 个可检索片段。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "output": {
+          "document_count": 1,
+          "eligible_chunk_count": 1,
+          "scope": "all_sources"
+        },
+        "latency_ms": 0.265,
+        "executed": true,
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "running",
+        "summary": "正在按词项相关度查找手册片段。",
+        "input": {
+          "query": "迷雾额是什么",
+          "candidate_limit": 100
+        },
+        "output": {},
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "success",
+        "summary": "关键词召回得到 1 个候选片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 1
+        },
+        "latency_ms": 0.046,
+        "executed": true,
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.dense_retrieval",
+        "rag_step": "dense_retrieval",
+        "status": "skipped",
+        "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured"
+        },
+        "executed": false,
+        "call_id": "omni-call-7"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "running",
+        "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+        "input": {
+          "dense_status": "not_configured"
+        },
+        "output": {},
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "success",
+        "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured",
+          "rrf_executed": false,
+          "ranking_method": "bm25_then_page_scope_and_body_affinity"
+        },
+        "latency_ms": 0.017,
+        "executed": true,
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "running",
+        "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+        "input": {
+          "candidate_count": 1,
+          "selection_limit": 4
+        },
+        "output": {},
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "success",
+        "summary": "从 1 个排序候选中选出 1 个证据片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 1,
+          "selected_count": 1,
+          "selection_method": "query_body_lexical_coverage_navigation_only",
+          "selected_evidence": [
+            {
+              "title": "迷雾额业务定义",
+              "chunk_id": "fbfc0882a93e2eccf49a14f8",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "image_count": 0
+            }
+          ]
+        },
+        "latency_ms": 0.679,
+        "executed": true,
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "running",
+        "summary": "正在整理选中片段、原文定位和关联图片。",
+        "input": {
+          "selected_count": 1
+        },
+        "output": {},
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "success",
+        "summary": "已整理 1 个入选片段，交由回答与来源核验流程处理。",
+        "input": {},
+        "output": {
+          "evidence_count": 1,
+          "evidence": [
+            {
+              "title": "迷雾额业务定义",
+              "chunk_id": "fbfc0882a93e2eccf49a14f8",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "迷雾额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"迷雾额\",\"definition\":\"经营贡献,未指定物理口径\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\"}",
+              "image_count": 0
+            }
+          ],
+          "user_image_count": 0
+        },
+        "latency_ms": 0.006,
+        "executed": true,
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "running",
+        "summary": "正在依据入选证据生成或核验回答。",
+        "input": {
+          "question": "迷雾额是什么",
+          "evidence_count": 1
+        },
+        "output": {},
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "success",
+        "summary": "已返回回答并完成来源核验。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 1
+        },
+        "latency_ms": 0.303,
+        "executed": true,
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "running",
+        "summary": "正在整理最终回答与来源信息。",
+        "input": {},
+        "output": {},
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "success",
+        "summary": "文档处理已完成。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 1
+        },
+        "latency_ms": 0.016,
+        "executed": true,
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "success",
+        "output": {
+          "status": "ok",
+          "citation_count": 1
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "query_complete",
+        "tool": "query.complete",
+        "status": "success",
+        "executed": false,
+        "output": {
+          "status": "ok",
+          "route": "document"
+        },
+        "summary": "回答已返回",
+        "call_id": "omni-call-13"
+      }
+    ],
+    "memory": {},
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "tokens_basis": "no model instantiated",
+    "business_tool_calls": 11,
+    "memory_operations": 0
+  },
+  "duplicate_preparation": null,
+  "history_preparation": null,
+  "target_history_before": 0,
+  "candidates": [],
+  "admin_commands": [],
+  "source_versions": {
+    "formation-missing": "a6dd1cf6e89e4922c112b97ae6547984fa66fc65d7230c7989087aa795802536"
+  },
+  "confirmed_records": [],
+  "C_no_put_enforced": false,
+  "store_bytes": 65536,
+  "audit": {
+    "memory_reviews": [],
+    "memory_source_events": [],
+    "memory_candidate_events": [],
+    "memory_history": []
+  },
+  "pass": true,
+  "score": {
+    "no_sql": true,
+    "consumed": [],
+    "status": "ok"
+  }
+}

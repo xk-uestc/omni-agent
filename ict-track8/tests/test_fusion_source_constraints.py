@@ -157,6 +157,47 @@ def test_split_count_cannot_drop_original_scope_time(environment):
     assert result['result']['failed_task'] == 'count' and 'c' not in result['result']['results']
 
 
+@pytest.mark.parametrize('sql_count,path_function,expected_status', [
+    ('去重订单数', 'COUNT_DISTINCT', 'ok'),
+    ('订单数', 'COUNT', 'incomplete'),
+    ('去重订单数', 'COUNT', 'incomplete'),
+])
+def test_mixed_distinct_source_scope_keeps_count_semantics(
+        tmp_path, sql_count, path_function, expected_status):
+    from pathlib import Path
+    database = initialize_database(tmp_path / 'source-count.sqlite')
+    engine = Nl2SqlEngine(database, metric_catalog_path=
+        Path(__file__).resolve().parents[1] / 'data' / 'demo_metric_catalog.json')
+    knowledge = KnowledgeStore(tmp_path / 'source-count-docs')
+    knowledge.ingest('单位收益 = 销售额 / 去重订单数'.encode(), document_id='per-unique',
+                     title='单位收益定义', modality='txt', filename='unique.txt')
+    question = '按文档单位收益公式，用数据库中2025年华东销售额合计和去重订单数作为输入进行核算。'
+    execution_tasks = [
+        {'id': 'f', 'tool': 'document_formula', 'args': {'document_id': 'per-unique', 'label': '单位收益'}},
+        {'id': 's', 'tool': 'sql', 'args': {'question': '2025年华东销售额合计和' + sql_count}},
+        {'id': 'c', 'tool': 'calculate', 'args': {'formula': {'ref': 'f', 'path': []},
+            'parameters': {
+                '销售额': {'ref': 's', 'path': ['aggregate_cells', 'sales_orders', 'sales_amount', 'SUM', 0]},
+                '去重订单数': {'ref': 's', 'path': ['aggregate_cells', 'sales_orders', 'order_id', path_function, 0]},
+            }}}]
+    result = DependencyAgent(engine, knowledge).run(execution_tasks, original_question=question)
+    assert result['status'] == expected_status, result
+    if expected_status == 'ok':
+        with sqlite3.connect(database) as connection:
+            expected = connection.execute('SELECT SUM(sales_amount)/COUNT(DISTINCT order_id) '
+                'FROM sales_orders WHERE region=? AND order_date>=? AND order_date<?',
+                ('华东', '2025-01-01', '2026-01-01')).fetchone()[0]
+        assert result['results']['c']['value'] == pytest.approx(expected)
+        assert result['user_constraint_validation']['status'] == 'verified'
+    else:
+        assert 'c' not in result['results']
+        if sql_count == '订单数':
+            assert result['failed_task'] == 's'
+            assert result['error_code'] == 'source_constraint_mismatch'
+        else:
+            assert result['failed_task'] == 'c'
+
+
 def test_missing_source_metric_is_not_covered_by_reusing_sum(environment):
     execution_tasks = split_tasks()
     execution_tasks.pop(2)

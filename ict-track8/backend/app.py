@@ -174,11 +174,20 @@ generator = None
 if generation_client:
     from .grounded_generation import GroundedGenerator
     generator = GroundedGenerator(generation_client)
-knowledge_store = KnowledgeStore(os.getenv("ICT8_KNOWLEDGE_ROOT", str(ROOT / "runtime/knowledge")), ocr_pipeline=ocr_pipeline, embedder=embedder, generator=generator)
+from .pdf_backend import configured_pdf_backend
+knowledge_store = KnowledgeStore(os.getenv("ICT8_KNOWLEDGE_ROOT", str(ROOT / "runtime/knowledge")), ocr_pipeline=ocr_pipeline, embedder=embedder, generator=generator, pdf_backend=configured_pdf_backend())
 if os.getenv("ICT8_KNOWLEDGE_ROOT", "").strip():
     document_retriever = knowledge_store
     document_source = "independent_corpus"
     agent = CrossSourceAgent(engine, document_retriever)
+from .memory.core import MemoryCore
+from .memory.adapter import MemoryAdapter
+memory_core = MemoryCore.from_env()
+memory_adapter = MemoryAdapter(memory_core, engine, knowledge_store,
+    database_source=os.getenv('ICT8_MEMORY_DATABASE_SOURCE', 'database'),
+    formation_enabled=os.getenv('ICT8_MEMORY_FORMATION_ENABLED','0')=='1') if memory_core.enabled else None
+from .memory.experience import ExperienceSelector
+experience_selector = ExperienceSelector(memory_adapter) if memory_adapter is not None and os.getenv('ICT8_TASK_EXPERIENCE_ENABLED','0')=='1' else None
 clarification_resolver = ClarificationResolver()
 app = FastAPI(title="ICT Track 8 Structured QA", version="0.1.0")
 
@@ -377,6 +386,8 @@ class OmniRequest(BaseModel):
     session_id: str | None = Field(default=None, max_length=128)
     reset_context: bool = False
     complete_results: bool = False
+    document_id: str | None = Field(default=None, min_length=1, max_length=128,
+                                     pattern=r'^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$')
     images: list[Annotated[str, Field(max_length=8_400_000)]] = Field(default_factory=list, max_length=3)
 
 
@@ -384,13 +395,17 @@ class OmniRequest(BaseModel):
 def omni_query(request: OmniRequest):
     from .omni_agent import OmniAgent
     from .multimodal_input import decode_chat_images
+    from .selected_document import SelectedDocumentMissing
     try:
         image_attachments = decode_chat_images(request.images)
-        return OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
+        return OmniAgent(engine, knowledge_store, conversation_store, generation_client, memory=memory_adapter, experience=experience_selector).query(
             request.question, session_id=request.session_id, reset_context=request.reset_context,
-            complete_results=request.complete_results, image_attachments=image_attachments or None)
+            complete_results=request.complete_results, image_attachments=image_attachments or None,
+            document_id=request.document_id)
     except SourceIntegrityError as exc:
         raise HTTPException(status_code=409,detail={'code':'evidence_integrity_failed','message':str(exc)}) from exc
+    except SelectedDocumentMissing as exc:
+        raise HTTPException(status_code=404, detail={'code': 'selected_document_missing', 'message': str(exc)}) from exc
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)[:200]) from exc
 
@@ -400,6 +415,8 @@ def omni_query_stream(request: OmniRequest):
     """Stream actual unified-agent calls, then the unchanged query snapshot."""
     from .omni_agent import OmniAgent
     from .multimodal_input import decode_chat_images
+    from .presentation_events import presentation_event
+    from .selected_document import SelectedDocumentMissing
     try:
         if request.session_id:
             ConversationStore.validate_id(request.session_id)
@@ -413,20 +430,26 @@ def omni_query_stream(request: OmniRequest):
     events = queue.Queue()
     def worker():
         try:
-            response = OmniAgent(engine, knowledge_store, conversation_store, generation_client).query(
+            response = OmniAgent(engine, knowledge_store, conversation_store, generation_client, memory=memory_adapter, experience=experience_selector).query(
                 request.question, session_id=request.session_id, reset_context=request.reset_context,
                 complete_results=request.complete_results,
+                document_id=request.document_id,
                 image_attachments=image_attachments or None,
-                trace_callback=lambda event: events.put(('trace', event)))
+                trace_callback=lambda event: events.put(('trace', presentation_event(event))))
             events.put(('done', response))
         except SourceIntegrityError:
             events.put(('error', {'detail': {'code': 'evidence_integrity_failed',
+                                             'failure_category': 'source_binding',
                                              'message': '来源已变化或原件完整性检查失败'}}))
+        except SelectedDocumentMissing as exc:
+            events.put(('error', {'detail': {'code': 'selected_document_missing',
+                                             'message': str(exc)}}))
         except ValueError as exc:
             message = str(exc)[:200] if image_attachments else '请求或查询条件未通过检查'
             events.put(('error', {'detail': {'code': 'invalid_query', 'message': message}}))
         except Exception:
-            events.put(('error', {'detail': {'code': 'query_failed', 'message': '查询执行失败'}}))
+            events.put(('error', {'detail': {'code': 'query_failed', 'failure_category': 'executor',
+                                            'message': '查询执行失败'}}))
         finally:
             STREAM_SLOTS.release()
     try:
@@ -440,7 +463,9 @@ def omni_query_stream(request: OmniRequest):
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 yield 'event: error\ndata: ' + json.dumps(
-                    {'detail': {'code': 'timeout', 'message': '查询超时，后台执行可能仍在继续'}}, ensure_ascii=False) + '\n\n'
+                    {'detail': {'code': 'timeout', 'failure_category': 'provider_transport',
+                                'phase': 'transport', 'worker_cancelled': False,
+                                'message': '查询超时，后台执行可能仍在继续'}}, ensure_ascii=False) + '\n\n'
                 return
             try:
                 kind, payload = events.get(timeout=min(10.0, remaining))
@@ -741,6 +766,7 @@ def knowledge_query(request: KnowledgeQueryRequest):
 
 @app.post('/api/v1/knowledge/query/stream')
 def knowledge_query_stream(request: KnowledgeQueryRequest) -> StreamingResponse:
+    from .presentation_events import presentation_event
     """Send the deterministic retrieval audit before the final answer snapshot."""
     if not STREAM_SLOTS.acquire(blocking=False):
         raise HTTPException(status_code=429,
@@ -753,7 +779,7 @@ def knowledge_query_stream(request: KnowledgeQueryRequest) -> StreamingResponse:
                 **({'document_id': request.document_id} if request.document_id is not None else {}),
                 **({'page_no': request.page_no} if request.page_no is not None else {}),
                 audit_callback=lambda audit: events.put(('audit', audit)),
-                progress_callback=lambda item: events.put(('trace', item)))
+                progress_callback=lambda item: events.put(('trace', presentation_event(item))))
             events.put(('done', result))
         except SourceIntegrityError:
             events.put(('error', {'detail': {'code': 'evidence_integrity_failed',
@@ -976,6 +1002,7 @@ def agent_query_stream(request: AgentQueryRequest) -> StreamingResponse:
 
     def worker() -> None:
         try:
+            result_holder["worker_state"] = "running"
             result_holder["result"] = agent.answer(
                 request.question,
                 top_k_documents=request.top_k_documents,
@@ -986,19 +1013,29 @@ def agent_query_stream(request: AgentQueryRequest) -> StreamingResponse:
         except Exception as exc:  # headers 已发送，错误作为 SSE 事件返回（不透传内部异常文本）
             result_holder["error"] = {"code": type(exc).__name__, "message": "查询执行失败"}
         finally:
+            result_holder["worker_state"] = "failed" if "error" in result_holder else "completed"
             events.put(("complete", None))
             STREAM_SLOTS.release()
 
     if not STREAM_SLOTS.acquire(blocking=False):
         raise HTTPException(status_code=429, detail={"code": "stream_busy", "message": "并发流式请求过多，请稍后重试"})
-    threading.Thread(target=worker, name="ict8-agent-stream", daemon=True).start()
+    try:
+        threading.Thread(target=worker, name="ict8-agent-stream", daemon=True).start()
+    except Exception as exc:
+        STREAM_SLOTS.release()
+        raise HTTPException(status_code=503, detail={"code": "stream_worker_start_failed",
+            "message": "查询任务未能启动"}) from exc
 
     def generate():
         deadline = time.monotonic() + STREAM_TIMEOUT_SECONDS
         while True:
             remaining = deadline - time.monotonic()
             if remaining <= 0:
-                yield f"event: error\ndata: {json.dumps({'detail': {'code': 'timeout', 'message': '查询超时'}}, ensure_ascii=False)}\n\n"
+                yield f"event: error\ndata: {json.dumps({'detail': {
+                    'code': 'timeout', 'failure_category': 'provider_transport',
+                    'phase': 'transport', 'worker_cancelled': False,
+                    'worker_state': result_holder.get('worker_state', 'running'),
+                    'message': '查询超时；底层操作不会因SSE截止时间被强制中断'}}, ensure_ascii=False)}\n\n"
                 return
             try:
                 kind, payload = events.get(timeout=min(10.0, remaining))

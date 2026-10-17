@@ -1,0 +1,467 @@
+{
+  "response": {
+    "status": "ok",
+    "question": "2025年华南销量",
+    "effective_question": "2025年华南销量",
+    "route": "sql",
+    "planner_source": "rules_basic",
+    "session_id": "u01-target",
+    "context_turns": 0,
+    "state": {
+      "route": "sql",
+      "metrics": [],
+      "filters": [
+        {
+          "column": "order_date",
+          "operator": "RANGE",
+          "value": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "source_text": "2025年",
+          "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+          "table": "sales_orders"
+        },
+        {
+          "column": "region",
+          "operator": "=",
+          "value": "华南",
+          "source_text": "华南",
+          "explanation": "限定 region ∈ {华南}",
+          "table": "sales_orders"
+        }
+      ],
+      "dimensions": [],
+      "clarification_code": null,
+      "pending_question": null,
+      "executed_sql_context": {
+        "payload": {
+          "question": "2025年华南销量",
+          "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            "华南",
+            100
+          ],
+          "source_revision": "384ced6dcaeccf64f2f8cbd476acef87dbb2f8556b52538c04dca1017239780a"
+        },
+        "sha256": "6b305db2aa5771454e6c74440981afab6b97d3de6f47a61d4fb58f919a75a57c"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "result_state": "rows",
+      "notices": [],
+      "question": "2025年华南销量",
+      "rewritten_question": "2025年华南销量",
+      "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+      "parameters": [
+        "2025-01-01",
+        "2026-01-01",
+        "华南",
+        100
+      ],
+      "columns": [
+        "销量"
+      ],
+      "rows": [
+        {
+          "销量": 30
+        }
+      ],
+      "plan": {
+        "table": "sales_orders",
+        "metric_table": "sales_orders",
+        "metric_column": "quantity",
+        "metric_function": "SUM",
+        "metric_label": "销量",
+        "analysis_mode": "aggregate",
+        "dimensions": [],
+        "dimension_tables": {},
+        "dimension_transforms": {},
+        "dimension_labels": {},
+        "filters": [
+          {
+            "column": "order_date",
+            "operator": "RANGE",
+            "value": [
+              "2025-01-01",
+              "2026-01-01"
+            ],
+            "source_text": "2025年",
+            "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+            "table": "sales_orders"
+          },
+          {
+            "column": "region",
+            "operator": "=",
+            "value": "华南",
+            "source_text": "华南",
+            "explanation": "限定 region ∈ {华南}",
+            "table": "sales_orders"
+          }
+        ],
+        "having": null,
+        "links": [
+          {
+            "source_text": "销量",
+            "table": "sales_orders",
+            "column": "quantity",
+            "role": "metric",
+            "score": 0.74,
+            "matched_alias": "销量",
+            "metric_function": "SUM"
+          }
+        ],
+        "join_tables": [],
+        "join_conditions": [],
+        "join_path": [],
+        "join_alternatives": [],
+        "order_desc": true,
+        "limit": 100,
+        "complete_results": false,
+        "semantic_row_limit": null,
+        "preview_row_limit": null,
+        "confidence": 0.58,
+        "rewritten_question": "2025年华南销量",
+        "comparison_mode": "none",
+        "comparison_period": {},
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": [],
+        "assumptions": [
+          "日期参数格式：iso_text",
+          "使用表 sales_orders 的只读聚合查询"
+        ],
+        "planner_source": "rules",
+        "top_n": null,
+        "fan_out": false,
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华南",
+            "销量"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "intent_audit": {
+          "question": "2025年华南销量",
+          "metric": {
+            "table": "sales_orders",
+            "column": "quantity",
+            "function": "SUM",
+            "label": "销量"
+          },
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "source_text": "2025年",
+              "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华南",
+              "source_text": "华南",
+              "explanation": "限定 region ∈ {华南}",
+              "table": "sales_orders"
+            }
+          ],
+          "time_range": [
+            "2025-01-01",
+            "2026-01-01"
+          ],
+          "group_by": [],
+          "comparison": "none",
+          "comparison_window": null,
+          "top_n": null,
+          "confidence": 0.58,
+          "unresolved": [],
+          "execution_allowed": true,
+          "planner_source": "rules",
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "grain_audit": {},
+          "semantic_audit": {
+            "date_storage_formats": {
+              "sales_orders.order_date": "iso_text"
+            }
+          }
+        },
+        "planner_audit": {},
+        "model_plan_diagnostics": {},
+        "metrics": [],
+        "derived_metrics": [],
+        "order_metric": null,
+        "grain_audit": {},
+        "semantic_audit": {
+          "date_storage_formats": {
+            "sales_orders.order_date": "iso_text"
+          }
+        },
+        "output_metrics": []
+      },
+      "explanation": [
+        "识别指标：销量（SUM）",
+        "查询表：sales_orders",
+        "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+        "限定 region ∈ {华南}",
+        "日期参数格式：iso_text",
+        "使用表 sales_orders 的只读聚合查询",
+        "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+      ],
+      "provenance": {
+        "source_type": "structured_database",
+        "database": "mixed.sqlite",
+        "table": "sales_orders",
+        "row_count": 1,
+        "row_limit": 100,
+        "result_completeness": "within_return_limit",
+        "query_hash": "a393ad500692016d",
+        "field_links": [
+          {
+            "source_text": "销量",
+            "table": "sales_orders",
+            "column": "quantity",
+            "role": "metric",
+            "score": 0.74,
+            "matched_alias": "销量",
+            "metric_function": "SUM"
+          }
+        ],
+        "coverage": {
+          "consumed": [
+            "2025年",
+            "华南",
+            "销量"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "consistency": "sqlite_read_transaction",
+        "source_revision": "384ced6dcaeccf64f2f8cbd476acef87dbb2f8556b52538c04dca1017239780a",
+        "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+        "grain_audit": {},
+        "result_cells": [
+          {
+            "row": 0,
+            "column": "销量",
+            "query_hash": "a393ad500692016d",
+            "locator": {
+              "type": "sql_result",
+              "row": 0,
+              "column": "销量"
+            }
+          }
+        ],
+        "output_cardinality": {
+          "status": "verified",
+          "maximum_output_rows": 1,
+          "method": "executed_select_scope_cardinality",
+          "verified_singleton_scopes": 1,
+          "aggregate_functions": [
+            "SUM"
+          ],
+          "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+        }
+      },
+      "clarification": null,
+      "clarification_code": null,
+      "clarification_options": [],
+      "source_tables": {
+        "database": "mixed.sqlite",
+        "source_revision": "384ced6dcaeccf64f2f8cbd476acef87dbb2f8556b52538c04dca1017239780a",
+        "query_hash": "a393ad500692016d",
+        "source_question": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华南",
+          100
+        ],
+        "reused_result": false,
+        "tables": [
+          {
+            "name": "sales_orders",
+            "used_columns": [
+              "order_date",
+              "quantity",
+              "region"
+            ]
+          }
+        ],
+        "basis": "executed_sql_ast_physical_sources"
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "sql",
+        "latency_ms": 2.453,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      }
+    ],
+    "audit_id": "f306a99443f8293d97878048",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华南销量"
+    },
+    "routing": {
+      "selected_route": "sql",
+      "label": "数据库问数",
+      "strategy": "source_query",
+      "reason": "查询所需指标和数据。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "failure_trace": [],
+    "task_verification": {
+      "execution_status": "ok",
+      "independent_whole_question_success": "not_verified_by_status",
+      "first_failure": null
+    },
+    "query_reference_id": "q_c8a653527c2f4de39319b959086d84b4"
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 8.002,
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "running",
+      "input": {
+        "question": "2025年华南销量"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "sql": "SELECT SUM(\"sales_orders\".\"quantity\") AS \"销量\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"quantity\") DESC LIMIT ?",
+        "parameters": [
+          "2025-01-01",
+          "2026-01-01",
+          "华南",
+          100
+        ],
+        "columns": [
+          "销量"
+        ],
+        "result_state": "rows",
+        "row_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "sql"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-3"
+    }
+  ],
+  "memory": {},
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 2,
+  "memory_operations": 0,
+  "id": "u01",
+  "category": "irrelevant_control",
+  "score": {
+    "status": "ok",
+    "field_pass": true,
+    "dimension_pass": true,
+    "result_pass": true,
+    "source_filter_population_pass": true,
+    "gold_source_table": "sales_orders",
+    "gold_contributing_records": 8,
+    "actual_source_table": "sales_orders",
+    "actual_contributing_records": 8,
+    "actual_rows": [
+      [
+        30
+      ]
+    ],
+    "gold_rows_scoring_only": [
+      [
+        30
+      ]
+    ],
+    "replay_rows": [
+      [
+        30
+      ]
+    ],
+    "metric_fields_actual": [
+      "quantity"
+    ],
+    "version_evidence_pass": true
+  },
+  "target_history_before": 0,
+  "target_session": "u01-target",
+  "preparation_session": "u01-preparation",
+  "preparation": [],
+  "candidate_ids": [
+    "cost",
+    "margin",
+    "online",
+    "method"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "b10cbc15c788fc67180be28e25c7e31842d6f349743e7223f3722019dd6dd89f",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": null,
+  "memory_store_bytes_before": 86016,
+  "memory_store_bytes_after": 86016,
+  "archived_events": [],
+  "pass": true
+}

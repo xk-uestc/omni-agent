@@ -8,6 +8,7 @@ import requests
 from backend.responses_client import StructuredResponses, GenerationError
 from backend.nl2sql.responses_provider import ResponsesModelPlanProvider
 from backend.nl2sql.model_contract import ModelPlanError
+import backend.nl2sql.responses_provider as responses_provider
 
 
 def payload(**overrides):
@@ -50,18 +51,25 @@ def client(data=None):
                                session=Session([Response(payload() if data is None else data)]))
 
 
+def plan_provider(session, monkeypatch, *, base_url='https://example.com/v1', headers=None):
+    structured = StructuredResponses(base_url, 'private-test-token', model='gpt-6-luna',
+                                     http_headers=headers, session=session, transport_attempts=1)
+    monkeypatch.setattr(responses_provider, 'configured_responses_client', lambda **kwargs: structured)
+    return ResponsesModelPlanProvider(base_url, 'private-test-token', model='gpt-6-luna',
+                                      http_headers=headers, session=session)
+
+
 def generate(c):
     return c.generate('private-instructions', {'private_input': 'should-not-appear'}, {})
 
 
-def test_gateway_header_reaches_both_transports_without_audit_exposure():
+def test_gateway_header_reaches_both_transports_without_audit_exposure(monkeypatch):
     session = Session([Response(payload())])
     headers = {'x-openai-actor-authorization': 'private-actor'}
     c = StructuredResponses('https://spacetimeai.cc/v1', 'private-test-token',
                             model='gpt-6-luna', http_headers=headers, session=session)
     generate(c)
-    p = ResponsesModelPlanProvider('https://spacetimeai.cc/v1', 'private-test-token',
-                                   model='gpt-6-luna', http_headers=headers, session=session)
+    p = plan_provider(session, monkeypatch, base_url='https://spacetimeai.cc/v1', headers=headers)
     assert p('销售额', ()) == {}
     assert len(session.calls) == 2
     for _, request in session.calls:
@@ -139,9 +147,9 @@ def test_invalid_or_absent_usage_is_unknown_not_zero(invalid):
 
 
 @pytest.mark.parametrize('status', [301, 401, 403])
-def test_permanent_http_failure_is_not_retried(status):
+def test_permanent_http_failure_is_not_retried(status, monkeypatch):
     s = Session([Response({'error': 'private-test-token'}, status)])
-    p = ResponsesModelPlanProvider('https://example.com/v1', 'private-test-token', model='gpt-6-luna', session=s)
+    p = plan_provider(s, monkeypatch)
     with pytest.raises(ModelPlanError):
         p('销售额', ())
     assert len(s.calls) == len(p.audit_history) == 1
@@ -150,9 +158,9 @@ def test_permanent_http_failure_is_not_retried(status):
 
 
 @pytest.mark.parametrize('first', [Response({}, 429), Response({}, 503), requests.Timeout('private-test-token')])
-def test_retry_audit_preserves_failed_and_successful_attempts(first):
+def test_retry_audit_preserves_failed_and_successful_attempts(first, monkeypatch):
     s = Session([first, Response(payload())])
-    p = ResponsesModelPlanProvider('https://example.com/v1', 'private-test-token', model='gpt-6-luna', session=s)
+    p = plan_provider(s, monkeypatch)
     assert p('销售额', ()) == {}
     assert [a['status'] for a in p.audit_history] == ['failed', 'completed']
     assert [a['call_index'] for a in p.audit_history] == [1, 2]

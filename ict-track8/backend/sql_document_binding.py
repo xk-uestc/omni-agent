@@ -49,7 +49,17 @@ def _output_bindings(plan):
             metric = metrics[key]
             identity = (('metric', metric.table, metric.column, metric.function)
                         if isinstance(metric, MetricSpec) else ('derived', json.dumps(metric.expression, sort_keys=True)))
-            outputs.append((identity, metric.label))
+            label = metric.label
+            # The compiler retains legacy single-metric physical slots alongside
+            # metrics[]. A display alias may change the legacy label only.
+            # Accept it only when both representations name the SAME sole
+            # physical aggregate; all values still face canonical SQL replay.
+            legacy = ('metric', plan.metric_table or plan.table, plan.metric_column, plan.metric_function)
+            if (len(plan.metrics) == 1 and not plan.derived_metrics
+                    and len(plan.output_metrics or list(metrics)) == 1
+                    and identity == legacy and plan.metric_label):
+                label = plan.metric_label
+            outputs.append((identity, label))
     else:
         outputs.append((('metric', plan.metric_table or plan.table, plan.metric_column, plan.metric_function),
                         plan.metric_label or plan.metric_column))
@@ -193,7 +203,7 @@ def authorize_sql_document_search(original_question, tasks, engine):
     return bundle
 
 
-def validate_sql_document_search(bundle, *, task, tasks, results, engine):
+def validate_sql_document_search(bundle, *, task, tasks, results, engine, allow_ranked_aggregate=False):
     """Recheck rank output, exact query ref and all tied winners before search."""
     bindings = [b for b in bundle['bindings'] if b['search_task_id'] == task['id']]
     if not bindings:
@@ -220,7 +230,8 @@ def validate_sql_document_search(bundle, *, task, tasks, results, engine):
     dimensions = {(link.table, link.column) for link in engine.analyze_slots(binding['dimension_label'])['dimensions']}
     if (binding['dimension_table'], dimension) not in dimensions:
         _reject()
-    if (plan.get('top_n') != 1 or plan.get('analysis_mode') != 'rank' or plan.get('order_desc') is not True
+    allowed_modes = {'rank', 'aggregate'} if allow_ranked_aggregate else {'rank'}
+    if (plan.get('top_n') != 1 or plan.get('analysis_mode') not in allowed_modes or plan.get('order_desc') is not True
             or plan.get('dimensions') != [dimension]
             or plan.get('dimension_tables', {}).get(dimension, plan.get('table')) != binding['dimension_table']
             or plan.get('dimension_transforms', {}).get(dimension, 'raw') != 'raw'

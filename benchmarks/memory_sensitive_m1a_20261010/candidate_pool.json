@@ -1,0 +1,292 @@
+{
+  "scope": {
+    "deployment": "synthetic-m1a",
+    "project": "commerce-dev",
+    "data_sources": [
+      "mixed",
+      "policy",
+      "targets",
+      "terms"
+    ]
+  },
+  "reference_time": "2026-10-10T12:00:00+08:00",
+  "candidates": [
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "cost",
+      "type": "business_semantics",
+      "content": "蓝星额指销售成本合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "cost_amount",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "evidence_id": "fixture-confirm-cost"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "margin",
+      "type": "business_semantics",
+      "content": "紫竹额指销售毛利合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "gross_profit",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "evidence_id": "fixture-confirm-margin"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "online",
+      "type": "business_semantics",
+      "content": "清泉额指线上渠道销售额合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "sales_amount",
+        "function": "SUM",
+        "channel": "线上"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "evidence_id": "fixture-confirm-online"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "method",
+      "type": "task_experience",
+      "content": "获取指定文档中的目标公式和当前地区年份的目标增长率；从当前数据库查询指定基准年度地区销售额；仅在来源约束和公式参数均验证后计算。不得复用旧结果值。",
+      "source_dependencies": [
+        "policy",
+        "targets",
+        "mixed"
+      ],
+      "verification": "runner preparatory DependencyAgent execution + scorer independent check required; becomes eligible only if both pass",
+      "evidence_id": "preverified-method"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-10-08T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "expired",
+      "type": "business_semantics",
+      "content": "青松额指销售成本合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "cost_amount",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "test_state": "expired",
+      "evidence_id": "fixture-expired"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "changed",
+      "type": "business_semantics",
+      "content": "青松额指销售成本合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "cost_amount",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "test_state": "source_changed",
+      "evidence_id": "fixture-changed"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "conflict-sales",
+      "type": "business_semantics",
+      "content": "青松额指销售额合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "sales_amount",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "test_state": "conflict",
+      "evidence_id": "fixture-conflict-sales"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "conflict-cost",
+      "type": "business_semantics",
+      "content": "青松额指销售成本合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "cost_amount",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "test_state": "conflict",
+      "evidence_id": "fixture-conflict-cost"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "other-project",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "confirmed_fixture_contract",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "foreign",
+      "type": "business_semantics",
+      "content": "青松额指销售成本合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "cost_amount",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "test_state": "foreign_scope",
+      "evidence_id": "fixture-foreign"
+    },
+    {
+      "scope": {
+        "deployment": "synthetic-m1a",
+        "project": "commerce-dev",
+        "data_sources": [
+          "mixed",
+          "policy",
+          "targets",
+          "terms"
+        ]
+      },
+      "verification_state": "candidate_user_claim",
+      "valid_from": "2026-10-01T00:00:00+08:00",
+      "valid_to": "2026-11-01T00:00:00+08:00",
+      "authority": "server-authored development fixture; not authenticated real user confirmation",
+      "id": "unverified",
+      "type": "business_semantics",
+      "content": "青松额指销售成本合计，单位元。",
+      "binding": {
+        "table": "sales_orders",
+        "column": "cost_amount",
+        "function": "SUM"
+      },
+      "source": "terms",
+      "source_variant": "original",
+      "test_state": "candidate",
+      "evidence_id": "fixture-unverified"
+    }
+  ],
+  "contains_final_answers": false
+}

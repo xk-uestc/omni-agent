@@ -39,6 +39,23 @@ def object_schema(properties):
     return {'type': 'object', 'properties': properties, 'required': list(properties), 'additionalProperties': False}
 
 
+def completed_json_protocol_failure(audit):
+    """Only a completed, identified response can use the planning repair slot.
+
+    Transport loss, truncation, refusal, unknown provider identity and unsafe
+    content do not become protocol retries. The malformed output is never
+    stripped, executed or copied into the next model context.
+    """
+    return (isinstance(audit, dict) and audit.get('model_verified') is True
+            and audit.get('response_model') == audit.get('model')
+            and isinstance(audit.get('model'), str) and bool(audit['model'])
+            and type(audit.get('http_status')) is int and 200 <= audit['http_status'] < 300
+            and isinstance(audit.get('output_failure'), dict)
+            and audit['output_failure'].get('kind') == 'invalid_json'
+            and audit.get('response_completed') is True
+            and not audit.get('transport_usage_unknown'))
+
+
 class StructuredResponses:
     # This adapter supports raw-source selection and its independent-review
     # schemas. Other generator adapters must explicitly declare this capability.
@@ -254,6 +271,7 @@ class StructuredResponses:
                 raise GenerationError('服务端未确认指定模型')
             if payload.get('status') != 'completed':
                 raise GenerationError('模型响应未完成')
+            audit['response_completed'] = True
             texts = []
             outputs = payload.get('output')
             if not isinstance(outputs, list):
@@ -271,7 +289,21 @@ class StructuredResponses:
                         raise GenerationError('模型拒绝处理请求')
                     if part.get('type') == 'output_text':
                         texts.append(part.get('text', ''))
-            result = json.loads(''.join(texts))
+            raw_output = ''.join(texts)
+            try:
+                result = json.loads(raw_output)
+            except json.JSONDecodeError as exc:
+                # Keep an audit fingerprint and parse location without storing
+                # arbitrary model text, which may contain user data or secrets.
+                audit['output_failure'] = {
+                    'kind': 'invalid_json',
+                    'characters': len(raw_output),
+                    'sha256': hashlib.sha256(raw_output.encode('utf-8')).hexdigest(),
+                    'error_position': exc.pos,
+                    'error_line': exc.lineno,
+                    'error_column': exc.colno,
+                }
+                raise
             if not isinstance(result, dict):
                 raise GenerationError('模型输出必须为对象')
         except (ValueError, TypeError) as exc:

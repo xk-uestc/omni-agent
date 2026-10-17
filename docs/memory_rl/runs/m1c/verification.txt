@@ -1,0 +1,28 @@
+{
+  "frozen_hashes_match": true,
+  "source_stable": true,
+  "db_stable": true,
+  "heldout_seen_only_in_formal_final": true,
+  "target_count": 64,
+  "new_session_history_zero": true,
+  "cumulative_cost": {
+    "reserved_calls": 96,
+    "recorded_call_audits": 95,
+    "missing_response_audit_numbers": [
+      22
+    ],
+    "known_input_tokens": 432293,
+    "known_output_tokens": 35477,
+    "unknown_tokens_not_zero": true,
+    "cap": 144,
+    "within_approved_budget": true,
+    "currency_cost": "not independently verified; billing dashboard authoritative"
+  },
+  "limitations": [
+    "h07 frozen scorer checks safe non-answer, not accuracy of clarification explanation; generic model-unavailable message is not a correct missing-source diagnosis.",
+    "d08/h08 main-run forecast lifecycle controls are vacuous because forecast seed failed; supplemental B checks and lifecycle unit tests provide nonvacuous evidence.",
+    "Oracle and Fixed selected the same single candidate; paired outcome differences are not selection-policy gains.",
+    "D matches maximum context/output budget, not actual input token count.",
+    "Formal results are single runs and cannot establish statistical gains."
+  ]
+}

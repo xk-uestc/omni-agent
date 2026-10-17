@@ -1,0 +1,89 @@
+{
+  "version": "official-pdf-local-replay-v1",
+  "verified_date": "2026-10-13",
+  "scope": "4份官网PDF，用于本地交互与解析验证；不是公开基准成绩，不包含原文件或Gold。",
+  "documents": [
+    {
+      "document_id": "public-nist-si-2019",
+      "title": "国际单位制 SI · NIST SP 330 (2019)",
+      "filename": "nist-si-2019.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.330-2019.pdf",
+      "purpose": "英文技术文档、单位与公式",
+      "sha256": "57fadf9d4d086bd167634afc02ed9cb71278d16a676f36bc89f7148cbe64bf78",
+      "bytes": 1098279,
+      "page_count": 138,
+      "encrypted": false,
+      "license_note": "原件仅本地保存；公开可下载不视为再分发许可；未核实再分发许可，仓库仅保存来源与校验信息。",
+      "ingest_result": {
+        "status": "ok",
+        "http_status": 200,
+        "chunk_count": 2393,
+        "warnings": [
+          "page_20:outline_level_jump:heading:17",
+          "page_28:outline_level_jump:heading:20",
+          "page_36:outline_level_jump:heading:3",
+          "page_47:outline_level_jump:heading:18",
+          "page_49:outline_level_jump:heading:1",
+          "page_49:outline_level_jump:heading:14",
+          "native_table_ingest_page_budget_exceeded"
+        ]
+      }
+    },
+    {
+      "document_id": "public-stats-disclosure-2024",
+      "title": "国家统计局2024年政府信息公开工作年度报告",
+      "filename": "stats-disclosure-2024.pdf",
+      "url": "https://www.stats.gov.cn/xxgk/gknb/tjj_gknb/202501/P020250126347265724981.pdf",
+      "purpose": "中文报告、统计表格",
+      "sha256": "c8af2ea411db04a8d51cff05eae46342fd6ec1264384c758cdb20f0a9f7374d5",
+      "bytes": 724129,
+      "page_count": 6,
+      "encrypted": false,
+      "license_note": "原件仅本地保存；公开可下载不视为再分发许可；未核实再分发许可，仓库仅保存来源与校验信息。",
+      "ingest_result": {
+        "status": "ok",
+        "http_status": 200,
+        "chunk_count": 187,
+        "warnings": []
+      }
+    },
+    {
+      "document_id": "public-sh-water-cost",
+      "title": "上海市水利工程设计概（估）算编制规定（2021）",
+      "filename": "sh-water-cost.pdf",
+      "url": "https://swj.sh.gov.cn/cmsres/fa/fa3e5cc96dc1419288a66ec5760bd10a/283a5563260b6f12ba39575a15b8389b.pdf",
+      "purpose": "中文工程计价、公式与表格",
+      "sha256": "5de464eac629ce6650820b89117dc6d5d921000d548cfc0f664ad8d677fc8f5f",
+      "bytes": 323671,
+      "page_count": 40,
+      "encrypted": true,
+      "license_note": "原件仅本地保存；公开可下载不视为再分发许可；未核实再分发许可，仓库仅保存来源与校验信息。",
+      "ingest_result": {
+        "status": "failed",
+        "http_status": 400,
+        "error": "PDF 已加密，无法解析"
+      }
+    },
+    {
+      "document_id": "public-water-conservation-cost",
+      "title": "水利水电工程初步设计报告编制规程",
+      "filename": "water-conservation-cost.pdf",
+      "url": "https://banshi.beijing.gov.cn/pubtask/download/d2ef074f-f92a-4839-b747-972ac6724f48.pdf",
+      "purpose": "中文水利行业标准、152页长文档及报告编制结构",
+      "sha256": "2365e40025915f800fc861ba015fec49d127b7f1500e8a917d907ef1509ccf0b",
+      "bytes": 2744900,
+      "page_count": 152,
+      "encrypted": false,
+      "license_note": "原件仅本地保存；公开可下载不视为再分发许可；未核实再分发许可，仓库仅保存来源与校验信息。",
+      "ingest_result": {
+        "status": "ok",
+        "http_status": 200,
+        "chunk_count": 2810,
+        "warnings": [
+          "page_89:ocr_status:ok",
+          "native_table_ingest_page_budget_exceeded"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "created_at": "2026-10-11T14:17:23Z",
+  "case_id": "a9189b43-d6c1-4fe5-80fa-e92a083ae2fb",
+  "question": "What was the total amount of Sales/Use Tax collected from 2017 to 2021?",
+  "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+  "page_no": 1,
+  "status": "ok",
+  "answer_mode": "visual_source_model_reviewed",
+  "answer": "$ 343,215,345",
+  "answer_scores": {
+    "normalized_exact_match": 1,
+    "english_token_f1": 1.0,
+    "normalized_gold_substring": true
+  },
+  "citations": [
+    {
+      "citation_id": 1,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "title": "finance/DUDE_fc03b3768346584a3fa425c656bfe748",
+      "snippet": "Sales/Use Tax",
+      "source_uri": "/api/v1/knowledge/documents/ohr-0015f5d2d1d7355ea6d8/original",
+      "metadata": {
+        "document_id": "ohr-0015f5d2d1d7355ea6d8",
+        "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+        "page_no": 1,
+        "locator": {
+          "type": "pdf_visual_region",
+          "page_no": 1,
+          "bbox_display_pt": [
+            39.7475,
+            114.695,
+            94.7825,
+            126.56
+          ],
+          "coordinate_system": "pdf_display_points_top_left"
+        }
+      }
+    },
+    {
+      "citation_id": 2,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "title": "finance/DUDE_fc03b3768346584a3fa425c656bfe748",
+      "snippet": "$ 343,215,345",
+      "source_uri": "/api/v1/knowledge/documents/ohr-0015f5d2d1d7355ea6d8/original",
+      "metadata": {
+        "document_id": "ohr-0015f5d2d1d7355ea6d8",
+        "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+        "page_no": 1,
+        "locator": {
+          "type": "pdf_visual_region",
+          "page_no": 1,
+          "bbox_display_pt": [
+            483.08500000000004,
+            114.695,
+            550.35,
+            126.56
+          ],
+          "coordinate_system": "pdf_display_points_top_left"
+        }
+      }
+    },
+    {
+      "citation_id": 3,
+      "document_id": "ohr-0015f5d2d1d7355ea6d8",
+      "title": "finance/DUDE_fc03b3768346584a3fa425c656bfe748",
+      "snippet": "Total",
+      "source_uri": "/api/v1/knowledge/documents/ohr-0015f5d2d1d7355ea6d8/original",
+      "metadata": {
+        "document_id": "ohr-0015f5d2d1d7355ea6d8",
+        "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+        "page_no": 1,
+        "locator": {
+          "type": "pdf_visual_region",
+          "page_no": 1,
+          "bbox_display_pt": [
+            522.8325,
+            98.875,
+            547.2925,
+            110.74000000000001
+          ],
+          "coordinate_system": "pdf_display_points_top_left"
+        }
+      }
+    }
+  ],
+  "visual_source_proof": {
+    "version": "literal-visual-source-v1",
+    "parts": [
+      {
+        "evidence_id": "f1c564211be392515f18344b5f66816139ecc09a3e948b386d30181318393920",
+        "quote": "Sales/Use Tax",
+        "bbox_normalized": [
+          0.065,
+          0.145,
+          0.155,
+          0.16
+        ],
+        "page_no": 1,
+        "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+        "render_sha256": "2dea6b921e34bee854d22f3f6fa9d5a45cb365b8713aa4ea61019e823cde17c7",
+        "bbox_display_pt": [
+          39.7475,
+          114.695,
+          94.7825,
+          126.56
+        ],
+        "coordinate_system": "pdf_display_points_top_left",
+        "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+      },
+      {
+        "evidence_id": "f1c564211be392515f18344b5f66816139ecc09a3e948b386d30181318393920",
+        "quote": "$ 343,215,345",
+        "bbox_normalized": [
+          0.79,
+          0.145,
+          0.9,
+          0.16
+        ],
+        "page_no": 1,
+        "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+        "render_sha256": "2dea6b921e34bee854d22f3f6fa9d5a45cb365b8713aa4ea61019e823cde17c7",
+        "bbox_display_pt": [
+          483.08500000000004,
+          114.695,
+          550.35,
+          126.56
+        ],
+        "coordinate_system": "pdf_display_points_top_left",
+        "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+      },
+      {
+        "evidence_id": "f1c564211be392515f18344b5f66816139ecc09a3e948b386d30181318393920",
+        "quote": "Total",
+        "bbox_normalized": [
+          0.855,
+          0.125,
+          0.895,
+          0.14
+        ],
+        "page_no": 1,
+        "source_sha256": "0dfec99b5368a44a20e9e8ca54f2898adab27d9c878929849615664e425fcfd0",
+        "render_sha256": "2dea6b921e34bee854d22f3f6fa9d5a45cb365b8713aa4ea61019e823cde17c7",
+        "bbox_display_pt": [
+          522.8325,
+          98.875,
+          547.2925,
+          110.74000000000001
+        ],
+        "coordinate_system": "pdf_display_points_top_left",
+        "location_verification": "independent_visual_model_review_not_exact_native_text_match"
+      }
+    ],
+    "review": {
+      "approved": true,
+      "whole_question_answered": true,
+      "all_requested_items_present": true,
+      "quotes_visibly_exact": true,
+      "regions_locate_quotes": true,
+      "units_signs_periods_preserved": true,
+      "source_relationship_explicit": true,
+      "no_inference_or_arithmetic": true
+    },
+    "question_sha256": "d830a485ae439a99cdf2674938b90264efea860e48234913618286cc4dadd379",
+    "semantic_verification": "independent_model_review_not_formal_entailment",
+    "page_selection_scope": "explicit_short_document_all_pages"
+  },
+  "trace": {
+    "stage": "original_page_visual_fallback",
+    "status": "model_reviewed",
+    "model_audits": [
+      {
+        "provider": "deepseek_chat_completions",
+        "model": "deepseek-flash",
+        "operation": "visual_source_literal_selection",
+        "call_number": 19,
+        "status": "completed",
+        "http_status": 200,
+        "temperature": 0,
+        "thinking": "disabled",
+        "max_output_tokens": 1000,
+        "input_tokens": 1859,
+        "output_tokens": 230,
+        "transport_attempts": 1,
+        "usage": {
+          "prompt_tokens": 1859,
+          "completion_tokens": 230,
+          "total_tokens": 2089,
+          "prompt_tokens_details": {
+            "cached_tokens": 1664
+          },
+          "prompt_cache_hit_tokens": 1664,
+          "prompt_cache_miss_tokens": 195
+        },
+        "response_model": "deepseek-flash",
+        "finish_reason": "stop",
+        "model_verified": true,
+        "wall_ms": 2302.995
+      },
+      {
+        "provider": "deepseek_chat_completions",
+        "model": "deepseek-flash",
+        "operation": "visual_source_independent_review",
+        "call_number": 20,
+        "status": "completed",
+        "http_status": 200,
+        "temperature": 0,
+        "thinking": "disabled",
+        "max_output_tokens": 1000,
+        "input_tokens": 1972,
+        "output_tokens": 79,
+        "transport_attempts": 1,
+        "usage": {
+          "prompt_tokens": 1972,
+          "completion_tokens": 79,
+          "total_tokens": 2051,
+          "prompt_tokens_details": {
+            "cached_tokens": 512
+          },
+          "prompt_cache_hit_tokens": 512,
+          "prompt_cache_miss_tokens": 1460
+        },
+        "response_model": "deepseek-flash",
+        "finish_reason": "stop",
+        "model_verified": true,
+        "wall_ms": 1837.099
+      }
+    ],
+    "page_selection_scope": "explicit_short_document_all_pages",
+    "selection_shape": {
+      "abstain": false,
+      "part_count": 3,
+      "all_evidence_ids_known": true
+    },
+    "rejected_checks": []
+  },
+  "api_calls": [
+    {
+      "operation": "visual_source_literal_selection",
+      "call_number": 19,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1859,
+      "output_tokens": 230,
+      "response_model": "deepseek-flash",
+      "wall_ms": 2302.995
+    },
+    {
+      "operation": "visual_source_independent_review",
+      "call_number": 20,
+      "status": "completed",
+      "http_status": 200,
+      "input_tokens": 1972,
+      "output_tokens": 79,
+      "response_model": "deepseek-flash",
+      "wall_ms": 1837.099
+    }
+  ],
+  "elapsed_seconds": 4.26
+}

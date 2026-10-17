@@ -130,7 +130,8 @@ def test_invalid_generated_relation_uses_real_knowledge_store_extract_fallback(t
                  title='地区收入', modality='txt', filename='revenue.txt')
     result = store.answer('华东收入')
     assert result['answer_mode'] == 'extractive_fallback'
-    assert '华东收入100万元' in result['answer']
+    assert result['status'] == 'insufficient_evidence'
+    assert '华东收入100万元' in result['retrieved_excerpts']
     assert '华东收入200万元' not in result['answer']
     assert result['trace'][-1]['fallback'] == 'attributed_extracts'
 
@@ -232,7 +233,8 @@ def test_second_invalid_structured_reply_really_falls_back_to_store_original_ext
     store.ingest(source.encode(), document_id='revenue', title='地区收入', modality='txt', filename='revenue.txt')
     result = store.answer('华东收入')
     assert len(client.calls) == 2 and result['answer_mode'] == 'extractive_fallback'
-    assert '华东收入100万元' in result['answer'] and '华东收入200万元' not in result['answer']
+    assert result['status'] == 'insufficient_evidence'
+    assert '华东收入100万元' in result['retrieved_excerpts'] and '华东收入200万元' not in result['retrieved_excerpts']
 
 
 @pytest.mark.parametrize('malformed', [None, [], 'text'])

@@ -1,0 +1,343 @@
+{
+  "arms": {
+    "A": {
+      "total": 16,
+      "passed": 10,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "business_tool_calls": 109,
+      "memory_operations": 0,
+      "wall_ms_total": 153.248,
+      "wall_ms_median": 5.739,
+      "wall_ms_p95": 28.429,
+      "recall_ms_total": 0,
+      "observe_ms_total": 0
+    },
+    "B": {
+      "total": 16,
+      "passed": 14,
+      "model_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "business_tool_calls": 29,
+      "memory_operations": 32,
+      "wall_ms_total": 226.396,
+      "wall_ms_median": 14.335,
+      "wall_ms_p95": 23.168,
+      "recall_ms_total": 29.243,
+      "observe_ms_total": 101.872
+    }
+  },
+  "comparison": [
+    {
+      "id": "s01",
+      "M1A": false,
+      "A": false,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [
+        "cost"
+      ],
+      "consumed": [
+        "cost"
+      ],
+      "decisions": [
+        {
+          "memory_id": "cost",
+          "term": "蓝星额",
+          "reason": "selected"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "s02",
+      "M1A": false,
+      "A": false,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [
+        "cost"
+      ],
+      "consumed": [
+        "cost"
+      ],
+      "decisions": [
+        {
+          "memory_id": "cost",
+          "term": "蓝星额",
+          "reason": "selected"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "s03",
+      "M1A": false,
+      "A": false,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [
+        "online"
+      ],
+      "consumed": [
+        "online"
+      ],
+      "decisions": [
+        {
+          "memory_id": "online",
+          "term": "清泉额",
+          "reason": "selected"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "s04",
+      "M1A": false,
+      "A": false,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [
+        "margin"
+      ],
+      "consumed": [
+        "margin"
+      ],
+      "decisions": [
+        {
+          "memory_id": "margin",
+          "term": "紫竹额",
+          "reason": "selected"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "f01",
+      "M1A": false,
+      "A": false,
+      "B": false,
+      "A_status": "clarification",
+      "B_status": "clarification",
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "target_history_before": 0
+    },
+    {
+      "id": "f02",
+      "M1A": false,
+      "A": false,
+      "B": false,
+      "A_status": "clarification",
+      "B_status": "clarification",
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "target_history_before": 0
+    },
+    {
+      "id": "g01",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "insufficient_evidence",
+      "B_status": "clarification",
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "memory_id": "expired",
+          "term": "青松额",
+          "reason": "expired"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "g02",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "insufficient_evidence",
+      "B_status": "clarification",
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "memory_id": "changed",
+          "term": "青松额",
+          "reason": "source_changed"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "g03",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "insufficient_evidence",
+      "B_status": "clarification",
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "memory_id": "conflict-cost",
+          "term": "青松额",
+          "reason": "conflict"
+        },
+        {
+          "memory_id": "conflict-sales",
+          "term": "青松额",
+          "reason": "conflict"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "g04",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "insufficient_evidence",
+      "B_status": "insufficient_evidence",
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "reason": "foreign_scope",
+          "count": 1
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "g05",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "insufficient_evidence",
+      "B_status": "clarification",
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "memory_id": "unverified",
+          "term": "青松额",
+          "reason": "unverified"
+        }
+      ],
+      "target_history_before": 0
+    },
+    {
+      "id": "u01",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "target_history_before": 0
+    },
+    {
+      "id": "u02",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "target_history_before": 0
+    },
+    {
+      "id": "c01",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "target_history_before": 0
+    },
+    {
+      "id": "h01",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "ok",
+      "B_status": "ok",
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "target_history_before": 1
+    },
+    {
+      "id": "h02",
+      "M1A": true,
+      "A": true,
+      "B": true,
+      "A_status": "clarification",
+      "B_status": "clarification",
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "target_history_before": 0
+    }
+  ],
+  "semantics": {
+    "A": {
+      "passed": 0,
+      "consumption_verified": 0,
+      "total": 4
+    },
+    "B": {
+      "passed": 4,
+      "consumption_verified": 4,
+      "total": 4
+    }
+  },
+  "same_session_control": "h01",
+  "independent_session_control": "h02",
+  "document_versions": {
+    "original": {
+      "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+      "targets": "08effccc09e0412f68e5f8af8be8a109511b7747258790ef69122490e764193d",
+      "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+    },
+    "terms_changed": {
+      "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+      "targets": "08effccc09e0412f68e5f8af8be8a109511b7747258790ef69122490e764193d",
+      "terms": "c47e5ab2b8ef0eec3d7317e176413ca213767e28a9d5aef79e466924973d96ad"
+    },
+    "targets_changed": {
+      "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+      "targets": "920f672106a5b237c4c5ec6846b80f72fbbb4f326b6cbc791071f704600811fa",
+      "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+    }
+  },
+  "memory_store_total_bytes": {
+    "A": 401408,
+    "B": 401408
+  },
+  "memory_store_growth_target_bytes": {
+    "A": 0,
+    "B": 0
+  },
+  "C": {
+    "status": "not_run",
+    "reason": "One legal candidate per semantic term; unsupported task_experience; no meaningful independent Oracle selection experiment."
+  }
+}

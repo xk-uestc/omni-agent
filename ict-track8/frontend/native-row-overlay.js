@@ -61,5 +61,48 @@
       return {bbox_normalized:normalized,label:field.label,text:field.text,role:field.role};
     });
   }
-  return {model,totalModel,factModel};
+  function tableFactModel(metadata,manifest,fact){
+    const source=metadata?.source_sha256,doc=metadata?.document_id,page=metadata?.page_no;
+    const locator=typeof fact?.locator==='string'?/^page:([1-9]\d*)\/element:([^/]+)\/row:(\d+)\/column:(.+)$/.exec(fact.locator):null;
+    const frame=manifest?.coordinate_frame;
+    if(fact?.validation!=='native_table_literal_cell_replayed'||!hex.test(source||'')
+      ||typeof doc!=='string'||!doc||!Number.isInteger(page)||page<1
+      ||fact.sha256!==source||fact.document_id!==doc||fact.page_no!==page
+      ||manifest?.source_sha256!==source||manifest.document_id!==doc||manifest.page_no!==page
+      ||!locator||Number(locator[1])!==page||locator[2]!==fact.structured_element_id
+      ||metadata.source_locator!==fact.locator
+      ||fact.source_uri!==`/api/v1/knowledge/documents/${encodeURIComponent(doc)}/original`
+      ||typeof fact.raw_value!=='string'
+      ||frame?.origin!=='top_left'||frame.unit!=='pt'||frame.rotation_applied!==true)
+      throw Error('表格单元格与本次原件引用不一致。');
+    const validBox=box=>Array.isArray(box)&&box.length===4&&box.every(Number.isFinite)&&box[0]<box[2]&&box[1]<box[3];
+    const sameBox=(a,b)=>validBox(a)&&validBox(b)&&a.every((value,index)=>value===b[index]);
+    const conditions=fact.matched_conditions,boxes=fact.condition_bboxes_display_pt,citedBoxes=metadata.condition_bboxes_display_pt;
+    if(!conditions||Array.isArray(conditions)||typeof conditions!=='object'
+      ||!boxes||Array.isArray(boxes)||!citedBoxes||Array.isArray(citedBoxes)
+      ||!sameBox(fact.bbox_display_pt,metadata.bbox_display_pt)
+      ||!sameBox(fact.column_header_bbox_display_pt,metadata.column_header_bbox_display_pt))
+      throw Error('表格字段的引用坐标不匹配。');
+    const keys=Object.keys(conditions);
+    if(!keys.length||keys.length>64||Object.keys(boxes).length!==keys.length||Object.keys(citedBoxes).length!==keys.length
+      ||keys.some(key=>!key||!Object.hasOwn(boxes,key)||!Object.hasOwn(citedBoxes,key)
+        ||!sameBox(boxes[key],citedBoxes[key])
+        ||!(typeof conditions[key]==='string'||typeof conditions[key]==='number'&&Number.isFinite(conditions[key]))))
+      throw Error('表格筛选条件与原页位置不一致。');
+    const size=manifest.size_px;
+    if(!Array.isArray(size)||size.length!==2||!size.every(v=>Number.isInteger(v)&&v>0))throw Error('原页尺寸不可用。');
+    // The replayed native cells already use displayed page points. Only the
+    // server's display-to-raster mapping applies, including crop and scale.
+    const raster=matrix(manifest.mappings?.display_to_asset_px);
+    const fields=[...keys.map(key=>({box:boxes[key],label:key,text:String(conditions[key]),role:'subject'})),
+      {box:fact.column_header_bbox_display_pt,label:'查询列',text:locator[4],role:'subject'},
+      {box:fact.bbox_display_pt,label:'原文值',text:fact.raw_value,role:'value'}];
+    return fields.map(field=>{
+      const box=field.box,points=[[box[0],box[1]],[box[2],box[1]],[box[2],box[3]],[box[0],box[3]]].map(p=>point(p,raster));
+      const normalized=[Math.min(...points.map(p=>p[0]))/size[0],Math.min(...points.map(p=>p[1]))/size[1],Math.max(...points.map(p=>p[0]))/size[0],Math.max(...points.map(p=>p[1]))/size[1]];
+      if(normalized.some(v=>!Number.isFinite(v)||v<0||v>1))throw Error('字段超出本次原页显示范围。');
+      return {bbox_normalized:normalized,label:field.label,text:field.text,role:field.role};
+    });
+  }
+  return {model,totalModel,factModel,tableFactModel};
 });

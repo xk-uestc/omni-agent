@@ -1,0 +1,110 @@
+{
+  "scope": "engineering_development_probes_on_existing_development_originals",
+  "gold_fields": "scorer_only_never_model_or_corpus_input",
+  "documents": [
+    {
+      "id": "labor",
+      "title": "定额教材",
+      "image_name": "docstructbench_dianzishu_zhongwenzaixian-o.O-61520788.pdf_391.jpg"
+    },
+    {
+      "id": "standards",
+      "title": "工程标准清单",
+      "image_name": "docstructbench_dianzishu_zhongwenzaixian-o.O-61521384.pdf_750.jpg"
+    },
+    {
+      "id": "penalties",
+      "title": "银行处罚分析",
+      "image_name": "yanbaor2_4862cd850679e945a98c54c8d4c37be0154b5790d2c32da35d0f5ca0be413693.pdf_9.jpg"
+    },
+    {
+      "id": "chemistry",
+      "title": "有机化学教材",
+      "image_name": "jiaocaineedrop_chem-354334.pdf_20.jpg"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "labor-0",
+      "document_id": "labor",
+      "question": "高级熟练工的一般地区值是多少？",
+      "gold_row_label": "高级熟练工",
+      "gold_column": "一般地区"
+    },
+    {
+      "id": "labor-1",
+      "document_id": "labor",
+      "question": "熟练工的一般地区值是多少？",
+      "gold_row_label": "熟练工",
+      "gold_column": "一般地区"
+    },
+    {
+      "id": "labor-2",
+      "document_id": "labor",
+      "question": "半熟练工的一般地区值是多少？",
+      "gold_row_label": "半熟练工",
+      "gold_column": "一般地区"
+    },
+    {
+      "id": "labor-3",
+      "document_id": "labor",
+      "question": "普工的一般地区值是多少？",
+      "gold_row_label": "普工",
+      "gold_column": "一般地区"
+    },
+    {
+      "id": "standard-4",
+      "document_id": "standards",
+      "question": "《中华人民共和国建筑法》的标准号是多少？",
+      "gold_row_label": "《中华人民共和国建筑法》",
+      "gold_column": "标准号"
+    },
+    {
+      "id": "standard-5",
+      "document_id": "standards",
+      "question": "《中华人民共和国电力法》的标准号是多少？",
+      "gold_row_label": "《中华人民共和国电力法》",
+      "gold_column": "标准号"
+    },
+    {
+      "id": "standard-6",
+      "document_id": "standards",
+      "question": "《中华人民共和国劳动合同法》的标准号是多少？",
+      "gold_row_label": "《中华人民共和国劳动合同法》",
+      "gold_column": "标准号"
+    },
+    {
+      "id": "penalty-7",
+      "document_id": "penalties",
+      "question": "禁止从事银行业的罚单数量（张）是多少？",
+      "gold_row_label": "禁止从事银行业",
+      "gold_column": "罚单数量（张）"
+    },
+    {
+      "id": "penalty-8",
+      "document_id": "penalties",
+      "question": "取消任职资格的罚单数量（张）是多少？",
+      "gold_row_label": "取消任职资格",
+      "gold_column": "罚单数量（张）"
+    },
+    {
+      "id": "penalty-9",
+      "document_id": "penalties",
+      "question": "吊销金融许可证的罚单数量（张）是多少？",
+      "gold_row_label": "吊销金融许可证",
+      "gold_column": "罚单数量（张）"
+    },
+    {
+      "id": "ambiguous-chemistry",
+      "document_id": "chemistry",
+      "question": "What is Thermal for 4n + 2?",
+      "expected_abstention": true
+    },
+    {
+      "id": "compound-labor",
+      "document_id": "labor",
+      "question": "高级熟练工的一般地区值是多少，为什么？",
+      "expected_abstention": true
+    }
+  ]
+}

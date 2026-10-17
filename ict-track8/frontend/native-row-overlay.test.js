@@ -1,5 +1,5 @@
 const test=require('node:test'),assert=require('node:assert/strict');
-const {model,totalModel,factModel}=require('./native-row-overlay.js');
+const {model,totalModel,factModel,tableFactModel}=require('./native-row-overlay.js');
 const sha='a'.repeat(64);
 function fixture(){return {metadata:{document_id:'d',page_no:1,source_sha256:sha,native_row:{document_id:'d',page_no:1,source_sha256:sha,fields:[{bbox_pt:[10,20,30,40],header:'Subject',text:'A'},{bbox_pt:[50,20,60,40],header:'Result',text:'3 UG/L'}]}},manifest:{document_id:'d',page_no:1,source_sha256:sha,size_px:[200,100],mappings:{fitz_unrotated_to_display:[1,0,0,1,0,0],display_to_asset_px:[1,0,0,1,0,0]}},selection:{column_index:1}};}
 test('subject and queried cell keep separate exact rectangles',()=>{const f=fixture(),boxes=model(f.metadata,f.manifest,f.selection);assert.deepEqual(boxes[1].bbox_normalized,[.25,.2,.3,.4]);assert.equal(boxes[1].role,'value');assert.equal(boxes[0].role,'subject');});
@@ -18,3 +18,63 @@ test('financial highlight separates indicator, group, year, scale and original a
 test('financial display coordinates never receive the PDF rotation twice',()=>{const f=financialFixture();f.manifest.mappings.fitz_unrotated_to_display=[0,1,-1,0,100,0];assert.deepEqual(factModel(f.metadata,f.manifest,f.selected)[4].bbox_normalized,[.25,.2,.3,.4]);});
 test('financial highlight applies raster crop and scale',()=>{const f=financialFixture();f.manifest.mappings.display_to_asset_px=[2,0,0,2,0,0];assert.deepEqual(factModel(f.metadata,f.manifest,f.selected)[4].bbox_normalized,[.5,.4,.6,.8]);});
 test('financial highlight rejects wrong source, page, selected value or header geometry',()=>{for(const mutate of [f=>f.selected=[],f=>f.selected.push({...f.selected[0]}),f=>f.selected[0].raw_value='100',f=>f.manifest.source_sha256='b'.repeat(64),f=>f.manifest.page_no=2,f=>f.manifest.document_id='other',f=>f.metadata.fact.column_header_bboxes_display_pt=[],f=>f.metadata.fact.bbox_display_pt=[50,20,9999,40]]){const f=financialFixture();mutate(f);assert.throws(()=>factModel(f.metadata,f.manifest,f.selected));}});
+
+function tableFixture(){
+  const f=fixture();delete f.metadata.native_row;
+  f.tableFact={document_id:'d',page_no:1,sha256:sha,source_uri:'/api/v1/knowledge/documents/d/original',
+    locator:'page:1/element:native_e00001/row:2/column:Unit price',structured_element_id:'native_e00001',
+    validation:'native_table_literal_cell_replayed',value:7.25,raw_value:'7.25',unit:'unknown',
+    matched_conditions:{Grade:'Level B'},condition_bboxes_display_pt:{Grade:[10,20,30,40]},
+    column_header_bbox_display_pt:[50,2,60,10],bbox_display_pt:[50,20,60,40]};
+  Object.assign(f.metadata,{source_locator:f.tableFact.locator,bbox_display_pt:structuredClone(f.tableFact.bbox_display_pt),
+    condition_bboxes_display_pt:structuredClone(f.tableFact.condition_bboxes_display_pt),
+    column_header_bbox_display_pt:structuredClone(f.tableFact.column_header_bbox_display_pt)});
+  f.manifest.coordinate_frame={origin:'top_left',unit:'pt',rotation_applied:true};return f;
+}
+test('replayed native table highlights literal conditions, exact column and returned cell',()=>{
+  const f=tableFixture(),before=structuredClone(f),boxes=tableFactModel(f.metadata,f.manifest,f.tableFact);
+  assert.deepEqual(boxes.map(b=>[b.label,b.text,b.role]),[
+    ['Grade','Level B','subject'],['查询列','Unit price','subject'],['原文值','7.25','value']]);
+  assert.deepEqual(boxes[2].bbox_normalized,[.25,.2,.3,.4]);assert.deepEqual(f,before);
+});
+test('native table display boxes apply scale and crop but never rotate a second time',()=>{
+  const f=tableFixture();f.manifest.mappings.fitz_unrotated_to_display=[0,1,-1,0,100,0];
+  assert.deepEqual(tableFactModel(f.metadata,f.manifest,f.tableFact)[2].bbox_normalized,[.25,.2,.3,.4]);
+  f.manifest.mappings.display_to_asset_px=[2,0,0,2,-10,0];
+  assert.deepEqual(tableFactModel(f.metadata,f.manifest,f.tableFact)[2].bbox_normalized,[.45,.4,.55,.8]);
+});
+test('native table overlay requires the exact replay validation and current source identity',()=>{
+  for(const mutate of [f=>f.tableFact.validation='model_reviewed',f=>delete f.tableFact.validation,
+    f=>f.tableFact.sha256='b'.repeat(64),f=>f.tableFact.document_id='other',f=>f.tableFact.page_no=2,
+    f=>f.manifest.source_sha256='b'.repeat(64),f=>f.manifest.document_id='other',f=>f.manifest.page_no=2,
+    f=>f.metadata.page_no=true,f=>f.tableFact.source_uri='/api/v1/knowledge/documents/other/original']){
+    const f=tableFixture();mutate(f);assert.throws(()=>tableFactModel(f.metadata,f.manifest,f.tableFact));
+  }
+});
+test('native table overlay refuses a different locator page, element, row or target column',()=>{
+  for(const mutate of [f=>f.metadata.source_locator=f.metadata.source_locator.replace('/row:2/','/row:3/'),
+    f=>f.tableFact.locator=f.tableFact.locator.replace('Unit price','Another column'),
+    f=>f.tableFact.structured_element_id='native_e00002',f=>f.tableFact.locator='page:1',
+    f=>{f.tableFact.locator=f.tableFact.locator.replace('page:1','page:2');f.metadata.source_locator=f.tableFact.locator;}]){
+    const f=tableFixture();mutate(f);assert.throws(()=>tableFactModel(f.metadata,f.manifest,f.tableFact));
+  }
+});
+test('native table citation geometry must exactly agree with replayed cell and conditions',()=>{
+  for(const mutate of [f=>f.metadata.bbox_display_pt[0]=49,f=>f.metadata.column_header_bbox_display_pt[0]=49,
+    f=>f.metadata.condition_bboxes_display_pt.Grade[0]=9,f=>delete f.tableFact.condition_bboxes_display_pt.Grade,
+    f=>f.tableFact.matched_conditions.Other='A',f=>f.metadata.condition_bboxes_display_pt.Other=[1,2,3,4],
+    f=>f.tableFact.matched_conditions.Grade=true,f=>f.tableFact.matched_conditions.Grade=Infinity,
+    f=>f.tableFact.matched_conditions={},f=>f.tableFact.raw_value=7.25]){
+    const f=tableFixture();mutate(f);assert.throws(()=>tableFactModel(f.metadata,f.manifest,f.tableFact));
+  }
+});
+test('native table overlay fails closed for unsupported frames, invalid matrices and off-page cells',()=>{
+  for(const mutate of [f=>delete f.manifest.coordinate_frame,f=>f.manifest.coordinate_frame.rotation_applied=false,
+    f=>f.manifest.coordinate_frame.unit='px',f=>f.manifest.coordinate_frame.origin='bottom_left',
+    f=>f.manifest.mappings.display_to_asset_px=[0,0,0,0,0,0],f=>f.manifest.size_px=[0,100],
+    f=>{f.tableFact.bbox_display_pt=[50,20,9999,40];f.metadata.bbox_display_pt=[50,20,9999,40];},
+    f=>{f.tableFact.bbox_display_pt=[50,20,50,40];f.metadata.bbox_display_pt=[50,20,50,40];},
+    f=>f.manifest.mappings.display_to_asset_px=[1,0,0,1,0,-30]]){
+    const f=tableFixture();mutate(f);assert.throws(()=>tableFactModel(f.metadata,f.manifest,f.tableFact));
+  }
+});

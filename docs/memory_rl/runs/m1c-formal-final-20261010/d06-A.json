@@ -1,0 +1,838 @@
+{
+  "task": {
+    "id": "d06",
+    "split": "development",
+    "workflow": "D",
+    "question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+    "variant": "normal"
+  },
+  "arm": "A",
+  "response": {
+    "status": "clarification",
+    "question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+    "effective_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+    "route": "fusion",
+    "planner_source": "model_validated",
+    "session_id": "new-d06",
+    "context_turns": 0,
+    "state": {
+      "route": "fusion",
+      "trace_id": "1009c61ad31ebe3f78d4"
+    },
+    "result": {
+      "status": "clarification",
+      "trace_id": "1009c61ad31ebe3f78d4",
+      "results": {},
+      "trace": [],
+      "clarification": "跨源查询的来源范围尚未核验，请明确各数据库取数的表、指标、时间和包含/排除条件。",
+      "clarification_code": "source_scope_unverified",
+      "error_code": "source_scope_unverified",
+      "skipped_tasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "edges": [],
+      "user_constraint_validation": {
+        "status": "unverified",
+        "error_code": "source_scope_unverified"
+      },
+      "execution_plan": [
+        {
+          "id": "t1",
+          "tool": "document_cell",
+          "args": {
+            "document_id": "targets",
+            "where": {
+              "地区": "华东",
+              "年份": 2026
+            },
+            "column": "目标增长率"
+          }
+        },
+        {
+          "id": "t2",
+          "tool": "document_cell",
+          "args": {
+            "document_id": "revised",
+            "where": {
+              "地区": "华东",
+              "年份": 2026
+            },
+            "column": "目标增长率"
+          }
+        },
+        {
+          "id": "t3",
+          "tool": "compare",
+          "args": {
+            "left": {
+              "ref": "t1",
+              "path": []
+            },
+            "right": {
+              "ref": "t2",
+              "path": []
+            },
+            "operator": "eq"
+          }
+        },
+        {
+          "id": "t4",
+          "tool": "sql",
+          "args": {
+            "question": "2025年华东地区销售额"
+          }
+        }
+      ]
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "model_validated",
+        "route": "fusion",
+        "latency_ms": 1639.244,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "validation": "complete",
+            "errors": [],
+            "api_audit": {
+              "provider": "deepseek_chat_completions",
+              "model": "deepseek-flash",
+              "operation": "omni_plan",
+              "call_number": 54,
+              "status": "completed",
+              "http_status": 200,
+              "temperature": 0,
+              "thinking": "disabled",
+              "max_output_tokens": 5000,
+              "input_tokens": 4587,
+              "output_tokens": 245,
+              "transport_attempts": 1,
+              "usage": {
+                "prompt_tokens": 4587,
+                "completion_tokens": 245,
+                "total_tokens": 4832,
+                "prompt_tokens_details": {
+                  "cached_tokens": 4352
+                },
+                "prompt_cache_hit_tokens": 4352,
+                "prompt_cache_miss_tokens": 235
+              },
+              "response_model": "deepseek-flash",
+              "finish_reason": "stop",
+              "model_verified": true,
+              "wall_ms": 1628.297
+            }
+          }
+        ]
+      }
+    ],
+    "audit_id": "74faf603b576b55d7594406a",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。"
+    },
+    "routing": {
+      "selected_route": "fusion",
+      "label": "数据与资料联合查询",
+      "strategy": "dependency_workflow",
+      "reason": "按依赖顺序查询数据、读取资料并核对结果。",
+      "context_mode": "independent",
+      "model_enabled": true
+    }
+  },
+  "model_calls": [
+    {
+      "context": {
+        "question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "actual_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "server_context_resolution": {
+          "mode": "independent",
+          "actual_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。"
+        },
+        "history": [],
+        "source_intent_hint": "fusion",
+        "reference_date": "2026-10-09",
+        "required_operations": {
+          "version_comparison_dates": []
+        },
+        "database_schema": {
+          "tables": [
+            {
+              "name": "finance_loans",
+              "columns": [
+                {
+                  "name": "loan_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "loan_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "loan_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "interest_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "loan_id"
+                ]
+              ]
+            },
+            {
+              "name": "sales_orders",
+              "columns": [
+                {
+                  "name": "order_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "order_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "channel",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "quantity",
+                  "data_type": "INTEGER",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "sales_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "cost_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "gross_profit",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "product_name",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "order_id"
+                ]
+              ]
+            }
+          ],
+          "source": "sqlite_read_only"
+        },
+        "documents": [
+          {
+            "id": "policy",
+            "title": "指标与计划",
+            "modality": "txt",
+            "text": "目标销售额 = 基准销售额 * (1 + 目标增长率)\n客单价 = 销售额 / 订单数\n统计说明:按指定年度和地区重新查询数据库。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 65,
+                "locator": "lines:1-3",
+                "chunk_id": "30f316ceeb9c9573822db935"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "revised",
+            "title": "修订计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 18%\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 16%",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 54,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "5f77724053e06f8d76d61b51"
+              },
+              {
+                "text_start": 55,
+                "text_end": 90,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "ab4704c757495b0e832c9558"
+              },
+              {
+                "text_start": 91,
+                "text_end": 145,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "9798ef123d3f28d2ac78d30f"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.18
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.16
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "targets",
+            "title": "区域计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 12%\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 10%",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 54,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "18866d7aa0a4908b88df37ac"
+              },
+              {
+                "text_start": 55,
+                "text_end": 90,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "b6ff553c802374af9a8965ff"
+              },
+              {
+                "text_start": 91,
+                "text_end": 145,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "cde0223868881655658ce172"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.12
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.1
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "alt_policy",
+            "title": "年度预算公式",
+            "modality": "txt",
+            "text": "目标销售额 = 基准销售额 * (1 + 目标增长率)\n年度预算需读取本期参数,基准年度由用户指定。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 50,
+                "locator": "lines:1-2",
+                "chunk_id": "70e46598735bd86c447de349"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "next_targets",
+            "title": "下一期计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华北 | 年份: 2027 | 目标增长率: 8%\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2027 | 目标增长率: 14%\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 53,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "025e53a3e35ae1d84b80c830"
+              },
+              {
+                "text_start": 54,
+                "text_end": 108,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "6d35d74f9c3781dff475d0dc"
+              },
+              {
+                "text_start": 109,
+                "text_end": 144,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "f2de5afbe55f40a6ff205e3f"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华北",
+                  2027,
+                  0.08
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2027,
+                  0.14
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "methods",
+            "title": "区域团队方法",
+            "modality": "txt",
+            "text": "华东冠军团队的方法:每日核验库存,按客户需求安排补货。华东团队的复核流程:每周检查需求记录。\n华南冠军团队的方法:每周复核渠道订单。华南团队的复核流程:每日核验渠道凭证。\n华北冠军团队的方法:按周汇总客户需求并协调仓库。华北团队的复核流程:双人核对订单清单。\n西南冠军团队的方法:按月检查品类库存并跟进补货。西南团队的复核流程:逐项检查补货单据。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 173,
+                "locator": "lines:1-4",
+                "chunk_id": "5adf4bb5d746bbad205906a0"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          }
+        ]
+      },
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string",
+            "enum": [
+              "sql",
+              "document",
+              "fusion",
+              "clarify"
+            ]
+          },
+          "effective_question": {
+            "type": "string"
+          },
+          "clarification": {
+            "type": "string"
+          },
+          "tasks_json": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "route",
+          "effective_question",
+          "clarification",
+          "tasks_json"
+        ],
+        "additionalProperties": false
+      },
+      "audit": {
+        "provider": "deepseek_chat_completions",
+        "model": "deepseek-flash",
+        "operation": "omni_plan",
+        "call_number": 54,
+        "status": "completed",
+        "http_status": 200,
+        "temperature": 0,
+        "thinking": "disabled",
+        "max_output_tokens": 5000,
+        "input_tokens": 4587,
+        "output_tokens": 245,
+        "transport_attempts": 1,
+        "usage": {
+          "prompt_tokens": 4587,
+          "completion_tokens": 245,
+          "total_tokens": 4832,
+          "prompt_tokens_details": {
+            "cached_tokens": 4352
+          },
+          "prompt_cache_hit_tokens": 4352,
+          "prompt_cache_miss_tokens": 235
+        },
+        "response_model": "deepseek-flash",
+        "finish_reason": "stop",
+        "model_verified": true,
+        "wall_ms": 1628.297
+      },
+      "assistant_content": "{\"route\": \"fusion\", \"effective_question\": \"比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。\", \"clarification\": \"\", \"tasks_json\": \"[{\\\"id\\\":\\\"t1\\\",\\\"tool\\\":\\\"document_cell\\\",\\\"args\\\":{\\\"document_id\\\":\\\"targets\\\",\\\"where\\\":{\\\"地区\\\":\\\"华东\\\",\\\"年份\\\":2026},\\\"column\\\":\\\"目标增长率\\\"}},{\\\"id\\\":\\\"t2\\\",\\\"tool\\\":\\\"document_cell\\\",\\\"args\\\":{\\\"document_id\\\":\\\"revised\\\",\\\"where\\\":{\\\"地区\\\":\\\"华东\\\",\\\"年份\\\":2026},\\\"column\\\":\\\"目标增长率\\\"}},{\\\"id\\\":\\\"t3\\\",\\\"tool\\\":\\\"compare\\\",\\\"args\\\":{\\\"left\\\":{\\\"ref\\\":\\\"t1\\\",\\\"path\\\":[]},\\\"right\\\":{\\\"ref\\\":\\\"t2\\\",\\\"path\\\":[]},\\\"operator\\\":\\\"eq\\\"}},{\\\"id\\\":\\\"t4\\\",\\\"tool\\\":\\\"sql\\\",\\\"args\\\":{\\\"question\\\":\\\"2025年华东地区销售额\\\"}}]\"}",
+      "output": {
+        "route": "fusion",
+        "effective_question": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "clarification": "",
+        "tasks_json": "[{\"id\":\"t1\",\"tool\":\"document_cell\",\"args\":{\"document_id\":\"targets\",\"where\":{\"地区\":\"华东\",\"年份\":2026},\"column\":\"目标增长率\"}},{\"id\":\"t2\",\"tool\":\"document_cell\",\"args\":{\"document_id\":\"revised\",\"where\":{\"地区\":\"华东\",\"年份\":2026},\"column\":\"目标增长率\"}},{\"id\":\"t3\",\"tool\":\"compare\",\"args\":{\"left\":{\"ref\":\"t1\",\"path\":[]},\"right\":{\"ref\":\"t2\",\"path\":[]},\"operator\":\"eq\"}},{\"id\":\"t4\",\"tool\":\"sql\",\"args\":{\"question\":\"2025年华东地区销售额\"}}]"
+      }
+    }
+  ],
+  "decision": {
+    "selected": [],
+    "action": {
+      "type": "no_experience"
+    },
+    "state": {
+      "candidates": []
+    }
+  },
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "running",
+      "input": {
+        "query": "比较《区域计划》和《修订计划》中2026年华东目标增长率是否相同，并查询数据库2025年华东销售额。",
+        "top_k": 20
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "fusion.execute",
+      "status": "running",
+      "input": {
+        "task_count": 4
+      },
+      "executed": false,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "fusion.execute",
+      "status": "attention",
+      "output": {
+        "status": "clarification"
+      },
+      "executed": false,
+      "summary": "需要补充条件或证据",
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "clarification",
+        "route": "fusion"
+      },
+      "summary": "需要补充条件或证据",
+      "call_id": "omni-call-5"
+    }
+  ],
+  "wall_ms": 1641.343,
+  "source_versions": {
+    "alt_policy": "dbd631190d329feae53b5f17f991cb951b01518465f2e59430f0c040a79e0202",
+    "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8",
+    "next_targets": "aa42b6d9e54086a6da8bc6268eadd6bce76b3824e18259f442a98a691bc94d9d",
+    "policy": "74adadae4b66dd32f8c21897578301cd8b25f7cf8072272525833ffba78d7bf6",
+    "revised": "5092635cf96e455ecbf00206c2dd37cba421330355c8d6a8bc5e867d13d75946",
+    "targets": "3c49540f4d2de8e8f259fbe573a1747c74fc9bc62558bb48144a939b2a6a5898"
+  },
+  "model_call_count": 1,
+  "input_tokens": 4587,
+  "output_tokens": 245,
+  "tool_calls": 4,
+  "pool": [
+    {
+      "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+      "memory_type": "task_experience",
+      "term": "experience_sql_document",
+      "content": "Source-bound method; replan from current request.",
+      "binding": {},
+      "scope": {
+        "deployment": "m1c",
+        "project": "competition-demo",
+        "data_sources": [
+          "alt_policy",
+          "database",
+          "methods",
+          "next_targets",
+          "policy",
+          "revised",
+          "targets"
+        ]
+      },
+      "provenance": {
+        "authority": "trusted_local_review",
+        "candidate_digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+        "candidate_id": "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+        "confirmation_id": "seed-review-1",
+        "evidence": {
+          "event_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+          "trace_sha256": "578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+          "verifier_sha256": "c180c255c8393da9e1da7f830c1d3508fef4559fec349c4180b18a4cb5a5b9a5"
+        },
+        "evidence_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+        "origin": "agent_execution",
+        "review": {
+          "candidate_id": "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "decision": "confirm",
+          "digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+          "memory_id": "mem-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "reason": "Independent whole-task fixture verification",
+          "request_id": "seed-review-1",
+          "reviewed_at": "2026-10-10T12:00:00+00:00",
+          "reviewer": {
+            "account": "viva",
+            "configuration_sha256": "d4c76babc2aeb15726a1ae89f9354bf9bfde1eeb354fdf7155720bc131285187",
+            "host": "a100",
+            "memory_path": "/home/viva/omni-agent/runtime/m1c-formal-final-20261010/seed-memory.sqlite",
+            "scope_key": "{\"data_sources\":[\"alt_policy\",\"database\",\"methods\",\"next_targets\",\"policy\",\"revised\",\"targets\"],\"deployment\":\"m1c\",\"project\":\"competition-demo\"}",
+            "uid": 1001
+          },
+          "source_version": {
+            "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+            "sources": {
+              "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+              "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+            }
+          },
+          "supersedes": null,
+          "validation": {
+            "candidate_digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+            "checked_at": "2026-10-10T12:00:00+00:00",
+            "checks": "typed_experience+immutable_verified_trace+shared_context_validity",
+            "reasons": [],
+            "valid": true
+          }
+        },
+        "verification_id": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea"
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+          "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+        }
+      },
+      "valid_from": "2026-10-10T12:00:00+00:00",
+      "valid_to": null,
+      "verification_state": "confirmed",
+      "created_at": "2026-10-10T12:00:00+00:00",
+      "updated_at": "2026-10-10T12:00:00+00:00",
+      "task_trace_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+      "experience": {
+        "documents": [
+          "methods"
+        ],
+        "execution_authority": "none",
+        "formula_labels": [],
+        "on_missing_or_ambiguous": "clarify",
+        "rebinding": [
+          "current_request_time_region_metric_and_all_explicit_operations",
+          "fresh_read_only_sql_results",
+          "current_document_formula_and_typed_cells",
+          "verified_output_references_no_literal_historical_values"
+        ],
+        "steps": [
+          {
+            "argument_sources": [
+              "current_question_or_current_source"
+            ],
+            "depends_on": [],
+            "role": "step_0",
+            "tool": "sql"
+          },
+          {
+            "argument_sources": [
+              "current_question_or_current_source",
+              "step_0.verified_output"
+            ],
+            "depends_on": [
+              "step_0"
+            ],
+            "role": "step_1",
+            "tool": "search"
+          }
+        ],
+        "version": 1,
+        "workflow": "sql_document"
+      }
+    }
+  ],
+  "events": [],
+  "score": {
+    "task_success": false,
+    "operation_coverage": false,
+    "result_correct": false,
+    "source_correct": false,
+    "clarification_correct": null
+  },
+  "selection_correct": null,
+  "stale_or_wrong_use": false,
+  "controller_feedback": {
+    "task_success": false,
+    "operation_coverage": false,
+    "result_correct": false,
+    "source_correct": false,
+    "clarification_correct": null,
+    "cost": {
+      "model_calls": 1,
+      "input_tokens": 4587,
+      "output_tokens": 245,
+      "tool_calls": 4,
+      "wall_ms": 1641.343
+    },
+    "failure_reason": "source_scope_unverified",
+    "trained_policy": false
+  }
+}

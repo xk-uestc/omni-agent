@@ -1,0 +1,33 @@
+{
+  "id": "health",
+  "method": "GET",
+  "path": "/health",
+  "http_status": 200,
+  "seconds": 0.030303620966151357,
+  "response_headers": {
+    "date": "Mon, 12 Oct 2026 07:16:29 GMT",
+    "server": "uvicorn",
+    "content-length": "337",
+    "content-type": "application/json",
+    "vary": "Origin"
+  },
+  "response": {
+    "ok": true,
+    "service": "ict-track8-nl2sql",
+    "database": "demo.sqlite",
+    "document_source": "independent_corpus",
+    "planner_source": "rules",
+    "retrieval": {
+      "mode": "bm25",
+      "embedding_model": null,
+      "dense_answer_threshold": null
+    },
+    "generation": {
+      "mode": "attributed_extracts",
+      "model": null,
+      "provider_count": 0,
+      "hedge_delay_ms": null
+    },
+    "configuration_warnings": []
+  }
+}

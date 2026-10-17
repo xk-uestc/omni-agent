@@ -65,6 +65,19 @@ def test_actual_cell_bound_independently_from_value_index(context):
     assert result['provenance']['source_constraint_validation']['status'] == 'verified'
 
 
+def test_explicit_average_survives_catalog_expansion_and_dynamic_source_binding(context):
+    agent, _ = context
+    average_scope = '该地区2025年的平均销售额'
+    required = agent.sql_engine.extract_required_intent(average_scope)
+    question = QUESTION.replace('2025年的销售额', '2025年的平均销售额')
+    bound = bind((agent, required), question=question)
+    result = agent.sql_engine.answer('2025年华东地区平均销售额', required_intent=bound).to_dict()
+    assert result['status'] == 'ok', result
+    assert result['rows'][0]['平均销售额'] == pytest.approx(9861.333333333334)
+    assert result['provenance']['source_constraint_validation']['status'] == 'verified'
+    assert result['plan']['semantic_audit']['explicit_aggregation_override']['requested_function'] == 'AVG'
+
+
 @pytest.mark.parametrize('query', ['2025年华南地区销售额', '2025年地区销售额', '2026年华东地区销售额',
                                   '2025年华东地区平均销售额', '2025年华东地区手机销售额'])
 def test_engine_cannot_omit_overwrite_or_expand_scope(context, query):

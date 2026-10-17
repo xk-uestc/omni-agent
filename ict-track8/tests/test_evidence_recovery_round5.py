@@ -5,7 +5,7 @@ import pytest
 
 from backend.evidence_recovery import audit_boundary, plan_evidence_recovery, recovery_eligible
 from backend.grounded_generation import GroundedGenerator
-from backend.knowledge_store import KnowledgeStore, SourceRevisionError
+from backend.knowledge_store import KnowledgeStore, SourceIntegrityError, SourceRevisionError
 from backend.evidence_context import MAX_TOTAL_EVIDENCE_CHARS, text_sha256
 from backend.responses_client import GenerationError, StructuredResponses
 
@@ -62,12 +62,13 @@ def test_real_source_retrieval_recovery_answers_original_question_once(tmp_path,
 
     def miss_first(query, **kwargs):
         calls.append((query, kwargs))
-        return search(query, document_id='distractor', top_k=1) if query == question else search(query, **kwargs)
+        return search(query, **{**kwargs, 'document_id': 'distractor', 'top_k': 1}) if query == question else search(query, **kwargs)
 
     monkeypatch.setattr(store, 'search', miss_first)
     # Make the initial incomplete pipeline abstain rather than claim its
     # unrelated but literally supported dispatch clause is a complete answer.
-    result = store.answer(question)
+    progress = []
+    result = store.answer(question, progress_callback=progress.append)
     assert result['question'] == question
     assert 'After written approval' in result['answer'] and 'lighthouse maintenance' in result['answer']
     assert result['status'] == 'ok'
@@ -78,6 +79,64 @@ def test_real_source_retrieval_recovery_answers_original_question_once(tmp_path,
     assert len(calls) == 2
     assert result['claims'][0]['support'][0]['quote'] in result['citations'][1]['generation_evidence']['text'] or any(
         result['claims'][0]['support'][0]['quote'] in c['generation_evidence']['text'] for c in result['citations'])
+    generation = [event for event in progress if event['rag_step'] == 'answer_generation']
+    assert [event['status'] for event in generation] == ['running', 'attention', 'success']
+    assert generation[-1]['output'] == {'status': result['status'], 'answer_mode': result['answer_mode'],
+                                       'citation_count': len(result['citations'])}
+    assert generation[-1]['executed'] is True
+
+
+def test_recovery_that_still_abstains_does_not_publish_generation_success(tmp_path, monkeypatch):
+    class AbstainingClient(Client):
+        def generate(self, *args, **kwargs):
+            value = super().generate(*args, **kwargs)
+            return {'abstain': True, 'claims': []} if kwargs['name'] == 'grounded_answer' else value
+
+    client = AbstainingClient()
+    store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))
+    ingest(store, 'Harbor dispatch includes seasonal warnings.', 'distractor')
+    ingest(store, 'After written approval, harbor dispatch includes lighthouse maintenance.', 'wanted')
+    question = 'What does harbor dispatch include after written approval?'
+    search = store.search
+    monkeypatch.setattr(store, 'search', lambda query, **kwargs:
+        search(query, **{**kwargs, 'document_id': 'distractor', 'top_k': 1}) if query == question else search(query, **kwargs))
+    progress = []
+    result = store.answer(question, progress_callback=progress.append)
+    assert result['status'] == 'insufficient_evidence'
+    assert result['evidence_recovery']['navigation_audit']['status'] == 'executed_once'
+    generation = [event for event in progress if event['rag_step'] == 'answer_generation']
+    assert [event['status'] for event in generation] == ['running', 'attention', 'attention']
+    assert generation[-1]['output']['status'] == result['status']
+    assert generation[-1]['output']['citation_count'] == len(result['citations'])
+
+
+def test_recovered_answer_final_source_failure_never_publishes_success(tmp_path, monkeypatch):
+    client = Client()
+    store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))
+    ingest(store, 'Harbor dispatch includes seasonal warnings.', 'distractor')
+    ingest(store, 'After written approval, harbor dispatch includes lighthouse maintenance.', 'wanted')
+    question = 'What does harbor dispatch include after written approval?'
+    search = store.search
+    monkeypatch.setattr(store, 'search', lambda query, **kwargs:
+        search(query, **{**kwargs, 'document_id': 'distractor', 'top_k': 1}) if query == question else search(query, **kwargs))
+    attach = store._attach_retrieval_audit
+    recovered_answer = []
+
+    def remove_source_after_recovery(result, audit):
+        value = attach(result, audit)
+        if result.get('evidence_recovery'):
+            assert result['status'] == 'ok'
+            recovered_answer.append(result)
+            store.original('wanted')[0].unlink()
+        return value
+
+    monkeypatch.setattr(store, '_attach_retrieval_audit', remove_source_after_recovery)
+    progress = []
+    with pytest.raises(SourceIntegrityError):
+        store.answer(question, progress_callback=progress.append)
+    assert recovered_answer
+    generation = [event for event in progress if event['rag_step'] == 'answer_generation']
+    assert [event['status'] for event in generation] == ['running', 'attention']
 
 
 def test_retrieval_preserves_explicit_document_scope(tmp_path, monkeypatch):

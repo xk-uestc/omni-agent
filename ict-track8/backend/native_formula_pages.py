@@ -15,6 +15,62 @@ _START=re.compile(r'^([A-Za-z\u3400-\u9fff][A-Za-z0-9_ \u3400-\u9fff-]{0,48})\s*
 _MATH=re.compile(r'[A-Za-z0-9_\u3400-\u9fff\s.+*/%()^×÷−-]{1,250}')
 
 
+def extract_native_literal_formulas(raw, *, label, expected_sha256):
+    """Finite horizontal literal arithmetic; no OCR, scripts or layout guessing."""
+    if (not isinstance(raw,bytes) or not raw or len(raw)>20*1024*1024
+            or hashlib.sha256(raw).hexdigest()!=expected_sha256):
+        raise ValueError('native_formula_source_invalid')
+    found=[]
+    with fitz.open(stream=raw,filetype='pdf') as document:
+        if document.needs_pass or len(document)>1000:
+            raise ValueError('native_formula_source_budget')
+        for page_index,page in enumerate(document):
+            if page.rotation:continue
+            blocks=page.get_text('dict').get('blocks',[])
+            all_lines=[l for b in blocks for l in b.get('lines',[])]
+            for block_no,block in enumerate(blocks):
+                for line_no,line in enumerate(block.get('lines',[])):
+                    spans=line.get('spans',[])
+                    text=''.join(span['text'] for span in spans).strip()
+                    match=_START.fullmatch(text)
+                    if not match or match[1].strip()!=label or not _MATH.fullmatch(match[2]):continue
+                    if tuple(line.get('dir',()))!=(1.,0.) or not spans:continue
+                    box=fitz.Rect(line['bbox'])
+                    # Hidden OCR layers and raster regions are recognition,
+                    # never literal native arithmetic authority.
+                    if any(kind in {'ignore-text','fill-image'} and box.intersects(fitz.Rect(bounds))
+                           for kind,bounds,*_ in page.get_bboxlog()):continue
+                    if any(s.get('alpha',255) != 255 for s in spans):continue
+                    origins=[s['origin'][1] for s in spans if s.get('text','').strip()]
+                    sizes=[s['size'] for s in spans if s.get('text','').strip()]
+                    # CJK text and operator fonts can have optical baseline
+                    # offsets. Equal font size + a bounded em offset admits
+                    # that typography while refusing smaller/lifted scripts.
+                    tolerance=min(sizes)*.2 if sizes else 0
+                    if (not origins or max(sizes)-min(sizes)>.01*max(sizes)
+                            or max(origins)-min(origins)>tolerance or any(s.get('flags',0)&1 for s in spans)):continue
+                    region=fitz.Rect(line['bbox'])
+                    region.x1+=max(sizes)*.5
+                    region.y0-=max(sizes)*.5
+                    region.y1+=max(sizes)*.2
+                    if any(other is not line and region.intersects(fitz.Rect(other['bbox']))
+                           and _MATH.fullmatch(''.join(s['text'] for s in other.get('spans',[])).strip())
+                           for other in all_lines):continue
+                    # A whitespace-only implicit product must never merge names.
+                    if re.search(r'[A-Za-z0-9_\u3400-\u9fff]\s+[A-Za-z0-9_\u3400-\u9fff]',match[2]):continue
+                    expression=DocumentAnalyzer._normalize_formula(match[2])
+                    try:parameters=SafeFormulaEvaluator().parameters(expression)
+                    except (SyntaxError,ValueError):continue
+                    locator=f'page:{page_index+1}/block:{block_no}/line:{line_no}/native-formula'
+                    found.append({'label':label, 'expression':expression, 'parameters':list(parameters),
+                        'sha256':expected_sha256, 'locator':locator,
+                        'native_formula_proof':{'policy':'complete_horizontal_literal_arithmetic_v1',
+                            'page_no':page_index+1, 'literal_text':text, 'bbox_display_pt':list(line['bbox']),
+                            'baseline_tolerance_pt':tolerance, 'recognition':'native_pdf_text_not_OCR',
+                            'validation_scope':'whole_literal_expression_and_safe_AST_not_arbitrary_math_recognition'}})
+    return found
+
+
 def extract_cross_page_formulas(raw, *, label, expected_sha256):
     if (not isinstance(raw,bytes) or not raw or len(raw)>20*1024*1024
             or hashlib.sha256(raw).hexdigest()!=expected_sha256):

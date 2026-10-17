@@ -1,0 +1,187 @@
+{
+  "d01": {
+    "kind": "A",
+    "expected_experience": "formula_sql",
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+    "year": 2024,
+    "region": "华南",
+    "formula": "目标销售额",
+    "rate": 0.1,
+    "documents": [
+      "policy",
+      "targets"
+    ]
+  },
+  "d02": {
+    "kind": "A",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+    "year": 2025,
+    "region": "华东",
+    "formula": "客单价",
+    "rate": null,
+    "documents": [
+      "policy"
+    ]
+  },
+  "d03": {
+    "kind": "B",
+    "expected_experience": "sql_document",
+    "sql": "SELECT region,SUM(sales_amount) AS v FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' GROUP BY region ORDER BY v DESC",
+    "column": "sales_amount",
+    "year": 2024,
+    "target": "冠军团队的方法",
+    "documents": [
+      "methods"
+    ]
+  },
+  "d04": {
+    "kind": "B",
+    "expected_experience": "sql_document",
+    "sql": "SELECT region,SUM(quantity) AS v FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' GROUP BY region ORDER BY v DESC",
+    "column": "quantity",
+    "year": 2025,
+    "target": "冠军团队的方法",
+    "documents": [
+      "methods"
+    ]
+  },
+  "d05": {
+    "kind": "C",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+    "year": 2025,
+    "region": "华东",
+    "documents": [
+      "targets"
+    ]
+  },
+  "d06": {
+    "kind": "D",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+    "year": 2025,
+    "region": "华东",
+    "documents": [
+      "targets",
+      "revised"
+    ],
+    "comparison": false
+  },
+  "d07": {
+    "kind": "SQL",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+    "year": 2025,
+    "region": "华东",
+    "documents": []
+  },
+  "d08": {
+    "kind": "A",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华南'",
+    "year": 2025,
+    "region": "华南",
+    "formula": "目标销售额",
+    "rate": 0.1,
+    "documents": [
+      "policy",
+      "targets"
+    ]
+  },
+  "h01": {
+    "kind": "A",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华北'",
+    "year": 2025,
+    "region": "华北",
+    "formula": "目标销售额",
+    "rate": 0.08,
+    "documents": [
+      "alt_policy",
+      "next_targets"
+    ]
+  },
+  "h02": {
+    "kind": "A",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华南'",
+    "year": 2024,
+    "region": "华南",
+    "formula": "客单价",
+    "rate": null,
+    "documents": [
+      "policy"
+    ]
+  },
+  "h03": {
+    "kind": "B",
+    "expected_experience": "sql_document",
+    "sql": "SELECT region,SUM(quantity) AS v FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' GROUP BY region ORDER BY v DESC",
+    "column": "quantity",
+    "year": 2024,
+    "target": "冠军团队的方法",
+    "documents": [
+      "methods"
+    ]
+  },
+  "h04": {
+    "kind": "B",
+    "expected_experience": "sql_document",
+    "sql": "SELECT region,SUM(sales_amount) AS v FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' GROUP BY region ORDER BY v DESC",
+    "column": "sales_amount",
+    "year": 2025,
+    "target": "团队的复核流程",
+    "documents": [
+      "methods"
+    ]
+  },
+  "h05": {
+    "kind": "C",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华东'",
+    "year": 2024,
+    "region": "华东",
+    "documents": [
+      "revised"
+    ]
+  },
+  "h06": {
+    "kind": "D",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华南'",
+    "year": 2025,
+    "region": "华南",
+    "documents": [
+      "targets",
+      "revised"
+    ],
+    "comparison": false
+  },
+  "h07": {
+    "kind": "clarify",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2025-01-01' AND order_date<'2026-01-01' AND region='华东'",
+    "year": 2025,
+    "region": "华东",
+    "formula": "目标销售额",
+    "rate": 0.12,
+    "documents": [
+      "policy",
+      "targets"
+    ]
+  },
+  "h08": {
+    "kind": "A",
+    "expected_experience": null,
+    "sql": "SELECT SUM(sales_amount),COUNT(*) FROM sales_orders WHERE order_date>='2024-01-01' AND order_date<'2025-01-01' AND region='华东'",
+    "year": 2024,
+    "region": "华东",
+    "formula": "目标销售额",
+    "rate": 0.12,
+    "documents": [
+      "policy",
+      "targets"
+    ]
+  }
+}

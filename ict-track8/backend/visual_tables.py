@@ -290,3 +290,83 @@ def lookup_table_fact(manifest, *, table_id, row_header, column_header_path):
     if len(facts) != 1:
         raise VisualTableError('cell_header_path_not_uniquely_bound')
     return json.loads(json.dumps(facts[0]))
+
+
+def extract_native_table_records(pdf_bytes, *, page_no, expected_source_sha256):
+    """Reuse the grid engine for complete native tables, including body spans.
+
+    Unlike the numeric/image selection adapter above, this preserves text cells
+    and physical merged-cell anchors. Only one explicit internal header row is
+    executable; external or merged headers remain outside this contract.
+    Geometry certifies native-text membership, not the truth of a document.
+    """
+    if (not isinstance(pdf_bytes, bytes) or not pdf_bytes or len(pdf_bytes) > 20*1024*1024
+            or _sha(pdf_bytes) != expected_source_sha256 or type(page_no) is not int):
+        raise VisualTableError('native_table_record_source_invalid')
+    from .pdf_table_values import label
+    records = []
+    with fitz.open(stream=pdf_bytes, filetype='pdf') as document:
+        if document.needs_pass or not 1 <= page_no <= len(document) <= 1000:
+            raise VisualTableError('native_table_record_page_bounds')
+        page = document[page_no-1]
+        matrix = fitz.Matrix(page.rotation_matrix)
+        page.set_rotation(0)
+        # Font ascent/descent boxes can cross grid lines even when the printed
+        # glyphs do not. MuPDF's glyph-outline boxes avoid guessing a tolerance.
+        accurate = getattr(fitz, 'TEXT_ACCURATE_BBOXES', 0)
+        words = page.get_text('words', flags=fitz.TEXTFLAGS_WORDS | accurate)
+        drawings = page.get_drawings()
+        if len(words) > 20000 or sum(len(d.get('items', [])) for d in drawings) > 20000:
+            raise VisualTableError('native_table_record_page_budget')
+        if not words:
+            return []
+        tables = page.find_tables(strategy='lines', paths=drawings).tables
+        if len(tables) > 32 or sum(t.row_count*t.col_count for t in tables) > 4000:
+            raise VisualTableError('native_table_record_cell_budget')
+        for index, table in enumerate(tables):
+            # Do not consume TableHeader's inferred external labels. The first
+            # actual grid row must establish our explicit internal convention.
+            if table.row_count < 2 or table.col_count < 2:
+                continue
+            bbox = fitz.Rect(table.bbox)
+            if any(kind in {'ignore-text','fill-image'} and bbox.intersects(fitz.Rect(bounds))
+                   for kind,bounds,*_ in page.get_bboxlog()):
+                continue
+            rects = sorted({tuple(c) for row in table.rows for c in row.cells if c is not None},
+                           key=lambda c: (c[1], c[0]))
+            xs = sorted({v for c in rects for v in (c[0], c[2])})
+            ys = sorted({v for c in rects for v in (c[1], c[3])})
+            if len(xs)-1 != table.col_count or len(ys)-1 != table.row_count:
+                continue
+            occupied, cells, valid = set(), [], True
+            for bounds in rects:
+                rect = fitz.Rect(bounds)
+                c, r = xs.index(rect.x0), ys.index(rect.y0)
+                cs, rs = xs.index(rect.x1)-c, ys.index(rect.y1)-r
+                slots = {(y,x) for y in range(r,r+rs) for x in range(c,c+cs)}
+                if occupied.intersection(slots) or r == 0 and (rs != 1 or cs != 1):
+                    valid = False
+                    break
+                occupied.update(slots)
+                tokens = [{'text': w[4], 'block_no': w[5], 'line_no': w[6], 'word_no': w[7],
+                           'bbox_fitz_unrotated_pt': list(w[:4])}
+                          for w in words if _contains(rect, fitz.Rect(w[:4]))]
+                cells.append({'row':r, 'column':c, 'row_span':rs, 'column_span':cs,
+                              'is_header':r == 0, 'text':label(_text(tokens)),
+                              'bbox':list(rect*matrix)})
+            if not valid or len(occupied) != table.row_count*table.col_count:
+                continue
+            # Every native word touching the table must fit one physical cell.
+            # Cross-cell text and raster-only values cannot establish relations.
+            if any(sum(_contains(fitz.Rect(c), fitz.Rect(w[:4])) for c in rects) != 1
+                   for w in words if fitz.Rect(w[:4]).intersects(bbox)):
+                continue
+            headers = [c['text'] for c in cells if c['is_header']]
+            if (len(headers) != table.col_count or not all(headers) or len(set(headers)) != len(headers)
+                    or all(_number_like(h) for h in headers)):
+                continue
+            records.append({'kind':'table', 'page_no':page_no, 'order':index,
+                'bbox':list(bbox*matrix), 'text':'', 'cells':cells,
+                'table_structure_status':'native_geometry_verified',
+                'validation_scope':'native_text_cell_membership_with_explicit_internal_header'})
+    return records

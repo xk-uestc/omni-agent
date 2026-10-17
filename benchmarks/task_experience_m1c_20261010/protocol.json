@@ -1,0 +1,25 @@
+{
+  "arms": [
+    "A_no_memory",
+    "B_fixed",
+    "C_oracle_selection",
+    "D_plain_prompt_control"
+  ],
+  "task_count": 16,
+  "splits": {
+    "development": 8,
+    "heldout": 8
+  },
+  "model": "deepseek-flash",
+  "temperature": 0,
+  "max_output_tokens": 5000,
+  "max_planner_calls_per_task": 2,
+  "tool_dag_cap": 16,
+  "experience_items": 1,
+  "experience_character_cap": 3000,
+  "seed_origin": "real model proposed A/B with independent re-execution; developer verified ratio and alternative-order method; no target Gold in retrieval",
+  "oracle": "choose among same validated eligible IDs by workflow method applicability and dependency footprint only; no task answers or target SQL",
+  "control": "ordinary generic planning checklist with same 3000 character maximum and 5000 output token budget; actual token counts measured, not claimed identical",
+  "heldout_policy": "freeze before formal runs; no tuning using heldout outputs; failure corrections require new labelled follow-up, never overwrite",
+  "calls_cap_total": 144
+}

@@ -1,0 +1,62 @@
+{
+  "classification": "manual_dependency_graph_only_not_autonomous_agent",
+  "question": "先从数据库按工种统计用工统计工时合计，取最高的1个，再从文档《定额教材》中查询该工种的一般地区值。",
+  "database_rows": "artificial labor business mapping",
+  "tasks": [
+    {
+      "id": "rank",
+      "tool": "sql",
+      "args": {
+        "question": "按工种统计用工统计工时合计，取最高的1个"
+      }
+    },
+    {
+      "id": "rate",
+      "tool": "document_cell",
+      "args": {
+        "document_id": "labor",
+        "where": {
+          "定额人等级": {
+            "ref": "rank",
+            "path": [
+              "dimension_values",
+              "用工统计",
+              "工种",
+              0
+            ]
+          }
+        },
+        "column": "一般地区"
+      }
+    }
+  ],
+  "result": {
+    "status": "clarification",
+    "trace_id": "213349f79be6a7184119",
+    "results": {},
+    "trace": [],
+    "failure_trace": [
+      {
+        "version": "foundation-failure-v1",
+        "category": "source_binding",
+        "phase": "source_binding",
+        "code": "source_scope_unverified",
+        "task_id": null,
+        "retryable": false,
+        "independent_task_success": "not_verified"
+      }
+    ],
+    "clarification": "跨源查询的来源范围尚未核验，请明确各数据库取数的表、指标、时间和包含/排除条件。",
+    "clarification_code": "source_scope_unverified",
+    "error_code": "source_scope_unverified",
+    "skipped_tasks": [
+      "rank",
+      "rate"
+    ],
+    "edges": [],
+    "user_constraint_validation": {
+      "status": "unverified",
+      "error_code": "source_scope_unverified"
+    }
+  }
+}

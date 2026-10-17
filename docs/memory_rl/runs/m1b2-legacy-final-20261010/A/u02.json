@@ -1,0 +1,458 @@
+{
+  "response": {
+    "status": "ok",
+    "question": "2024年华东销售额",
+    "effective_question": "2024年华东销售额",
+    "route": "sql",
+    "planner_source": "rules_basic",
+    "session_id": "u02-target",
+    "context_turns": 0,
+    "state": {
+      "route": "sql",
+      "metrics": [],
+      "filters": [
+        {
+          "column": "order_date",
+          "operator": "RANGE",
+          "value": [
+            "2024-01-01",
+            "2025-01-01"
+          ],
+          "source_text": "2024年",
+          "explanation": "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+          "table": "sales_orders"
+        },
+        {
+          "column": "region",
+          "operator": "=",
+          "value": "华东",
+          "source_text": "华东",
+          "explanation": "限定 region ∈ {华东}",
+          "table": "sales_orders"
+        }
+      ],
+      "dimensions": [],
+      "clarification_code": null,
+      "pending_question": null,
+      "executed_sql_context": {
+        "payload": {
+          "question": "2024年华东销售额",
+          "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+          "parameters": [
+            "2024-01-01",
+            "2025-01-01",
+            "华东",
+            100
+          ],
+          "source_revision": "9feb10fb93338cc59c56be02f3174faa63f9fba5dafb24fc2a6a6349aa91fac8"
+        },
+        "sha256": "ebe0f992615599327e236554e38994bc2abc067e1bda7e1688567d861cc9ea89"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "result_state": "rows",
+      "notices": [],
+      "question": "2024年华东销售额",
+      "rewritten_question": "2024年华东销售额",
+      "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+      "parameters": [
+        "2024-01-01",
+        "2025-01-01",
+        "华东",
+        100
+      ],
+      "columns": [
+        "销售额"
+      ],
+      "rows": [
+        {
+          "销售额": 4092.0
+        }
+      ],
+      "plan": {
+        "table": "sales_orders",
+        "metric_table": "sales_orders",
+        "metric_column": "sales_amount",
+        "metric_function": "SUM",
+        "metric_label": "销售额",
+        "analysis_mode": "aggregate",
+        "dimensions": [],
+        "dimension_tables": {},
+        "dimension_transforms": {},
+        "dimension_labels": {},
+        "filters": [
+          {
+            "column": "order_date",
+            "operator": "RANGE",
+            "value": [
+              "2024-01-01",
+              "2025-01-01"
+            ],
+            "source_text": "2024年",
+            "explanation": "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+            "table": "sales_orders"
+          },
+          {
+            "column": "region",
+            "operator": "=",
+            "value": "华东",
+            "source_text": "华东",
+            "explanation": "限定 region ∈ {华东}",
+            "table": "sales_orders"
+          }
+        ],
+        "having": null,
+        "links": [
+          {
+            "source_text": "销售额",
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "role": "metric",
+            "score": 0.82,
+            "matched_alias": "销售额",
+            "metric_function": "SUM"
+          }
+        ],
+        "join_tables": [],
+        "join_conditions": [],
+        "join_path": [],
+        "join_alternatives": [],
+        "order_desc": true,
+        "limit": 100,
+        "complete_results": false,
+        "semantic_row_limit": null,
+        "preview_row_limit": null,
+        "confidence": 0.58,
+        "rewritten_question": "2024年华东销售额",
+        "comparison_mode": "none",
+        "comparison_period": {},
+        "clarification": null,
+        "clarification_code": null,
+        "clarification_options": [],
+        "assumptions": [
+          "日期参数格式：iso_text",
+          "使用表 sales_orders 的只读聚合查询"
+        ],
+        "planner_source": "rules",
+        "top_n": null,
+        "fan_out": false,
+        "coverage": {
+          "consumed": [
+            "2024年",
+            "华东",
+            "销售额"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "intent_audit": {
+          "question": "2024年华东销售额",
+          "metric": {
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "function": "SUM",
+            "label": "销售额"
+          },
+          "filters": [
+            {
+              "column": "order_date",
+              "operator": "RANGE",
+              "value": [
+                "2024-01-01",
+                "2025-01-01"
+              ],
+              "source_text": "2024年",
+              "explanation": "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+              "table": "sales_orders"
+            },
+            {
+              "column": "region",
+              "operator": "=",
+              "value": "华东",
+              "source_text": "华东",
+              "explanation": "限定 region ∈ {华东}",
+              "table": "sales_orders"
+            }
+          ],
+          "time_range": [
+            "2024-01-01",
+            "2025-01-01"
+          ],
+          "group_by": [],
+          "comparison": "none",
+          "comparison_window": null,
+          "top_n": null,
+          "confidence": 0.58,
+          "unresolved": [],
+          "execution_allowed": true,
+          "planner_source": "rules",
+          "planner_audit": {},
+          "metrics": [],
+          "derived_metrics": [],
+          "grain_audit": {},
+          "semantic_audit": {
+            "date_storage_formats": {
+              "sales_orders.order_date": "iso_text"
+            }
+          }
+        },
+        "planner_audit": {},
+        "model_plan_diagnostics": {},
+        "metrics": [],
+        "derived_metrics": [],
+        "order_metric": null,
+        "grain_audit": {},
+        "semantic_audit": {
+          "date_storage_formats": {
+            "sales_orders.order_date": "iso_text"
+          }
+        },
+        "output_metrics": []
+      },
+      "explanation": [
+        "识别指标：销售额（SUM）",
+        "查询表：sales_orders",
+        "限制时间 [2024-01-01, 2025-01-01)，时间字段 sales_orders.order_date",
+        "限定 region ∈ {华东}",
+        "日期参数格式：iso_text",
+        "使用表 sales_orders 的只读聚合查询",
+        "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+      ],
+      "provenance": {
+        "source_type": "structured_database",
+        "database": "mixed.sqlite",
+        "table": "sales_orders",
+        "row_count": 1,
+        "row_limit": 100,
+        "result_completeness": "within_return_limit",
+        "query_hash": "dee5f3d265042646",
+        "field_links": [
+          {
+            "source_text": "销售额",
+            "table": "sales_orders",
+            "column": "sales_amount",
+            "role": "metric",
+            "score": 0.82,
+            "matched_alias": "销售额",
+            "metric_function": "SUM"
+          }
+        ],
+        "coverage": {
+          "consumed": [
+            "2024年",
+            "华东",
+            "销售额"
+          ],
+          "unresolved": [],
+          "ignored_instruction_spans": []
+        },
+        "consistency": "sqlite_read_transaction",
+        "source_revision": "9feb10fb93338cc59c56be02f3174faa63f9fba5dafb24fc2a6a6349aa91fac8",
+        "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+        "grain_audit": {},
+        "result_cells": [
+          {
+            "row": 0,
+            "column": "销售额",
+            "query_hash": "dee5f3d265042646",
+            "locator": {
+              "type": "sql_result",
+              "row": 0,
+              "column": "销售额"
+            }
+          }
+        ],
+        "output_cardinality": {
+          "status": "verified",
+          "maximum_output_rows": 1,
+          "method": "executed_select_scope_cardinality",
+          "verified_singleton_scopes": 1,
+          "aggregate_functions": [
+            "SUM"
+          ],
+          "scope": "output_cardinality_not_input_population_or_semantic_accuracy"
+        }
+      },
+      "clarification": null,
+      "clarification_code": null,
+      "clarification_options": [],
+      "source_tables": {
+        "database": "mixed.sqlite",
+        "source_revision": "9feb10fb93338cc59c56be02f3174faa63f9fba5dafb24fc2a6a6349aa91fac8",
+        "query_hash": "dee5f3d265042646",
+        "source_question": null,
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2024-01-01",
+          "2025-01-01",
+          "华东",
+          100
+        ],
+        "reused_result": false,
+        "tables": [
+          {
+            "name": "sales_orders",
+            "used_columns": [
+              "order_date",
+              "region",
+              "sales_amount"
+            ]
+          }
+        ],
+        "basis": "executed_sql_ast_physical_sources"
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "sql",
+        "latency_ms": 2.366,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      }
+    ],
+    "audit_id": "b7b3a57171eee0e26636c2c6",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2024年华东销售额"
+    },
+    "routing": {
+      "selected_route": "sql",
+      "label": "数据库问数",
+      "strategy": "source_query",
+      "reason": "查询所需指标和数据。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "query_reference_id": "q_849a477b52b5444f9eea1f5f2dc5c003"
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 7.621,
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "running",
+      "input": {
+        "question": "2024年华东销售额"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "nl2sql",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "sql": "SELECT SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? AND \"sales_orders\".\"region\" = ? ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC LIMIT ?",
+        "parameters": [
+          "2024-01-01",
+          "2025-01-01",
+          "华东",
+          100
+        ],
+        "columns": [
+          "销售额"
+        ],
+        "result_state": "rows",
+        "row_count": 1
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "sql"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-3"
+    }
+  ],
+  "memory": {},
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 2,
+  "memory_operations": 0,
+  "id": "u02",
+  "category": "irrelevant_control",
+  "score": {
+    "status": "ok",
+    "field_pass": true,
+    "dimension_pass": true,
+    "result_pass": true,
+    "source_filter_population_pass": true,
+    "gold_source_table": "sales_orders",
+    "gold_contributing_records": 8,
+    "actual_source_table": "sales_orders",
+    "actual_contributing_records": 8,
+    "actual_rows": [
+      [
+        4092.0
+      ]
+    ],
+    "gold_rows_scoring_only": [
+      [
+        4092.0
+      ]
+    ],
+    "replay_rows": [
+      [
+        4092.0
+      ]
+    ],
+    "metric_fields_actual": [
+      "sales_amount"
+    ],
+    "version_evidence_pass": true
+  },
+  "target_history_before": 0,
+  "target_session": "u02-target",
+  "preparation_session": "u02-preparation",
+  "preparation": [],
+  "candidate_ids": [
+    "online"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "ce728e3b42f762213023ab1fca826409fe920939558883e4b7519ec11f2784dd",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": null,
+  "memory_store_bytes_before": 65536,
+  "memory_store_bytes_after": 65536,
+  "archived_events": [],
+  "pass": true
+}

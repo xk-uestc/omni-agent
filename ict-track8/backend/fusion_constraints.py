@@ -47,7 +47,7 @@ class VerifiedFormulaTarget:
 
 
 _DATABASE = re.compile(r'数据库|数据表|(?<![A-Za-z0-9_])SQL(?![A-Za-z0-9_])', re.I)
-_DOCUMENT = re.compile(r'《[^》]+》|文档|手册|知识库|资料|(?<![A-Za-z0-9_])(?:PDF|Excel|XLSX|DOCX)(?![A-Za-z0-9_])', re.I)
+_DOCUMENT = re.compile(r'《[^》]+》|文档|教材|手册|知识库|资料|(?<![A-Za-z0-9_])(?:PDF|Excel|XLSX|DOCX)(?![A-Za-z0-9_])', re.I)
 _MODIFIER = re.compile(r'^(?:不含|不包括|不包含|排除|仅|只取|只考虑|限定|限于|除.+(?:之外|以外))')
 _EXCLUSION = re.compile(r'不含|不包括|不包含|排除|仅|只取|只考虑|限定|限于|除.+(?:之外|以外)')
 _PURPOSE = re.compile(r'(?:作为|用作|作)(?:历史|预测|计算)?(?:基准|基数|输入|参数)|'
@@ -87,10 +87,15 @@ def _known_prediction_target(text, engine, clauses):
     return len(matches) == 1
 
 
-def _pieces(question):
+def _pieces(question, verified_ranges=()):
     """Top-level punctuation, preserving brackets around source qualifiers."""
     start, depth = 0, 0
+    boundaries = {part for pair in verified_ranges for part in pair}
     for index, char in enumerate(question):
+        if index in boundaries and start < index:
+            if question[start:index].strip():
+                yield start, index
+            start = index
         if char in '（([{《':
             depth += 1
         elif char in '）)]}》':
@@ -383,12 +388,14 @@ def extract_source_clauses(question, schema, *, engine=None, verified_formula_ta
     if not isinstance(question, str) or not 1 <= len(question) <= 1000:
         raise SourceConstraintError('source_scope_unverified')
     tables = [_table_pattern(table['name']) for table in schema.get('tables', [])]
-    pieces = list(_pieces(question))
+    pieces = list(_pieces(question, verified_document_search_ranges))
     clauses, consumed = [], set()
     for number, (left, right) in enumerate(pieces):
         if number in consumed:
             continue
         text = question[left:right]
+        if (left, right) in verified_document_search_ranges:
+            continue
         db = list(_DATABASE.finditer(text))
         table_hits = [hit for pattern in tables for hit in pattern.finditer(text)]
         # Attribution is an output request, never another database read.
@@ -448,7 +455,15 @@ def extract_source_clauses(question, schema, *, engine=None, verified_formula_ta
         while next_number < len(pieces):
             nleft, nright = pieces[next_number]
             following = question[nleft:nright].strip()
-            if not _MODIFIER.match(following) or _DATABASE.search(following) or _DOCUMENT.search(following):
+            # Punctuation is not a scope boundary for a complete ranking
+            # operator. Keep the literal span (including all conditions), and
+            # let the same QueryPlan parser used at execution verify it.
+            ranking_tail = re.fullmatch(
+                r'(?:再)?(?:取|选|选取)?(?:最高|最低|最大|最小)(?:的)?[1-9]\d?(?:个|名|项|条)?'
+                r'|(?:取)?(?:排名)?(?:前|后)[1-9]\d?(?:个|名|项|条)?', following)
+            if not (_MODIFIER.match(following) or ranking_tail) or _DATABASE.search(following) or _DOCUMENT.search(following):
+                break
+            if (nleft, nright) in verified_document_search_ranges:
                 break
             if any(pattern.search(following) for pattern in tables):
                 break
@@ -464,11 +479,12 @@ def extract_source_clauses(question, schema, *, engine=None, verified_formula_ta
         clauses.append(SourceClause(f'sql_scope_{len(clauses)+1}', left, right,
                                     question[left:right], 'baseline' if purpose and re.search(r'基准|基数', purpose.group()) else 'observation'))
         consumed.add(number)
-    if (not clauses and engine is not None and len(pieces) == 2
+    remaining = [piece for piece in pieces if piece not in verified_document_search_ranges]
+    if (not clauses and engine is not None and len(remaining) == 1
             and len(verified_document_search_ranges) == 1
-            and tuple(verified_document_search_ranges[0]) == pieces[1]
-            and not _DATABASE.search(question) and not _DOCUMENT.search(question[pieces[0][0]:pieces[0][1]])):
-        left, right = pieces[0]
+            and not _DATABASE.search(question)
+            and not _DOCUMENT.search(question[remaining[0][0]:remaining[0][1]])):
+        left, right = remaining[0]
         intent = engine.extract_required_intent(question[left:right])
         if not intent.clarification and not intent.coverage.get('unresolved') and _metrics(intent):
             clauses = [SourceClause('sql_scope_1', left, right, question[left:right], 'observation')]
@@ -483,7 +499,6 @@ def extract_source_clauses(question, schema, *, engine=None, verified_formula_ta
             raise SourceConstraintError('source_scope_unverified')
         left, right = item
         if (not 0 <= left < right <= len(question) or (left, right) not in pieces
-                or left < min(clause.end for clause in clauses)
                 or any(left < clause.end and right > clause.start for clause in clauses)
                 or any(left < qright and right > qleft for clause in clauses
                        for qleft, qright in clause.qualifier_ranges)):

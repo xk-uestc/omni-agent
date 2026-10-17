@@ -1,0 +1,428 @@
+/* ==========================================================================
+   Agent Conversational Cards, Metrics, SQL, Citations & Clarification UI
+   ========================================================================== */
+
+/* User Query Bubble */
+.user-turn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.user-bubble {
+  max-width: 78%;
+  background-color: var(--bg-user-bubble);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 18px 18px 4px 18px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  border: 1px solid var(--accent-border);
+}
+
+/* Agent Response Card */
+.agent-result-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  padding: 22px 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.agent-result-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.agent-heading-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.agent-avatar-badge {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0066CC 0%, #0099FF 100%);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agent-title-text {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.agent-badges-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.verify-pill {
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.verify-pill.verified {
+  background-color: var(--status-success-bg);
+  color: var(--status-success);
+}
+
+.verify-pill.clarify {
+  background-color: var(--status-warning-bg);
+  color: var(--status-warning);
+}
+
+.verify-pill.cross-source {
+  background-color: var(--accent-soft);
+  color: var(--accent-primary);
+}
+
+/* Entity Rewrite Banner (中级任务1&2: 要素精准识别与问题改写) */
+.rewrite-banner {
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rewrite-chip {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  color: var(--accent-primary);
+}
+
+/* Executive Metrics Grid */
+.agent-result-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+}
+
+.metric-card {
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 13px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metric-value {
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-delta {
+  font-size: 11.5px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.metric-delta.up { color: var(--status-success); }
+.metric-delta.down { color: var(--status-danger); }
+.metric-delta.neutral { color: var(--text-muted); }
+
+/* Answer Prose & Inline Citations */
+.agent-answer-markdown {
+  font-size: 14.5px;
+  line-height: 1.78;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.agent-answer-markdown p {
+  margin: 0;
+}
+
+.agent-answer-markdown ul {
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cite-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 7px;
+  margin: 0 2px;
+  border-radius: 99px;
+  background-color: var(--accent-soft);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-border);
+  cursor: pointer;
+  vertical-align: baseline;
+  transition: all 0.14s ease;
+}
+
+.cite-badge:hover {
+  background-color: var(--accent-primary);
+  color: #FFFFFF;
+}
+
+/* Interactive Clarification Card (中级任务3: 智能语义校验与主动澄清) */
+.clarification-box {
+  background-color: var(--status-warning-bg);
+  border: 1px solid rgba(217, 119, 6, 0.28);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clarify-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--status-warning);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clarify-dimensions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.clarify-dim-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.clarify-dim-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.clarify-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.clarify-option-btn {
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.clarify-option-btn:hover, .clarify-option-btn.selected {
+  background-color: var(--accent-primary);
+  color: #FFFFFF;
+  border-color: var(--accent-primary);
+}
+
+/* Inline Data Table & Chart Preview */
+.data-preview-section {
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--bg-surface);
+}
+
+.data-preview-header {
+  padding: 9px 14px;
+  background-color: var(--bg-surface-subtle);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.data-table-wrapper {
+  overflow-x: auto;
+}
+
+.clean-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+.clean-data-table th {
+  text-align: left;
+  padding: 9px 14px;
+  background-color: var(--bg-surface-subtle);
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-hairline);
+  white-space: nowrap;
+}
+
+.clean-data-table td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.clean-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.clean-data-table td.num, .clean-data-table th.num {
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+/* Card Footer Evidence Action Bar */
+.agent-result-sources {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.source-chips-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.source-action-chip {
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-hairline);
+  background-color: var(--bg-surface-subtle);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.source-action-chip:hover {
+  border-color: var(--accent-border);
+  color: var(--accent-primary);
+  background-color: var(--accent-soft);
+}
+
+/* Inspector Specific Cards */
+.inspector-card {
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inspector-card-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sql-code-block {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.6;
+  background-color: #0F172A;
+  color: #E2E8F0;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.pdf-snippet-box {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.pdf-highlight {
+  background-color: rgba(250, 204, 21, 0.28);
+  color: var(--text-primary);
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.formula-box {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background-color: var(--bg-surface);
+  border: 1px dashed var(--accent-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--text-primary);
+}

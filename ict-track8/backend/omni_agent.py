@@ -12,7 +12,7 @@ from contextlib import ExitStack
 from .dependency_agent import DependencyAgent
 from .fusion_normalization import normalize_fusion_tasks
 from .text_reference_contract import text_reference_errors
-from .responses_client import GenerationError, object_schema
+from .responses_client import GenerationError, object_schema, completed_json_protocol_failure
 from .nl2sql.schema import normalize_text
 from .plan_requirements import requested_operations, completion_errors
 from .fusion_constraints import SourceConstraintError
@@ -59,6 +59,9 @@ search_fact: {evidence:引用search整个结果,scope:适用对象,label:事实�
 document_formula: {document_id,label}；返回 expression/parameters/source_uri/locator。
 document_cell: {document_id,where:{列名:实际值},column:列名}；返回 value/unit/source_uri/locator。
 document_cell.where 只包含用户明确给定的筛选条件，不能从预览猜出输出值后再把输出列加入where。
+若对象来自SQL排名，where必须引用该SQL的dimension_values真实维度值，不得猜冠军、固定工种或引用统计数值。随后直接调用document_cell读取实际单元格。
+server_ranked_cell_intent只是服务器从用户原话、Schema和原件独立核验的范围导航，不含工具图或答案；你仍需自主提出sql→document_cell计划，服务器会重验排名、全部并列对象、来源版本与列。
+用户要求最高一个时，sql.question必须明确“取最高的1个”，不能仅列出所有工种并降序排序；可沿用server_ranked_cell_intent.scope_question的原始数据库范围。
 where必须使用table_rows.values中的真实JSON值和类型；text中的百分比、货币等显示字符串不等于底层筛选值，不得把数值改成字符串。
 例如表格values为0.15而text显示15%时，比率条件填写数值0.15；若来源实际存储字符串则保留该字符串，不得自行强制转型。
 按年份和比率寻找地区时，where只使用原问题的年份/比率；读取地区作为结果，不预填一个地区。
@@ -72,6 +75,8 @@ SQL数值引用rows中的实际业务标签，不是指标ID；例如{ref:"value
 {ref:"values",path:["aggregate_cells",真实表名,真实列名,实际聚合函数,0]}。
 aggregate_cells的叶子是带value/单位/SQL定位的完整证据，直接传给calculate.parameters或compare。
 函数严格按业务指标口径和metric_contracts选择，如SUM/COUNT/COUNT_DISTINCT，不得更换统计口径。
+多指标SQL的每个引用独立选择聚合函数：用户明确要求某计数指标“去重”时，该指标的aggregate_cells函数为COUNT_DISTINCT；不能沿用另一个指标的函数或默认COUNT。COUNT与COUNT_DISTINCT不可互换，即使某次结果数值相同。
+若用户要求的聚合函数与文档公式变量在metric_contracts中的口径不一致，先澄清口径；不能把COUNT_DISTINCT结果冒充COUNT公式参数，也不能擅自删掉用户的“去重”。
 derived_metric_contracts 中的公式是已配置业务口径；用户询问这些指标时沿用配置，不需再次询问公式；仍须保留时间和地区条件。
 公式变量“基准销售额”可不同于SQL展示列名；不得把公式变量名猜成rows列名。
 引用列标签需与工具question中的业务指标及formula参数一致，不能擅自给标签加“去重/总计/本期”等词。
@@ -83,6 +88,7 @@ compare的left/right必须引用数值证据完整结果path:[]，不能仅引�
 SQL结果含rows、plan、provenance，引用值必须path:["rows",行下标,实际列标签]。
 SQL地区/客户等原始维度值优先使用稳定物理引用path:["dimension_values",真实表名,真实列名,行下标]，不要猜中文展示别名。
 SQL排名结果驱动文档检索时，query使用[维度引用,原问题要求检索的逐字目标]；不要添加未要求的文档标题、固定地区、年份、其他过滤或返回格式文字。
+排名后文本检索的结构示例（表名、字段名和检索目标必须换成当前schema与原问题的真实内容）：[{"id":"ranking","tool":"sql","args":{"question":"按用户指定的时间和指标对目标维度排名，取最高的1个"}},{"id":"evidence","tool":"search","args":{"query":[{"ref":"ranking","path":["dimension_values","真实表名","真实维度列名",0]},"原问题中的逐字检索目标"]}}]。不能预先填入排名结果；query字面部分不重复“该地区”等指代词。文本经验检索到search结束。
 如果server_context_resolution.mode为server_verified_sql_followup或server_verified_sql_clarification_fill，question已由服务器核验补全，按该问题规划SQL，不要因为actual_question省略年份/地区而再次澄清。
 server_context_resolution.mode为server_resolved_pending_fusion_scope时，只恢复了用户原文范围，没有继承任何成功执行结果、来源或公式；按完整question重新规划fusion，重新读取并核验全部来源。
 server_context_resolution.requires_clarification=true表示SQL追问继承范围未核验，不能推断成无过滤SQL；这不禁止用户切换到文档定义/政策等独立问题，仍按actual_question的真实意图选择route。
@@ -142,9 +148,12 @@ def fusion_retrieval_summary(result):
             missing.append(entity)
             messages.append(f'数据库确定的对象为{entity}；本次检索片段未定位该对象的对应资料，暂不能给出其“{target}”。')
     if messages:
+        result['tool_execution_status'] = result['status']
+        result['status'] = 'insufficient_evidence'
         result['answer'] = '\n'.join(messages)
         result['answer_mode'] = 'verified_sql_entity_with_retrieved_excerpts'
         result['answer_status'] = 'insufficient_evidence' if missing else 'retrieved_excerpts'
+        result['answer_completeness'] = 'retrieval_only'
 
 
 def _reject_plan(code, details=None):
@@ -208,6 +217,12 @@ def _check_static_document_cells(tasks, knowledge):
             document = knowledge.document(args['document_id'])
         except (ValueError, TypeError, KeyError, OSError):
             _reject_plan('document_cell_static_source_unverified')
+        if document['modality'] == 'pdf':
+            try:
+                knowledge.native_table_cell(args['document_id'], where=args['where'], column=args['column'])
+            except (ValueError, TypeError, KeyError, OSError):
+                _reject_plan('document_cell_static_selection_unverified')
+            continue
         candidates = []
         for chunk in document['chunks']:
             metadata = chunk['metadata']
@@ -254,9 +269,30 @@ def _normalize_model_tasks(plan, tasks, engine, knowledge, question):
             except SourceConstraintError as exc:
                 _reject_plan('sql_document_plan_scope_invalid', [exc.code])
         _check_static_document_cells(tasks, knowledge)
+        from .sql_document_cell_binding import authorize_sql_document_cells
+        try:
+            cells = authorize_sql_document_cells(question, tasks, engine, knowledge)
+            if cells['bindings']:
+                from .fusion_constraints import bind_source_constraints, verify_required_intent
+                required, _ = bind_source_constraints(question, tasks, engine,
+                    verified_document_search_ranges=tuple(cells['source_ranges']))
+                for task in tasks:
+                    if task['tool'] == 'sql':
+                        text = task['args'].get('question')
+                        if not isinstance(text, str) or verify_required_intent(engine.extract_required_intent(text), required[task['id']]):
+                            raise SourceConstraintError('sql_document_cell_scope_unverified')
+        except SourceConstraintError as exc:
+            _reject_plan('sql_document_cell_plan_scope_invalid', [exc.code])
         plan['tasks_json'] = json.dumps(tasks, ensure_ascii=False)
         return plan, notes
     if tasks == []:
+        if plan['route'] in {'sql', 'document'}:
+            from .sql_document_cell_binding import ranked_cell_intent
+            try:
+                if ranked_cell_intent(question, engine, knowledge) is not None:
+                    _reject_plan('ranked_document_cell_requires_fusion')
+            except SourceConstraintError as exc:
+                _reject_plan('sql_document_cell_plan_scope_invalid', [exc.code])
         if plan['route'] in {'sql', 'document'} and explicit_cross_source_request(question):
             _reject_plan('single_source_cross_source_request')
         return plan, []
@@ -289,8 +325,10 @@ def _normalize_model_tasks(plan, tasks, engine, knowledge, question):
 
 
 class OmniAgent:
-    def __init__(self, engine, knowledge, conversations, client=None):
+    def __init__(self, engine, knowledge, conversations, client=None, *, memory=None, experience=None):
         self.engine, self.knowledge, self.conversations, self.client = engine, knowledge, conversations, client
+        self.memory = memory
+        self.experience = experience
 
     def catalogue(self, question, *, trace_callback=None):
         """Build bounded, question-selected context, never a first-N corpus dump."""
@@ -442,6 +480,10 @@ class OmniAgent:
         return {'route': 'sql', 'effective_question': question, 'tasks_json': '[]', 'clarification': ''}
 
     def _remember(self, session_id, *, question, effective_question, state, pending_parent_id=None):
+        if self.memory is not None and self.memory.enabled:
+            receipts = self.memory.request_receipts.get()
+            if receipts:
+                state = {**state, 'memory_bindings': list(receipts)}
         state = dict(state)
         if state.get('route') == 'sql' and state.get('pending_question'):
             parent, _ = self.conversations.pending_tasks.resolve(session_id, pending_parent_id) if pending_parent_id else (None, None)
@@ -471,6 +513,8 @@ class OmniAgent:
                 output['row_count'] = len(value['rows'])
             if isinstance(value.get('citations'), list):
                 output['citation_count'] = len(value['citations'])
+        from .presentation_events import tool_receipt
+        output.update(tool_receipt(tool, value))
         success = outcome in (None, 'ok', 'completed', 'complete')
         callback({'stage': 'tool_call', 'tool': tool,
                   'status': 'success' if success else 'attention', 'output': output,
@@ -478,7 +522,135 @@ class OmniAgent:
         return result
 
     def query(self, question, *, session_id=None, reset_context=False, complete_results=False, _confirmed_comparison_scope=None,
-              _confirmed_pending_turn_id=None, trace_callback=None, image_attachments=None):
+              _confirmed_pending_turn_id=None, trace_callback=None, image_attachments=None, document_id=None):
+        from .nl2sql.security import unsafe_request_reason
+        if unsafe_request_reason(question):
+            refused = self.engine.answer(question).to_dict()
+            event = {'stage': 'request_safety', 'tool': 'request.safety', 'status': 'rejected',
+                     'executed': False, 'error_code': 'read_only_query_required',
+                     'failure_category': 'safety', 'summary': '整条请求包含写入或绕过规则意图，未执行。'}
+            if trace_callback is not None:
+                trace_callback(dict(event))
+            response = {'status': 'clarification', 'route': 'sql', 'question': question,
+                    'effective_question': question, 'session_id': session_id,
+                    'context_turns': len(self.conversations.context(session_id)) if session_id else 0,
+                    'result': refused, 'state': {'route': 'sql', 'context_preserved': True},
+                    'context_resolution': {'mode': 'write_request_rejected',
+                                           'context_preserved': True, 'executed': False},
+                    'trace': [event]}
+            if self.memory is not None and self.memory.enabled:
+                response['memory'] = {'enabled': True, 'selected': [], 'consumed': [],
+                    'decisions': [], 'reason': 'unsafe_request',
+                    'observe': {'stored': False, 'reason': 'rejected_before_memory'}}
+            from .failure_trace import attach
+            return attach(response)
+        if document_id is not None:
+            return self._query_selected_document(question, document_id=document_id,
+                session_id=session_id, reset_context=reset_context,
+                trace_callback=trace_callback, image_attachments=image_attachments)
+        options = dict(session_id=session_id, reset_context=reset_context, complete_results=complete_results,
+            _confirmed_comparison_scope=_confirmed_comparison_scope, _confirmed_pending_turn_id=_confirmed_pending_turn_id,
+            trace_callback=trace_callback, image_attachments=image_attachments)
+        if self.memory is not None and self.memory.enabled:
+            return self.memory.run(self, question, options)
+        return self._query_without_memory(question, **options)
+
+    def _query_selected_document(self, question, *, document_id, session_id=None,
+                                 reset_context=False, trace_callback=None, image_attachments=None):
+        """A user-selected source is an explicit scope, not a title search hint."""
+        from .document_dialogue import document_context
+        from .selected_document import (document_overview, is_overview_request,
+                                        scope_reference_conflict, SelectedDocumentMissing)
+        from .failure_trace import attach
+        if not isinstance(question, str) or not question.strip() or len(question) > 1000:
+            raise ValueError('问题为空或过长')
+        self.knowledge.validate_id(document_id)
+        if image_attachments and self.client is None:
+            raise ValueError('当前未配置支持图片输入的模型，暂不能处理图片。')
+        observed, pending = [], {}
+        call_index = 0
+        def publish(event):
+            nonlocal call_index
+            item = dict(event)
+            tool = item.get('tool', item.get('stage', 'query'))
+            if item.get('status') == 'running' or tool not in pending:
+                call_index += 1
+                pending[tool] = f'selected-call-{call_index}'
+            item['call_id'] = pending[tool]
+            if item.get('status') != 'running':
+                pending.pop(tool, None)
+            observed.append(item)
+            if trace_callback:
+                trace_callback(item)
+        with self.conversations.turn(session_id):
+            if session_id and reset_context:
+                self.conversations.clear(session_id)
+            history = self.conversations.context(session_id) if session_id else ()
+            def verify_selected():
+                try:
+                    document = self.knowledge.document(document_id)
+                except KeyError as exc:
+                    raise SelectedDocumentMissing('所选资料已移除，请重新选择或上传文件。') from exc
+                self.knowledge.verify_source(document_id, expected_sha256=document['sha256'])
+                return {'status': 'ok', 'document_id': document_id, 'title': document['title'],
+                        'source_sha256': document['sha256'],
+                        'verification_scope': 'original_file_hash_and_current_document_version'}
+            scope = self._tool_call(publish, 'document.scope', verify_selected,
+                                    input={'document_id': document_id})
+            scope_conflict = scope_reference_conflict(question, scope['title'])
+            if scope_conflict:
+                message = ('当前已限定到所选文件，但问题引用了另一份资料或历史查询。'
+                           '请取消文件选择后使用查询编号，或保留当前文件并直接填写要问的内容。')
+                result = {'status': 'clarification', 'clarification': message,
+                          'clarification_code': 'selected_source_reference_conflict',
+                          'answer': message, 'citations': [], 'trace': []}
+                publish({'stage': 'source_scope', 'tool': 'document.scope', 'status': 'attention',
+                         'executed': False, 'summary': message,
+                         'output': {'status': 'clarification',
+                                    'clarification_code': 'selected_source_reference_conflict'}})
+            elif is_overview_request(question) and not image_attachments:
+                result = self._tool_call(publish, 'document.overview',
+                    lambda: document_overview(self.knowledge, document_id),
+                    input={'document_id': document_id})
+            else:
+                result = self._tool_call(publish, 'knowledge.answer',
+                    lambda: self.knowledge.answer(question, document_id=document_id,
+                        progress_callback=publish,
+                        context_resolution={'mode': 'explicit_document_selection',
+                                            'actual_question': question, 'document_id': document_id},
+                        **({'image_attachments': image_attachments} if image_attachments else {})),
+                    input={'question': question, 'document_id': document_id})
+            self.knowledge.verify_source(document_id, expected_sha256=scope['source_sha256'])
+            state = {'route': 'document', 'sources': [document_id]}
+            if scope_conflict:
+                state['context_preserved'] = True
+            saved = document_context(question, result, self.knowledge)
+            if saved:
+                state['document_context'] = saved
+            if session_id and not scope_conflict:
+                self._remember(session_id, question=question, effective_question=question, state=state)
+            response = {'status': result['status'], 'route': 'document',
+                        'question': question, 'effective_question': question,
+                        'session_id': session_id, 'context_turns': len(history),
+                        'planner_source': 'explicit_document_selection',
+                        'state': state, 'result': result, 'trace': observed,
+                        'document_scope': scope,
+                        'context_resolution': {'mode': 'explicit_document_selection',
+                                               'actual_question': question, 'document_id': document_id}}
+            response['routing'] = routing_receipt(response, model_enabled=self.client is not None)
+            attach(response)
+            if session_id and saved:
+                response['document_reference_id'] = self.conversations.context(session_id)[-1].turn_id
+            publish({'stage': 'query_complete', 'tool': 'query.complete',
+                     'status': 'success' if response['status'] == 'ok' else 'attention',
+                     'executed': False, 'output': {'status': response['status'], 'route': 'document'},
+                     'summary': '已返回所选文档的处理结果。' if response['status'] == 'ok'
+                                else '请补充问题或核对选择的资料。'})
+            return response
+
+    def _query_without_memory(self, question, *, session_id=None, reset_context=False, complete_results=False, _confirmed_comparison_scope=None,
+              _confirmed_pending_turn_id=None, trace_callback=None, image_attachments=None,
+              _memory_original_question=None):
         if image_attachments and self.client is None:
             raise ValueError('当前未配置支持图片输入的模型，暂不能处理图片。')
         call_index = 0
@@ -487,6 +659,10 @@ class OmniAgent:
             nonlocal call_index
             item = dict(event)
             tool = item.get('tool', item.get('stage', 'query'))
+            if item.get('call_id'):
+                if trace_callback is not None:
+                    trace_callback(item)
+                return
             if item.get('status') == 'running' or tool not in pending:
                 call_index += 1
                 pending[tool] = f'omni-call-{call_index}'
@@ -596,7 +772,7 @@ class OmniAgent:
                                     complete_results=complete_results,_confirmed_comparison_scope=_confirmed_comparison_scope,
                                     _confirmed_pending_turn_id=_confirmed_pending_turn_id,
                                     image_attachments=image_attachments,
-                                    _remember_question=question if canonical != question else None,
+                                    _remember_question=_memory_original_question or (question if canonical != question else None),
                                     _trace_callback=publish if trace_callback else None)
                 if resolved_choice:
                     choices.clear(session_id)
@@ -616,6 +792,12 @@ class OmniAgent:
                     if semantic is not None and isinstance(result.get('plan'), dict):
                         result['plan'].setdefault('semantic_audit', {})['language_normalization'] = semantic.to_dict()
             response['routing'] = routing_receipt(response, model_enabled=self.client is not None)
+            from .failure_trace import attach
+            attach(response)
+            if response['failure_trace'] and trace_callback:
+                publish({'stage': 'failure_classification', 'tool': 'query.failure',
+                         'status': 'attention', 'executed': False,
+                         'output': {'failures': response['failure_trace']}})
             from .source_provenance import attach_sql_sources
             attach_sql_sources(response, self.engine)
             after=self.conversations.context(session_id) if session_id else ()
@@ -1038,11 +1220,21 @@ class OmniAgent:
         source, error = 'rules_basic', None
         planning_notes = []
         planning_attempts = []
+        experience_decision = None
         rejection_code = None
         direct_sql = (self._verified_sql_route(scope_question) if not image_attachments and not history_error
             and inherited is None and scope_question == question
             and (not planning_history or fresh_scope)
             and not fusion_history_audit.get('requires_clarification') else None)
+        native_document = None
+        if (direct_sql is None and not image_attachments and not history_error and inherited is None
+                and not planning_history and not fusion_history_audit.get('requires_clarification')
+                and not re.search(r'数据库|数据表|\bSQL\b|\bdatabase\b', scope_question, re.I)):
+            # A complete, unique document cell must not become a SQL query
+            # merely because its column says “地区” or “数量”. This is source
+            # selection from actual original evidence, never keyword override.
+            hits = self.knowledge.search(scope_question, top_k=4)
+            native_document = self.knowledge._native_table_literal_answer(scope_question, hits)
         explicit_formula_tasks=None
         if (os.getenv('ICT8_FAST_SQL','0')=='1' and not image_attachments and not history_error and inherited is None
                 and not fusion_history_audit.get('requires_clarification')):
@@ -1064,6 +1256,10 @@ class OmniAgent:
         elif direct_sql is not None:
             plan, source = direct_sql, 'server_verified_sql_route'
             planning_notes.append('complete_schema_value_time_coverage_model_sql_planner_retained')
+        elif native_document is not None:
+            plan={'route':'document','effective_question':scope_question,'tasks_json':'[]','clarification':''}
+            source='server_verified_native_table_route'
+            planning_notes.append('complete_literal_question_bound_to_original_document_table')
         elif explicit_formula_tasks is not None:
             plan={'route':'fusion','effective_question':scope_question,
                 'tasks_json':json.dumps(explicit_formula_tasks,ensure_ascii=False),'clarification':''}
@@ -1097,6 +1293,17 @@ class OmniAgent:
                     'required_operations': requirements,
                     'database_schema': self.engine.schema(include_row_count=False),
                     'documents': self.catalogue(context_question, trace_callback=_trace_callback)}
+                from .sql_document_cell_binding import ranked_cell_intent
+                try:
+                    ranked_intent = ranked_cell_intent(scope_question, self.engine, self.knowledge)
+                    if ranked_intent:
+                        context['server_ranked_cell_intent'] = ranked_intent.navigation()
+                except SourceConstraintError as exc:
+                    context['server_ranked_cell_scope_error'] = exc.code
+                if self.experience is not None and not image_attachments:
+                    experience_decision = self.experience.select(scope_question)
+                    if experience_decision.get('advice'):
+                        context['task_experience'] = experience_decision['advice']
                 if image_attachments:
                     context['attached_image_count'] = len(image_attachments)
                 image_generate_options = {'image_attachments': image_attachments} if image_attachments else {}
@@ -1115,8 +1322,17 @@ class OmniAgent:
                                 name='omni_plan' if attempt == 0 else 'omni_plan_completion_repair', max_tokens=5000,
                                 **image_generate_options))
                     except GenerationError:
+                        failed_audit = dict(getattr(self.client, 'audit', {}))
                         planning_attempts.append({'attempt': attempt+1, 'validation': 'provider_failed',
-                                                  'api_audit': dict(getattr(self.client, 'audit', {}))})
+                                                  'api_audit': failed_audit})
+                        if attempt == 0 and completed_json_protocol_failure(failed_audit):
+                            planning_attempts[-1]['validation'] = 'completed_invalid_json'
+                            context = {**context, 'plan_completion_feedback': {
+                                'errors': ['completed_plan_invalid_json'],
+                                'instruction': '为同一原始问题重新提出完整计划。只返回一个符合Schema的JSON对象；'
+                                    'tasks_json为JSON数组的字符串。不得输出DSML、Markdown、角色分隔符或JSON后的附加文字。'
+                                    '保留全部用户约束；上一响应未被执行，不可假设任何工具已经运行。'}}
+                            continue
                         raise
                     protocol_error = None
                     protocol_details = []
@@ -1142,7 +1358,9 @@ class OmniAgent:
                     planning_attempts.append({'attempt': attempt+1, 'validation': ('complete' if not errors else
                         'plan_protocol_rejected' if protocol_error else 'requested_operation_missing'),
                                               'errors': errors, 'api_audit': audit})
-                    if protocol_details:
+                    if rejection_code == 'sql_document_cell_plan_scope_invalid':
+                        planning_attempts[-1]['source_scope_errors'] = protocol_details
+                    elif protocol_details:
                         planning_attempts[-1]['reference_type_errors'] = protocol_details
                     if not errors:
                         rejection_code = None
@@ -1193,7 +1411,13 @@ class OmniAgent:
                         context['plan_completion_feedback']['instruction'] += (
                             '当前非fusion路由与非空任务图不兼容。按route_task_contract重新输出完整计划，'
                             '不要重复提交document/sql路由加多步任务；不能为了格式合规删掉用户要求的实际操作。')
-                    if protocol_details:
+                    if rejection_code == 'sql_document_cell_plan_scope_invalid':
+                        context['plan_completion_feedback']['source_scope_errors'] = protocol_details
+                        context['plan_completion_feedback']['instruction'] += (
+                            '按server_ranked_cell_intent的独立原始范围修复SQL与PDF依赖；'
+                            'SQL问题必须保留top_n=1，明确取最高的1个，不能仅全量降序。'
+                            'document_cell必须使用已核验document_id/column和SQL维度引用；不得固定冠军。')
+                    elif protocol_details:
                         context['plan_completion_feedback']['reference_type_errors'] = protocol_details
                         context['plan_completion_feedback']['instruction'] += (
                             '文本字段只接受标量或扁平标量数组；按给出的字段路径与类型重新规划，'
@@ -1205,6 +1429,10 @@ class OmniAgent:
                     raise ValueError('图片内容未能完成识别，本次没有忽略图片继续回答，请稍后重试。') from exc
                 source, error = 'rules_fallback', type(exc).__name__
                 plan = self.basic_plan(scope_question, history)
+                if plan['route'] == 'clarify' and rejection_code in {
+                        'sql_document_plan_scope_invalid', 'sql_document_cell_plan_scope_invalid'}:
+                    plan['clarification'] = ('未能形成可核验的跨源方案，本次未执行该方案。'
+                        '请分别写明数据库取数的时间、地区和指标，以及需要查找的资料内容。')
         else:
             plan = self.basic_plan(scope_question, history)
         route, effective = plan['route'], plan['effective_question']
@@ -1250,6 +1478,8 @@ class OmniAgent:
                   'latency_ms': round((time.perf_counter()-started)*1000, 3), 'error': error,
                   'rejection_code': rejection_code,
                   'normalizations': planning_notes, 'attempts': planning_attempts}]
+        if experience_decision is not None:
+            trace[0]['task_experience'] = experience_decision
         if route == 'sql':
             try:
                 required = self.engine.extract_required_intent(effective)
@@ -1316,20 +1546,27 @@ class OmniAgent:
                 verify_inherited_document_tasks(tasks, inherited)
                 def task_event(event):
                     if _trace_callback:
-                        _trace_callback({'stage': 'fusion_task', 'tool': event['tool'],
-                            'task_id': event['task_id'], 'status': 'success' if event['status'] == 'complete' else 'error',
+                        status = {'complete': 'success', 'failed': 'error', 'rejected': 'attention'}.get(event['status'], event['status'])
+                        _trace_callback({'stage': event.get('stage', 'fusion_task'), 'tool': event.get('tool', 'fusion.validation'),
+                            'call_id': f'fusion:{event.get("trace_id", "validation")}:{event.get("task_id", event.get("stage", "validation"))}',
+                            'trace_id': event.get('trace_id'), 'task_id': event.get('task_id'), 'status': status,
+                            'dependencies': list(event.get('dependencies') or []),
                             'executed': event['status'] == 'complete',
-                            'output': {'status': event['status'], 'latency_ms': event.get('latency_ms')}})
+                            'failure': event.get('failure'), 'error_code': event.get('error_code'),
+                            'latency_ms': event.get('latency_ms'),
+                            'output': {**event.get('output', {}), 'status': event['status'], 'latency_ms': event.get('latency_ms')}})
                 result = self._tool_call(_trace_callback, 'fusion.execute',
                     lambda: DependencyAgent(self.engine, self.knowledge).run(tasks,
-                        original_question=scope_question, on_event=task_event),
+                        original_question=scope_question, on_progress=task_event),
                     input={'task_count': len(tasks)})
             except SourceConstraintError as exc:
                 result = {'status': 'clarification', 'clarification': str(exc), 'clarification_code': exc.code,
                           'results': {}, 'trace': [], 'trace_id': 'source_scope_unverified'}
             result['execution_plan'] = tasks
-            from .fusion_result_answer import calculation_answer
+            from .fusion_result_answer import calculation_answer, ranked_cell_answer
             rendered_answer=calculation_answer(tasks,result,self.knowledge)
+            if not rendered_answer:
+                rendered_answer=ranked_cell_answer(tasks,result,self.knowledge)
             if rendered_answer:result['answer']=rendered_answer
             fusion_retrieval_summary(result)
             state = {'route': route, 'trace_id': result['trace_id']}
@@ -1365,6 +1602,8 @@ class OmniAgent:
         response = {'status': result['status'], 'question': question, 'effective_question': effective, 'route': route,
                     'planner_source': source, 'session_id': session_id, 'context_turns': len(history),
                     'state': {key:value for key,value in state.items() if key not in {'comparison_snapshot','ranked_result_snapshot','sql_result_snapshot'}}, 'result': result, 'trace': trace, 'audit_id': audit_id}
+        if experience_decision is not None and hasattr(self.experience, 'observe'):
+            trace[0]['task_experience_observation'] = self.experience.observe(experience_decision,response)
         response['context_resolution'] = fusion_history_audit
         if session_id:
             pending_parent = (history[-1].turn_id if history and

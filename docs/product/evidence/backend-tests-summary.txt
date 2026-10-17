@@ -1,0 +1,88 @@
+Omni-Agent backend product verification — 2026-10-13 (Asia/Shanghai)
+
+Base revision: 19714677ed01fb09e6a1d75a49a85f37b1520c06 (memory)
+All test runs disabled the model planner/generator; no paid model requests were made by this work.
+
+Final focused regression: 123 passed, 3 dependency deprecation warnings, 7.33 s.
+Full log: backend-tests-final.log
+The earlier focused run had 117 passes; six source-selection/history-reference conflict cases were added afterwards.
+
+Files exercised:
+  ict-track8/tests/test_product_events_scope.py
+  ict-track8/tests/test_omni_query_stream.py
+  ict-track8/tests/test_dependency_agent.py
+  ict-track8/tests/test_fusion_source_constraints.py
+  ict-track8/tests/test_streaming.py
+  ict-track8/tests/test_foundation_stream_fault.py
+
+Coverage includes actual SQLite/formula execution callbacks, legacy terminal hooks, dependency failure propagation, bounded public tool receipts, no model reasoning/secret fields in those receipts, selected-document retrieval isolation, honest structure/excerpt coverage, original-file hash tampering, read-only request rejection, missing-document errors, SSE compatibility, source constraints, stream failure reporting, and conflicting document/history references.
+
+Final command (from repo root):
+env ICT8_GENERATION_PROVIDER= ICT8_PLAN_PROVIDER= ICT8_PLAN_URL= ICT8_DB_PATH=/tmp/omni-product-event-tests/sales.sqlite ICT8_KNOWLEDGE_ROOT=/tmp/omni-product-event-tests/knowledge ICT8_SESSION_DB=/tmp/omni-product-event-tests/sessions.sqlite PYTHONPATH=ict-track8 .venv/bin/pytest -q --tb=short -o faulthandler_timeout=30 ict-track8/tests/test_product_events_scope.py ict-track8/tests/test_omni_query_stream.py ict-track8/tests/test_dependency_agent.py ict-track8/tests/test_fusion_source_constraints.py ict-track8/tests/test_streaming.py ict-track8/tests/test_foundation_stream_fault.py
+
+Additional existing document-dialogue suite:
+  Modified working tree: 19 failed, 4 passed.
+  Original HEAD, exported with git archive to /tmp/omni-product-events-head-baseline: same 19 failed, 4 passed.
+  All 19 fail at the old fixture's first warranty question: expected ok, received insufficient_evidence with no model configured.
+  These are reproduced pre-existing baseline failures, not counted as passing or hidden by fixture/Gold changes.
+  Original-HEAD full reproduction log: backend-head-document-dialogue.log
+
+Test environment:
+  Project .venv, Python 3.12; local permissions required for TestClient event-loop communication.
+  An initial sandbox TestClient run stalled; it was interrupted and repeated successfully with local permissions.
+  Importing the default app during the initial test run changed the initially clean demo_sales.sqlite; that file alone was restored byte-for-byte from HEAD with the root agent's authorization. Subsequent runs use the isolated /tmp database, knowledge directory and session database above. The tracked demo database has no diff.
+
+baseline-c.json/.sse investigation:
+  Question: 根据教材公式和参数计算运输保险费。
+  planner_source: rules_fallback; first planning attempt: GenerationError, no semantic rejection_code.
+  HTTP 200; ledger response state incomplete; output_tokens 2000, reasoning_tokens 2000.
+  Omni requested a 5000-token plan budget, but runtime/local_run_20261012/budget_transport.py caps every request at 2000 output tokens. All returned tokens were reasoning; no completed structured plan was available.
+  responses_client.py refuses payload.status != completed before JSON plan validation; the fallback then takes the generic document path. This was not a failed safety/source validation.
+  Recommended deployment repair: preserve per-call requested limits up to a configured bound (at least 5000 for planning), and reserve cost using the same output limit while retaining the existing shared 20-call / CNY 5 ledger. Alternatively lower reasoning only after verifying provider support. No automatic retry or budget reset is proposed. This audit did not change deployment budgets or call a model.
+
+Scope conflict protection:
+  Explicit document_id plus history/source-reference commands or another explicitly named document returns clarification_code selected_source_reference_conflict.
+  No answer retrieval executes and existing session history is preserved.
+  Plain questions about the current selected file continue to use only that document after original-file verification.
+
+
+2026-10-13: saved real Demo 3 / Demo 4 offline diagnosis and fix
+============================================================
+No model calls, runtime configuration edits, or frontend edits were made for this follow-up.
+
+Demo 3: demo3-formula.json contains model_validated formula + SQL + calculation tasks.
+The recorded terminal error is source_scope_unverified (not source_constraint_mismatch).
+The original user-source clause was independently parsed as SUM(sales_amount) plus
+COUNT_DISTINCT(order_id), but the cue coverage loop examined only plan.metric_function
+(the first SUM). The later metric's bound phrase 去重订单数 stayed unconsumed, so the
+server stopped before tools. The fix consumes DISTINCT phrases only for the physical
+metric whose function is COUNT_DISTINCT; it does not globally discard 去重 from a query.
+
+The recorded model plan also references the order count under aggregate_cells/COUNT,
+which is different from the requested and executed COUNT_DISTINCT. That reference must
+still fail. The existing formula document defines 客单价 = 销售额 / 订单数, and the metric
+catalog defines 订单数 as COUNT. The user question's added 去重 request conflicts with that
+configured formula parameter meaning. We kept all source and formula semantic checks.
+The generic planning instructions now explicitly explain these independent aggregate
+paths and the need to clarify incompatible formula/count semantics.
+
+Demo 4: both model attempts completed successfully at the provider (HTTP 200, completed),
+then failed sql_document_plan_scope_invalid / sql_document_scope_unverified. This is not
+an output token truncation. The saved evidence does not retain the rejected raw graph,
+so the exact violating reference or literal cannot be reconstructed from these files.
+A schema-grounded SQL ranking -> search graph passed existing scope authorization offline;
+see backend-demo4-offline-authorized.json. That is a protocol diagnostic, not a successful
+model execution or an end-to-end demo score. The prompt now includes the generic valid
+ranking -> dimension_values -> search shape, with placeholders explicitly requiring
+actual schema fields and the original verbatim search target. No validators were loosened.
+
+Validation:
+- backend-distinct-tests.log: 154 passed (35.41s), covering metric_catalog_bindings,
+  aggregate_coverage, round13_count_semantics, fusion_source_constraints,
+  and sql_aggregate_evidence.
+- backend-distinct-chain-tests.log: 3 passed, 76 deselected. New real isolated SQLite +
+  ingested document tests verify: correct SUM/COUNT_DISTINCT result; a SQL task that
+  silently changes DISTINCT to COUNT is blocked by source_constraint_mismatch before
+  executing that SQL; a COUNT path into a COUNT_DISTINCT result is blocked before compute.
+- The passing tests are offline regression tests, not autonomous LLM benchmark scores.
+- git diff --check passed.

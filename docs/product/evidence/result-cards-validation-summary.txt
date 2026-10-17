@@ -1,0 +1,54 @@
+Result-card / CJK / recovery validation evidence
+Base commit: 19714677ed01fb09e6a1d75a49a85f37b1520c06
+No model, browser, or network calls were made for these checks.
+
+Base reproduction:
+- All 165 exported backend files were byte-compared with git show at the exact commit.
+- The two test files were exported verbatim from the same commit.
+- Both disputed assertions failed on that baseline with the same assertion differences.
+- Preview assertion: current snippet already includes the tail sentence.
+- Composition assertion: execution kwargs additionally include image_attachments=None and retrieval_context=None.
+- The baseline manifest includes file SHA-256 values.
+
+Current worktree:
+- CJK/native compatibility: 158 passed.
+- Recovery status targeted checks: 3 passed, 24 deselected.
+- Expanded recovery: 87 passed, 1 failed, 1 deselected. Remaining failure is the reproduced baseline composition assertion; the deselected test is the reproduced baseline preview assertion.
+- No claim that the expanded suite passes in full.
+
+Root-page old-action scope review:
+- Passed offline evaluation of the actual result-action callback and control selectors.
+- Original document is captured by copy; changing the current selection does not redirect a previous result action.
+- Clear-scope action passes null; changed session, active request, or file upload blocks action.
+- Previous result buttons are disabled when starting and completing the next turn.
+- This is a code/callback review, not a browser interaction run.
+
+Reproduction commands (run in the listed cwd):
+
+result-cards-head-baseline-failures
+cwd: /tmp/omni-product-events-head-baseline
+PYTHONPATH=/tmp/omni-product-events-head-baseline/ict-track8 PYTHONDONTWRITEBYTECODE=1 /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/.venv/bin/python -m pytest -q ict-track8/tests/test_evidence_recovery_round5.py::test_navigation_sees_original_condition_beyond_retrieval_preview ict-track8/tests/test_document_parts_composition.py::test_success_preserves_original_question_scope_literals_and_server_computation
+result: 2 failed in 0.69s
+log: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/runtime/product_20261013/result-cards-head-baseline-failures.log
+
+result-cards-cjk158
+cwd: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent
+PYTHONPATH=/home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/ict-track8 PYTHONDONTWRITEBYTECODE=1 /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/.venv/bin/python -m pytest -q ict-track8/tests/test_cjk_numeric_continuation.py ict-track8/tests/test_native_continuation.py ict-track8/tests/test_pdf_native_context.py ict-track8/tests/test_literal_english_generation.py ict-track8/tests/test_grounded_span_contract_pin_round5.py
+result: 158 passed in 2.14s
+log: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/runtime/product_20261013/result-cards-cjk158.log
+
+result-cards-recovery3
+cwd: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent
+PYTHONPATH=/home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/ict-track8 PYTHONDONTWRITEBYTECODE=1 /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/.venv/bin/python -m pytest -q ict-track8/tests/test_evidence_recovery_round5.py -k 'real_source_retrieval_recovery or recovery_that_still_abstains or recovered_answer_final_source_failure'
+result: 3 passed, 24 deselected in 1.16s
+log: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/runtime/product_20261013/result-cards-recovery3.log
+
+result-cards-recovery-extended
+cwd: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent
+PYTHONPATH=/home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/ict-track8 PYTHONDONTWRITEBYTECODE=1 /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/.venv/bin/python -m pytest -q ict-track8/tests/test_evidence_recovery_round5.py -k 'not navigation_sees_original_condition_beyond_retrieval_preview' ict-track8/tests/test_document_parts_composition.py ict-track8/tests/test_source_span_store.py ict-track8/tests/test_round10_multi_source_store.py
+result: 1 failed, 87 passed, 1 deselected in 3.60s
+log: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/runtime/product_20261013/result-cards-recovery-extended.log
+
+Scope review command:
+/home/viva/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node runtime/product_20261013/result-cards-scope-review.js
+log: runtime/product_20261013/result-cards-scope-review.log

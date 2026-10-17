@@ -1,0 +1,31 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_planner_receives_request_local_advice_and_generates_new_parameters ____
+
+env = (<backend.memory.adapter.MemoryAdapter object at 0x7abae05a7920>, LocalReviewContext(uid=1001, account='viva', host='a.../memory.sqlite', scope_key='{"data_sources":["database","policy","targets"],"deployment":"test","project":"project"}'))
+
+    def test_planner_receives_request_local_advice_and_generates_new_parameters(env):
+        from copy import deepcopy
+        from backend.omni_agent import OmniAgent
+        from backend.session import ConversationStore
+        adapter,authority=env;confirm(adapter,authority)
+        calls=[]
+        class Planner:
+            audit={'status':'completed','http_status':200}
+            def generate(self,instructions,context,schema,**kwargs):
+                calls.append(deepcopy(context))
+                tasks=json.loads(json.dumps(TASKS).replace('华东','华南').replace('2025','2024'))
+                return {'route':'fusion','effective_question':context['question'],'tasks_json':json.dumps(tasks,ensure_ascii=False),'clarification':''}
+        agent=OmniAgent(adapter.engine,adapter.knowledge,ConversationStore(),Planner(),experience=ExperienceSelector(adapter))
+        result=agent.query(QUESTION.replace('华东','华南').replace('2025','2024'),session_id='new')
+>       assert result['context_turns']==0 and result['status']=='ok', result
+E       AssertionError: {'status': 'incomplete', 'question': '根据《指标与计划》目标销售额公式和《区域计划》2026年华南目标增长率，以及数据库2024年华南销售额，计算2026年目标销售额。', 'effective_question': '根据《指标与计划》目标销售额公式和《区域计划》2026年华南目标增长率，以及数据库2024年华南销售额，计算2026年目标销售额。', 'route': 'fusion', ...}
+E       assert (0 == 0 and 'incomplete' == 'ok'
+E         
+E         - ok
+E         + incomplete)
+
+ict-track8/tests/test_task_experience.py:144: AssertionError
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_task_experience.py::test_planner_receives_request_local_advice_and_generates_new_parameters
+1 failed in 0.43s

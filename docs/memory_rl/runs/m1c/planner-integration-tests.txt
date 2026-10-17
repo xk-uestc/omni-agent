@@ -1,0 +1,31 @@
+...........F............................................................ [ 68%]
+.................................                                        [100%]
+=================================== FAILURES ===================================
+___ test_planner_receives_request_local_advice_and_generates_new_parameters ____
+
+env = (<backend.memory.adapter.MemoryAdapter object at 0x79c465573e90>, LocalReviewContext(uid=1001, account='viva', host='a.../memory.sqlite', scope_key='{"data_sources":["database","policy","targets"],"deployment":"test","project":"project"}'))
+
+    def test_planner_receives_request_local_advice_and_generates_new_parameters(env):
+        from copy import deepcopy
+        from backend.omni_agent import OmniAgent
+        from backend.session import ConversationStore
+        adapter,authority=env;confirm(adapter,authority)
+        calls=[]
+        class Planner:
+            audit={'status':'completed','http_status':200}
+            def generate(self,instructions,context,schema,**kwargs):
+                calls.append(deepcopy(context))
+                tasks=json.loads(json.dumps(TASKS).replace('华东','华南').replace('2025','2024'))
+                return {'route':'fusion','effective_question':context['question'],'tasks_json':json.dumps(tasks,ensure_ascii=False),'clarification':''}
+        agent=OmniAgent(adapter.engine,adapter.knowledge,ConversationStore(),Planner(),experience=ExperienceSelector(adapter))
+        result=agent.query(QUESTION.replace('华东','华南').replace('2025','2024'),session_id='new')
+>       assert result['context_turns']==0 and result['status']=='ok'
+E       AssertionError: assert (0 == 0 and 'incomplete' == 'ok'
+E         
+E         - ok
+E         + incomplete)
+
+ict-track8/tests/test_task_experience.py:144: AssertionError
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_task_experience.py::test_planner_receives_request_local_advice_and_generates_new_parameters
+1 failed, 104 passed in 3.55s

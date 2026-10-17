@@ -1,0 +1,1893 @@
+{
+  "workflow": "B",
+  "question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+  "response": {
+    "status": "ok",
+    "question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+    "effective_question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+    "route": "fusion",
+    "planner_source": "model_validated",
+    "session_id": "fresh",
+    "context_turns": 0,
+    "state": {
+      "route": "fusion",
+      "trace_id": "b1dfdb93e56f591f75ef",
+      "fusion_context": {
+        "status": "verified",
+        "scope_question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "documents": {
+          "methods": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542"
+        },
+        "source_bindings": [
+          {
+            "task_id": "t1",
+            "id": "sql_scope_1",
+            "start": 5,
+            "end": 21,
+            "text": "查2025年销售额排名第一的地区",
+            "role": "observation",
+            "qualifier_ranges": [],
+            "target_binding": null,
+            "document_search_ranges": [
+              [
+                22,
+                37
+              ]
+            ]
+          }
+        ],
+        "document_tasks": [
+          {
+            "tool": "search",
+            "args": {
+              "query": [
+                {
+                  "ref": "t1",
+                  "path": [
+                    "dimension_values",
+                    "sales_orders",
+                    "region",
+                    0
+                  ]
+                },
+                "冠军团队的方法"
+              ],
+              "document_id": "methods"
+            }
+          }
+        ],
+        "formula_contracts": [],
+        "task_template": {
+          "payload": {
+            "scope_question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+            "documents": {
+              "methods": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542"
+            },
+            "source_bindings": [
+              {
+                "task_id": "t1",
+                "id": "sql_scope_1",
+                "start": 5,
+                "end": 21,
+                "text": "查2025年销售额排名第一的地区",
+                "role": "observation",
+                "qualifier_ranges": [],
+                "target_binding": null,
+                "document_search_ranges": [
+                  [
+                    22,
+                    37
+                  ]
+                ]
+              }
+            ],
+            "document_tasks": [
+              {
+                "tool": "search",
+                "args": {
+                  "query": [
+                    {
+                      "ref": "t1",
+                      "path": [
+                        "dimension_values",
+                        "sales_orders",
+                        "region",
+                        0
+                      ]
+                    },
+                    "冠军团队的方法"
+                  ],
+                  "document_id": "methods"
+                }
+              }
+            ],
+            "formula_contracts": [],
+            "tasks": [
+              {
+                "id": "t1",
+                "tool": "sql",
+                "args": {
+                  "question": "2025年销售额排名第一的地区"
+                }
+              },
+              {
+                "id": "t2",
+                "tool": "search",
+                "args": {
+                  "query": [
+                    {
+                      "ref": "t1",
+                      "path": [
+                        "dimension_values",
+                        "sales_orders",
+                        "region",
+                        0
+                      ]
+                    },
+                    "冠军团队的方法"
+                  ],
+                  "document_id": "methods"
+                }
+              }
+            ]
+          },
+          "sha256": "dd143814e32e8b1a396582cea37444f94352a790be22a0343480a81b5945f284"
+        }
+      },
+      "fusion_result_snapshot": {
+        "payload": {
+          "question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+          "source_revision": "e3349d9c04d6b2a3c8ed936b6c45a92cdb567704c352ddfcf5d0796abb8055ec",
+          "documents": {
+            "methods": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542"
+          },
+          "sql_facts": [
+            {
+              "sql": "SELECT \"region\", \"销售额\", \"排名\" FROM (SELECT \"sales_orders\".\"region\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\", DENSE_RANK() OVER (ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC) AS \"排名\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY \"sales_orders\".\"region\") AS ranked WHERE \"排名\" <= ? ORDER BY \"排名\" ASC, \"销售额\" DESC LIMIT ?",
+              "parameters": [
+                "2025-01-01",
+                "2026-01-01",
+                1,
+                100
+              ],
+              "rows": [
+                {
+                  "region": "华北",
+                  "销售额": 6004.0,
+                  "排名": 1
+                }
+              ],
+              "columns": [
+                "region",
+                "销售额",
+                "排名"
+              ],
+              "provenance": {
+                "source_type": "structured_database",
+                "database": "mixed.sqlite",
+                "table": "sales_orders",
+                "row_count": 1,
+                "row_limit": 100,
+                "result_completeness": "within_return_limit",
+                "query_hash": "de346c8af035c202",
+                "field_links": [
+                  {
+                    "source_text": "销售额",
+                    "table": "sales_orders",
+                    "column": "sales_amount",
+                    "role": "metric",
+                    "score": 0.82,
+                    "matched_alias": "销售额",
+                    "metric_function": "SUM"
+                  },
+                  {
+                    "source_text": "地区",
+                    "table": "sales_orders",
+                    "column": "region",
+                    "role": "dimension",
+                    "score": 0.74,
+                    "matched_alias": "地区",
+                    "metric_function": null
+                  }
+                ],
+                "coverage": {
+                  "consumed": [
+                    "2025年",
+                    "地区",
+                    "排名",
+                    "排名第一",
+                    "销售额"
+                  ],
+                  "unresolved": [],
+                  "ignored_instruction_spans": []
+                },
+                "consistency": "sqlite_read_transaction",
+                "source_revision": "e3349d9c04d6b2a3c8ed936b6c45a92cdb567704c352ddfcf5d0796abb8055ec",
+                "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+                "grain_audit": {},
+                "result_cells": [
+                  {
+                    "row": 0,
+                    "column": "region",
+                    "query_hash": "de346c8af035c202",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "region"
+                    }
+                  },
+                  {
+                    "row": 0,
+                    "column": "销售额",
+                    "query_hash": "de346c8af035c202",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "销售额"
+                    }
+                  },
+                  {
+                    "row": 0,
+                    "column": "排名",
+                    "query_hash": "de346c8af035c202",
+                    "locator": {
+                      "type": "sql_result",
+                      "row": 0,
+                      "column": "排名"
+                    }
+                  }
+                ],
+                "source_constraint_validation": {
+                  "status": "verified",
+                  "error_codes": [],
+                  "scope_question_sha256": "a46266998c88e89b3d664a65e93cf90f41e789bc1be04376e0c2a9fe8c7d563e",
+                  "verification": "typed_original_source_clause_before_sql_execution"
+                }
+              }
+            }
+          ],
+          "citations": [
+            {
+              "document_id": "6be05cca913386905dd598cc",
+              "title": "区域团队方法",
+              "score": 0.8384,
+              "matched_terms": [
+                "团队",
+                "方法",
+                "军团",
+                "军团队",
+                "冠军",
+                "冠军团",
+                "团队的",
+                "的方",
+                "的方法",
+                "队的",
+                "队的方"
+              ],
+              "snippet": "华东冠军团队的方法:每日核验库存,按客户需求安排补货。\n华南冠军团队的方法:每周复核渠道订单。",
+              "source_uri": "/api/v1/knowledge/documents/methods/original",
+              "metadata": {
+                "line_start": 1,
+                "line_end": 2,
+                "source_sha256": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542",
+                "original_document_id": "methods",
+                "document_id": "methods",
+                "chunk_id": "6be05cca913386905dd598cc",
+                "source_locator": "lines:1-2",
+                "page_no": null,
+                "sheet_name": null,
+                "row_start": null,
+                "row_end": null,
+                "title_path": [],
+                "quality": 1.0,
+                "warnings": [],
+                "raysource_images": [],
+                "bm25_raw": 5.187524,
+                "retrieval_channel": "bm25",
+                "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                "bm25_relative": 1.0,
+                "bm25_rank": 1,
+                "ranking_score": 11.771689076923076,
+                "anchor_match_count": 0,
+                "retrieval_language_policy": {
+                  "query_language": "zh_or_mixed",
+                  "encoder_languages": null,
+                  "strategy": "configured_retrieval"
+                },
+                "page_scope_coverage": 0,
+                "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+                "body_query_term_coverage": 0.8461538461538463,
+                "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+                "question_shape_navigation": {
+                  "method": "generic_purpose_body_affinity_not_semantic_proof",
+                  "body_affinity": 1.0
+                },
+                "identifier_anchors": [],
+                "evidence_role": "primary",
+                "evidence_selection": {
+                  "method": "query_body_lexical_coverage_navigation_only",
+                  "semantic_sufficiency": "not_evaluated",
+                  "new_lexical_facets": [
+                    "军团",
+                    "冠军",
+                    "团队",
+                    "方法",
+                    "的方",
+                    "队的"
+                  ],
+                  "body_sha256": "0aec279afe37f1ec58e3a4bac71f59c7d25407e37b55a4765a11856c661e7b80",
+                  "utility": 1.385714,
+                  "uncovered_lexical_facets": [
+                    "华北"
+                  ],
+                  "selection_budget_exhausted": false
+                }
+              }
+            }
+          ]
+        },
+        "sha256": "76bf97aef7089b76d9e7559cdb5e7c9715306b88125d585f16071f9999cd6d1a"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "trace_id": "b1dfdb93e56f591f75ef",
+      "results": {
+        "t1": {
+          "status": "ok",
+          "result_state": "rows",
+          "notices": [],
+          "question": "2025年销售额排名第一的地区",
+          "rewritten_question": "2025年销售额排名第一的地区",
+          "sql": "SELECT \"region\", \"销售额\", \"排名\" FROM (SELECT \"sales_orders\".\"region\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\", DENSE_RANK() OVER (ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC) AS \"排名\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY \"sales_orders\".\"region\") AS ranked WHERE \"排名\" <= ? ORDER BY \"排名\" ASC, \"销售额\" DESC LIMIT ?",
+          "parameters": [
+            "2025-01-01",
+            "2026-01-01",
+            1,
+            100
+          ],
+          "columns": [
+            "region",
+            "销售额",
+            "排名"
+          ],
+          "rows": [
+            {
+              "region": "华北",
+              "销售额": 6004.0,
+              "排名": 1
+            }
+          ],
+          "plan": {
+            "table": "sales_orders",
+            "metric_table": "sales_orders",
+            "metric_column": "sales_amount",
+            "metric_function": "SUM",
+            "metric_label": "销售额",
+            "analysis_mode": "rank",
+            "dimensions": [
+              "region"
+            ],
+            "dimension_tables": {
+              "region": "sales_orders"
+            },
+            "dimension_transforms": {},
+            "dimension_labels": {},
+            "filters": [
+              {
+                "column": "order_date",
+                "operator": "RANGE",
+                "value": [
+                  "2025-01-01",
+                  "2026-01-01"
+                ],
+                "source_text": "2025年",
+                "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+                "table": "sales_orders"
+              }
+            ],
+            "having": null,
+            "links": [
+              {
+                "source_text": "销售额",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "role": "metric",
+                "score": 0.82,
+                "matched_alias": "销售额",
+                "metric_function": "SUM"
+              },
+              {
+                "source_text": "地区",
+                "table": "sales_orders",
+                "column": "region",
+                "role": "dimension",
+                "score": 0.74,
+                "matched_alias": "地区",
+                "metric_function": null
+              }
+            ],
+            "join_tables": [],
+            "join_conditions": [],
+            "join_path": [],
+            "join_alternatives": [],
+            "order_desc": true,
+            "limit": 100,
+            "complete_results": false,
+            "semantic_row_limit": null,
+            "preview_row_limit": null,
+            "confidence": 0.72,
+            "rewritten_question": "2025年销售额排名第一的地区",
+            "comparison_mode": "none",
+            "comparison_period": {},
+            "clarification": null,
+            "clarification_code": null,
+            "clarification_options": [],
+            "assumptions": [
+              "日期参数格式：iso_text",
+              "使用表 sales_orders 的只读聚合查询"
+            ],
+            "planner_source": "rules",
+            "top_n": 1,
+            "fan_out": false,
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "地区",
+                "排名",
+                "排名第一",
+                "销售额"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "intent_audit": {
+              "question": "2025年销售额排名第一的地区",
+              "metric": {
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "function": "SUM",
+                "label": "销售额"
+              },
+              "filters": [
+                {
+                  "column": "order_date",
+                  "operator": "RANGE",
+                  "value": [
+                    "2025-01-01",
+                    "2026-01-01"
+                  ],
+                  "source_text": "2025年",
+                  "explanation": "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+                  "table": "sales_orders"
+                }
+              ],
+              "time_range": [
+                "2025-01-01",
+                "2026-01-01"
+              ],
+              "group_by": [
+                {
+                  "table": "sales_orders",
+                  "column": "region",
+                  "grain": "raw",
+                  "label": "region"
+                }
+              ],
+              "comparison": "none",
+              "comparison_window": null,
+              "top_n": 1,
+              "confidence": 0.72,
+              "unresolved": [],
+              "execution_allowed": true,
+              "planner_source": "rules",
+              "planner_audit": {},
+              "metrics": [],
+              "derived_metrics": [],
+              "grain_audit": {},
+              "semantic_audit": {
+                "date_storage_formats": {
+                  "sales_orders.order_date": "iso_text"
+                }
+              },
+              "source_constraint_validation": {
+                "status": "verified",
+                "error_codes": [],
+                "scope_question_sha256": "a46266998c88e89b3d664a65e93cf90f41e789bc1be04376e0c2a9fe8c7d563e",
+                "verification": "typed_original_source_clause_before_sql_execution"
+              }
+            },
+            "planner_audit": {},
+            "model_plan_diagnostics": {},
+            "metrics": [],
+            "derived_metrics": [],
+            "order_metric": null,
+            "grain_audit": {},
+            "semantic_audit": {
+              "date_storage_formats": {
+                "sales_orders.order_date": "iso_text"
+              }
+            },
+            "output_metrics": []
+          },
+          "explanation": [
+            "识别指标：销售额（SUM）",
+            "查询表：sales_orders",
+            "分析模式：rank",
+            "Top-N：前 1（DENSE_RANK，含并列）",
+            "限制时间 [2025-01-01, 2026-01-01)，时间字段 sales_orders.order_date",
+            "日期参数格式：iso_text",
+            "使用表 sales_orders 的只读聚合查询",
+            "执行策略：只读参数化 SQL，并通过 SQLite authorizer 拒绝写操作。"
+          ],
+          "provenance": {
+            "source_type": "structured_database",
+            "database": "mixed.sqlite",
+            "table": "sales_orders",
+            "row_count": 1,
+            "row_limit": 100,
+            "result_completeness": "within_return_limit",
+            "query_hash": "de346c8af035c202",
+            "field_links": [
+              {
+                "source_text": "销售额",
+                "table": "sales_orders",
+                "column": "sales_amount",
+                "role": "metric",
+                "score": 0.82,
+                "matched_alias": "销售额",
+                "metric_function": "SUM"
+              },
+              {
+                "source_text": "地区",
+                "table": "sales_orders",
+                "column": "region",
+                "role": "dimension",
+                "score": 0.74,
+                "matched_alias": "地区",
+                "metric_function": null
+              }
+            ],
+            "coverage": {
+              "consumed": [
+                "2025年",
+                "地区",
+                "排名",
+                "排名第一",
+                "销售额"
+              ],
+              "unresolved": [],
+              "ignored_instruction_spans": []
+            },
+            "consistency": "sqlite_read_transaction",
+            "source_revision": "e3349d9c04d6b2a3c8ed936b6c45a92cdb567704c352ddfcf5d0796abb8055ec",
+            "source_revision_kind": "file_generation_and_schema_version_not_content_hash",
+            "grain_audit": {},
+            "result_cells": [
+              {
+                "row": 0,
+                "column": "region",
+                "query_hash": "de346c8af035c202",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "region"
+                }
+              },
+              {
+                "row": 0,
+                "column": "销售额",
+                "query_hash": "de346c8af035c202",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "销售额"
+                }
+              },
+              {
+                "row": 0,
+                "column": "排名",
+                "query_hash": "de346c8af035c202",
+                "locator": {
+                  "type": "sql_result",
+                  "row": 0,
+                  "column": "排名"
+                }
+              }
+            ],
+            "source_constraint_validation": {
+              "status": "verified",
+              "error_codes": [],
+              "scope_question_sha256": "a46266998c88e89b3d664a65e93cf90f41e789bc1be04376e0c2a9fe8c7d563e",
+              "verification": "typed_original_source_clause_before_sql_execution"
+            }
+          },
+          "clarification": null,
+          "clarification_code": null,
+          "clarification_options": [],
+          "aggregate_cells": {
+            "sales_orders": {
+              "sales_amount": {
+                "SUM": [
+                  {
+                    "value": 6004.0,
+                    "source_uri": "sql://de346c8af035c202",
+                    "locator": "rows/0/销售额",
+                    "unit": "unknown",
+                    "metric": {
+                      "id": "single_metric",
+                      "table": "sales_orders",
+                      "column": "sales_amount",
+                      "function": "SUM",
+                      "label": "销售额"
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "dimension_values": {
+            "sales_orders": {
+              "region": [
+                "华北"
+              ]
+            }
+          },
+          "aggregate_cell_contract": {
+            "address": [
+              "table",
+              "column",
+              "function",
+              "row"
+            ],
+            "source": "actual_verified_plan_and_executed_rows",
+            "ambiguous_addresses_not_exposed": []
+          },
+          "source_tables": {
+            "database": "mixed.sqlite",
+            "source_revision": "e3349d9c04d6b2a3c8ed936b6c45a92cdb567704c352ddfcf5d0796abb8055ec",
+            "query_hash": "de346c8af035c202",
+            "source_question": null,
+            "sql": "SELECT \"region\", \"销售额\", \"排名\" FROM (SELECT \"sales_orders\".\"region\", SUM(\"sales_orders\".\"sales_amount\") AS \"销售额\", DENSE_RANK() OVER (ORDER BY SUM(\"sales_orders\".\"sales_amount\") DESC) AS \"排名\" FROM \"sales_orders\" WHERE \"sales_orders\".\"order_date\" >= ? AND \"sales_orders\".\"order_date\" < ? GROUP BY \"sales_orders\".\"region\") AS ranked WHERE \"排名\" <= ? ORDER BY \"排名\" ASC, \"销售额\" DESC LIMIT ?",
+            "parameters": [
+              "2025-01-01",
+              "2026-01-01",
+              1,
+              100
+            ],
+            "reused_result": false,
+            "tables": [
+              {
+                "name": "sales_orders",
+                "used_columns": [
+                  "order_date",
+                  "region",
+                  "sales_amount"
+                ]
+              }
+            ],
+            "basis": "executed_sql_ast_physical_sources"
+          }
+        },
+        "t2": {
+          "hits": [
+            {
+              "document_id": "6be05cca913386905dd598cc",
+              "title": "区域团队方法",
+              "score": 0.8384,
+              "matched_terms": [
+                "团队",
+                "方法",
+                "军团",
+                "军团队",
+                "冠军",
+                "冠军团",
+                "团队的",
+                "的方",
+                "的方法",
+                "队的",
+                "队的方"
+              ],
+              "snippet": "华东冠军团队的方法:每日核验库存,按客户需求安排补货。\n华南冠军团队的方法:每周复核渠道订单。",
+              "source_uri": "/api/v1/knowledge/documents/methods/original",
+              "metadata": {
+                "line_start": 1,
+                "line_end": 2,
+                "source_sha256": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542",
+                "original_document_id": "methods",
+                "document_id": "methods",
+                "chunk_id": "6be05cca913386905dd598cc",
+                "source_locator": "lines:1-2",
+                "page_no": null,
+                "sheet_name": null,
+                "row_start": null,
+                "row_end": null,
+                "title_path": [],
+                "quality": 1.0,
+                "warnings": [],
+                "raysource_images": [],
+                "bm25_raw": 5.187524,
+                "retrieval_channel": "bm25",
+                "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+                "bm25_relative": 1.0,
+                "bm25_rank": 1,
+                "ranking_score": 11.771689076923076,
+                "anchor_match_count": 0,
+                "retrieval_language_policy": {
+                  "query_language": "zh_or_mixed",
+                  "encoder_languages": null,
+                  "strategy": "configured_retrieval"
+                },
+                "page_scope_coverage": 0,
+                "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+                "body_query_term_coverage": 0.8461538461538463,
+                "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+                "question_shape_navigation": {
+                  "method": "generic_purpose_body_affinity_not_semantic_proof",
+                  "body_affinity": 1.0
+                },
+                "identifier_anchors": [],
+                "evidence_role": "primary",
+                "evidence_selection": {
+                  "method": "query_body_lexical_coverage_navigation_only",
+                  "semantic_sufficiency": "not_evaluated",
+                  "new_lexical_facets": [
+                    "军团",
+                    "冠军",
+                    "团队",
+                    "方法",
+                    "的方",
+                    "队的"
+                  ],
+                  "body_sha256": "0aec279afe37f1ec58e3a4bac71f59c7d25407e37b55a4765a11856c661e7b80",
+                  "utility": 1.385714,
+                  "uncovered_lexical_facets": [
+                    "华北"
+                  ],
+                  "selection_budget_exhausted": false
+                }
+              }
+            }
+          ],
+          "search_scope": {
+            "mode": "explicit_document_all_pages",
+            "document_id": "methods",
+            "page_no": null,
+            "source_sha256": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542"
+          },
+          "dependency_reference_validation": {
+            "status": "verified",
+            "scope": "actual_rank1_dimension_reference_and_complete_ties",
+            "sql_task_id": "t1",
+            "row_index": 0,
+            "output_column": "region",
+            "reference_path": [
+              "dimension_values",
+              "sales_orders",
+              "region",
+              0
+            ],
+            "value": "华北",
+            "target_text": "冠军团队的方法",
+            "result_verification": "independent_original_scope_rules_and_complete_physical_result_replay",
+            "independent_query_hash": "de346c8af035c202"
+          },
+          "entity_evidence_navigation": {
+            "entity": "华北",
+            "matched_excerpt_count": 0,
+            "semantic_answer_verified": false
+          }
+        }
+      },
+      "trace": [
+        {
+          "trace_id": "b1dfdb93e56f591f75ef",
+          "task_id": "t1",
+          "tool": "sql",
+          "dependencies": [],
+          "status": "complete",
+          "latency_ms": 4.917
+        },
+        {
+          "trace_id": "b1dfdb93e56f591f75ef",
+          "task_id": "t2",
+          "tool": "search",
+          "dependencies": [
+            "t1"
+          ],
+          "status": "complete",
+          "latency_ms": 5.751
+        }
+      ],
+      "source_validation": {
+        "status": "verified",
+        "documents": {
+          "methods": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542"
+        },
+        "scope": "selected_original_hash_and_logical_version_not_semantic_truth"
+      },
+      "edges": [
+        {
+          "from": "t1",
+          "to": "t2"
+        }
+      ],
+      "user_constraint_validation": {
+        "status": "verified",
+        "scope": "explicit_server_bound_sql_source_clauses",
+        "bindings": [
+          {
+            "task_id": "t1",
+            "id": "sql_scope_1",
+            "start": 5,
+            "end": 21,
+            "text": "查2025年销售额排名第一的地区",
+            "role": "observation",
+            "qualifier_ranges": [],
+            "target_binding": null,
+            "document_search_ranges": [
+              [
+                22,
+                37
+              ]
+            ]
+          }
+        ],
+        "document_search_bindings": [
+          {
+            "search_task_id": "t2",
+            "sql_task_id": "t1",
+            "dimension_label": "地区",
+            "dimension_table": "sales_orders",
+            "dimension_column": "region",
+            "qualifier": "再根据该地区",
+            "target_text": "冠军团队的方法",
+            "row_index": 0,
+            "output_column": null,
+            "reference_path": [
+              "dimension_values",
+              "sales_orders",
+              "region",
+              0
+            ],
+            "scope_question": "查2025年销售额排名第一的地区"
+          }
+        ]
+      },
+      "execution_plan": [
+        {
+          "id": "t1",
+          "tool": "sql",
+          "args": {
+            "question": "2025年销售额排名第一的地区"
+          }
+        },
+        {
+          "id": "t2",
+          "tool": "search",
+          "args": {
+            "query": [
+              {
+                "ref": "t1",
+                "path": [
+                  "dimension_values",
+                  "sales_orders",
+                  "region",
+                  0
+                ]
+              },
+              "冠军团队的方法"
+            ],
+            "document_id": "methods"
+          }
+        }
+      ],
+      "answer": "数据库确定的对象为华北；本次检索片段未定位该对象的对应资料，暂不能给出其“冠军团队的方法”。",
+      "answer_mode": "verified_sql_entity_with_retrieved_excerpts",
+      "answer_status": "insufficient_evidence"
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "model_validated",
+        "route": "fusion",
+        "latency_ms": 2196.566,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": [
+          {
+            "attempt": 1,
+            "validation": "plan_protocol_rejected",
+            "errors": [
+              "sql_document_plan_scope_invalid"
+            ],
+            "api_audit": {
+              "provider": "deepseek_chat_completions",
+              "model": "deepseek-chat",
+              "operation": "omni_plan",
+              "call_number": 2,
+              "status": "completed",
+              "http_status": 200,
+              "temperature": 0,
+              "max_output_tokens": 5000,
+              "input_tokens": 4006,
+              "output_tokens": 148,
+              "transport_attempts": 1,
+              "usage": {
+                "prompt_tokens": 4006,
+                "completion_tokens": 148,
+                "total_tokens": 4154,
+                "prompt_tokens_details": {
+                  "cached_tokens": 1792
+                },
+                "prompt_cache_hit_tokens": 1792,
+                "prompt_cache_miss_tokens": 2214
+              },
+              "response_model": "deepseek-flash",
+              "finish_reason": "stop",
+              "model_verified": false,
+              "wall_ms": 1176.738
+            },
+            "reference_type_errors": [
+              "sql_document_scope_unverified"
+            ]
+          },
+          {
+            "attempt": 2,
+            "validation": "complete",
+            "errors": [],
+            "api_audit": {
+              "provider": "deepseek_chat_completions",
+              "model": "deepseek-chat",
+              "operation": "omni_plan_completion_repair",
+              "call_number": 3,
+              "status": "completed",
+              "http_status": 200,
+              "temperature": 0,
+              "max_output_tokens": 5000,
+              "input_tokens": 4237,
+              "output_tokens": 143,
+              "transport_attempts": 1,
+              "usage": {
+                "prompt_tokens": 4237,
+                "completion_tokens": 143,
+                "total_tokens": 4380,
+                "prompt_tokens_details": {
+                  "cached_tokens": 3968
+                },
+                "prompt_cache_hit_tokens": 3968,
+                "prompt_cache_miss_tokens": 269
+              },
+              "response_model": "deepseek-flash",
+              "finish_reason": "stop",
+              "model_verified": false,
+              "wall_ms": 974.836
+            }
+          }
+        ]
+      },
+      {
+        "trace_id": "b1dfdb93e56f591f75ef",
+        "task_id": "t1",
+        "tool": "sql",
+        "dependencies": [],
+        "status": "complete",
+        "latency_ms": 4.917
+      },
+      {
+        "trace_id": "b1dfdb93e56f591f75ef",
+        "task_id": "t2",
+        "tool": "search",
+        "dependencies": [
+          "t1"
+        ],
+        "status": "complete",
+        "latency_ms": 5.751
+      }
+    ],
+    "audit_id": "58b84418f16c9c82c4b27e54",
+    "context_resolution": {
+      "mode": "independent"
+    },
+    "routing": {
+      "selected_route": "fusion",
+      "label": "数据与资料联合查询",
+      "strategy": "dependency_workflow",
+      "reason": "按依赖顺序查询数据、读取资料并核对结果。",
+      "context_mode": "independent",
+      "model_enabled": true
+    }
+  },
+  "calls": [
+    {
+      "context": {
+        "question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "actual_question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "server_context_resolution": {
+          "mode": "independent"
+        },
+        "history": [],
+        "source_intent_hint": "fusion",
+        "reference_date": "2026-10-09",
+        "required_operations": {
+          "version_comparison_dates": []
+        },
+        "database_schema": {
+          "tables": [
+            {
+              "name": "finance_loans",
+              "columns": [
+                {
+                  "name": "loan_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "loan_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "loan_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "interest_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "loan_id"
+                ]
+              ]
+            },
+            {
+              "name": "sales_orders",
+              "columns": [
+                {
+                  "name": "order_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "order_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "channel",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "quantity",
+                  "data_type": "INTEGER",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "sales_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "cost_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "gross_profit",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "product_name",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "order_id"
+                ]
+              ]
+            }
+          ],
+          "source": "sqlite_read_only"
+        },
+        "documents": [
+          {
+            "id": "methods",
+            "title": "区域团队方法",
+            "modality": "txt",
+            "text": "华东冠军团队的方法:每日核验库存,按客户需求安排补货。\n华南冠军团队的方法:每周复核渠道订单。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 47,
+                "locator": "lines:1-2",
+                "chunk_id": "6be05cca913386905dd598cc"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "policy",
+            "title": "指标与计划",
+            "modality": "txt",
+            "text": "目标销售额 = 基准销售额 * (1 + 目标增长率)\n统计说明:基准按指定年度和地区重新查询数据库。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 51,
+                "locator": "lines:1-2",
+                "chunk_id": "2fabc52be30442d7fe0a3de0"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "terms",
+            "title": "业务术语确认卡",
+            "modality": "txt",
+            "text": "蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 50,
+                "locator": "lines:1-3",
+                "chunk_id": "8a8b3b74b1be65213da4ca1c"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "targets",
+            "title": "区域计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.12\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.1\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 55,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "642778e1449c2aa3a27ea027"
+              },
+              {
+                "text_start": 56,
+                "text_end": 110,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "9c9f6cb8555b2b92238d6434"
+              },
+              {
+                "text_start": 111,
+                "text_end": 146,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "b6ff553c802374af9a8965ff"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.12
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.1
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "967da55c5295f7fc9a10e8e2b426b78c743008f6550e17ed262b1e791ca1f1ad",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "revised",
+            "title": "修订计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.18\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.16\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 55,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "afca8074299a9415492b3974"
+              },
+              {
+                "text_start": 56,
+                "text_end": 111,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "d6e177f80da1cee88fd2b256"
+              },
+              {
+                "text_start": 112,
+                "text_end": 147,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "ab4704c757495b0e832c9558"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.18
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.16
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "9fff9a66b9b1a784ed02fd6b176ca6582639902dfdee199d927e78abb2e5656c",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          }
+        ]
+      },
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string",
+            "enum": [
+              "sql",
+              "document",
+              "fusion",
+              "clarify"
+            ]
+          },
+          "effective_question": {
+            "type": "string"
+          },
+          "clarification": {
+            "type": "string"
+          },
+          "tasks_json": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "route",
+          "effective_question",
+          "clarification",
+          "tasks_json"
+        ],
+        "additionalProperties": false
+      },
+      "audit": {
+        "provider": "deepseek_chat_completions",
+        "model": "deepseek-chat",
+        "operation": "omni_plan",
+        "call_number": 2,
+        "status": "completed",
+        "http_status": 200,
+        "temperature": 0,
+        "max_output_tokens": 5000,
+        "input_tokens": 4006,
+        "output_tokens": 148,
+        "transport_attempts": 1,
+        "usage": {
+          "prompt_tokens": 4006,
+          "completion_tokens": 148,
+          "total_tokens": 4154,
+          "prompt_tokens_details": {
+            "cached_tokens": 1792
+          },
+          "prompt_cache_hit_tokens": 1792,
+          "prompt_cache_miss_tokens": 2214
+        },
+        "response_model": "deepseek-flash",
+        "finish_reason": "stop",
+        "model_verified": false,
+        "wall_ms": 1176.738
+      },
+      "output": {
+        "route": "fusion",
+        "effective_question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "clarification": "",
+        "tasks_json": "[{\"id\":\"t1\",\"tool\":\"sql\",\"args\":{\"question\":\"2025年各地区销售额合计，按销售额降序排名\"}},{\"id\":\"t2\",\"tool\":\"search\",\"args\":{\"query\":[{\"ref\":\"t1\",\"path\":[\"dimension_values\",\"sales_orders\",\"region\",0]},\"冠军团队的方法\"],\"document_id\":\"methods\"}}]"
+      }
+    },
+    {
+      "context": {
+        "question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "actual_question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "server_context_resolution": {
+          "mode": "independent"
+        },
+        "history": [],
+        "source_intent_hint": "fusion",
+        "reference_date": "2026-10-09",
+        "required_operations": {
+          "version_comparison_dates": []
+        },
+        "database_schema": {
+          "tables": [
+            {
+              "name": "finance_loans",
+              "columns": [
+                {
+                  "name": "loan_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "loan_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "loan_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "interest_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "loan_id"
+                ]
+              ]
+            },
+            {
+              "name": "sales_orders",
+              "columns": [
+                {
+                  "name": "order_id",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": true
+                },
+                {
+                  "name": "order_date",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "region",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "channel",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "quantity",
+                  "data_type": "INTEGER",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "sales_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "cost_amount",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "gross_profit",
+                  "data_type": "REAL",
+                  "nullable": true,
+                  "primary_key": false
+                },
+                {
+                  "name": "product_name",
+                  "data_type": "TEXT",
+                  "nullable": true,
+                  "primary_key": false
+                }
+              ],
+              "foreign_keys": [],
+              "unique_keys": [
+                [
+                  "order_id"
+                ]
+              ]
+            }
+          ],
+          "source": "sqlite_read_only"
+        },
+        "documents": [
+          {
+            "id": "methods",
+            "title": "区域团队方法",
+            "modality": "txt",
+            "text": "华东冠军团队的方法:每日核验库存,按客户需求安排补货。\n华南冠军团队的方法:每周复核渠道订单。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 47,
+                "locator": "lines:1-2",
+                "chunk_id": "6be05cca913386905dd598cc"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "5b59b4f0040e43f579295f53a1dd7e637f75024d9c128350959926fcc9a5f542",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "policy",
+            "title": "指标与计划",
+            "modality": "txt",
+            "text": "目标销售额 = 基准销售额 * (1 + 目标增长率)\n统计说明:基准按指定年度和地区重新查询数据库。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 51,
+                "locator": "lines:1-2",
+                "chunk_id": "2fabc52be30442d7fe0a3de0"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "terms",
+            "title": "业务术语确认卡",
+            "modality": "txt",
+            "text": "蓝星额:销售成本合计,单位元。\n紫竹额:销售毛利合计,单位元。\n清泉额:线上渠道销售额合计,单位元。",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 50,
+                "locator": "lines:1-3",
+                "chunk_id": "8a8b3b74b1be65213da4ca1c"
+              }
+            ],
+            "table_rows": [],
+            "source_sha256": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "targets",
+            "title": "区域计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.12\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.1\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 55,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "642778e1449c2aa3a27ea027"
+              },
+              {
+                "text_start": 56,
+                "text_end": 110,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "9c9f6cb8555b2b92238d6434"
+              },
+              {
+                "text_start": 111,
+                "text_end": 146,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "b6ff553c802374af9a8965ff"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.12
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.1
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "967da55c5295f7fc9a10e8e2b426b78c743008f6550e17ed262b1e791ca1f1ad",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          },
+          {
+            "id": "revised",
+            "title": "修订计划",
+            "modality": "xlsx",
+            "text": "Sheet | 地区 | 年份 | 目标增长率\n地区: 华东 | 年份: 2026 | 目标增长率: 0.18\nSheet | 地区 | 年份 | 目标增长率\n地区: 华南 | 年份: 2026 | 目标增长率: 0.16\nSheet | A1: 地区 | B1: 年份 | C1: 目标增长率",
+            "excerpts": [
+              {
+                "text_start": 0,
+                "text_end": 55,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2",
+                "chunk_id": "afca8074299a9415492b3974"
+              },
+              {
+                "text_start": 56,
+                "text_end": 111,
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3",
+                "chunk_id": "d6e177f80da1cee88fd2b256"
+              },
+              {
+                "text_start": 112,
+                "text_end": 147,
+                "locator": "sheet:Sheet:cells:A1,B1,C1",
+                "chunk_id": "ab4704c757495b0e832c9558"
+              }
+            ],
+            "table_rows": [
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华东",
+                  2026,
+                  0.18
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:2"
+              },
+              {
+                "headers": [
+                  "地区",
+                  "年份",
+                  "目标增长率"
+                ],
+                "values": [
+                  "华南",
+                  2026,
+                  0.16
+                ],
+                "locator": "sheet:Sheet:table:Sheet!A1:C3:row:3"
+              }
+            ],
+            "source_sha256": "9fff9a66b9b1a784ed02fd6b176ca6582639902dfdee199d927e78abb2e5656c",
+            "selection": "question_retrieval",
+            "preview_truncated": false,
+            "omitted_table_rows": 0
+          }
+        ],
+        "plan_completion_feedback": {
+          "errors": [
+            "sql_document_plan_scope_invalid"
+          ],
+          "instruction": "重新规划同一用户任务，修正协议并补齐实际依赖操作；保留全部用户约束，不直接给答案。SQL排名第一必须使用按用户指定指标、时间、分组排名前1的独立问题；search.query必须由SQL地区等维度引用与原问题逐字检索目标组成。禁止追加文档标题、额外年份或固定地区；使用dimension_values的稳定物理列引用。文本字段只接受标量或扁平标量数组；按给出的字段路径与类型重新规划，不能将整对象转成字符串。检索文本投影仅用于导航，不是已核验事实；不得据此新增筛选条件或代替来源绑定。",
+          "original_sql_scopes": [
+            {
+              "question": "查2025年销售额排名第一的地区",
+              "top_n": 1,
+              "dimension_reference_paths": [
+                [
+                  "dimension_values",
+                  "sales_orders",
+                  "region",
+                  0
+                ]
+              ]
+            }
+          ],
+          "reference_type_errors": [
+            "sql_document_scope_unverified"
+          ]
+        }
+      },
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "route": {
+            "type": "string",
+            "enum": [
+              "sql",
+              "document",
+              "fusion",
+              "clarify"
+            ]
+          },
+          "effective_question": {
+            "type": "string"
+          },
+          "clarification": {
+            "type": "string"
+          },
+          "tasks_json": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "route",
+          "effective_question",
+          "clarification",
+          "tasks_json"
+        ],
+        "additionalProperties": false
+      },
+      "audit": {
+        "provider": "deepseek_chat_completions",
+        "model": "deepseek-chat",
+        "operation": "omni_plan_completion_repair",
+        "call_number": 3,
+        "status": "completed",
+        "http_status": 200,
+        "temperature": 0,
+        "max_output_tokens": 5000,
+        "input_tokens": 4237,
+        "output_tokens": 143,
+        "transport_attempts": 1,
+        "usage": {
+          "prompt_tokens": 4237,
+          "completion_tokens": 143,
+          "total_tokens": 4380,
+          "prompt_tokens_details": {
+            "cached_tokens": 3968
+          },
+          "prompt_cache_hit_tokens": 3968,
+          "prompt_cache_miss_tokens": 269
+        },
+        "response_model": "deepseek-flash",
+        "finish_reason": "stop",
+        "model_verified": false,
+        "wall_ms": 974.836
+      },
+      "output": {
+        "route": "fusion",
+        "effective_question": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "clarification": "",
+        "tasks_json": "[{\"id\":\"t1\",\"tool\":\"sql\",\"args\":{\"question\":\"2025年销售额排名第一的地区\"}},{\"id\":\"t2\",\"tool\":\"search\",\"args\":{\"query\":[{\"ref\":\"t1\",\"path\":[\"dimension_values\",\"sales_orders\",\"region\",0]},\"冠军团队的方法\"],\"document_id\":\"methods\"}}]"
+      }
+    }
+  ],
+  "trace": [
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "running",
+      "input": {
+        "query": "先从数据库查2025年销售额排名第一的地区，再根据该地区检索冠军团队的方法，保留来源。",
+        "top_k": 20
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.search",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "intent.plan",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "fusion.execute",
+      "status": "running",
+      "input": {
+        "task_count": 2
+      },
+      "executed": false,
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "fusion_task",
+      "tool": "sql",
+      "task_id": "t1",
+      "status": "success",
+      "executed": true,
+      "output": {
+        "status": "complete",
+        "latency_ms": 4.917
+      },
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "fusion_task",
+      "tool": "search",
+      "task_id": "t2",
+      "status": "success",
+      "executed": true,
+      "output": {
+        "status": "complete",
+        "latency_ms": 5.751
+      },
+      "call_id": "omni-call-7"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "fusion.execute",
+      "status": "success",
+      "output": {
+        "status": "ok"
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "fusion"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-8"
+    }
+  ]
+}

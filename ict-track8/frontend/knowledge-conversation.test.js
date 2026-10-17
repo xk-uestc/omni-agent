@@ -31,3 +31,13 @@ test('a second conversation request does not race the first request',async()=>{
   await vm.runInContext('runConversation("/clarify",{},()=>{},()=>{})',h);
   assert.equal(calls,1);finish({});await first;
 });
+test('source conflict recovery clears the selected file and restores input without submitting',()=>{
+  const events=[],input={value:'',focus:()=>events.push('focus'),scrollIntoView:()=>events.push('scroll')};
+  const context={selectDocument:id=>events.push(['select',id]),$:id=>{assert.equal(id,'omni-question');return input;},
+    request:()=>assert.fail('Recovery must not spend a model call'),fetch:()=>assert.fail('Recovery must not submit')};
+  vm.createContext(context);
+  vm.runInContext(source.slice(source.indexOf('function prepareUnscopedQuestion('),source.indexOf('function updateTaskScopeHint(')),context);
+  context.prepareUnscopedQuestion('根据查询编号 q_abc，继续分析。');
+  assert.equal(input.value,'根据查询编号 q_abc，继续分析。');
+  assert.deepEqual(events,[['select',''],'focus','scroll']);
+});

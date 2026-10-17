@@ -1,0 +1,23 @@
+{
+  "gpu_probe": {
+    "command": "nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader",
+    "host_output": "NVIDIA A100-SXM4-40GB, 40960 MiB, 580.178.04",
+    "sandbox_probe": "failed to communicate with NVIDIA driver",
+    "interpretation": "GPU is available on host; this deployment does not use it"
+  },
+  "ocr": {
+    "url": "http://127.0.0.1:8030/api/v1/documents/ocr/health",
+    "http_status": 200,
+    "response": {
+      "status": "configured",
+      "configured": true,
+      "ready": true,
+      "provider": "rapidocr",
+      "languages": [
+        "Chinese",
+        "English"
+      ],
+      "execution": "local_cpu"
+    }
+  }
+}

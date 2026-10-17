@@ -1,0 +1,1904 @@
+{
+  "response": {
+    "status": "ok",
+    "question": "2025年华东霜桥额是多少",
+    "effective_question": "2025年华东霜桥额是多少",
+    "route": "document",
+    "planner_source": "rules_basic",
+    "session_id": "target-B-n02",
+    "context_turns": 0,
+    "state": {
+      "route": "document",
+      "sources": [
+        "formation-conflict1",
+        "formation-conflict2"
+      ],
+      "document_context": {
+        "payload": {
+          "question": "2025年华东霜桥额是多少",
+          "documents": {
+            "formation-conflict1": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f",
+            "formation-conflict2": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0"
+          }
+        },
+        "sha256": "3cd3600664d9cc98fa2c0a43e434a6c52c3e87a6c6d414bd85db8df6edc338ee"
+      }
+    },
+    "result": {
+      "status": "ok",
+      "question": "2025年华东霜桥额是多少",
+      "answer_mode": "attributed_extracts",
+      "answer": "[1] 霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}\n\n[2] 霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+      "citations": [
+        {
+          "citation_id": 1,
+          "document_id": "bfab2c009f411350b0655eb2",
+          "title": "霜桥额业务定义",
+          "score": 0.614,
+          "matched_terms": [
+            "霜桥额",
+            "桥额",
+            "霜桥"
+          ],
+          "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+          "source_uri": "/api/v1/knowledge/documents/formation-conflict1/original",
+          "metadata": {
+            "line_start": 1,
+            "line_end": 2,
+            "source_sha256": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f",
+            "original_document_id": "formation-conflict1",
+            "document_id": "formation-conflict1",
+            "chunk_id": "bfab2c009f411350b0655eb2",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 1.590724,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 1.0,
+            "bm25_rank": 1,
+            "ranking_score": 1.786280708975885,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.08195710840928833,
+            "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "primary",
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [
+                "桥额",
+                "霜桥"
+              ],
+              "body_sha256": "fef72a36b91a7c24c0f18edbccc7fd99e57087c2de773e29c1ff27462ee88d6f",
+              "utility": 0.877778,
+              "uncovered_lexical_facets": [
+                "2025",
+                "东霜",
+                "华东",
+                "年华",
+                "是多",
+                "额是"
+              ],
+              "selection_budget_exhausted": false
+            }
+          }
+        },
+        {
+          "citation_id": 2,
+          "document_id": "c527f56677e45668f5d0f38f",
+          "title": "霜桥额业务定义",
+          "score": 0.6128,
+          "matched_terms": [
+            "霜桥额",
+            "桥额",
+            "霜桥"
+          ],
+          "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+          "source_uri": "/api/v1/knowledge/documents/formation-conflict2/original",
+          "metadata": {
+            "line_start": 1,
+            "line_end": 2,
+            "source_sha256": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0",
+            "original_document_id": "formation-conflict2",
+            "document_id": "formation-conflict2",
+            "chunk_id": "c527f56677e45668f5d0f38f",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "title_path": [],
+            "quality": 1.0,
+            "warnings": [],
+            "raysource_images": [],
+            "bm25_raw": 1.582893,
+            "retrieval_channel": "bm25",
+            "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+            "bm25_relative": 0.9951,
+            "bm25_rank": 2,
+            "ranking_score": 1.7774869998019553,
+            "anchor_match_count": 0,
+            "retrieval_language_policy": {
+              "query_language": "zh_or_mixed",
+              "encoder_languages": null,
+              "strategy": "configured_retrieval"
+            },
+            "page_scope_coverage": 0,
+            "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+            "body_query_term_coverage": 0.08195710840928833,
+            "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+            "question_shape_navigation": {
+              "method": "generic_purpose_body_affinity_not_semantic_proof",
+              "body_affinity": 1.0
+            },
+            "identifier_anchors": [],
+            "evidence_role": "supporting",
+            "evidence_selection": {
+              "method": "query_body_lexical_coverage_navigation_only",
+              "semantic_sufficiency": "not_evaluated",
+              "new_lexical_facets": [],
+              "body_sha256": "2cd85d340303a5998ba943ce17aa00aba27d2d4008274ab252702cd6f1f507a0",
+              "utility": 0.696554,
+              "uncovered_lexical_facets": [
+                "2025",
+                "东霜",
+                "华东",
+                "年华",
+                "是多",
+                "额是"
+              ],
+              "selection_budget_exhausted": false
+            }
+          }
+        }
+      ],
+      "retrieval": {
+        "mode": "bm25",
+        "embedding_model": null,
+        "dense_answer_threshold": null
+      },
+      "trace": [
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 2
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 2,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "retrieval_audit": {
+        "version": "ict8-rag-audit-v1",
+        "query": "2025年华东霜桥额是多少",
+        "scope": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "query_language": "zh_or_mixed",
+        "dense_status": "not_configured",
+        "channels": [
+          "bm25"
+        ],
+        "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+        "candidate_pool_limit": 20,
+        "candidate_count": 2,
+        "selection_budget": 4,
+        "selected_count": 2,
+        "selection": {
+          "method": "query_body_lexical_coverage_navigation_only",
+          "semantic_sufficiency": "not_evaluated",
+          "top_k": 4,
+          "candidate_count": 2,
+          "unique_body_count": 2,
+          "query_facets": {
+            "年华": 1.0,
+            "2025": 2.0,
+            "是多": 1.0,
+            "华东": 1.0,
+            "东霜": 1.0,
+            "霜桥": 1.0,
+            "桥额": 1.0,
+            "额是": 1.0
+          },
+          "covered_lexical_facets": [
+            "桥额",
+            "霜桥"
+          ],
+          "uncovered_lexical_facets": [
+            "2025",
+            "东霜",
+            "华东",
+            "年华",
+            "是多",
+            "额是"
+          ],
+          "available_but_unselected_facets": [],
+          "selection_budget_exhausted": false,
+          "source_counts": {
+            "formation-conflict1": 1,
+            "formation-conflict2": 1
+          },
+          "steps": [
+            {
+              "chunk_id": "bfab2c009f411350b0655eb2",
+              "source_id": "formation-conflict1",
+              "ranking_score": 1.786280708975885,
+              "utility": 0.877778,
+              "new_lexical_facets": [
+                "桥额",
+                "霜桥"
+              ],
+              "body_sha256": "fef72a36b91a7c24c0f18edbccc7fd99e57087c2de773e29c1ff27462ee88d6f"
+            },
+            {
+              "chunk_id": "c527f56677e45668f5d0f38f",
+              "source_id": "formation-conflict2",
+              "ranking_score": 1.7774869998019553,
+              "utility": 0.696554,
+              "new_lexical_facets": [],
+              "body_sha256": "2cd85d340303a5998ba943ce17aa00aba27d2d4008274ab252702cd6f1f507a0"
+            }
+          ],
+          "skipped": []
+        },
+        "candidates": [
+          {
+            "chunk_id": "bfab2c009f411350b0655eb2",
+            "source_document_id": "formation-conflict1",
+            "source_sha256": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f",
+            "title": "霜桥额业务定义",
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 1,
+            "bm25_rank": 1,
+            "bm25_raw": 1.590724,
+            "bm25_relative": 1.0,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 1.786280708975885,
+            "body_query_term_coverage": 0.08195710840928833,
+            "matched_terms": [
+              "霜桥额",
+              "桥额",
+              "霜桥"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "primary",
+            "selection_utility": 0.877778,
+            "new_lexical_facets": [
+              "桥额",
+              "霜桥"
+            ],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              1
+            ]
+          },
+          {
+            "chunk_id": "c527f56677e45668f5d0f38f",
+            "source_document_id": "formation-conflict2",
+            "source_sha256": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0",
+            "title": "霜桥额业务定义",
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "sheet_name": null,
+            "row_start": null,
+            "row_end": null,
+            "ranking_rank": 2,
+            "bm25_rank": 2,
+            "bm25_raw": 1.582893,
+            "bm25_relative": 0.9951,
+            "dense_rank": null,
+            "dense_cosine": null,
+            "rrf_rank": null,
+            "rrf_score": null,
+            "ranking_score": 1.7774869998019553,
+            "body_query_term_coverage": 0.08195710840928833,
+            "matched_terms": [
+              "霜桥额",
+              "桥额",
+              "霜桥"
+            ],
+            "retrieval_channels": [
+              "bm25"
+            ],
+            "selected_in_initial_coverage": true,
+            "selection_role": "supporting",
+            "selection_utility": 0.696554,
+            "new_lexical_facets": [],
+            "selection_note": "coverage_selector_selected",
+            "evidence_status": "retrieval_candidate_not_fact_verification",
+            "final_citation_ids": [
+              2
+            ]
+          }
+        ]
+      }
+    },
+    "trace": [
+      {
+        "stage": "intent_planning",
+        "source": "rules_basic",
+        "route": "document",
+        "latency_ms": 82.203,
+        "error": null,
+        "rejection_code": null,
+        "normalizations": [],
+        "attempts": []
+      },
+      {
+        "stage": "document_retrieval",
+        "channel": "bm25",
+        "candidate_count": 2
+      },
+      {
+        "stage": "evidence_selection",
+        "selected_count": 2,
+        "generation": "extractive"
+      },
+      {
+        "stage": "visual_page_routing",
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+        "candidate_document_ids": [],
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 4000,
+          "source_bytes": 41943040,
+          "pages_per_source": 1000,
+          "source_bytes_per_source": 20971520,
+          "index_build_seconds_per_source": 60,
+          "index_bytes_per_source": 16777216,
+          "cache_bytes": 134217728,
+          "cache_entries": 128
+        }
+      },
+      {
+        "stage": "visual_chart_routing",
+        "status": "no_pdf_candidates",
+        "model_requests_attempted": 0,
+        "limits": {
+          "documents": 4,
+          "pages": 1000,
+          "total_bytes": 41943040,
+          "source_bytes": 20971520,
+          "seconds": 60
+        },
+        "candidate_document_ids": [],
+        "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+      },
+      {
+        "stage": "native_aligned_table_routing",
+        "status": "not_applicable",
+        "model_requests_attempted": 0,
+        "model_audits": []
+      },
+      {
+        "stage": "native_total_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_page_answer_dossier",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_comparison_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      },
+      {
+        "stage": "native_row_selection_routing",
+        "status": "not_applicable",
+        "model_audits": []
+      }
+    ],
+    "audit_id": "65dd7add24b378862fab93da",
+    "context_resolution": {
+      "mode": "independent",
+      "actual_question": "2025年华东霜桥额是多少"
+    },
+    "routing": {
+      "selected_route": "document",
+      "label": "资料问答",
+      "strategy": "source_query",
+      "reason": "检索原文并核对来源。",
+      "context_mode": "independent",
+      "model_enabled": false
+    },
+    "document_reference_id": "q_80ced5269150431093b96b352d72e8a9",
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 26.467,
+      "trace_id": "022eb80322e249a9a8d6145ee442ea54",
+      "observe_ms": 4.087,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result",
+        "model_planning_failed": false
+      }
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 119.296,
+  "trace": [
+    {
+      "stage": "memory",
+      "tool": "memory.recall",
+      "status": "success",
+      "executed": true,
+      "call_id": "022eb80322e249a9a8d6145ee442ea54:memory.recall",
+      "trace_id": "022eb80322e249a9a8d6145ee442ea54",
+      "output": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 26.467,
+        "trace_id": "022eb80322e249a9a8d6145ee442ea54"
+      }
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "running",
+      "input": null,
+      "executed": false,
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "context.resolve",
+      "status": "success",
+      "output": {
+        "status": null
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-1"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "running",
+      "input": {
+        "question": "2025年华东霜桥额是多少"
+      },
+      "executed": false,
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "running",
+      "summary": "正在整理本轮问题与检索目标。",
+      "input": {
+        "question": "2025年华东霜桥额是多少"
+      },
+      "output": {},
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.question_analysis",
+      "rag_step": "question_analysis",
+      "status": "success",
+      "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+      "input": {},
+      "output": {
+        "question": "2025年华东霜桥额是多少",
+        "retrieval_query": "2025年华东霜桥额是多少",
+        "query_rewrite": "none"
+      },
+      "latency_ms": 0.004,
+      "executed": true,
+      "call_id": "omni-call-3"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "running",
+      "summary": "正在核对多轮上下文、指代和附加输入。",
+      "input": {
+        "mode": "independent_question"
+      },
+      "output": {},
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.context_resolution",
+      "rag_step": "context_resolution",
+      "status": "success",
+      "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+      "input": {},
+      "output": {
+        "mode": "independent_question",
+        "actual_question": "2025年华东霜桥额是多少",
+        "effective_question": "2025年华东霜桥额是多少",
+        "context_turns": 0,
+        "image_count": 0,
+        "retrieval_context_attached": false
+      },
+      "latency_ms": 0.004,
+      "executed": true,
+      "call_id": "omni-call-4"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "running",
+      "summary": "正在应用资料范围和页码限制。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "scope": "all_sources"
+      },
+      "output": {},
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.source_binding",
+      "rag_step": "source_binding",
+      "status": "success",
+      "summary": "已限定到 2 份资料、2 个可检索片段。",
+      "input": {
+        "document_id": null,
+        "page_no": null,
+        "exact_identifiers": []
+      },
+      "output": {
+        "document_count": 2,
+        "eligible_chunk_count": 2,
+        "scope": "all_sources"
+      },
+      "latency_ms": 0.381,
+      "executed": true,
+      "call_id": "omni-call-5"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "running",
+      "summary": "正在按词项相关度查找手册片段。",
+      "input": {
+        "query": "2025年华东霜桥额是多少",
+        "candidate_limit": 100
+      },
+      "output": {},
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.bm25_retrieval",
+      "rag_step": "bm25_retrieval",
+      "status": "success",
+      "summary": "关键词召回得到 2 个候选片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 2
+      },
+      "latency_ms": 0.068,
+      "executed": true,
+      "call_id": "omni-call-6"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.dense_retrieval",
+      "rag_step": "dense_retrieval",
+      "status": "skipped",
+      "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured"
+      },
+      "executed": false,
+      "call_id": "omni-call-7"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "running",
+      "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+      "input": {
+        "dense_status": "not_configured"
+      },
+      "output": {},
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.hybrid_ranking",
+      "rag_step": "hybrid_ranking",
+      "status": "success",
+      "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+      "input": {},
+      "output": {
+        "dense_status": "not_configured",
+        "rrf_executed": false,
+        "ranking_method": "bm25_then_page_scope_and_body_affinity"
+      },
+      "latency_ms": 0.073,
+      "executed": true,
+      "call_id": "omni-call-8"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "running",
+      "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+      "input": {
+        "candidate_count": 2,
+        "selection_limit": 4
+      },
+      "output": {},
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.evidence_selection",
+      "rag_step": "evidence_selection",
+      "status": "success",
+      "summary": "从 2 个排序候选中选出 2 个证据片段。",
+      "input": {},
+      "output": {
+        "candidate_count": 2,
+        "selected_count": 2,
+        "selection_method": "query_body_lexical_coverage_navigation_only",
+        "selected_evidence": [
+          {
+            "title": "霜桥额业务定义",
+            "chunk_id": "bfab2c009f411350b0655eb2",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+            "image_count": 0
+          },
+          {
+            "title": "霜桥额业务定义",
+            "chunk_id": "c527f56677e45668f5d0f38f",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+            "image_count": 0
+          }
+        ]
+      },
+      "latency_ms": 0.872,
+      "executed": true,
+      "call_id": "omni-call-9"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "running",
+      "summary": "正在整理选中片段、原文定位和关联图片。",
+      "input": {
+        "selected_count": 2
+      },
+      "output": {},
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.generation_evidence",
+      "rag_step": "generation_evidence",
+      "status": "success",
+      "summary": "已整理 2 个入选片段，交由回答与来源核验流程处理。",
+      "input": {},
+      "output": {
+        "evidence_count": 2,
+        "evidence": [
+          {
+            "title": "霜桥额业务定义",
+            "chunk_id": "bfab2c009f411350b0655eb2",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+            "image_count": 0
+          },
+          {
+            "title": "霜桥额业务定义",
+            "chunk_id": "c527f56677e45668f5d0f38f",
+            "source_locator": "lines:1-2",
+            "page_no": null,
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+            "image_count": 0
+          }
+        ],
+        "user_image_count": 0
+      },
+      "latency_ms": 0.009,
+      "executed": true,
+      "call_id": "omni-call-10"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "running",
+      "summary": "正在依据入选证据生成或核验回答。",
+      "input": {
+        "question": "2025年华东霜桥额是多少",
+        "evidence_count": 2
+      },
+      "output": {},
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.answer_generation",
+      "rag_step": "answer_generation",
+      "status": "success",
+      "summary": "已返回回答并完成来源核验。",
+      "input": {},
+      "output": {
+        "status": "ok",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 2
+      },
+      "latency_ms": 0.374,
+      "executed": true,
+      "call_id": "omni-call-11"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "running",
+      "summary": "正在整理最终回答与来源信息。",
+      "input": {},
+      "output": {},
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "rag_process",
+      "tool": "rag.completion",
+      "rag_step": "completion",
+      "status": "success",
+      "summary": "文档处理已完成。",
+      "input": {},
+      "output": {
+        "status": "ok",
+        "answer_mode": "attributed_extracts",
+        "citation_count": 2
+      },
+      "latency_ms": 0.018,
+      "executed": true,
+      "call_id": "omni-call-12"
+    },
+    {
+      "stage": "tool_call",
+      "tool": "knowledge.answer",
+      "status": "success",
+      "output": {
+        "status": "ok",
+        "citation_count": 2
+      },
+      "executed": true,
+      "summary": "调用完成",
+      "call_id": "omni-call-2"
+    },
+    {
+      "stage": "memory",
+      "tool": "memory.observe",
+      "status": "success",
+      "executed": true,
+      "call_id": "022eb80322e249a9a8d6145ee442ea54:memory.observe",
+      "trace_id": "022eb80322e249a9a8d6145ee442ea54",
+      "output": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result",
+        "model_planning_failed": false
+      }
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "success",
+      "executed": false,
+      "output": {
+        "status": "ok",
+        "route": "document"
+      },
+      "summary": "回答已返回",
+      "call_id": "omni-call-13"
+    }
+  ],
+  "memory": {
+    "recall_count": 1,
+    "selected": [],
+    "consumed": [],
+    "decisions": [],
+    "degraded": false,
+    "bindings": [],
+    "recall_ms": 26.467,
+    "trace_id": "022eb80322e249a9a8d6145ee442ea54",
+    "observe_ms": 4.087,
+    "observe": {
+      "stored": true,
+      "promotion": "none",
+      "category": "verified_result",
+      "model_planning_failed": false
+    }
+  },
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 11,
+  "memory_operations": 2,
+  "id": "n02",
+  "category": "conflict",
+  "end_to_end_ms": 180.939,
+  "formation_ms": 42.109,
+  "preparation": {
+    "response": {
+      "status": "ok",
+      "question": "霜桥额是什么",
+      "effective_question": "霜桥额是什么",
+      "route": "document",
+      "planner_source": "server_verified_term_definition_route",
+      "session_id": "formation-A-n02",
+      "context_turns": 0,
+      "state": {
+        "route": "document",
+        "sources": [
+          "formation-conflict1",
+          "formation-conflict2"
+        ],
+        "document_context": {
+          "payload": {
+            "question": "霜桥额是什么",
+            "documents": {
+              "formation-conflict1": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f",
+              "formation-conflict2": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0"
+            }
+          },
+          "sha256": "6d9adb09fbc01a82f20e8bdb1d6683efec0b8837cacc0b9deade4b7a7734ce67"
+        }
+      },
+      "result": {
+        "status": "ok",
+        "question": "霜桥额是什么",
+        "answer_mode": "attributed_extracts",
+        "answer": "[1] 霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}\n\n[2] 霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+        "citations": [
+          {
+            "citation_id": 1,
+            "document_id": "bfab2c009f411350b0655eb2",
+            "title": "霜桥额业务定义",
+            "score": 0.614,
+            "matched_terms": [
+              "霜桥额",
+              "桥额",
+              "霜桥"
+            ],
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+            "source_uri": "/api/v1/knowledge/documents/formation-conflict1/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 2,
+              "source_sha256": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f",
+              "original_document_id": "formation-conflict1",
+              "document_id": "formation-conflict1",
+              "chunk_id": "bfab2c009f411350b0655eb2",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "raysource_images": [],
+              "bm25_raw": 1.590724,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 1.0,
+              "bm25_rank": 1,
+              "ranking_score": 2.0402274398916274,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "body_query_term_coverage": 0.1883852635201026,
+              "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "primary",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [
+                  "桥额",
+                  "霜桥"
+                ],
+                "body_sha256": "fef72a36b91a7c24c0f18edbccc7fd99e57087c2de773e29c1ff27462ee88d6f",
+                "utility": 1.1,
+                "uncovered_lexical_facets": [
+                  "是什",
+                  "额是"
+                ],
+                "selection_budget_exhausted": false
+              }
+            }
+          },
+          {
+            "citation_id": 2,
+            "document_id": "c527f56677e45668f5d0f38f",
+            "title": "霜桥额业务定义",
+            "score": 0.6128,
+            "matched_terms": [
+              "霜桥额",
+              "桥额",
+              "霜桥"
+            ],
+            "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+            "source_uri": "/api/v1/knowledge/documents/formation-conflict2/original",
+            "metadata": {
+              "line_start": 1,
+              "line_end": 2,
+              "source_sha256": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0",
+              "original_document_id": "formation-conflict2",
+              "document_id": "formation-conflict2",
+              "chunk_id": "c527f56677e45668f5d0f38f",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "title_path": [],
+              "quality": 1.0,
+              "warnings": [],
+              "raysource_images": [],
+              "bm25_raw": 1.582893,
+              "retrieval_channel": "bm25",
+              "text_normalization": "opencc-python-reimplemented-0.1.7:t2s:v1",
+              "bm25_relative": 0.9951,
+              "bm25_rank": 2,
+              "ranking_score": 2.0301835723936885,
+              "anchor_match_count": 0,
+              "retrieval_language_policy": {
+                "query_language": "zh_or_mixed",
+                "encoder_languages": null,
+                "strategy": "configured_retrieval"
+              },
+              "page_scope_coverage": 0,
+              "page_scope_method": "body_only_idf_coverage_rerank_not_generation_evidence",
+              "body_query_term_coverage": 0.1883852635201026,
+              "body_query_term_method": "idf_weighted_query_term_coverage_for_non_paginated_chunks",
+              "question_shape_navigation": {
+                "method": "generic_purpose_body_affinity_not_semantic_proof",
+                "body_affinity": 1.0
+              },
+              "identifier_anchors": [],
+              "evidence_role": "supporting",
+              "evidence_selection": {
+                "method": "query_body_lexical_coverage_navigation_only",
+                "semantic_sufficiency": "not_evaluated",
+                "new_lexical_facets": [],
+                "body_sha256": "2cd85d340303a5998ba943ce17aa00aba27d2d4008274ab252702cd6f1f507a0",
+                "utility": 0.696554,
+                "uncovered_lexical_facets": [
+                  "是什",
+                  "额是"
+                ],
+                "selection_budget_exhausted": false
+              }
+            }
+          }
+        ],
+        "retrieval": {
+          "mode": "bm25",
+          "embedding_model": null,
+          "dense_answer_threshold": null
+        },
+        "trace": [
+          {
+            "stage": "document_retrieval",
+            "channel": "bm25",
+            "candidate_count": 2
+          },
+          {
+            "stage": "evidence_selection",
+            "selected_count": 2,
+            "generation": "extractive"
+          },
+          {
+            "stage": "visual_page_routing",
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+            "candidate_document_ids": [],
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 4000,
+              "source_bytes": 41943040,
+              "pages_per_source": 1000,
+              "source_bytes_per_source": 20971520,
+              "index_build_seconds_per_source": 60,
+              "index_bytes_per_source": 16777216,
+              "cache_bytes": 134217728,
+              "cache_entries": 128
+            }
+          },
+          {
+            "stage": "visual_chart_routing",
+            "status": "no_pdf_candidates",
+            "model_requests_attempted": 0,
+            "limits": {
+              "documents": 4,
+              "pages": 1000,
+              "total_bytes": 41943040,
+              "source_bytes": 20971520,
+              "seconds": 60
+            },
+            "candidate_document_ids": [],
+            "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+          },
+          {
+            "stage": "native_aligned_table_routing",
+            "status": "not_applicable",
+            "model_requests_attempted": 0,
+            "model_audits": []
+          },
+          {
+            "stage": "native_total_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_page_answer_dossier",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_comparison_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          },
+          {
+            "stage": "native_row_selection_routing",
+            "status": "not_applicable",
+            "model_audits": []
+          }
+        ],
+        "retrieval_audit": {
+          "version": "ict8-rag-audit-v1",
+          "query": "霜桥额是什么",
+          "scope": {
+            "document_id": null,
+            "page_no": null,
+            "exact_identifiers": []
+          },
+          "retrieval": {
+            "mode": "bm25",
+            "embedding_model": null,
+            "dense_answer_threshold": null
+          },
+          "query_language": "zh_or_mixed",
+          "dense_status": "not_configured",
+          "channels": [
+            "bm25"
+          ],
+          "ranking_method": "bm25_then_idf_query_coverage_page_scope_and_body_affinity",
+          "candidate_pool_limit": 20,
+          "candidate_count": 2,
+          "selection_budget": 4,
+          "selected_count": 2,
+          "selection": {
+            "method": "query_body_lexical_coverage_navigation_only",
+            "semantic_sufficiency": "not_evaluated",
+            "top_k": 4,
+            "candidate_count": 2,
+            "unique_body_count": 2,
+            "query_facets": {
+              "是什": 1.0,
+              "额是": 1.0,
+              "桥额": 1.0,
+              "霜桥": 1.0
+            },
+            "covered_lexical_facets": [
+              "桥额",
+              "霜桥"
+            ],
+            "uncovered_lexical_facets": [
+              "是什",
+              "额是"
+            ],
+            "available_but_unselected_facets": [],
+            "selection_budget_exhausted": false,
+            "source_counts": {
+              "formation-conflict1": 1,
+              "formation-conflict2": 1
+            },
+            "steps": [
+              {
+                "chunk_id": "bfab2c009f411350b0655eb2",
+                "source_id": "formation-conflict1",
+                "ranking_score": 2.0402274398916274,
+                "utility": 1.1,
+                "new_lexical_facets": [
+                  "桥额",
+                  "霜桥"
+                ],
+                "body_sha256": "fef72a36b91a7c24c0f18edbccc7fd99e57087c2de773e29c1ff27462ee88d6f"
+              },
+              {
+                "chunk_id": "c527f56677e45668f5d0f38f",
+                "source_id": "formation-conflict2",
+                "ranking_score": 2.0301835723936885,
+                "utility": 0.696554,
+                "new_lexical_facets": [],
+                "body_sha256": "2cd85d340303a5998ba943ce17aa00aba27d2d4008274ab252702cd6f1f507a0"
+              }
+            ],
+            "skipped": []
+          },
+          "candidates": [
+            {
+              "chunk_id": "bfab2c009f411350b0655eb2",
+              "source_document_id": "formation-conflict1",
+              "source_sha256": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f",
+              "title": "霜桥额业务定义",
+              "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "ranking_rank": 1,
+              "bm25_rank": 1,
+              "bm25_raw": 1.590724,
+              "bm25_relative": 1.0,
+              "dense_rank": null,
+              "dense_cosine": null,
+              "rrf_rank": null,
+              "rrf_score": null,
+              "ranking_score": 2.0402274398916274,
+              "body_query_term_coverage": 0.1883852635201026,
+              "matched_terms": [
+                "霜桥额",
+                "桥额",
+                "霜桥"
+              ],
+              "retrieval_channels": [
+                "bm25"
+              ],
+              "selected_in_initial_coverage": true,
+              "selection_role": "primary",
+              "selection_utility": 1.1,
+              "new_lexical_facets": [
+                "桥额",
+                "霜桥"
+              ],
+              "selection_note": "coverage_selector_selected",
+              "evidence_status": "retrieval_candidate_not_fact_verification",
+              "final_citation_ids": [
+                1
+              ]
+            },
+            {
+              "chunk_id": "c527f56677e45668f5d0f38f",
+              "source_document_id": "formation-conflict2",
+              "source_sha256": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0",
+              "title": "霜桥额业务定义",
+              "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "sheet_name": null,
+              "row_start": null,
+              "row_end": null,
+              "ranking_rank": 2,
+              "bm25_rank": 2,
+              "bm25_raw": 1.582893,
+              "bm25_relative": 0.9951,
+              "dense_rank": null,
+              "dense_cosine": null,
+              "rrf_rank": null,
+              "rrf_score": null,
+              "ranking_score": 2.0301835723936885,
+              "body_query_term_coverage": 0.1883852635201026,
+              "matched_terms": [
+                "霜桥额",
+                "桥额",
+                "霜桥"
+              ],
+              "retrieval_channels": [
+                "bm25"
+              ],
+              "selected_in_initial_coverage": true,
+              "selection_role": "supporting",
+              "selection_utility": 0.696554,
+              "new_lexical_facets": [],
+              "selection_note": "coverage_selector_selected",
+              "evidence_status": "retrieval_candidate_not_fact_verification",
+              "final_citation_ids": [
+                2
+              ]
+            }
+          ]
+        }
+      },
+      "trace": [
+        {
+          "stage": "intent_planning",
+          "source": "server_verified_term_definition_route",
+          "route": "document",
+          "latency_ms": 0.014,
+          "error": null,
+          "rejection_code": null,
+          "normalizations": [],
+          "attempts": []
+        },
+        {
+          "stage": "document_retrieval",
+          "channel": "bm25",
+          "candidate_count": 2
+        },
+        {
+          "stage": "evidence_selection",
+          "selected_count": 2,
+          "generation": "extractive"
+        },
+        {
+          "stage": "visual_page_routing",
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus",
+          "candidate_document_ids": [],
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 4000,
+            "source_bytes": 41943040,
+            "pages_per_source": 1000,
+            "source_bytes_per_source": 20971520,
+            "index_build_seconds_per_source": 60,
+            "index_bytes_per_source": 16777216,
+            "cache_bytes": 134217728,
+            "cache_entries": 128
+          }
+        },
+        {
+          "stage": "visual_chart_routing",
+          "status": "no_pdf_candidates",
+          "model_requests_attempted": 0,
+          "limits": {
+            "documents": 4,
+            "pages": 1000,
+            "total_bytes": 41943040,
+            "source_bytes": 20971520,
+            "seconds": 60
+          },
+          "candidate_document_ids": [],
+          "scope": "retrieved_pdf_documents_all_pages_not_global_corpus"
+        },
+        {
+          "stage": "native_aligned_table_routing",
+          "status": "not_applicable",
+          "model_requests_attempted": 0,
+          "model_audits": []
+        },
+        {
+          "stage": "native_total_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_page_answer_dossier",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_comparison_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        },
+        {
+          "stage": "native_row_selection_routing",
+          "status": "not_applicable",
+          "model_audits": []
+        }
+      ],
+      "audit_id": "cfb0dbcc54b245a36505ebaa",
+      "context_resolution": {
+        "mode": "independent",
+        "actual_question": "霜桥额是什么"
+      },
+      "routing": {
+        "selected_route": "document",
+        "label": "资料问答",
+        "strategy": "source_query",
+        "reason": "检索原文并核对来源。",
+        "context_mode": "independent",
+        "model_enabled": false
+      },
+      "document_reference_id": "q_e18de59875d34f148e6fee07463497b7",
+      "memory": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 3.289,
+        "trace_id": "fe5fb33a25e8426885c266fd397dd252",
+        "observe_ms": 1.356,
+        "observe": {
+          "stored": true,
+          "promotion": "none",
+          "category": "verified_result",
+          "model_planning_failed": false
+        }
+      }
+    },
+    "error": null,
+    "execution_status": "executed",
+    "wall_ms": 10.355,
+    "trace": [
+      {
+        "stage": "memory",
+        "tool": "memory.recall",
+        "status": "success",
+        "executed": true,
+        "call_id": "fe5fb33a25e8426885c266fd397dd252:memory.recall",
+        "trace_id": "fe5fb33a25e8426885c266fd397dd252",
+        "output": {
+          "recall_count": 1,
+          "selected": [],
+          "consumed": [],
+          "decisions": [],
+          "degraded": false,
+          "bindings": [],
+          "recall_ms": 3.289,
+          "trace_id": "fe5fb33a25e8426885c266fd397dd252"
+        }
+      },
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "running",
+        "input": null,
+        "executed": false,
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "context.resolve",
+        "status": "success",
+        "output": {
+          "status": null
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-1"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "running",
+        "input": {
+          "question": "霜桥额是什么"
+        },
+        "executed": false,
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "running",
+        "summary": "正在整理本轮问题与检索目标。",
+        "input": {
+          "question": "霜桥额是什么"
+        },
+        "output": {},
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.question_analysis",
+        "rag_step": "question_analysis",
+        "status": "success",
+        "summary": "检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。",
+        "input": {},
+        "output": {
+          "question": "霜桥额是什么",
+          "retrieval_query": "霜桥额是什么",
+          "query_rewrite": "none"
+        },
+        "latency_ms": 0.003,
+        "executed": true,
+        "call_id": "omni-call-3"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "running",
+        "summary": "正在核对多轮上下文、指代和附加输入。",
+        "input": {
+          "mode": "independent_question"
+        },
+        "output": {},
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.context_resolution",
+        "rag_step": "context_resolution",
+        "status": "success",
+        "summary": "按本轮完整问题处理；没有沿用未经核验的历史文档来源。",
+        "input": {},
+        "output": {
+          "mode": "independent_question",
+          "actual_question": "霜桥额是什么",
+          "effective_question": "霜桥额是什么",
+          "context_turns": 0,
+          "image_count": 0,
+          "retrieval_context_attached": false
+        },
+        "latency_ms": 0.004,
+        "executed": true,
+        "call_id": "omni-call-4"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "running",
+        "summary": "正在应用资料范围和页码限制。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "scope": "all_sources"
+        },
+        "output": {},
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.source_binding",
+        "rag_step": "source_binding",
+        "status": "success",
+        "summary": "已限定到 2 份资料、2 个可检索片段。",
+        "input": {
+          "document_id": null,
+          "page_no": null,
+          "exact_identifiers": []
+        },
+        "output": {
+          "document_count": 2,
+          "eligible_chunk_count": 2,
+          "scope": "all_sources"
+        },
+        "latency_ms": 0.168,
+        "executed": true,
+        "call_id": "omni-call-5"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "running",
+        "summary": "正在按词项相关度查找手册片段。",
+        "input": {
+          "query": "霜桥额是什么",
+          "candidate_limit": 100
+        },
+        "output": {},
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.bm25_retrieval",
+        "rag_step": "bm25_retrieval",
+        "status": "success",
+        "summary": "关键词召回得到 2 个候选片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 2
+        },
+        "latency_ms": 0.064,
+        "executed": true,
+        "call_id": "omni-call-6"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.dense_retrieval",
+        "rag_step": "dense_retrieval",
+        "status": "skipped",
+        "summary": "Dense 向量索引未配置，本轮保留关键词召回。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured"
+        },
+        "executed": false,
+        "call_id": "omni-call-7"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "running",
+        "summary": "正在融合召回名次，并按明确的年份、页范围和正文覆盖调整顺序。",
+        "input": {
+          "dense_status": "not_configured"
+        },
+        "output": {},
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.hybrid_ranking",
+        "rag_step": "hybrid_ranking",
+        "status": "success",
+        "summary": "BM25 候选已按页范围与正文覆盖重排；本轮未执行 RRF。",
+        "input": {},
+        "output": {
+          "dense_status": "not_configured",
+          "rrf_executed": false,
+          "ranking_method": "bm25_then_page_scope_and_body_affinity"
+        },
+        "latency_ms": 0.028,
+        "executed": true,
+        "call_id": "omni-call-8"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "running",
+        "summary": "正在应用资料范围约束，并裁剪相关证据片段。",
+        "input": {
+          "candidate_count": 2,
+          "selection_limit": 4
+        },
+        "output": {},
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.evidence_selection",
+        "rag_step": "evidence_selection",
+        "status": "success",
+        "summary": "从 2 个排序候选中选出 2 个证据片段。",
+        "input": {},
+        "output": {
+          "candidate_count": 2,
+          "selected_count": 2,
+          "selection_method": "query_body_lexical_coverage_navigation_only",
+          "selected_evidence": [
+            {
+              "title": "霜桥额业务定义",
+              "chunk_id": "bfab2c009f411350b0655eb2",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+              "image_count": 0
+            },
+            {
+              "title": "霜桥额业务定义",
+              "chunk_id": "c527f56677e45668f5d0f38f",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+              "image_count": 0
+            }
+          ]
+        },
+        "latency_ms": 0.197,
+        "executed": true,
+        "call_id": "omni-call-9"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "running",
+        "summary": "正在整理选中片段、原文定位和关联图片。",
+        "input": {
+          "selected_count": 2
+        },
+        "output": {},
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.generation_evidence",
+        "rag_step": "generation_evidence",
+        "status": "success",
+        "summary": "已整理 2 个入选片段，交由回答与来源核验流程处理。",
+        "input": {},
+        "output": {
+          "evidence_count": 2,
+          "evidence": [
+            {
+              "title": "霜桥额业务定义",
+              "chunk_id": "bfab2c009f411350b0655eb2",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售额合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"sales_amount\",\"function\":\"SUM\",\"filters\":[]}}",
+              "image_count": 0
+            },
+            {
+              "title": "霜桥额业务定义",
+              "chunk_id": "c527f56677e45668f5d0f38f",
+              "source_locator": "lines:1-2",
+              "page_no": null,
+              "snippet": "霜桥额的业务定义如下。自建开发资料。\n业务口径:{\"term\":\"霜桥额\",\"definition\":\"销售数量合计\",\"valid_from\":\"2026-10-01T00:00:00+08:00\",\"valid_to\":\"2026-11-01T00:00:00+08:00\",\"binding\":{\"table\":\"sales_orders\",\"column\":\"quantity\",\"function\":\"SUM\",\"filters\":[]}}",
+              "image_count": 0
+            }
+          ],
+          "user_image_count": 0
+        },
+        "latency_ms": 0.007,
+        "executed": true,
+        "call_id": "omni-call-10"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "running",
+        "summary": "正在依据入选证据生成或核验回答。",
+        "input": {
+          "question": "霜桥额是什么",
+          "evidence_count": 2
+        },
+        "output": {},
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.answer_generation",
+        "rag_step": "answer_generation",
+        "status": "success",
+        "summary": "已返回回答并完成来源核验。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 2
+        },
+        "latency_ms": 0.33,
+        "executed": true,
+        "call_id": "omni-call-11"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "running",
+        "summary": "正在整理最终回答与来源信息。",
+        "input": {},
+        "output": {},
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "rag_process",
+        "tool": "rag.completion",
+        "rag_step": "completion",
+        "status": "success",
+        "summary": "文档处理已完成。",
+        "input": {},
+        "output": {
+          "status": "ok",
+          "answer_mode": "attributed_extracts",
+          "citation_count": 2
+        },
+        "latency_ms": 0.016,
+        "executed": true,
+        "call_id": "omni-call-12"
+      },
+      {
+        "stage": "tool_call",
+        "tool": "knowledge.answer",
+        "status": "success",
+        "output": {
+          "status": "ok",
+          "citation_count": 2
+        },
+        "executed": true,
+        "summary": "调用完成",
+        "call_id": "omni-call-2"
+      },
+      {
+        "stage": "memory",
+        "tool": "memory.observe",
+        "status": "success",
+        "executed": true,
+        "call_id": "fe5fb33a25e8426885c266fd397dd252:memory.observe",
+        "trace_id": "fe5fb33a25e8426885c266fd397dd252",
+        "output": {
+          "stored": true,
+          "promotion": "none",
+          "category": "verified_result",
+          "model_planning_failed": false
+        }
+      },
+      {
+        "stage": "query_complete",
+        "tool": "query.complete",
+        "status": "success",
+        "executed": false,
+        "output": {
+          "status": "ok",
+          "route": "document"
+        },
+        "summary": "回答已返回",
+        "call_id": "omni-call-13"
+      }
+    ],
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 3.289,
+      "trace_id": "fe5fb33a25e8426885c266fd397dd252",
+      "observe_ms": 1.356,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "verified_result",
+        "model_planning_failed": false
+      }
+    },
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "tokens_basis": "no model instantiated",
+    "business_tool_calls": 11,
+    "memory_operations": 2
+  },
+  "duplicate_preparation": null,
+  "history_preparation": null,
+  "target_history_before": 0,
+  "candidates": [],
+  "admin_commands": [],
+  "source_versions": {
+    "formation-conflict1": "ef1d18d66210690f9cebcd859f1b25a494b1e11e4422f884bd23fe9ed4cd735f",
+    "formation-conflict2": "4742a83a8e9ad9bbe4b1f73412e6e1c210addba93c16de44d9ee780e43f8cbf0"
+  },
+  "confirmed_records": [],
+  "C_no_put_enforced": false,
+  "store_bytes": 65536,
+  "audit": {
+    "memory_reviews": [],
+    "memory_source_events": [],
+    "memory_candidate_events": [],
+    "memory_history": []
+  },
+  "pass": true,
+  "score": {
+    "no_sql": true,
+    "consumed": [],
+    "status": "ok"
+  }
+}

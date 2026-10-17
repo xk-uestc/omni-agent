@@ -1,0 +1,51 @@
+...............F.........                                                [100%]
+=================================== FAILURES ===================================
+______________ test_http_and_sse_use_same_guard_and_do_not_write _______________
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-37/test_http_and_sse_use_same_gua0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x78d805e2ade0>
+
+    def test_http_and_sse_use_same_guard_and_do_not_write(tmp_path,monkeypatch):
+        import backend.app as module
+        path=initialize_database(tmp_path/'api.sqlite');engine=Nl2SqlEngine(path)
+        monkeypatch.setattr(module,'engine',engine)
+        monkeypatch.setattr(module,'knowledge_store',KnowledgeStore(tmp_path/'k'))
+        monkeypatch.setattr(module,'conversation_store',ConversationStore())
+        monkeypatch.setattr(module,'generation_client',None)
+        monkeypatch.setattr(module,'memory_adapter',None)
+        monkeypatch.setattr(module,'experience_selector',None)
+        client=TestClient(module.app);before=hashlib.sha256(path.read_bytes()).hexdigest()
+        query=DANGEROUS[0]
+        direct=client.post('/api/v1/query',json={'question':query})
+>       assert direct.status_code==200 and direct.json()['clarification_code']=='read_only_query_required'
+E       assert (404 == 200)
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+ict-track8/tests/test_foundation_safety.py:72: AssertionError
+=============================== warnings summary ===============================
+../../../tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+ict-track8/backend/app.py:194
+  /home/viva/omni-agent/ict-track8/backend/app.py:194: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+../../../tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/applications.py:4745
+  /tmp/omni-m1a-venv/lib/python3.12/site-packages/fastapi/applications.py:4745: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)  # ty: ignore[deprecated]
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_foundation_safety.py::test_http_and_sse_use_same_guard_and_do_not_write
+1 failed, 24 passed, 3 warnings in 1.62s

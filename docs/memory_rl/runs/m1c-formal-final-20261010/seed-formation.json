@@ -1,0 +1,151 @@
+[
+  {
+    "index": 0,
+    "formed": false,
+    "reason": "real_agent_failed_independent_whole_task",
+    "score": {
+      "task_success": false,
+      "operation_coverage": false,
+      "result_correct": false,
+      "source_correct": false,
+      "clarification_correct": null
+    }
+  },
+  {
+    "index": 1,
+    "formed": true,
+    "candidate": {
+      "memory_type": "task_experience",
+      "term": "experience_sql_document",
+      "definition": "Source-bound method; replan from current request.",
+      "binding": {},
+      "experience": {
+        "version": 1,
+        "workflow": "sql_document",
+        "steps": [
+          {
+            "role": "step_0",
+            "tool": "sql",
+            "depends_on": [],
+            "argument_sources": [
+              "current_question_or_current_source"
+            ]
+          },
+          {
+            "role": "step_1",
+            "tool": "search",
+            "depends_on": [
+              "step_0"
+            ],
+            "argument_sources": [
+              "current_question_or_current_source",
+              "step_0.verified_output"
+            ]
+          }
+        ],
+        "documents": [
+          "methods"
+        ],
+        "formula_labels": [],
+        "rebinding": [
+          "current_request_time_region_metric_and_all_explicit_operations",
+          "fresh_read_only_sql_results",
+          "current_document_formula_and_typed_cells",
+          "verified_output_references_no_literal_historical_values"
+        ],
+        "on_missing_or_ambiguous": "clarify",
+        "execution_authority": "none"
+      },
+      "scope": {
+        "deployment": "m1c",
+        "project": "competition-demo",
+        "data_sources": [
+          "alt_policy",
+          "database",
+          "methods",
+          "next_targets",
+          "policy",
+          "revised",
+          "targets"
+        ]
+      },
+      "evidence": {
+        "event_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+        "trace_sha256": "578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+        "verifier_sha256": "c180c255c8393da9e1da7f830c1d3508fef4559fec349c4180b18a4cb5a5b9a5"
+      },
+      "source_version": {
+        "schema": "2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e",
+        "sources": {
+          "database": "a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51",
+          "methods": "fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8"
+        }
+      },
+      "valid_from": "2026-10-10T12:00:00+00:00",
+      "valid_to": null,
+      "supersedes": null,
+      "reason": "agent_execution",
+      "digest": "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+      "candidate_id": "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+      "created_at": "2026-10-10T12:00:00+00:00",
+      "source_event_id": "trace-578419dca54049ed216ff6d7a1311ac66a0b29001228817b528fa5976a97c989",
+      "verification_state": "candidate"
+    },
+    "cli": [
+      {
+        "command": [
+          "/tmp/omni-m1a-venv/bin/python",
+          "-m",
+          "backend.memory.admin",
+          "--config",
+          "/home/viva/omni-agent/runtime/m1c-formal-final-20261010/admin.json",
+          "--type",
+          "task_experience",
+          "validate",
+          "--candidate",
+          "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "--digest",
+          "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea"
+        ],
+        "exit": 0,
+        "stdout": "{\"valid\": true, \"checked_at\": \"2026-10-10T12:00:00+00:00\", \"candidate_digest\": \"cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea\", \"checks\": \"typed_experience+immutable_verified_trace+shared_context_validity\", \"reasons\": []}\n"
+      },
+      {
+        "command": [
+          "/tmp/omni-m1a-venv/bin/python",
+          "-m",
+          "backend.memory.admin",
+          "--config",
+          "/home/viva/omni-agent/runtime/m1c-formal-final-20261010/admin.json",
+          "--type",
+          "task_experience",
+          "review",
+          "--candidate",
+          "cand-cc04a9272f81093c82a8a1ef87e2f0bb",
+          "--digest",
+          "cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea",
+          "--decision",
+          "confirm",
+          "--request-id",
+          "seed-review-1",
+          "--reason",
+          "Independent whole-task fixture verification"
+        ],
+        "exit": 0,
+        "stdout": "{\"candidate_id\": \"cand-cc04a9272f81093c82a8a1ef87e2f0bb\", \"digest\": \"cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea\", \"request_id\": \"seed-review-1\", \"decision\": \"confirm\", \"reason\": \"Independent whole-task fixture verification\", \"reviewer\": {\"uid\": 1001, \"account\": \"viva\", \"host\": \"a100\", \"configuration_sha256\": \"d4c76babc2aeb15726a1ae89f9354bf9bfde1eeb354fdf7155720bc131285187\", \"memory_path\": \"/home/viva/omni-agent/runtime/m1c-formal-final-20261010/seed-memory.sqlite\", \"scope_key\": \"{\\\"data_sources\\\":[\\\"alt_policy\\\",\\\"database\\\",\\\"methods\\\",\\\"next_targets\\\",\\\"policy\\\",\\\"revised\\\",\\\"targets\\\"],\\\"deployment\\\":\\\"m1c\\\",\\\"project\\\":\\\"competition-demo\\\"}\"}, \"supersedes\": null, \"reviewed_at\": \"2026-10-10T12:00:00+00:00\", \"validation\": {\"candidate_digest\": \"cc04a9272f81093c82a8a1ef87e2f0bbfebd9e8d236db8838ba3d7ce916d44ea\", \"checked_at\": \"2026-10-10T12:00:00+00:00\", \"checks\": \"typed_experience+immutable_verified_trace+shared_context_validity\", \"reasons\": [], \"valid\": true}, \"source_version\": {\"schema\": \"2caec9497ecf4a6f52410f4b87121168bc4aa6e7b7e6a75951f2cf9958248b0e\", \"sources\": {\"database\": \"a22c51bf72db2b291fe98909c8085c98c03d1a1afa1b500b578c23a4c2805e51\", \"methods\": \"fca5aaa63015bcdb113165acddb3889708c3d653bcd63cfcbc08772786dc0fc8\"}}, \"memory_id\": \"mem-cc04a9272f81093c82a8a1ef87e2f0bb\"}\n"
+      }
+    ]
+  },
+  {
+    "index": 2,
+    "formed": false,
+    "reason": "developer_graph_failed_full_scope",
+    "score": {
+      "task_success": false,
+      "operation_coverage": false,
+      "result_correct": false,
+      "source_correct": false,
+      "clarification_correct": null
+    }
+  }
+]

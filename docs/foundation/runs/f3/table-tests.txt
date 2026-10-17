@@ -1,0 +1,18 @@
+.....F........................................                           [100%]
+=================================== FAILURES ===================================
+_________ test_old_source_refused_and_update_delete_invalidates_bundle _________
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-96/test_old_source_refused_and_up0')
+
+    def test_old_source_refused_and_update_delete_invalidates_bundle(tmp_path):
+        s=KnowledgeStore(tmp_path);put(s);put(s,'old',year=2025)
+        h=s.search(QUESTION);b=prepare_table_bundle(s,QUESTION,h)
+        assert b['document_id']=='table'
+        s.ingest(raw_file({'type':'pdf','pages':['对象代码E-18。新版本记录。']}),document_id='table',title='Table',modality='pdf',filename='t.pdf')
+>       with pytest.raises(SourceRevisionError):prepare_table_bundle(s,QUESTION,h)
+E       Failed: DID NOT RAISE SourceRevisionError
+
+ict-track8/tests/test_f3_table_pipeline.py:61: Failed
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_f3_table_pipeline.py::test_old_source_refused_and_update_delete_invalidates_bundle
+1 failed, 45 passed in 1.36s

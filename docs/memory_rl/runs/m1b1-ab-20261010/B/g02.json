@@ -1,0 +1,170 @@
+{
+  "response": {
+    "status": "clarification",
+    "question": "2025年华东青松额是多少",
+    "effective_question": "2025年华东青松额是多少",
+    "route": "clarify",
+    "session_id": "g02-target",
+    "result": {
+      "status": "clarification",
+      "clarification": "记忆口径、当前来源或本轮条件存在未核实之处，请确认业务指标及筛选范围。",
+      "clarification_code": "memory_source_changed",
+      "sql": null,
+      "rows": []
+    },
+    "trace": [],
+    "context_resolution": {
+      "mode": "memory_binding_rejected",
+      "executed": false,
+      "context_preserved": true
+    },
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "memory_id": "changed",
+          "term": "青松额",
+          "reason": "source_changed"
+        }
+      ],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 1.706,
+      "trace_id": "c826252cf67a42cc92e88bf0ad01161e",
+      "observe_ms": 5.365,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "source_conflict"
+      }
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 7.155,
+  "trace": [
+    {
+      "stage": "memory",
+      "tool": "memory.recall",
+      "status": "success",
+      "executed": true,
+      "call_id": "c826252cf67a42cc92e88bf0ad01161e:memory.recall",
+      "trace_id": "c826252cf67a42cc92e88bf0ad01161e",
+      "output": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [
+          {
+            "memory_id": "changed",
+            "term": "青松额",
+            "reason": "source_changed"
+          }
+        ],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 1.706,
+        "trace_id": "c826252cf67a42cc92e88bf0ad01161e"
+      }
+    },
+    {
+      "stage": "memory",
+      "tool": "memory.observe",
+      "status": "success",
+      "executed": true,
+      "call_id": "c826252cf67a42cc92e88bf0ad01161e:memory.observe",
+      "trace_id": "c826252cf67a42cc92e88bf0ad01161e",
+      "output": {
+        "stored": true,
+        "promotion": "none",
+        "category": "source_conflict"
+      }
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "clarification",
+        "route": "clarify"
+      }
+    }
+  ],
+  "memory": {
+    "recall_count": 1,
+    "selected": [],
+    "consumed": [],
+    "decisions": [
+      {
+        "memory_id": "changed",
+        "term": "青松额",
+        "reason": "source_changed"
+      }
+    ],
+    "degraded": false,
+    "bindings": [],
+    "recall_ms": 1.706,
+    "trace_id": "c826252cf67a42cc92e88bf0ad01161e",
+    "observe_ms": 5.365,
+    "observe": {
+      "stored": true,
+      "promotion": "none",
+      "category": "source_conflict"
+    }
+  },
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 0,
+  "memory_operations": 2,
+  "id": "g02",
+  "category": "source_change_guard",
+  "score": {
+    "safe_abstention": true,
+    "executed_sql": false,
+    "answer_rows_present": false,
+    "status": "clarification",
+    "limitation": "Checks output abstention only; recall/write isolation cannot be measured without adapter instrumentation."
+  },
+  "target_history_before": 0,
+  "target_session": "g02-target",
+  "preparation_session": "g02-preparation",
+  "preparation": [],
+  "candidate_ids": [
+    "changed"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "08effccc09e0412f68e5f8af8be8a109511b7747258790ef69122490e764193d",
+    "terms": "c47e5ab2b8ef0eec3d7317e176413ca213767e28a9d5aef79e466924973d96ad"
+  },
+  "supplemental_consumption_verified": null,
+  "memory_store_bytes_before": 24576,
+  "memory_store_bytes_after": 24576,
+  "archived_events": [
+    {
+      "category": "source_conflict",
+      "consumed": [],
+      "event_id": "c826252cf67a42cc92e88bf0ad01161e",
+      "promotion": "none",
+      "question_sha256": "29694b66ae9a04924ed7e119c12a7c461ab6422224c9c0083ef355d74f299f0c",
+      "rejected": [
+        {
+          "memory_id": "changed",
+          "reason": "source_changed"
+        }
+      ],
+      "selected": [],
+      "source_versions": {},
+      "verification": {
+        "execution_verified": false,
+        "independent_task_verified": false
+      }
+    }
+  ],
+  "pass": true
+}

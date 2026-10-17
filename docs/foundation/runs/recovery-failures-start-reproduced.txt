@@ -1,0 +1,86 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______ test_real_source_retrieval_recovery_answers_original_question_once ______
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-43/test_real_source_retrieval_rec0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7e4b89cd4590>
+
+    def test_real_source_retrieval_recovery_answers_original_question_once(tmp_path, monkeypatch):
+        client = Client()
+        store = KnowledgeStore(tmp_path, generator=GroundedGenerator(client))
+        ingest(store, 'Harbor dispatch includes seasonal warnings.', 'distractor')
+        ingest(store, 'After written approval, harbor dispatch includes lighthouse maintenance.', 'wanted')
+        question = 'What does harbor dispatch include after written approval?'
+        search = store.search
+        calls = []
+    
+        def miss_first(query, **kwargs):
+            calls.append((query, kwargs))
+            return search(query, document_id='distractor', top_k=1) if query == question else search(query, **kwargs)
+    
+        monkeypatch.setattr(store, 'search', miss_first)
+        # Make the initial incomplete pipeline abstain rather than claim its
+        # unrelated but literally supported dispatch clause is a complete answer.
+>       result = store.answer(question)
+                 ^^^^^^^^^^^^^^^^^^^^^^
+
+/tmp/f1-start-snapshot/ict-track8/tests/test_evidence_recovery_round5.py:70: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/f1-start-snapshot/ict-track8/backend/knowledge_store.py:778: in answer
+    result = self._answer_with_recovery(question, top_k=top_k, document_id=document_id,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <backend.knowledge_store.KnowledgeStore object at 0x7e4b89cd7920>
+question = 'What does harbor dispatch include after written approval?'
+top_k = 4, document_id = None, page_no = None, audit_callback = None
+progress_callback = None, image_attachments = None, retrieval_context = None
+retrieval_query = 'What does harbor dispatch include after written approval?'
+
+    def _answer_with_recovery(self, question: str, *, top_k=4, document_id=None, page_no=None,
+                              audit_callback=None, progress_callback=None, image_attachments=None,
+                              retrieval_context=None, retrieval_query=None) -> dict[str, Any]:
+        if not question.strip() or len(question) > 1000:
+            raise ValueError('问题为空或超出长度上限')
+        from .evidence_recovery import audit_boundary, recovery_eligible, plan_evidence_recovery
+        client = getattr(self.generator, 'client', None)
+        answer_audit_start = audit_boundary(client)
+        if retrieval_query is None:
+            question_analysis_started = time.perf_counter()
+            retrieval_query = question
+            if isinstance(retrieval_context, str) and retrieval_context.strip():
+                extra = retrieval_context.strip()
+                retrieval_query = (question + '\n' + extra[:max(0, 1000 - len(question) - 1)])[:1000]
+            _publish_rag_progress(progress_callback, 'question_analysis', 'success',
+                '检索文本已整理；BM25 与 Dense 使用同一条本轮检索问题。',
+                output={'question': question, 'retrieval_query': retrieval_query,
+                        'query_rewrite': 'none'},
+                latency_ms=(time.perf_counter() - question_analysis_started) * 1000, executed=True)
+>       hits, retrieval_audit = self.search(retrieval_query, top_k=top_k,
+        ^^^^^^^^^^^^^^^^^^^^^
+                           **({'document_id': document_id} if document_id is not None else {}),
+                           **({'page_no': page_no} if page_no is not None else {}), with_audit=True,
+                           progress_callback=progress_callback)
+E       ValueError: not enough values to unpack (expected 2, got 1)
+
+/tmp/f1-start-snapshot/ict-track8/backend/knowledge_store.py:822: ValueError
+_______ test_navigation_sees_original_condition_beyond_retrieval_preview _______
+
+tmp_path = PosixPath('/tmp/pytest-of-viva/pytest-43/test_navigation_sees_original_0')
+
+    def test_navigation_sees_original_condition_beyond_retrieval_preview(tmp_path):
+        store = KnowledgeStore(tmp_path)
+        text = ('Harbor dispatch covers routine maintenance. ' + 'Routine operational notes. ' * 20
+                + 'After written approval, the lighthouse dispatch window starts at dawn.')
+        ingest(store, text, 'case')
+        hits = store.search('harbor dispatch', top_k=1)
+>       assert 'window starts at dawn' not in hits[0].snippet
+E       AssertionError: assert 'window starts at dawn' not in 'perational ...rts at dawn.'
+E         
+E         'window starts at dawn' is contained here:
+E            dispatch window starts at dawn.
+
+/tmp/f1-start-snapshot/ict-track8/tests/test_evidence_recovery_round5.py:241: AssertionError
+=========================== short test summary info ============================
+FAILED ../../../tmp/f1-start-snapshot/ict-track8/tests/test_evidence_recovery_round5.py::test_real_source_retrieval_recovery_answers_original_question_once
+FAILED ../../../tmp/f1-start-snapshot/ict-track8/tests/test_evidence_recovery_round5.py::test_navigation_sees_original_condition_beyond_retrieval_preview
+2 failed in 0.41s

@@ -1,0 +1,73 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /tmp/omni-native-venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent
+plugins: anyio-4.15.1
+collecting ... collected 9 items
+
+ict-track8/tests/test_omni_query_stream.py::test_sql_running_precedes_actual_execution_and_success_contains_real_sql PASSED [ 11%]
+ict-track8/tests/test_omni_query_stream.py::test_document_real_call_emits_attention_for_insufficient_evidence PASSED [ 22%]
+ict-track8/tests/test_omni_query_stream.py::test_clarification_does_not_claim_database_tool_execution PASSED [ 33%]
+ict-track8/tests/test_omni_query_stream.py::test_endpoint_final_snapshot_is_query_result_without_extra_session_turn Timeout (0:00:20)!
+Thread 0x000071f0d087e6c0 (most recent call first):
+  File "/usr/lib/python3.12/selectors.py", line 468 in select
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1949 in _run_once
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641 in run_forever
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 674 in run_until_complete
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118 in run
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2548 in run
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/_core/_eventloop.py", line 83 in run
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/from_thread.py", line 538 in run_blocking_portal
+  File "/usr/lib/python3.12/threading.py", line 1010 in run
+  File "/usr/lib/python3.12/threading.py", line 1073 in _bootstrap_inner
+  File "/usr/lib/python3.12/threading.py", line 1030 in _bootstrap
+
+Thread 0x000071f0d73ab080 (most recent call first):
+  File "/usr/lib/python3.12/threading.py", line 355 in wait
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 451 in result
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2780 in run_sync_from_thread
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/from_thread.py", line 119 in run_sync
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/from_thread.py", line 303 in _spawn_task_from_thread
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/from_thread.py", line 384 in start_task_soon
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/anyio/from_thread.py", line 340 in call
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/starlette/testclient.py", line 356 in handle_request
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/httpx/_client.py", line 1014 in _send_single_request
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/httpx/_client.py", line 979 in _send_handling_redirects
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/httpx/_client.py", line 942 in _send_handling_auth
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/httpx/_client.py", line 914 in send
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/httpx/_client.py", line 825 in request
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/starlette/testclient.py", line 463 in request
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/httpx/_client.py", line 1144 in post
+  File "/home/viva/.codex/.chatgpt-projects/g-p-6ac4a8aaab40819194803c67d533d9ce/omni-agent/ict-track8/tests/test_omni_query_stream.py", line 80 in test_endpoint_final_snapshot_is_query_result_without_extra_session_turn
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/python.py", line 167 in pytest_pyfunc_call
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/python.py", line 1707 in runtest
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/runner.py", line 184 in pytest_runtest_call
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/runner.py", line 250 in <lambda>
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/runner.py", line 361 in from_call
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/runner.py", line 249 in call_and_report
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/runner.py", line 139 in runtestprotocol
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/runner.py", line 118 in pytest_runtest_protocol
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/main.py", line 408 in pytest_runtestloop
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/main.py", line 384 in _main
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/main.py", line 330 in wrap_session
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/main.py", line 377 in pytest_cmdline_main
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 229 in _main
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 253 in _console_main
+  File "/tmp/omni-native-venv/lib/python3.12/site-packages/pytest/__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main

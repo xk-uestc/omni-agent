@@ -125,10 +125,10 @@ def test_fusion_observations_forward_only_actual_completed_tasks(local_agent, mo
     monkeypatch.setattr(local_agent, 'basic_plan', lambda question, *args: {
         'route': 'fusion', 'effective_question': question, 'tasks_json': '[]', 'clarification': ''})
     observed = []
-    def run(self, tasks, *, original_question, on_event):
+    def run(self, tasks, *, original_question, on_progress):
         assert observed[-1]['tool'] == 'fusion.execute' and observed[-1]['status'] == 'running'
-        on_event({'task_id': 'read-one', 'tool': 'search', 'status': 'complete', 'latency_ms': 1})
-        on_event({'task_id': 'rejected', 'tool': 'sql', 'status': 'failed', 'latency_ms': 2})
+        on_progress({'task_id': 'read-one', 'tool': 'search', 'status': 'complete', 'latency_ms': 1})
+        on_progress({'task_id': 'rejected', 'tool': 'sql', 'status': 'failed', 'latency_ms': 2})
         return {'status': 'incomplete', 'trace_id': 'fake-observation', 'trace': [], 'results': {}}
     monkeypatch.setattr(DependencyAgent, 'run', run)
     result = local_agent.query('请检索并比较资料', trace_callback=observed.append)

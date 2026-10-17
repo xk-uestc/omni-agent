@@ -1,0 +1,56 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+_____________ test_followup_conflict_cannot_bypass_semantic_filter _____________
+
+setup = (<backend.omni_agent.OmniAgent object at 0x7729504b03b0>, <backend.memory.adapter.MemoryAdapter object at 0x772950402690>, <function setup.<locals>.add at 0x7729505f1760>)
+
+    def test_followup_conflict_cannot_bypass_semantic_filter(setup):
+        a,m,_=setup
+        assert value(a.query('2025年华东银杉额',session_id='filter-history'))==100
+        r=a.query('那门店呢',session_id='filter-history')
+>       assert r['status']=='clarification' and not r['result'].get('sql')
+E       AssertionError: assert ('ok' == 'clarification'
+E         
+E         - clarification
+E         + ok)
+
+ict-track8/tests/test_memory_adapter.py:186: AssertionError
+_______________ test_new_conflict_cannot_bypass_through_history ________________
+
+setup = (<backend.omni_agent.OmniAgent object at 0x7729503eda90>, <backend.memory.adapter.MemoryAdapter object at 0x7729504b1d90>, <function setup.<locals>.add at 0x7729503d4b80>)
+
+    def test_new_conflict_cannot_bypass_through_history(setup):
+        a,m,add=setup
+        assert value(a.query('2025年华东晨光额',session_id='new-conflict'))==120
+        add(field='sales_amount',ident='conflicting-confirmation')
+        r=a.query('那华南呢',session_id='new-conflict')
+>       assert r['status']=='clarification' and not r['result'].get('sql')
+E       AssertionError: assert ('ok' == 'clarification'
+E         
+E         - clarification
+E         + ok)
+
+ict-track8/tests/test_memory_adapter.py:194: AssertionError
+______ test_actual_model_failure_is_archived_despite_successful_fallback _______
+
+setup = (<backend.omni_agent.OmniAgent object at 0x772950218ce0>, <backend.memory.adapter.MemoryAdapter object at 0x7729504eee70>, <function setup.<locals>.add at 0x7729503d6340>)
+
+    def test_actual_model_failure_is_archived_despite_successful_fallback(setup):
+        from backend.responses_client import GenerationError
+        a,m,_=setup
+        class Broken:
+            def generate(self,*args,**kwargs):raise GenerationError('provider unavailable')
+        a.client=Broken()
+        r=a.query('2025年华东晨光额')
+        assert value(r)==120
+        event=m.core.store.events()[-1]
+>       assert event['model_planning_failed'] is True
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'model_planning_failed'
+
+ict-track8/tests/test_memory_adapter.py:206: KeyError
+=========================== short test summary info ============================
+FAILED ict-track8/tests/test_memory_adapter.py::test_followup_conflict_cannot_bypass_semantic_filter
+FAILED ict-track8/tests/test_memory_adapter.py::test_new_conflict_cannot_bypass_through_history
+FAILED ict-track8/tests/test_memory_adapter.py::test_actual_model_failure_is_archived_despite_successful_fallback
+3 failed, 20 deselected in 0.66s

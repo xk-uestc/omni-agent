@@ -1,0 +1,194 @@
+{
+  "response": {
+    "status": "clarification",
+    "question": "2025年华东青松额是多少",
+    "effective_question": "2025年华东青松额是多少",
+    "route": "clarify",
+    "session_id": "g03-target",
+    "result": {
+      "status": "clarification",
+      "clarification": "记忆口径、当前来源或本轮条件存在未核实之处，请确认业务指标及筛选范围。",
+      "clarification_code": "memory_conflict",
+      "sql": null,
+      "rows": []
+    },
+    "trace": [],
+    "context_resolution": {
+      "mode": "memory_binding_rejected",
+      "executed": false,
+      "context_preserved": true
+    },
+    "memory": {
+      "recall_count": 1,
+      "selected": [],
+      "consumed": [],
+      "decisions": [
+        {
+          "memory_id": "conflict-cost",
+          "term": "青松额",
+          "reason": "conflict"
+        },
+        {
+          "memory_id": "conflict-sales",
+          "term": "青松额",
+          "reason": "conflict"
+        }
+      ],
+      "degraded": false,
+      "bindings": [],
+      "recall_ms": 2.005,
+      "trace_id": "52b9fcfd6e764b8d9080e47c9cf70fd6",
+      "observe_ms": 1.115,
+      "observe": {
+        "stored": true,
+        "promotion": "none",
+        "category": "source_conflict",
+        "model_planning_failed": false
+      }
+    }
+  },
+  "error": null,
+  "execution_status": "executed",
+  "wall_ms": 3.219,
+  "trace": [
+    {
+      "stage": "memory",
+      "tool": "memory.recall",
+      "status": "success",
+      "executed": true,
+      "call_id": "52b9fcfd6e764b8d9080e47c9cf70fd6:memory.recall",
+      "trace_id": "52b9fcfd6e764b8d9080e47c9cf70fd6",
+      "output": {
+        "recall_count": 1,
+        "selected": [],
+        "consumed": [],
+        "decisions": [
+          {
+            "memory_id": "conflict-cost",
+            "term": "青松额",
+            "reason": "conflict"
+          },
+          {
+            "memory_id": "conflict-sales",
+            "term": "青松额",
+            "reason": "conflict"
+          }
+        ],
+        "degraded": false,
+        "bindings": [],
+        "recall_ms": 2.005,
+        "trace_id": "52b9fcfd6e764b8d9080e47c9cf70fd6"
+      }
+    },
+    {
+      "stage": "memory",
+      "tool": "memory.observe",
+      "status": "success",
+      "executed": true,
+      "call_id": "52b9fcfd6e764b8d9080e47c9cf70fd6:memory.observe",
+      "trace_id": "52b9fcfd6e764b8d9080e47c9cf70fd6",
+      "output": {
+        "stored": true,
+        "promotion": "none",
+        "category": "source_conflict",
+        "model_planning_failed": false
+      }
+    },
+    {
+      "stage": "query_complete",
+      "tool": "query.complete",
+      "status": "attention",
+      "executed": false,
+      "output": {
+        "status": "clarification",
+        "route": "clarify"
+      }
+    }
+  ],
+  "memory": {
+    "recall_count": 1,
+    "selected": [],
+    "consumed": [],
+    "decisions": [
+      {
+        "memory_id": "conflict-cost",
+        "term": "青松额",
+        "reason": "conflict"
+      },
+      {
+        "memory_id": "conflict-sales",
+        "term": "青松额",
+        "reason": "conflict"
+      }
+    ],
+    "degraded": false,
+    "bindings": [],
+    "recall_ms": 2.005,
+    "trace_id": "52b9fcfd6e764b8d9080e47c9cf70fd6",
+    "observe_ms": 1.115,
+    "observe": {
+      "stored": true,
+      "promotion": "none",
+      "category": "source_conflict",
+      "model_planning_failed": false
+    }
+  },
+  "model_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "tokens_basis": "no model instantiated",
+  "business_tool_calls": 0,
+  "memory_operations": 2,
+  "id": "g03",
+  "category": "conflict_guard",
+  "score": {
+    "safe_abstention": true,
+    "executed_sql": false,
+    "answer_rows_present": false,
+    "status": "clarification",
+    "limitation": "Checks output abstention only; recall/write isolation cannot be measured without adapter instrumentation."
+  },
+  "target_history_before": 0,
+  "target_session": "g03-target",
+  "preparation_session": "g03-preparation",
+  "preparation": [],
+  "candidate_ids": [
+    "conflict-sales",
+    "conflict-cost"
+  ],
+  "source_versions": {
+    "policy": "c7193c697cd4b6feb9986ffd268aa7ba98382822a7692d42eb90af34f63101bd",
+    "targets": "1b418e16f5151012c5b49c04e1d95ea27ced4665cfd3b47cab68ccf4e1dc08f5",
+    "terms": "646133564194b430e26efb0b7ecdec0b4f524026a8e3259d174f722de50df375"
+  },
+  "supplemental_consumption_verified": null,
+  "memory_store_bytes_before": 73728,
+  "memory_store_bytes_after": 73728,
+  "archived_events": [
+    {
+      "category": "source_conflict",
+      "consumed": [],
+      "event_id": "52b9fcfd6e764b8d9080e47c9cf70fd6",
+      "model_planning_failed": false,
+      "promotion": "none",
+      "question_sha256": "29694b66ae9a04924ed7e119c12a7c461ab6422224c9c0083ef355d74f299f0c",
+      "rejected": [
+        {
+          "memory_id": "conflict-cost",
+          "reason": "conflict"
+        },
+        {
+          "memory_id": "conflict-sales",
+          "reason": "conflict"
+        }
+      ],
+      "selected": [],
+      "source_versions": {},
+      "verification": {
+        "execution_verified": false,
+        "independent_task_verified": false
+      }
+    }
+  ],
+  "pass": true
+}
